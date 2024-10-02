@@ -73,22 +73,16 @@ export const createInvokedFunctionResultVariableDeclaration = (
 export const cloneAndStripImportSpecifier = (
   importSpecifier: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
 ): es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier => {
-  switch (importSpecifier.type) {
-    case 'ImportSpecifier':
-      return {
-        type: 'ImportSpecifier',
-        local: create.identifier(importSpecifier.local.name),
-        imported: create.identifier(importSpecifier.imported.name)
-      }
-    case 'ImportDefaultSpecifier':
-      return {
-        type: 'ImportDefaultSpecifier',
-        local: create.identifier(importSpecifier.local.name)
-      }
-    case 'ImportNamespaceSpecifier':
-      return {
-        type: 'ImportNamespaceSpecifier',
-        local: create.identifier(importSpecifier.local.name)
-      }
+  if (importSpecifier.type === 'ImportSpecifier') {
+    return {
+      type: 'ImportSpecifier',
+      local: create.identifier(importSpecifier.local.name),
+      imported: create.identifier(importSpecifier.imported.name)
+    }
+  }
+
+  return {
+    type: importSpecifier.type,
+    local: create.identifier(importSpecifier.local.name)
   }
 }

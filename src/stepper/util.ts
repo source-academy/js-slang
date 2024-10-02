@@ -1,4 +1,4 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { Context } from '..'
 import * as errors from '../errors/errors'
@@ -125,3 +125,5 @@ export function defineVariable(
 
   return environment
 }
+export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>
+export type ContiguousArrayElements = ContiguousArrayElementExpression[]

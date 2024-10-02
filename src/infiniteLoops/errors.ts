@@ -16,8 +16,8 @@ export enum StackOverflowMessages {
 /**
  * Checks if the error is a TimeoutError or Stack Overflow.
  *
- * @returns {true} if the error is a TimeoutError or Stack Overflow.
- * @returns {false} otherwise.
+ * @returns true if the error is a TimeoutError or Stack Overflow.
+ * false otherwise.
  */
 export function isPotentialInfiniteLoop(error: any) {
   if (error instanceof TimeoutError) {

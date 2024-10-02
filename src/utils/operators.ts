@@ -1,6 +1,5 @@
 import type { BinaryOperator, UnaryOperator } from 'estree'
 
-import { LazyBuiltIn } from '../createContext'
 import {
   CallingNonFunctionValue,
   ExceptionError,
@@ -12,7 +11,7 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import { Chapter, type NativeStorage, Thunk } from '../types'
+import { Chapter, type NativeStorage } from '../types'
 import { callExpression, locationDummyNode } from './ast/astCreator'
 import * as create from './ast/astCreator'
 import { makeWrapper } from './makeWrapper'
@@ -32,58 +31,6 @@ export function throwIfTimeout(
       nativeStorage.maxExecTime
     )
   }
-}
-
-export function forceIt(val: Thunk | any): any {
-  if (val !== undefined && val !== null && val.isMemoized !== undefined) {
-    if (val.isMemoized) {
-      return val.memoizedValue
-    }
-
-    const evaluatedValue = forceIt(val.f())
-
-    val.isMemoized = true
-    val.memoizedValue = evaluatedValue
-
-    return evaluatedValue
-  } else {
-    return val
-  }
-}
-
-export function delayIt(f: () => any): Thunk {
-  return {
-    isMemoized: false,
-    value: undefined,
-    f
-  }
-}
-
-export function wrapLazyCallee(candidate: any) {
-  candidate = forceIt(candidate)
-  if (typeof candidate === 'function') {
-    const wrapped: any = (...args: any[]) => candidate(...args.map(forceIt))
-    makeWrapper(candidate, wrapped)
-    wrapped[Symbol.toStringTag] = () => candidate.toString()
-    wrapped.toString = () => candidate.toString()
-    return wrapped
-  } else if (candidate instanceof LazyBuiltIn) {
-    if (candidate.evaluateArgs) {
-      const wrapped: any = (...args: any[]) => candidate.func(...args.map(forceIt))
-      makeWrapper(candidate.func, wrapped)
-      wrapped[Symbol.toStringTag] = () => candidate.toString()
-      wrapped.toString = () => candidate.toString()
-      return wrapped
-    } else {
-      return candidate
-    }
-  }
-  // doesn't look like a function, not our business to error now
-  return candidate
-}
-
-export function makeLazyFunction(candidate: any) {
-  return new LazyBuiltIn(candidate, false)
 }
 
 export function callIfFuncAndRightArgs(
@@ -115,22 +62,7 @@ export function callIfFuncAndRightArgs(
       )
     }
     try {
-      const forcedArgs = args.map(forceIt)
-      return originalCandidate(...forcedArgs)
-    } catch (error) {
-      // if we already handled the error, simply pass it on
-      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-        throw new ExceptionError(error, dummy.loc)
-      } else {
-        throw error
-      }
-    }
-  } else if (candidate instanceof LazyBuiltIn) {
-    try {
-      if (candidate.evaluateArgs) {
-        args = args.map(forceIt)
-      }
-      return candidate.func(...args)
+      return originalCandidate(...args)
     } catch (error) {
       // if we already handled the error, simply pass it on
       if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
@@ -145,7 +77,6 @@ export function callIfFuncAndRightArgs(
 }
 
 export function boolOrErr(candidate: any, line: number, column: number, source: string | null) {
-  candidate = forceIt(candidate)
   const error = rttc.checkIfStatement(create.locationDummyNode(line, column, source), candidate)
   if (error === undefined) {
     return candidate
@@ -161,7 +92,6 @@ export function unaryOp(
   column: number,
   source: string | null
 ) {
-  argument = forceIt(argument)
   const error = rttc.checkUnaryExpression(
     create.locationDummyNode(line, column, source),
     operator,
@@ -195,8 +125,6 @@ export function binaryOp(
   column: number,
   source: string | null
 ) {
-  left = forceIt(left)
-  right = forceIt(right)
   const error = rttc.checkBinaryExpression(
     create.locationDummyNode(line, column, source),
     operator,
@@ -255,7 +183,6 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
   const pastCalls: [string, any[]][] = []
   while (true) {
     const dummy = locationDummyNode(line, column, source)
-    f = forceIt(f)
     if (typeof f === 'function') {
       if (f.transformedFunction !== undefined) {
         f = f.transformedFunction
@@ -275,11 +202,6 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
           hasVarArgs
         )
       }
-    } else if (f instanceof LazyBuiltIn) {
-      if (f.evaluateArgs) {
-        args = args.map(forceIt)
-      }
-      f = f.func
     } else {
       throw new CallingNonFunctionValue(f, dummy)
     }

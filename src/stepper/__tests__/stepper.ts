@@ -2,8 +2,9 @@ import type es from 'estree'
 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
-import { Chapter, Context, substituterNodes } from '../../types'
+import { Chapter, type Context, type substituterNodes } from '../../types'
 import { codify, getEvaluationSteps } from '../stepper'
+import { astTester, testMultipleCases } from '../../utils/testing'
 
 function getLastStepAsString(steps: [substituterNodes, string[][], string][]): string {
   return codify(steps[steps.length - 1][0]).trim()
@@ -12,6 +13,28 @@ function getLastStepAsString(steps: [substituterNodes, string[][], string][]): s
 function getExplanation(steps: [substituterNodes, string[][], string][]): string {
   // Explanation of the step is kept in index 2 of steps
   return steps.map(x => x[2]).join('\n')
+}
+
+function getEvalStepsFromCode(programStr: string, context?: Context) {
+  // Enable Source 2 to test builtin functions
+  context = context ?? mockContext(Chapter.SOURCE_2)
+  const program = parse(programStr, context)!
+  return getEvalSteps(program, context)
+}
+
+function getEvalSteps(program: es.Program, context: Context) {
+  const options = {
+    stepLimit: 1000,
+    importOptions: {
+      loadTabs: false,
+      wrapSourceModules: false,
+      resolverOptions: { extensions: null },
+      shouldAddFileName: false,
+      allowUndefinedImports: false,
+      throwOnDuplicateNames: true
+    }
+  }
+  return getEvaluationSteps(program, context, options)
 }
 
 describe('Test codify works on non-circular abstract syntax graphs', () => {
@@ -50,7 +73,7 @@ describe('Test codify works on non-circular abstract syntax graphs', () => {
 })
 
 describe('Test codify works on circular abstract syntax graphs', () => {
-  test('functions', async () => {
+  test('functions', () => {
     const code = `
     x => x();
   `
@@ -67,1681 +90,1717 @@ describe('Test codify works on circular abstract syntax graphs', () => {
   })
 })
 
-const testEvalSteps = (programStr: string, context?: Context) => {
-  // Enable Source 2 to test builtin functions
-  context = context ?? mockContext(Chapter.SOURCE_2)
-  const program = parse(programStr, context)!
-  const options = {
-    stepLimit: 1000,
-    importOptions: {
-      loadTabs: false,
-      wrapSourceModules: false,
-      resolverOptions: { extensions: null },
-      shouldAddFileName: false,
-      allowUndefinedImports: false,
-      throwOnDuplicateNames: true
+const testCasesAgainstSnapshots = (
+  desc: string,
+  cases: ([string, string] | [string, string, any])[]
+) =>
+  describe(desc, () => {
+    astTester((program, context, expected) => {
+      const steps = getEvalSteps(program, context)
+      expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+      if (expected !== undefined) {
+        expect(getLastStepAsString(steps)).toEqual(expected)
+      }
+    }, cases)
+  })
+
+const testCasesAgainstInlineSnapshots = (
+  cases: ([string, string, string] | [string, string, string, Chapter])[]
+) => {
+  testMultipleCases<[string, string] | [string, string, Chapter]>(
+    cases,
+    ([code, expected, chapter]) => {
+      const context = mockContext(chapter)
+      const program = parse(code, context)
+      expect(program).not.toBeNull()
+
+      const steps = getEvalSteps(program!, context)
+      expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(expected)
     }
-  }
-  return getEvaluationSteps(program, context, options)
+  )
 }
 
-describe('Test calling functions', () => {
-  test('Function that exists', async () => {
-    const code = `
-    function foo(x) { return x;}
-    foo(1 + 2);
+testCasesAgainstSnapshots('Test calling functions', [
+  [
+    'Function that exists',
     `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  })
-
-  test('Math function', async () => {
-    const code = `
-    math_abs(-1);
-    `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  })
-
-  test('Imported module function', async () => {
-    const code = `
-    pair(1, 1);
-    `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  })
-
-  test('Built-in function', async () => {
-    const code = `
-    is_boolean(false);
-    `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  })
-
-  test('Argument reduction steps', async () => {
-    const code = `
-    (1 * 3)(2 * 3 + 10);
-    `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  })
-
-  test('Literal function should error', async () => {
-    const code = `
-    1(2);
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-
-  test('Incorrect number of argument (less)', async () => {
-    const code = `
-    function foo(a) {
-      return a;
-    }
-    foo();
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-
-  test('Incorrect number of argument (more)', async () => {
-    const code = `
-    function foo(a) {
-      return a;
-    }
-    foo(1, 2, 3);
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-})
-
-describe('Test runtime errors', () => {
-  test('Variable used before assigning in program', async () => {
-    const code = `
-    unassigned_variable;
-    const unassigned_variable = "assigned";
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-
-  test('Variable used before assigning in functions', async () => {
-    const code = `
-    function foo() {
-      unassigned_variable;
-      const unassigned_variable = "assigned";
-    }
-    foo();
+        function foo(x) { return x;}
+        foo(1 + 2);
       `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
+  ],
+  ['Math function', 'math_abs(-1);'],
+  ['Builtin function', 'is_boolean(false);'],
+  ['Argument reduction steps', '(1 * 3)(2 * 3 + 10);']
+])
 
-  test('Incompatible types operation', async () => {
-    const code = `
-    "1" + 2 * 3;
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
+describe('Test errors', () => {
+  function testErrors(desc: string, cases: [string, string][]) {
+    describe(desc, () => {
+      astTester((program, context) => {
+        const steps = getEvalSteps(program, context)
+        expect(getExplanation(steps)).toMatchSnapshot()
+      }, cases)
+    })
+  }
+
+  testErrors('Test runtime errors', [
+    [
+      'Variable used before assignment in program',
+      `
+        unassigned_variable;
+        const unassigned_variable = "assigned";
+      `
+    ],
+    [
+      'Variable used before assignment in functions',
+      `
+      function foo() {
+        unassigned_variable;
+        const unassigned_variable = "assigned";
+      }
+      foo();
+      `
+    ],
+    ['Incompatible types operation', '"1" + 2 * 3;']
+  ])
+
+  testErrors('Test catching errors from builtin functions', [
+    ['Incorrect type of argument for math function', 'math_sin(true);'],
+    // TODO: Check the naming for this test
+    ['Incorrect type of argument for module function', 'arity("not a function");'],
+    ['Incorrect number of arguments', 'pair(2);']
+  ])
+
+  // TODO: Is this necessary? Stepper uses undefined variable checker which has its own tests
+  testErrors('Test catching of undeclared variable error', [
+    ['Variable not declared in program', 'undeclared_variable;'],
+    ['Variable not declared in block statement', '{ undeclared_variable; }'],
+    [
+      'Variable not declared in function declaration',
+      `
+        function foo() {
+          undeclared_variable;
+        }
+      `
+    ]
+  ])
+
+  testErrors('Test function call errors', [
+    ['Literal function should error', '1(2);'],
+    [
+      'Fewer than correct number of arguments',
+      `
+        function foo(a) {
+          return a;
+        }
+        foo();
+      `
+    ],
+    [
+      'More than correct number of arguments',
+      `
+        function foo(a) {
+          return a;
+        }
+        foo(1, 2, 3);
+      `
+    ]
+  ])
 })
 
-describe('Test catching errors from built in function', () => {
-  test('Incorrect type of argument for math function', async () => {
-    const code = `
-    math_sin(true);
+testCasesAgainstSnapshots('Test reducing of empty block into epsilon', [
+  ['Empty block in program', '3;\n{}', '3;'],
+  [
+    'Empty blocks in block',
     `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-
-  test('Incorrect type of arguments for module function', async () => {
-    const code = `
-    arity("not a function");
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-
-  test('Incorrect number of arguments', async () => {
-    const code = `pair(2);`
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-})
-
-describe('Test catching of undeclared variable error', () => {
-  test('Variable not declared in program', async () => {
-    const code = `
-    undeclared_variable;
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-
-  test('Variable not declared in block statement', async () => {
-    const code = `
-    {
-      undeclared_variable;
-    } 
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-
-  test('Variable not declared in function declaration', async () => {
-    const code = `
-    function foo() {
-      undeclared_variable;
-    }
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-})
-
-describe('Test reducing of empty block into epsilon', () => {
-  test('Empty block in program', async () => {
-    const code = `
-    3;
-    {}
-    `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('3;')
-  })
-
-  test('Empty blocks in block', async () => {
-    const code = `
-    {
-      3;
       {
-        {}
-        {}
+        3;
+        {
+          {}
+          {}
+        }
       }
-    }
+      `,
+    '3;'
+  ],
+  [
+    'Empty block in function',
     `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('3;')
-  })
+        function f() {
+          3;
+          {}
+        }
+        f();
+      `
+  ]
+])
 
-  test('Empty block in function', async () => {
-    const code = `
-    function f() {
-      3;
-      {}
-    }
-    f();
+testCasesAgainstSnapshots('Test correct evaluation sequence when first statement is a value', [
+  [
+    'Reducible second statement in program',
     `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  })
-})
-
-describe('Test correct evaluation sequence when first statement is a value', () => {
-  test('Reducible second statement in program', async () => {
-    const code = `
-    'value';
-    const x = 10;
+        'value';
+        const x = 10;
+      `,
+    "'value';"
+  ],
+  [
+    'Irreducible second statement in program',
     `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual("'value';")
-  })
-
-  test('Irreducible second statement in program', async () => {
-    const code = `
-    'value';
-    'also a value';
+        'value';
+        'also a value';
+      `,
+    "'also a value';"
+  ],
+  [
+    'Reducible second statement in block',
     `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual("'also a value';")
-  })
-
-  test('Reducible second statement in block', async () => {
-    const code = `
-    {
-      'value';
-      const x = 10;
-    }
+        {
+          'value';
+          const x = 10;
+        }
+      `,
+    "'value';"
+  ],
+  [
+    'Irreducible second statement in block',
     `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual("'value';")
-  })
-
-  test('Irreducible second statement in block', async () => {
-    const code = `
-    {
-      'value';
-      'also a value';
-    }
-    `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual("'also a value';")
-  })
-
-  test('Reducible second statement in function', async () => {
-    const code = `
-    function f () {
-      'value';
-      const x = 10;
-      return 'another value';
-    }
-    f();
-    `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  })
-
-  test('Irreducible second statement in functions', async () => {
-    const code = `
-    function f () {
-      'value';
-      'also a value';
-      return 'another value';
-    }
-    f();
-    `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  })
-
-  test('Mix statements', async () => {
-    const code = `
-    'value';
-    const x = 10;
-    function f() {
-      20;
-      function p() {
-        22;
+      {
+        'value';
+        'also a value';
       }
-    }
-    const z = 30;
-    'also a value';
-    {
-      'another value';
-      const a = 40;
-      a;
-    }
-    'another value';
-    const a = 40;
+      `,
+    "'also a value';"
+  ],
+  [
+    'Reducible second statement in function',
     `
-    const steps = await testEvalSteps(code)
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual("'another value';")
-  })
-})
-
-describe('Test single line of code is evaluated', () => {
-  test('Constants Declaration', async () => {
-    const code = `
-    const x = 10;
+      function f () {
+        'value';
+        const x = 10;
+        return 'another value';
+      }
+      f();
+      `,
+    "'another value';"
+  ],
+  [
+    'Irreducible second statement in function',
     `
-    const steps = await testEvalSteps(code)
-    expect(steps.length).toBe(4)
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-
-  test('Function Declaration', async () => {
-    const code = `
-    function x () {
-      return 10;
-    }
+      function f () {
+        'value';
+        'also a value';
+        return 'another value';
+      }
+      f();
+      `,
+    "'another value';"
+  ],
+  [
+    'Mix statements',
     `
-    const steps = await testEvalSteps(code)
-    expect(steps.length).toBe(4)
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
+        'value';
+        const x = 10;
+        function f() {
+          20;
+          function p() {
+            22;
+          }
+        }
+        const z = 30;
+        'also a value';
+        {
+          'another value';
+          const a = 40;
+          a;
+        }
+        'another value';
+        const a = 40;
+      `,
+    "'another value';"
+  ]
+])
 
-  test('Value', async () => {
-    const code = `
-    10;
+testCasesAgainstSnapshots('Snapshot code snippets', [
+  ['Evaluate empty program', '', 'undefined;'],
+  [
+    'expmod',
     `
-    const steps = await testEvalSteps(code)
-    expect(steps.length).toBe(2)
-    expect(getLastStepAsString(steps)).toEqual('10;')
-  })
-})
-
-test('Test basic substitution', async () => {
-  const code = `
-    (1 + 2) * (3 + 4);
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "(1 + 2) * (3 + 4);
-
-    (1 + 2) * (3 + 4);
-
-    3 * (3 + 4);
-
-    3 * (3 + 4);
-
-    3 * 7;
-
-    3 * 7;
-
-    21;
-
-    21;
-    "
-  `)
-})
-
-test('Test binary operator error', async () => {
-  const code = `
-    (1 + 2) * ('a' + 'string');
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "(1 + 2) * ('a' + 'string');
-
-    (1 + 2) * ('a' + 'string');
-
-    3 * ('a' + 'string');
-
-    3 * ('a' + 'string');
-
-    3 * \\"astring\\";
-
-    3 * \\"astring\\";
-    "
-  `)
-})
-
-test('Test two statement substitution', async () => {
-  const code = `
-    (1 + 2) * (3 + 4);
-    3 * 5;
-  `
-  const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_4))
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "(1 + 2) * (3 + 4);
-    3 * 5;
-
-    (1 + 2) * (3 + 4);
-    3 * 5;
-
-    3 * (3 + 4);
-    3 * 5;
-
-    3 * (3 + 4);
-    3 * 5;
-
-    3 * 7;
-    3 * 5;
-
-    3 * 7;
-    3 * 5;
-
-    21;
-    3 * 5;
-
-    21;
-    3 * 5;
-
-    21;
-    15;
-
-    21;
-    15;
-
-    15;
-
-    15;
-    "
-  `)
-})
-
-test('Test unary and binary boolean operations', async () => {
-  const code = `
-  !!!true || true;
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "!!!true || true;
-
-    !!!true || true;
-
-    !!false || true;
-
-    !!false || true;
-
-    !true || true;
-
-    !true || true;
-
-    false || true;
-
-    false || true;
-
-    true;
-
-    true;
-    "
-  `)
-})
-
-test('Test ternary operator', async () => {
-  const code = `
-  1 + -1 === 0 ? false ? true : Infinity : undefined;
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "1 + -1 === 0 ? false ? true : Infinity : undefined;
-
-    1 + -1 === 0 ? false ? true : Infinity : undefined;
-
-    0 === 0 ? false ? true : Infinity : undefined;
-
-    0 === 0 ? false ? true : Infinity : undefined;
-
-    true ? false ? true : Infinity : undefined;
-
-    true ? false ? true : Infinity : undefined;
-
-    false ? true : Infinity;
-
-    false ? true : Infinity;
-
-    Infinity;
-
-    Infinity;
-    "
-  `)
-})
-
-test('Test basic function', async () => {
-  const code = `
-  function f(n) {
-    return n;
-  }
-  f(5+1*6-40);
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "function f(n) {
-      return n;
+      function is_even(n) {
+        return n % 2 === 0;
     }
-    f(5 + 1 * 6 - 40);
 
-    function f(n) {
-      return n;
-    }
-    f(5 + 1 * 6 - 40);
-
-    f(5 + 1 * 6 - 40);
-
-    f(5 + 1 * 6 - 40);
-
-    f(5 + 6 - 40);
-
-    f(5 + 6 - 40);
-
-    f(11 - 40);
-
-    f(11 - 40);
-
-    f(-29);
-
-    f(-29);
-
-    -29;
-
-    -29;
-    "
-  `)
-})
-
-test('Test basic bifunction', async () => {
-  const code = `
-  function f(n, m) {
-    return n * m;
-  }
-  f(5+1*6-40, 2-5);
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "function f(n, m) {
-      return n * m;
-    }
-    f(5 + 1 * 6 - 40, 2 - 5);
-
-    function f(n, m) {
-      return n * m;
-    }
-    f(5 + 1 * 6 - 40, 2 - 5);
-
-    f(5 + 1 * 6 - 40, 2 - 5);
-
-    f(5 + 1 * 6 - 40, 2 - 5);
-
-    f(5 + 6 - 40, 2 - 5);
-
-    f(5 + 6 - 40, 2 - 5);
-
-    f(11 - 40, 2 - 5);
-
-    f(11 - 40, 2 - 5);
-
-    f(-29, 2 - 5);
-
-    f(-29, 2 - 5);
-
-    f(-29, -3);
-
-    f(-29, -3);
-
-    -29 * -3;
-
-    -29 * -3;
-
-    87;
-
-    87;
-    "
-  `)
-})
-
-test('Test "recursive" function calls', async () => {
-  const code = `
-  function factorial(n) {
-    return n === 0
-      ? 1
-      : n * factorial(n-1);
-  }
-  factorial(5);
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "function factorial(n) {
-      return n === 0 ? 1 : n * factorial(n - 1);
-    }
-    factorial(5);
-
-    function factorial(n) {
-      return n === 0 ? 1 : n * factorial(n - 1);
-    }
-    factorial(5);
-
-    factorial(5);
-
-    factorial(5);
-
-    5 === 0 ? 1 : 5 * factorial(5 - 1);
-
-    5 === 0 ? 1 : 5 * factorial(5 - 1);
-
-    false ? 1 : 5 * factorial(5 - 1);
-
-    false ? 1 : 5 * factorial(5 - 1);
-
-    5 * factorial(5 - 1);
-
-    5 * factorial(5 - 1);
-
-    5 * factorial(4);
-
-    5 * factorial(4);
-
-    5 * (4 === 0 ? 1 : 4 * factorial(4 - 1));
-
-    5 * (4 === 0 ? 1 : 4 * factorial(4 - 1));
-
-    5 * (false ? 1 : 4 * factorial(4 - 1));
-
-    5 * (false ? 1 : 4 * factorial(4 - 1));
-
-    5 * (4 * factorial(4 - 1));
-
-    5 * (4 * factorial(4 - 1));
-
-    5 * (4 * factorial(3));
-
-    5 * (4 * factorial(3));
-
-    5 * (4 * (3 === 0 ? 1 : 3 * factorial(3 - 1)));
-
-    5 * (4 * (3 === 0 ? 1 : 3 * factorial(3 - 1)));
-
-    5 * (4 * (false ? 1 : 3 * factorial(3 - 1)));
-
-    5 * (4 * (false ? 1 : 3 * factorial(3 - 1)));
-
-    5 * (4 * (3 * factorial(3 - 1)));
-
-    5 * (4 * (3 * factorial(3 - 1)));
-
-    5 * (4 * (3 * factorial(2)));
-
-    5 * (4 * (3 * factorial(2)));
-
-    5 * (4 * (3 * (2 === 0 ? 1 : 2 * factorial(2 - 1))));
-
-    5 * (4 * (3 * (2 === 0 ? 1 : 2 * factorial(2 - 1))));
-
-    5 * (4 * (3 * (false ? 1 : 2 * factorial(2 - 1))));
-
-    5 * (4 * (3 * (false ? 1 : 2 * factorial(2 - 1))));
-
-    5 * (4 * (3 * (2 * factorial(2 - 1))));
-
-    5 * (4 * (3 * (2 * factorial(2 - 1))));
-
-    5 * (4 * (3 * (2 * factorial(1))));
-
-    5 * (4 * (3 * (2 * factorial(1))));
-
-    5 * (4 * (3 * (2 * (1 === 0 ? 1 : 1 * factorial(1 - 1)))));
-
-    5 * (4 * (3 * (2 * (1 === 0 ? 1 : 1 * factorial(1 - 1)))));
-
-    5 * (4 * (3 * (2 * (false ? 1 : 1 * factorial(1 - 1)))));
-
-    5 * (4 * (3 * (2 * (false ? 1 : 1 * factorial(1 - 1)))));
-
-    5 * (4 * (3 * (2 * (1 * factorial(1 - 1)))));
-
-    5 * (4 * (3 * (2 * (1 * factorial(1 - 1)))));
-
-    5 * (4 * (3 * (2 * (1 * factorial(0)))));
-
-    5 * (4 * (3 * (2 * (1 * factorial(0)))));
-
-    5 * (4 * (3 * (2 * (1 * (0 === 0 ? 1 : 0 * factorial(0 - 1))))));
-
-    5 * (4 * (3 * (2 * (1 * (0 === 0 ? 1 : 0 * factorial(0 - 1))))));
-
-    5 * (4 * (3 * (2 * (1 * (true ? 1 : 0 * factorial(0 - 1))))));
-
-    5 * (4 * (3 * (2 * (1 * (true ? 1 : 0 * factorial(0 - 1))))));
-
-    5 * (4 * (3 * (2 * (1 * 1))));
-
-    5 * (4 * (3 * (2 * (1 * 1))));
-
-    5 * (4 * (3 * (2 * 1)));
-
-    5 * (4 * (3 * (2 * 1)));
-
-    5 * (4 * (3 * 2));
-
-    5 * (4 * (3 * 2));
-
-    5 * (4 * 6);
-
-    5 * (4 * 6);
-
-    5 * 24;
-
-    5 * 24;
-
-    120;
-
-    120;
-    "
-  `)
-})
-
-// source 0
-test('undefined || 1', async () => {
-  const code = `
-  undefined || 1;
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "undefined || 1;
-
-    undefined || 1;
-    "
-  `)
-})
-
-// source 0
-test('1 + math_sin', async () => {
-  const code = `
-  1 + math_sin;
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "1 + math_sin;
-
-    1 + math_sin;
-    "
-  `)
-})
-
-// source 0
-test('plus undefined', async () => {
-  const code = `
-  math_sin(1) + undefined;
-  `
-
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "math_sin(1) + undefined;
-
-    math_sin(1) + undefined;
-
-    0.8414709848078965 + undefined;
-
-    0.8414709848078965 + undefined;
-    "
-  `)
-})
-
-// source 0
-test('math_pow', async () => {
-  const code = `
-  math_pow(2, 20) || NaN;
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "math_pow(2, 20) || NaN;
-
-    math_pow(2, 20) || NaN;
-
-    1048576 || NaN;
-
-    1048576 || NaN;
-    "
-  `)
-})
-
-// source 0
-test('expmod', async () => {
-  const code = `
-  function is_even(n) {
-    return n % 2 === 0;
-}
-
-function expmod(base, exp, m) {
-    if (exp === 0) {
-        return 1;
-    } else {
-        if (is_even(exp)) {
-            const to_half = expmod(base, exp / 2, m);
-            return to_half * to_half % m;
+    function expmod(base, exp, m) {
+        if (exp === 0) {
+            return 1;
         } else {
-            return base * expmod(base, exp - 1, m) % m;
+            if (is_even(exp)) {
+                const to_half = expmod(base, exp / 2, m);
+                return to_half * to_half % m;
+            } else {
+                return base * expmod(base, exp - 1, m) % m;
+            }
         }
     }
-}
 
-expmod(4, 3, 5);
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-})
-
-// source 0
-test('Infinite recursion', async () => {
-  const code = `
-  function f() {
-    return f();
-}
-f();
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-})
-
-// source 0
-test('subsets', async () => {
-  const code = `
-  function subsets(s) {
-    if (is_null(s)) {
-        return list(null);
-    } else {
-        const rest = subsets(tail(s));
-        return append(rest, map(x => pair(head(s), x), rest));
-    }
-}
-
- subsets(list(1, 2, 3));
-  `
-  const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-})
-
-// source 0
-test('even odd mutual', async () => {
-  const code = `
-  const odd = n => n === 0 ? false : even(n-1);
-  const even = n => n === 0 || odd(n-1);
-  even(1);
-  `
-  const steps = await testEvalSteps(code)
-  expect(getLastStepAsString(steps)).toEqual('false;')
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "const odd = n => n === 0 ? false : even(n - 1);
-    const even = n => n === 0 || odd(n - 1);
-    even(1);
-
-    const odd = n => n === 0 ? false : even(n - 1);
-    const even = n => n === 0 || odd(n - 1);
-    even(1);
-
-    const even = n => n === 0 || (n => n === 0 ? false : even(n - 1))(n - 1);
-    even(1);
-
-    const even = n => n === 0 || (n => n === 0 ? false : even(n - 1))(n - 1);
-    even(1);
-
-    (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1);
-
-    (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1);
-
-    1 === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
-
-    1 === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
-
-    false || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
-
-    false || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
-
-    (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
-
-    (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
-
-    (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0);
-
-    (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0);
-
-    0 === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0 - 1);
-
-    0 === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0 - 1);
-
-    true ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0 - 1);
-
-    true ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0 - 1);
-
-    false;
-
-    false;
-    "
-  `)
-})
-
-// source 0
-test('assign undefined', async () => {
-  const code = `
-  const a = undefined;
-  a;
-  `
-  const steps = await testEvalSteps(code)
-  expect(getLastStepAsString(steps)).toEqual('undefined;')
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "const a = undefined;
-    a;
-
-    const a = undefined;
-    a;
-
-    undefined;
-
-    undefined;
-    "
-  `)
-})
-
-test('builtins return identifiers', async () => {
-  const code = `
-  math_sin();
-  `
-  const steps = await testEvalSteps(code)
-  expect(getLastStepAsString(steps)).toEqual('NaN;')
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "math_sin();
-
-    math_sin();
-
-    NaN;
-
-    NaN;
-    "
-  `)
-})
-
-test('negative numbers as arguments', async () => {
-  const code = `
-  math_sin(-1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "math_sin(-1);
-
-    math_sin(-1);
-
-    -0.8414709848078965;
-
-    -0.8414709848078965;
-    "
-  `)
-})
-
-test('is_function checks for builtin', async () => {
-  const code = `
-    is_function(is_function);
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "is_function(is_function);
-
-    is_function(is_function);
-
-    true;
-
-    true;
-    "
-  `)
-})
-
-test('triple equals work on function', async () => {
-  const code = `
-    function f() { return g(); } function g() { return f(); }
-    f === f;
-    g === g;
-    f === g;
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "function f() {
-      return g();
-    }
-    function g() {
-      return f();
-    }
-    f === f;
-    g === g;
-    f === g;
-
-    function f() {
-      return g();
-    }
-    function g() {
-      return f();
-    }
-    f === f;
-    g === g;
-    f === g;
-
-    function g() {
-      return f();
-    }
-    f === f;
-    g === g;
-    f === g;
-
-    function g() {
-      return f();
-    }
-    f === f;
-    g === g;
-    f === g;
-
-    f === f;
-    g === g;
-    f === g;
-
-    f === f;
-    g === g;
-    f === g;
-
-    true;
-    g === g;
-    f === g;
-
-    true;
-    g === g;
-    f === g;
-
-    true;
-    true;
-    f === g;
-
-    true;
-    true;
-    f === g;
-
-    true;
-    f === g;
-
-    true;
-    f === g;
-
-    true;
-    false;
-
-    true;
-    false;
-
-    false;
-
-    false;
-    "
-  `)
-})
-
-test('constant declarations in blocks are protected', async () => {
-  const code = `
-    const z = 1;
-
-function f(g) {
-    const z = 3;
-    return g(z);
-}
-
-f(y => y + z);
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "const z = 1;
-    function f(g) {
-      const z = 3;
-      return g(z);
-    }
-    f(y => y + z);
-
-    const z = 1;
-    function f(g) {
-      const z = 3;
-      return g(z);
-    }
-    f(y => y + z);
-
-    function f(g) {
-      const z = 3;
-      return g(z);
-    }
-    f(y => y + 1);
-
-    function f(g) {
-      const z = 3;
-      return g(z);
-    }
-    f(y => y + 1);
-
-    f(y => y + 1);
-
-    f(y => y + 1);
-
-    {
-      const z = 3;
-      return (y => y + 1)(z);
-    };
-
-    {
-      const z = 3;
-      return (y => y + 1)(z);
-    };
-
-    {
-      return (y => y + 1)(3);
-    };
-
-    {
-      return (y => y + 1)(3);
-    };
-
-    (y => y + 1)(3);
-
-    (y => y + 1)(3);
-
-    3 + 1;
-
-    3 + 1;
-
-    4;
-
-    4;
-    "
-  `)
-  expect(getLastStepAsString(steps)).toEqual('4;')
-})
-
-test('function declarations in blocks are protected', async () => {
-  const code = `
-    function repeat_pattern(n, p, r) {
-    function twice_p(r) {
-        return p(p(r));
-    }
-    return n === 0
-        ? r
-        : n % 2 !== 0
-          ? repeat_pattern(n - 1, p, p(r))
-          : repeat_pattern(n / 2, twice_p, r);
-}
-
-function plus_one(x) {
-    return x + 1;
-}
-
-repeat_pattern(5, plus_one, 0);
-
-  `
-  const steps = await testEvalSteps(code)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('5;')
-})
-
-test('const declarations in blocks subst into call expressions', async () => {
-  const code = `
-  const z = 1;
-  function f(g) {
-    const z = 3;
-    return (y => z + z)(z);
-  }
-  f(undefined);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('6;')
-})
-
-test('scoping test for lambda expressions nested in blocks', async () => {
-  const code = `
-  {
-    const f = x => g();
-    const g = () => x;
-    const x = 1;
-    f(0);
-  }
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('1;')
-})
-
-test('scoping test for blocks nested in lambda expressions', async () => {
-  const code = `
-  const f = x => { g(); };
-  const g = () => { x; };
-  const x = 1;
-  f(0);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('undefined;')
-})
-
-test('scoping test for function expressions', async () => {
-  const code = `
-  function f(x) {
-    return g();
-  }
-  function g() {
-    return x;
-  }
-  const x = 1;
-  f(0);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('1;')
-})
-
-test('scoping test for lambda expressions', async () => {
-  const code = `
-  const f = x => g();
-  const g = () => x;
-  const x = 1;
-  f(0);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('1;')
-})
-
-test('scoping test for block expressions', async () => {
-  const code = `
-  function f(x) {
-    const y = x;
-    return g();
-  }
-  function g() {
-    return y;
-  }
-  const y = 1;
-  f(0);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('1;')
-})
-
-test('scoping test for block expressions, no renaming', async () => {
-  const code = `
-  function h(w) {
-    function f(w) {
-        return g();
-    }
-    function g() {
-        return w;
-    }
-    return f(0);
-  }
-  h(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('1;')
-})
-
-test('return in nested blocks', async () => {
-  const code = `
-  function f(x) {{ return 1; }}
-  f(0);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('1;')
-})
-
-test('renaming clash test for lambda function', async () => {
-  const code = `
-  const f = w_11 => w_10 => w_11 + w_10 + g();
-  const g = () => w_10;
-  const w_10 = 0;
-  f(1)(2);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('3;')
-})
-
-test('renaming clash test for functions', async () => {
-  const code = `
-  function f(w_8) {
-    function h(w_9) {
-        return w_8 + w_9 + g();
-    }
-    return h;
-}
-
-function g() {
-    return w_9;
-}
-
-const w_9 = 0;
-f(1)(2);
-`
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('3;')
-})
-
-test('renaming clash in replacement for lambda function', async () => {
-  const code = `
-  const g = () => x_1 + x_2;
-  const f = x_1 => x_2 => g();
-  const x_1 = 0;
-  const x_2 = 0;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('0;')
-})
-
-test(`renaming clash in replacement for function expression`, async () => {
-  const code = `
-  function f(x_1) {
-    function h(x_2) {
-        return g();
-    }
-      return h;
-  }
-  function g() {
-    return x_1 + x_2;
-  }
-  const x_1 = 0;
-  const x_2 = 0;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('0;')
-})
-
-test(`renaming clash in replacement for function declaration`, async () => {
-  const code = `
-  function g() {
-    return x_1 + x_2;
-  }
-  function f(x_1) {
-      function h(x_2) {
-          return g();
+    expmod(4, 3, 5);`
+  ],
+  [
+    'Infinite recursion',
+    `
+      function f() {
+        return f();
       }
-      return h;
-  }
-  const x_1 = 0;
-  const x_2 = 0;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('0;')
-})
-
-test(`multiple clash for function declaration`, async () => {
-  const code = `
-  function g() {
-    return x_2 + x_3;
-  }
-  function f(x_2) {
-      function h(x_3) {
-          return x_4 + g();
+      f();
+    `
+  ],
+  [
+    'subsets',
+    `
+      function subsets(s) {
+        if (is_null(s)) {
+            return list(null);
+        } else {
+            const rest = subsets(tail(s));
+            return append(rest, map(x => pair(head(s), x), rest));
+        }
       }
-      return h;
-  }
-  const x_3 = 0;
-  const x_2 = 2;
-  const x_4 = 2;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
 
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('4;')
-})
+      subsets(list(1, 2, 3));
+    `
+  ],
+  [
+    'function declarations in blocks are protected',
+    `
+      function repeat_pattern(n, p, r) {
+        function twice_p(r) {
+            return p(p(r));
+        }
+        return n === 0
+            ? r
+            : n % 2 !== 0
+              ? repeat_pattern(n - 1, p, p(r))
+              : repeat_pattern(n / 2, twice_p, r);
+      }
 
-test(`multiple clash for function expression`, async () => {
-  const code = `
-  function f(x_2) {
-    function h(x_3) {
-        return x_4 + g();
+      function plus_one(x) {
+        return x + 1;
+      }
+
+      repeat_pattern(5, plus_one, 0);
+    `,
+    '5;'
+  ],
+  [
+    'const declarations in blocks subst into call expressions',
+    `
+      const z = 1;
+      function f(g) {
+        const z = 3;
+        return (y => z + z)(z);
+      }
+      f(undefined);
+    `,
+    '6;'
+  ],
+  [
+    'scoping test for lambda expressions nested in blocks',
+    `
+      {
+        const f = x => g();
+        const g = () => x;
+        const x = 1;
+        f(0);
+      }
+    `,
+    '1;'
+  ],
+  [
+    'scoping test for blocks nested in lambda expressions',
+    `
+      const f = x => { g(); };
+      const g = () => { x; };
+      const x = 1;
+      f(0);
+    `,
+    'undefined;'
+  ],
+  [
+    'scoping test for function expressions',
+    `
+      function f(x) {
+        return g();
+      }
+      function g() {
+        return x;
+      }
+      const x = 1;
+      f(0);
+    `,
+    '1;'
+  ],
+  [
+    'scoping test for lambda expressions',
+    `
+      const f = x => g();
+      const g = () => x;
+      const x = 1;
+      f(0);
+    `,
+    '1;'
+  ],
+  [
+    'scoping test for block expressions',
+    `
+      function h(w) {
+        function f(w) {
+            return g();
+        }
+        function g() {
+            return w;
+        }
+        return f(0);
+      }
+      h(1);
+    `,
+    '1;'
+  ],
+  [
+    'scoping test for block expressions, no renaming',
+    `
+      function h(w) {
+        function f(w) {
+            return g();
+        }
+        function g() {
+            return w;
+        }
+        return f(0);
+      }
+      h(1);
+    `,
+    '1;'
+  ],
+  [
+    'return in nested blocks',
+    `
+      function f(x) {{ return 1; }}
+      f(0);
+    `,
+    '1;'
+  ],
+  [
+    'renaming clash test for lambda function',
+    `
+      const f = w_11 => w_10 => w_11 + w_10 + g();
+      const g = () => w_10;
+      const w_10 = 0;
+      f(1)(2);
+    `,
+    '3;'
+  ],
+  [
+    'renaming clash test for functions',
+    `
+    function f(w_8) {
+        function h(w_9) {
+            return w_8 + w_9 + g();
+        }
+        return h;
     }
-    return h;
-  }
-  function g() {
-      return x_2 + x_3;
-  }
-  const x_3 = 0;
-  const x_2 = 2;
-  const x_4 = 2;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
 
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('4;')
-})
-
-test(`multiple clash for lambda function`, async () => {
-  const code = `
-  const f = x_2 => x_3 => x_4 + g();
-  const g = () => x_2 + x_3;
-  const x_3 = 0;
-  const x_2 = 2;
-  const x_4 = 2;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('4;')
-})
-
-test(`multiple clash 2 for lambda function`, async () => {
-  const code = `
-  const f = x => x_1 => x_2 + g();
-  const g = () => x + x_1;
-  const x_2 = 0;
-  const x_1 = 2;
-  const x = 1;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('3;')
-})
-
-test(`multiple clash 2 for function expression`, async () => {
-  const code = `
-  function f(x) {
-    function h(x_1) {
-        return x_2 + g();
+    function g() {
+        return w_9;
     }
-    return h;
-  }
-  function g() {
-      return x + x_1;
-  }
-  const x_2 = 0;
-  const x_1 = 2;
-  const x = 1;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
 
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('3;')
-})
-
-test(`multiple clash 2 for function declaration`, async () => {
-  const code = `
-  function g() {
-    return x + x_1;
-  }
-  function f(x) {
+    const w_9 = 0;
+    f(1)(2);
+    `,
+    '3;'
+  ],
+  [
+    'renaming clash in replacement for lambda function',
+    `
+      const g = () => x_1 + x_2;
+      const f = x_1 => x_2 => g();
+      const x_1 = 0;
+      const x_2 = 0;
+      f(1)(1);
+    `,
+    '0;'
+  ],
+  [
+    'renaming clash in replacement for function expressions',
+    `
+      function f(x_1) {
+        function h(x_2) {
+            return g();
+        }
+          return h;
+      }
+      function g() {
+        return x_1 + x_2;
+      }
+      const x_1 = 0;
+      const x_2 = 0;
+      f(1)(1);
+    `,
+    '0;'
+  ],
+  [
+    'renaming clash in replacement for function declaration',
+    `
+      function g() {
+        return x_1 + x_2;
+      }
+      function f(x_1) {
+          function h(x_2) {
+              return g();
+          }
+          return h;
+      }
+      const x_1 = 0;
+      const x_2 = 0;
+      f(1)(1);
+    `,
+    '0;'
+  ],
+  [
+    'multiple clashes for function declarations',
+    `
+      function g() {
+        return x_2 + x_3;
+      }
+      function f(x_2) {
+          function h(x_3) {
+              return x_4 + g();
+          }
+          return h;
+      }
+      const x_3 = 0;
+      const x_2 = 2;
+      const x_4 = 2;
+      f(1)(1);
+    `,
+    '4;'
+  ],
+  [
+    'multiple clashes for function declaration 2',
+    `
+      function g() {
+        return x + x_1;
+      }
+      function f(x) {
+          function h(x_1) {
+              return x_2 + g();
+          }
+          return h;
+      }
+      const x_2 = 0;
+      const x_1 = 2;
+      const x = 1;
+      f(1)(1);
+    `,
+    '3;'
+  ],
+  [
+    'multiple clashes for function expression',
+    `
+      function f(x_2) {
+        function h(x_3) {
+            return x_4 + g();
+        }
+        return h;
+      }
+      function g() {
+          return x_2 + x_3;
+      }
+      const x_3 = 0;
+      const x_2 = 2;
+      const x_4 = 2;
+      f(1)(1);
+    `,
+    '4;'
+  ],
+  [
+    'multiple clashes for function expression 2',
+    `
+    function f(x) {
       function h(x_1) {
           return x_2 + g();
       }
       return h;
-  }
-  const x_2 = 0;
-  const x_1 = 2;
-  const x = 1;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('3;')
-})
-
-test(`renaming clash with declaration in replacement for function declaration`, async () => {
-  const code = `
-  function g() {
-    const x_2 = 2;
-    return x_1 + x_2 + x;
-  }
-
-  function f(x) {
-      function h(x_1) {
-          return x + g();
-      }
-        return h;
-  }
-
-  const x_1 = 0;
-  const x = 0;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('3;')
-})
-
-test(`renaming clash with declaration in replacement for function expression`, async () => {
-  const code = `
-  function f(x) {
-    function h(x_1) {
-        return g();
     }
-      return h;
-  }
-
-  function g() {
+    function g() {
+        return x + x_1;
+    }
+    const x_2 = 0;
+    const x_1 = 2;
+    const x = 1;
+    f(1)(1);
+    `,
+    '3;'
+  ],
+  [
+    'multiple clashes for lambda functions',
+    `
+      const f = x_2 => x_3 => x_4 + g();
+      const g = () => x_2 + x_3;
+      const x_3 = 0;
       const x_2 = 2;
-      return x_1 + x_2 + x;
-  }
-
-  const x_1 = 0;
-  const x = 0;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('2;')
-})
-
-test(`renaming clash with declaration in replacement for lambda function`, async () => {
-  const code = `
-  const f = x => x_1 => g();
-  const g = () => { const x_2 = 2; return x_1 + x + x_2; };
-  const x = 0;
-  const x_1 = 0;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('2;')
-})
-
-test(`renaming clash with parameter of lambda function declaration in block`, async () => {
-  const code = `
-  const g = () => x_1;
-  const f = x_1 => {
-      const h = x_2 => x_1 + g();
-      return h;
-  };
-
-  const x_1 = 1;
-  f(3)(2);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('4;')
-})
-
-test(`renaming clash with parameter of function declaration in block`, async () => {
-  const code = `
-  function g() {
-    return x_1;
-  }
-  function f (x_1) {
-      function h(x_2) {
-          return x_1 + g();
+      const x_4 = 2;
+      f(1)(1);
+    `,
+    '4;'
+  ],
+  [
+    'multiple clashes for lambda functions 2',
+    `
+      const f = x => x_1 => x_2 + g();
+      const g = () => x + x_1;
+      const x_2 = 0;
+      const x_1 = 2;
+      const x = 1;
+      f(1)(1);
+    `,
+    '3;'
+  ],
+  [
+    'renaming clash with declaration in replacement for function declaration',
+    `
+      function g() {
+        const x_2 = 2;
+        return x_1 + x_2 + x;
       }
-      return h;
-  }
-  const x_1 = 1;
-  f(3)(2);
-  `
-  const steps = await testEvalSteps(code)
 
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('4;')
-})
+      function f(x) {
+          function h(x_1) {
+              return x + g();
+          }
+            return h;
+      }
 
-test(`renaming of outer parameter in lambda function`, async () => {
-  const code = `
-  const g = () =>  w_1;
-  const f = w_1 => w_2 => w_1 + g();
-  const w_1 = 0;
-  f(1)(1);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('1;')
-})
-
-test(`removes debugger statements`, async () => {
-  const code = `
-  function f(n) {
-    debugger;
-    return n === 0 ? 1 : n * f(n - 1);
-  }
-  debugger;
-  f(3);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('6;')
-})
-
-describe(`redeclaration of predeclared functions work`, () => {
-  test('control', async () => {
-    const code = `
-    length(list(1, 2, 3));
+      const x_1 = 0;
+      const x = 0;
+      f(1)(1);
+    `,
+    '3;'
+  ],
+  [
+    'renaming clash with declaration in replacement for function expression',
     `
+      function f(x) {
+        function h(x_1) {
+            return g();
+        }
+          return h;
+      }
 
-    const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('3;')
-  })
+      function g() {
+          const x_2 = 2;
+          return x_1 + x_2 + x;
+      }
 
-  test('test', async () => {
-    const code = `
-    function length(xs) {
-      return 0;
+      const x_1 = 0;
+      const x = 0;
+      f(1)(1);
+    `,
+    '2;'
+  ],
+  [
+    'renaming clash with declaration in replacement for lambda function',
+    `
+    const f = x => x_1 => g();
+    const g = () => { const x_2 = 2; return x_1 + x + x_2; };
+    const x = 0;
+    const x_1 = 0;
+    f(1)(1);
+    `,
+    '2;'
+  ],
+  [
+    'renaming clash with parameter of lambda function declaration in block',
+    `
+      function g() {
+        return x_1;
+      }
+      function f (x_1) {
+          function h(x_2) {
+              return x_1 + g();
+          }
+          return h;
+      }
+      const x_1 = 1;
+      f(3)(2);
+    `,
+    '4;'
+  ],
+  [
+    'renaming clash with parameter of function declaration in block',
+    `
+      function g() {
+        return x_1;
+      }
+      function f (x_1) {
+          function h(x_2) {
+              return x_1 + g();
+          }
+          return h;
+      }
+      const x_1 = 1;
+      f(3)(2);
+    `,
+    '4;'
+  ],
+  [
+    'renaming of outer parameter in lambda function',
+    `
+      const g = () =>  w_1;
+      const f = w_1 => w_2 => w_1 + g();
+      const w_1 = 0;
+      f(1)(1);
+    `,
+    '1;'
+  ],
+  [
+    'remove debugger statements',
+    `
+      function f(n) {
+        debugger;
+        return n === 0 ? 1 : n * f(n - 1);
+      }
+      debugger;
+      f(3);
+    `,
+    '6;'
+  ]
+])
+
+testCasesAgainstInlineSnapshots([
+  [
+    'Basic substitution',
+    '(1 + 2) * (3 + 4);',
+    `
+      "(1 + 2) * (3 + 4);
+
+      (1 + 2) * (3 + 4);
+
+      3 * (3 + 4);
+
+      3 * (3 + 4);
+
+      3 * 7;
+
+      3 * 7;
+
+      21;
+
+      21;
+      "
+      `
+  ],
+  [
+    'Binary operator error',
+    "(1 + 2) * ('a' + 'string');",
+    `
+      "(1 + 2) * ('a' + 'string');
+
+      (1 + 2) * ('a' + 'string');
+
+      3 * ('a' + 'string');
+
+      3 * ('a' + 'string');
+
+      3 * \\"astring\\";
+
+      3 * \\"astring\\";
+      "
+      `
+  ],
+  [
+    'Two statement subsitution',
+    '(1 + 2) * (3 + 4);\n 3 * 5;',
+    `
+      "(1 + 2) * (3 + 4);
+      3 * 5;
+
+      (1 + 2) * (3 + 4);
+      3 * 5;
+
+      3 * (3 + 4);
+      3 * 5;
+
+      3 * (3 + 4);
+      3 * 5;
+
+      3 * 7;
+      3 * 5;
+
+      3 * 7;
+      3 * 5;
+
+      21;
+      3 * 5;
+
+      21;
+      3 * 5;
+
+      21;
+      15;
+
+      21;
+      15;
+
+      15;
+
+      15;
+      "
+      `,
+    Chapter.SOURCE_4
+  ],
+  [
+    'Unary and binary boolean operations',
+    '!!!true || true;',
+    `
+      "!!!true || true;
+
+      !!!true || true;
+
+      !!false || true;
+
+      !!false || true;
+
+      !true || true;
+
+      !true || true;
+
+      false || true;
+
+      false || true;
+
+      true;
+
+      true;
+      "
+      `
+  ],
+  [
+    'Ternary operator',
+    '1 + -1 === 0 ? false ? true : Infinity : undefined;',
+    `
+      "1 + -1 === 0 ? false ? true : Infinity : undefined;
+
+      1 + -1 === 0 ? false ? true : Infinity : undefined;
+
+      0 === 0 ? false ? true : Infinity : undefined;
+
+      0 === 0 ? false ? true : Infinity : undefined;
+
+      true ? false ? true : Infinity : undefined;
+
+      true ? false ? true : Infinity : undefined;
+
+      false ? true : Infinity;
+
+      false ? true : Infinity;
+
+      Infinity;
+
+      Infinity;
+      "
+      `
+  ],
+  [
+    'Basic function',
+    `
+        function f(n) {
+          return n;
+        }
+        f(5+1*6-40);
+      `,
+    `
+      "function f(n) {
+        return n;
+      }
+      f(5 + 1 * 6 - 40);
+
+      function f(n) {
+        return n;
+      }
+      f(5 + 1 * 6 - 40);
+
+      f(5 + 1 * 6 - 40);
+
+      f(5 + 1 * 6 - 40);
+
+      f(5 + 6 - 40);
+
+      f(5 + 6 - 40);
+
+      f(11 - 40);
+
+      f(11 - 40);
+
+      f(-29);
+
+      f(-29);
+
+      -29;
+
+      -29;
+      "
+      `
+  ],
+  [
+    'Basic bifunction',
+    `
+        function f(n, m) {
+          return n * m;
+        }
+        f(5+1*6-40, 2-5);
+      `,
+    `
+      "function f(n, m) {
+        return n * m;
+      }
+      f(5 + 1 * 6 - 40, 2 - 5);
+
+      function f(n, m) {
+        return n * m;
+      }
+      f(5 + 1 * 6 - 40, 2 - 5);
+
+      f(5 + 1 * 6 - 40, 2 - 5);
+
+      f(5 + 1 * 6 - 40, 2 - 5);
+
+      f(5 + 6 - 40, 2 - 5);
+
+      f(5 + 6 - 40, 2 - 5);
+
+      f(11 - 40, 2 - 5);
+
+      f(11 - 40, 2 - 5);
+
+      f(-29, 2 - 5);
+
+      f(-29, 2 - 5);
+
+      f(-29, -3);
+
+      f(-29, -3);
+
+      -29 * -3;
+
+      -29 * -3;
+
+      87;
+
+      87;
+      "
+      `
+  ],
+  [
+    '"Recursive" function calls',
+    `
+        function factorial(n) {
+          return n === 0
+            ? 1
+            : n * factorial(n-1);
+        }
+        factorial(5);
+      `,
+    `
+      "function factorial(n) {
+        return n === 0 ? 1 : n * factorial(n - 1);
+      }
+      factorial(5);
+
+      function factorial(n) {
+        return n === 0 ? 1 : n * factorial(n - 1);
+      }
+      factorial(5);
+
+      factorial(5);
+
+      factorial(5);
+
+      5 === 0 ? 1 : 5 * factorial(5 - 1);
+
+      5 === 0 ? 1 : 5 * factorial(5 - 1);
+
+      false ? 1 : 5 * factorial(5 - 1);
+
+      false ? 1 : 5 * factorial(5 - 1);
+
+      5 * factorial(5 - 1);
+
+      5 * factorial(5 - 1);
+
+      5 * factorial(4);
+
+      5 * factorial(4);
+
+      5 * (4 === 0 ? 1 : 4 * factorial(4 - 1));
+
+      5 * (4 === 0 ? 1 : 4 * factorial(4 - 1));
+
+      5 * (false ? 1 : 4 * factorial(4 - 1));
+
+      5 * (false ? 1 : 4 * factorial(4 - 1));
+
+      5 * (4 * factorial(4 - 1));
+
+      5 * (4 * factorial(4 - 1));
+
+      5 * (4 * factorial(3));
+
+      5 * (4 * factorial(3));
+
+      5 * (4 * (3 === 0 ? 1 : 3 * factorial(3 - 1)));
+
+      5 * (4 * (3 === 0 ? 1 : 3 * factorial(3 - 1)));
+
+      5 * (4 * (false ? 1 : 3 * factorial(3 - 1)));
+
+      5 * (4 * (false ? 1 : 3 * factorial(3 - 1)));
+
+      5 * (4 * (3 * factorial(3 - 1)));
+
+      5 * (4 * (3 * factorial(3 - 1)));
+
+      5 * (4 * (3 * factorial(2)));
+
+      5 * (4 * (3 * factorial(2)));
+
+      5 * (4 * (3 * (2 === 0 ? 1 : 2 * factorial(2 - 1))));
+
+      5 * (4 * (3 * (2 === 0 ? 1 : 2 * factorial(2 - 1))));
+
+      5 * (4 * (3 * (false ? 1 : 2 * factorial(2 - 1))));
+
+      5 * (4 * (3 * (false ? 1 : 2 * factorial(2 - 1))));
+
+      5 * (4 * (3 * (2 * factorial(2 - 1))));
+
+      5 * (4 * (3 * (2 * factorial(2 - 1))));
+
+      5 * (4 * (3 * (2 * factorial(1))));
+
+      5 * (4 * (3 * (2 * factorial(1))));
+
+      5 * (4 * (3 * (2 * (1 === 0 ? 1 : 1 * factorial(1 - 1)))));
+
+      5 * (4 * (3 * (2 * (1 === 0 ? 1 : 1 * factorial(1 - 1)))));
+
+      5 * (4 * (3 * (2 * (false ? 1 : 1 * factorial(1 - 1)))));
+
+      5 * (4 * (3 * (2 * (false ? 1 : 1 * factorial(1 - 1)))));
+
+      5 * (4 * (3 * (2 * (1 * factorial(1 - 1)))));
+
+      5 * (4 * (3 * (2 * (1 * factorial(1 - 1)))));
+
+      5 * (4 * (3 * (2 * (1 * factorial(0)))));
+
+      5 * (4 * (3 * (2 * (1 * factorial(0)))));
+
+      5 * (4 * (3 * (2 * (1 * (0 === 0 ? 1 : 0 * factorial(0 - 1))))));
+
+      5 * (4 * (3 * (2 * (1 * (0 === 0 ? 1 : 0 * factorial(0 - 1))))));
+
+      5 * (4 * (3 * (2 * (1 * (true ? 1 : 0 * factorial(0 - 1))))));
+
+      5 * (4 * (3 * (2 * (1 * (true ? 1 : 0 * factorial(0 - 1))))));
+
+      5 * (4 * (3 * (2 * (1 * 1))));
+
+      5 * (4 * (3 * (2 * (1 * 1))));
+
+      5 * (4 * (3 * (2 * 1)));
+
+      5 * (4 * (3 * (2 * 1)));
+
+      5 * (4 * (3 * 2));
+
+      5 * (4 * (3 * 2));
+
+      5 * (4 * 6);
+
+      5 * (4 * 6);
+
+      5 * 24;
+
+      5 * 24;
+
+      120;
+
+      120;
+      "
+      `
+  ],
+  [
+    'undefined || 1',
+    'undefined || 1;',
+    `
+      "undefined || 1;
+
+      undefined || 1;
+      "
+      `
+  ],
+  [
+    '1 + math_sin',
+    '1 + math_sin;',
+    `
+      "1 + math_sin;
+
+      1 + math_sin;
+      "
+      `
+  ],
+  [
+    'plus undefined',
+    'math_sin(1) + undefined;',
+    `
+      "math_sin(1) + undefined;
+
+      math_sin(1) + undefined;
+
+      0.8414709848078965 + undefined;
+
+      0.8414709848078965 + undefined;
+      "
+      `
+  ],
+  [
+    'math_pow',
+    'math_pow(2, 20) || NaN;',
+    `
+      "math_pow(2, 20) || NaN;
+
+      math_pow(2, 20) || NaN;
+
+      1048576 || NaN;
+
+      1048576 || NaN;
+      "
+      `
+  ],
+  [
+    'even odd mutual',
+    `
+        const odd = n => n === 0 ? false : even(n-1);
+        const even = n => n === 0 || odd(n-1);
+        even(1);
+      `,
+    `
+      "const odd = n => n === 0 ? false : even(n - 1);
+      const even = n => n === 0 || odd(n - 1);
+      even(1);
+
+      const odd = n => n === 0 ? false : even(n - 1);
+      const even = n => n === 0 || odd(n - 1);
+      even(1);
+
+      const even = n => n === 0 || (n => n === 0 ? false : even(n - 1))(n - 1);
+      even(1);
+
+      const even = n => n === 0 || (n => n === 0 ? false : even(n - 1))(n - 1);
+      even(1);
+
+      (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1);
+
+      (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1);
+
+      1 === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
+
+      1 === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
+
+      false || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
+
+      false || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
+
+      (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
+
+      (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(1 - 1);
+
+      (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0);
+
+      (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0);
+
+      0 === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0 - 1);
+
+      0 === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0 - 1);
+
+      true ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0 - 1);
+
+      true ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => n === 0 ? false : (n => n === 0 || (n => ...)(n - 1))(n - 1))(n - 1))(n - 1))(n - 1))(0 - 1);
+
+      false;
+
+      false;
+      "
+      `
+  ],
+  [
+    'assign undefined',
+    'const a = undefined; a;',
+    `
+      "const a = undefined;
+      a;
+
+      const a = undefined;
+      a;
+
+      undefined;
+
+      undefined;
+      "
+      `
+  ],
+  [
+    'builtins return identifiers',
+    'math_sin();',
+    `
+      "math_sin();
+
+      math_sin();
+
+      NaN;
+
+      NaN;
+      "
+      `
+  ],
+  [
+    'negative numbers as arguments',
+    'math_sin(-1);',
+    `
+      "math_sin(-1);
+
+      math_sin(-1);
+
+      -0.8414709848078965;
+
+      -0.8414709848078965;
+      "
+      `
+  ],
+  [
+    'is_function checks for builtin',
+    'is_function(is_function);',
+    `
+      "is_function(is_function);
+
+      is_function(is_function);
+
+      true;
+
+      true;
+      "
+      `
+  ],
+  [
+    'triple equals works on function',
+    `
+        function f() { return g(); } function g() { return f(); }
+        f === f;
+        g === g;
+        f === g;
+      `,
+    `
+      "function f() {
+        return g();
+      }
+      function g() {
+        return f();
+      }
+      f === f;
+      g === g;
+      f === g;
+
+      function f() {
+        return g();
+      }
+      function g() {
+        return f();
+      }
+      f === f;
+      g === g;
+      f === g;
+
+      function g() {
+        return f();
+      }
+      f === f;
+      g === g;
+      f === g;
+
+      function g() {
+        return f();
+      }
+      f === f;
+      g === g;
+      f === g;
+
+      f === f;
+      g === g;
+      f === g;
+
+      f === f;
+      g === g;
+      f === g;
+
+      true;
+      g === g;
+      f === g;
+
+      true;
+      g === g;
+      f === g;
+
+      true;
+      true;
+      f === g;
+
+      true;
+      true;
+      f === g;
+
+      true;
+      f === g;
+
+      true;
+      f === g;
+
+      true;
+      false;
+
+      true;
+      false;
+
+      false;
+
+      false;
+      "
+      `
+  ],
+  [
+    'constant declarations in blocks are protected',
+    `
+        const z = 1;
+        function f(g) {
+            const z = 3;
+            return g(z);
+        }
+
+        f(y => y + z);
+      `,
+    `
+      "const z = 1;
+      function f(g) {
+        const z = 3;
+        return g(z);
+      }
+      f(y => y + z);
+
+      const z = 1;
+      function f(g) {
+        const z = 3;
+        return g(z);
+      }
+      f(y => y + z);
+
+      function f(g) {
+        const z = 3;
+        return g(z);
+      }
+      f(y => y + 1);
+
+      function f(g) {
+        const z = 3;
+        return g(z);
+      }
+      f(y => y + 1);
+
+      f(y => y + 1);
+
+      f(y => y + 1);
+
+      {
+        const z = 3;
+        return (y => y + 1)(z);
+      };
+
+      {
+        const z = 3;
+        return (y => y + 1)(z);
+      };
+
+      {
+        return (y => y + 1)(3);
+      };
+
+      {
+        return (y => y + 1)(3);
+      };
+
+      (y => y + 1)(3);
+
+      (y => y + 1)(3);
+
+      3 + 1;
+
+      3 + 1;
+
+      4;
+
+      4;
+      "
+      `
+  ]
+])
+
+describe('Test single line of code is evaluated', () => {
+  testMultipleCases(
+    [
+      ['Constant declaration', 'const x = 10;', 4, 'undefined;'],
+      ['Function declaration', 'function x() { return 10; }', 4, 'undefined;'],
+      ['Value', '10;', 2, '10;']
+    ],
+    ([code, count, expected]) => {
+      const context = mockContext()
+      const program = parse(code, context)
+      expect(program).not.toBeNull()
+      const steps = getEvalSteps(program!, context)
+      expect(steps.length).toEqual(count)
+      expect(getLastStepAsString(steps)).toEqual(expected)
     }
-    length(list(1, 2, 3));
-    `
-    const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
-
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('0;')
-  })
+  )
 })
 
-describe(`#1109: Empty function bodies don't break execution`, () => {
-  test('Function declaration', async () => {
-    const code = `
-    function a() {}
-    "other statement";
-    a();
-    "Gets returned by normal run";
+testCasesAgainstSnapshots('redclaration of predeclared functions work', [
+  ['control', 'length(list(1, 2, 3));', '3;'],
+  [
+    'test',
     `
-    const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
+        function length(xs) {
+          return 0;
+        }
+        length(list(1, 2, 3));
+      `,
+    '0;'
+  ]
+])
 
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('"Gets returned by normal run";')
-  })
-
-  test('Constant declaration of lambda', async () => {
-    const code = `
-    const a = () => {};
-    "other statement";
-    a();
-    "Gets returned by normal run";
+testCasesAgainstSnapshots("#1109: Empty function bodies don't break execution", [
+  [
+    'Function declaration',
     `
-    const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
+      function a() {}
+      "other statement";
+      a();
+      "Gets returned by normal run";
+    `,
+    '"Gets returned by normal run";'
+  ],
+  [
+    'Constant declaration of lambda',
+    `
+      const a = () => {};
+      "other statement";
+      a();
+      "Gets returned by normal run"; 
+    `,
+    '"Gets returned by normal run";'
+  ]
+])
 
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('"Gets returned by normal run";')
-  })
-})
+// start of stepper specification tests
+testCasesAgainstSnapshots('Programs', [
+  // Program-intro
+  ['Program-intro 1', '1 + 1;', '2;'],
+  ['Program-intro 2', '1;\n1 + 1;', '2;'],
+
+  // Program-reduce
+  ['Program-reduce', '1;\n2;', '2;'],
+
+  // Eliminate-function-declaration
+  [
+    'Eliminate-function-declaration 1',
+    `
+      function foo(x) {
+        return 0;
+      }
+    `,
+    'undefined;'
+  ],
+  [
+    'Eliminate-function-declaration 2',
+    `
+      1;
+      function foo(x) {
+        return 0;
+      }
+    `,
+    '1;'
+  ],
+
+  // Eliminate-constant-declaration
+  ['Eliminate-constant-declartion 1', 'const x = 0;', 'undefined;'],
+  ['Eliminate-constant-declartion 2', '1;\nconst x = 0;', '1;']
+])
+
+testCasesAgainstSnapshots('Statements: Expression statements', [
+  ['Expression-statement-reduce', `1 + 2 + 3;`, '6;']
+])
+
+testCasesAgainstSnapshots('Statements: Constant declarations', [
+  ['Evaluate-constant-declaration', 'const x = 1 + 2 + 3;', 'undefined;']
+])
+
+testCasesAgainstSnapshots('Statements: Conditionals', [
+  [
+    'Conditional-statement-predicate',
+    `
+    if (1 + 2 + 3 === 1) {
+
+    } else {
+
+    }
+    `,
+    'undefined;'
+  ],
+  [
+    'Conditional-statement-consequent',
+    `
+      if (true) {
+        1;
+      } else {
+        2;
+      }
+    `,
+    '1;'
+  ],
+  [
+    'Conditional-statement-alternative',
+    `
+      if (false) {
+        1;
+      } else {
+        2;
+      }
+    `,
+    '2;'
+  ],
+  [
+    'Conditional-statement-blockexpr-consequent 1',
+    `
+      function foo(x) {
+        if (true) {
+          1;
+        } else {
+          2;
+        }
+      }
+      foo(0);
+    `,
+    'undefined;'
+  ],
+  [
+    'Conditional-statement-blockexpr-consequent 2',
+    `
+      function foo(x) {
+        3;
+        if (true) {
+          1;
+        } else {
+          2;
+        }
+      }
+      foo(0);
+    `,
+    'undefined;'
+  ],
+  [
+    'Conditional-statement-blockexpr-alternative 1',
+    `
+    function foo(x) {
+      if (false) {
+        1;
+      } else {
+        2;
+      }
+    }
+    foo(0);
+    `,
+    'undefined;'
+  ],
+  [
+    'Conditional-statement-blockexpr-alternative 2',
+    `
+    function foo(x) {
+      3;
+      if (false) {
+        1;
+      } else {
+        2;
+      }
+    }
+    foo(0);
+    `,
+    'undefined;'
+  ]
+])
+
+testCasesAgainstSnapshots('Statements: Blocks', [
+  ['Block-statement-intro', '{ 1 + 1; }', '2;'],
+  ['Block-statement-single-reduce', '{ 1; }', '1;'],
+  ['Block-statement-empty-reduce 1', '{}', 'undefined;'],
+  [
+    'Block-statement-empty-reduce 2',
+    `
+      {
+        {
+          {
+
+          }
+          {
+
+          }
+        }
+
+        {
+          {
+
+          }
+          {
+
+          }
+        }
+      }
+    `,
+    'undefined;'
+  ]
+])
+
+testCasesAgainstSnapshots('Expressions: Blocks', [
+  [
+    'Block-expression-intro',
+    `
+      function foo(x) { 1 + 1; }
+      foo(0);
+    `,
+    'undefined;'
+  ],
+  [
+    'Block-expression-single-reduce',
+    `
+      function foo(x) { 1; }
+      foo(0);
+    `,
+    'undefined;'
+  ],
+  [
+    'Block-expression-empty-reduce',
+    `
+      function foo(x) {}
+      foo(0);
+    `,
+    'undefined;'
+  ]
+  /**
+   * Block-expression-return-reduce is not included as test cases
+   * This section needs further discussion
+   */
+])
+
+testCasesAgainstSnapshots('Expressions: Binary operators', [
+  [
+    'Left-binary-reduce',
+    `
+      if (1 + 2 + 3 === 1 + 2 + 3) {
+        1;
+      } else {
+        2;
+      }
+    `,
+    '1;'
+  ],
+  [
+    'And-shortcut-false',
+    `
+      if (false && 1 + 2 === 1 + 2) {
+        1;
+      } else {
+        2;
+      }
+    `,
+    '2;'
+  ],
+  [
+    'And-shortcut-true',
+    `
+      if (true && 1 + 2 === 2 + 3) {
+        1;
+      } else {
+        2;
+      }
+    `,
+    '2;'
+  ],
+  [
+    'Or-shortcut-false',
+    `
+      if (false || 1 + 2 === 1 + 2) {
+        1;
+      } else {
+        2;
+      }
+    `,
+    '1;'
+  ],
+  [
+    'Or-shortcut-true',
+    `
+      if (true || 1 + 2 === 2 + 3) {
+        1;
+      } else {
+        2;
+      }
+    `,
+    '1;'
+  ],
+  [
+    'Right-binary-reduce',
+    `
+      if (1 >= 1 + 1) {
+        1;
+      } else {
+        2;
+      } 
+    `,
+    '2;'
+  ],
+  [
+    'Prim-binary-reduce',
+    `
+     if (1 >= 2) {
+        1;
+      } else {
+        2;
+      }
+    `,
+    '2;'
+  ]
+])
+
+testCasesAgainstSnapshots('Expressions: Conditionals', [
+  ['Conditional-predicate-reduce', '1 + 1 === 2 ? 1 + 2 : 2 + 3;', '3;'],
+  ['Conditional-true-reduce', 'true ? 1 + 2 : 2 + 3;', '3;'],
+  ['Conditional-false-reduce', 'false ? 1 + 2 : 2 + 3;', '5;']
+])
 
 describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
   test('Program steps equal to Stepper limit', async () => {
@@ -1753,452 +1812,16 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
       }
       factorial(100);
       `
-    const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
+    const steps = getEvalStepsFromCode(code, mockContext(Chapter.SOURCE_2))
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('9.33262154439441e+157;')
-  })
-})
-
-describe(`Evaluation of empty code and imports`, () => {
-  test('Evaluate empty program', async () => {
-    const code = ``
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
   })
 })
 
 /**
  * start of stepper specification tests
  */
-describe(`Programs`, () => {
-  //Program-intro:
-  test('Program-intro test case 1', async () => {
-    const code = `1 + 1;`
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('2;')
-  })
 
-  test('Program-intro test case 2', async () => {
-    const code = `
-      1;
-      1 + 1;
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('2;')
-  })
-  //Program-reduce:
-  test('Program-reduce test case', async () => {
-    const code = `
-      1;
-      2;
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('2;')
-  })
-  //Eliminate-function-declaration:
-  test('Eliminate-function-declaration test case 1', async () => {
-    const code = `
-      function foo(x) {
-        return 0;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-
-  test('Eliminate-function-declaration test case 2', async () => {
-    const code = `
-      1;
-      function foo(x) {
-        return 0;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('1;')
-  })
-  //Eliminate-constant-declaration:
-  test('Eliminate-constant-declaration test case 1', async () => {
-    const code = `
-      const x = 0;
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-
-  test('Eliminate-constant-declaration test case 2', async () => {
-    const code = `
-      1;
-      const x = 0;
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('1;')
-  })
-})
-
-describe(`Statements: Expression statements`, () => {
-  //Expression-statement-reduce:
-  test('Expression-statement-reduce test case', async () => {
-    const code = `
-      1 + 2 + 3;
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('6;')
-  })
-})
-
-describe(`Statements: Constant declarations`, () => {
-  //Evaluate-constant-declaration:
-  test('Evaluate-constant-declaration test case', async () => {
-    const code = `
-      const x = 1 + 2 + 3;
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-})
-
-describe(`Statements: Conditionals`, () => {
-  //Conditional-statement-predicate:
-  test('Conditional-statement-predicate test case', async () => {
-    const code = `
-      if (1 + 2 + 3 === 1) {
-
-      } else {
-
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-  //Conditional-statement-consequent:
-  test('Conditional-statement-consequent test case', async () => {
-    const code = `
-      if (true) {
-        1;
-      } else {
-        2;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('1;')
-  })
-  //Conditional-statement-alternative:
-  test('Conditional-statement-alternative test case', async () => {
-    const code = `
-      if (false) {
-        1;
-      } else {
-        2;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('2;')
-  })
-  //Conditional-statement-blockexpr-consequent:
-  test('Conditional-statement-blockexpr-consequent test case 1', async () => {
-    const code = `
-      function foo(x) {
-        if (true) {
-          1;
-        } else {
-          2;
-        }
-      }
-      foo(0);
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-
-  test('Conditional-statement-blockexpr-consequent test case 2', async () => {
-    const code = `
-      function foo(x) {
-        3;
-        if (true) {
-          1;
-        } else {
-          2;
-        }
-      }
-      foo(0);
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-  //Conditional-statement-blockexpr-alternative:
-  test('Conditional-statement-blockexpr-alternative test case 1', async () => {
-    const code = `
-    function foo(x) {
-      if (false) {
-        1;
-      } else {
-        2;
-      }
-    }
-    foo(0);
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-
-  test('Conditional-statement-blockexpr-alternative test case 2', async () => {
-    const code = `
-    function foo(x) {
-      3;
-      if (false) {
-        1;
-      } else {
-        2;
-      }
-    }
-    foo(0);
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-})
-
-describe(`Statements: Blocks`, () => {
-  //Block-statement-intro:
-  test('Block-statement-intro test case', async () => {
-    const code = `
-      {
-        1 + 1;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('2;')
-  })
-  //Block-statement-single-reduce:
-  test('Block-statement-single-reduce test case', async () => {
-    const code = `
-      {
-        1;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('1;')
-  })
-  //Block-statement-empty-reduce:
-  test('Block-statement-empty-reduce test case 1', async () => {
-    const code = `
-      {
-
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-
-  test('Block-statement-empty-reduce test case 2', async () => {
-    const code = `
-      {
-        {
-          {
-
-          }
-          {
-
-          }
-        }
-
-        {
-          {
-
-          }
-          {
-
-          }
-        }
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-})
-
-describe(`Expresssions: Blocks`, () => {
-  //Block-expression-intro:
-  test('Block-expression-intro test case', async () => {
-    const code = `
-      function foo(x) {
-        1 + 1;
-      }
-      foo(0);
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-  //Block-expression-single-reduce:
-  test('Block-expression-single-reduce test case', async () => {
-    const code = `
-      function foo(x) {
-        1;
-      }
-      foo(0);
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-  //Block-expression-empty-reduce:
-  test('Block-expression-empty-reduce test case', async () => {
-    const code = `
-      function foo(x) {
-      }
-      foo(0);
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('undefined;')
-  })
-  /**
-   * Block-expression-return-reduce is not included as test cases
-   * This section needs further discussion
-   */
-})
-
-describe(`Expressions: Binary operators`, () => {
-  //Left-binary-reduce:
-  test('Left-binary-reduce test case', async () => {
-    const code = `
-      if (1 + 2 + 3 === 1 + 2 + 3) {
-        1;
-      } else {
-        2;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('1;')
-  })
-  //And-shortcut-false:
-  test('And-shortcut-false test case', async () => {
-    const code = `
-      if (false && 1 + 2 === 1 + 2) {
-        1;
-      } else {
-        2;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('2;')
-  })
-  //And-shortcut-true:
-  test('And-shortcut-true test case', async () => {
-    const code = `
-      if (true && 1 + 2 === 2 + 3) {
-        1;
-      } else {
-        2;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('2;')
-  })
-  //Or-shortcut-true:
-  test('Or-shortcut-true test case', async () => {
-    const code = `
-      if (true || 1 + 2 === 2 + 3) {
-        1;
-      } else {
-        2;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('1;')
-  })
-  //Or-shortcut-false:
-  test('Or-shortcut-false test case', async () => {
-    const code = `
-      if (false || 1 + 2 === 1 + 2) {
-        1;
-      } else {
-        2;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('1;')
-  })
-  //Right-binary-reduce:
-  test('Right-binary-reduce test case', async () => {
-    const code = `
-      if (1 >= 1 + 1) {
-        1;
-      } else {
-        2;
-      }
-    `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('2;')
-  })
-  //Prim-binary-reduce:
-  test('Prim-binary-reduce test case', async () => {
-    const code = `
-      if (1 >= 2) {
-        1;
-      } else {
-        2;
-      }
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('2;')
-  })
-})
-
-describe(`Expressions: conditionals`, () => {
-  //Conditional-predicate-reduce:
-  test('Conditional-predicate-reduce test case', async () => {
-    const code = `
-      1 + 1 === 2 ? 1 + 2 : 2 + 3;
-      `
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('3;')
-  })
-  //Conditional-true-reduce:
-  test('Conditional-true-reduce test case', async () => {
-    const code = `true ? 1 + 2 : 2 + 3;`
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('3;')
-  })
-  //Conditional-false-reduce:
-  test('Conditional-false-reduce test case', async () => {
-    const code = `false ? 1 + 2 : 2 + 3;`
-    const steps = await testEvalSteps(code, mockContext())
-    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('5;')
-  })
-})
 /*
 test cases to be discussed
 describe(`Expressions: function application`, () => {

@@ -7,11 +7,11 @@ import { parse } from '../parser/parser'
 import type {
   BlockExpression,
   Context,
-  ContiguousArrayElementExpression,
-  ContiguousArrayElements,
   FunctionDeclarationExpression,
   substituterNodes
 } from '../types'
+import type { ContiguousArrayElements } from './util'
+import type { ContiguousArrayElementExpression } from './util'
 import * as ast from '../utils/ast/astCreator'
 import {
   dummyBlockExpression,

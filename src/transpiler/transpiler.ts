@@ -6,9 +6,12 @@ import { type RawSourceMap, SourceMapGenerator } from 'source-map'
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
 import { Chapter, type Context, type NativeStorage, type Node, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { filterImportDeclarations, getImportedName } from '../utils/ast/helpers'
 import {
-  getFunctionDeclarationNamesInProgram,
+  filterImportDeclarations,
+  getDeclaredIdentifiers,
+  getImportedName
+} from '../utils/ast/helpers'
+import {
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getNativeIds,
@@ -44,19 +47,6 @@ export function transformImportDeclarations(
   })
 
   return [declNodes, otherNodes]
-}
-
-export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
-  return program.body
-    .filter(statement => statement.type === 'VariableDeclaration')
-    .map(
-      ({
-        declarations: {
-          0: { id }
-        },
-        kind
-      }: es.VariableDeclaration) => (id as es.Identifier).name
-    )
 }
 
 export function getBuiltins(nativeStorage: NativeStorage): es.Statement[] {
@@ -455,8 +445,8 @@ function transpileToSource(
 
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
-  getGloballyDeclaredIdentifiers(program).forEach(id =>
-    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  getDeclaredIdentifiers(program).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id.name)
   )
   const newStatements = [
     ...getDeclarationsToAccessTranspilerInternals(globalIds),
@@ -495,12 +485,10 @@ function transpileToFullJS(
   )
 
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
-  getFunctionDeclarationNamesInProgram(program).forEach(id =>
-    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  getDeclaredIdentifiers(program).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id.name)
   )
-  getGloballyDeclaredIdentifiers(program).forEach(id =>
-    context.nativeStorage.previousProgramsIdentifiers.add(id)
-  )
+
   const transpiledProgram: es.Program = create.program([
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
     create.expressionStatement(create.identifier('undefined')),

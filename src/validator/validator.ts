@@ -1,30 +1,32 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { NoAssignmentToForVariable } from '../errors/validityErrors'
 import { parse } from '../parser/parser'
-import { Context, Node, NodeWithInferredType } from '../types'
+import type { Context, Node } from '../types'
 import { getVariableDeclarationName } from '../utils/ast/astCreator'
 import {
-  getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getNativeIds,
   NativeIds
 } from '../utils/uniqueIds'
 import { ancestor, base, FullWalkerCallback } from '../utils/walkers'
+import {
+  getDeclaredIdentifiers,
+  getIdentifiersFromVariableDeclaration,
+  mapIdentifiersToNames
+} from '../utils/ast/helpers'
+import { isVariableDeclaration } from '../utils/ast/typeGuards'
 
 class Declaration {
   public accessedBeforeDeclaration: boolean = false
   constructor(public isConstant: boolean) {}
 }
 
-export function validateAndAnnotate(
-  program: es.Program,
-  context: Context
-): NodeWithInferredType<es.Program> {
+export function validateAndAnnotate(program: es.Program, context: Context): es.Program {
   const accessedBeforeDeclarationMap = new Map<Node, Map<string, Declaration>>()
-  const scopeHasCallExpressionMap = new Map<Node, boolean>()
+
   function processBlock(node: es.Program | es.BlockStatement) {
     const initialisedIdentifiers = new Map<string, Declaration>()
     for (const statement of node.body) {
@@ -42,7 +44,6 @@ export function validateAndAnnotate(
         initialisedIdentifiers.set(statement.id.name, new Declaration(true))
       }
     }
-    scopeHasCallExpressionMap.set(node, false)
     accessedBeforeDeclarationMap.set(node, initialisedIdentifiers)
   }
   function processFunction(node: es.FunctionDeclaration | es.ArrowFunctionExpression) {
@@ -50,7 +51,6 @@ export function validateAndAnnotate(
       node,
       new Map((node.params as es.Identifier[]).map(id => [id.name, new Declaration(false)]))
     )
-    scopeHasCallExpressionMap.set(node, false)
   }
 
   // initialise scope of variables
@@ -66,7 +66,6 @@ export function validateAndAnnotate(
           forStatement,
           new Map([[getVariableDeclarationName(init), new Declaration(init.kind === 'const')]])
         )
-        scopeHasCallExpressionMap.set(forStatement, false)
       }
     }
   })
@@ -103,35 +102,13 @@ export function validateAndAnnotate(
   ancestor(
     program,
     {
-      VariableDeclaration(node: NodeWithInferredType<es.VariableDeclaration>, ancestors: Node[]) {
-        const lastAncestor = ancestors[ancestors.length - 2]
-        const name = getVariableDeclarationName(node)
-        const accessedBeforeDeclaration = accessedBeforeDeclarationMap
-          .get(lastAncestor)!
-          .get(name)!.accessedBeforeDeclaration
-        node.typability = accessedBeforeDeclaration ? 'Untypable' : 'NotYetTyped'
-      },
       Identifier: validateIdentifier,
-      FunctionDeclaration(node: NodeWithInferredType<es.FunctionDeclaration>, ancestors: Node[]) {
-        // a function declaration can be typed if there are no function calls in the same scope before it
-        const lastAncestor = ancestors[ancestors.length - 2]
-        node.typability = scopeHasCallExpressionMap.get(lastAncestor) ? 'Untypable' : 'NotYetTyped'
-      },
       Pattern(node: es.Pattern, ancestors: Node[]) {
         if (node.type === 'Identifier') {
           validateIdentifier(node, ancestors)
         } else if (node.type === 'MemberExpression') {
           if (node.object.type === 'Identifier') {
             validateIdentifier(node.object, ancestors)
-          }
-        }
-      },
-      CallExpression(call: es.CallExpression, ancestors: Node[]) {
-        for (let i = ancestors.length - 1; i >= 0; i--) {
-          const a = ancestors[i]
-          if (scopeHasCallExpressionMap.has(a)) {
-            scopeHasCallExpressionMap.set(a, true)
-            break
           }
         }
       }
@@ -168,64 +145,64 @@ export function checkForUndefinedVariables(
   globalIds: NativeIds,
   skipUndefined: boolean
 ) {
-  const preludes = context.prelude
-    ? getFunctionDeclarationNamesInProgram(parse(context.prelude, context)!)
-    : new Set<String>()
+  const preludes = new Set<string>(
+    context.prelude
+      ? mapIdentifiersToNames(getDeclaredIdentifiers(parse(context.prelude, context)!))
+      : []
+  )
 
   const env = context.runtime.environments[0].head || {}
 
   const builtins = context.nativeStorage.builtins
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement) {
-    const identifiers = new Set<string>()
-    for (const statement of node.body) {
-      if (statement.type === 'VariableDeclaration') {
-        identifiers.add((statement.declarations[0].id as es.Identifier).name)
-      } else if (statement.type === 'FunctionDeclaration') {
-        if (statement.id === null) {
-          throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-          )
-        }
-        identifiers.add(statement.id.name)
-      } else if (statement.type === 'ImportDeclaration') {
-        for (const specifier of statement.specifiers) {
-          identifiers.add(specifier.local.name)
-        }
-      }
-    }
+    const identifiers = new Set(mapIdentifiersToNames(getDeclaredIdentifiers(node)))
     identifiersIntroducedByNode.set(node, identifiers)
   }
   function processFunction(
-    node: es.FunctionDeclaration | es.ArrowFunctionExpression,
+    node: es.FunctionDeclaration | es.ArrowFunctionExpression | es.FunctionExpression,
     _ancestors: es.Node[]
   ) {
     identifiersIntroducedByNode.set(
       node,
-      new Set(
-        node.params.map(id =>
-          id.type === 'Identifier'
-            ? id.name
-            : ((id as es.RestElement).argument as es.Identifier).name
-        )
-      )
+      new Set(mapIdentifiersToNames(node.params.flatMap(getIdentifiersFromVariableDeclaration)))
     )
   }
+
+  function processFor(node: es.ForOfStatement | es.ForInStatement) {
+    if (isVariableDeclaration(node.left)) {
+      identifiersIntroducedByNode.set(
+        node,
+        new Set(mapIdentifiersToNames(getIdentifiersFromVariableDeclaration(node.left)))
+      )
+    }
+  }
+
   const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
   ancestor(program, {
-    Program: processBlock,
-    BlockStatement: processBlock,
-    FunctionDeclaration: processFunction,
     ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
-      const init = forStatement.init!
-      if (init.type === 'VariableDeclaration') {
+    BlockStatement: processBlock,
+    CatchClause(node: es.CatchClause) {
+      if (node.param) {
         identifiersIntroducedByNode.set(
-          forStatement,
-          new Set([(init.declarations[0].id as es.Identifier).name])
+          node,
+          new Set(mapIdentifiersToNames(getIdentifiersFromVariableDeclaration(node.param)))
         )
       }
     },
+    ForStatement(forStatement: es.ForStatement) {
+      const init = forStatement.init
+      if (init && isVariableDeclaration(init)) {
+        identifiersIntroducedByNode.set(
+          forStatement,
+          new Set(mapIdentifiersToNames(getIdentifiersFromVariableDeclaration(init)))
+        )
+      }
+    },
+    ForInStatement: processFor,
+    ForOfStatement: processFor,
+    FunctionDeclaration: processFunction,
+    FunctionExpression: processFunction,
     Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
       identifiersToAncestors.set(identifier, [...ancestors])
     },
@@ -237,7 +214,8 @@ export function checkForUndefinedVariables(
           identifiersToAncestors.set(node.object, [...ancestors])
         }
       }
-    }
+    },
+    Program: processBlock
   })
   const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
 
