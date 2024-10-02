@@ -20,7 +20,7 @@ const globalIdNames = [
 export type NativeIds = Record<(typeof globalIdNames)[number], es.Identifier>
 
 export function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): NativeIds {
-  const globalIds = {}
+  const globalIds: Partial<NativeIds> = {}
   for (const identifier of globalIdNames) {
     globalIds[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier))
   }

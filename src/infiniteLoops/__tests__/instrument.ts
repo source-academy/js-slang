@@ -12,7 +12,7 @@ import {
 
 function mockFunctionsAndState() {
   const theState = undefined
-  const functions = {}
+  const functions: Partial<Record<functionNames, any>> = {}
   const returnFirst = (...args: any[]) => args[0]
   const nothing = (..._args: any[]) => {}
   functions[functionNames.nothingFunction] = nothing
