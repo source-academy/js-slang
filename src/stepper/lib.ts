@@ -3,6 +3,7 @@ import * as es from 'estree'
 import * as misc from '../stdlib/misc'
 import { Context, substituterNodes } from '../types'
 import * as ast from '../utils/ast/astCreator'
+import { BuiltInFunctionError } from '../errors/errors'
 import { nodeToValue, nodeToValueWithContext, valueToExpression } from './converter'
 import { codify } from './stepper'
 import { isBuiltinFunction, isNumber } from './util'
@@ -30,13 +31,13 @@ export function stringify(val: substituterNodes): es.Literal {
 //   defineBuiltin(context, 'error(str)', misc.error_message)
 export function error(val: substituterNodes, str?: substituterNodes) {
   const output = (str === undefined ? '' : str + ' ') + stringify(val)
-  throw new Error(output)
+  throw new BuiltInFunctionError(output)
 }
 
 //   defineBuiltin(context, 'prompt(str)', prompt)
 export function prompt(str: substituterNodes): es.Literal {
   if (str.type !== 'Literal' || typeof str.value !== 'string') {
-    throw new Error('Argument to error must be a string.')
+    throw new BuiltInFunctionError('Argument to error must be a string.')
   }
   const result = window.prompt(str.value as string)
   return ast.literal((result ? result : null) as string)
@@ -99,9 +100,9 @@ export function parse_int(str: substituterNodes, radix: substituterNodes): es.Ex
 export function evaluateMath(mathFn: string, ...args: substituterNodes[]): es.Expression {
   const fn = Math[mathFn.split('_')[1]]
   if (!fn) {
-    throw new Error(`Math function ${mathFn} not found.`)
+    throw new BuiltInFunctionError(`Math function ${mathFn} not found.`)
   } else if (args.some(arg => !isNumber(arg))) {
-    throw new Error(`Math functions must be called with number arguments`)
+    throw new BuiltInFunctionError(`Math functions must be called with number arguments`)
   }
   const jsArgs = args.map(nodeToValue)
   return valueToExpression(fn(...jsArgs))
@@ -115,7 +116,7 @@ export function evaluateModuleFunction(
 ): es.Expression {
   const fn = context.runtime.environments[0].head[moduleFn]
   if (!fn) {
-    throw new Error(`Module function ${moduleFn} not found.`)
+    throw new BuiltInFunctionError(`Module function ${moduleFn} not found.`)
   }
   const jsArgs = args.map(arg => nodeToValueWithContext(arg, context))
   return valueToExpression(fn(...jsArgs), context)
@@ -126,7 +127,7 @@ export function evaluateModuleFunction(
 //   defineBuiltin(context, 'pair(left, right)', list.pair)
 export function pair(left: substituterNodes, right: substituterNodes): es.ArrayExpression {
   if (left == null || right == null) {
-    throw new Error(
+    throw new BuiltInFunctionError(
       //Count the number of arguments that are not undefined
       `Expected 2 arguments, but got ${[left, right].filter(x => x != undefined).length}`
     )
@@ -136,13 +137,16 @@ export function pair(left: substituterNodes, right: substituterNodes): es.ArrayE
 
 //   defineBuiltin(context, 'is_pair(val)', list.is_pair)
 export function is_pair(val: substituterNodes): es.Literal {
+  if (val == null) {
+    throw new BuiltInFunctionError('Expected 1 argument, but got 0')
+  }
   return ast.literal(val.type === 'ArrayExpression' && val.elements.length === 2)
 }
 
 //   defineBuiltin(context, 'head(xs)', list.head)
 export function head(xs: substituterNodes): es.Expression {
   if (is_pair(xs).value === false) {
-    throw new Error(`${codify(xs)} is not a pair`)
+    throw new BuiltInFunctionError(`${codify(xs)} is not a pair`)
   }
   return (xs as es.ArrayExpression).elements[0] as es.Expression
 }
@@ -150,7 +154,7 @@ export function head(xs: substituterNodes): es.Expression {
 //   defineBuiltin(context, 'tail(xs)', list.tail)
 export function tail(xs: substituterNodes): es.Expression {
   if (is_pair(xs).value === false) {
-    throw new Error(`${codify(xs)} is not a pair`)
+    throw new BuiltInFunctionError(`${codify(xs)} is not a pair`)
   }
   return (xs as es.ArrayExpression).elements[1] as es.Expression
 }
