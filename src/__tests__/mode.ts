@@ -79,7 +79,7 @@ test('constants are not correctly loaded', () => {
 })
 
 test('operator syntax type error', () => {
-  const code = 'const num = 3; \nnum++; \nnum--; \nnum += 1;'
+  const code = 'const num = 3; \nnum++; \nnum--; \nnum += 1; \n5 + num |2;'
 
   setSession(Chapter.SOURCE_1, defaultVariant, defaultExternal, code)
 
@@ -91,6 +91,15 @@ test('operator syntax type error', () => {
 
   const token3 = session.getTokenAt(3, 5)
   expect(expectedBool(token3, CATEGORY.forbidden)).toBe(true)
+
+  const token4 = session.getTokenAt(4, 1)
+  expect(expectedBool(token4, CATEGORY.number)).toBe(true)
+
+  const token5 = session.getTokenAt(4, 9)
+  expect(expectedBool(token5, CATEGORY.forbidden)).toBe(true)
+
+  const token6 = session.getTokenAt(4, 10)
+  expect(expectedBool(token6, CATEGORY.number)).toBe(true)
 })
 
 test('forbidden keywords', () => {
