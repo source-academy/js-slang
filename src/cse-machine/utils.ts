@@ -12,6 +12,7 @@ import { Control } from './interpreter'
 import { AppInstr, EnvArray, ControlItem, Instr, InstrType } from './types'
 import Closure from './closure'
 import { Continuation, isCallWithCurrentContinuation } from './continuations'
+import { isEval } from './scheme-macros'
 
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
@@ -507,6 +508,15 @@ export const checkNumberOfArguments = (
     }
   } else if (isCallWithCurrentContinuation(callee)) {
     // call/cc should have a single argument
+    if (args.length !== 1) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+      )
+    }
+    return undefined
+  } else if (isEval(callee)) {
+    // eval should have a single argument
     if (args.length !== 1) {
       return handleRuntimeError(
         context,

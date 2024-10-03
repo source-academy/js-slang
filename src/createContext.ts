@@ -38,6 +38,7 @@ import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 import { schemeVisualise } from './alt-langs/scheme/scheme-mapper'
+import { csep_eval } from './cse-machine/scheme-macros'
 
 export class LazyBuiltIn {
   func: (...arg0: any) => any
@@ -450,6 +451,9 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
     switch (context.chapter) {
       case Chapter.FULL_SCHEME:
+        // eval metaprocedure
+        defineBuiltin(context, '$scheme_ZXZhbA$61$$61$(xs)', csep_eval)
+
       case Chapter.SCHEME_4:
         // Introduction to call/cc
         defineBuiltin(context, 'call$47$cc(f)', call_with_current_continuation)

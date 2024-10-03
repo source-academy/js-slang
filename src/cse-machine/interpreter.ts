@@ -77,6 +77,7 @@ import {
   setVariable,
   valueProducing
 } from './utils'
+import { isEval } from './scheme-macros'
 
 type CmdEvaluator = (
   command: ControlItem,
@@ -924,6 +925,14 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
     if (!(func instanceof Closure || func instanceof Function)) {
       handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
+    }
+
+    if (isEval(func)) {
+      // Check for number of arguments mismatch error
+      checkNumberOfArguments(context, func, args, command.srcNode)
+
+      throw new Error('Eval is not implemented yet')
+      return
     }
 
     if (isCallWithCurrentContinuation(func)) {
