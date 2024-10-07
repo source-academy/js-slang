@@ -77,7 +77,7 @@ import {
   setVariable,
   valueProducing
 } from './utils'
-import { isEval } from './scheme-macros'
+import { isEval, schemeEval } from './scheme-macros'
 
 type CmdEvaluator = (
   command: ControlItem,
@@ -373,9 +373,12 @@ export function* generateCSEMachineStateStream(
         // With the new evaluator, we don't return a break
         // return new CSEBreak()
       }
-    } else {
+    } else if (isInstr(command)) {
       // Command is an instruction
       cmdEvaluators[command.instrType](command, context, control, stash, isPrelude)
+    } else {
+      // this is a scheme value
+      schemeEval(command, context, control, stash, isPrelude)
     }
 
     // Push undefined into the stack if both control and stash is empty
@@ -781,7 +784,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   [InstrType.RESET]: function (command: Instr, context: Context, control: Control, stash: Stash) {
     // Keep pushing reset instructions until marker is found.
     const cmdNext: ControlItem | undefined = control.pop()
-    if (cmdNext && (isNode(cmdNext) || cmdNext.instrType !== InstrType.MARKER)) {
+    if (cmdNext && (!isInstr(cmdNext) || cmdNext.instrType !== InstrType.MARKER)) {
       control.push(instr.resetInstr(command.srcNode))
     }
   },
@@ -931,7 +934,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
-      throw new Error('Eval is not implemented yet')
+      // get the AST from the arguments
+      const AST = args[0]
+
+      // move it to the control
+      control.push(AST)
       return
     }
 
