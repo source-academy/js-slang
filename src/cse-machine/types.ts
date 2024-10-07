@@ -2,6 +2,7 @@ import * as es from 'estree'
 
 import { Environment, Node } from '../types'
 import Closure from './closure'
+import { SchemeControlItems } from './scheme-macros'
 
 export enum InstrType {
   RESET = 'Reset',
@@ -83,7 +84,7 @@ export type Instr =
   | EnvInstr
   | ArrLitInstr
 
-export type ControlItem = (Node | Instr) & {
+export type ControlItem = (Node | Instr | SchemeControlItems) & {
   isEnvDependent?: boolean
 }
 

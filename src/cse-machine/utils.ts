@@ -234,7 +234,7 @@ export const envChanging = (command: ControlItem): boolean => {
       type === 'ArrowFunctionExpression' ||
       (type === 'ExpressionStatement' && command.expression.type === 'ArrowFunctionExpression')
     )
-  } else {
+  } else if (isInstr(command)) {
     const type = command.instrType
     return (
       type === InstrType.ENVIRONMENT ||
@@ -243,6 +243,12 @@ export const envChanging = (command: ControlItem): boolean => {
       type === InstrType.ARRAY_ASSIGNMENT ||
       (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs > 0)
     )
+  } else {
+    // TODO deal with scheme control items
+    // for now, as per the CSE machine paper,
+    // we decide to ignore environment optimizations
+    // for scheme control items :P
+    return true
   }
 }
 
@@ -710,7 +716,7 @@ export const isEnvDependent = (command: ControlItem): boolean => {
       type === InstrType.CONTINUE_MARKER ||
       type === InstrType.BREAK_MARKER
     )
-  } else {
+  } else if (isNode(command)) {
     const type = command.type
     switch (type) {
       case 'StatementSequence':
@@ -734,6 +740,10 @@ export const isEnvDependent = (command: ControlItem): boolean => {
         break
     }
   }
+  // TODO deal with scheme control items
+  // for now, as per the CSE machine paper,
+  // we decide to ignore environment optimizations
+  // for scheme control items :P
   command.isEnvDependent = isDependent
   return isDependent
 }
