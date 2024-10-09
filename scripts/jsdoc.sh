@@ -130,21 +130,6 @@ run() {
 	     ${LIB}/pairmutator.js \
 	     ${LIB}/concurrency.js
 
-	# Source §3 Non-Det
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -R ${MD}/README_3_NON-DET.md \
-	     -d ${DST}/"source_3_non-det"/ \
-	     ${LIB}/auxiliary.js \
-	     ${LIB}/misc.js \
-	     ${LIB}/math.js \
-         ${LIB}/list.js \
-	     ${LIB}/stream.js \
-		 ${LIB}/array.js \
-	     ${LIB}/pairmutator.js \
-		 ${LIB}/non-det.js
-    
 	# Source §3 Typed
     
     ${JSDOC} -r -t ${TMPL} \

@@ -108,7 +108,6 @@ targets = [
     "source_2_lazy",
     "source_3",
     "source_3_concurrent",
-    "source_3_non-det",
     "source_4", 
     "source_4_explicit-control"
     "External libraries",

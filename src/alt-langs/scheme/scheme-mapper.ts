@@ -7,7 +7,7 @@ import { List, Pair } from "../../stdlib/list"
 import { Representation } from "../mapper"
 
 export function mapResultToScheme(res: Result): Result {
-  if (res.status === "finished" || res.status === "suspended-non-det") {
+  if (res.status === "finished") {
     return {
       ...res,
       value: decodeValue(res.value),
