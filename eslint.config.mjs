@@ -3,7 +3,7 @@
 import tseslint from 'typescript-eslint'
 import globals from 'globals'
 
-// @ts-expect-error
+// @ts-expect-error no type definitions for plugin
 import importPlugin from 'eslint-plugin-import'
 
 export default tseslint.config(
