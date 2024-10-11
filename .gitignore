@@ -1,8 +1,12 @@
 node_modules
 *.js
 !eslint.config.js
+
+# docs
 !docs/jsdoc/templates/**/*.js
 !docs/lib/**/*.js
+docs/source
+
 *.map
 dist/
 .idea/
