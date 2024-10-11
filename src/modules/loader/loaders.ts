@@ -122,8 +122,9 @@ export const memoizedGetModuleDocsAsync = getMemoizedDocsImporter()
 
 const bundleAndTabImporter = wrapImporter<{ default: ModuleBundle }>(
   typeof window !== 'undefined' && process.env.NODE_ENV !== 'test'
-    ? (new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any)
-    : p => Promise.resolve(require(p))
+    ? (new Function('path', 'return import(path)') as any)
+    : // eslint-disable-next-line @typescript-eslint/no-require-imports
+      p => Promise.resolve(require(p))
 )
 
 export async function loadModuleBundleAsync(

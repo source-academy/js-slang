@@ -21,7 +21,7 @@ import { SourceDocumentation } from '../docTooltip'
 export function HighlightRulesSelector(
   id: number,
   variant: Variant = Variant.DEFAULT,
-  external: String = 'NONE',
+  external: string = 'NONE',
   externalLibraries: (
     | {
         caption: string
