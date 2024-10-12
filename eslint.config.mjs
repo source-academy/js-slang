@@ -1,11 +1,12 @@
+// @ts-check
+
 import tseslint from 'typescript-eslint'
 import globals from 'globals'
+
+// @ts-expect-error no type definitions for plugin
 import importPlugin from 'eslint-plugin-import'
 
-/**
- * @type {import('eslint').Linter.FlatConfig[]}
- */
-export default [
+export default tseslint.config(
   {
     // global ignores
     ignores: ['dist', 'src/alt-langs', 'src/py-slang', 'src/__tests__/sicp', '**/*.snap']
@@ -72,4 +73,4 @@ export default [
       '@typescript-eslint/no-require-imports': 'off'
     }
   }
-]
+)

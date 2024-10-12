@@ -268,14 +268,6 @@ run() {
 	     -d ${DST}/CONCURRENCY/ \
 	     ${LIB}/concurrency.js
 
-    # NON-DET
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -R ${MD}/README_NON-DET.md \
-	     -d ${DST}/NON-DET/ \
-	     ${LIB}/non-det.js
-    
     # MCE
     
     ${JSDOC} -r -t ${TMPL} \
