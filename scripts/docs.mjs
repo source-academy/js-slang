@@ -317,7 +317,7 @@ async function prepare() {
       console.log(`Copied ${srcPath} to ${dstPath}`)
     })))
 
-  const makeProc = spawn('make', { cwd: specs_dir })
+  const makeProc = spawn('make', { cwd: specs_dir, stdio: [0, 1, 2]})
 
   const makeretcode = await new Promise((resolve, reject) => {
     makeProc.on('exit', resolve)
