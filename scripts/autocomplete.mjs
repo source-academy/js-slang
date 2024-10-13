@@ -1,7 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+// @ts-check
+
+import fs from 'fs/promises';
+import pathlib from 'path';
+import { JSDOM } from 'jsdom';
 
 const CONST_DECL = "const";
 const FUNC_DECL = "func";
@@ -74,11 +75,11 @@ function processFunction(namespace, element, document) {
   namespace[name] = { title, description: html, meta: FUNC_DECL };
 }
 
-function processDirGlobals(target) {
-  const inFile = path.join(BASE_DIR, target, SRC_FILENAME);
+async function processDirGlobals(target) {
+  const inFile = pathlib.join(BASE_DIR, target, SRC_FILENAME);
   let document;
   try {
-    const contents = fs.readFileSync(inFile);
+    const contents = await fs.readFile(inFile);
     document = new JSDOM(contents.toString()).window.document;
   } catch (err) {
     console.error(inFile, "failed", err);
@@ -93,17 +94,26 @@ function processDirGlobals(target) {
   const functions = document.getElementsByClassName('function-entry')
   Array.prototype.forEach.call(functions, ele => processFunction(names, ele, document));
 
-  fs.mkdirSync(OUT_DIR, { recursive: true })
-
-  const outFile = path.join(OUT_DIR, target + '.json');
-  fs.writeFileSync(outFile, JSON.stringify(names, null, 2), 'utf-8');
+  const outFile = pathlib.join(OUT_DIR, target + '.json');
+  await fs.writeFile(outFile, JSON.stringify(names, null, 2), 'utf-8')
 }
 
-if (fs.existsSync(BASE_DIR)) {
-  TARGETS.forEach(processDirGlobals);
-} else {
-  console.error(`
-  Error: path to jsdoc html is invalid.
-  Ensure that this script is run from the project root and documentation has been generated\
-  `);
+export default async function autocomplete() {
+  try {
+    await fs.access(BASE_DIR, fs.constants.R_OK)
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.error(`
+      Error: path to jsdoc html is invalid.
+      Ensure that this script is run from the project root and documentation has been generated\
+      `);
+    } else {
+      console.error(error)
+    }
+  }
+
+  await fs.mkdir(OUT_DIR, { recursive: true })
+  await Promise.all(TARGETS.map(processDirGlobals))
+  console.log('Finished processing autocomplete documentation')
 }
+

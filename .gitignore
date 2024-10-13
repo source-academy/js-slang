@@ -1,6 +1,5 @@
 node_modules
 *.js
-!eslint.config.js
 
 # docs
 !docs/jsdoc/templates/**/*.js
