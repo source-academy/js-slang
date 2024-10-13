@@ -325,6 +325,7 @@ async function prepare() {
   })
 
   if (makeretcode !== 0) process.exit(makeretcode)
+  console.log('Finished running make')
 
   // Copy pdf files that make produced to out_dir
   await fs.readdir(specs_dir)
@@ -357,6 +358,10 @@ async function checkGitRoot() {
   const gitRoot = await new Promise((resolve, reject) => {
     gitProc.stdout.on('data', data => {
       resolve(data.toString().trim())
+    })
+
+    gitProc.on('exit', c => {
+      if (c !== 0) reject(c)
     })
 
     gitProc.stdout.on('error', reject)
