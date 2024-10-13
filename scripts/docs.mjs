@@ -1,6 +1,6 @@
 // @ts-check
 
-import { spawn } from 'child_process'
+import { execFile, fork, spawn } from 'child_process'
 import pathlib from 'path'
 import fs from 'fs/promises'
 import { Command } from 'commander'
@@ -270,19 +270,17 @@ async function run() {
   await fs.mkdir(out_dir, { recursive: true })
 
   const promises = Object.entries(configs).map(([name, config]) => {
-    const args = [
-      jsdoc,
+    const proc = fork(jsdoc, [
       '-r',
       '-t', template_location,
       '-c', config_file,
       '-R', pathlib.join(readmes, config["readme"]),
       '-d', pathlib.join(out_dir, config["dst"]),
       ...config.libs.map(each => pathlib.join(libraries, each))
-    ]
+    ])
 
-    const proc = spawn('node', args)
     proc.on('spawn', () => console.log(`Building ${name}`))
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       proc.on('exit', c => {
         if (c === 0) {
           console.log(`Finished ${name}`)
@@ -294,7 +292,7 @@ async function run() {
 
       proc.on('error', e => {
         console.error(`Error occurred with ${name}: ${e}`)
-        reject(e)
+        resolve(1)
       })
     })
   })
@@ -317,11 +315,13 @@ async function prepare() {
       console.log(`Copied ${srcPath} to ${dstPath}`)
     })))
 
-  const makeProc = spawn('make', { cwd: specs_dir, stdio: [0, 1, 2]})
-
-  const makeretcode = await new Promise((resolve, reject) => {
+  const makeProc = spawn('make', { cwd: specs_dir, stdio: 'inherit' })
+  const makeretcode = await new Promise(resolve => {
     makeProc.on('exit', resolve)
-    makeProc.on('error', reject)
+    makeProc.on('error', () => {
+      console.error('Failed to start make')
+      process.exit(1)
+    })
   })
 
   if (makeretcode !== 0) process.exit(makeretcode)
@@ -349,24 +349,17 @@ async function clean() {
  * Check that the commands are being run from the root of the git repository
  */
 async function checkGitRoot() {
-  const gitProc = spawn('git', ['rev-parse', '--show-toplevel'], { stdio: ['ignore', 'pipe', 'inherit'] })
-  gitProc.on('error', e => {
-    console.error(e)
-    process.exit(1)
-  })
+  const gitRoot = await new Promise(resolve => {
+    execFile('git', ['rev-parse', '--show-toplevel'], (err, stdout, stderr) => {
+      const possibleError = err || stderr
+      if (possibleError) {
+        console.error(possibleError)
+        process.exit(1)
+      }
 
-  const gitRoot = await new Promise((resolve, reject) => {
-    gitProc.stdout.on('data', data => {
-      resolve(data.toString().trim())
-    })
+      resolve(stdout.trim())
+  })})
 
-    gitProc.on('exit', c => {
-      if (c !== 0) reject(c)
-    })
-
-    gitProc.stdout.on('error', reject)
-  })
-  
   const procDir = pathlib.relative(gitRoot, '')
   if (procDir !== '') {
     console.error('Please run this command from the git root directory')

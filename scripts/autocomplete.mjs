@@ -110,6 +110,7 @@ export default async function autocomplete() {
     } else {
       console.error(error)
     }
+    process.exit(1)
   }
 
   await fs.mkdir(OUT_DIR, { recursive: true })
