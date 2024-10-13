@@ -270,12 +270,14 @@ async function run() {
   await fs.mkdir(out_dir, { recursive: true })
 
   const promises = Object.entries(configs).map(([name, config]) => {
+    // Use fork to start a new instance of nodejs and run jsdoc
+    // for each configuration
     const proc = fork(jsdoc, [
       '-r',
       '-t', template_location,
       '-c', config_file,
-      '-R', pathlib.join(readmes, config["readme"]),
-      '-d', pathlib.join(out_dir, config["dst"]),
+      '-R', pathlib.join(readmes, config.readme),
+      '-d', pathlib.join(out_dir, config.dst),
       ...config.libs.map(each => pathlib.join(libraries, each))
     ])
 
@@ -285,25 +287,27 @@ async function run() {
         if (c === 0) {
           console.log(`Finished ${name}`)
         } else {
-          console.error(`Error occurred with ${name}: jsdoc exited with ${c}`)
+          console.error(`Error occurred with ${name}: jsdoc exited with code ${c}`)
         }
         resolve(c)
       })
 
       proc.on('error', e => {
-        console.error(`Error occurred with ${name}: ${e}`)
+        console.error(`Error occurred with ${name}: `, e)
         resolve(1)
       })
     })
   })
 
+  // If some instance returned a non zero return code,
+  // exit with that return code
   const retcodes = await Promise.all(promises)
   const nonzeroRetcode = retcodes.find(c => c !== 0)
 
   if (nonzeroRetcode !== undefined) process.exit(nonzeroRetcode)
 }
 
-async function prepare() {
+async function prepare({ silent }) {
   await run()
 
   // Copy images in images directory to out_dir
@@ -312,14 +316,19 @@ async function prepare() {
       const srcPath = pathlib.join('docs/images', img)
       const dstPath = pathlib.join(out_dir, img)
       await fs.copyFile(srcPath, dstPath)
-      console.log(`Copied ${srcPath} to ${dstPath}`)
+      console.debug(`Copied ${srcPath} to ${dstPath}`)
     })))
 
-  const makeProc = spawn('make', { cwd: specs_dir, stdio: 'inherit' })
+  const makeProc = spawn('make', { cwd: specs_dir, stdio: [
+    'ignore',
+    silent ? 'ignore' : 'inherit',
+    'inherit'
+  ]})
+
   const makeretcode = await new Promise(resolve => {
     makeProc.on('exit', resolve)
-    makeProc.on('error', () => {
-      console.error('Failed to start make')
+    makeProc.on('error', e => {
+      console.error('Failed to start make: ', e)
       process.exit(1)
     })
   })
@@ -335,7 +344,7 @@ async function prepare() {
         const srcPath = pathlib.join(specs_dir, file)
         const dstPath = pathlib.join(out_dir, file)
         await fs.copyFile(srcPath, dstPath)
-        console.log(`Copied ${srcPath} to ${dstPath}`)
+        console.debug(`Copied ${srcPath} to ${dstPath}`)
       })
     ))
 }
@@ -375,7 +384,11 @@ await new Command()
       .action(run),
     { isDefault: true }
   )
-  .addCommand(new Command('prepare').action(prepare))
+  .addCommand(
+    new Command('prepare')
+      .option('--silent', 'Run make without outputting to stdout')
+      .action(prepare)
+  )
   .addCommand(
     new Command('clean')
       .description('Clear the output directory')

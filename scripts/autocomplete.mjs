@@ -100,6 +100,7 @@ async function processDirGlobals(target) {
 
 export default async function autocomplete() {
   try {
+    // Check that the BASE_DIR exists and that we can read from it
     await fs.access(BASE_DIR, fs.constants.R_OK)
   } catch (error) {
     if (error.code === 'ENOENT') {
