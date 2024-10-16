@@ -83,7 +83,7 @@ async function processDirGlobals(target) {
     document = new JSDOM(contents.toString()).window.document;
   } catch (err) {
     console.error(inFile, "failed", err);
-    return;
+    return err;
   }
 
   const names = {};
@@ -96,6 +96,7 @@ async function processDirGlobals(target) {
 
   const outFile = pathlib.join(OUT_DIR, target + '.json');
   await fs.writeFile(outFile, JSON.stringify(names, null, 2), 'utf-8')
+  return undefined
 }
 
 export default async function autocomplete() {
@@ -115,7 +116,11 @@ export default async function autocomplete() {
   }
 
   await fs.mkdir(OUT_DIR, { recursive: true })
-  await Promise.all(TARGETS.map(processDirGlobals))
+  
+  // Exit with error code if the there was some error
+  const errors = await Promise.all(TARGETS.map(processDirGlobals))
+  if (errors.find(each => each !== undefined)) process.exit(1)
+
   console.log('Finished processing autocomplete documentation')
 }
 
