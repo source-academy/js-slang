@@ -78,6 +78,7 @@ import {
   valueProducing
 } from './utils'
 import { isEval, schemeEval } from './scheme-macros'
+import { Transformer } from './patterns'
 
 type CmdEvaluator = (
   command: ControlItem,
@@ -168,6 +169,29 @@ export class Stash extends Stack<Value> {
 }
 
 /**
+ * The P component is a dictionary of mappings from syntax names to 
+ * their corresponding syntax rule transformers (patterns).
+ */
+export class Pattern {
+  private items: Map<string, Transformer[]>
+  public constructor() {
+    this.items = new Map<string, Transformer[]>()
+  }
+
+  public get(name: string): Transformer[] | undefined {
+    return this.items.get(name)
+  }
+
+  public hasPattern(name: string): boolean {
+    return this.items.has(name)
+  }
+  
+  public set(name: string, item: Transformer[]): void {
+    this.items.set(name, item)
+  }
+}
+
+/**
  * Function to be called when a program is to be interpreted using
  * the explicit control evaluator.
  *
@@ -188,10 +212,12 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     context.runtime.isRunning = true
     context.runtime.control = new Control(program)
     context.runtime.stash = new Stash()
+    context.runtime.patterns = new Pattern()
     return runCSEMachine(
       context,
       context.runtime.control,
       context.runtime.stash,
+      context.runtime.patterns,
       options.envSteps,
       options.stepLimit,
       options.isPrelude
@@ -214,7 +240,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runCSEMachine(context, context.runtime.control!, context.runtime.stash!, -1, -1)
+    return runCSEMachine(context, context.runtime.control!, context.runtime.stash!, context.runtime.patterns, -1, -1)
   } catch (error) {
     return new CseError(error)
   } finally {
@@ -283,6 +309,7 @@ export function CSEResultPromise(context: Context, value: Value): Promise<Result
  * @param context The context to evaluate the program in.
  * @param control Points to the current context.runtime.control
  * @param stash Points to the current context.runtime.stash
+ * @param patterns Points to the current context.runtime.patterns
  * @param isPrelude Whether the program we are running is the prelude
  * @returns A special break object if the program is interrupted by a breakpoint;
  * else the top value of the stash. It is usually the return value of the program.
@@ -291,6 +318,7 @@ function runCSEMachine(
   context: Context,
   control: Control,
   stash: Stash,
+  patterns: Pattern,
   envSteps: number,
   stepLimit: number,
   isPrelude: boolean = false
@@ -299,6 +327,7 @@ function runCSEMachine(
     context,
     control,
     stash,
+    patterns,
     envSteps,
     stepLimit,
     isPrelude
@@ -316,6 +345,7 @@ export function* generateCSEMachineStateStream(
   context: Context,
   control: Control,
   stash: Stash,
+  patterns: Pattern,
   envSteps: number,
   stepLimit: number,
   isPrelude: boolean = false
@@ -378,7 +408,7 @@ export function* generateCSEMachineStateStream(
       cmdEvaluators[command.instrType](command, context, control, stash, isPrelude)
     } else {
       // this is a scheme value
-      schemeEval(command, context, control, stash, isPrelude)
+      schemeEval(command, context, control, stash, patterns, isPrelude)
     }
 
     // Push undefined into the stack if both control and stash is empty

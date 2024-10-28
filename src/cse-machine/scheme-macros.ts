@@ -3,7 +3,7 @@ import { List } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import { Context } from '..'
-import { Control, Stash } from './interpreter'
+import { Control, Pattern, Stash } from './interpreter'
 import { getVariable } from './utils'
 
 // this needs to be better but for now it's fine
@@ -36,7 +36,7 @@ export function isEval(value: any): boolean {
 }
 
 // helper function to check if a value is a list.
-function isList(value: any): boolean {
+export function isList(value: any): boolean {
   if (value === null) {
     return true
   }
@@ -44,7 +44,7 @@ function isList(value: any): boolean {
 }
 
 // do a 1-level deep flattening of a list.
-function flattenList(value: any): any[] {
+export function flattenList(value: any): any[] {
   if (value === null) {
     return []
   }
@@ -56,6 +56,7 @@ export function schemeEval(
   context: Context,
   control: Control,
   stash: Stash,
+  patterns: Pattern,
   isPrelude: boolean
 ) {
   // scheme CSE machine will only ever encounter
@@ -76,17 +77,33 @@ export function schemeEval(
   if (isList(command)) {
     // do something
     const parsedList = flattenList(command)
+    const elem = parsedList[0]
     // do work based on the first element of the list.
     // it should match some symbol "define", "set", "lambda", etc...
     // or if it doesn't match any of these, then it is a function call.
-    if (parsedList[0] instanceof _Symbol) {
+    if (elem instanceof _Symbol) {
+      // check if elem matches any defined syntax in the P component.
+      // if it does, then apply the corresponding rule.
+      if (patterns.hasPattern(elem.sym)) {
+        // apply the rule
+        // TODO
+        return
+      }
+
+      // else, this is a standard special form.
       // we attempt to piggyback on the standard CSE machine to 
       // handle the basic special forms.
       // however, for more advanced stuff like quotes or definitions,
       // the logic will be handled here.
       switch (parsedList[0].sym) {
         case 'lambda':
-          // do something
+          // return a lambda expression that takes
+          // in the arguments, and returns the body
+          // as an eval of the body.
+          const args = parsedList[1]
+          // convert the args to estree pattern
+          const body = parsedList[2]
+          // TODO
         case 'define':
           // assume that define-function
           // has been resolved to define-variable
@@ -146,12 +163,17 @@ export function schemeEval(
           }
 
         case "quote":
-          // TODO
+          // quote is a special form that returns the expression
+          // as is, without evaluating it.
+          // we can just push the expression to the stash.
+          stash.push(parsedList[1])
+          return
         case "quasiquote":
           // hey, we can deal with unquote-splicing here!
           // TODO
         case "define-syntax":
           // parse the pattern and template here,
+          // generate a list of transformers from it,
           // and add it to the Patterns component.
           // TODO
       }
