@@ -169,7 +169,7 @@ export class Stash extends Stack<Value> {
 }
 
 /**
- * The P component is a dictionary of mappings from syntax names to 
+ * The P component is a dictionary of mappings from syntax names to
  * their corresponding syntax rule transformers (patterns).
  */
 export class Pattern {
@@ -185,7 +185,7 @@ export class Pattern {
   public hasPattern(name: string): boolean {
     return this.items.has(name)
   }
-  
+
   public set(name: string, item: Transformer[]): void {
     this.items.set(name, item)
   }
@@ -240,7 +240,14 @@ export function evaluate(program: es.Program, context: Context, options: IOption
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runCSEMachine(context, context.runtime.control!, context.runtime.stash!, context.runtime.patterns, -1, -1)
+    return runCSEMachine(
+      context,
+      context.runtime.control!,
+      context.runtime.stash!,
+      context.runtime.patterns,
+      -1,
+      -1
+    )
   } catch (error) {
     return new CseError(error)
   } finally {

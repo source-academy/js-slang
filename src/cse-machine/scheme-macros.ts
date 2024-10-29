@@ -73,7 +73,7 @@ export function schemeEval(
     // TODO: error
     return
   }
-  
+
   if (isList(command)) {
     // do something
     const parsedList = flattenList(command)
@@ -91,7 +91,7 @@ export function schemeEval(
       }
 
       // else, this is a standard special form.
-      // we attempt to piggyback on the standard CSE machine to 
+      // we attempt to piggyback on the standard CSE machine to
       // handle the basic special forms.
       // however, for more advanced stuff like quotes or definitions,
       // the logic will be handled here.
@@ -103,7 +103,7 @@ export function schemeEval(
           const args = parsedList[1]
           // convert the args to estree pattern
           const body = parsedList[2]
-          // TODO
+        // TODO
         case 'define':
           // assume that define-function
           // has been resolved to define-variable
@@ -162,20 +162,20 @@ export function schemeEval(
             control.push(parsedList[i])
           }
 
-        case "quote":
+        case 'quote':
           // quote is a special form that returns the expression
           // as is, without evaluating it.
           // we can just push the expression to the stash.
           stash.push(parsedList[1])
           return
-        case "quasiquote":
-          // hey, we can deal with unquote-splicing here!
-          // TODO
-        case "define-syntax":
-          // parse the pattern and template here,
-          // generate a list of transformers from it,
-          // and add it to the Patterns component.
-          // TODO
+        case 'quasiquote':
+        // hey, we can deal with unquote-splicing here!
+        // TODO
+        case 'define-syntax':
+        // parse the pattern and template here,
+        // generate a list of transformers from it,
+        // and add it to the Patterns component.
+        // TODO
       }
       return
     }
