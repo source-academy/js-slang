@@ -7,6 +7,8 @@ import { List, Pair } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { flattenList, isList } from './scheme-macros'
 
+// a single pattern stored within the patterns component
+// may have several transformers attributed to it.
 export class Transformer {
   literals: string[]
   pattern: List
@@ -19,7 +21,15 @@ export class Transformer {
   }
 }
 
-function arrayToList(arr: any[]): List {
+// given a matching transformer,
+// the macro_transform() function will transform a list
+// into the template of the transformer.
+export function macro_transform(input: List, transformer: Transformer): List {
+  const collected = collect(input, transformer.pattern, transformer.literals)
+  return transform(transformer.template, collected)
+}
+
+export function arrayToList(arr: any[]): List {
   if (arr.length === 0) {
     return null
   }
@@ -33,14 +43,14 @@ function arrayToImproperList(arr: any[], last: any): any {
   return [arr[0], arrayToImproperList(arr.slice(1), last)]
 }
 
-function isImproperList(value: any): boolean {
+export function isImproperList(value: any): boolean {
   if (value === null) {
     return false
   }
   return Array.isArray(value) && value.length === 2 && !isList(value[1])
 }
 
-function flattenImproperList(value: any): [any[], any] {
+export function flattenImproperList(value: any): [any[], any] {
   let items = []
   let working = value
   while (working instanceof Array && working.length === 2) {
@@ -52,7 +62,11 @@ function flattenImproperList(value: any): [any[], any] {
 
 // we use the match() function to match a list against a pattern and literals
 // and verify if it is a match.
-function match(input: any, pattern: List | Pair<any, any> | _Symbol, literals: string[]): boolean {
+export function match(
+  input: any,
+  pattern: List | Pair<any, any> | _Symbol,
+  literals: string[]
+): boolean {
   if (pattern instanceof _Symbol && !literals.includes(pattern.sym)) {
     // this will match whatever the input list is unless it is
     // a literal in the literals list. (ie syntax)

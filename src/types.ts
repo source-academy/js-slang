@@ -146,7 +146,7 @@ export interface Context<T = any> {
 
   /** Runtime Specific state */
   runtime: {
-    patterns: Pattern
+    patterns?: Pattern
     break: boolean
     debuggerOn: boolean
     isRunning: boolean

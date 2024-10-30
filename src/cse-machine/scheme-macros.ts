@@ -5,6 +5,15 @@ import { SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math
 import { Context } from '..'
 import { Control, Pattern, Stash } from './interpreter'
 import { getVariable } from './utils'
+import {
+  Transformer,
+  arrayToList,
+  flattenImproperList,
+  isImproperList,
+  macro_transform,
+  match
+} from './patterns'
+import { ControlItem } from './types'
 
 // this needs to be better but for now it's fine
 export type SchemeControlItems = List | _Symbol | SchemeNumber | boolean | string
@@ -85,7 +94,21 @@ export function schemeEval(
       // check if elem matches any defined syntax in the P component.
       // if it does, then apply the corresponding rule.
       if (patterns.hasPattern(elem.sym)) {
-        // apply the rule
+        // get the relevant transformers
+        const transformers: Transformer[] = patterns.getPattern(elem.sym)
+
+        // find the first matching transformer
+        for (const transformer of transformers) {
+          // check if the transformer matches the list
+          if (match(command, transformer.pattern, transformer.literals)) {
+            // if it does, apply the transformer
+            const transformedMacro = macro_transform(command as List, transformer)
+            control.push(transformedMacro as ControlItem)
+            return
+          }
+        }
+
+        // there is an error if we get to here
         // TODO
         return
       }
@@ -101,9 +124,54 @@ export function schemeEval(
           // in the arguments, and returns the body
           // as an eval of the body.
           const args = parsedList[1]
+
+          let argsList: _Symbol[] = []
+          let rest: _Symbol | null = null
+          if (args instanceof _Symbol) {
+            // if the args is a symbol, then it is a variadic function.
+            // we can just set the args to a list of the symbol.
+            rest = args
+          } else if (isImproperList(args)) {
+            [argsList, rest] = flattenImproperList(args)
+          } else {
+            argsList = flattenList(args) as _Symbol[]
+          }
+
           // convert the args to estree pattern
-          const body = parsedList[2]
-        // TODO
+          const params: (es.Identifier | es.RestElement)[] = argsList.map(arg =>
+            makeDummyIdentifierNode(arg.sym)
+          )
+
+          let body = parsedList[2]
+
+          // if there is a rest argument, we need to wrap it in a rest element.
+          // we also need to add another element to the body,
+          // to convert the rest element into a list.
+          if (rest !== null) {
+            params.push({
+              type: 'RestElement',
+              argument: makeDummyIdentifierNode(rest.sym)
+            })
+            body = arrayToList([
+              new _Symbol('begin'),
+              arrayToList([
+                new _Symbol('set!'),
+                rest,
+                arrayToList([new _Symbol('vector->list'), rest])
+              ]),
+              body
+            ])
+          }
+
+          // estree ArrowFunctionExpression
+          const lambda = {
+            type: 'ArrowFunctionExpression',
+            params: params,
+            body: body
+          }
+
+          control.push(lambda as es.ArrowFunctionExpression)
+
         case 'define':
           // assume that define-function
           // has been resolved to define-variable
@@ -139,6 +207,7 @@ export function schemeEval(
           }
 
           control.push(assignment as es.AssignmentExpression)
+
         case 'if':
           const condition = parsedList[1]
           const consequent = parsedList[2]
@@ -154,6 +223,7 @@ export function schemeEval(
           }
 
           control.push(conditional as es.ConditionalExpression)
+
         case 'begin':
           // begin is a sequence of expressions
           // that are evaluated in order.
@@ -167,15 +237,50 @@ export function schemeEval(
           // as is, without evaluating it.
           // we can just push the expression to the stash.
           stash.push(parsedList[1])
-          return
+        /*
+        quasiquote can be represented using
+        macros!
+
+        (define-syntax quasiquote
+          (syntax-rules (unquote unquote-splicing)
+            ((_ (unquote x)) x)
+            ((_ (unquote-splicing x) . rest)
+              (append x (quasiquote rest)))
+
+            ((_ (a . rest))
+            (cons (quasiquote a) (quasiquote rest)))
+
+            ((_ x) (quote x))))
+
         case 'quasiquote':
-        // hey, we can deal with unquote-splicing here!
-        // TODO
+          // hey, we can deal with unquote-splicing here!
+          // decompose the list into a call to a list of the elements,
+          // leaving quoted items alone, and unquoting the unquoted items.
+        */
+
         case 'define-syntax':
-        // parse the pattern and template here,
-        // generate a list of transformers from it,
-        // and add it to the Patterns component.
-        // TODO
+          // parse the pattern and template here,
+          // generate a list of transformers from it,
+          // and add it to the Patterns component.
+          const syntaxName = parsedList[1]
+          const syntaxRules = parsedList[2]
+
+          // at this point, we assume that syntax-rules is verified
+          // and parsed correctly already.
+          const syntaxRulesList = flattenList(syntaxRules)
+          const literals: string[] = syntaxRulesList[1].map((literal: _Symbol) => literal.sym)
+          const rules = syntaxRulesList.slice(2)
+          // rules are set as a list of patterns and templates.
+          // we need to convert these into transformers.
+          const transformers: Transformer[] = rules.map(rule => {
+            const ruleList = flattenList(rule)
+            const pattern = ruleList[0]
+            const template = ruleList[1]
+            return new Transformer(literals, pattern, template)
+          })
+          // now we can add the transformers to the patterns component.
+          patterns.addPattern(syntaxName.sym, transformers)
+          return
       }
       return
     }

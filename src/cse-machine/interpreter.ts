@@ -178,15 +178,16 @@ export class Pattern {
     this.items = new Map<string, Transformer[]>()
   }
 
-  public get(name: string): Transformer[] | undefined {
-    return this.items.get(name)
+  // only call this if you are sure that the pattern exists.
+  public getPattern(name: string): Transformer[] {
+    return this.items.get(name) as Transformer[]
   }
 
   public hasPattern(name: string): boolean {
     return this.items.has(name)
   }
 
-  public set(name: string, item: Transformer[]): void {
+  public addPattern(name: string, item: Transformer[]): void {
     this.items.set(name, item)
   }
 }
@@ -244,7 +245,7 @@ export function resumeEvaluate(context: Context) {
       context,
       context.runtime.control!,
       context.runtime.stash!,
-      context.runtime.patterns,
+      context.runtime.patterns as Pattern,
       -1,
       -1
     )
