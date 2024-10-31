@@ -14,6 +14,7 @@ import {
   match
 } from './patterns'
 import { ControlItem } from './types'
+import { encode } from '../alt-langs/scheme/scm-slang/src'
 
 // this needs to be better but for now it's fine
 export type SchemeControlItems = List | _Symbol | SchemeNumber | boolean | string
@@ -79,7 +80,7 @@ export function schemeEval(
   // onto the stash.
 
   if (command === null) {
-    // TODO: error
+    // error
     return
   }
 
@@ -132,7 +133,7 @@ export function schemeEval(
             // we can just set the args to a list of the symbol.
             rest = args
           } else if (isImproperList(args)) {
-            [argsList, rest] = flattenImproperList(args)
+            ;[argsList, rest] = flattenImproperList(args)
           } else {
             argsList = flattenList(args) as _Symbol[]
           }
@@ -142,7 +143,8 @@ export function schemeEval(
             makeDummyIdentifierNode(arg.sym)
           )
 
-          let body = parsedList[2]
+          let body_elements = parsedList.slice(2)
+          let body: List = arrayToList([new _Symbol('begin'), ...body_elements])
 
           // if there is a rest argument, we need to wrap it in a rest element.
           // we also need to add another element to the body,
@@ -159,7 +161,7 @@ export function schemeEval(
                 rest,
                 arrayToList([new _Symbol('vector->list'), rest])
               ]),
-              body
+              ...body_elements
             ])
           }
 
@@ -167,10 +169,11 @@ export function schemeEval(
           const lambda = {
             type: 'ArrowFunctionExpression',
             params: params,
-            body: body
+            body: body as any
           }
 
           control.push(lambda as es.ArrowFunctionExpression)
+          return
 
         case 'define':
           // assume that define-function
@@ -187,13 +190,14 @@ export function schemeEval(
             declarations: [
               {
                 type: 'VariableDeclarator',
-                id: makeDummyIdentifierNode(variable.sym),
+                id: makeDummyIdentifierNode(encode(variable.sym)),
                 init: value
               }
             ]
           }
 
           control.push(definition as es.VariableDeclaration)
+          return
         case 'set!':
           const set_variable = parsedList[1]
           const set_value = parsedList[2]
@@ -202,12 +206,12 @@ export function schemeEval(
           const assignment = {
             type: 'AssignmentExpression',
             operator: '=',
-            left: makeDummyIdentifierNode(set_variable.sym),
+            left: makeDummyIdentifierNode(encode(set_variable.sym)),
             right: set_value
           }
 
           control.push(assignment as es.AssignmentExpression)
-
+          return
         case 'if':
           const condition = parsedList[1]
           const consequent = parsedList[2]
@@ -223,20 +227,21 @@ export function schemeEval(
           }
 
           control.push(conditional as es.ConditionalExpression)
-
+          return
         case 'begin':
           // begin is a sequence of expressions
           // that are evaluated in order.
-          // we can just push the expressions to the control.
-          for (let i = 1; i < parsedList.length; i++) {
+          // push the expressions to the control in reverse
+          for (let i = parsedList.length - 1; i > 0; i--) {
             control.push(parsedList[i])
           }
-
+          return
         case 'quote':
           // quote is a special form that returns the expression
           // as is, without evaluating it.
           // we can just push the expression to the stash.
           stash.push(parsedList[1])
+          return
         /*
         quasiquote can be represented using
         macros!
@@ -282,7 +287,6 @@ export function schemeEval(
           patterns.addPattern(syntaxName.sym, transformers)
           return
       }
-      return
     }
     // if we get to this point, then it is a function call.
     // convert it into an es.CallExpression and push it to the control.
@@ -297,8 +301,10 @@ export function schemeEval(
     control.push(appln as es.CallExpression)
     return
   } else if (command instanceof _Symbol) {
-    // do something else
-    stash.push(getVariable(context, command.sym, makeDummyIdentifierNode(command.sym)))
+    // get the value of the symbol from the environment
+    // associated with this symbol.
+    const encodedName = encode(command.sym)
+    stash.push(getVariable(context, encodedName, makeDummyIdentifierNode(command.sym)))
     return
   }
   // if we get to this point of execution, it is just some primitive value.

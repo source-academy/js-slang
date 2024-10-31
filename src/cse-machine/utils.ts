@@ -4,7 +4,7 @@ import { isArray, isFunction } from 'lodash'
 import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import type { Environment, Node, StatementSequence, Value } from '../types'
+import { Chapter, type Environment, type Node, type StatementSequence, type Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import Heap from './heap'
 import * as instr from './instrCreator'
@@ -422,7 +422,12 @@ export function defineVariable(
 ) {
   const environment = currentEnvironment(context)
 
-  if (environment.head[name] !== UNASSIGNED_CONST && environment.head[name] !== UNASSIGNED_LET) {
+  // we disable this check for full scheme due to the inability to scan for variables before usage
+  if (
+    environment.head[name] !== UNASSIGNED_CONST &&
+    environment.head[name] !== UNASSIGNED_LET &&
+    context.chapter !== Chapter.FULL_SCHEME
+  ) {
     return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
   }
 
@@ -740,10 +745,17 @@ export const isEnvDependent = (command: ControlItem): boolean => {
         break
     }
   }
-  // TODO deal with scheme control items
-  // for now, as per the CSE machine paper,
+  // as per the CSE machine paper,
   // we decide to ignore environment optimizations
-  // for scheme control items :P
+  // for scheme control items
+
+  // if the command is a primitive, it is not environment dependent
+  // commands are allowed to be in the control now due to the
+  // scheme CSEP machine.
+  // avoid attempting to add attributes to it.
+  if (typeof command === 'string' || typeof command === 'boolean') {
+    return isDependent
+  }
   command.isEnvDependent = isDependent
   return isDependent
 }
