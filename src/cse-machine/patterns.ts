@@ -6,6 +6,7 @@
 import { List, Pair } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { flattenList, isList } from './scheme-macros'
+import { atomic_equals, is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 
 // a single pattern stored within the patterns component
 // may have several transformers attributed to it.
@@ -24,7 +25,7 @@ export class Transformer {
 // given a matching transformer,
 // the macro_transform() function will transform a list
 // into the template of the transformer.
-export function macro_transform(input: List, transformer: Transformer): List {
+export function macro_transform(input: any, transformer: Transformer): any {
   const collected = collect(input, transformer.pattern, transformer.literals)
   return transform(transformer.template, collected)
 }
@@ -33,14 +34,18 @@ export function arrayToList(arr: any[]): List {
   if (arr.length === 0) {
     return null
   }
-  return [arr[0], arrayToList(arr.slice(1))]
+  const pair: any[] = [arr[0], arrayToList(arr.slice(1))] as any[]
+  ;(pair as any).pair = true
+  return pair as List
 }
 
-function arrayToImproperList(arr: any[], last: any): any {
+export function arrayToImproperList(arr: any[], last: any): any {
   if (arr.length === 0) {
     return last
   }
-  return [arr[0], arrayToImproperList(arr.slice(1), last)]
+  const pair: any[] = [arr[0], arrayToImproperList(arr.slice(1), last)] as any[]
+  ;(pair as any).pair = true
+  return pair
 }
 
 export function isImproperList(value: any): boolean {
@@ -62,15 +67,20 @@ export function flattenImproperList(value: any): [any[], any] {
 
 // we use the match() function to match a list against a pattern and literals
 // and verify if it is a match.
-export function match(
-  input: any,
-  pattern: List | Pair<any, any> | _Symbol,
-  literals: string[]
-): boolean {
+export function match(input: any, pattern: any, literals: string[]): boolean {
+  // deal with the cases where the pattern is a literal - a Scheme Number, string, or boolean
+  if (typeof pattern === 'string' || typeof pattern === 'boolean') {
+    return input === pattern
+  }
+
+  if (is_number(pattern)) {
+    return atomic_equals(input, pattern)
+  }
+
   if (pattern instanceof _Symbol && !literals.includes(pattern.sym)) {
     // this will match whatever the input list is unless it is
     // a literal in the literals list. (ie syntax)
-    return !(input instanceof _Symbol && !literals.includes(input.sym))
+    return !(input instanceof _Symbol && literals.includes(input.sym))
   }
 
   if (pattern instanceof _Symbol && literals.includes(pattern.sym)) {
@@ -80,31 +90,31 @@ export function match(
 
   // at this point, we know that the pattern is a list or improper list
   // make sure that the input is one too.
-  if (!isList(input) || !isImproperList(input)) {
+  if (!isList(input) && !isImproperList(input)) {
     return false
   }
 
-  // make sure that both the pattern and input match each other.
-  // they should both be lists or improper lists, with no mix.
-  if (isImproperList(pattern) !== isImproperList(input)) {
-    return false
+  // we know that both the pattern and inputs are at least pairs now.
+  // we can take the head and tails of both.
+  if (isImproperList(pattern)) {
+    if (input === null) {
+      return false
+    }
+    const [patternHead, patternTail] = pattern as [any, any]
+    const [inputHead, inputTail] = input as [any, any]
+    return match(inputHead, patternHead, literals) && match(inputTail, patternTail, literals)
   }
 
-  // in the case that both the pattern and input are improper lists,
-  if (isImproperList(pattern) && isImproperList(input)) {
-    const [patternItems, patternLast] = flattenImproperList(pattern)
-    const [inputItems, inputLast] = flattenImproperList(input)
-    // match the first element of the list with the first element of the pattern
-    return (
-      match(arrayToList(inputItems), arrayToList(patternItems), literals) &&
-      match(inputLast, patternLast, literals)
-    )
+  // at this point, the pattern is a list.
+  // if the input is not a list, it can't match.
+  if (!isList(input)) {
+    return false
   }
 
   // now we know that both the pattern and list are lists.
   // we can match the elements of the list against the pattern,
   // but we also need to compare and check for the ... syntax.
-  if ((input == pattern) == null) {
+  if (input === null && pattern === null) {
     return true
   }
 
@@ -155,8 +165,7 @@ export function match(
     return true
   }
 
-  // we assume for now that ... cannot appear elsewhere in this level of the pattern, except at the end.
-  // so here, we have no ... syntax.
+  // here, we have no ... syntax.
 
   // we can just compare the elements of the list with the pattern.
   if (inputList.length !== patternList.length) {
@@ -174,12 +183,17 @@ export function match(
 
 // once a pattern is matched, we need to collect all of the matched variables.
 // ONLY called on matching patterns.
-function collect(
-  input: any,
-  pattern: List | Pair<any, any> | _Symbol,
-  literals: string[]
-): Map<string, any[]> {
+function collect(input: any, pattern: any, literals: string[]): Map<string, any[]> {
   const collected = new Map<string, (List | _Symbol)[]>()
+  // deal with the cases where the pattern is a literal - a Scheme Number, string, or boolean
+  if (typeof pattern === 'string' || typeof pattern === 'boolean') {
+    return collected
+  }
+
+  if (is_number(pattern)) {
+    return collected
+  }
+
   if (pattern instanceof _Symbol && !literals.includes(pattern.sym)) {
     // collect the matching input here
     collected.set(pattern.sym, [input])
@@ -191,24 +205,24 @@ function collect(
     return collected
   }
 
-  if (pattern instanceof _Symbol && pattern.sym === '_') {
+  if (pattern instanceof _Symbol && (pattern.sym === '_' || pattern.sym === '...')) {
     // don't collect anything
     return collected
   }
 
-  // if one is an improper list, the other should be as well.
+  // match on an improper list pattern
   if (isImproperList(pattern)) {
-    const [patternItems, patternLast] = flattenImproperList(pattern)
-    const [inputItems, inputLast] = flattenImproperList(input)
+    const [patternHead, patternTail] = pattern as [any, any]
+    const [inputHead, inputTail] = input as [any, any]
 
-    // collect the proper list items
-    const collectedFirst = collect(arrayToList(inputItems), arrayToList(patternItems), literals)
+    // collect the head
+    const collectedFirst = collect(inputHead, patternHead, literals)
     for (const [key, value] of collectedFirst) {
       collected.set(key, value)
     }
 
-    // collect the improper list ending
-    const collectedSecond = collect(inputLast, patternLast, literals)
+    // collect the tail
+    const collectedSecond = collect(inputTail, patternTail, literals)
     for (const [key, value] of collectedSecond) {
       collected.set(key, value)
     }
@@ -303,24 +317,36 @@ function collect(
 // when matched against a pattern, we use the transform() function
 // to transform the list into the template.
 // returns a list, a pair, or any value, as determined by the template.
-function transform(template: List | Pair<any, any> | _Symbol, collected: Map<string, any[]>): any {
+function transform(template: any, collected: Map<string, any[]>, indexToCollect: number = 0): any {
+  // deal with the cases where the template is a literal - a Scheme Number, string, or boolean
+  if (typeof template === 'string' || typeof template === 'boolean') {
+    return template
+  }
+
+  if (is_number(template)) {
+    return template
+  }
+
   if (template instanceof _Symbol) {
     if (collected.has(template.sym)) {
       // get the item from the collected list,
       // remove it from the collected list,
       // and return it.
-      const item = (collected.get(template.sym) as any[]).shift()
+      const item = (collected.get(template.sym) as any[])[indexToCollect]
       return item
     }
     return template
   }
 
   if (isImproperList(template)) {
-    const [items, last] = flattenImproperList(template)
+    const [head, tail] = template as [any, any]
     // assemble both parts of the template separately
-    const firstPart = flattenList(transform(arrayToList(items), collected))
-    const secondPart = transform(last, collected)
-    return arrayToImproperList(firstPart, secondPart)
+    const firstPart = flattenList(transform(head, collected))
+    const secondPart = transform(tail, collected)
+
+    const newPair = [firstPart, secondPart] as any[]
+    ;(newPair as any).pair = true
+    return newPair
   }
 
   // at this point, its a list.
@@ -338,95 +364,73 @@ function transform(template: List | Pair<any, any> | _Symbol, collected: Map<str
     return templateList[1]
   }
 
-  // we need to deal with any ... syntax as well.
-  // there is only one at the 1D flattened list level, and we need to deal with it.
-  const ellipsisIndex = templateList.findIndex(
-    elem => elem instanceof _Symbol && elem.sym === '...'
-  )
-
-  if (ellipsisIndex !== -1) {
-    const frontTemplateLength = ellipsisIndex
-    const ellipsisTemplate = templateList[ellipsisIndex + 1]
-    const backTemplateLength = templateList.length - ellipsisIndex - 1
-
-    const transformedList = []
-
-    // transform the front of the list
-    for (let i = 0; i < frontTemplateLength; i++) {
-      transformedList.push(transform(templateList[i], collected))
-    }
-
-    // add the values from the ellipsis template
-    // (repeat the ellipsis template until the relevant collected items are exhausted)
-    // (the tricky part is that the repeated ellipsis template may
-    // refer to a list as well...)
-
-    // idea - track the relevant template items, and track them until they are exhausted.
-    // to my understanding, there should be no nested ellipsis templates, (as in repeats of ... in a template already repeated)
-    // as there would be no way to equally distribute the collected items.
-
-    // deal with the ellipsis template based on 3 cases: symbol, list, or improper list.
-    if (ellipsisTemplate instanceof _Symbol) {
-      // if it is a symbol, we can just repeat it.
-      while (
-        collected.has(ellipsisTemplate.sym) &&
-        (collected.get(ellipsisTemplate.sym) as any[]).length > 0
-      ) {
-        transformedList.push(transform(ellipsisTemplate, collected))
+  // collects all items in an ellipsis template to be used in the final list.
+  function deepFlatten(pair: Pair<any, any>): _Symbol[] {
+    const items: _Symbol[] = []
+    function flattenHelper(item: any) {
+      if (item instanceof _Symbol && item.sym !== '...') {
+        items.push(item)
+      } else if (item === null) {
+        return
+      } else if (item instanceof Array && item.length === 2) {
+        // based on the usage of (... <value>),
+        // and our previous discussion on the viability
+        // of ... within the ellipsis template
+        // we can assume that any ellipsis used is used to halt macro expansion of <value>.
+        if (item[0] instanceof _Symbol && item[0].sym === '...') {
+          // do not collect any items here, this halts the collection
+          return
+        }
+        // if its a pair, traverse both car and cdr
+        flattenHelper(item[0])
+        flattenHelper(item[1])
       }
-    } else if (isList(ellipsisTemplate) || isImproperList(ellipsisTemplate)) {
-      function deepFlatten(pair: Pair<any, any>): any[] {
-        const items: any[] = []
-        function flattenHelper(item: any) {
-          if (item instanceof _Symbol && item.sym !== '...') {
-            items.push(item)
-          } else if (item === null) {
-            return
-          } else if (item instanceof Array && item.length === 2) {
-            // based on the usage of (... <value>),
-            // and our previous discussion on the viability
-            // of ... within the ellipsis template
-            // we can assume that any ellipsis used is used to halt macro expansion of <value>.
-            if (item[0] instanceof _Symbol && item[0].sym === '...') {
-              // do not collect any items here, this halts the collection
-              return
-            }
-            // if its a pair, traverse both car and cdr
-            flattenHelper(item[0])
-            flattenHelper(item[1])
+    }
+    flattenHelper(pair)
+    return items
+  }
+
+  const transformedList: any[] = []
+  let lastEllipsisTemplate: any
+
+  // collect all items in the working list,
+  // using the ellipsis templates if we need to.
+  for (let i = 0; i < templateList.length; i++) {
+    if (templateList[i] instanceof _Symbol && templateList[i].sym === '...') {
+      // if we have an ellipsis, collect all items as necessary.
+      // we track these items, and apply the last ellipsis template again
+      // until these items are exhausted.
+      const items = deepFlatten(lastEllipsisTemplate)
+      // start at 1, since the first item has already been collected once.
+      let collectingIndex = 1
+      while (true) {
+        // check if all items are exhausted
+        let itemsAreExhausted = false
+        for (let i = 0; i < items.length; i++) {
+          if (!collected.has(items[i].sym)) {
+            itemsAreExhausted = true
+            break
+          }
+          if (
+            collected.has(items[i].sym) &&
+            (collected.get(items[i].sym) as any[]).length <= collectingIndex
+          ) {
+            itemsAreExhausted = true
+            break
           }
         }
-        flattenHelper(pair)
-        return items
+        if (itemsAreExhausted) {
+          break
+        }
+        // apply the last ellipsis template again
+        transformedList.push(transform(lastEllipsisTemplate, collected, collectingIndex))
+        collectingIndex++
       }
-
-      // collect all the items in the ellipsis template
-      const ellipsisTemplateList = deepFlatten(ellipsisTemplate as Pair<any, any>)
-
-      // all we need is to track some symbol in the ellipsis template, and make sure that it is exhausted.
-      while (
-        collected.has(ellipsisTemplateList[0].sym) &&
-        (collected.get(ellipsisTemplateList[0].sym) as any[]).length > 0
-      ) {
-        transformedList.push(transform(ellipsisTemplate, collected))
-      }
+      continue
     }
-
-    // transform the back of the list
-    for (let i = templateList.length - backTemplateLength; i < templateList.length; i++) {
-      transformedList.push(transform(templateList[i], collected))
-    }
-
-    return arrayToList(transformedList)
-  }
-
-  // if there is no ... syntax, we can just evaluate the list as is.
-  // use iteration, as we are not sure that map evaluates left to right.
-  const transformedList = []
-
-  for (let i = 0; i < templateList.length; i++) {
+    // store this template for any ellipsis.
+    lastEllipsisTemplate = templateList[i]
     transformedList.push(transform(templateList[i], collected))
   }
-
   return arrayToList(transformedList)
 }

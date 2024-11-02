@@ -213,7 +213,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     context.runtime.isRunning = true
     context.runtime.control = new Control(program)
     context.runtime.stash = new Stash()
-    context.runtime.patterns = new Pattern()
+    context.runtime.patterns = context.runtime.patterns ? context.runtime.patterns : new Pattern()
     return runCSEMachine(
       context,
       context.runtime.control,
@@ -368,11 +368,11 @@ export function* generateCSEMachineStateStream(
 
   // Push first node to be evaluated into context.
   // The typeguard is there to guarantee that we are pushing a node (which should always be the case)
-  if (command && isNode(command)) {
+  if (command !== undefined && isNode(command)) {
     context.runtime.nodes.unshift(command)
   }
 
-  while (command) {
+  while (command !== undefined) {
     // Return to capture a snapshot of the control and stash after the target step count is reached
     if (!isPrelude && steps === envSteps) {
       yield { stash, control, steps }
