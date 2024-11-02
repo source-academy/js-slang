@@ -144,13 +144,14 @@ export function schemeEval(
             rest = args
           } else if (isImproperList(args)) {
             ;[argsList, rest] = flattenImproperList(args)
-            argsList.forEach(arg => {
+            argsList.forEach((arg: any) => {
               if (!(arg instanceof _Symbol)) {
                 return handleRuntimeError(
                   context,
                   new errors.ExceptionError(new Error('Invalid arguments for lambda!'))
                 )
               }
+              return
             })
             if (rest !== null && !(rest instanceof _Symbol)) {
               return handleRuntimeError(
@@ -160,13 +161,14 @@ export function schemeEval(
             }
           } else if (isList(args)) {
             argsList = flattenList(args) as _Symbol[]
-            argsList.forEach(arg => {
+            argsList.forEach((arg: any) => {
               if (!(arg instanceof _Symbol)) {
                 return handleRuntimeError(
                   context,
                   new errors.ExceptionError(new Error('Invalid arguments for lambda!'))
                 )
               }
+              return
             })
           } else {
             return handleRuntimeError(
@@ -177,7 +179,7 @@ export function schemeEval(
 
           // convert the args to estree pattern
           const params: (es.Identifier | es.RestElement)[] = argsList.map(arg =>
-            makeDummyIdentifierNode(arg.sym)
+            makeDummyIdentifierNode(encode(arg.sym))
           )
 
           let body_elements = parsedList.slice(2)
@@ -189,7 +191,7 @@ export function schemeEval(
           if (rest !== null) {
             params.push({
               type: 'RestElement',
-              argument: makeDummyIdentifierNode(rest.sym)
+              argument: makeDummyIdentifierNode(encode(rest.sym))
             })
             body = arrayToList([
               new _Symbol('begin'),
@@ -206,11 +208,10 @@ export function schemeEval(
           const lambda = {
             type: 'ArrowFunctionExpression',
             params: params,
-            body: body as any,
-            modified: true
+            body: convertToEvalExpression(body)
           }
 
-          control.push(lambda as unknown as es.ArrowFunctionExpression)
+          control.push(lambda as es.ArrowFunctionExpression)
           return
 
         case 'define':
@@ -269,10 +270,9 @@ export function schemeEval(
               {
                 type: 'VariableDeclarator',
                 id: makeDummyIdentifierNode(encode(variable.sym)),
-                init: value
+                init: convertToEvalExpression(value)
               }
-            ],
-            modified: true
+            ]
           }
 
           control.push(definition as es.VariableDeclaration)
@@ -298,8 +298,7 @@ export function schemeEval(
             type: 'AssignmentExpression',
             operator: '=',
             left: makeDummyIdentifierNode(encode(set_variable.sym)),
-            right: set_value,
-            modified: true
+            right: convertToEvalExpression(set_value)
           }
 
           control.push(assignment as es.AssignmentExpression)
@@ -328,10 +327,9 @@ export function schemeEval(
           // estree ConditionalExpression
           const conditional = {
             type: 'ConditionalExpression',
-            test: truthyCondition as any,
-            consequent,
-            alternate,
-            modified: true
+            test: convertToEvalExpression(truthyCondition),
+            consequent: convertToEvalExpression(consequent),
+            alternate: alternate ? convertToEvalExpression(alternate) : undefined
           }
 
           control.push(conditional as es.ConditionalExpression)
@@ -398,10 +396,15 @@ export function schemeEval(
           // at this point, we assume that syntax-rules is verified
           // and parsed correctly already.
           const syntaxRulesList = flattenList(syntaxRules)
-          if (!(syntaxRulesList[0] instanceof _Symbol) || syntaxRulesList[0].sym !== 'syntax-rules') {
+          if (
+            !(syntaxRulesList[0] instanceof _Symbol) ||
+            syntaxRulesList[0].sym !== 'syntax-rules'
+          ) {
             return handleRuntimeError(
               context,
-              new errors.ExceptionError(new Error('define-syntax requires a syntax-rules transformer!'))
+              new errors.ExceptionError(
+                new Error('define-syntax requires a syntax-rules transformer!')
+              )
             )
           }
           if (syntaxRulesList.length < 3) {
@@ -441,8 +444,8 @@ export function schemeEval(
     const appln = {
       type: 'CallExpression',
       optional: false,
-      callee: procedure,
-      arguments: args
+      callee: convertToEvalExpression(procedure) as es.Expression,
+      arguments: args.map(convertToEvalExpression) // unfortunately, each one needs to be converted.
     }
     control.push(appln as es.CallExpression)
     return
@@ -510,167 +513,101 @@ export function makeDummyEvalExpression(callee: string, argument: string): es.Ca
 }
 
 /**
- * Because we have passed estree nodes with list elements
- * to the control, if any future estree functions require 
- * the values within the nodes to be evaluated, we use this
- * function to re-parse the modified estree nodes to avoid any errors.
+ * Convert a scheme expression (that is meant to be evaluated)
+ * into an estree expression, using eval.
+ * this will let us avoid the "hack" of storing Scheme lists
+ * in estree nodes.
+ * @param expression
+ * @returns estree expression
  */
-export function reparseEstreeNode(node: any): es.Node {
-  // if the node is an estree node, we recursively reparse it.
-  if (node.type) {
-    if (!node.modified) {
-      return node
-    }
-    switch (node.type) {
-      case 'ArrowFunctionExpression':
-        return {
-          type: 'ArrowFunctionExpression',
-          params: node.params.map((param: any) => reparseEstreeNode(param) as es.Identifier | es.RestElement),
-          body: reparseEstreeNode(node.body) as es.BlockStatement
-        } as es.Node
-      case 'VariableDeclaration':
-        return {
-          type: 'VariableDeclaration',
-          kind: node.kind,
-          declarations: node.declarations.map((decl: any) => reparseEstreeNode(decl) as es.VariableDeclarator)
-        } as es.Node
-      case 'VariableDeclarator':
-        return {
-          type: 'VariableDeclarator',
-          id: reparseEstreeNode(node.id) as es.Identifier,
-          init: reparseEstreeNode(node.init)
-        } as es.Node
-      case 'AssignmentExpression':
-        return {
-          type: 'AssignmentExpression',
-          operator: node.operator,
-          left: reparseEstreeNode(node.left) as es.Identifier,
-          right: reparseEstreeNode(node.right)
-        } as es.Node
-      case 'ConditionalExpression':
-        return {
-          type: 'ConditionalExpression',
-          test: reparseEstreeNode(node.test),
-          consequent: reparseEstreeNode(node.consequent),
-          alternate: reparseEstreeNode(node.alternate)
-        } as es.Node
-      case 'CallExpression':
-        return {
-          type: 'CallExpression',
-          optional: false,
-          callee: reparseEstreeNode(node.callee),
-          arguments: node.arguments.map((arg: any) => reparseEstreeNode(arg))
-        } as es.Node
-      case 'Identifier':
-        return {
+export function convertToEvalExpression(expression: SchemeControlItems): es.CallExpression {
+  function convertToEstreeExpression(expression: SchemeControlItems): es.Expression {
+    /*
+    cases to consider:
+    - list
+    - pair/improper list
+    - symbol
+    - number
+    - boolean
+    - string
+    */
+    if (isList(expression)) {
+      // make a call expression to list
+      // with the elements of the list as its arguments.
+      const args = flattenList(expression).map(convertToEstreeExpression)
+      return {
+        type: 'CallExpression',
+        optional: false,
+        callee: {
           type: 'Identifier',
-          name: node.name
-        } as es.Node
-      case 'RestElement':
-        return {
-          type: 'RestElement',
-          argument: reparseEstreeNode(node.argument) as es.Identifier
-        } as es.Node
-      default:
-        // no other node was touched by schemeEval.
-        // return it as is.
-        return node
+          name: 'list'
+        },
+        arguments: args
+      }
+    } else if (isImproperList(expression)) {
+      // make a call to cons
+      // with the car and cdr as its arguments.
+      const [car, cdr] = expression as [SchemeControlItems, SchemeControlItems]
+      return {
+        type: 'CallExpression',
+        optional: false,
+        callee: {
+          type: 'Identifier',
+          name: 'cons'
+        },
+        arguments: [convertToEstreeExpression(car), convertToEstreeExpression(cdr)]
+      }
+    } else if (expression instanceof _Symbol) {
+      // make a call to string->symbol
+      // with the symbol name as its argument.
+      return {
+        type: 'CallExpression',
+        optional: false,
+        callee: {
+          type: 'Identifier',
+          name: encode('string->symbol')
+        },
+        arguments: [
+          {
+            type: 'Literal',
+            value: expression.sym
+          }
+        ]
+      }
+    } else if (is_number(expression)) {
+      // make a call to string->number
+      // with the number toString() as its argument.
+      return {
+        type: 'CallExpression',
+        optional: false,
+        callee: {
+          type: 'Identifier',
+          name: encode('string->number')
+        },
+        arguments: [
+          {
+            type: 'Literal',
+            value: (expression as any).toString()
+          }
+        ]
+      }
+    }
+    // if we're here, then it is a boolean or string.
+    // just return the literal value.
+    return {
+      type: 'Literal',
+      value: expression as boolean | string
     }
   }
-  // if the node is not an estree node, there are several possibilities:
-  // 1. it is a list/improper list
-  // 2. it is a symbol
-  // 3. it is a number
-  // 4. it is a boolean
-  // 5. it is a string
-  // we need to handle each of these cases.
-  if (isList(node)) {
-    // if it is a list, we can be lazy and reparse the list as a
-    // CallExpression to the list procedure- followed by a call to eval.
-    // this will ensure that the list is evaluated.
 
-    // this also handles null.
-    const items = flattenList(node)
-    const evalledItems = items.map((item: any) => reparseEstreeNode(item))
-    const listCall = {
-      type: 'CallExpression',
-      optional: false,
-      callee: {
-        type: 'Identifier',
-        name: 'list'
-      },
-      arguments: evalledItems
-    }
-    return {
-      type: 'CallExpression',
-      optional: false,
-      callee: {
-        type: 'Identifier',
-        name: encode('eval')
-      },
-      arguments: [listCall as es.CallExpression]
-    }
-  } else if (isImproperList(node)) {
-    // we can treat the improper list as a recursive CallExpression of cons
-    // followed by a call to eval.
-    const pairCall = {
-      type: 'CallExpression',
-      optional: false,
-      callee: {
-        type: 'Identifier',
-        name: 'cons'
-      },
-      arguments: [
-        reparseEstreeNode(node[0]),
-        reparseEstreeNode(node[1])
-      ]
-    }
-    return {
-      type: 'CallExpression',
-      optional: false,
-      callee: {
-        type: 'Identifier',
-        name: encode('eval')
-      },
-      arguments: [pairCall as es.CallExpression]
-    }
-  } else if (node instanceof _Symbol) {
-    // if it is a symbol, we can just return an Identifier node.
-    return {
-      type: 'Identifier',
-      name: node.sym
-    }
-  } else if (is_number(node)) {
-    // if it is a number, we treat it as a call to
-    // the string->number function.
-    return {
-      type: 'CallExpression',
-      optional: false,
-      callee: {
-        type: 'Identifier',
-        name: encode('string->number')
-      },
-      arguments: [
-        {
-          type: 'Literal',
-          value: node.toString()
-        }
-      ]
-    }
-  } else if (typeof node === 'boolean') {
-    return {
-      type: 'Literal',
-      value: node
-    }
-  } else if (typeof node === 'string') {
-    return {
-      type: 'Literal',
-      value: node
-    }
-  }
-  // if we get to this point, just return undefined
+  // make a call expression to eval with the single expression as its component.
   return {
-    type: 'Literal',
-    value: "undefined"
+    type: 'CallExpression',
+    optional: false,
+    callee: {
+      type: 'Identifier',
+      name: encode('eval')
+    },
+    arguments: [convertToEstreeExpression(expression) as es.Expression]
   }
 }
