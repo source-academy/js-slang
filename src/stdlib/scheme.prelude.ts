@@ -92,9 +92,33 @@ export const scheme3Prelude = `
 `
 
 export const scheme4Prelude = `
-;; empty for now
+(define call-with-current-continuation call/cc)
 `
 
 export const schemeFullPrelude = `
-(define call-with-current-continuation call/cc)
+(define-syntax let (syntax-rules () ((_ ((name val) ...) body ...) ((lambda (name ...) body ...) val ...))))
+(define-syntax quasiquote
+    (syntax-rules (unquote unquote-splicing)
+        ((_ (unquote x)) x)
+        ((_ ((unquote-splicing x) . rest))
+            (append x (quasiquote rest)))
+        ((_ (a . rest))
+            (cons (quasiquote a) (quasiquote rest)))        
+        ((_ x) (quote x))))
+(define-syntax cond
+  (syntax-rules (else)
+    ((_) (if #f #f))
+    
+    ((_ (else val ...))
+     (begin val ...))
+    
+    ((_ (test val ...))
+     (if test
+         (begin val ...)
+         (cond)))
+    
+    ((_ (test val ...) next-clauses ...)
+     (if test
+         (begin val ...)
+         (cond next-clauses ...)))))
 `

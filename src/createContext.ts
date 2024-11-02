@@ -39,6 +39,7 @@ import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 import { schemeVisualise } from './alt-langs/scheme/scheme-mapper'
 import { csep_eval } from './cse-machine/scheme-macros'
+import { Pattern } from './cse-machine/interpreter'
 
 export class LazyBuiltIn {
   func: (...arg0: any) => any
@@ -118,6 +119,7 @@ const createEmptyRuntime = () => ({
   nodes: [],
   control: null,
   stash: null,
+  patterns: new Pattern(),
   objectCount: 0,
   envSteps: -1,
   envStepsTotal: 0,
