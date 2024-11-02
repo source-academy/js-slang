@@ -125,6 +125,12 @@ export function schemeEval(
       // the logic will be handled here.
       switch (parsedList[0].sym) {
         case 'lambda':
+          if (parsedList.length < 3) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('lambda requires at least 2 arguments!'))
+            )
+          }
           // return a lambda expression that takes
           // in the arguments, and returns the body
           // as an eval of the body.
@@ -138,8 +144,35 @@ export function schemeEval(
             rest = args
           } else if (isImproperList(args)) {
             ;[argsList, rest] = flattenImproperList(args)
-          } else {
+            argsList.forEach(arg => {
+              if (!(arg instanceof _Symbol)) {
+                return handleRuntimeError(
+                  context,
+                  new errors.ExceptionError(new Error('Invalid arguments for lambda!'))
+                )
+              }
+            })
+            if (rest !== null && !(rest instanceof _Symbol)) {
+              return handleRuntimeError(
+                context,
+                new errors.ExceptionError(new Error('Invalid arguments for lambda!'))
+              )
+            }
+          } else if (isList(args)) {
             argsList = flattenList(args) as _Symbol[]
+            argsList.forEach(arg => {
+              if (!(arg instanceof _Symbol)) {
+                return handleRuntimeError(
+                  context,
+                  new errors.ExceptionError(new Error('Invalid arguments for lambda!'))
+                )
+              }
+            })
+          } else {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('Invalid arguments for lambda!'))
+            )
           }
 
           // convert the args to estree pattern
@@ -181,6 +214,12 @@ export function schemeEval(
           return
 
         case 'define':
+          if (parsedList.length < 3) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('define requires at least 2 arguments!'))
+            )
+          }
           const variable = parsedList[1]
           if (isList(variable)) {
             // then this define is actually a function definition
@@ -209,6 +248,17 @@ export function schemeEval(
             ])
             control.push(define_function as any)
             return
+          } else if (!(variable instanceof _Symbol)) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('Invalid variable for define!'))
+            )
+          }
+          if (parsedList.length !== 3) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('define requires 2 arguments!'))
+            )
           }
           const value = parsedList[2]
           // estree VariableDeclaration
@@ -228,7 +278,19 @@ export function schemeEval(
           control.push(definition as es.VariableDeclaration)
           return
         case 'set!':
+          if (parsedList.length !== 3) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('set! requires 2 arguments!'))
+            )
+          }
           const set_variable = parsedList[1]
+          if (!(set_variable instanceof _Symbol)) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('Invalid arguments for set!'))
+            )
+          }
           const set_value = parsedList[2]
 
           // estree AssignmentExpression
@@ -243,6 +305,18 @@ export function schemeEval(
           control.push(assignment as es.AssignmentExpression)
           return
         case 'if':
+          if (parsedList.length < 3) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('if requires at least 2 arguments!'))
+            )
+          }
+          if (parsedList.length > 4) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('if requires at most 3 arguments!'))
+            )
+          }
           const condition = parsedList[1]
           const consequent = parsedList[2]
           // check if there is an alternate
@@ -266,6 +340,14 @@ export function schemeEval(
           // begin is a sequence of expressions
           // that are evaluated in order.
           // push the expressions to the control in reverse
+          // order.
+          if (parsedList.length < 2) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('begin requires at least 1 argument!'))
+            )
+          }
+
           control.push(parsedList[parsedList.length - 1])
           for (let i = parsedList.length - 2; i > 0; i--) {
             control.push(popInstr(makeDummyIdentifierNode('pop')))
@@ -295,17 +377,49 @@ export function schemeEval(
         */
 
         case 'define-syntax':
+          if (parsedList.length !== 3) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('define-syntax requires 2 arguments!'))
+            )
+          }
           // parse the pattern and template here,
           // generate a list of transformers from it,
           // and add it to the Patterns component.
           const syntaxName = parsedList[1]
+          if (!(syntaxName instanceof _Symbol)) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('define-syntax requires a symbol!'))
+            )
+          }
           const syntaxRules = parsedList[2]
 
           // at this point, we assume that syntax-rules is verified
           // and parsed correctly already.
           const syntaxRulesList = flattenList(syntaxRules)
+          if (!(syntaxRulesList[0] instanceof _Symbol) || syntaxRulesList[0].sym !== 'syntax-rules') {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('define-syntax requires a syntax-rules transformer!'))
+            )
+          }
+          if (syntaxRulesList.length < 3) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('syntax-rules requires at least 2 arguments!'))
+            )
+          }
           const literalList = flattenList(syntaxRulesList[1])
-          const literals: string[] = literalList.map((literal: _Symbol) => literal.sym)
+          const literals: string[] = literalList.map((literal: _Symbol) => {
+            if (!(literal instanceof _Symbol)) {
+              return handleRuntimeError(
+                context,
+                new errors.ExceptionError(new Error('Invalid syntax-rules literals!'))
+              )
+            }
+            return literal.sym
+          })
           const rules = syntaxRulesList.slice(2)
           // rules are set as a list of patterns and templates.
           // we need to convert these into transformers.
@@ -472,8 +586,10 @@ export function reparseEstreeNode(node: any): es.Node {
   // we need to handle each of these cases.
   if (isList(node)) {
     // if it is a list, we can be lazy and reparse the list as a
-    // CallExpression to the list. followed by a call to eval.
+    // CallExpression to the list procedure- followed by a call to eval.
     // this will ensure that the list is evaluated.
+
+    // this also handles null.
     const items = flattenList(node)
     const evalledItems = items.map((item: any) => reparseEstreeNode(item))
     const listCall = {
@@ -490,7 +606,7 @@ export function reparseEstreeNode(node: any): es.Node {
       optional: false,
       callee: {
         type: 'Identifier',
-        name: 'eval'
+        name: encode('eval')
       },
       arguments: [listCall as es.CallExpression]
     }
@@ -514,7 +630,7 @@ export function reparseEstreeNode(node: any): es.Node {
       optional: false,
       callee: {
         type: 'Identifier',
-        name: 'eval'
+        name: encode('eval')
       },
       arguments: [pairCall as es.CallExpression]
     }
@@ -532,7 +648,7 @@ export function reparseEstreeNode(node: any): es.Node {
       optional: false,
       callee: {
         type: 'Identifier',
-        name: 'string->number'
+        name: encode('string->number')
       },
       arguments: [
         {
