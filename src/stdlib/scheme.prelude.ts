@@ -96,7 +96,11 @@ export const scheme4Prelude = `
 `
 
 export const schemeFullPrelude = `
-(define-syntax let (syntax-rules () ((_ ((name val) ...) body ...) ((lambda (name ...) body ...) val ...))))
+(define-syntax let 
+    (syntax-rules () 
+        ((_ ((name val) ...) body restbody ...) 
+         ((lambda (name ...) body restbody ...) val ...))))
+
 (define-syntax quasiquote
     (syntax-rules (unquote unquote-splicing)
         ((_ (unquote x)) x)
@@ -105,20 +109,22 @@ export const schemeFullPrelude = `
         ((_ (a . rest))
             (cons (quasiquote a) (quasiquote rest)))        
         ((_ x) (quote x))))
+        
 (define-syntax cond
   (syntax-rules (else)
     ((_) (if #f #f))
-    
-    ((_ (else val ...))
-     (begin val ...))
-    
-    ((_ (test val ...))
+
+    ((_ (else val rest ...))
+     (begin val rest ...))
+
+    ((_ (test val rest ...))
      (if test
-         (begin val ...)
-         (cond)))
-    
-    ((_ (test val ...) next-clauses ...)
+         (begin val rest ...)
+         (cond))) 
+
+    ((_ (test val rest ...) next-clauses ...)
      (if test
-         (begin val ...)
+         (begin val rest ...)
          (cond next-clauses ...)))))
+
 `
