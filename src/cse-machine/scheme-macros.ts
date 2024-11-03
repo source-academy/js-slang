@@ -64,6 +64,21 @@ export function flattenList(value: any): any[] {
   return [value[0], ...flattenList(value[1])]
 }
 
+function isSpecialForm(sym: _Symbol): boolean {
+  return [
+    'lambda',
+    'define',
+    'set!',
+    'if',
+    'begin',
+    'quote',
+    'quasiquote',
+    'define-syntax',
+    'syntax-rules',
+    'eval'
+  ].includes(sym.sym)
+}
+
 export function schemeEval(
   command: SchemeControlItems,
   context: Context,
@@ -277,20 +292,7 @@ export function schemeEval(
             )
           }
           // make sure variable does not shadow a special form
-          if (
-            variable.sym in
-            [
-              'lambda',
-              'define',
-              'set!',
-              'if',
-              'begin',
-              'quote',
-              'quasiquote',
-              'define-syntax',
-              'syntax-rules'
-            ]
-          ) {
+          if (isSpecialForm(variable) && !isPrelude) {
             return handleRuntimeError(
               context,
               new errors.ExceptionError(
@@ -329,20 +331,7 @@ export function schemeEval(
             )
           }
           // make sure set_variable does not shadow a special form
-          if (
-            set_variable.sym in
-            [
-              'lambda',
-              'define',
-              'set!',
-              'if',
-              'begin',
-              'quote',
-              'quasiquote',
-              'define-syntax',
-              'syntax-rules'
-            ]
-          ) {
+          if (isSpecialForm(set_variable) && !isPrelude) {
             return handleRuntimeError(
               context,
               new errors.ExceptionError(
@@ -436,20 +425,7 @@ export function schemeEval(
             )
           }
           // make sure syntaxName does not shadow a special form
-          if (
-            syntaxName.sym in
-            [
-              'lambda',
-              'define',
-              'set!',
-              'if',
-              'begin',
-              'quote',
-              'quasiquote',
-              'define-syntax',
-              'syntax-rules'
-            ]
-          ) {
+          if (isSpecialForm(syntaxName) && !isPrelude) {
             return handleRuntimeError(
               context,
               new errors.ExceptionError(

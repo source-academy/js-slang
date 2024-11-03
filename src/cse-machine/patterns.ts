@@ -108,7 +108,7 @@ export function match(input: any, pattern: any, literals: string[]): boolean {
     return is_number(input) && atomic_equals(input, pattern)
   }
 
-  if (typeof pattern === 'string' || typeof pattern === 'boolean') {
+  if (typeof pattern === 'string' || typeof pattern === 'boolean' || typeof pattern === 'number') {
     return input === pattern
   }
 
@@ -239,7 +239,7 @@ export function match(input: any, pattern: any, literals: string[]): boolean {
 
 // once a pattern is matched, we need to collect all of the matched variables.
 // ONLY called on matching patterns.
-function collect(input: any, pattern: any, literals: string[]): Map<string, any[]> {
+export function collect(input: any, pattern: any, literals: string[]): Map<string, any[]> {
   const collected = new Map<string, (List | _Symbol)[]>()
   // we should compare the input and pattern based on the possible forms of pattern:
   // 1. an identifier
@@ -267,7 +267,7 @@ function collect(input: any, pattern: any, literals: string[]): Map<string, any[
     return collected
   }
 
-  if (typeof pattern === 'string' || typeof pattern === 'boolean') {
+  if (typeof pattern === 'string' || typeof pattern === 'boolean' || typeof pattern === 'number') {
     return collected
   }
 
@@ -405,7 +405,11 @@ function collect(input: any, pattern: any, literals: string[]): Map<string, any[
 // when matched against a pattern, we use the transform() function
 // to transform the list into the template.
 // returns a list, a pair, or any value, as determined by the template.
-function transform(template: any, collected: Map<string, any[]>, indexToCollect: number = 0): any {
+export function transform(
+  template: any,
+  collected: Map<string, any[]>,
+  indexToCollect: number = 0
+): any {
   // there are 5 possible forms of the template:
   // 1. an identifier
   // 2. a literal such as null, a number, a string, or a boolean
@@ -431,7 +435,11 @@ function transform(template: any, collected: Map<string, any[]>, indexToCollect:
     return null
   }
 
-  if (typeof template === 'string' || typeof template === 'boolean') {
+  if (
+    typeof template === 'string' ||
+    typeof template === 'boolean' ||
+    typeof template === 'number'
+  ) {
     return template
   }
 
