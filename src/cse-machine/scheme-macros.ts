@@ -276,6 +276,28 @@ export function schemeEval(
               new errors.ExceptionError(new Error('define requires 2 arguments!'))
             )
           }
+          // make sure variable does not shadow a special form
+          if (
+            variable.sym in
+            [
+              'lambda',
+              'define',
+              'set!',
+              'if',
+              'begin',
+              'quote',
+              'quasiquote',
+              'define-syntax',
+              'syntax-rules'
+            ]
+          ) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(
+                new Error('Cannot shadow special form ' + variable.sym + ' with a definition!')
+              )
+            )
+          }
           const value = parsedList[2]
           // estree VariableDeclaration
           const definition = {
@@ -304,6 +326,28 @@ export function schemeEval(
             return handleRuntimeError(
               context,
               new errors.ExceptionError(new Error('Invalid arguments for set!'))
+            )
+          }
+          // make sure set_variable does not shadow a special form
+          if (
+            set_variable.sym in
+            [
+              'lambda',
+              'define',
+              'set!',
+              'if',
+              'begin',
+              'quote',
+              'quasiquote',
+              'define-syntax',
+              'syntax-rules'
+            ]
+          ) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(
+                new Error('Cannot overwrite special form ' + set_variable.sym + ' with a value!')
+              )
             )
           }
           const set_value = parsedList[2]
@@ -373,22 +417,7 @@ export function schemeEval(
           // we can just push the expression to the stash.
           stash.push(parsedList[1])
           return
-        /*
-        quasiquote can be represented using
-        macros!
-
-        (define-syntax quasiquote
-          (syntax-rules (unquote unquote-splicing)
-            ((_ (unquote x)) x)
-            ((_ ((unquote-splicing x) . rest))
-              (append x (quasiquote rest)))
-
-            ((_ (a . rest))
-            (cons (quasiquote a) (quasiquote rest)))
-              
-            ((_ x) (quote x))))
-        */
-
+        // case 'quasiquote': quasiquote is implemented as a macro.
         case 'define-syntax':
           if (parsedList.length !== 3) {
             return handleRuntimeError(
@@ -404,6 +433,28 @@ export function schemeEval(
             return handleRuntimeError(
               context,
               new errors.ExceptionError(new Error('define-syntax requires a symbol!'))
+            )
+          }
+          // make sure syntaxName does not shadow a special form
+          if (
+            syntaxName.sym in
+            [
+              'lambda',
+              'define',
+              'set!',
+              'if',
+              'begin',
+              'quote',
+              'quasiquote',
+              'define-syntax',
+              'syntax-rules'
+            ]
+          ) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(
+                new Error('Cannot shadow special form ' + syntaxName.sym + ' with a macro!')
+              )
             )
           }
           const syntaxRules = parsedList[2]
@@ -450,6 +501,17 @@ export function schemeEval(
           // now we can add the transformers to the patterns component.
           patterns.addPattern(syntaxName.sym, transformers)
           return
+        case 'syntax-rules':
+          // syntax-rules is a special form that is used to define
+          // a set of transformers.
+          // it isn't meant to be evaluated outside of a define-syntax.
+          // throw an error.
+          return handleRuntimeError(
+            context,
+            new errors.ExceptionError(
+              new Error('syntax-rules must only exist within define-syntax!')
+            )
+          )
       }
     }
     // if we get to this point, then it is a function call.
