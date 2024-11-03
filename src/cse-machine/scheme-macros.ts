@@ -103,18 +103,33 @@ export function schemeEval(
         // find the first matching transformer
         for (const transformer of transformers) {
           // check if the transformer matches the list
-          if (match(command, transformer.pattern, transformer.literals)) {
-            // if it does, apply the transformer
-            const transformedMacro = macro_transform(command as List, transformer)
-            control.push(transformedMacro as ControlItem)
-            return
+          try {
+            if (match(command, transformer.pattern, transformer.literals)) {
+              // if it does, apply the transformer
+              const transformedMacro = macro_transform(command as List, transformer)
+              control.push(transformedMacro as ControlItem)
+              return
+            }
+          } catch (e) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(
+                new Error(
+                  'Error in macro-expanding ' +
+                    elem.sym +
+                    '! Are the template and pattern well formed?'
+                )
+              )
+            )
           }
         }
 
         // there is an error if we get to here
         return handleRuntimeError(
           context,
-          new errors.ExceptionError(new Error('No matching transformer found for macro'))
+          new errors.ExceptionError(
+            new Error('No matching transformer found for macro ' + elem.sym)
+          )
         )
       }
 
@@ -457,20 +472,36 @@ export function schemeEval(
       // find the first matching transformer
       for (const transformer of transformers) {
         // check if the transformer matches the list
-        if (match(command, transformer.pattern, transformer.literals)) {
-          // if it does, apply the transformer
-          const transformedMacro = macro_transform(command, transformer)
-          control.push(transformedMacro as ControlItem)
-          return
+        try {
+          if (match(command, transformer.pattern, transformer.literals)) {
+            // if it does, apply the transformer
+            const transformedMacro = macro_transform(command, transformer)
+            control.push(transformedMacro as ControlItem)
+            return
+          }
+        } catch (e) {
+          return handleRuntimeError(
+            context,
+            new errors.ExceptionError(
+              new Error(
+                'Error in macro-expanding ' +
+                  command.sym +
+                  '! Are the template and pattern well formed?'
+              )
+            )
+          )
         }
       }
 
       // there is an error if we get to here
       return handleRuntimeError(
         context,
-        new errors.ExceptionError(new Error('No matching transformer found for macro'))
+        new errors.ExceptionError(
+          new Error('No matching transformer found for macro ' + command.sym)
+        )
       )
     }
+
     // get the value of the symbol from the environment
     // associated with this symbol.
     const encodedName = encode(command.sym)

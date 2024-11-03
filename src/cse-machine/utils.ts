@@ -23,6 +23,24 @@ import Closure from './closure'
 import { Continuation, isCallWithCurrentContinuation } from './continuations'
 import { isEval } from './scheme-macros'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
+
+/**
+ * Typeguard for commands to check if they are scheme values.
+ *
+ * @param command A ControlItem
+ * @returns true if the ControlItem is a scheme value, false otherwise.
+ */
+export const isSchemeValue = (command: ControlItem): boolean => {
+  return (
+    command === null ||
+    typeof command === 'string' ||
+    typeof command === 'boolean' ||
+    isArray(command) ||
+    command instanceof _Symbol ||
+    is_number(command)
+  )
+}
 
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
@@ -31,6 +49,10 @@ import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
  * @returns true if the ControlItem is an instruction and false otherwise.
  */
 export const isInstr = (command: ControlItem): command is Instr => {
+  // this prevents us from reading properties of null
+  if (isSchemeValue(command)) {
+    return false
+  }
   return (command as Instr).instrType !== undefined
 }
 
@@ -41,6 +63,10 @@ export const isInstr = (command: ControlItem): command is Instr => {
  * @returns true if the ControlItem is a Node or StatementSequence, false if it is an instruction.
  */
 export const isNode = (command: ControlItem): command is Node => {
+  // this prevents us from reading properties of null
+  if (isSchemeValue(command)) {
+    return false
+  }
   return (command as Node).type !== undefined
 }
 
