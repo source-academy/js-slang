@@ -131,6 +131,9 @@ Node {
     },
   ],
   "end": 78,
+  "extra": Object {
+    "topLevelAwait": false,
+  },
   "interpreter": null,
   "loc": SourceLocation {
     "end": Position {

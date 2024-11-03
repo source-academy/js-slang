@@ -7,7 +7,6 @@ import { List, Pair } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { flattenList, isList } from './scheme-macros'
 import { atomic_equals, is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
-import { schemeVisualise } from '../alt-langs/scheme/scheme-mapper'
 
 // a single pattern stored within the patterns component
 // may have several transformers attributed to it.
