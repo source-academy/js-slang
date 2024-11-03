@@ -79,9 +79,6 @@ Node {
     },
   ],
   "end": 62,
-  "extra": Object {
-    "topLevelAwait": false,
-  },
   "interpreter": null,
   "loc": SourceLocation {
     "end": Position {
@@ -357,9 +354,6 @@ Node {
     },
   ],
   "end": 74,
-  "extra": Object {
-    "topLevelAwait": false,
-  },
   "interpreter": null,
   "loc": SourceLocation {
     "end": Position {
