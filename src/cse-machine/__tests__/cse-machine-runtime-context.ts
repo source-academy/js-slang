@@ -1,8 +1,11 @@
+import * as es from 'estree'
 import { IOptions } from '../..'
 import { mockContext } from '../../mocks/context'
+import { parse } from '../../parser/parser'
 import { runCodeInSource } from '../../runner'
 import { Chapter, RecursivePartial } from '../../types'
 import { stripIndent } from '../../utils/formatters'
+import { Control, Pattern, Stash, generateCSEMachineStateStream } from '../interpreter'
 
 const getContextFrom = async (code: string, steps?: number) => {
   const context = mockContext(Chapter.SOURCE_4)
@@ -12,6 +15,27 @@ const getContextFrom = async (code: string, steps?: number) => {
   }
   await runCodeInSource(code, context, options)
   return context
+}
+
+const evaluateCode = (code: string) => {
+  const context = mockContext(Chapter.SOURCE_4)
+  const options: RecursivePartial<IOptions> = { executionMethod: 'cse-machine' }
+  const program = parse(code, context)
+  context.runtime.isRunning = true
+  context.runtime.control = new Control(program as es.Program)
+  context.runtime.stash = new Stash()
+  context.runtime.patterns = new Pattern()
+
+  const CSEState = generateCSEMachineStateStream(
+    context,
+    context.runtime.control,
+    context.runtime.stash,
+    context.runtime.patterns,
+    options.envSteps ?? -1,
+    options.stepLimit ?? -1,
+    options.isPrelude
+  )
+  return CSEState
 }
 
 const codeSamples = [
@@ -72,75 +96,117 @@ for (const context of contexts) {
     expect((await context).runtime.changepointSteps).toMatchSnapshot()
   })
 }
-test('Avoid unnescessary environment instruction 1', async () => {
-  const context = getContextFrom(
+test('Avoid unnescessary environment instruction', () => {
+  const CSEState = evaluateCode(
     stripIndent(
       `
-      function f(n) {
-        return n === 0
-        ? 1
-        : f(n-1) * 2;
-      }
-      f(3);
-    `
-    ),
-    61
+        function f(n) {
+          return n === 0
+          ? 1
+          : f(n-1) * 2;
+        }
+        f(3);
+      `
+    )
   )
-  expect((await context).runtime.control).toMatchSnapshot()
+
+  for (const state of CSEState) {
+    expect(state.control.getNumEnvDependentItems()).toMatchSnapshot()
+  }
 })
 
-test('Avoid unnescessary environment instruction 2', async () => {
-  const context = getContextFrom(
+test('Avoid unnescessary environment instruction', () => {
+  const CSEState = evaluateCode(
     stripIndent(
       `
-      function f(n) {
-        return n === 0
-        ? 1
-        : n * f(n-1);
-      }
-      f(3);
-    `
-    ),
-    63
-  )
-  expect((await context).runtime.control).toMatchSnapshot()
-})
-
-test('Avoid unnescessary environment instruction 3', async () => {
-  const context = getContextFrom(
-    stripIndent(
-      `
-      let a = 1;
-      function f(n) {
+        function f(n) {
           return n === 0
           ? 1
           : n * f(n-1);
-      }
-      f(3);
-      a = 2;
-    `
-    ),
-    66
+        }
+        f(3);
+      `
+    )
   )
-  expect((await context).runtime.control).toMatchSnapshot()
+
+  for (const state of CSEState) {
+    expect(state.control.getNumEnvDependentItems()).toMatchSnapshot()
+  }
 })
 
-test('Avoid unnescessary environment instruction 4', async () => {
-  const context = getContextFrom(
+test('Avoid unnescessary environment instruction', () => {
+  const CSEState = evaluateCode(
     stripIndent(
       `
-      {
         let a = 1;
-        let b = 2;
-      }
-      
-      {
-          1 + 2;
-          3;
-      }
-    `
-    ),
-    3
+        function f(n) {
+            return n === 0
+            ? 1
+            : n * f(n-1);
+        }
+        f(3);
+        a = 2;
+      `
+    )
   )
-  expect((await context).runtime.control).toMatchSnapshot()
+
+  for (const state of CSEState) {
+    expect(state.control.getNumEnvDependentItems()).toMatchSnapshot()
+  }
+})
+
+test('Avoid unnescessary environment instruction', () => {
+  const CSEState = evaluateCode(
+    stripIndent(
+      `
+        {
+          let a = 1;
+          let b = 2;
+        }
+        
+        {
+            1 + 2;
+            3;
+        }
+    `
+    )
+  )
+
+  for (const state of CSEState) {
+    expect(state.control.getNumEnvDependentItems()).toMatchSnapshot()
+  }
+})
+
+test('Avoid unnescessary environment instruction', () => {
+  const CSEState = evaluateCode(
+    stripIndent(
+      `
+      import "rune";
+      const arr = [1,2,3];
+      const c = (x => x)(1);
+      let sum = 0;
+
+      function add(x, y) {
+          return x + y;
+      }
+
+      for(let i = 1; i < 10; i = i + 1) {
+          let j = 0;
+          while(j < i) {
+              sum = add(sum, i);
+              j = j + 1;
+          }
+          if (sum > 100 && sum < 200) {
+              arr[0] = sum;
+              break;
+          }
+      }
+      display(sum);
+    `
+    )
+  )
+
+  for (const state of CSEState) {
+    expect(state.control.getNumEnvDependentItems()).toMatchSnapshot()
+  }
 })

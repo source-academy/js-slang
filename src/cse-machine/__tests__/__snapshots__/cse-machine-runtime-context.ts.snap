@@ -1,2925 +1,2742 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Avoid unnescessary environment instruction 1 1`] = `
-Control {
-  "numEnvDependentItems": 0,
-  "storage": Array [
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "arguments": Array [
-            Node {
-              "end": 48,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 46,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 7,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 45,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 6,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 48,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 9,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 8,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 47,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 45,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 44,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 43,
-            "type": "Identifier",
-          },
-          "end": 49,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "start": 43,
-          "type": "CallExpression",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "end": 53,
-          "isEnvDependent": false,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 13,
-              "line": 4,
-            },
-          },
-          "raw": "2",
-          "start": 52,
-          "type": "Literal",
-          "value": 2,
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Node {
-      "end": 53,
-      "isEnvDependent": false,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 14,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 13,
-          "line": 4,
-        },
-      },
-      "raw": "2",
-      "start": 52,
-      "type": "Literal",
-      "value": 2,
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "arguments": Array [
-            Node {
-              "end": 48,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 46,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 7,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 45,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 6,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 48,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 9,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 8,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 47,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 45,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 44,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 43,
-            "type": "Identifier",
-          },
-          "end": 49,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "start": 43,
-          "type": "CallExpression",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "end": 53,
-          "isEnvDependent": false,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 13,
-              "line": 4,
-            },
-          },
-          "raw": "2",
-          "start": 52,
-          "type": "Literal",
-          "value": 2,
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Node {
-      "end": 53,
-      "isEnvDependent": false,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 14,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 13,
-          "line": 4,
-        },
-      },
-      "raw": "2",
-      "start": 52,
-      "type": "Literal",
-      "value": 2,
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "arguments": Array [
-            Node {
-              "end": 48,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 46,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 7,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 45,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 6,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 48,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 9,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 8,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 47,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 45,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 44,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 43,
-            "type": "Identifier",
-          },
-          "end": 49,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "start": 43,
-          "type": "CallExpression",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "end": 53,
-          "isEnvDependent": false,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 13,
-              "line": 4,
-            },
-          },
-          "raw": "2",
-          "start": 52,
-          "type": "Literal",
-          "value": 2,
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-  ],
-}
-`;
+exports[`Avoid unnescessary environment instruction 1`] = `1`;
 
-exports[`Avoid unnescessary environment instruction 2 1`] = `
-Control {
-  "numEnvDependentItems": 0,
-  "storage": Array [
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 44,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "name": "n",
-          "start": 43,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 52,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 50,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 49,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 10,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 52,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 51,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 49,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 48,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 47,
-            "type": "Identifier",
-          },
-          "end": 53,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 8,
-              "line": 4,
-            },
-          },
-          "start": 47,
-          "type": "CallExpression",
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 44,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "name": "n",
-          "start": 43,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 52,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 50,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 49,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 10,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 52,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 51,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 49,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 48,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 47,
-            "type": "Identifier",
-          },
-          "end": 53,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 8,
-              "line": 4,
-            },
-          },
-          "start": 47,
-          "type": "CallExpression",
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 44,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "name": "n",
-          "start": 43,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 52,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 50,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 49,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 10,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 52,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 51,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 49,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 48,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 47,
-            "type": "Identifier",
-          },
-          "end": 53,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 8,
-              "line": 4,
-            },
-          },
-          "start": 47,
-          "type": "CallExpression",
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-  ],
-}
-`;
+exports[`Avoid unnescessary environment instruction 2`] = `2`;
 
-exports[`Avoid unnescessary environment instruction 3 1`] = `
-Control {
-  "numEnvDependentItems": 5,
-  "storage": Array [
-    Node {
-      "end": 86,
-      "expression": Node {
-        "end": 85,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 81,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 8,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 8,
-            },
-          },
-          "name": "a",
-          "start": 80,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 5,
-            "line": 8,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 8,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 85,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 8,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 8,
-            },
-          },
-          "raw": "2",
-          "start": 84,
-          "type": "Literal",
-          "value": 2,
-        },
-        "start": 80,
-        "type": "AssignmentExpression",
-      },
-      "isEnvDependent": true,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 6,
-          "line": 8,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 8,
-        },
-      },
-      "start": 80,
-      "type": "ExpressionStatement",
-    },
-    Object {
-      "instrType": "Pop",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 86,
-        "expression": Node {
-          "end": 85,
-          "isEnvDependent": true,
-          "left": Node {
-            "end": 81,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 1,
-                "line": 8,
-              },
-              "start": Position {
-                "column": 0,
-                "line": 8,
-              },
-            },
-            "name": "a",
-            "start": 80,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 8,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 8,
-            },
-          },
-          "operator": "=",
-          "right": Node {
-            "end": 85,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 8,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 8,
-              },
-            },
-            "raw": "2",
-            "start": 84,
-            "type": "Literal",
-            "value": 2,
-          },
-          "start": 80,
-          "type": "AssignmentExpression",
-        },
-        "isEnvDependent": true,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 6,
-            "line": 8,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 8,
-          },
-        },
-        "start": 80,
-        "type": "ExpressionStatement",
-      },
-    },
-    Object {
-      "env": Object {
-        "head": Object {
-          "a": 1,
-          "f": [Function],
-        },
-        "heap": Heap {
-          "storage": Set {
-            [Function],
-          },
-        },
-        "id": "47",
-        "name": "programEnvironment",
-        "tail": Object {
-          "head": Object {
-            "$accumulate": [Function],
-            "$append": [Function],
-            "$build_list": [Function],
-            "$enum_list": [Function],
-            "$filter": [Function],
-            "$length": [Function],
-            "$list_to_string": [Function],
-            "$map": [Function],
-            "$remove": [Function],
-            "$remove_all": [Function],
-            "$reverse": [Function],
-            "__access_export__": [Function],
-            "__access_named_export__": [Function],
-            "accumulate": [Function],
-            "append": [Function],
-            "build_list": [Function],
-            "build_stream": [Function],
-            "enum_list": [Function],
-            "enum_stream": [Function],
-            "equal": [Function],
-            "eval_stream": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "integers_from": [Function],
-            "is_stream": [Function],
-            "length": [Function],
-            "list_ref": [Function],
-            "list_to_stream": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "member": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "stream_append": [Function],
-            "stream_filter": [Function],
-            "stream_for_each": [Function],
-            "stream_length": [Function],
-            "stream_map": [Function],
-            "stream_member": [Function],
-            "stream_ref": [Function],
-            "stream_remove": [Function],
-            "stream_remove_all": [Function],
-            "stream_reverse": [Function],
-            "stream_tail": [Function],
-            "stream_to_list": [Function],
-          },
-          "heap": Heap {
-            "storage": Set {
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-            },
-          },
-          "id": "0",
-          "name": "prelude",
-          "tail": Object {
-            "head": Object {
-              "Infinity": Infinity,
-              "NaN": NaN,
-              "apply_in_underlying_javascript": [Function],
-              "arity": [Function],
-              "array_length": [Function],
-              "call_cc": [Function],
-              "char_at": [Function],
-              "display": [Function],
-              "display_list": [Function],
-              "draw_data": [Function],
-              "error": [Function],
-              "get_time": [Function],
-              "head": [Function],
-              "is_array": [Function],
-              "is_boolean": [Function],
-              "is_function": [Function],
-              "is_list": [Function],
-              "is_null": [Function],
-              "is_number": [Function],
-              "is_pair": [Function],
-              "is_string": [Function],
-              "is_undefined": [Function],
-              "list": [Function],
-              "math_E": 2.718281828459045,
-              "math_LN10": 2.302585092994046,
-              "math_LN2": 0.6931471805599453,
-              "math_LOG10E": 0.4342944819032518,
-              "math_LOG2E": 1.4426950408889634,
-              "math_PI": 3.141592653589793,
-              "math_SQRT1_2": 0.7071067811865476,
-              "math_SQRT2": 1.4142135623730951,
-              "math_abs": [Function],
-              "math_acos": [Function],
-              "math_acosh": [Function],
-              "math_asin": [Function],
-              "math_asinh": [Function],
-              "math_atan": [Function],
-              "math_atan2": [Function],
-              "math_atanh": [Function],
-              "math_cbrt": [Function],
-              "math_ceil": [Function],
-              "math_clz32": [Function],
-              "math_cos": [Function],
-              "math_cosh": [Function],
-              "math_exp": [Function],
-              "math_expm1": [Function],
-              "math_floor": [Function],
-              "math_fround": [Function],
-              "math_hypot": [Function],
-              "math_imul": [Function],
-              "math_log": [Function],
-              "math_log10": [Function],
-              "math_log1p": [Function],
-              "math_log2": [Function],
-              "math_max": [Function],
-              "math_min": [Function],
-              "math_pow": [Function],
-              "math_random": [Function],
-              "math_round": [Function],
-              "math_sign": [Function],
-              "math_sin": [Function],
-              "math_sinh": [Function],
-              "math_sqrt": [Function],
-              "math_tan": [Function],
-              "math_tanh": [Function],
-              "math_trunc": [Function],
-              "pair": [Function],
-              "parse": [Function],
-              "parse_int": [Function],
-              "prompt": [Function],
-              "raw_display": [Function],
-              "set_head": [Function],
-              "set_tail": [Function],
-              "stream": [Function],
-              "stringify": [Function],
-              "tail": [Function],
-              "tokenize": [Function],
-              "undefined": undefined,
-            },
-            "heap": Heap {
-              "storage": null,
-            },
-            "id": "-1",
-            "name": "global",
-            "tail": null,
-          },
-        },
-      },
-      "instrType": "Environment",
-      "isEnvDependent": true,
-      "srcNode": Node {
-        "arguments": Array [
-          Node {
-            "end": 77,
-            "isEnvDependent": false,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 3,
-                "line": 7,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 7,
-              },
-            },
-            "raw": "3",
-            "start": 76,
-            "type": "Literal",
-            "value": 3,
-          },
-        ],
-        "callee": Node {
-          "end": 75,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 7,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 7,
-            },
-          },
-          "name": "f",
-          "start": 74,
-          "type": "Identifier",
-        },
-        "end": 78,
-        "isEnvDependent": true,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 4,
-            "line": 7,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 7,
-          },
-        },
-        "start": 74,
-        "type": "CallExpression",
-      },
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 70,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 61,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 6,
-              "line": 5,
-            },
-          },
-          "name": "n",
-          "start": 60,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 6,
-            "line": 5,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 69,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 67,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 5,
-                  },
-                },
-                "name": "n",
-                "start": 66,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 69,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 15,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 14,
-                    "line": 5,
-                  },
-                },
-                "raw": "1",
-                "start": 68,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 66,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 65,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 5,
-              },
-            },
-            "name": "f",
-            "start": 64,
-            "type": "Identifier",
-          },
-          "end": 70,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "start": 64,
-          "type": "CallExpression",
-        },
-        "start": 60,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Object {
-      "env": Object {
-        "callExpression": Object {
-          "arguments": Array [
-            Object {
-              "loc": undefined,
-              "type": "Literal",
-              "value": 3,
-            },
-          ],
-          "callee": Node {
-            "end": 75,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 1,
-                "line": 7,
-              },
-              "start": Position {
-                "column": 0,
-                "line": 7,
-              },
-            },
-            "name": "f",
-            "start": 74,
-            "type": "Identifier",
-          },
-          "end": 78,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 4,
-              "line": 7,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 7,
-            },
-          },
-          "start": 74,
-          "type": "CallExpression",
-        },
-        "head": Object {
-          "n": 3,
-        },
-        "heap": Heap {
-          "storage": null,
-        },
-        "id": "49",
-        "name": "f",
-        "tail": Object {
-          "head": Object {
-            "a": 1,
-            "f": [Function],
-          },
-          "heap": Heap {
-            "storage": Set {
-              [Function],
-            },
-          },
-          "id": "47",
-          "name": "programEnvironment",
-          "tail": Object {
-            "head": Object {
-              "$accumulate": [Function],
-              "$append": [Function],
-              "$build_list": [Function],
-              "$enum_list": [Function],
-              "$filter": [Function],
-              "$length": [Function],
-              "$list_to_string": [Function],
-              "$map": [Function],
-              "$remove": [Function],
-              "$remove_all": [Function],
-              "$reverse": [Function],
-              "__access_export__": [Function],
-              "__access_named_export__": [Function],
-              "accumulate": [Function],
-              "append": [Function],
-              "build_list": [Function],
-              "build_stream": [Function],
-              "enum_list": [Function],
-              "enum_stream": [Function],
-              "equal": [Function],
-              "eval_stream": [Function],
-              "filter": [Function],
-              "for_each": [Function],
-              "integers_from": [Function],
-              "is_stream": [Function],
-              "length": [Function],
-              "list_ref": [Function],
-              "list_to_stream": [Function],
-              "list_to_string": [Function],
-              "map": [Function],
-              "member": [Function],
-              "remove": [Function],
-              "remove_all": [Function],
-              "reverse": [Function],
-              "stream_append": [Function],
-              "stream_filter": [Function],
-              "stream_for_each": [Function],
-              "stream_length": [Function],
-              "stream_map": [Function],
-              "stream_member": [Function],
-              "stream_ref": [Function],
-              "stream_remove": [Function],
-              "stream_remove_all": [Function],
-              "stream_reverse": [Function],
-              "stream_tail": [Function],
-              "stream_to_list": [Function],
-            },
-            "heap": Heap {
-              "storage": Set {
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-              },
-            },
-            "id": "0",
-            "name": "prelude",
-            "tail": Object {
-              "head": Object {
-                "Infinity": Infinity,
-                "NaN": NaN,
-                "apply_in_underlying_javascript": [Function],
-                "arity": [Function],
-                "array_length": [Function],
-                "call_cc": [Function],
-                "char_at": [Function],
-                "display": [Function],
-                "display_list": [Function],
-                "draw_data": [Function],
-                "error": [Function],
-                "get_time": [Function],
-                "head": [Function],
-                "is_array": [Function],
-                "is_boolean": [Function],
-                "is_function": [Function],
-                "is_list": [Function],
-                "is_null": [Function],
-                "is_number": [Function],
-                "is_pair": [Function],
-                "is_string": [Function],
-                "is_undefined": [Function],
-                "list": [Function],
-                "math_E": 2.718281828459045,
-                "math_LN10": 2.302585092994046,
-                "math_LN2": 0.6931471805599453,
-                "math_LOG10E": 0.4342944819032518,
-                "math_LOG2E": 1.4426950408889634,
-                "math_PI": 3.141592653589793,
-                "math_SQRT1_2": 0.7071067811865476,
-                "math_SQRT2": 1.4142135623730951,
-                "math_abs": [Function],
-                "math_acos": [Function],
-                "math_acosh": [Function],
-                "math_asin": [Function],
-                "math_asinh": [Function],
-                "math_atan": [Function],
-                "math_atan2": [Function],
-                "math_atanh": [Function],
-                "math_cbrt": [Function],
-                "math_ceil": [Function],
-                "math_clz32": [Function],
-                "math_cos": [Function],
-                "math_cosh": [Function],
-                "math_exp": [Function],
-                "math_expm1": [Function],
-                "math_floor": [Function],
-                "math_fround": [Function],
-                "math_hypot": [Function],
-                "math_imul": [Function],
-                "math_log": [Function],
-                "math_log10": [Function],
-                "math_log1p": [Function],
-                "math_log2": [Function],
-                "math_max": [Function],
-                "math_min": [Function],
-                "math_pow": [Function],
-                "math_random": [Function],
-                "math_round": [Function],
-                "math_sign": [Function],
-                "math_sin": [Function],
-                "math_sinh": [Function],
-                "math_sqrt": [Function],
-                "math_tan": [Function],
-                "math_tanh": [Function],
-                "math_trunc": [Function],
-                "pair": [Function],
-                "parse": [Function],
-                "parse_int": [Function],
-                "prompt": [Function],
-                "raw_display": [Function],
-                "set_head": [Function],
-                "set_tail": [Function],
-                "stream": [Function],
-                "stringify": [Function],
-                "tail": [Function],
-                "tokenize": [Function],
-                "undefined": undefined,
-              },
-              "heap": Heap {
-                "storage": null,
-              },
-              "id": "-1",
-              "name": "global",
-              "tail": null,
-            },
-          },
-        },
-      },
-      "instrType": "Environment",
-      "isEnvDependent": true,
-      "srcNode": Node {
-        "arguments": Array [
-          Node {
-            "end": 69,
-            "isEnvDependent": true,
-            "left": Node {
-              "end": 67,
-              "isEnvDependent": true,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "name": "n",
-              "start": 66,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 15,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 5,
-              },
-            },
-            "operator": "-",
-            "right": Node {
-              "end": 69,
-              "isEnvDependent": false,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 14,
-                  "line": 5,
-                },
-              },
-              "raw": "1",
-              "start": 68,
-              "type": "Literal",
-              "value": 1,
-            },
-            "start": 66,
-            "type": "BinaryExpression",
-          },
-        ],
-        "callee": Node {
-          "end": 65,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "name": "f",
-          "start": 64,
-          "type": "Identifier",
-        },
-        "end": 70,
-        "isEnvDependent": true,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 10,
-            "line": 5,
-          },
-        },
-        "start": 64,
-        "type": "CallExpression",
-      },
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 70,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 61,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 6,
-              "line": 5,
-            },
-          },
-          "name": "n",
-          "start": 60,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 6,
-            "line": 5,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 69,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 67,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 5,
-                  },
-                },
-                "name": "n",
-                "start": 66,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 69,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 15,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 14,
-                    "line": 5,
-                  },
-                },
-                "raw": "1",
-                "start": 68,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 66,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 65,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 5,
-              },
-            },
-            "name": "f",
-            "start": 64,
-            "type": "Identifier",
-          },
-          "end": 70,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "start": 64,
-          "type": "CallExpression",
-        },
-        "start": 60,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Object {
-      "env": Object {
-        "callExpression": Object {
-          "arguments": Array [
-            Object {
-              "loc": undefined,
-              "type": "Literal",
-              "value": 2,
-            },
-          ],
-          "callee": Node {
-            "end": 65,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 5,
-              },
-            },
-            "name": "f",
-            "start": 64,
-            "type": "Identifier",
-          },
-          "end": 70,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "start": 64,
-          "type": "CallExpression",
-        },
-        "head": Object {
-          "n": 2,
-        },
-        "heap": Heap {
-          "storage": null,
-        },
-        "id": "50",
-        "name": "f",
-        "tail": Object {
-          "head": Object {
-            "a": 1,
-            "f": [Function],
-          },
-          "heap": Heap {
-            "storage": Set {
-              [Function],
-            },
-          },
-          "id": "47",
-          "name": "programEnvironment",
-          "tail": Object {
-            "head": Object {
-              "$accumulate": [Function],
-              "$append": [Function],
-              "$build_list": [Function],
-              "$enum_list": [Function],
-              "$filter": [Function],
-              "$length": [Function],
-              "$list_to_string": [Function],
-              "$map": [Function],
-              "$remove": [Function],
-              "$remove_all": [Function],
-              "$reverse": [Function],
-              "__access_export__": [Function],
-              "__access_named_export__": [Function],
-              "accumulate": [Function],
-              "append": [Function],
-              "build_list": [Function],
-              "build_stream": [Function],
-              "enum_list": [Function],
-              "enum_stream": [Function],
-              "equal": [Function],
-              "eval_stream": [Function],
-              "filter": [Function],
-              "for_each": [Function],
-              "integers_from": [Function],
-              "is_stream": [Function],
-              "length": [Function],
-              "list_ref": [Function],
-              "list_to_stream": [Function],
-              "list_to_string": [Function],
-              "map": [Function],
-              "member": [Function],
-              "remove": [Function],
-              "remove_all": [Function],
-              "reverse": [Function],
-              "stream_append": [Function],
-              "stream_filter": [Function],
-              "stream_for_each": [Function],
-              "stream_length": [Function],
-              "stream_map": [Function],
-              "stream_member": [Function],
-              "stream_ref": [Function],
-              "stream_remove": [Function],
-              "stream_remove_all": [Function],
-              "stream_reverse": [Function],
-              "stream_tail": [Function],
-              "stream_to_list": [Function],
-            },
-            "heap": Heap {
-              "storage": Set {
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-              },
-            },
-            "id": "0",
-            "name": "prelude",
-            "tail": Object {
-              "head": Object {
-                "Infinity": Infinity,
-                "NaN": NaN,
-                "apply_in_underlying_javascript": [Function],
-                "arity": [Function],
-                "array_length": [Function],
-                "call_cc": [Function],
-                "char_at": [Function],
-                "display": [Function],
-                "display_list": [Function],
-                "draw_data": [Function],
-                "error": [Function],
-                "get_time": [Function],
-                "head": [Function],
-                "is_array": [Function],
-                "is_boolean": [Function],
-                "is_function": [Function],
-                "is_list": [Function],
-                "is_null": [Function],
-                "is_number": [Function],
-                "is_pair": [Function],
-                "is_string": [Function],
-                "is_undefined": [Function],
-                "list": [Function],
-                "math_E": 2.718281828459045,
-                "math_LN10": 2.302585092994046,
-                "math_LN2": 0.6931471805599453,
-                "math_LOG10E": 0.4342944819032518,
-                "math_LOG2E": 1.4426950408889634,
-                "math_PI": 3.141592653589793,
-                "math_SQRT1_2": 0.7071067811865476,
-                "math_SQRT2": 1.4142135623730951,
-                "math_abs": [Function],
-                "math_acos": [Function],
-                "math_acosh": [Function],
-                "math_asin": [Function],
-                "math_asinh": [Function],
-                "math_atan": [Function],
-                "math_atan2": [Function],
-                "math_atanh": [Function],
-                "math_cbrt": [Function],
-                "math_ceil": [Function],
-                "math_clz32": [Function],
-                "math_cos": [Function],
-                "math_cosh": [Function],
-                "math_exp": [Function],
-                "math_expm1": [Function],
-                "math_floor": [Function],
-                "math_fround": [Function],
-                "math_hypot": [Function],
-                "math_imul": [Function],
-                "math_log": [Function],
-                "math_log10": [Function],
-                "math_log1p": [Function],
-                "math_log2": [Function],
-                "math_max": [Function],
-                "math_min": [Function],
-                "math_pow": [Function],
-                "math_random": [Function],
-                "math_round": [Function],
-                "math_sign": [Function],
-                "math_sin": [Function],
-                "math_sinh": [Function],
-                "math_sqrt": [Function],
-                "math_tan": [Function],
-                "math_tanh": [Function],
-                "math_trunc": [Function],
-                "pair": [Function],
-                "parse": [Function],
-                "parse_int": [Function],
-                "prompt": [Function],
-                "raw_display": [Function],
-                "set_head": [Function],
-                "set_tail": [Function],
-                "stream": [Function],
-                "stringify": [Function],
-                "tail": [Function],
-                "tokenize": [Function],
-                "undefined": undefined,
-              },
-              "heap": Heap {
-                "storage": null,
-              },
-              "id": "-1",
-              "name": "global",
-              "tail": null,
-            },
-          },
-        },
-      },
-      "instrType": "Environment",
-      "isEnvDependent": true,
-      "srcNode": Node {
-        "arguments": Array [
-          Node {
-            "end": 69,
-            "isEnvDependent": true,
-            "left": Node {
-              "end": 67,
-              "isEnvDependent": true,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "name": "n",
-              "start": 66,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 15,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 5,
-              },
-            },
-            "operator": "-",
-            "right": Node {
-              "end": 69,
-              "isEnvDependent": false,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 14,
-                  "line": 5,
-                },
-              },
-              "raw": "1",
-              "start": 68,
-              "type": "Literal",
-              "value": 1,
-            },
-            "start": 66,
-            "type": "BinaryExpression",
-          },
-        ],
-        "callee": Node {
-          "end": 65,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "name": "f",
-          "start": 64,
-          "type": "Identifier",
-        },
-        "end": 70,
-        "isEnvDependent": true,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 10,
-            "line": 5,
-          },
-        },
-        "start": 64,
-        "type": "CallExpression",
-      },
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 70,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 61,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 6,
-              "line": 5,
-            },
-          },
-          "name": "n",
-          "start": 60,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 6,
-            "line": 5,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 69,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 67,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 5,
-                  },
-                },
-                "name": "n",
-                "start": 66,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 69,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 15,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 14,
-                    "line": 5,
-                  },
-                },
-                "raw": "1",
-                "start": 68,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 66,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 65,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 5,
-              },
-            },
-            "name": "f",
-            "start": 64,
-            "type": "Identifier",
-          },
-          "end": 70,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "start": 64,
-          "type": "CallExpression",
-        },
-        "start": 60,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Object {
-      "env": Object {
-        "callExpression": Object {
-          "arguments": Array [
-            Object {
-              "loc": undefined,
-              "type": "Literal",
-              "value": 1,
-            },
-          ],
-          "callee": Node {
-            "end": 65,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 5,
-              },
-            },
-            "name": "f",
-            "start": 64,
-            "type": "Identifier",
-          },
-          "end": 70,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "start": 64,
-          "type": "CallExpression",
-        },
-        "head": Object {
-          "n": 1,
-        },
-        "heap": Heap {
-          "storage": null,
-        },
-        "id": "51",
-        "name": "f",
-        "tail": Object {
-          "head": Object {
-            "a": 1,
-            "f": [Function],
-          },
-          "heap": Heap {
-            "storage": Set {
-              [Function],
-            },
-          },
-          "id": "47",
-          "name": "programEnvironment",
-          "tail": Object {
-            "head": Object {
-              "$accumulate": [Function],
-              "$append": [Function],
-              "$build_list": [Function],
-              "$enum_list": [Function],
-              "$filter": [Function],
-              "$length": [Function],
-              "$list_to_string": [Function],
-              "$map": [Function],
-              "$remove": [Function],
-              "$remove_all": [Function],
-              "$reverse": [Function],
-              "__access_export__": [Function],
-              "__access_named_export__": [Function],
-              "accumulate": [Function],
-              "append": [Function],
-              "build_list": [Function],
-              "build_stream": [Function],
-              "enum_list": [Function],
-              "enum_stream": [Function],
-              "equal": [Function],
-              "eval_stream": [Function],
-              "filter": [Function],
-              "for_each": [Function],
-              "integers_from": [Function],
-              "is_stream": [Function],
-              "length": [Function],
-              "list_ref": [Function],
-              "list_to_stream": [Function],
-              "list_to_string": [Function],
-              "map": [Function],
-              "member": [Function],
-              "remove": [Function],
-              "remove_all": [Function],
-              "reverse": [Function],
-              "stream_append": [Function],
-              "stream_filter": [Function],
-              "stream_for_each": [Function],
-              "stream_length": [Function],
-              "stream_map": [Function],
-              "stream_member": [Function],
-              "stream_ref": [Function],
-              "stream_remove": [Function],
-              "stream_remove_all": [Function],
-              "stream_reverse": [Function],
-              "stream_tail": [Function],
-              "stream_to_list": [Function],
-            },
-            "heap": Heap {
-              "storage": Set {
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-              },
-            },
-            "id": "0",
-            "name": "prelude",
-            "tail": Object {
-              "head": Object {
-                "Infinity": Infinity,
-                "NaN": NaN,
-                "apply_in_underlying_javascript": [Function],
-                "arity": [Function],
-                "array_length": [Function],
-                "call_cc": [Function],
-                "char_at": [Function],
-                "display": [Function],
-                "display_list": [Function],
-                "draw_data": [Function],
-                "error": [Function],
-                "get_time": [Function],
-                "head": [Function],
-                "is_array": [Function],
-                "is_boolean": [Function],
-                "is_function": [Function],
-                "is_list": [Function],
-                "is_null": [Function],
-                "is_number": [Function],
-                "is_pair": [Function],
-                "is_string": [Function],
-                "is_undefined": [Function],
-                "list": [Function],
-                "math_E": 2.718281828459045,
-                "math_LN10": 2.302585092994046,
-                "math_LN2": 0.6931471805599453,
-                "math_LOG10E": 0.4342944819032518,
-                "math_LOG2E": 1.4426950408889634,
-                "math_PI": 3.141592653589793,
-                "math_SQRT1_2": 0.7071067811865476,
-                "math_SQRT2": 1.4142135623730951,
-                "math_abs": [Function],
-                "math_acos": [Function],
-                "math_acosh": [Function],
-                "math_asin": [Function],
-                "math_asinh": [Function],
-                "math_atan": [Function],
-                "math_atan2": [Function],
-                "math_atanh": [Function],
-                "math_cbrt": [Function],
-                "math_ceil": [Function],
-                "math_clz32": [Function],
-                "math_cos": [Function],
-                "math_cosh": [Function],
-                "math_exp": [Function],
-                "math_expm1": [Function],
-                "math_floor": [Function],
-                "math_fround": [Function],
-                "math_hypot": [Function],
-                "math_imul": [Function],
-                "math_log": [Function],
-                "math_log10": [Function],
-                "math_log1p": [Function],
-                "math_log2": [Function],
-                "math_max": [Function],
-                "math_min": [Function],
-                "math_pow": [Function],
-                "math_random": [Function],
-                "math_round": [Function],
-                "math_sign": [Function],
-                "math_sin": [Function],
-                "math_sinh": [Function],
-                "math_sqrt": [Function],
-                "math_tan": [Function],
-                "math_tanh": [Function],
-                "math_trunc": [Function],
-                "pair": [Function],
-                "parse": [Function],
-                "parse_int": [Function],
-                "prompt": [Function],
-                "raw_display": [Function],
-                "set_head": [Function],
-                "set_tail": [Function],
-                "stream": [Function],
-                "stringify": [Function],
-                "tail": [Function],
-                "tokenize": [Function],
-                "undefined": undefined,
-              },
-              "heap": Heap {
-                "storage": null,
-              },
-              "id": "-1",
-              "name": "global",
-              "tail": null,
-            },
-          },
-        },
-      },
-      "instrType": "Environment",
-      "isEnvDependent": true,
-      "srcNode": Node {
-        "arguments": Array [
-          Node {
-            "end": 69,
-            "isEnvDependent": true,
-            "left": Node {
-              "end": 67,
-              "isEnvDependent": true,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "name": "n",
-              "start": 66,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 15,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 5,
-              },
-            },
-            "operator": "-",
-            "right": Node {
-              "end": 69,
-              "isEnvDependent": false,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 14,
-                  "line": 5,
-                },
-              },
-              "raw": "1",
-              "start": 68,
-              "type": "Literal",
-              "value": 1,
-            },
-            "start": 66,
-            "type": "BinaryExpression",
-          },
-        ],
-        "callee": Node {
-          "end": 65,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "name": "f",
-          "start": 64,
-          "type": "Identifier",
-        },
-        "end": 70,
-        "isEnvDependent": true,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 10,
-            "line": 5,
-          },
-        },
-        "start": 64,
-        "type": "CallExpression",
-      },
-    },
-    Node {
-      "end": 53,
-      "isEnvDependent": false,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 7,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 6,
-          "line": 4,
-        },
-      },
-      "raw": "1",
-      "start": 52,
-      "type": "Literal",
-      "value": 1,
-    },
-  ],
-}
-`;
+exports[`Avoid unnescessary environment instruction 3`] = `2`;
 
-exports[`Avoid unnescessary environment instruction 4 1`] = `
-Control {
-  "numEnvDependentItems": 0,
-  "storage": Array [
-    Object {
-      "body": Array [
-        Node {
-          "end": 43,
-          "expression": Node {
-            "end": 42,
-            "isEnvDependent": false,
-            "left": Node {
-              "end": 38,
-              "isEnvDependent": false,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 7,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 7,
-                },
-              },
-              "raw": "1",
-              "start": 37,
-              "type": "Literal",
-              "value": 1,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 7,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 7,
-              },
-            },
-            "operator": "+",
-            "right": Node {
-              "end": 42,
-              "isEnvDependent": false,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 7,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 7,
-                },
-              },
-              "raw": "2",
-              "start": 41,
-              "type": "Literal",
-              "value": 2,
-            },
-            "start": 37,
-            "type": "BinaryExpression",
-          },
-          "isEnvDependent": false,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 7,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 7,
-            },
-          },
-          "start": 37,
-          "type": "ExpressionStatement",
-        },
-        Node {
-          "end": 50,
-          "expression": Node {
-            "end": 49,
-            "isEnvDependent": false,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 8,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 8,
-              },
-            },
-            "raw": "3",
-            "start": 48,
-            "type": "Literal",
-            "value": 3,
-          },
-          "isEnvDependent": false,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 6,
-              "line": 8,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 8,
-            },
-          },
-          "start": 48,
-          "type": "ExpressionStatement",
-        },
-      ],
-      "isEnvDependent": false,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 1,
-          "line": 9,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 6,
-        },
-      },
-      "type": "StatementSequence",
-    },
-    Object {
-      "body": Array [
-        Node {
-          "declarations": Array [
-            Node {
-              "end": 13,
-              "id": Node {
-                "end": 9,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 7,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 2,
-                  },
-                },
-                "name": "a",
-                "start": 8,
-                "type": "Identifier",
-              },
-              "init": Node {
-                "end": 13,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 2,
-                  },
-                },
-                "raw": "1",
-                "start": 12,
-                "type": "Literal",
-                "value": 1,
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 11,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 6,
-                  "line": 2,
-                },
-              },
-              "start": 8,
-              "type": "VariableDeclarator",
-            },
-          ],
-          "end": 14,
-          "isEnvDependent": true,
-          "kind": "let",
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 12,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "start": 4,
-          "typability": "NotYetTyped",
-          "type": "VariableDeclaration",
-        },
-        Node {
-          "declarations": Array [
-            Node {
-              "end": 26,
-              "id": Node {
-                "end": 22,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 7,
-                    "line": 3,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 3,
-                  },
-                },
-                "name": "b",
-                "start": 21,
-                "type": "Identifier",
-              },
-              "init": Node {
-                "end": 26,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 3,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 3,
-                  },
-                },
-                "raw": "2",
-                "start": 25,
-                "type": "Literal",
-                "value": 2,
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 11,
-                  "line": 3,
-                },
-                "start": Position {
-                  "column": 6,
-                  "line": 3,
-                },
-              },
-              "start": 21,
-              "type": "VariableDeclarator",
-            },
-          ],
-          "end": 27,
-          "kind": "let",
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 12,
-              "line": 3,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 3,
-            },
-          },
-          "start": 17,
-          "typability": "NotYetTyped",
-          "type": "VariableDeclaration",
-        },
-      ],
-      "isEnvDependent": false,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 1,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "type": "StatementSequence",
-    },
-  ],
-}
-`;
+exports[`Avoid unnescessary environment instruction 4`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 5`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 6`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 7`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 8`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 9`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 10`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 11`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 12`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 13`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 14`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 15`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 16`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 17`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 18`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 19`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 20`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 21`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 22`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 23`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 24`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 25`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 26`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 27`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 28`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 29`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 30`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 31`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 32`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 33`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 34`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 35`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 36`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 37`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 38`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 39`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 40`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 41`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 42`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 43`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 44`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 45`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 46`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 47`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 48`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 49`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 50`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 51`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 52`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 53`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 54`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 55`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 56`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 57`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 58`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 59`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 60`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 61`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 62`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 63`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 64`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 65`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 66`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 67`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 68`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 69`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 70`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 71`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 72`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 73`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 74`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 75`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 76`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 77`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 78`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 79`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 80`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 81`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 82`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 83`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 84`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 85`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 86`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 87`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 88`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 89`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 90`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 91`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 92`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 93`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 94`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 95`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 96`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 97`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 98`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 99`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 100`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 101`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 102`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 103`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 104`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 105`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 106`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 107`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 108`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 109`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 110`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 111`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 112`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 113`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 114`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 115`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 116`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 117`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 118`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 119`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 120`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 121`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 122`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 123`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 124`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 125`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 126`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 127`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 128`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 129`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 130`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 131`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 132`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 133`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 134`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 135`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 136`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 137`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 138`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 139`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 140`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 141`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 142`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 143`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 144`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 145`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 146`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 147`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 148`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 149`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 150`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 151`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 152`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 153`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 154`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 155`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 156`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 157`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 158`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 159`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 160`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 161`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 162`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 163`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 164`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 165`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 166`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 167`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 168`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 169`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 170`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 171`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 172`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 173`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 174`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 175`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 176`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 177`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 178`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 179`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 180`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 181`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 182`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 183`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 184`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 185`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 186`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 187`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 188`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 189`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 190`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 191`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 192`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 193`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 194`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 195`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 196`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 197`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 198`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 199`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 200`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 201`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 202`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 203`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 204`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 205`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 206`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 207`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 208`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 209`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 210`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 211`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 212`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 213`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 214`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 215`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 216`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 217`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 218`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 219`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 220`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 221`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 222`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 223`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 224`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 225`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 226`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 227`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 228`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 229`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 230`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 231`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 232`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 233`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 234`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 235`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 236`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 237`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 238`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 239`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 240`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 241`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 242`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 243`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 244`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 245`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 246`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 247`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 248`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 249`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 250`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 251`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 252`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 253`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 254`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 255`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 256`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 257`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 258`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 259`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 260`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 261`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 262`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 263`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 264`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 265`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 266`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 267`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 268`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 269`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 270`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 271`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 272`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 273`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 274`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 275`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 276`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 277`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 278`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 279`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 280`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 281`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 282`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 283`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 284`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 285`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 286`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 287`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 288`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 289`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 290`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 291`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 292`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 293`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 294`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 295`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 296`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 297`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 298`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 299`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 300`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 301`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 302`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 303`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 304`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 305`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 306`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 307`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 308`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 309`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 310`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 311`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 312`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 313`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 314`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 315`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 316`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 317`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 318`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 319`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 320`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 321`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 322`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 323`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 324`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 325`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 326`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 327`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 328`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 329`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 330`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 331`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 332`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 333`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 334`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 335`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 336`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 337`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 338`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 339`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 340`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 341`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 342`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 343`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 344`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 345`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 346`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 347`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 348`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 349`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 350`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 351`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 352`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 353`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 354`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 355`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 356`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 357`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 358`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 359`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 360`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 361`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 362`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 363`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 364`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 365`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 366`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 367`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 368`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 369`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 370`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 371`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 372`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 373`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 374`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 375`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 376`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 377`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 378`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 379`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 380`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 381`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 382`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 383`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 384`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 385`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 386`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 387`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 388`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 389`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 390`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 391`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 392`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 393`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 394`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 395`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 396`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 397`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 398`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 399`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 400`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 401`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 402`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 403`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 404`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 405`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 406`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 407`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 408`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 409`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 410`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 411`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 412`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 413`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 414`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 415`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 416`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 417`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 418`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 419`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 420`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 421`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 422`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 423`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 424`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 425`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 426`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 427`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 428`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 429`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 430`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 431`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 432`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 433`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 434`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 435`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 436`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 437`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 438`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 439`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 440`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 441`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 442`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 443`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 444`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 445`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 446`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 447`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 448`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 449`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 450`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 451`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 452`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 453`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 454`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 455`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 456`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 457`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 458`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 459`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 460`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 461`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 462`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 463`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 464`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 465`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 466`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 467`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 468`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 469`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 470`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 471`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 472`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 473`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 474`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 475`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 476`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 477`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 478`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 479`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 480`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 481`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 482`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 483`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 484`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 485`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 486`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 487`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 488`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 489`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 490`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 491`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 492`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 493`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 494`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 495`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 496`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 497`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 498`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 499`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 500`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 501`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 502`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 503`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 504`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 505`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 506`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 507`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 508`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 509`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 510`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 511`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 512`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 513`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 514`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 515`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 516`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 517`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 518`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 519`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 520`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 521`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 522`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 523`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 524`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 525`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 526`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 527`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 528`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 529`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 530`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 531`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 532`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 533`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 534`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 535`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 536`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 537`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 538`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 539`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 540`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 541`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 542`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 543`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 544`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 545`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 546`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 547`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 548`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 549`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 550`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 551`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 552`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 553`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 554`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 555`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 556`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 557`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 558`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 559`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 560`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 561`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 562`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 563`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 564`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 565`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 566`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 567`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 568`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 569`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 570`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 571`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 572`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 573`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 574`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 575`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 576`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 577`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 578`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 579`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 580`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 581`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 582`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 583`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 584`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 585`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 586`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 587`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 588`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 589`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 590`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 591`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 592`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 593`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 594`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 595`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 596`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 597`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 598`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 599`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 600`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 601`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 602`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 603`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 604`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 605`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 606`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 607`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 608`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 609`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 610`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 611`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 612`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 613`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 614`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 615`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 616`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 617`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 618`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 619`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 620`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 621`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 622`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 623`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 624`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 625`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 626`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 627`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 628`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 629`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 630`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 631`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 632`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 633`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 634`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 635`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 636`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 637`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 638`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 639`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 640`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 641`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 642`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 643`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 644`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 645`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 646`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 647`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 648`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 649`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 650`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 651`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 652`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 653`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 654`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 655`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 656`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 657`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 658`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 659`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 660`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 661`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 662`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 663`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 664`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 665`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 666`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 667`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 668`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 669`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 670`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 671`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 672`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 673`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 674`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 675`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 676`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 677`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 678`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 679`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 680`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 681`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 682`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 683`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 684`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 685`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 686`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 687`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 688`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 689`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 690`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 691`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 692`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 693`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 694`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 695`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 696`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 697`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 698`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 699`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 700`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 701`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 702`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 703`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 704`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 705`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 706`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 707`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 708`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 709`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 710`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 711`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 712`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 713`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 714`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 715`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 716`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 717`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 718`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 719`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 720`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 721`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 722`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 723`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 724`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 725`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 726`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 727`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 728`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 729`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 730`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 731`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 732`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 733`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 734`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 735`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 736`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 737`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 738`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 739`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 740`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 741`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 742`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 743`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 744`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 745`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 746`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 747`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 748`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 749`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 750`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 751`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 752`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 753`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 754`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 755`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 756`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 757`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 758`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 759`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 760`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 761`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 762`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 763`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 764`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 765`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 766`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 767`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 768`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 769`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 770`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 771`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 772`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 773`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 774`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 775`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 776`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 777`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 778`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 779`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 780`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 781`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 782`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 783`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 784`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 785`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 786`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 787`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 788`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 789`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 790`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 791`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 792`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 793`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 794`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 795`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 796`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 797`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 798`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 799`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 800`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 801`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 802`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 803`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 804`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 805`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 806`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 807`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 808`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 809`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 810`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 811`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 812`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 813`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 814`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 815`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 816`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 817`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 818`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 819`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 820`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 821`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 822`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 823`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 824`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 825`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 826`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 827`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 828`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 829`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 830`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 831`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 832`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 833`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 834`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 835`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 836`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 837`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 838`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 839`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 840`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 841`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 842`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 843`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 844`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 845`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 846`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 847`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 848`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 849`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 850`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 851`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 852`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 853`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 854`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 855`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 856`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 857`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 858`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 859`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 860`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 861`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 862`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 863`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 864`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 865`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 866`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 867`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 868`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 869`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 870`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 871`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 872`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 873`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 874`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 875`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 876`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 877`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 878`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 879`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 880`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 881`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 882`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 883`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 884`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 885`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 886`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 887`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 888`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 889`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 890`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 891`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 892`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 893`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 894`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 895`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 896`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 897`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 898`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 899`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 900`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 901`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 902`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 903`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 904`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 905`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 906`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 907`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 908`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 909`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 910`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 911`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 912`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 913`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 914`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 915`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 916`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 917`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 918`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 919`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 920`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 921`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 922`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 923`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 924`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 925`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 926`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 927`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 928`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 929`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 930`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 931`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 932`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 933`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 934`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 935`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 936`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 937`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 938`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 939`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 940`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 941`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 942`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 943`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 944`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 945`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 946`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 947`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 948`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 949`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 950`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 951`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 952`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 953`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 954`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 955`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 956`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 957`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 958`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 959`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 960`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 961`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 962`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 963`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 964`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 965`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 966`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 967`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 968`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 969`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 970`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 971`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 972`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 973`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 974`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 975`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 976`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 977`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 978`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 979`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 980`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 981`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 982`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 983`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 984`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 985`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 986`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 987`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 988`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 989`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 990`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 991`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 992`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 993`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 994`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 995`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 996`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 997`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 998`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 999`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1000`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1001`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1002`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1003`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1004`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1005`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1006`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1007`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1008`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1009`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1010`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1011`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1012`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1013`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1014`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1015`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1016`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1017`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1018`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1019`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1020`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1021`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1022`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1023`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1024`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1025`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1026`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1027`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1028`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1029`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1030`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1031`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1032`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1033`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1034`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1035`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1036`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1037`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1038`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1039`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1040`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1041`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1042`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1043`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1044`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1045`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1046`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1047`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1048`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1049`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1050`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1051`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1052`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1053`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1054`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1055`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1056`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1057`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1058`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1059`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1060`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1061`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1062`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1063`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1064`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1065`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1066`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1067`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1068`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1069`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1070`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1071`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1072`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1073`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1074`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1075`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1076`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1077`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1078`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1079`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1080`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1081`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1082`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1083`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1084`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1085`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1086`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1087`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1088`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1089`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1090`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1091`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1092`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1093`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1094`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1095`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1096`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1097`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1098`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1099`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1100`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1101`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1102`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1103`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1104`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1105`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1106`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1107`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1108`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1109`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1110`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1111`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1112`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1113`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1114`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 1115`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 1116`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1117`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1118`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 1119`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 1120`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 1121`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 1122`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 1123`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 1124`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1125`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1126`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1127`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1128`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1129`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1130`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1131`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1132`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1133`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1134`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1135`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1136`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1137`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1138`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1139`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1140`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1141`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1142`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1143`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1144`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1145`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1146`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1147`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1148`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1149`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1150`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1151`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1152`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1153`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1154`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1155`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1156`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1157`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1158`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1159`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1160`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1161`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1162`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1163`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1164`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1165`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1166`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1167`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1168`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1169`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1170`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1171`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1172`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1173`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1174`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1175`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1176`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1177`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1178`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1179`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1180`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1181`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1182`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1183`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1184`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1185`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1186`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1187`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1188`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1189`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1190`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1191`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1192`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1193`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1194`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1195`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1196`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1197`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1198`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1199`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1200`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1201`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1202`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1203`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1204`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1205`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1206`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1207`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1208`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1209`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1210`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1211`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1212`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1213`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1214`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1215`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1216`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1217`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1218`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1219`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1220`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1221`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1222`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1223`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1224`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1225`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1226`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1227`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1228`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1229`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1230`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1231`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1232`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1233`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1234`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1235`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1236`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1237`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1238`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1239`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1240`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1241`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1242`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1243`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1244`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1245`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1246`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1247`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1248`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1249`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1250`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1251`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1252`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1253`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1254`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1255`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1256`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1257`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1258`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1259`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1260`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1261`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1262`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1263`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1264`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1265`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1266`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1267`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1268`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1269`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1270`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1271`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1272`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1273`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1274`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1275`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1276`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1277`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1278`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1279`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1280`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1281`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1282`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1283`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1284`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1285`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1286`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1287`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1288`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1289`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1290`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1291`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1292`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1293`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1294`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1295`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1296`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1297`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1298`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1299`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1300`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1301`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1302`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1303`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1304`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1305`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1306`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1307`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1308`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1309`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1310`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1311`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1312`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1313`] = `13`;
+
+exports[`Avoid unnescessary environment instruction 1314`] = `12`;
+
+exports[`Avoid unnescessary environment instruction 1315`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1316`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1317`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1318`] = `11`;
+
+exports[`Avoid unnescessary environment instruction 1319`] = `10`;
+
+exports[`Avoid unnescessary environment instruction 1320`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1321`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1322`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1323`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1324`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1325`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1326`] = `9`;
+
+exports[`Avoid unnescessary environment instruction 1327`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1328`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1329`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1330`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1331`] = `8`;
+
+exports[`Avoid unnescessary environment instruction 1332`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1333`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1334`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1335`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1336`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1337`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1338`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1339`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1340`] = `7`;
+
+exports[`Avoid unnescessary environment instruction 1341`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1342`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1343`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1344`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1345`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1346`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1347`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1348`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1349`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1350`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1351`] = `6`;
+
+exports[`Avoid unnescessary environment instruction 1352`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1353`] = `5`;
+
+exports[`Avoid unnescessary environment instruction 1354`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 1355`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 1356`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 1357`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 1358`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 1359`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 1360`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 1361`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1362`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1363`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1364`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1365`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1366`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 1367`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1368`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1369`] = `0`;
 
 exports[`Breakpoint steps match 1`] = `
 Array [
