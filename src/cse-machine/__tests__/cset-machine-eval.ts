@@ -1,7 +1,7 @@
 import { Chapter, Variant } from '../../types'
 import { expectParsedError, expectResult } from '../../utils/testing'
 
-// CSEP tests for Scheme
+// CSET tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('eval of numbers', () => {

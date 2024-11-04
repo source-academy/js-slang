@@ -5,7 +5,7 @@ import { parse } from '../../parser/parser'
 import { runCodeInSource } from '../../runner'
 import { Chapter, RecursivePartial } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { Control, Pattern, Stash, generateCSEMachineStateStream } from '../interpreter'
+import { Control, Transformers, Stash, generateCSEMachineStateStream } from '../interpreter'
 
 const getContextFrom = async (code: string, steps?: number) => {
   const context = mockContext(Chapter.SOURCE_4)
@@ -24,13 +24,13 @@ const evaluateCode = (code: string) => {
   context.runtime.isRunning = true
   context.runtime.control = new Control(program as es.Program)
   context.runtime.stash = new Stash()
-  context.runtime.patterns = new Pattern()
+  context.runtime.transformers = new Transformers()
 
   const CSEState = generateCSEMachineStateStream(
     context,
     context.runtime.control,
     context.runtime.stash,
-    context.runtime.patterns,
+    context.runtime.transformers,
     options.envSteps ?? -1,
     options.stepLimit ?? -1,
     options.isPrelude

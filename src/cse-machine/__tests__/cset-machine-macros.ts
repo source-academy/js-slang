@@ -1,7 +1,7 @@
 import { Chapter, Variant } from '../../types'
 import { expectParsedError, expectResult } from '../../utils/testing'
 
-// CSEP tests for Scheme Macros
+// CSET tests for Scheme Macros
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('definition of a macro', () => {

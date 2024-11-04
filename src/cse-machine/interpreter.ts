@@ -174,10 +174,10 @@ export class Stash extends Stack<Value> {
 }
 
 /**
- * The P component is a dictionary of mappings from syntax names to
+ * The T component is a dictionary of mappings from syntax names to
  * their corresponding syntax rule transformers (patterns).
  */
-export class Pattern {
+export class Transformers {
   private items: Map<string, Transformer[]>
   public constructor() {
     this.items = new Map<string, Transformer[]>()
@@ -218,12 +218,14 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     context.runtime.isRunning = true
     context.runtime.control = new Control(program)
     context.runtime.stash = new Stash()
-    context.runtime.patterns = context.runtime.patterns ? context.runtime.patterns : new Pattern()
+    context.runtime.transformers = context.runtime.transformers
+      ? context.runtime.transformers
+      : new Transformers()
     return runCSEMachine(
       context,
       context.runtime.control,
       context.runtime.stash,
-      context.runtime.patterns,
+      context.runtime.transformers,
       options.envSteps,
       options.stepLimit,
       options.isPrelude
@@ -250,7 +252,7 @@ export function resumeEvaluate(context: Context) {
       context,
       context.runtime.control!,
       context.runtime.stash!,
-      context.runtime.patterns as Pattern,
+      context.runtime.transformers as Transformers,
       -1,
       -1
     )
@@ -331,7 +333,7 @@ function runCSEMachine(
   context: Context,
   control: Control,
   stash: Stash,
-  patterns: Pattern,
+  transformers: Transformers,
   envSteps: number,
   stepLimit: number,
   isPrelude: boolean = false
@@ -340,7 +342,7 @@ function runCSEMachine(
     context,
     control,
     stash,
-    patterns,
+    transformers,
     envSteps,
     stepLimit,
     isPrelude
@@ -358,7 +360,7 @@ export function* generateCSEMachineStateStream(
   context: Context,
   control: Control,
   stash: Stash,
-  patterns: Pattern,
+  transformers: Transformers,
   envSteps: number,
   stepLimit: number,
   isPrelude: boolean = false
@@ -421,7 +423,7 @@ export function* generateCSEMachineStateStream(
       cmdEvaluators[command.instrType](command, context, control, stash, isPrelude)
     } else {
       // this is a scheme value
-      schemeEval(command, context, control, stash, patterns, isPrelude)
+      schemeEval(command, context, control, stash, transformers, isPrelude)
     }
 
     // Push undefined into the stack if both control and stash is empty

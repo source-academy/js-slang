@@ -10,7 +10,7 @@ import {
 } from '../cse-machine/utils'
 import { Context, Environment, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { Control, Pattern, Stash, generateCSEMachineStateStream } from './interpreter'
+import { Control, Transformers, Stash, generateCSEMachineStateStream } from './interpreter'
 import { envInstr } from './instrCreator'
 
 const closureToJS = (value: Closure, context: Context) => {
@@ -39,12 +39,12 @@ const closureToJS = (value: Closure, context: Context) => {
     // The call expression won't create one as there is only one item in the control.
     newContext.runtime.control.push(envInstr(currentEnvironment(context), node), node)
     newContext.runtime.stash = new Stash()
-    newContext.runtime.patterns = context.runtime.patterns
+    newContext.runtime.transformers = context.runtime.transformers
     const gen = generateCSEMachineStateStream(
       newContext,
       newContext.runtime.control,
       newContext.runtime.stash,
-      newContext.runtime.patterns as Pattern,
+      newContext.runtime.transformers as Transformers,
       -1,
       -1
     )

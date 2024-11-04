@@ -4,7 +4,7 @@ import { List } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { is_number, SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import { Context } from '..'
-import { Control, Pattern, Stash } from './interpreter'
+import { Control, Transformers, Stash } from './interpreter'
 import { getVariable, handleRuntimeError } from './utils'
 import {
   Transformer,
@@ -42,10 +42,10 @@ export class Eval extends Function {
   }
 }
 
-export const csep_eval = Eval.get()
+export const cset_eval = Eval.get()
 
 export function isEval(value: any): boolean {
-  return value === csep_eval
+  return value === cset_eval
 }
 
 // helper function to check if a value is a list.
@@ -84,7 +84,7 @@ export function schemeEval(
   context: Context,
   control: Control,
   stash: Stash,
-  patterns: Pattern,
+  transformers: Transformers,
   isPrelude: boolean
 ) {
   // scheme CSE machine will only ever encounter
@@ -92,7 +92,7 @@ export function schemeEval(
   // if its a list, we can parse the list and evaluate each item as necessary
   // if its a symbol, we can look up the symbol in the environment.
   // for either of these operations, if our list matches some pattern in
-  // the P component, then we can apply the corresponding rule.
+  // the T component, then we can apply the corresponding rule.
 
   // if its a number, boolean, or string, we can just shift the value
   // onto the stash.
@@ -109,14 +109,14 @@ export function schemeEval(
     // it should match some symbol "define", "set", "lambda", etc...
     // or if it doesn't match any of these, then it is a function call.
     if (elem instanceof _Symbol) {
-      // check if elem matches any defined syntax in the P component.
+      // check if elem matches any defined syntax in the T component.
       // if it does, then apply the corresponding rule.
-      if (patterns.hasPattern(elem.sym)) {
+      if (transformers.hasPattern(elem.sym)) {
         // get the relevant transformers
-        const transformers: Transformer[] = patterns.getPattern(elem.sym)
+        const transformerList: Transformer[] = transformers.getPattern(elem.sym)
 
         // find the first matching transformer
-        for (const transformer of transformers) {
+        for (const transformer of transformerList) {
           // check if the transformer matches the list
           try {
             if (match(command, transformer.pattern, transformer.literals)) {
@@ -468,14 +468,14 @@ export function schemeEval(
           const rules = syntaxRulesList.slice(2)
           // rules are set as a list of patterns and templates.
           // we need to convert these into transformers.
-          const transformers: Transformer[] = rules.map(rule => {
+          const transformerList: Transformer[] = rules.map(rule => {
             const ruleList = flattenList(rule)
             const pattern = ruleList[0]
             const template = ruleList[1]
             return new Transformer(literals, pattern, template)
           })
           // now we can add the transformers to the patterns component.
-          patterns.addPattern(syntaxName.sym, transformers)
+          transformers.addPattern(syntaxName.sym, transformerList)
           return
         case 'syntax-rules':
           // syntax-rules is a special form that is used to define
@@ -503,12 +503,12 @@ export function schemeEval(
     control.push(appln as es.CallExpression)
     return
   } else if (command instanceof _Symbol) {
-    if (patterns.hasPattern(command.sym)) {
+    if (transformers.hasPattern(command.sym)) {
       // get the relevant transformers
-      const transformers: Transformer[] = patterns.getPattern(command.sym)
+      const transformerList: Transformer[] = transformers.getPattern(command.sym)
 
       // find the first matching transformer
-      for (const transformer of transformers) {
+      for (const transformer of transformerList) {
         // check if the transformer matches the list
         try {
           if (match(command, transformer.pattern, transformer.literals)) {
