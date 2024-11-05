@@ -3,6 +3,7 @@ import * as es from 'estree'
 
 import {
   currentEnvironment,
+  currentTransformers,
   hasReturnStatement,
   isBlockStatement,
   isStatementSequence,
@@ -37,14 +38,16 @@ const closureToJS = (value: Closure, context: Context) => {
     newContext.runtime.control = new Control()
     // Also need the env instruction to return back to the current environment at the end.
     // The call expression won't create one as there is only one item in the control.
-    newContext.runtime.control.push(envInstr(currentEnvironment(context), node), node)
+    newContext.runtime.control.push(
+      envInstr(currentEnvironment(context), currentTransformers(context), node),
+      node
+    )
     newContext.runtime.stash = new Stash()
     newContext.runtime.transformers = context.runtime.transformers
     const gen = generateCSEMachineStateStream(
       newContext,
       newContext.runtime.control,
       newContext.runtime.stash,
-      newContext.runtime.transformers as Transformers,
       -1,
       -1
     )
@@ -86,6 +89,7 @@ export default class Closure extends Callable {
   public static makeFromArrowFunction(
     node: es.ArrowFunctionExpression,
     environment: Environment,
+    transformers: Transformers,
     context: Context,
     dummyReturn?: boolean,
     predefined?: boolean
@@ -106,6 +110,7 @@ export default class Closure extends Callable {
     const closure = new Closure(
       ast.blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),
       environment,
+      transformers,
       context,
       predefined
     )
@@ -137,6 +142,7 @@ export default class Closure extends Callable {
   constructor(
     public node: es.ArrowFunctionExpression,
     public environment: Environment,
+    public transformers: Transformers,
     context: Context,
     isPredefined?: boolean
   ) {

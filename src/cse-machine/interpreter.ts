@@ -52,6 +52,7 @@ import {
   createEnvironment,
   createProgramEnvironment,
   currentEnvironment,
+  currentTransformers,
   declareFunctionsAndVariables,
   declareIdentifier,
   defineVariable,
@@ -74,11 +75,13 @@ import {
   popEnvironment,
   pushEnvironment,
   reduceConditional,
+  setTransformers,
   setVariable,
   valueProducing
 } from './utils'
 import { isEval, schemeEval } from './scheme-macros'
 import { Transformer } from './patterns'
+import { isSchemeLanguage } from '../alt-langs/mapper'
 
 type CmdEvaluator = (
   command: ControlItem,
@@ -176,20 +179,43 @@ export class Stash extends Stack<Value> {
 /**
  * The T component is a dictionary of mappings from syntax names to
  * their corresponding syntax rule transformers (patterns).
+ *
+ * Similar to the E component, there is a matching
+ * "T" environment tree that is used to store the transformers.
+ * as such, we need to track the transformers and update them with the environment.
  */
 export class Transformers {
+  private parent: Transformers | null
   private items: Map<string, Transformer[]>
-  public constructor() {
+  public constructor(parent?: Transformers) {
+    this.parent = parent || null
     this.items = new Map<string, Transformer[]>()
   }
 
   // only call this if you are sure that the pattern exists.
   public getPattern(name: string): Transformer[] {
-    return this.items.get(name) as Transformer[]
+    // check if the pattern exists in the current transformer
+    if (this.items.has(name)) {
+      return this.items.get(name) as Transformer[]
+    }
+    // else check if the pattern exists in the parent transformer
+    if (this.parent) {
+      return this.parent.getPattern(name)
+    }
+    // should not get here. use this properly.
+    throw new Error(`Pattern ${name} not found in transformers`)
   }
 
   public hasPattern(name: string): boolean {
-    return this.items.has(name)
+    // check if the pattern exists in the current transformer
+    if (this.items.has(name)) {
+      return true
+    }
+    // else check if the pattern exists in the parent transformer
+    if (this.parent) {
+      return this.parent.hasPattern(name)
+    }
+    return false
   }
 
   public addPattern(name: string, item: Transformer[]): void {
@@ -218,14 +244,15 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     context.runtime.isRunning = true
     context.runtime.control = new Control(program)
     context.runtime.stash = new Stash()
+    // set a global transformer if it does not exist.
     context.runtime.transformers = context.runtime.transformers
       ? context.runtime.transformers
       : new Transformers()
+
     return runCSEMachine(
       context,
       context.runtime.control,
       context.runtime.stash,
-      context.runtime.transformers,
       options.envSteps,
       options.stepLimit,
       options.isPrelude
@@ -248,14 +275,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runCSEMachine(
-      context,
-      context.runtime.control!,
-      context.runtime.stash!,
-      context.runtime.transformers as Transformers,
-      -1,
-      -1
-    )
+    return runCSEMachine(context, context.runtime.control!, context.runtime.stash!, -1, -1)
   } catch (error) {
     return new CseError(error)
   } finally {
@@ -324,7 +344,6 @@ export function CSEResultPromise(context: Context, value: Value): Promise<Result
  * @param context The context to evaluate the program in.
  * @param control Points to the current context.runtime.control
  * @param stash Points to the current context.runtime.stash
- * @param patterns Points to the current context.runtime.patterns
  * @param isPrelude Whether the program we are running is the prelude
  * @returns A special break object if the program is interrupted by a breakpoint;
  * else the top value of the stash. It is usually the return value of the program.
@@ -333,7 +352,6 @@ function runCSEMachine(
   context: Context,
   control: Control,
   stash: Stash,
-  transformers: Transformers,
   envSteps: number,
   stepLimit: number,
   isPrelude: boolean = false
@@ -342,7 +360,6 @@ function runCSEMachine(
     context,
     control,
     stash,
-    transformers,
     envSteps,
     stepLimit,
     isPrelude
@@ -360,7 +377,6 @@ export function* generateCSEMachineStateStream(
   context: Context,
   control: Control,
   stash: Stash,
-  transformers: Transformers,
   envSteps: number,
   stepLimit: number,
   isPrelude: boolean = false
@@ -423,7 +439,7 @@ export function* generateCSEMachineStateStream(
       cmdEvaluators[command.instrType](command, context, control, stash, isPrelude)
     } else {
       // this is a scheme value
-      schemeEval(command, context, control, stash, transformers, isPrelude)
+      schemeEval(command, context, control, stash, isPrelude)
     }
 
     // Push undefined into the stack if both control and stash is empty
@@ -507,7 +523,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
       !control.canAvoidEnvInstr()
     ) {
-      control.push(instr.envInstr(currentEnvironment(context), command))
+      control.push(
+        instr.envInstr(
+          currentEnvironment(context),
+          context.runtime.transformers as Transformers,
+          command
+        )
+      )
     }
 
     const environment = createBlockEnvironment(context, 'blockEnvironment')
@@ -806,6 +828,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const closure: Closure = Closure.makeFromArrowFunction(
       command,
       currentEnvironment(context),
+      currentTransformers(context),
       context,
       true,
       isPrelude
@@ -995,6 +1018,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const contControl = control.copy()
       const contStash = stash.copy()
       const contEnv = context.runtime.environments.slice()
+      const contTransformers = currentTransformers(context)
 
       // at this point, the extra CALL instruction
       // has been removed from the control stack.
@@ -1005,7 +1029,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // as such, there is no further need to modify the
       // copied C, S and E!
 
-      const continuation = new Continuation(contControl, contStash, contEnv)
+      const continuation = new Continuation(contControl, contStash, contEnv, contTransformers)
 
       // Get the callee
       const cont_callee: Value = args[0]
@@ -1042,11 +1066,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const contControl = func.getControl()
       const contStash = func.getStash()
       const contEnv = func.getEnv()
+      const contTransformers = func.getTransformers()
 
       // update the C, S, E of the current context
       control.setTo(contControl)
       stash.setTo(contStash)
       context.runtime.environments = contEnv
+      setTransformers(context, contTransformers)
 
       // push the arguments back onto the stash
       stash.push(...args)
@@ -1062,12 +1088,18 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Push ENVIRONMENT instruction if needed - if next control stack item
       // exists and is not an environment instruction, OR the control only contains
       // environment indepedent items
+      // if the current language is a scheme language, don't avoid the environment instruction
+      // as schemers like using the REPL, and that always assumes that the environment is reset
+      // to the main environment.
       if (
-        next &&
-        !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
-        !control.canAvoidEnvInstr()
+        (next &&
+          !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
+          !control.canAvoidEnvInstr()) ||
+        isSchemeLanguage(context)
       ) {
-        control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
+        control.push(
+          instr.envInstr(currentEnvironment(context), currentTransformers(context), command.srcNode)
+        )
       }
 
       // Create environment for function parameters if the function isn't nullary.
@@ -1093,6 +1125,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         control.push(func.node.body)
       }
 
+      // we need to update the transformers environment here.
+      const newTransformers = new Transformers(func.transformers)
+      setTransformers(context, newTransformers)
       return
     }
 
@@ -1175,6 +1210,8 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     while (currentEnvironment(context).id !== command.env.id) {
       popEnvironment(context)
     }
+    // restore transformers environment
+    setTransformers(context, command.transformers)
   },
 
   [InstrType.ARRAY_LITERAL]: function (

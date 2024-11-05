@@ -4,8 +4,8 @@ import { List } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { is_number, SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import { Context } from '..'
-import { Control, Transformers, Stash } from './interpreter'
-import { getVariable, handleRuntimeError } from './utils'
+import { Control, Stash } from './interpreter'
+import { currentTransformers, getVariable, handleRuntimeError } from './utils'
 import {
   Transformer,
   arrayToImproperList,
@@ -84,9 +84,9 @@ export function schemeEval(
   context: Context,
   control: Control,
   stash: Stash,
-  transformers: Transformers,
   isPrelude: boolean
 ) {
+  const transformers = currentTransformers(context)
   // scheme CSE machine will only ever encounter
   // lists or primitives like symbols, booleans or strings.
   // if its a list, we can parse the list and evaluate each item as necessary
@@ -474,7 +474,7 @@ export function schemeEval(
             const template = ruleList[1]
             return new Transformer(literals, pattern, template)
           })
-          // now we can add the transformers to the patterns component.
+          // now we can add the transformers to the transformers component.
           transformers.addPattern(syntaxName.sym, transformerList)
           return
         case 'syntax-rules':
@@ -503,43 +503,6 @@ export function schemeEval(
     control.push(appln as es.CallExpression)
     return
   } else if (command instanceof _Symbol) {
-    if (transformers.hasPattern(command.sym)) {
-      // get the relevant transformers
-      const transformerList: Transformer[] = transformers.getPattern(command.sym)
-
-      // find the first matching transformer
-      for (const transformer of transformerList) {
-        // check if the transformer matches the list
-        try {
-          if (match(command, transformer.pattern, transformer.literals)) {
-            // if it does, apply the transformer
-            const transformedMacro = macro_transform(command, transformer)
-            control.push(transformedMacro as ControlItem)
-            return
-          }
-        } catch (e) {
-          return handleRuntimeError(
-            context,
-            new errors.ExceptionError(
-              new Error(
-                'Error in macro-expanding ' +
-                  command.sym +
-                  '! Are the template and pattern well formed?'
-              )
-            )
-          )
-        }
-      }
-
-      // there is an error if we get to here
-      return handleRuntimeError(
-        context,
-        new errors.ExceptionError(
-          new Error('No matching transformer found for macro ' + command.sym)
-        )
-      )
-    }
-
     // get the value of the symbol from the environment
     // associated with this symbol.
     const encodedName = encode(command.sym)

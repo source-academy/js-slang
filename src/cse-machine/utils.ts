@@ -8,7 +8,7 @@ import { Chapter, type Environment, type Node, type StatementSequence, type Valu
 import * as ast from '../utils/ast/astCreator'
 import Heap from './heap'
 import * as instr from './instrCreator'
-import { Control } from './interpreter'
+import { Control, Transformers } from './interpreter'
 import {
   AppInstr,
   EnvArray,
@@ -302,6 +302,16 @@ export const isSimpleFunction = (node: any) => {
     const block = node.body
     return block.body.length === 1 && block.body[0].type === 'ReturnStatement'
   }
+}
+
+/**
+ * Transformers
+ */
+export const currentTransformers = (context: Context) =>
+  context.runtime.transformers as Transformers
+
+export const setTransformers = (context: Context, transformers: Transformers) => {
+  context.runtime.transformers = transformers
 }
 
 /**

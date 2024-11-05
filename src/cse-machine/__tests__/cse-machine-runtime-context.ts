@@ -30,7 +30,6 @@ const evaluateCode = (code: string) => {
     context,
     context.runtime.control,
     context.runtime.stash,
-    context.runtime.transformers,
     options.envSteps ?? -1,
     options.stepLimit ?? -1,
     options.isPrelude
