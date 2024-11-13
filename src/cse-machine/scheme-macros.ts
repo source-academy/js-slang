@@ -476,6 +476,9 @@ export function schemeEval(
           })
           // now we can add the transformers to the transformers component.
           transformers.addPattern(syntaxName.sym, transformerList)
+
+          // for consistency with scheme expecting undefined return values, push undefined to the stash.
+          stash.push(undefined)
           return
         case 'syntax-rules':
           // syntax-rules is a special form that is used to define

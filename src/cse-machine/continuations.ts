@@ -1,7 +1,8 @@
 import * as es from 'estree'
 
-import { Environment } from '../types'
+import { Context, Environment } from '../types'
 import { Control, Stash, Transformers } from './interpreter'
+import { uniqueId } from './utils'
 
 /**
  * A dummy function used to detect for the apply function object.
@@ -74,12 +75,16 @@ export class Continuation extends Function {
   private env: Environment[]
   private transformers: Transformers
 
-  constructor(control: Control, stash: Stash, env: Environment[], transformers: Transformers) {
+  /** Unique ID defined for continuation */
+  public readonly id: string
+
+  constructor(context: Context, control: Control, stash: Stash, env: Environment[], transformers: Transformers) {
     super()
     this.control = control.copy()
     this.stash = stash.copy()
     this.env = [...env]
     this.transformers = transformers
+    this.id = uniqueId(context)
   }
 
   // As the continuation needs to be immutable (we can call it several times)
@@ -102,6 +107,10 @@ export class Continuation extends Function {
 
   public toString(): string {
     return 'continuation'
+  }
+  
+  public equals(other: Continuation): boolean {
+    return this === other
   }
 }
 

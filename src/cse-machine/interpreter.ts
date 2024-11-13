@@ -1027,9 +1027,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // and additionally, call/cc itself has been removed from the stash.
 
       // as such, there is no further need to modify the
-      // copied C, S and E!
+      // copied C, S, E and T!
 
-      const continuation = new Continuation(contControl, contStash, contEnv, contTransformers)
+      const continuation = new Continuation(context, contControl, contStash, contEnv, contTransformers)
 
       // Get the callee
       const cont_callee: Value = args[0]
