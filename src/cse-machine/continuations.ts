@@ -78,7 +78,13 @@ export class Continuation extends Function {
   /** Unique ID defined for continuation */
   public readonly id: string
 
-  constructor(context: Context, control: Control, stash: Stash, env: Environment[], transformers: Transformers) {
+  constructor(
+    context: Context,
+    control: Control,
+    stash: Stash,
+    env: Environment[],
+    transformers: Transformers
+  ) {
     super()
     this.control = control.copy()
     this.stash = stash.copy()
@@ -108,7 +114,7 @@ export class Continuation extends Function {
   public toString(): string {
     return 'continuation'
   }
-  
+
   public equals(other: Continuation): boolean {
     return this === other
   }
