@@ -96,10 +96,17 @@ export const scheme4Prelude = `
 `
 
 export const schemeFullPrelude = `
-(define-syntax let 
-    (syntax-rules () 
+(define-syntax let
+    (syntax-rules ()
         ((_ ((name val) ...) body restbody ...) 
-         ((lambda (name ...) body restbody ...) val ...))))
+         ((lambda (name ...) body restbody ...) val ...))
+    
+        ;; taken from https://stackoverflow.com/questions/78177041/is-there-a-way-to-implement-named-let-as-macro-to-make-it-work-with-petrofsky-le
+        ((_ name ((id init) ...) body0 body1 ...)
+         (((lambda (h)
+            ((lambda (x) (h (lambda a (apply (x x) a))))
+             (lambda (x) (h (lambda a (apply (x x) a))))))
+             (lambda (name) (lambda (id ...) body0 body1 ...))) init ...))))
 
 (define-syntax quasiquote
     (syntax-rules (unquote unquote-splicing)
