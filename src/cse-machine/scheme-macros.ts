@@ -6,18 +6,17 @@ import { is_number, SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdli
 import { Context } from '..'
 import { Control, Stash } from './interpreter'
 import { currentTransformers, getVariable, handleRuntimeError } from './utils'
+import { Transformer, macro_transform, match } from './patterns'
 import {
-  Transformer,
   arrayToImproperList,
   arrayToList,
   flattenImproperList,
-  isImproperList,
-  macro_transform,
-  match
-} from './patterns'
+  isImproperList
+} from './macro-utils'
 import { ControlItem } from './types'
 import { encode } from '../alt-langs/scheme/scm-slang/src'
 import { popInstr } from './instrCreator'
+import { flattenList, isList } from './macro-utils'
 
 // this needs to be better but for now it's fine
 export type SchemeControlItems = List | _Symbol | SchemeNumber | boolean | string
@@ -46,22 +45,6 @@ export const cset_eval = Eval.get()
 
 export function isEval(value: any): boolean {
   return value === cset_eval
-}
-
-// helper function to check if a value is a list.
-export function isList(value: any): boolean {
-  if (value === null) {
-    return true
-  }
-  return Array.isArray(value) && value.length === 2 && isList(value[1])
-}
-
-// do a 1-level deep flattening of a list.
-export function flattenList(value: any): any[] {
-  if (value === null) {
-    return []
-  }
-  return [value[0], ...flattenList(value[1])]
 }
 
 function isSpecialForm(sym: _Symbol): boolean {

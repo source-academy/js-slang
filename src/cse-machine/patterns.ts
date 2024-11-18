@@ -1,11 +1,19 @@
-// a single pattern stored within the patterns component
+// a single transformer stored within the transformers component
 // will be henceforth referred to as a "transformer".
 // it consists of a set of literals used as additional syntax,
 // a pattern (for a list to match against)
 // and a final template (for the list to be transformed into).
 import { List, Pair } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
-import { flattenList, isList } from './scheme-macros'
+import {
+  arrayToImproperList,
+  arrayToList,
+  flattenList,
+  improperListLength,
+  isImproperList,
+  isPair,
+  isList
+} from './macro-utils'
 import { atomic_equals, is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 
 // a single pattern stored within the patterns component
@@ -28,55 +36,6 @@ export class Transformer {
 export function macro_transform(input: any, transformer: Transformer): any {
   const collected = collect(input, transformer.pattern, transformer.literals)
   return transform(transformer.template, collected)
-}
-
-export function arrayToList(arr: any[]): List {
-  if (arr.length === 0) {
-    return null
-  }
-  const pair: any[] = [arr[0], arrayToList(arr.slice(1))] as any[]
-  ;(pair as any).pair = true
-  return pair as List
-}
-
-export function arrayToImproperList(arr: any[], last: any): any {
-  if (arr.length === 0) {
-    return last
-  }
-  const pair: any[] = [arr[0], arrayToImproperList(arr.slice(1), last)] as any[]
-  ;(pair as any).pair = true
-  return pair
-}
-
-export function isImproperList(value: any): boolean {
-  if (value === null) {
-    return false
-  }
-  return Array.isArray(value) && value.length === 2 && !isList(value[1])
-}
-
-function isPair(value: any): value is Pair<any, any> {
-  return Array.isArray(value) && value.length === 2
-}
-
-export function flattenImproperList(value: any): [any[], any] {
-  let items = []
-  let working = value
-  while (working instanceof Array && working.length === 2) {
-    items.push(working[0])
-    working = working[1]
-  }
-  return [items, working]
-}
-
-function improperListLength(value: any): number {
-  let length = 0
-  let working = value
-  while (isPair(working)) {
-    length++
-    working = working[1]
-  }
-  return length
 }
 
 // we use the match() function to match a list against a pattern and literals
@@ -448,7 +407,12 @@ export function transform(
   }
 
   // case 3
-  if (isList(template) && template[0] instanceof _Symbol && template[0].sym === '...') {
+  if (
+    isList(template) &&
+    template !== null &&
+    template[0] instanceof _Symbol &&
+    template[0].sym === '...'
+  ) {
     // parser should ensure that the ellipsis is followed by a single value.
     // this value is the template to be used.
     // get the cadr of the template and return it.

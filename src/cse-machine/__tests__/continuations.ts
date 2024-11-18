@@ -1,3 +1,4 @@
+import { mockContext } from '../../mocks/context'
 import { Call_cc, Continuation, isCallWithCurrentContinuation } from '../continuations'
 import { Control, Stash, Transformers } from '../interpreter'
 
@@ -15,6 +16,6 @@ test('isCallWithCurrentContinuation works on call/cc only', () => {
 })
 
 test('Continuation toString', () => {
-  const cont = new Continuation(new Control(), new Stash(), [], new Transformers())
+  const cont = new Continuation(mockContext(), new Control(), new Stash(), [], new Transformers())
   expect(cont.toString()).toBe('continuation')
 })
