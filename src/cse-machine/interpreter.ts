@@ -79,9 +79,10 @@ import {
   setVariable,
   valueProducing
 } from './utils'
-import { isEval, schemeEval } from './scheme-macros'
+import { isApply, isEval, schemeEval } from './scheme-macros'
 import { Transformer } from './patterns'
 import { isSchemeLanguage } from '../alt-langs/mapper'
+import { flattenList, isList } from './macro-utils'
 
 type CmdEvaluator = (
   command: ControlItem,
@@ -998,6 +999,37 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
     }
 
+    if (isApply(func)) {
+      // Check for number of arguments mismatch error
+      checkNumberOfArguments(context, func, args, command.srcNode)
+
+      // get the procedure from the arguments
+      const proc = args[0]
+      // get the last list from the arguments
+      // (and it should be a list)
+      const last = args[args.length - 1]
+      if (!isList(last)) {
+        handleRuntimeError(
+          context,
+          new errors.ExceptionError(new Error('Last argument of apply must be a list'))
+        )
+      }
+      // get the rest of the arguments between the procedure and the last list
+      const rest = args.slice(1, args.length - 1)
+      // convert the last list to an array
+      const lastAsArray = flattenList(last)
+      // combine the rest and the last list
+      const combined = [...rest, ...lastAsArray]
+
+      // push the items back onto the stash
+      stash.push(proc)
+      stash.push(...combined)
+
+      // prepare a function call for the procedure
+      control.push(instr.appInstr(combined.length, command.srcNode))
+      return
+    }
+
     if (isEval(func)) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
@@ -1056,17 +1088,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (func instanceof Continuation) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
-
-      // const dummyContCallExpression = makeDummyContCallExpression('f', 'cont')
-
-      // // Restore the state of the stash,
-      // // but replace the function application instruction with
-      // // a resume continuation instruction
-      // stash.push(func)
-      // // we need to push the arguments back onto the stash
-      // // as well
-      // stash.push(...args)
-      // control.push(instr.resumeContInstr(command.numOfArgs, dummyContCallExpression))
 
       // get the C, S, E from the continuation
       const contControl = func.getControl()

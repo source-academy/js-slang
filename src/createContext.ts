@@ -38,7 +38,7 @@ import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 import { schemeVisualise } from './alt-langs/scheme/scheme-mapper'
-import { cset_eval } from './cse-machine/scheme-macros'
+import { cset_apply, cset_eval } from './cse-machine/scheme-macros'
 import { Transformers } from './cse-machine/interpreter'
 
 export class LazyBuiltIn {
@@ -619,11 +619,16 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'list$45$$62$string(xs)', scheme_libs.list$45$$62$string)
 
         // Scheme apply is needed here to help in the definition of the Scheme Prelude.
-        defineBuiltin(context, 'apply(f, ...args)', scheme_libs.apply, 2)
+        defineBuiltin(context, 'apply(f, ...args)', cset_apply, 2)
 
       case Chapter.SCHEME_1:
         // Display
-        defineBuiltin(context, 'display(val)', (val: any) => display(schemeVisualise(val)))
+        defineBuiltin(
+          context,
+          'display(val, prepend = undefined)',
+          (val: any, ...str: string[]) => display(schemeVisualise(val), ...str),
+          1
+        )
         defineBuiltin(context, 'newline()', () => display(''))
 
         // I/O

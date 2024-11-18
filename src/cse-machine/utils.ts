@@ -21,7 +21,7 @@ import {
 } from './types'
 import Closure from './closure'
 import { Continuation, isCallWithCurrentContinuation } from './continuations'
-import { isEval } from './scheme-macros'
+import { isApply, isEval } from './scheme-macros'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 
@@ -578,6 +578,15 @@ export const checkNumberOfArguments = (
       return handleRuntimeError(
         context,
         new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+      )
+    }
+    return undefined
+  } else if (isApply(callee)) {
+    // apply should have at least two arguments
+    if (args.length < 2) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(exp, 2, args.length, false)
       )
     }
     return undefined

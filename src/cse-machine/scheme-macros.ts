@@ -22,8 +22,37 @@ import { flattenList, isList } from './macro-utils'
 export type SchemeControlItems = List | _Symbol | SchemeNumber | boolean | string
 
 /**
+ * A metaprocedure used to detect for the apply function object.
+ * If the interpreter sees this specific function,
+ * it will take all of the operands, and apply the second to second last operands as well as the last operand (must be a list)
+ * to the first operand (which must be a function).
+ */
+export class Apply extends Function {
+  private static instance: Apply = new Apply()
+
+  private constructor() {
+    super()
+  }
+
+  public static get(): Apply {
+    return Apply.instance
+  }
+
+  public toString(): string {
+    return 'apply'
+  }
+}
+
+export const cset_apply = Apply.get()
+
+export function isApply(value: any): boolean {
+  return value === cset_apply
+}
+
+/**
  * A metaprocedure used to detect for the eval function object.
  * If the interpreter sees this specific function,
+ * it will transfer its operand to the control component.
  */
 export class Eval extends Function {
   private static instance: Eval = new Eval()
@@ -505,28 +534,6 @@ export function makeDummyIdentifierNode(name: string): es.Identifier {
   return {
     type: 'Identifier',
     name
-  }
-}
-
-/**
- * Provides an adequate representation of what calling
- * eval looks like, to give to the
- * APPLICATION instruction.
- */
-export function makeDummyEvalExpression(callee: string, argument: string): es.CallExpression {
-  return {
-    type: 'CallExpression',
-    optional: false,
-    callee: {
-      type: 'Identifier',
-      name: callee
-    },
-    arguments: [
-      {
-        type: 'Identifier',
-        name: argument
-      }
-    ]
   }
 }
 
