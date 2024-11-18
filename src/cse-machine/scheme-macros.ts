@@ -416,6 +416,12 @@ export function schemeEval(
           // quote is a special form that returns the expression
           // as is, without evaluating it.
           // we can just push the expression to the stash.
+          if (parsedList.length !== 2) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('quote requires 1 argument!'))
+            )
+          }
           stash.push(parsedList[1])
           return
         // case 'quasiquote': quasiquote is implemented as a macro.
@@ -446,6 +452,14 @@ export function schemeEval(
             )
           }
           const syntaxRules = parsedList[2]
+          if (!isList(syntaxRules)) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(
+                new Error('define-syntax requires a syntax-rules transformer!')
+              )
+            )
+          }
 
           // at this point, we assume that syntax-rules is verified
           // and parsed correctly already.
@@ -467,6 +481,12 @@ export function schemeEval(
               new errors.ExceptionError(new Error('syntax-rules requires at least 2 arguments!'))
             )
           }
+          if (!isList(syntaxRulesList[1])) {
+            return handleRuntimeError(
+              context,
+              new errors.ExceptionError(new Error('Invalid syntax-rules literals!'))
+            )
+          }
           const literalList = flattenList(syntaxRulesList[1])
           const literals: string[] = literalList.map((literal: _Symbol) => {
             if (!(literal instanceof _Symbol)) {
@@ -481,6 +501,12 @@ export function schemeEval(
           // rules are set as a list of patterns and templates.
           // we need to convert these into transformers.
           const transformerList: Transformer[] = rules.map(rule => {
+            if (!isList(rule)) {
+              return handleRuntimeError(
+                context,
+                new errors.ExceptionError(new Error('Invalid syntax-rules rule!'))
+              )
+            }
             const ruleList = flattenList(rule)
             const pattern = ruleList[0]
             const template = ruleList[1]

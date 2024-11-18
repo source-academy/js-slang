@@ -1,0 +1,376 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`evaluating a poorly formed begin throws error (insufficient arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(begin))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: begin requires at least 1 argument!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define throws error (attempt to redefine special form): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define (if x y) 4))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: Cannot shadow special form if with a definition!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define throws error (ill formed define-function): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define (x 1 2 3) 4))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: Invalid arguments for lambda!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define throws error (insufficient arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: define requires at least 2 arguments!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define throws error (too many arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define x 1 2 3))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: define requires 2 arguments!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define-syntax throws error (attempt to shadow special form): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define-syntax if 4))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: Cannot shadow special form if with a macro!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define-syntax throws error (insufficient arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define-syntax))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: define-syntax requires 2 arguments!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define-syntax throws error (list is not syntax-rules): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define-syntax x (foo bar)))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: define-syntax requires a syntax-rules transformer!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define-syntax throws error (no syntax-rules list): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define-syntax x 1))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: define-syntax requires a syntax-rules transformer!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define-syntax throws error (syntax is not a symbol): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define-syntax 1 4))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: define-syntax requires a symbol!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define-syntax throws error (syntax-rules has non-list rules): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define-syntax x (syntax-rules (x) 1)))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: Invalid syntax-rules rule!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define-syntax throws error (syntax-rules has non-symbol literals): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define-syntax x (syntax-rules (1 2) (1 1))))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: Invalid syntax-rules literals!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define-syntax throws error (syntax-rules has poor literals list): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define-syntax x (syntax-rules x (1 1))))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: Invalid syntax-rules literals!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define-syntax throws error (syntax-rules too few arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define-syntax x (syntax-rules)))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: syntax-rules requires at least 2 arguments!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed define-syntax throws error (too many arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define-syntax x 1 2 3))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: define-syntax requires 2 arguments!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed if throws error (insufficient arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(if))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: if requires at least 2 arguments!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed if throws error (too many arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(if #t 1 2 3))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: if requires at most 3 arguments!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed lambda throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(lambda (1 2 3) x))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: Invalid arguments for lambda!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed quote throws error (insufficient arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(quote))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: quote requires 1 argument!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed quote throws error (too many arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(quote x y))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: quote requires 1 argument!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed set! throws error (attempt to set! special form): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(set! if 4))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: Cannot overwrite special form if with a value!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed set! throws error (insufficient arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(set!))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: set! requires 2 arguments!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a poorly formed set! throws error (too many arguments): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(set! x 1 2 3))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: set! requires 2 arguments!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating a syntax-rules expression (should not exist outside of define-syntax): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(syntax-rules (x) (1 1)))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: syntax-rules must only exist within define-syntax!",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`evaluating null throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '())
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: Cannot evaluate null",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
