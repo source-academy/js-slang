@@ -50,7 +50,7 @@ describe('Test codify works on non-circular abstract syntax graphs', () => {
 })
 
 describe('Test codify works on circular abstract syntax graphs', () => {
-  test('functions', async () => {
+  test('functions', () => {
     const code = `
     x => x();
   `

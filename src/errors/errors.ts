@@ -10,7 +10,7 @@ import { RuntimeSourceError } from './runtimeSourceError'
 
 //Wrap build-in function error in SourceError
 export class BuiltInFunctionError extends RuntimeSourceError {
-  constructor(private explanation: String) {
+  constructor(private explanation: string) {
     super(undefined)
     this.explanation = explanation
   }

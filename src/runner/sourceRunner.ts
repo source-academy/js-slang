@@ -12,13 +12,12 @@ import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluateProgram as evaluate } from '../interpreter/interpreter'
-import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
-import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
+import { AsyncScheduler, PreemptiveScheduler } from '../schedulers'
 import {
   callee,
   getEvaluationSteps,
@@ -117,10 +116,7 @@ function runSubstitution(
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
   let it = evaluate(program, context)
   let scheduler: Scheduler
-  if (context.variant === Variant.NON_DET) {
-    it = nonDetEvaluate(program, context)
-    scheduler = new NonDetScheduler()
-  } else if (options.scheduler === 'async') {
+  if (options.scheduler === 'async') {
     scheduler = new AsyncScheduler()
   } else {
     scheduler = new PreemptiveScheduler(options.steps)
