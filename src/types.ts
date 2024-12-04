@@ -10,7 +10,7 @@ import * as es from 'estree'
 
 import { EnvTree } from './createContext'
 import Heap from './cse-machine/heap'
-import { Control, Stash } from './cse-machine/interpreter'
+import { Control, Stash, Transformers } from './cse-machine/interpreter'
 import type { ModuleFunctions } from './modules/moduleTypes'
 import { Representation } from './alt-langs/mapper'
 
@@ -146,6 +146,7 @@ export interface Context<T = any> {
 
   /** Runtime Specific state */
   runtime: {
+    transformers?: Transformers
     break: boolean
     debuggerOn: boolean
     isRunning: boolean

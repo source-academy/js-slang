@@ -2,7 +2,7 @@ import { Chapter, Variant } from '../../types'
 import { expectParsedError, expectResult } from '../../utils/testing'
 
 // Continuation tests for Scheme
-const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
+const optionECScm = { chapter: Chapter.SCHEME_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('basic call/cc works', () => {
   return expectResult(
