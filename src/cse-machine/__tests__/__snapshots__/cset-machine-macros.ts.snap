@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`definition of a macro: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (define-syntax my-let
+      (syntax-rules ()
+        ((_ ((var expr) ...) body ...)
+         ((lambda (var ...) body ...) expr ...))))
+    ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`failed usage of a macro (no matching pattern): expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (define-syntax my-let
+      (syntax-rules ()
+        ((_ ((var expr) ...) body ...)
+         ((lambda (var ...) body ...) expr ...))))
+    (my-let ((x 1) y)
+      (+ x y))
+    ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: No matching transformer found for macro my-let",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`use of a macro: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (define-syntax my-let
+      (syntax-rules ()
+        ((_ ((var expr) ...) body ...)
+         ((lambda (var ...) body ...) expr ...))))
+    (my-let ((x 1) (y 2))
+      (+ x y))
+    ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 3n,
+  },
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`use of a more complex macro (recursive): expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+(define-syntax define-match
+    (syntax-rules ()
+        ; vars is a pair
+        ((_ (front . rest) val)
+         (begin
+            (if (not (pair? val))
+                (error \\"define-match: vars and vals do not match\\"))
+            (define-match front (car val))
+            (define-match rest (cdr val))))
+        ; vars is nil
+        ((_ () val)
+         ; do nothing
+         (if #f #f))
+        ; vars is a single symbol
+        ((_ sym val)
+         (define sym val))))
+  (define-match ((x y) z) '((1 2) 3))
+  (+ x y z)
+    ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 6n,
+  },
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
