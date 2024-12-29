@@ -56,6 +56,7 @@ export function mockRuntimeContext(): Context {
       }
     ],
     control: null,
+    transformers: mockTransformers(),
     stash: null,
     objectCount: 0,
     envStepsTotal: 0,

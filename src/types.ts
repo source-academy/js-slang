@@ -132,6 +132,7 @@ export interface NativeStorage {
   close in the surrounding values, so no problem
    */
   loadedModules: Record<string, ModuleFunctions>
+  loadedModulesTypes: Record<string, string>
 }
 
 export interface Context<T = any> {
@@ -146,12 +147,12 @@ export interface Context<T = any> {
 
   /** Runtime Specific state */
   runtime: {
-    transformers?: Transformers
     break: boolean
     debuggerOn: boolean
     isRunning: boolean
     environmentTree: EnvTree
     environments: Environment[]
+    transformers: Transformers | null
     nodes: Node[]
     control: Control | null
     stash: Stash | null

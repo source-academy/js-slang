@@ -3,7 +3,7 @@ import type es from 'estree'
 
 import type { Context, IOptions } from '../..'
 import type { RecursivePartial } from '../../types'
-import loadSourceModules from '../loader'
+import loadSourceModules, { loadSourceModulesTypes } from '../loader'
 import type { FileGetter } from '../moduleTypes'
 import analyzeImportsAndExports from './analyzer'
 import parseProgramsAndConstructImportGraph from './linker'
@@ -46,6 +46,20 @@ const preprocessFileImports = async (
   bundler: Bundler = defaultBundler
 ): Promise<PreprocessResult> => {
   // Parse all files into ASTs and build the import graph.
+  try {
+    await loadSourceModulesTypes(
+      new Set<string>(['rune']),
+      context,
+      options.importOptions?.loadTabs ?? true
+    )
+  } catch (error) {
+    context.errors.push(error)
+    return {
+      ok: false,
+      verboseErrors: false
+    }
+  }
+
   const linkerResult = await parseProgramsAndConstructImportGraph(
     files,
     entrypointFilePath,

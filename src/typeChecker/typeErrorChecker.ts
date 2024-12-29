@@ -10,6 +10,7 @@ import {
   InvalidIndexTypeError,
   InvalidNumberOfArgumentsTypeError,
   InvalidNumberOfTypeArgumentsForGenericTypeError,
+  // NameNotFoundInModuleError,
   TypeAliasNameNotAllowedError,
   TypecastError,
   TypeMismatchError,
@@ -68,6 +69,7 @@ import {
   tVoid,
   typeAnnotationKeywordToBasicTypeMap
 } from './utils'
+// import { ModuleNotFoundError } from '../modules/errors'
 
 // Context and type environment are saved as global variables so that they are not passed between functions excessively
 let context: Context = {} as Context
@@ -100,7 +102,7 @@ export function checkForTypeErrors(program: tsEs.Program, inputContext: Context)
   } catch (error) {
     // Catch-all for thrown errors
     // (either errors that cause early termination or errors that should not be reached logically)
-    console.error(error)
+    // console.error(error)
     context.errors.push(
       error instanceof TypecheckError
         ? error
@@ -388,7 +390,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
           return tStream(elementType)
         }
       }
-      const calleeType = typeCheckAndReturnType(callee)
+      const calleeType = cloneDeep(typeCheckAndReturnType(callee))
       if (calleeType.kind !== 'function') {
         if (calleeType.kind !== 'primitive' || calleeType.name !== 'any') {
           context.errors.push(new TypeNotCallableError(node, formatTypeString(calleeType)))
@@ -552,12 +554,89 @@ function handleImportDeclarations(node: tsEs.Program) {
   if (importStmts.length === 0) {
     return
   }
+  // importStmts.forEach(stmt => {
+  //   stmt.specifiers.map(spec => {
+  //     setType(spec.local.name, tAny, env)
+  //   })
+  // })
+
+  // const moduleList = Object.keys(memoizedGetModuleManifest())
+  const importedModuleTypesTextMap: Record<string, string> = {}
+
   importStmts.forEach(stmt => {
     // Source only uses strings for import source value
-    stmt.specifiers.map(spec => {
-      setType(spec.local.name, tAny, env)
+    const moduleName = stmt.source.value as string
+
+    // Module not found
+    // if (!moduleList.includes(moduleName)) {
+    //   context.errors.push(new ModuleNotFoundError(moduleName, stmt))
+    //   // Set all imported names to be of type any to prevent further typecheck errors
+    //   stmt.specifiers.map(spec => {
+    //     if (spec.type !== 'ImportSpecifier') {
+    //       throw new TypecheckError(stmt, 'Unknown specifier type')
+    //     }
+    //     setType(spec.local.name, tAny, env)
+    //   })
+    //   return
+    // }
+
+    // TODO: Add logic for fetching module type declarations map from modules repo
+    // after the modules have been properly typed on modules repo.
+    // runeTypes.ts is currently a temporary file added to js-slang as a proof of concept;
+    // the file should be deleted once the module types fetching system has been properly implemented
+
+    // loadedModulesTypes are fetched from the modules repo
+    const moduleTypesTextMap = context.nativeStorage.loadedModulesTypes
+
+    // Module has no types
+    if (!moduleTypesTextMap) {
+      // Set all imported names to be of type any
+      // TODO: Consider switching to 'Module not supported' error after more modules have been typed
+      stmt.specifiers.map(spec => {
+        if (spec.type !== 'ImportSpecifier') {
+          throw new TypecheckError(stmt, 'Unknown specifier type')
+        }
+        setType(spec.local.name, tAny, env)
+      })
+      return
+    }
+
+    // Add prelude for module, which contains types that are shared by
+    // multiple variables and functions in the module
+    if (!importedModuleTypesTextMap[moduleName]) {
+      importedModuleTypesTextMap[moduleName] = moduleTypesTextMap.prelude
+    }
+
+    stmt.specifiers.forEach(spec => {
+      if (spec.type !== 'ImportSpecifier') {
+        throw new TypecheckError(stmt, 'Unknown specifier type')
+      }
+
+      const importedName = spec.local.name
+      const importedType = moduleTypesTextMap[importedName]
+      if (!importedType) {
+        // context.errors.push(new NameNotFoundInModuleError(stmt, moduleName, importedName))
+        // Set imported name to be of type any to prevent further typecheck errors
+        setType(importedName, tAny, env)
+        return
+      }
+
+      importedModuleTypesTextMap[moduleName] =
+        importedModuleTypesTextMap[moduleName] + '\n' + importedType
     })
   })
+
+  Object.values(importedModuleTypesTextMap).forEach(typesText => {
+    const parsedModuleTypes = babelParse(typesText, {
+      sourceType: 'module',
+      plugins: ['typescript', 'estree']
+    }).program as unknown as tsEs.Program
+
+    console.log(parsedModuleTypes)
+    typeCheckAndReturnType(parsedModuleTypes)
+  })
+
+  console.log(env)
 }
 
 /**
