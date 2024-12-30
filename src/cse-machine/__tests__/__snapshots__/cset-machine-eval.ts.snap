@@ -1,0 +1,224 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`eval of application: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(+ 1 2))
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 3n,
+  },
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of begin: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(begin 1 2 3))
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 3n,
+  },
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of booleans: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval #t)
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of define: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(define x 1))
+    x
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 1n,
+  },
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of empty list: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '())
+  ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: Cannot evaluate null",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of if: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(if #t 1 2))
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 1n,
+  },
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of lambda: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(lambda (x) x))
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": [Function],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of numbers: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval 1)
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 1n,
+  },
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of quote: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval '(quote (1 2 3)))
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": Array [
+    SchemeInteger {
+      "numberType": 1,
+      "value": 1n,
+    },
+    Array [
+      SchemeInteger {
+        "numberType": 1,
+        "value": 2n,
+      },
+      Array [
+        SchemeInteger {
+          "numberType": 1,
+          "value": 3n,
+        },
+        null,
+      ],
+    ],
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of set!: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (define x 2)
+    (eval '(set! x 1))
+    x
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 1n,
+  },
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of strings: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (eval \\"hello\\")
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "hello",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`eval of symbols: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (define hello 1)
+    (eval 'hello)
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 1n,
+  },
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

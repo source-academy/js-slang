@@ -18,6 +18,7 @@ import {
   UnOpInstr,
   WhileInstr
 } from './types'
+import { Transformers } from './interpreter'
 
 export const resetInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.RESET,
@@ -90,9 +91,14 @@ export const branchInstr = (
   srcNode
 })
 
-export const envInstr = (env: Environment, srcNode: Node): EnvInstr => ({
+export const envInstr = (
+  env: Environment,
+  transformers: Transformers,
+  srcNode: Node
+): EnvInstr => ({
   instrType: InstrType.ENVIRONMENT,
   env,
+  transformers,
   srcNode
 })
 

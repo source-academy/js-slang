@@ -92,9 +92,46 @@ export const scheme3Prelude = `
 `
 
 export const scheme4Prelude = `
-;; empty for now
+(define call-with-current-continuation call/cc)
 `
 
 export const schemeFullPrelude = `
-(define call-with-current-continuation call/cc)
+(define-syntax let
+    (syntax-rules ()
+        ((_ ((name val) ...) body restbody ...) 
+         ((lambda (name ...) body restbody ...) val ...))
+    
+        ;; taken from https://stackoverflow.com/questions/78177041/is-there-a-way-to-implement-named-let-as-macro-to-make-it-work-with-petrofsky-le
+        ((_ name ((id init) ...) body0 body1 ...)
+         (((lambda (h)
+            ((lambda (x) (h (lambda a (apply (x x) a))))
+             (lambda (x) (h (lambda a (apply (x x) a))))))
+             (lambda (name) (lambda (id ...) body0 body1 ...))) init ...))))
+
+(define-syntax quasiquote
+    (syntax-rules (unquote unquote-splicing)
+        ((_ (unquote x)) x)
+        ((_ ((unquote-splicing x) . rest))
+            (append x (quasiquote rest)))
+        ((_ (a . rest))
+            (cons (quasiquote a) (quasiquote rest)))        
+        ((_ x) (quote x))))
+        
+(define-syntax cond
+  (syntax-rules (else)
+    ((_) (if #f #f))
+
+    ((_ (else val rest ...))
+     (begin val rest ...))
+
+    ((_ (test val rest ...))
+     (if test
+         (begin val rest ...)
+         (cond))) 
+
+    ((_ (test val rest ...) next-clauses ...)
+     (if test
+         (begin val rest ...)
+         (cond next-clauses ...)))))
+
 `

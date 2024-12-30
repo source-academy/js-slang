@@ -4,11 +4,11 @@ import { isArray, isFunction } from 'lodash'
 import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import type { Environment, Node, StatementSequence, Value } from '../types'
+import { Chapter, type Environment, type Node, type StatementSequence, type Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import Heap from './heap'
 import * as instr from './instrCreator'
-import { Control } from './interpreter'
+import { Control, Transformers } from './interpreter'
 import {
   AppInstr,
   EnvArray,
@@ -21,6 +21,26 @@ import {
 } from './types'
 import Closure from './closure'
 import { Continuation, isCallWithCurrentContinuation } from './continuations'
+import { isApply, isEval } from './scheme-macros'
+import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
+
+/**
+ * Typeguard for commands to check if they are scheme values.
+ *
+ * @param command A ControlItem
+ * @returns true if the ControlItem is a scheme value, false otherwise.
+ */
+export const isSchemeValue = (command: ControlItem): boolean => {
+  return (
+    command === null ||
+    typeof command === 'string' ||
+    typeof command === 'boolean' ||
+    isArray(command) ||
+    command instanceof _Symbol ||
+    is_number(command)
+  )
+}
 
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
@@ -29,6 +49,10 @@ import { Continuation, isCallWithCurrentContinuation } from './continuations'
  * @returns true if the ControlItem is an instruction and false otherwise.
  */
 export const isInstr = (command: ControlItem): command is Instr => {
+  // this prevents us from reading properties of null
+  if (isSchemeValue(command)) {
+    return false
+  }
   return (command as Instr).instrType !== undefined
 }
 
@@ -39,6 +63,10 @@ export const isInstr = (command: ControlItem): command is Instr => {
  * @returns true if the ControlItem is a Node or StatementSequence, false if it is an instruction.
  */
 export const isNode = (command: ControlItem): command is Node => {
+  // this prevents us from reading properties of null
+  if (isSchemeValue(command)) {
+    return false
+  }
   return (command as Node).type !== undefined
 }
 
@@ -242,7 +270,7 @@ export const envChanging = (command: ControlItem): boolean => {
       type === 'ArrowFunctionExpression' ||
       (type === 'ExpressionStatement' && command.expression.type === 'ArrowFunctionExpression')
     )
-  } else {
+  } else if (isInstr(command)) {
     const type = command.instrType
     return (
       type === InstrType.ENVIRONMENT ||
@@ -251,6 +279,12 @@ export const envChanging = (command: ControlItem): boolean => {
       type === InstrType.ARRAY_ASSIGNMENT ||
       (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs > 0)
     )
+  } else {
+    // TODO deal with scheme control items
+    // for now, as per the CSE machine paper,
+    // we decide to ignore environment optimizations
+    // for scheme control items :P
+    return true
   }
 }
 
@@ -268,6 +302,16 @@ export const isSimpleFunction = (node: any) => {
     const block = node.body
     return block.body.length === 1 && block.body[0].type === 'ReturnStatement'
   }
+}
+
+/**
+ * Transformers
+ */
+export const currentTransformers = (context: Context) =>
+  context.runtime.transformers as Transformers
+
+export const setTransformers = (context: Context, transformers: Transformers) => {
+  context.runtime.transformers = transformers
 }
 
 /**
@@ -424,7 +468,12 @@ export function defineVariable(
 ) {
   const environment = currentEnvironment(context)
 
-  if (environment.head[name] !== UNASSIGNED_CONST && environment.head[name] !== UNASSIGNED_LET) {
+  // we disable this check for full scheme due to the inability to scan for variables before usage
+  if (
+    environment.head[name] !== UNASSIGNED_CONST &&
+    environment.head[name] !== UNASSIGNED_LET &&
+    context.chapter !== Chapter.FULL_SCHEME
+  ) {
     return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
   }
 
@@ -520,6 +569,24 @@ export const checkNumberOfArguments = (
       return handleRuntimeError(
         context,
         new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+      )
+    }
+    return undefined
+  } else if (isEval(callee)) {
+    // eval should have a single argument
+    if (args.length !== 1) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+      )
+    }
+    return undefined
+  } else if (isApply(callee)) {
+    // apply should have at least two arguments
+    if (args.length < 2) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(exp, 2, args.length, false)
       )
     }
     return undefined
@@ -912,11 +979,32 @@ export function isEnvDependent(item: ControlItem | null | undefined): boolean {
   if (item === null || item === undefined) {
     return false
   }
+
+  // Scheme primitives are not environment dependent.
+  if (typeof item === 'string' || typeof item === 'boolean') {
+    return false
+  }
+
+  // Scheme symbols represent identifiers, which are environment dependent.
+  if (item instanceof _Symbol) {
+    return true
+  }
+
+  // We assume no optimisations for scheme lists.
+  if (isArray(item)) {
+    return true
+  }
+
   // If result is already calculated, return it
   if (item.isEnvDependent !== undefined) {
     return item.isEnvDependent
   }
-  const setter = isNode(item) ? propertySetter.get(item.type) : propertySetter.get(item.instrType)
+
+  const setter = isNode(item)
+    ? propertySetter.get(item.type)
+    : isInstr(item)
+    ? propertySetter.get(item.instrType)
+    : undefined
 
   if (setter) {
     return setter(item)?.isEnvDependent ?? false
