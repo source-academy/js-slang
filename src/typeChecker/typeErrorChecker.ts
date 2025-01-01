@@ -335,6 +335,9 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       setDeclKind(id.name, node.kind, env)
       return tUndef
     }
+    case 'ClassDeclaration': {
+      return tAny
+    }
     case 'CallExpression': {
       const callee = node.callee
       const args = node.arguments
@@ -631,12 +634,8 @@ function handleImportDeclarations(node: tsEs.Program) {
       sourceType: 'module',
       plugins: ['typescript', 'estree']
     }).program as unknown as tsEs.Program
-
-    console.log(parsedModuleTypes)
     typeCheckAndReturnType(parsedModuleTypes)
   })
-
-  console.log(env)
 }
 
 /**
@@ -699,6 +698,16 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         // Save variable type and decl kind in type env
         setType(id.name, expectedType, env)
         setDeclKind(id.name, bodyNode.kind, env)
+        break
+      case 'ClassDeclaration':
+        const className: string = bodyNode.id.name
+        const classType: Variable = {
+          kind: 'variable',
+          name: className,
+          constraint: 'none'
+        }
+        setType(className, classType, env)
+        setTypeAlias(className, classType, env)
         break
       case 'TSTypeAliasDeclaration':
         if (node.type === 'BlockStatement') {
