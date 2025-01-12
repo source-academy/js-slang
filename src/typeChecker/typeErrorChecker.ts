@@ -570,25 +570,7 @@ function handleImportDeclarations(node: tsEs.Program) {
     // Source only uses strings for import source value
     const moduleName = stmt.source.value as string
 
-    // Module not found
-    // if (!moduleList.includes(moduleName)) {
-    //   context.errors.push(new ModuleNotFoundError(moduleName, stmt))
-    //   // Set all imported names to be of type any to prevent further typecheck errors
-    //   stmt.specifiers.map(spec => {
-    //     if (spec.type !== 'ImportSpecifier') {
-    //       throw new TypecheckError(stmt, 'Unknown specifier type')
-    //     }
-    //     setType(spec.local.name, tAny, env)
-    //   })
-    //   return
-    // }
-
-    // TODO: Add logic for fetching module type declarations map from modules repo
-    // after the modules have been properly typed on modules repo.
-    // runeTypes.ts is currently a temporary file added to js-slang as a proof of concept;
-    // the file should be deleted once the module types fetching system has been properly implemented
-
-    // loadedModulesTypes are fetched from the modules repo
+    // Precondition: loadedModulesTypes are fetched from the modules repo
     const moduleTypesTextMap = context.nativeStorage.loadedModulesTypes
 
     // Module has no types
