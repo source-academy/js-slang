@@ -557,13 +557,7 @@ function handleImportDeclarations(node: tsEs.Program) {
   if (importStmts.length === 0) {
     return
   }
-  // importStmts.forEach(stmt => {
-  //   stmt.specifiers.map(spec => {
-  //     setType(spec.local.name, tAny, env)
-  //   })
-  // })
 
-  // const moduleList = Object.keys(memoizedGetModuleManifest())
   const importedModuleTypesTextMap: Record<string, string> = {}
 
   importStmts.forEach(stmt => {
@@ -574,7 +568,7 @@ function handleImportDeclarations(node: tsEs.Program) {
     const moduleTypesTextMap = context.nativeStorage.loadedModulesTypes
 
     // Module has no types
-    if (!moduleTypesTextMap) {
+    if (Object.keys(moduleTypesTextMap).length == 0) {
       // Set all imported names to be of type any
       // TODO: Consider switching to 'Module not supported' error after more modules have been typed
       stmt.specifiers.map(spec => {
@@ -600,7 +594,6 @@ function handleImportDeclarations(node: tsEs.Program) {
       const importedName = spec.local.name
       const importedType = moduleTypesTextMap[importedName]
       if (!importedType) {
-        // context.errors.push(new NameNotFoundInModuleError(stmt, moduleName, importedName))
         // Set imported name to be of type any to prevent further typecheck errors
         setType(importedName, tAny, env)
         return
