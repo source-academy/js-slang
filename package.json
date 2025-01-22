@@ -45,6 +45,9 @@
     "lodash": "^4.17.21",
     "source-map": "0.7.3"
   },
+  "resolutions": {
+    "**/gl": "^8.1.6"
+  },
   "scripts": {
     "build": "yarn docs && yarn build:slang",
     "build:slang": "tsc --project tsconfig.prod.json",
