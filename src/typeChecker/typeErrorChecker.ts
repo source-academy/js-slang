@@ -322,8 +322,8 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       const init = node.declarations[0].init
       // Look up declared type if current environment contains name
       const expectedType = env[env.length - 1].typeMap.has(id.name)
-        ? lookupTypeAndRemoveForAllAndPredicateTypes(id.name) ??
-          getTypeAnnotationType(id.typeAnnotation)
+        ? (lookupTypeAndRemoveForAllAndPredicateTypes(id.name) ??
+          getTypeAnnotationType(id.typeAnnotation))
         : getTypeAnnotationType(id.typeAnnotation)
       const initType = typeCheckAndReturnType(init)
       checkForTypeMismatch(node, initType, expectedType)

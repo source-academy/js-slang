@@ -11,8 +11,8 @@ import {
 } from '../cse-machine/utils'
 import { Context, Environment, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { Control, Transformers, Stash, generateCSEMachineStateStream } from './interpreter'
 import { envInstr } from './instrCreator'
+import { Control, Stash, Transformers, generateCSEMachineStateStream } from './interpreter'
 
 const closureToJS = (value: Closure, context: Context) => {
   function DummyClass(this: Closure) {
@@ -98,14 +98,14 @@ export default class Closure extends Callable {
       !isBlockStatement(node.body) && !isStatementSequence(node.body)
         ? ast.blockStatement([ast.returnStatement(node.body, node.body.loc)], node.body.loc)
         : dummyReturn && !hasReturnStatement(node.body)
-        ? ast.blockStatement(
-            [
-              ...node.body.body,
-              ast.returnStatement(ast.identifier('undefined', node.body.loc), node.body.loc)
-            ],
-            node.body.loc
-          )
-        : node.body
+          ? ast.blockStatement(
+              [
+                ...node.body.body,
+                ast.returnStatement(ast.identifier('undefined', node.body.loc), node.body.loc)
+              ],
+              node.body.loc
+            )
+          : node.body
 
     const closure = new Closure(
       ast.blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),

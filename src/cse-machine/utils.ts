@@ -2,28 +2,28 @@ import * as es from 'estree'
 import { isArray, isFunction } from 'lodash'
 
 import { Context } from '..'
+import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { Chapter, type Environment, type Node, type StatementSequence, type Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
+import Closure from './closure'
+import { Continuation, isCallWithCurrentContinuation } from './continuations'
 import Heap from './heap'
 import * as instr from './instrCreator'
 import { Control, Transformers } from './interpreter'
+import { isApply, isEval } from './scheme-macros'
 import {
   AppInstr,
-  EnvArray,
+  BranchInstr,
   ControlItem,
+  EnvArray,
+  ForInstr,
   Instr,
   InstrType,
-  BranchInstr,
-  WhileInstr,
-  ForInstr
+  WhileInstr
 } from './types'
-import Closure from './closure'
-import { Continuation, isCallWithCurrentContinuation } from './continuations'
-import { isApply, isEval } from './scheme-macros'
-import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
-import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 
 /**
  * Typeguard for commands to check if they are scheme values.
@@ -329,7 +329,7 @@ export const createEnvironment = (
   const environment: Environment = {
     name: isIdentifier(callExpression.callee)
       ? callExpression.callee.name
-      : closure.declaredName ?? closure.functionName,
+      : (closure.declaredName ?? closure.functionName),
     tail: closure.environment,
     head: {},
     heap: new Heap(),
@@ -1003,8 +1003,8 @@ export function isEnvDependent(item: ControlItem | null | undefined): boolean {
   const setter = isNode(item)
     ? propertySetter.get(item.type)
     : isInstr(item)
-    ? propertySetter.get(item.instrType)
-    : undefined
+      ? propertySetter.get(item.instrType)
+      : undefined
 
   if (setter) {
     return setter(item)?.isEnvDependent ?? false
