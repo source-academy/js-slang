@@ -17,7 +17,8 @@ import { isApply, isEval } from './scheme-macros'
 import {
   AppInstr,
   BranchInstr,
-  ControlItem, EnvArray,
+  ControlItem,
+  EnvArray,
   ForInstr,
   Instr,
   InstrType,
@@ -1002,8 +1003,8 @@ export function isEnvDependent(item: ControlItem | null | undefined): boolean {
   const setter = isNode(item)
     ? propertySetter.get(item.type)
     : isInstr(item)
-    ? propertySetter.get(item.instrType)
-    : undefined
+      ? propertySetter.get(item.instrType)
+      : undefined
 
   if (setter) {
     return setter(item)?.isEnvDependent ?? false
