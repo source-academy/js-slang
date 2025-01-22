@@ -88,9 +88,6 @@
     "ts-jest": "^29.0.0",
     "typescript": "^4.0.3"
   },
-  "resolutions": {
-    "gl": "^8.0.2"
-  },
   "jest": {
     "snapshotFormat": {
       "escapeString": true,
@@ -132,5 +129,5 @@
       ]
     ]
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@1.22.22"
 }
