@@ -38,6 +38,8 @@ import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 import { schemeVisualise } from './alt-langs/scheme/scheme-mapper'
+import { cset_apply, cset_eval } from './cse-machine/scheme-macros'
+import { Transformers } from './cse-machine/interpreter'
 
 export class LazyBuiltIn {
   func: (...arg0: any) => any
@@ -120,6 +122,7 @@ const createEmptyRuntime = () => ({
   nodes: [],
   control: null,
   stash: null,
+  transformers: new Transformers(),
   objectCount: 0,
   envSteps: -1,
   envStepsTotal: 0,
@@ -453,15 +456,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
     switch (context.chapter) {
       case Chapter.FULL_SCHEME:
+        // Introduction to eval
+        // eval metaprocedure
+        defineBuiltin(context, '$scheme_ZXZhbA$61$$61$(xs)', cset_eval)
+
       case Chapter.SCHEME_4:
         // Introduction to call/cc
         defineBuiltin(context, 'call$47$cc(f)', call_with_current_continuation)
-
-      // Introduction to eval
-
-      // Scheme apply
-      // ^ is needed in Schemes 2 and 3 to apply to call functions with rest parameters,
-      // so we move it there.
 
       case Chapter.SCHEME_3:
         // Introduction to mutable values, streams
@@ -500,10 +501,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'list$45$$62$vector(xs)', scheme_libs.list$45$$62$vector)
 
       case Chapter.SCHEME_2:
-        // Splicing builtin resolvers
-        // defineBuiltin(context, '$36$make$45$splice(expr)', scheme_libs.make_splice)
-        // defineBuiltin(context, '$36$resolve$45$splice(xs)', scheme_libs.resolve_splice)
-
         // Scheme pairs
         defineBuiltin(context, 'cons(left, right)', scheme_libs.cons)
         defineBuiltin(context, 'xcons(right, left)', scheme_libs.xcons)
@@ -625,11 +622,16 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'list$45$$62$string(xs)', scheme_libs.list$45$$62$string)
 
         // Scheme apply is needed here to help in the definition of the Scheme Prelude.
-        defineBuiltin(context, 'apply(f, ...args)', scheme_libs.apply, 2)
+        defineBuiltin(context, 'apply(f, ...args)', cset_apply, 2)
 
       case Chapter.SCHEME_1:
         // Display
-        defineBuiltin(context, 'display(val)', (val: any) => display(schemeVisualise(val)))
+        defineBuiltin(
+          context,
+          'display(val, prepend = undefined)',
+          (val: any, ...str: string[]) => display(schemeVisualise(val), ...str),
+          1
+        )
         defineBuiltin(context, 'newline()', () => display(''))
 
         // I/O

@@ -5,6 +5,7 @@ import OldClosure from '../interpreter/closure'
 import Closure from '../cse-machine/closure'
 import { createBlockEnvironment } from '../interpreter/interpreter'
 import { Chapter, Context, Environment, Variant } from '../types'
+import { Transformers } from '../cse-machine/interpreter'
 
 export function mockContext(
   chapter: Chapter = Chapter.SOURCE_1,
@@ -68,7 +69,24 @@ export function mockClosure(cseMachineClosure: true): Closure
 export function mockClosure(cseMachineClosure?: false): OldClosure
 export function mockClosure(cseMachineClosure?: boolean): Closure | OldClosure {
   const context = createContext()
-  return new (cseMachineClosure ? Closure : OldClosure)(
+  if (cseMachineClosure) {
+    return new Closure(
+      {
+        type: 'ArrowFunctionExpression',
+        expression: true,
+        loc: null,
+        params: [],
+        body: {
+          type: 'BlockStatement',
+          body: []
+        }
+      } as es.ArrowFunctionExpression,
+      mockEnvironment(context),
+      mockTransformers(),
+      context
+    )
+  }
+  return new OldClosure(
     {
       type: 'ArrowFunctionExpression',
       expression: true,
@@ -86,4 +104,8 @@ export function mockClosure(cseMachineClosure?: boolean): Closure | OldClosure {
 
 export function mockEnvironment(context: Context, name = 'blockEnvironment'): Environment {
   return createBlockEnvironment(context, name)
+}
+
+export function mockTransformers(): any {
+  return new Transformers()
 }

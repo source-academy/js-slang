@@ -2,16 +2,44 @@ import * as es from 'estree'
 import { isArray, isFunction } from 'lodash'
 
 import { Context } from '..'
+import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import type { Environment, Node, StatementSequence, Value } from '../types'
+import { Chapter, type Environment, type Node, type StatementSequence, type Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import Closure from './closure'
 import { Continuation, isCallWithCurrentContinuation } from './continuations'
 import Heap from './heap'
 import * as instr from './instrCreator'
-import { Control } from './interpreter'
-import { AppInstr, ControlItem, EnvArray, Instr, InstrType } from './types'
+import { Control, Transformers } from './interpreter'
+import { isApply, isEval } from './scheme-macros'
+import {
+  AppInstr,
+  BranchInstr,
+  ControlItem, EnvArray,
+  ForInstr,
+  Instr,
+  InstrType,
+  WhileInstr
+} from './types'
+
+/**
+ * Typeguard for commands to check if they are scheme values.
+ *
+ * @param command A ControlItem
+ * @returns true if the ControlItem is a scheme value, false otherwise.
+ */
+export const isSchemeValue = (command: ControlItem): boolean => {
+  return (
+    command === null ||
+    typeof command === 'string' ||
+    typeof command === 'boolean' ||
+    isArray(command) ||
+    command instanceof _Symbol ||
+    is_number(command)
+  )
+}
 
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
@@ -20,6 +48,10 @@ import { AppInstr, ControlItem, EnvArray, Instr, InstrType } from './types'
  * @returns true if the ControlItem is an instruction and false otherwise.
  */
 export const isInstr = (command: ControlItem): command is Instr => {
+  // this prevents us from reading properties of null
+  if (isSchemeValue(command)) {
+    return false
+  }
   return (command as Instr).instrType !== undefined
 }
 
@@ -30,6 +62,10 @@ export const isInstr = (command: ControlItem): command is Instr => {
  * @returns true if the ControlItem is a Node or StatementSequence, false if it is an instruction.
  */
 export const isNode = (command: ControlItem): command is Node => {
+  // this prevents us from reading properties of null
+  if (isSchemeValue(command)) {
+    return false
+  }
   return (command as Node).type !== undefined
 }
 
@@ -233,7 +269,7 @@ export const envChanging = (command: ControlItem): boolean => {
       type === 'ArrowFunctionExpression' ||
       (type === 'ExpressionStatement' && command.expression.type === 'ArrowFunctionExpression')
     )
-  } else {
+  } else if (isInstr(command)) {
     const type = command.instrType
     return (
       type === InstrType.ENVIRONMENT ||
@@ -242,6 +278,12 @@ export const envChanging = (command: ControlItem): boolean => {
       type === InstrType.ARRAY_ASSIGNMENT ||
       (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs > 0)
     )
+  } else {
+    // TODO deal with scheme control items
+    // for now, as per the CSE machine paper,
+    // we decide to ignore environment optimizations
+    // for scheme control items :P
+    return true
   }
 }
 
@@ -259,6 +301,16 @@ export const isSimpleFunction = (node: any) => {
     const block = node.body
     return block.body.length === 1 && block.body[0].type === 'ReturnStatement'
   }
+}
+
+/**
+ * Transformers
+ */
+export const currentTransformers = (context: Context) =>
+  context.runtime.transformers as Transformers
+
+export const setTransformers = (context: Context, transformers: Transformers) => {
+  context.runtime.transformers = transformers
 }
 
 /**
@@ -415,7 +467,12 @@ export function defineVariable(
 ) {
   const environment = currentEnvironment(context)
 
-  if (environment.head[name] !== UNASSIGNED_CONST && environment.head[name] !== UNASSIGNED_LET) {
+  // we disable this check for full scheme due to the inability to scan for variables before usage
+  if (
+    environment.head[name] !== UNASSIGNED_CONST &&
+    environment.head[name] !== UNASSIGNED_LET &&
+    context.chapter !== Chapter.FULL_SCHEME
+  ) {
     return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
   }
 
@@ -511,6 +568,24 @@ export const checkNumberOfArguments = (
       return handleRuntimeError(
         context,
         new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+      )
+    }
+    return undefined
+  } else if (isEval(callee)) {
+    // eval should have a single argument
+    if (args.length !== 1) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+      )
+    }
+    return undefined
+  } else if (isApply(callee)) {
+    // apply should have at least two arguments
+    if (args.length < 2) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(exp, 2, args.length, false)
       )
     }
     return undefined
@@ -673,68 +748,266 @@ export const hasContinueStatement = (block: es.BlockStatement | StatementSequenc
   return hasContinue
 }
 
-/**
- * Checks whether the evaluation of the given command depends on the current environment.
- * @param command The command to be checked
- * @return `true` if the command is environment depedent, else `false`.
- * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
- * control in SIMPLE CASES, so it might not be exhaustive
- */
-export const isEnvDependent = (command: ControlItem): boolean => {
-  // If the result is already calculated, return it
-  if (command.isEnvDependent != undefined) {
-    return command.isEnvDependent
-  }
+type PropertySetter = Map<string, Transformer>
+type Transformer = (item: ControlItem) => ControlItem
 
-  // Otherwise, calculate and store the result
-  let isDependent = true
-  if (isInstr(command)) {
-    const type = command.instrType
-    isDependent = !(
-      type === InstrType.UNARY_OP ||
-      type === InstrType.BINARY_OP ||
-      type === InstrType.POP ||
-      type === InstrType.ARRAY_ACCESS ||
-      type === InstrType.ARRAY_ASSIGNMENT ||
-      type === InstrType.RESET ||
-      type === InstrType.CONTINUE_MARKER ||
-      type === InstrType.BREAK_MARKER
-    )
-  } else {
-    const type = command.type
-    switch (type) {
-      case 'StatementSequence':
-        isDependent = command.body.some((statement: es.Statement) => isEnvDependent(statement))
-      case 'Literal':
-        isDependent = false
-        break
-      case 'BinaryExpression':
-        isDependent = isEnvDependent(command.left) || isEnvDependent(command.right)
-        break
-      case 'LogicalExpression':
-        isDependent = isEnvDependent(command.left) || isEnvDependent(command.right)
-        break
-      case 'UnaryExpression':
-        isDependent = isEnvDependent(command.argument)
-        break
-      case 'ExpressionStatement':
-        isDependent = isEnvDependent(command.expression)
-        break
-      default:
-        break
-    }
-  }
-  command.isEnvDependent = isDependent
-  return isDependent
+const setToTrue = (item: ControlItem): ControlItem => {
+  item.isEnvDependent = true
+  return item
 }
 
+const setToFalse = (item: ControlItem): ControlItem => {
+  item.isEnvDependent = false
+  return item
+}
+
+const propertySetter: PropertySetter = new Map<string, Transformer>([
+  [
+    'Program',
+    (node: Node) => {
+      node = node as es.Program
+      node.isEnvDependent = node.body.some(elem => isEnvDependent(elem))
+      return node
+    }
+  ],
+  ['Literal', setToFalse],
+  ['ImportDeclaration', setToFalse],
+  ['BreakStatement', setToFalse],
+  ['ContinueStatement', setToFalse],
+  ['DebuggerStatement', setToFalse],
+  ['VariableDeclaration', setToTrue],
+  ['FunctionDeclaration', setToTrue],
+  ['ArrowFunctionExpression', setToTrue],
+  ['Identifier', setToTrue],
+  [
+    'LogicalExpression',
+    (node: Node) => {
+      node = node as es.LogicalExpression
+      node.isEnvDependent = isEnvDependent(node.left) || isEnvDependent(node.right)
+      return node
+    }
+  ],
+  [
+    'BinaryExpression',
+    (node: Node) => {
+      node = node as es.BinaryExpression
+      node.isEnvDependent = isEnvDependent(node.left) || isEnvDependent(node.right)
+      return node
+    }
+  ],
+  [
+    'UnaryExpression',
+    (node: Node) => {
+      node = node as es.UnaryExpression
+      node.isEnvDependent = isEnvDependent(node.argument)
+      return node
+    }
+  ],
+  [
+    'ConditionalExpression',
+    (node: Node) => {
+      node = node as es.ConditionalExpression
+      node.isEnvDependent =
+        isEnvDependent(node.consequent) ||
+        isEnvDependent(node.alternate) ||
+        isEnvDependent(node.test)
+      return node
+    }
+  ],
+  [
+    'MemberExpression',
+    (node: Node) => {
+      node = node as es.MemberExpression
+      node.isEnvDependent = isEnvDependent(node.property) || isEnvDependent(node.object)
+      return node
+    }
+  ],
+  [
+    'ArrayExpression',
+    (node: Node) => {
+      node = node as es.ArrayExpression
+      node.isEnvDependent = node.elements.some(elem => isEnvDependent(elem))
+      return node
+    }
+  ],
+  [
+    'AssignmentExpression',
+    (node: Node) => {
+      node = node as es.AssignmentExpression
+      node.isEnvDependent = isEnvDependent(node.left) || isEnvDependent(node.right)
+      return node
+    }
+  ],
+  [
+    'ReturnStatement',
+    (node: Node) => {
+      node = node as es.ReturnStatement
+      node.isEnvDependent = isEnvDependent(node.argument)
+      return node
+    }
+  ],
+  [
+    'CallExpression',
+    (node: Node) => {
+      node = node as es.CallExpression
+      node.isEnvDependent =
+        isEnvDependent(node.callee) || node.arguments.some(arg => isEnvDependent(arg))
+      return node
+    }
+  ],
+  [
+    'ExpressionStatement',
+    (node: Node) => {
+      node = node as es.ExpressionStatement
+      node.isEnvDependent = isEnvDependent(node.expression)
+      return node
+    }
+  ],
+  [
+    'IfStatement',
+    (node: Node) => {
+      node = node as es.IfStatement
+      node.isEnvDependent =
+        isEnvDependent(node.test) ||
+        isEnvDependent(node.consequent) ||
+        isEnvDependent(node.alternate)
+      return node
+    }
+  ],
+  [
+    'ForStatement',
+    (node: Node) => {
+      node = node as es.ForStatement
+      node.isEnvDependent =
+        isEnvDependent(node.body) ||
+        isEnvDependent(node.init) ||
+        isEnvDependent(node.test) ||
+        isEnvDependent(node.update)
+      return node
+    }
+  ],
+  [
+    'WhileStatement',
+    (node: Node) => {
+      node = node as es.WhileStatement
+      node.isEnvDependent = isEnvDependent(node.body) || isEnvDependent(node.test)
+      return node
+    }
+  ],
+  [
+    'BlockStatement',
+    (node: Node) => {
+      node = node as es.BlockStatement
+      node.isEnvDependent = node.body.some(stm => isEnvDependent(stm))
+      return node
+    }
+  ],
+  [
+    'StatementSequence',
+    (node: Node) => {
+      node = node as StatementSequence
+      node.isEnvDependent = node.body.some(stm => isEnvDependent(stm))
+      return node
+    }
+  ],
+
+  [
+    'ImportDeclaration',
+    (node: Node) => {
+      node = node as es.ImportDeclaration
+      node.isEnvDependent = node.specifiers.some(x => isEnvDependent(x))
+      return node
+    }
+  ],
+
+  ['ImportSpecifier', setToTrue],
+
+  ['ImportDefaultSpecifier', setToTrue],
+
+  //Instruction
+  [InstrType.RESET, setToFalse],
+  [InstrType.UNARY_OP, setToFalse],
+  [InstrType.BINARY_OP, setToFalse],
+  [InstrType.POP, setToFalse],
+  [InstrType.ARRAY_ACCESS, setToFalse],
+  [InstrType.ARRAY_ASSIGNMENT, setToFalse],
+  [InstrType.CONTINUE, setToFalse],
+  [InstrType.CONTINUE_MARKER, setToFalse],
+  [InstrType.BREAK_MARKER, setToFalse],
+  [InstrType.MARKER, setToFalse],
+  [InstrType.ENVIRONMENT, setToFalse],
+  [InstrType.APPLICATION, setToTrue],
+  [InstrType.ASSIGNMENT, setToTrue],
+  [InstrType.ARRAY_LITERAL, setToTrue],
+  [
+    InstrType.WHILE,
+    (instr: WhileInstr) => {
+      instr.isEnvDependent = isEnvDependent(instr.test) || isEnvDependent(instr.body)
+      return instr
+    }
+  ],
+  [
+    InstrType.FOR,
+    (instr: ForInstr) => {
+      instr.isEnvDependent =
+        isEnvDependent(instr.init) ||
+        isEnvDependent(instr.test) ||
+        isEnvDependent(instr.update) ||
+        isEnvDependent(instr.body)
+      return instr
+    }
+  ],
+  [
+    InstrType.BRANCH,
+    (instr: BranchInstr) => {
+      instr.isEnvDependent = isEnvDependent(instr.consequent) || isEnvDependent(instr.alternate)
+      return instr
+    }
+  ]
+])
+
 /**
- * Checks whether an environment instruction needs to be pushed onto the control.
- * @param control The current control to be checked
- * @return `true` if the environment instruction can be avoided, else `false`.
- * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
- * control in SIMPLE CASES, so it might not be exhaustive
+ * Checks whether the evaluation of the given control item depends on the current environment.
+ * The item is also considered environment dependent if its evaluation introduces
+ * environment dependent items
+ * @param item The control item to be checked
+ * @return `true` if the item is environment depedent, else `false`.
  */
-export const canAvoidEnvInstr = (control: Control): boolean => {
-  return !control.getStack().some((command: ControlItem) => isEnvDependent(command))
+
+export function isEnvDependent(item: ControlItem | null | undefined): boolean {
+  if (item === null || item === undefined) {
+    return false
+  }
+
+  // Scheme primitives are not environment dependent.
+  if (typeof item === 'string' || typeof item === 'boolean') {
+    return false
+  }
+
+  // Scheme symbols represent identifiers, which are environment dependent.
+  if (item instanceof _Symbol) {
+    return true
+  }
+
+  // We assume no optimisations for scheme lists.
+  if (isArray(item)) {
+    return true
+  }
+
+  // If result is already calculated, return it
+  if (item.isEnvDependent !== undefined) {
+    return item.isEnvDependent
+  }
+
+  const setter = isNode(item)
+    ? propertySetter.get(item.type)
+    : isInstr(item)
+    ? propertySetter.get(item.instrType)
+    : undefined
+
+  if (setter) {
+    return setter(item)?.isEnvDependent ?? false
+  }
+
+  return false
 }

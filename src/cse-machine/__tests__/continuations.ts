@@ -1,5 +1,6 @@
+import { mockContext } from '../../mocks/context'
 import { Call_cc, Continuation, isCallWithCurrentContinuation } from '../continuations'
-import { Control, Stash } from '../interpreter'
+import { Control, Stash, Transformers } from '../interpreter'
 
 test('call/cc is a singleton', () => {
   expect(Call_cc.get()).toBe(Call_cc.get())
@@ -15,6 +16,6 @@ test('isCallWithCurrentContinuation works on call/cc only', () => {
 })
 
 test('Continuation toString', () => {
-  const cont = new Continuation(new Control(), new Stash(), [])
+  const cont = new Continuation(mockContext(), new Control(), new Stash(), [], new Transformers())
   expect(cont.toString()).toBe('continuation')
 })

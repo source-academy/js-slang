@@ -41,3 +41,10 @@ export function mapResult(context: Context): (x: Result) => Result {
       return x => x
   }
 }
+
+export const isSchemeLanguage = (context: Context) =>
+  context.chapter === Chapter.SCHEME_1 ||
+    context.chapter === Chapter.SCHEME_2 ||
+    context.chapter === Chapter.SCHEME_3 ||
+    context.chapter === Chapter.SCHEME_4 ||
+    context.chapter === Chapter.FULL_SCHEME
