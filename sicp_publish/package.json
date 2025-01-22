@@ -26,7 +26,7 @@
     "xmlhttprequest-ts": "^1.0.1"
   },
   "resolutions": {
-    "gl": "^8.0.2"
+    "**/gl": "^8.1.6"
   },
   "main": "dist/sicp",
   "types": "dist/sicp",
