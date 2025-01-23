@@ -1,7 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+// @ts-check
+
+import fs from 'fs/promises';
+import pathlib from 'path';
+import { JSDOM } from 'jsdom';
 
 const CONST_DECL = "const";
 const FUNC_DECL = "func";
@@ -18,7 +19,6 @@ const TARGETS = [
   "source_2_typed",
   "source_3",
   "source_3_concurrent",
-  "source_3_non-det",
   "source_3_typed",
   "source_4",
   "source_4_typed",
@@ -75,15 +75,15 @@ function processFunction(namespace, element, document) {
   namespace[name] = { title, description: html, meta: FUNC_DECL };
 }
 
-function processDirGlobals(target) {
-  const inFile = path.join(BASE_DIR, target, SRC_FILENAME);
+async function processDirGlobals(target) {
+  const inFile = pathlib.join(BASE_DIR, target, SRC_FILENAME);
   let document;
   try {
-    const contents = fs.readFileSync(inFile);
+    const contents = await fs.readFile(inFile);
     document = new JSDOM(contents.toString()).window.document;
   } catch (err) {
     console.error(inFile, "failed", err);
-    return;
+    return err;
   }
 
   const names = {};
@@ -94,17 +94,33 @@ function processDirGlobals(target) {
   const functions = document.getElementsByClassName('function-entry')
   Array.prototype.forEach.call(functions, ele => processFunction(names, ele, document));
 
-  fs.mkdirSync(OUT_DIR, { recursive: true })
-
-  const outFile = path.join(OUT_DIR, target + '.json');
-  fs.writeFileSync(outFile, JSON.stringify(names, null, 2), 'utf-8');
+  const outFile = pathlib.join(OUT_DIR, target + '.json');
+  await fs.writeFile(outFile, JSON.stringify(names, null, 2), 'utf-8')
+  return undefined
 }
 
-if (fs.existsSync(BASE_DIR)) {
-  TARGETS.forEach(processDirGlobals);
-} else {
-  console.error(`
-  Error: path to jsdoc html is invalid.
-  Ensure that this script is run from the project root and documentation has been generated\
-  `);
+export default async function autocomplete() {
+  try {
+    // Check that the BASE_DIR exists and that we can read from it
+    await fs.access(BASE_DIR, fs.constants.R_OK)
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.error(`
+      Error: path to jsdoc html is invalid.
+      Ensure that this script is run from the project root and documentation has been generated\
+      `);
+    } else {
+      console.error(error)
+    }
+    process.exit(1)
+  }
+
+  await fs.mkdir(OUT_DIR, { recursive: true })
+  
+  // Exit with error code if the there was some error
+  const errors = await Promise.all(TARGETS.map(processDirGlobals))
+  if (errors.find(each => each !== undefined)) process.exit(1)
+
+  console.log('Finished processing autocomplete documentation')
 }
+

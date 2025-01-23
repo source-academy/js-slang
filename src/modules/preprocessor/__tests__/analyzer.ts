@@ -1,3 +1,4 @@
+import type { Program } from 'estree'
 import createContext from '../../../createContext'
 import {
   DuplicateImportNameError,
@@ -11,7 +12,6 @@ import parseProgramsAndConstructImportGraph from '../linker'
 import analyzeImportsAndExports from '../analyzer'
 import { parse } from '../../../parser/parser'
 import { mockContext } from '../../../mocks/context'
-import type { Program } from 'estree'
 import loadSourceModules from '../../loader'
 import type { SourceFiles as Files } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'

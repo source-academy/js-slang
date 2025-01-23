@@ -65,7 +65,7 @@ export function validChapterVariant(language: Language) {
 }
 
 export function handleResult(result: Result, context: Context, verboseErrors: boolean) {
-  if (result.status === 'finished' || result.status === 'suspended-non-det') {
+  if (result.status === 'finished') {
     if (result.representation !== undefined) {
       return result.representation
     }
