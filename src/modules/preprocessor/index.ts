@@ -56,7 +56,6 @@ const preprocessFileImports = async (
       verboseErrors: false
     }
   }
-  console.log('types', context.nativeStorage.loadedModulesTypes)
 
   // Parse all files into ASTs and build the import graph.
   const linkerResult = await parseProgramsAndConstructImportGraph(
