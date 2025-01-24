@@ -583,7 +583,10 @@ function handleImportDeclarations(node: tsEs.Program) {
     // Add prelude for module, which contains types that are shared by
     // multiple variables and functions in the module
     if (!importedModuleTypesTextMap[moduleName]) {
-      importedModuleTypesTextMap[moduleName] = moduleTypesTextMap.prelude
+      importedModuleTypesTextMap[moduleName] = moduleTypesTextMap[moduleName]['prelude']
+    } else {
+      importedModuleTypesTextMap[moduleName] =
+        importedModuleTypesTextMap[moduleName] + '\n' + moduleTypesTextMap[moduleName]['prelude']
     }
 
     stmt.specifiers.forEach(spec => {
@@ -592,7 +595,7 @@ function handleImportDeclarations(node: tsEs.Program) {
       }
 
       const importedName = spec.local.name
-      const importedType = moduleTypesTextMap[importedName]
+      const importedType = moduleTypesTextMap[moduleName][importedName]
       if (!importedType) {
         // Set imported name to be of type any to prevent further typecheck errors
         setType(importedName, tAny, env)

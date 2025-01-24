@@ -36,13 +36,21 @@ export default async function loadSourceModules(
   )
   const loadedObj = Object.fromEntries(loadedModules)
   context.nativeStorage.loadedModules = loadedObj
-  sourceModulesToImport.forEach(module => {
-    context.nativeStorage.loadedModulesTypes = {
-      ...loadedObj[module].type_map
-    }
-  })
-
   return loadedObj
+}
+
+export async function loadSourceModuleTypes(sourceModulesToImport: Set<string>, context: Context) {
+  const loadedModules = await Promise.all(
+    [...sourceModulesToImport].map(async moduleName => {
+      await initModuleContextAsync(moduleName, context, false)
+      const bundle = await loadModuleBundleAsync(moduleName, context)
+      return [moduleName, bundle] as [string, ModuleFunctions]
+    })
+  )
+  const loadedObj = Object.fromEntries(loadedModules)
+  sourceModulesToImport.forEach(module => {
+    context.nativeStorage.loadedModulesTypes[module] = loadedObj[module].type_map
+  })
 }
 
 export {
