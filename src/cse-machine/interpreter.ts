@@ -584,14 +584,14 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Refer to Source §3 specifications https://docs.sourceacademy.org/source_3.pdf
     if (init.type === 'VariableDeclaration' && init.kind === 'let') {
       const id = init.declarations[0].id as es.Identifier
-      const valueExpression = init.declarations[0].init!
+      // const valueExpression = init.declarations[0].init!
 
       control.push(
         ast.blockStatement(
           [
             init,
             ast.forStatement(
-              ast.assignmentExpression(id, valueExpression, command.loc),
+              ast.assignmentExpression(id, ast.identifier(id.name, command.loc), command.loc),
               test,
               update,
               ast.blockStatement(
