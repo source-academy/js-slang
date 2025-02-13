@@ -132,7 +132,7 @@ export interface NativeStorage {
   close in the surrounding values, so no problem
    */
   loadedModules: Record<string, ModuleFunctions>
-  loadedModulesTypes: Record<string, string>
+  loadedModulesTypes: Record<string, Record<string, string>>
 }
 
 export interface Context<T = any> {
