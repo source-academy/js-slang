@@ -392,6 +392,54 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
           }
           return tStream(elementType)
         }
+
+        // Due to the use of generics, pair, list and stream functions are handled separately
+        const pairFunctions = ['pair']
+        const listFunctions = ['list', 'map', 'filter', 'accumulate', 'reverse']
+        const streamFunctions = ['stream_map', 'stream_reverse']
+        if (
+          pairFunctions.includes(fnName) ||
+          listFunctions.includes(fnName) ||
+          streamFunctions.includes(fnName)
+        ) {
+          const calleeType = cloneDeep(typeCheckAndReturnType(callee))
+          if (calleeType.kind !== 'function') {
+            if (calleeType.kind !== 'primitive' || calleeType.name !== 'any') {
+              context.errors.push(new TypeNotCallableError(node, formatTypeString(calleeType)))
+            }
+            return tAny
+          }
+
+          const expectedTypes = calleeType.parameterTypes
+          let returnType = calleeType.returnType
+
+          // Check argument types before returning declared return type
+          if (args.length !== expectedTypes.length) {
+            context.errors.push(
+              new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
+            )
+            return returnType
+          }
+
+          for (let i = 0; i < expectedTypes.length; i++) {
+            const node = args[i]
+            const actualType = typeCheckAndReturnType(node)
+            // Get all valid type variable mappings for current argument
+            const mappings = getTypeVariableMappings(node, actualType, expectedTypes[i])
+            // Apply type variable mappings to subsequent argument types and return type
+            for (const mapping of mappings) {
+              const typeVar = tVar(mapping[0])
+              const typeToSub = mapping[1]
+              for (let j = i; j < expectedTypes.length; j++) {
+                expectedTypes[j] = substituteVariableTypes(expectedTypes[j], typeVar, typeToSub)
+              }
+              returnType = substituteVariableTypes(returnType, typeVar, typeToSub)
+            }
+            // Typecheck current argument
+            checkForTypeMismatch(node, actualType, expectedTypes[i])
+          }
+          return returnType
+        }
       }
       const calleeType = cloneDeep(typeCheckAndReturnType(callee))
       if (calleeType.kind !== 'function') {
@@ -422,17 +470,6 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       for (let i = 0; i < expectedTypes.length; i++) {
         const node = args[i]
         const actualType = typeCheckAndReturnType(node)
-        // Get all valid type variable mappings for current argument
-        const mappings = getTypeVariableMappings(node, actualType, expectedTypes[i])
-        // Apply type variable mappings to subsequent argument types and return type
-        for (const mapping of mappings) {
-          const typeVar = tVar(mapping[0])
-          const typeToSub = mapping[1]
-          for (let j = i; j < expectedTypes.length; j++) {
-            expectedTypes[j] = substituteVariableTypes(expectedTypes[j], typeVar, typeToSub)
-          }
-          returnType = substituteVariableTypes(returnType, typeVar, typeToSub)
-        }
         // Typecheck current argument
         checkForTypeMismatch(node, actualType, expectedTypes[i])
       }
