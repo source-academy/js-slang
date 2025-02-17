@@ -499,9 +499,8 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
 
     if (command.body.length == 1) {
-      // If program only consists of one statement, evaluate it immediately
-      const next = command.body[0]
-      cmdEvaluators[next.type](next, context, control, stash, isPrelude)
+      // If program only consists of one statement, unwrap outer block
+      control.push(...handleSequence(command.body))
     } else {
       // Push block body as statement sequence
       const seq: StatementSequence = ast.statementSequence(command.body, command.loc)
