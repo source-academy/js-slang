@@ -27,9 +27,6 @@ function wrapImporter<T>(func: (p: string) => Promise<T>) {
 
     For the browser, we use the function constructor to hide the import calls from
     webpack so that webpack doesn't try to compile them away.
-
-    Browsers automatically cache import() calls, so we add a query parameter with the
-    current time to always invalidate the cache and handle the memoization ourselves
   */
   return async (p: string): Promise<T> => {
     try {
@@ -123,7 +120,8 @@ export const memoizedGetModuleDocsAsync = getMemoizedDocsImporter()
 const bundleAndTabImporter = wrapImporter<{ default: ModuleBundle }>(
   typeof window !== 'undefined' && process.env.NODE_ENV !== 'test'
     ? (new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any)
-    : p => Promise.resolve(require(p))
+    : // eslint-disable-next-line @typescript-eslint/no-require-imports
+      p => Promise.resolve(require(p))
 )
 
 export async function loadModuleBundleAsync(

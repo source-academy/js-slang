@@ -102,7 +102,7 @@ export class Control extends Stack<ControlItem> {
     super()
     this.numEnvDependentItems = 0
     // Load program into control stack
-    program ? this.push(program) : null
+    if (program) this.push(program)
   }
 
   public canAvoidEnvInstr(): boolean {
@@ -916,20 +916,17 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control: Control,
     stash: Stash
   ) {
-    command.declaration
-      ? defineVariable(
-          context,
-          command.symbol,
-          stash.peek(),
-          command.constant,
-          command.srcNode as es.VariableDeclaration
-        )
-      : setVariable(
-          context,
-          command.symbol,
-          stash.peek(),
-          command.srcNode as es.AssignmentExpression
-        )
+    if (command.declaration) {
+      defineVariable(
+        context,
+        command.symbol,
+        stash.peek(),
+        command.constant,
+        command.srcNode as es.VariableDeclaration
+      )
+    } else {
+      setVariable(context, command.symbol, stash.peek(), command.srcNode as es.AssignmentExpression)
+    }
   },
 
   [InstrType.UNARY_OP]: function (

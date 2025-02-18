@@ -405,7 +405,7 @@ test('String representation of non literal objects is nice', () => {
 test('String representation of non literal objects in nested object is nice', () => {
   const errorMsg: string = 'This is an error'
   const errorObj: Error = new Error(errorMsg)
-  const nestedObj: Object = {
+  const nestedObj = {
     data: [1, [2, errorObj], 3]
   }
   return expect(stringify(nestedObj)).toMatchInlineSnapshot(
