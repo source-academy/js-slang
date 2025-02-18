@@ -499,9 +499,8 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
 
     if (command.body.length == 1) {
-      // If program only consists of one statement, evaluate it immediately
-      const next = command.body[0]
-      cmdEvaluators[next.type](next, context, control, stash, isPrelude)
+      // If program only consists of one statement, unwrap outer block
+      control.push(...handleSequence(command.body))
     } else {
       // Push block body as statement sequence
       const seq: StatementSequence = ast.statementSequence(command.body, command.loc)
@@ -584,14 +583,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Refer to Source §3 specifications https://docs.sourceacademy.org/source_3.pdf
     if (init.type === 'VariableDeclaration' && init.kind === 'let') {
       const id = init.declarations[0].id as es.Identifier
-      const valueExpression = init.declarations[0].init!
-
       control.push(
         ast.blockStatement(
           [
             init,
             ast.forStatement(
-              ast.assignmentExpression(id, valueExpression, command.loc),
+              ast.assignmentExpression(id, ast.identifier(id.name, command.loc), command.loc),
               test,
               update,
               ast.blockStatement(
