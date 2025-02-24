@@ -2,7 +2,7 @@ import type es from 'estree'
 // import * as TypedES from '../../typeChecker/tsESTree'
 
 import type { Context, IOptions } from '../..'
-import type { RecursivePartial } from '../../types'
+import { RecursivePartial, Variant } from '../../types'
 import loadSourceModules, { loadSourceModuleTypes } from '../loader'
 import type { FileGetter } from '../moduleTypes'
 import analyzeImportsAndExports from './analyzer'
@@ -45,15 +45,17 @@ const preprocessFileImports = async (
   options: RecursivePartial<IOptions> = {},
   bundler: Bundler = defaultBundler
 ): Promise<PreprocessResult> => {
-  // Load typed source modules into context first to ensure that the type checker has access to all types.
-  // TODO: This is a temporary solution, and we should consider a better way to handle this.
-  try {
-    await loadSourceModuleTypes(new Set<string>(['rune', 'curve']), context)
-  } catch (error) {
-    context.errors.push(error)
-    return {
-      ok: false,
-      verboseErrors: false
+  if (context.variant === Variant.TYPED) {
+    // Load typed source modules into context first to ensure that the type checker has access to all types.
+    // TODO: This is a temporary solution, and we should consider a better way to handle this.
+    try {
+      await loadSourceModuleTypes(new Set<string>(['rune', 'curve']), context)
+    } catch (error) {
+      context.errors.push(error)
+      return {
+        ok: false,
+        verboseErrors: false
+      }
     }
   }
 
