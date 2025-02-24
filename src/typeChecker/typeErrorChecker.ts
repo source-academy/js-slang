@@ -605,7 +605,7 @@ function handleImportDeclarations(node: tsEs.Program) {
     const moduleTypesTextMap = context.nativeStorage.loadedModulesTypes
 
     // Module has no types
-    if (Object.keys(moduleTypesTextMap).length == 0) {
+    if (!moduleTypesTextMap[moduleName]) {
       // Set all imported names to be of type any
       // TODO: Consider switching to 'Module not supported' error after more modules have been typed
       stmt.specifiers.map(spec => {
