@@ -16,7 +16,7 @@ import {
   Instr,
   InstrType,
   UnOpInstr,
-  WhileInstr
+  WhileInstr,
 } from './types'
 import { Transformers } from './interpreter'
 
@@ -140,5 +140,10 @@ export const breakInstr = (srcNode: Node): Instr => ({
 
 export const breakMarkerInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.BREAK_MARKER,
+  srcNode
+})
+
+export const spreadInstr = (srcNode: Node): Instr => ({
+  instrType: InstrType.SPREAD,
   srcNode
 })

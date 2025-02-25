@@ -940,6 +940,7 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
   [InstrType.APPLICATION, setToTrue],
   [InstrType.ASSIGNMENT, setToTrue],
   [InstrType.ARRAY_LITERAL, setToTrue],
+  [InstrType.SPREAD, setToFalse],
   [
     InstrType.WHILE,
     (instr: WhileInstr) => {
