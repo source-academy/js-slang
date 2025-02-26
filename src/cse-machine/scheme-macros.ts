@@ -4,6 +4,7 @@ import { List } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { is_number, SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import { Context } from '..'
+import { encode } from '../alt-langs/scheme/scm-slang/src'
 import { Control, Stash } from './interpreter'
 import { currentTransformers, getVariable, handleRuntimeError } from './utils'
 import { Transformer, macro_transform, match } from './patterns'
@@ -12,11 +13,9 @@ import {
   arrayToList,
   flattenImproperList,
   isImproperList
-} from './macro-utils'
+, flattenList, isList } from './macro-utils'
 import { ControlItem } from './types'
-import { encode } from '../alt-langs/scheme/scm-slang/src'
 import { popInstr } from './instrCreator'
-import { flattenList, isList } from './macro-utils'
 
 // this needs to be better but for now it's fine
 export type SchemeControlItems = List | _Symbol | SchemeNumber | boolean | string

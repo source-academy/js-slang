@@ -21,6 +21,7 @@ import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/oper
 import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
+import { isSchemeLanguage } from '../alt-langs/mapper'
 import Closure from './closure'
 import {
   Continuation,
@@ -83,7 +84,6 @@ import {
 } from './utils'
 import { isApply, isEval, schemeEval } from './scheme-macros'
 import { Transformer } from './patterns'
-import { isSchemeLanguage } from '../alt-langs/mapper'
 import { flattenList, isList } from './macro-utils'
 
 type CmdEvaluator = (
@@ -1339,7 +1339,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const cont = control.getStack()
     const size = control.size()
     for (let i = size - 1; i >= 0;  i--) {
-      // guaranteed at least one call instr above
+      // guaranteed at least one call instr above, because spread is not allowed inside arrays
       if ((cont[i] as AppInstr).instrType === InstrType.APPLICATION) {
         (cont[i] as AppInstr).numOfArgs += array.length - 1;
         break; // only the nearest call instruction above
