@@ -16,7 +16,7 @@ import {
   Instr,
   InstrType,
   UnOpInstr,
-  WhileInstr,
+  WhileInstr
 } from './types'
 import { Transformers } from './interpreter'
 

@@ -46,7 +46,6 @@ import {
   UnOpInstr,
   WhileInstr,
   SpreadInstr
-
 } from './types'
 import {
   checkNumberOfArguments,
@@ -760,7 +759,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-
   SpreadElement: function (command: es.SpreadElement, context: Context, control: Control) {
     const arr = command.argument as es.ArrayExpression
     control.push(instr.spreadInstr(arr))
@@ -1282,7 +1280,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const value = stash.pop()
     const index = stash.pop()
     const array = stash.pop()
-    array[index] = value;
+    array[index] = value
     stash.push(value)
   },
 
@@ -1327,7 +1325,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control: Control,
     stash: Stash
   ) {
-
     const array = stash.pop()
 
     // spread array
@@ -1338,11 +1335,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // update call instr above
     const cont = control.getStack()
     const size = control.size()
-    for (let i = size - 1; i >= 0;  i--) {
+    for (let i = size - 1; i >= 0; i--) {
       // guaranteed at least one call instr above, because spread is not allowed inside arrays
       if ((cont[i] as AppInstr).instrType === InstrType.APPLICATION) {
-        (cont[i] as AppInstr).numOfArgs += array.length - 1;
-        break; // only the nearest call instruction above
+        ;(cont[i] as AppInstr).numOfArgs += array.length - 1
+        break // only the nearest call instruction above
       }
     }
   }

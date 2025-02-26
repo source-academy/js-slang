@@ -12,8 +12,10 @@ import {
   arrayToImproperList,
   arrayToList,
   flattenImproperList,
-  isImproperList
-, flattenList, isList } from './macro-utils'
+  isImproperList,
+  flattenList,
+  isList
+} from './macro-utils'
 import { ControlItem } from './types'
 import { popInstr } from './instrCreator'
 
