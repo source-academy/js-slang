@@ -21,6 +21,7 @@ import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/oper
 import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
+import { isSchemeLanguage } from '../alt-langs/mapper'
 import Closure from './closure'
 import {
   Continuation,
@@ -43,7 +44,8 @@ import {
   Instr,
   InstrType,
   UnOpInstr,
-  WhileInstr
+  WhileInstr,
+  SpreadInstr
 } from './types'
 import {
   checkNumberOfArguments,
@@ -81,7 +83,6 @@ import {
 } from './utils'
 import { isApply, isEval, schemeEval } from './scheme-macros'
 import { Transformer } from './patterns'
-import { isSchemeLanguage } from '../alt-langs/mapper'
 import { flattenList, isList } from './macro-utils'
 
 type CmdEvaluator = (
@@ -758,6 +759,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
+  SpreadElement: function (command: es.SpreadElement, context: Context, control: Control) {
+    const arr = command.argument as es.ArrayExpression
+    control.push(instr.spreadInstr(arr))
+    control.push(arr)
+  },
+
   ArrayExpression: function (command: es.ArrayExpression, context: Context, control: Control) {
     const elems = command.elements as ContiguousArrayElements
     reverse(elems)
@@ -1310,5 +1317,30 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.BREAK_MARKER]: function () {}
+  [InstrType.BREAK_MARKER]: function () {},
+
+  [InstrType.SPREAD]: function (
+    command: SpreadInstr,
+    context: Context,
+    control: Control,
+    stash: Stash
+  ) {
+    const array = stash.pop()
+
+    // spread array
+    for (let i = 0; i < array.length; i++) {
+      stash.push(array[i])
+    }
+
+    // update call instr above
+    const cont = control.getStack()
+    const size = control.size()
+    for (let i = size - 1; i >= 0; i--) {
+      // guaranteed at least one call instr above, because spread is not allowed inside arrays
+      if ((cont[i] as AppInstr).instrType === InstrType.APPLICATION) {
+        ;(cont[i] as AppInstr).numOfArgs += array.length - 1
+        break // only the nearest call instruction above
+      }
+    }
+  }
 }
