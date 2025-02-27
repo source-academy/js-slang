@@ -21,6 +21,7 @@ import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/oper
 import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
+import { isSchemeLanguage } from '../alt-langs/mapper'
 import Closure from './closure'
 import {
   Continuation,
@@ -43,7 +44,8 @@ import {
   Instr,
   InstrType,
   UnOpInstr,
-  WhileInstr
+  WhileInstr,
+  SpreadInstr
 } from './types'
 import {
   checkNumberOfArguments,
@@ -81,7 +83,6 @@ import {
 } from './utils'
 import { isApply, isEval, schemeEval } from './scheme-macros'
 import { Transformer } from './patterns'
-import { isSchemeLanguage } from '../alt-langs/mapper'
 import { flattenList, isList } from './macro-utils'
 
 type CmdEvaluator = (
@@ -499,9 +500,8 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
 
     if (command.body.length == 1) {
-      // If program only consists of one statement, evaluate it immediately
-      const next = command.body[0]
-      cmdEvaluators[next.type](next, context, control, stash, isPrelude)
+      // If program only consists of one statement, unwrap outer block
+      control.push(...handleSequence(command.body))
     } else {
       // Push block body as statement sequence
       const seq: StatementSequence = ast.statementSequence(command.body, command.loc)
@@ -584,14 +584,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Refer to Source §3 specifications https://docs.sourceacademy.org/source_3.pdf
     if (init.type === 'VariableDeclaration' && init.kind === 'let') {
       const id = init.declarations[0].id as es.Identifier
-      const valueExpression = init.declarations[0].init!
-
       control.push(
         ast.blockStatement(
           [
             init,
             ast.forStatement(
-              ast.assignmentExpression(id, valueExpression, command.loc),
+              ast.assignmentExpression(id, ast.identifier(id.name, command.loc), command.loc),
               test,
               update,
               ast.blockStatement(
@@ -759,6 +757,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       control.push(instr.assmtInstr(id.name, false, false, command))
       control.push(command.right)
     }
+  },
+
+  SpreadElement: function (command: es.SpreadElement, context: Context, control: Control) {
+    const arr = command.argument as es.ArrayExpression
+    control.push(instr.spreadInstr(arr))
+    control.push(arr)
   },
 
   ArrayExpression: function (command: es.ArrayExpression, context: Context, control: Control) {
@@ -1310,5 +1314,30 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.BREAK_MARKER]: function () {}
+  [InstrType.BREAK_MARKER]: function () {},
+
+  [InstrType.SPREAD]: function (
+    command: SpreadInstr,
+    context: Context,
+    control: Control,
+    stash: Stash
+  ) {
+    const array = stash.pop()
+
+    // spread array
+    for (let i = 0; i < array.length; i++) {
+      stash.push(array[i])
+    }
+
+    // update call instr above
+    const cont = control.getStack()
+    const size = control.size()
+    for (let i = size - 1; i >= 0; i--) {
+      // guaranteed at least one call instr above, because spread is not allowed inside arrays
+      if ((cont[i] as AppInstr).instrType === InstrType.APPLICATION) {
+        ;(cont[i] as AppInstr).numOfArgs += array.length - 1
+        break // only the nearest call instruction above
+      }
+    }
+  }
 }

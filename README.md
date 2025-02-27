@@ -4,17 +4,19 @@ Open-source implementations of the programming language _Source_. Source is a se
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Usage](#usage)
-- [Documentation](#documentation)
-- [Requirements](#requirements)
-- [Testing](#testing)
-- [Error messages](#error-messages)
-- [Using your js-slang in Source Academy](#using-your-js-slang-in-source-academy)
-- [Using your js-slang in your local Source Academy](#using-your-js-slang-in-your-local-source-academy)
-- [Building and publishing SICP package](#building-and-publishing-sicp-package)
-- [Talks and Presentations](#talks-and-presentations)
-- [License](#license)
+- [js-slang](#js-slang)
+  - [Table of Contents](#table-of-contents)
+  - [Prerequisites](#prerequisites)
+  - [Usage](#usage)
+  - [Documentation](#documentation)
+    - [Requirements](#requirements)
+  - [Testing](#testing)
+  - [Error messages](#error-messages)
+  - [Using your js-slang in Source Academy](#using-your-js-slang-in-source-academy)
+  - [Using your js-slang in your local Source Academy](#using-your-js-slang-in-your-local-source-academy)
+  - [Building and publishing SICP package](#building-and-publishing-sicp-package)
+  - [Talks and Presentations](#talks-and-presentations)
+  - [License](#license)
 
 ## Prerequisites
 
@@ -62,7 +64,7 @@ You can set additional options:
 Usage: js-slang [PROGRAM_STRING] [OPTION]
 
   -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4)                                                              (default: 1)
-  -v, --variant=VARIANT set the Source variant (i.e., default, interpreter, substituter, typed, lazy, non-det, concurrent, wasm, gpu) (default: default)
+  -v, --variant=VARIANT set the Source variant (i.e., default, interpreter, substituter, typed, lazy, concurrent, wasm, gpu) (default: default)
   -h, --help            display this help
   -e, --eval            don't show REPL, only display output of evaluation
 ```
@@ -82,7 +84,6 @@ Currently, valid CHAPTER/VARIANT combinations are:
 - `--chapter=2 --variant=typed`
 - `--chapter=3 --variant=default`
 - `--chapter=3 --variant=concurrent`
-- `--chapter=3 --variant=non-det`
 - `--chapter=3 --variant=interpreter`
 - `--chapter=3 --variant=typed`
 - `--chapter=4 --variant=default`
