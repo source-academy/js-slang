@@ -1,7 +1,11 @@
 node_modules
 *.js
+
+# docs
 !docs/jsdoc/templates/**/*.js
 !docs/lib/**/*.js
+docs/source
+
 *.map
 dist/
 .idea/

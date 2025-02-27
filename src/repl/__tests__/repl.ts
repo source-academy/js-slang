@@ -1,5 +1,5 @@
-import type { SourceFiles } from '../../modules/moduleTypes'
 import * as repl from 'repl'
+import type { SourceFiles } from '../../modules/moduleTypes'
 import { Chapter } from '../../types'
 import { asMockedFunc } from '../../utils/testing'
 import { getReplCommand } from '../repl'
@@ -20,7 +20,8 @@ jest.mock('fs/promises', () => ({
 
 jest.mock('path', () => {
   const actualPath = jest.requireActual('path')
-  const newResolve = (...args: string[]) => actualPath.resolve('/', ...args)
+  const { resolve } = jest.requireActual('path/posix')
+  const newResolve = (...args: string[]) => resolve('/', ...args)
   return {
     ...actualPath,
     resolve: newResolve

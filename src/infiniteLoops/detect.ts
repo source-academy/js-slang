@@ -7,6 +7,7 @@ import { getOriginalName } from './instrument'
 import * as st from './state'
 import { shallowConcretize } from './symbolic'
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const runAltErgo: any = require('@joeychenofficial/alt-ergo-modified')
 
 const options = {
