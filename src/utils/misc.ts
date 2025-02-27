@@ -42,3 +42,12 @@ export function objectKeys<T extends string | number | symbol>(obj: Record<T, an
 export function objectValues<T>(obj: Record<any, T>) {
   return Object.values(obj) as T[]
 }
+
+/**
+ * Type safe `Object.getOwnPropertyNames`
+ */
+export function objectGetOwnPropertyNames<T extends string | number | symbol>(
+  obj: Record<T, any>
+): T[] {
+  return Object.getOwnPropertyNames(obj) as T[]
+}
