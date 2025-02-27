@@ -14,7 +14,7 @@ const defaultVariant: Variant = Variant.DEFAULT
 const defaultExternal: string = 'NONE'
 
 // define session
-const session = ace.createEditSession('', DefaultMode)
+const session = ace.createEditSession('', new DefaultMode.Mode())
 
 // tested token types
 const CATEGORY = {
