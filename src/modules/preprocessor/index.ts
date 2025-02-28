@@ -2,8 +2,8 @@ import type es from 'estree'
 // import * as TypedES from '../../typeChecker/tsESTree'
 
 import type { Context, IOptions } from '../..'
-import type { RecursivePartial } from '../../types'
-import loadSourceModules from '../loader'
+import { RecursivePartial, Variant } from '../../types'
+import loadSourceModules, { loadSourceModuleTypes } from '../loader'
 import type { FileGetter } from '../moduleTypes'
 import analyzeImportsAndExports from './analyzer'
 import parseProgramsAndConstructImportGraph from './linker'
@@ -45,6 +45,20 @@ const preprocessFileImports = async (
   options: RecursivePartial<IOptions> = {},
   bundler: Bundler = defaultBundler
 ): Promise<PreprocessResult> => {
+  if (context.variant === Variant.TYPED) {
+    // Load typed source modules into context first to ensure that the type checker has access to all types.
+    // TODO: This is a temporary solution, and we should consider a better way to handle this.
+    try {
+      await loadSourceModuleTypes(new Set<string>(['rune', 'curve']), context)
+    } catch (error) {
+      context.errors.push(error)
+      return {
+        ok: false,
+        verboseErrors: false
+      }
+    }
+  }
+
   // Parse all files into ASTs and build the import graph.
   const linkerResult = await parseProgramsAndConstructImportGraph(
     files,
@@ -62,6 +76,18 @@ const preprocessFileImports = async (
 
   try {
     await loadSourceModules(sourceModulesToImport, context, options.importOptions?.loadTabs ?? true)
+    // Run type checking on the programs after loading the source modules and their types.
+    const linkerResult = await parseProgramsAndConstructImportGraph(
+      files,
+      entrypointFilePath,
+      context,
+      options?.importOptions,
+      !!options?.shouldAddFileName
+    )
+    // Return 'undefined' if there are errors while parsing.
+    if (!linkerResult.ok) {
+      return linkerResult
+    }
 
     analyzeImportsAndExports(
       programs,
