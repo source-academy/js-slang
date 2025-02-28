@@ -8,13 +8,7 @@ import { uniqueId } from '../cse-machine/utils'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import type {
-  Context,
-  ContiguousArrayElements,
-  Environment,
-  Node,
-  Value,
-} from '../types'
+import type { Context, ContiguousArrayElements, Environment, Node, Value } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
 import { getModuleDeclarationSource } from '../utils/ast/helpers'
