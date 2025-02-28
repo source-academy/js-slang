@@ -3,19 +3,17 @@ import type es from 'estree'
 import { isEmpty } from 'lodash'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import { LazyBuiltIn } from '../createContext'
 import Heap from '../cse-machine/heap'
 import { uniqueId } from '../cse-machine/utils'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import {
-  type Context,
-  type ContiguousArrayElements,
-  type Environment,
-  type Node,
-  type Value,
-  Variant
+import type {
+  Context,
+  ContiguousArrayElements,
+  Environment,
+  Node,
+  Value,
 } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
@@ -44,8 +42,6 @@ class Thunk {
     this.value = null
   }
 }
-
-const delayIt = (exp: Node, env: Environment): Thunk => new Thunk(exp, env)
 
 function* forceIt(val: any, context: Context): Value {
   if (val instanceof Thunk) {
@@ -280,9 +276,7 @@ const checkNumberOfArguments = (
 function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
-    if (context.variant === Variant.LAZY) {
-      args.push(delayIt(arg, currentEnvironment(context)))
-    } else if (arg.type === 'SpreadElement') {
+    if (arg.type === 'SpreadElement') {
       args.push(...(yield* actualValue(arg.argument, context)))
     } else {
       args.push(yield* actualValue(arg, context))
@@ -610,7 +604,7 @@ export const evaluators: { [nodeType: string]: Evaluator<Node> } = {
     }
 
     // If we are now left with a CallExpression, then we use TCO
-    if (returnExpression.type === 'CallExpression' && context.variant !== Variant.LAZY) {
+    if (returnExpression.type === 'CallExpression') {
       const callee = yield* actualValue(returnExpression.callee, context)
       const args = yield* getArgs(context, returnExpression)
       return new TailCallReturnValue(callee, args, returnExpression)
@@ -827,33 +821,6 @@ export function* apply(
       } else if (!(result instanceof ReturnValue)) {
         // No Return Value, set it as undefined
         result = new ReturnValue(undefined)
-      }
-    } else if (fun instanceof LazyBuiltIn) {
-      try {
-        let finalArgs = args
-        if (fun.evaluateArgs) {
-          finalArgs = []
-          for (const arg of args) {
-            finalArgs.push(yield* forceIt(arg, context))
-          }
-        }
-        result = fun.func.apply(thisContext, finalArgs)
-        break
-      } catch (e) {
-        // Recover from exception
-        context.runtime.environments = context.runtime.environments.slice(
-          -context.numberOfOuterEnvironments
-        )
-
-        const loc = node.loc ?? UNKNOWN_LOCATION
-        if (!(e instanceof RuntimeSourceError || e instanceof errors.ExceptionError)) {
-          // The error could've arisen when the builtin called a source function which errored.
-          // If the cause was a source error, we don't want to include the error.
-          // However if the error came from the builtin itself, we need to handle it.
-          return handleRuntimeError(context, new errors.ExceptionError(e, loc))
-        }
-        result = undefined
-        throw e
       }
     } else if (typeof fun === 'function') {
       checkNumberOfArguments(context, fun, args, node!)

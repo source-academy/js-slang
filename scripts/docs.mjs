@@ -23,14 +23,6 @@ const configs = {
       "math.js"
     ]
   },
-  "Source §1 Lazy": {
-    "readme": "README_1_LAZY.md",
-    "dst": "source_1_lazy/",
-    "libs": [
-      "misc.js",
-      "math.js"
-    ]
-  },
   "Source §1 Typed": {
     "readme": "README_1_TYPED.md",
     "dst": "source_1_typed/",
@@ -49,16 +41,6 @@ const configs = {
   "Source §2": {
     "readme": "README_2.md",
     "dst": "source_2/",
-    "libs": [
-      "auxiliary.js",
-      "misc.js",
-      "math.js",
-      "list.js"
-    ]
-  },
-  "Source §2 Lazy": {
-    "readme": "README_2_LAZY.md",
-    "dst": "source_2_lazy/",
     "libs": [
       "auxiliary.js",
       "misc.js",

@@ -4,7 +4,6 @@ import type { MockedFunction } from 'jest-mock'
 import createContext, { defineBuiltin } from '../createContext'
 import { transpileToGPU } from '../gpu/gpu'
 import { parseError, Result, runInContext } from '../index'
-import { transpileToLazy } from '../lazy/lazy'
 import { mockContext } from '../mocks/context'
 import { ImportOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
@@ -144,10 +143,6 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       switch (options.variant) {
         case Variant.GPU:
           transpileToGPU(parsed)
-          pretranspiled = generate(parsed)
-          break
-        case Variant.LAZY:
-          transpileToLazy(parsed)
           pretranspiled = generate(parsed)
           break
       }

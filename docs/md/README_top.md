@@ -58,14 +58,10 @@ the Source Academy.
   
 #### <a href="source_4.pdf">Specification of Source §4</a>
   
-#### <a href="source_1_lazy.pdf">Specification of Source §1 Lazy</a>
-  
 #### <a href="source_1_wasm.pdf">Specification of Source §1 WebAssembly</a>
 
 #### <a href="source_1_typed.pdf">Specification of Source §1 Typed</a>
   
-#### <a href="source_2_lazy.pdf">Specification of Source §2 Lazy</a>
-
 #### <a href="source_2_typed.pdf">Specification of Source §2 Typed</a>
 
 #### <a href="source_3_concurrent.pdf">Specification of Source §3 Concurrent</a>
