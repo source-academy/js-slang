@@ -1,6 +1,6 @@
 PDFLATEX = latexmk -pdf
 
-SPECSNUMS = 1 1_lazy 1_wasm 1_type_inference 1_infinite_loop_detection 1_typed 2 2_lazy 2_typed 3_type_inference 3 3_concurrent 3_typed 4 4_explicitcontrol 4_gpu 4_typed styleguide 2_stepper studio_2 python_1
+SPECSNUMS = 1 1_wasm 1_type_inference 1_infinite_loop_detection 1_typed 2 2_typed 3_type_inference 3 3_concurrent 3_typed 4 4_explicitcontrol 4_gpu 4_typed styleguide 2_stepper studio_2 python_1
 
 SPECS = $(SPECSNUMS:%=source_%)
 

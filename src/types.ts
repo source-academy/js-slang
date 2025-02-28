@@ -94,7 +94,6 @@ export enum Variant {
   TYPED = 'typed',
   NATIVE = 'native',
   WASM = 'wasm',
-  LAZY = 'lazy',
   CONCURRENT = 'concurrent',
   GPU = 'gpu',
   EXPLICIT_CONTROL = 'explicit-control'
@@ -193,7 +192,7 @@ export interface Context<T = any> {
 
   /**
    * Describes the strategy / paradigm to be used for evaluation
-   * Examples: lazy, concurrent or nondeterministic
+   * Examples: concurrent
    */
   variant: Variant
 
@@ -260,12 +259,6 @@ export interface Environment {
   head: Frame
   heap: Heap
   thisContext?: Value
-}
-
-export interface Thunk {
-  value: any
-  isMemoized: boolean
-  f: () => any
 }
 
 export interface Error {

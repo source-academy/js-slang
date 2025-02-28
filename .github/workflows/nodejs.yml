@@ -32,12 +32,16 @@ jobs:
         sudo apt-get install -y --no-install-recommends \
         libxi-dev libgl1-mesa-dev \
         texlive texlive-fonts-extra texlive-lang-cjk latexmk latex-cjk-all
+    # Has to be run before actions/setup-node.
+    # See: https://github.com/actions/setup-node/issues/480
+    - name: Enable corepack for Yarn
+      run: corepack enable
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
         node-version: 20
         cache: yarn
-    - run: yarn install --frozen-lockfile
+    - run: yarn install --immutable
     - run: yarn build
     - run: yarn format:ci
     - run: yarn eslint

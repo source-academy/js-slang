@@ -41,10 +41,8 @@ function resolveImportInconsistency(json: any) {
 export const SourceDocumentation = {
   builtins: {
     '1': resolveImportInconsistency(source_1),
-    '1_lazy': resolveImportInconsistency(source_1),
     '1_typed': resolveImportInconsistency(source_1_typed),
     '2': resolveImportInconsistency(source_2),
-    '2_lazy': resolveImportInconsistency(source_2),
     '2_typed': resolveImportInconsistency(source_2_typed),
     '3': resolveImportInconsistency(source_3),
     '3_concurrent': resolveImportInconsistency(source_3_concurrent),

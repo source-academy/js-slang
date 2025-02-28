@@ -19,4 +19,12 @@ coverage/
 *.tsbuildinfo
 test-report.html
 
+# yarn files
+
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 yarn-error.log

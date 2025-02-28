@@ -6,7 +6,6 @@ import { generate } from 'astring'
 
 import { transpileToGPU } from '../gpu/gpu'
 import { createContext, parseError } from '../index'
-import { transpileToLazy } from '../lazy/lazy'
 import defaultBundler from '../modules/preprocessor/bundler'
 import parseProgramsAndConstructImportGraph from '../modules/preprocessor/linker'
 import { transpile } from '../transpiler/transpiler'
@@ -19,9 +18,7 @@ import {
 } from './utils'
 
 export const transpilerCommand = new Command('transpiler')
-  .addOption(
-    getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.GPU, Variant.LAZY, Variant.NATIVE])
-  )
+  .addOption(getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.GPU, Variant.NATIVE]))
   .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
   .option(
     '-p, --pretranspile',
@@ -66,9 +63,6 @@ export const transpilerCommand = new Command('transpiler')
     switch (opts.variant) {
       case Variant.GPU:
         transpileToGPU(bundledProgram)
-        break
-      case Variant.LAZY:
-        transpileToLazy(bundledProgram)
         break
     }
 
