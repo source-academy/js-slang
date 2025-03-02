@@ -8,10 +8,10 @@ let context = mockContext(Chapter.SOURCE_4, Variant.TYPED)
 beforeEach(() => {
   context = mockContext(Chapter.SOURCE_4, Variant.TYPED)
   context.nativeStorage.loadedModules = {
-    module: {}
+    exampleModule: {}
   }
-  context.nativeStorage.loadedModulesTypes = {
-    module: {
+  context.nativeStorage.loadedModuleTypes = {
+    exampleModule: {
       prelude: `
         class Test1 {}
         class Test2 {}
@@ -36,7 +36,7 @@ describe('Typed module tests', () => {
 
   it('should allow correct assignment of a string variable', () => {
     const code = `
-      import { x } from 'module';
+      import { x } from 'exampleModule';
       const a: string = x;
     `
     parse(code, context)
@@ -45,7 +45,7 @@ describe('Typed module tests', () => {
 
   it('should allow correct assignment of a number variable', () => {
     const code = `
-      import { y } from 'module';
+      import { y } from 'exampleModule';
       const a: number = y;
     `
     parse(code, context)
@@ -54,7 +54,7 @@ describe('Typed module tests', () => {
 
   it('should allow correct assignment of a boolean variable', () => {
     const code = `
-      import { z } from 'module';
+      import { z } from 'exampleModule';
       const a: boolean = z;
     `
     parse(code, context)
@@ -63,7 +63,7 @@ describe('Typed module tests', () => {
 
   it('should allow a correct call to function1', () => {
     const code = `
-      import { function1, x, y, z } from 'module';
+      import { function1, x, y, z } from 'exampleModule';
       const a: number = function1(10, x, z);
     `
     parse(code, context)
@@ -72,7 +72,7 @@ describe('Typed module tests', () => {
 
   it('should allow a correct call to function2', () => {
     const code = `
-      import { function2, x, y, z } from 'module';
+      import { function2, x, y, z } from 'exampleModule';
       const a: string = function2(x, y, z);
     `
     parse(code, context)
@@ -81,7 +81,7 @@ describe('Typed module tests', () => {
 
   it('should allow a correct call to function3', () => {
     const code = `
-      import { function3, x, y, z } from 'module';
+      import { function3, x, y, z } from 'exampleModule';
       const a: boolean = function3(z, x, y);
     `
     parse(code, context)
@@ -92,7 +92,7 @@ describe('Typed module tests', () => {
 
   it('should error when assigning a string to a number variable', () => {
     const code = `
-      import { x } from 'module';
+      import { x } from 'exampleModule';
       const a: number = x;
     `
     parse(code, context)
@@ -103,7 +103,7 @@ describe('Typed module tests', () => {
 
   it('should error when assigning a number to a boolean variable', () => {
     const code = `
-      import { y } from 'module';
+      import { y } from 'exampleModule';
       const a: boolean = y;
     `
     parse(code, context)
@@ -114,7 +114,7 @@ describe('Typed module tests', () => {
 
   it('should error when assigning a boolean to a string variable', () => {
     const code = `
-      import { z } from 'module';
+      import { z } from 'exampleModule';
       const a: string = z;
     `
     parse(code, context)
@@ -125,7 +125,7 @@ describe('Typed module tests', () => {
 
   it('should error when function1 is called with wrong type for its first argument', () => {
     const code = `
-      import { function1, x, z } from 'module';
+      import { function1, x, z } from 'exampleModule';
       const a = function1("wrong", x, z);
     `
     parse(code, context)
@@ -136,7 +136,7 @@ describe('Typed module tests', () => {
 
   it('should error when function1 is called with wrong type for its second argument', () => {
     const code = `
-      import { function1, y, z } from 'module';
+      import { function1, y, z } from 'exampleModule';
       const a = function1(10, y, z);
     `
     parse(code, context)
@@ -147,7 +147,7 @@ describe('Typed module tests', () => {
 
   it('should error when function1 is called with wrong type for its third argument', () => {
     const code = `
-      import { function1, x, y } from 'module';
+      import { function1, x, y } from 'exampleModule';
       const a = function1(10, x, "not boolean");
     `
     parse(code, context)
@@ -158,7 +158,7 @@ describe('Typed module tests', () => {
 
   it('should error when function2 is called with a missing argument', () => {
     const code = `
-      import { function2, x, y } from 'module';
+      import { function2, x, y } from 'exampleModule';
       const a = function2(x, y);
     `
     parse(code, context)
@@ -169,7 +169,7 @@ describe('Typed module tests', () => {
 
   it('should error when function2 is called with an extra argument', () => {
     const code = `
-      import { function2, x, y, z } from 'module';
+      import { function2, x, y, z } from 'exampleModule';
       const a = function2(x, y, z, x);
     `
     parse(code, context)
@@ -180,7 +180,7 @@ describe('Typed module tests', () => {
 
   it('should error when functionError returns a wrong type', () => {
     const code = `
-      import { functionError } from 'module';
+      import { functionError } from 'exampleModule';
       const a: string = functionError(10);
     `
     parse(code, context)
@@ -202,7 +202,7 @@ describe('Typed module tests', () => {
 
   it('should error when assigning a function2 result (string) to a number variable', () => {
     const code = `
-      import { function2, x, y, z } from 'module';
+      import { function2, x, y, z } from 'exampleModule';
       const a: number = function2(x, y, z);
     `
     parse(code, context)
@@ -213,7 +213,7 @@ describe('Typed module tests', () => {
 
   it('should error when function3 is called with arguments in the wrong order', () => {
     const code = `
-      import { function3, x, y, z } from 'module';
+      import { function3, x, y, z } from 'exampleModule';
       const a = function3(x, z, y);
     `
     parse(code, context)
@@ -227,7 +227,7 @@ describe('Typed module tests', () => {
 
   it('should allow correct assignment of Test1 to a variable of type Test1', () => {
     const code = `
-      import { test1 } from 'module';
+      import { test1 } from 'exampleModule';
       const a: Test1 = test1;
     `
     parse(code, context)
@@ -236,7 +236,7 @@ describe('Typed module tests', () => {
 
   it('should allow correct assignment of Test2 to a variable of type Test2', () => {
     const code = `
-      import { test2 } from 'module';
+      import { test2 } from 'exampleModule';
       const a: Test2 = test2;
     `
     parse(code, context)
@@ -245,7 +245,7 @@ describe('Typed module tests', () => {
 
   it('should allow correct assignment of Test3 to a variable of type Test3', () => {
     const code = `
-      import { test3 } from 'module';
+      import { test3 } from 'exampleModule';
       const a: Test3 = test3;
     `
     parse(code, context)
@@ -254,7 +254,7 @@ describe('Typed module tests', () => {
 
   it('should error when assigning Test1 to a variable of type string', () => {
     const code = `
-      import { test1 } from 'module';
+      import { test1 } from 'exampleModule';
       const a: string = test1;
     `
     parse(code, context)
@@ -265,7 +265,7 @@ describe('Typed module tests', () => {
 
   it('should error when assigning Test2 to a variable of type number', () => {
     const code = `
-      import { test2 } from 'module';
+      import { test2 } from 'exampleModule';
       const a: number = test2;
     `
     parse(code, context)
@@ -276,7 +276,7 @@ describe('Typed module tests', () => {
 
   it('should error when assigning Test3 to a variable of type boolean', () => {
     const code = `
-      import { test3 } from 'module';
+      import { test3 } from 'exampleModule';
       const a: boolean = test3;
     `
     parse(code, context)

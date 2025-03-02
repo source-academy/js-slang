@@ -10,7 +10,6 @@ import {
   InvalidIndexTypeError,
   InvalidNumberOfArgumentsTypeError,
   InvalidNumberOfTypeArgumentsForGenericTypeError,
-  // NameNotFoundInModuleError,
   TypeAliasNameNotAllowedError,
   TypecastError,
   TypeMismatchError,
@@ -602,7 +601,7 @@ function handleImportDeclarations(node: tsEs.Program) {
     const moduleName = stmt.source.value as string
 
     // Precondition: loadedModulesTypes are fetched from the modules repo
-    const moduleTypesTextMap = context.nativeStorage.loadedModulesTypes
+    const moduleTypesTextMap = context.nativeStorage.loadedModuleTypes
 
     // Module has no types
     if (!moduleTypesTextMap[moduleName]) {

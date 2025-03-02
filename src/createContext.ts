@@ -154,7 +154,7 @@ const createNativeStorage = (): NativeStorage => ({
   maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
   evaller: null,
   loadedModules: {},
-  loadedModulesTypes: {}
+  loadedModuleTypes: {}
 })
 
 export const createEmptyContext = <T>(
