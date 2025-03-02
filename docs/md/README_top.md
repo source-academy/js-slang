@@ -35,8 +35,6 @@ the members of our learning community.
 
 #### <a href="source_2_typed/">Source §2 Typed</a>
 
-#### <a href="source_3_non-det/">Source §3 Non-Det</a>
-
 #### <a href="source_3_concurrent/">Source §3 Concurrent</a>
 
 #### <a href="source_3_typed/">Source §3 Typed</a>
@@ -69,8 +67,6 @@ the Source Academy.
 #### <a href="source_2_lazy.pdf">Specification of Source §2 Lazy</a>
 
 #### <a href="source_2_typed.pdf">Specification of Source §2 Typed</a>
-
-#### <a href="source_3_nondet.pdf">Specification of Source §3 Non-Det</a>
 
 #### <a href="source_3_concurrent.pdf">Specification of Source §3 Concurrent</a>
 
