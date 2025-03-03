@@ -781,3 +781,26 @@ export class DuplicateTypeAliasError implements SourceError {
     return this.explain()
   }
 }
+
+export class NameNotFoundInModuleError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(
+    public node: tsEs.ImportDeclaration,
+    public moduleName: string,
+    public name: string
+  ) {}
+
+  get location() {
+    return this.node.loc ?? UNKNOWN_LOCATION
+  }
+
+  public explain() {
+    return `Module '${this.moduleName}' has no exported member '${this.name}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}

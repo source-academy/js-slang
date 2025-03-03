@@ -24,7 +24,8 @@ export enum InstrType {
   CONTINUE = 'Continue',
   CONTINUE_MARKER = 'ContinueMarker',
   BREAK = 'Break',
-  BREAK_MARKER = 'BreakMarker'
+  BREAK_MARKER = 'BreakMarker',
+  SPREAD = 'Spread'
 }
 
 interface BaseInstr {
@@ -78,6 +79,10 @@ export interface ArrLitInstr extends BaseInstr {
   arity: number
 }
 
+export interface SpreadInstr extends BaseInstr {
+  symbol: es.SpreadElement
+}
+
 export type Instr =
   | BaseInstr
   | WhileInstr
@@ -86,6 +91,7 @@ export type Instr =
   | BranchInstr
   | EnvInstr
   | ArrLitInstr
+  | SpreadInstr
 
 export type ControlItem = (Node | Instr | SchemeControlItems) & {
   isEnvDependent?: boolean

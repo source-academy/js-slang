@@ -68,6 +68,7 @@ import {
   tVoid,
   typeAnnotationKeywordToBasicTypeMap
 } from './utils'
+// import { ModuleNotFoundError } from '../modules/errors'
 
 // Context and type environment are saved as global variables so that they are not passed between functions excessively
 let context: Context = {} as Context
@@ -100,7 +101,7 @@ export function checkForTypeErrors(program: tsEs.Program, inputContext: Context)
   } catch (error) {
     // Catch-all for thrown errors
     // (either errors that cause early termination or errors that should not be reached logically)
-    console.error(error)
+    // console.error(error)
     context.errors.push(
       error instanceof TypecheckError
         ? error
@@ -333,6 +334,9 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       setDeclKind(id.name, node.kind, env)
       return tUndef
     }
+    case 'ClassDeclaration': {
+      return tAny
+    }
     case 'CallExpression': {
       const callee = node.callee
       const args = node.arguments
@@ -387,8 +391,56 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
           }
           return tStream(elementType)
         }
+
+        // Due to the use of generics, pair, list and stream functions are handled separately
+        const pairFunctions = ['pair']
+        const listFunctions = ['list', 'map', 'filter', 'accumulate', 'reverse']
+        const streamFunctions = ['stream_map', 'stream_reverse']
+        if (
+          pairFunctions.includes(fnName) ||
+          listFunctions.includes(fnName) ||
+          streamFunctions.includes(fnName)
+        ) {
+          const calleeType = cloneDeep(typeCheckAndReturnType(callee))
+          if (calleeType.kind !== 'function') {
+            if (calleeType.kind !== 'primitive' || calleeType.name !== 'any') {
+              context.errors.push(new TypeNotCallableError(node, formatTypeString(calleeType)))
+            }
+            return tAny
+          }
+
+          const expectedTypes = calleeType.parameterTypes
+          let returnType = calleeType.returnType
+
+          // Check argument types before returning declared return type
+          if (args.length !== expectedTypes.length) {
+            context.errors.push(
+              new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
+            )
+            return returnType
+          }
+
+          for (let i = 0; i < expectedTypes.length; i++) {
+            const node = args[i]
+            const actualType = typeCheckAndReturnType(node)
+            // Get all valid type variable mappings for current argument
+            const mappings = getTypeVariableMappings(node, actualType, expectedTypes[i])
+            // Apply type variable mappings to subsequent argument types and return type
+            for (const mapping of mappings) {
+              const typeVar = tVar(mapping[0])
+              const typeToSub = mapping[1]
+              for (let j = i; j < expectedTypes.length; j++) {
+                expectedTypes[j] = substituteVariableTypes(expectedTypes[j], typeVar, typeToSub)
+              }
+              returnType = substituteVariableTypes(returnType, typeVar, typeToSub)
+            }
+            // Typecheck current argument
+            checkForTypeMismatch(node, actualType, expectedTypes[i])
+          }
+          return returnType
+        }
       }
-      const calleeType = typeCheckAndReturnType(callee)
+      const calleeType = cloneDeep(typeCheckAndReturnType(callee))
       if (calleeType.kind !== 'function') {
         if (calleeType.kind !== 'primitive' || calleeType.name !== 'any') {
           context.errors.push(new TypeNotCallableError(node, formatTypeString(calleeType)))
@@ -417,17 +469,6 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       for (let i = 0; i < expectedTypes.length; i++) {
         const node = args[i]
         const actualType = typeCheckAndReturnType(node)
-        // Get all valid type variable mappings for current argument
-        const mappings = getTypeVariableMappings(node, actualType, expectedTypes[i])
-        // Apply type variable mappings to subsequent argument types and return type
-        for (const mapping of mappings) {
-          const typeVar = tVar(mapping[0])
-          const typeToSub = mapping[1]
-          for (let j = i; j < expectedTypes.length; j++) {
-            expectedTypes[j] = substituteVariableTypes(expectedTypes[j], typeVar, typeToSub)
-          }
-          returnType = substituteVariableTypes(returnType, typeVar, typeToSub)
-        }
         // Typecheck current argument
         checkForTypeMismatch(node, actualType, expectedTypes[i])
       }
@@ -552,11 +593,62 @@ function handleImportDeclarations(node: tsEs.Program) {
   if (importStmts.length === 0) {
     return
   }
+
+  const importedModuleTypesTextMap: Record<string, string> = {}
+
   importStmts.forEach(stmt => {
     // Source only uses strings for import source value
-    stmt.specifiers.map(spec => {
-      setType(spec.local.name, tAny, env)
+    const moduleName = stmt.source.value as string
+
+    // Precondition: loadedModulesTypes are fetched from the modules repo
+    const moduleTypesTextMap = context.nativeStorage.loadedModuleTypes
+
+    // Module has no types
+    if (!moduleTypesTextMap[moduleName]) {
+      // Set all imported names to be of type any
+      // TODO: Consider switching to 'Module not supported' error after more modules have been typed
+      stmt.specifiers.map(spec => {
+        if (spec.type !== 'ImportSpecifier') {
+          throw new TypecheckError(stmt, 'Unknown specifier type')
+        }
+        setType(spec.local.name, tAny, env)
+      })
+      return
+    }
+
+    // Add prelude for module, which contains types that are shared by
+    // multiple variables and functions in the module
+    if (!importedModuleTypesTextMap[moduleName]) {
+      importedModuleTypesTextMap[moduleName] = moduleTypesTextMap[moduleName]['prelude']
+    } else {
+      importedModuleTypesTextMap[moduleName] =
+        importedModuleTypesTextMap[moduleName] + '\n' + moduleTypesTextMap[moduleName]['prelude']
+    }
+
+    stmt.specifiers.forEach(spec => {
+      if (spec.type !== 'ImportSpecifier') {
+        throw new TypecheckError(stmt, 'Unknown specifier type')
+      }
+
+      const importedName = spec.local.name
+      const importedType = moduleTypesTextMap[moduleName][importedName]
+      if (!importedType) {
+        // Set imported name to be of type any to prevent further typecheck errors
+        setType(importedName, tAny, env)
+        return
+      }
+
+      importedModuleTypesTextMap[moduleName] =
+        importedModuleTypesTextMap[moduleName] + '\n' + importedType
     })
+  })
+
+  Object.values(importedModuleTypesTextMap).forEach(typesText => {
+    const parsedModuleTypes = babelParse(typesText, {
+      sourceType: 'module',
+      plugins: ['typescript', 'estree']
+    }).program as unknown as tsEs.Program
+    typeCheckAndReturnType(parsedModuleTypes)
   })
 }
 
@@ -620,6 +712,16 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         // Save variable type and decl kind in type env
         setType(id.name, expectedType, env)
         setDeclKind(id.name, bodyNode.kind, env)
+        break
+      case 'ClassDeclaration':
+        const className: string = bodyNode.id.name
+        const classType: Variable = {
+          kind: 'variable',
+          name: className,
+          constraint: 'none'
+        }
+        setType(className, classType, env)
+        setTypeAlias(className, classType, env)
         break
       case 'TSTypeAliasDeclaration':
         if (node.type === 'BlockStatement') {

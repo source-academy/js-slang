@@ -77,7 +77,7 @@ describe('runFilesInContext', () => {
 describe('compileFiles', () => {
   let context = mockContext(Chapter.SOURCE_4)
 
-  beforeEach(async () => {
+  beforeEach(() => {
     context = mockContext(Chapter.SOURCE_4)
   })
 

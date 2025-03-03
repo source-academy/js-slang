@@ -5,6 +5,7 @@
 // and a final template (for the list to be transformed into).
 import { List, Pair } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { atomic_equals, is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import {
   arrayToImproperList,
   arrayToList,
@@ -14,7 +15,6 @@ import {
   isPair,
   isList
 } from './macro-utils'
-import { atomic_equals, is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 
 // a single pattern stored within the patterns component
 // may have several transformers attributed to it.
