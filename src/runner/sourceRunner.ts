@@ -8,11 +8,9 @@ import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpr
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
-import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluateProgram as evaluate } from '../interpreter/interpreter'
-import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
@@ -28,7 +26,6 @@ import {
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
 import { Chapter, type Context, type RecursivePartial, type Scheduler, Variant } from '../types'
-import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
@@ -145,21 +142,8 @@ async function runNative(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    switch (context.variant) {
-      case Variant.GPU:
-        transpileToGPU(transpiledProgram)
-        break
-      case Variant.LAZY:
-        transpileToLazy(transpiledProgram)
-        break
-    }
-
     ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
     let value = sandboxedEval(transpiled, context.nativeStorage)
-
-    if (context.variant === Variant.LAZY) {
-      value = forceIt(value)
-    }
 
     if (!options.isPrelude) {
       isPreviousCodeTimeoutError = false

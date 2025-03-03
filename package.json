@@ -27,9 +27,7 @@
   "files": [
     "dist"
   ],
-  "bin": {
-    "js-slang": "dist/repl/index.js"
-  },
+  "bin": "dist/repl/index.js",
   "dependencies": {
     "@babel/parser": "^7.19.4",
     "@commander-js/extra-typings": "^12.0.1",
@@ -42,13 +40,9 @@
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
     "commander": "^12.0.0",
-    "gpu.js": "^2.16.0",
     "js-base64": "^3.7.5",
     "lodash": "^4.17.21",
     "source-map": "0.7.3"
-  },
-  "resolutions": {
-    "**/gl": "^8.1.6"
   },
   "scripts": {
     "build": "yarn docs && yarn build:slang",
@@ -130,5 +124,5 @@
       ]
     ]
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "yarn@4.6.0"
 }
