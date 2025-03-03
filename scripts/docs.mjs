@@ -127,19 +127,6 @@ const configs = {
       "continuation.js"
     ]
   },
-  "Source §4 GPU": {
-    "readme": "README_4_GPU.md",
-    "dst": "source_4_gpu/",
-    "libs": [
-      "auxiliary.js",
-      "misc.js",
-      "math.js",
-      "list.js",
-      "stream.js",
-      "array.js",
-      "pairmutator.js"
-    ]
-  },
   "Source §4 Typed": {
     "readme": "README_4_TYPED.md",
     "dst": "source_4_typed/",

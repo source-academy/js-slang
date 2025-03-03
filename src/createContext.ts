@@ -11,7 +11,6 @@ import {
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
 import Heap from './cse-machine/heap'
-import * as gpu_lib from './gpu/lib'
 import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
@@ -138,7 +137,6 @@ const createNativeStorage = (): NativeStorage => ({
   builtins: new Map(),
   previousProgramsIdentifiers: new Set(),
   operators: new Map(Object.entries(operators)),
-  gpu: new Map(Object.entries(gpu_lib)),
   maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
   evaller: null,
   loadedModules: {},
@@ -375,15 +373,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       // tslint:disable-next-line:ban-types
       (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
     )
-
-    if (context.variant === Variant.GPU) {
-      defineBuiltin(context, '__clearKernelCache()', gpu_lib.__clearKernelCache)
-      defineBuiltin(
-        context,
-        '__createKernelSource(shape, extern, localNames, output, fun, kernelId)',
-        gpu_lib.__createKernelSource
-      )
-    }
 
     // Continuations for explicit-control variant
     if (context.chapter >= 4) {

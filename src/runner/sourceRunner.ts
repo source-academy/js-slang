@@ -8,7 +8,6 @@ import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpr
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
-import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluateProgram as evaluate } from '../interpreter/interpreter'
@@ -143,12 +142,6 @@ async function runNative(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    switch (context.variant) {
-      case Variant.GPU:
-        transpileToGPU(transpiledProgram)
-        break
-    }
-
     ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
     let value = sandboxedEval(transpiled, context.nativeStorage)
 

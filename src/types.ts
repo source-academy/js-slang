@@ -95,7 +95,6 @@ export enum Variant {
   NATIVE = 'native',
   WASM = 'wasm',
   CONCURRENT = 'concurrent',
-  GPU = 'gpu',
   EXPLICIT_CONTROL = 'explicit-control'
 }
 
@@ -121,7 +120,6 @@ export interface NativeStorage {
   builtins: Map<string, Value>
   previousProgramsIdentifiers: Set<string>
   operators: Map<string, (...operands: Value[]) => Value>
-  gpu: Map<string, (...operands: Value[]) => Value>
   maxExecTime: number
   evaller: null | ((program: string) => Value)
   /*

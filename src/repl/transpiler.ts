@@ -4,7 +4,6 @@ import { resolve } from 'path'
 import { Command } from '@commander-js/extra-typings'
 import { generate } from 'astring'
 
-import { transpileToGPU } from '../gpu/gpu'
 import { createContext, parseError } from '../index'
 import defaultBundler from '../modules/preprocessor/bundler'
 import parseProgramsAndConstructImportGraph from '../modules/preprocessor/linker'
@@ -18,7 +17,7 @@ import {
 } from './utils'
 
 export const transpilerCommand = new Command('transpiler')
-  .addOption(getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.GPU, Variant.NATIVE]))
+  .addOption(getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.NATIVE]))
   .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
   .option(
     '-p, --pretranspile',
@@ -59,12 +58,6 @@ export const transpilerCommand = new Command('transpiler')
 
     const { programs, topoOrder } = linkerResult
     const bundledProgram = defaultBundler(programs, entrypointFilePath, topoOrder, context)
-
-    switch (opts.variant) {
-      case Variant.GPU:
-        transpileToGPU(bundledProgram)
-        break
-    }
 
     const transpiled = opts.pretranspile
       ? generate(bundledProgram)

@@ -1,8 +1,6 @@
-import { generate } from 'astring'
 import type { MockedFunction } from 'jest-mock'
 
 import createContext, { defineBuiltin } from '../createContext'
-import { transpileToGPU } from '../gpu/gpu'
 import { parseError, Result, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { ImportOptions } from '../modules/moduleTypes'
@@ -139,13 +137,6 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     if (parsed === undefined) {
       pretranspiled = 'parseError'
     } else {
-      // Mutates program
-      switch (options.variant) {
-        case Variant.GPU:
-          transpileToGPU(parsed)
-          pretranspiled = generate(parsed)
-          break
-      }
       try {
         ;({ transpiled } = transpile(parsed, nativeTestContext))
         // replace declaration of builtins since they're repetitive

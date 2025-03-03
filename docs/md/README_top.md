@@ -25,21 +25,15 @@ the members of our learning community.
 
 ### Language variants
 
-#### <a href="source_1_lazy/">Source §1 Lazy</a>
-  
 #### <a href="source_1_wasm/">Source §1 WebAssembly</a>
 
 #### <a href="source_1_typed/">Source §1 Typed</a>
   
-#### <a href="source_2_lazy/">Source §2 Lazy</a>
-
 #### <a href="source_2_typed/">Source §2 Typed</a>
 
 #### <a href="source_3_concurrent/">Source §3 Concurrent</a>
 
 #### <a href="source_3_typed/">Source §3 Typed</a>
-
-#### <a href="source_4_gpu/">Source §4 GPU</a>
 
 #### <a href="source_4_typed/">Source §4 Typed</a>
 
@@ -67,8 +61,6 @@ the Source Academy.
 #### <a href="source_3_concurrent.pdf">Specification of Source §3 Concurrent</a>
 
 #### <a href="source_3_typed.pdf">Specification of Source §3 Typed</a>
-
-#### <a href="source_4_gpu.pdf">Specification of Source §4 GPU</a>
 
 #### <a href="source_4_typed.pdf">Specification of Source §4 Typed</a>
 
