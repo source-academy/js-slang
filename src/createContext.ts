@@ -141,7 +141,8 @@ const createNativeStorage = (): NativeStorage => ({
   gpu: new Map(Object.entries(gpu_lib)),
   maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
   evaller: null,
-  loadedModules: {}
+  loadedModules: {},
+  loadedModuleTypes: {}
 })
 
 export const createEmptyContext = <T>(
