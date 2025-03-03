@@ -81,7 +81,6 @@ Currently, valid CHAPTER/VARIANT combinations are:
 - `--chapter=2 --variant=interpreter`
 - `--chapter=2 --variant=typed`
 - `--chapter=3 --variant=default`
-- `--chapter=3 --variant=concurrent`
 - `--chapter=3 --variant=interpreter`
 - `--chapter=3 --variant=typed`
 - `--chapter=4 --variant=default`

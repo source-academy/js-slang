@@ -71,20 +71,6 @@ const configs = {
       "pairmutator.js"
     ]
   },
-  "Source §3 Concurrent": {
-    "readme": "README_3_CONCURRENT.md",
-    "dst": "source_3_concurrent/",
-    "libs": [
-      "auxiliary.js",
-      "misc.js",
-      "math.js",
-      "list.js",
-      "stream.js",
-      "array.js",
-      "pairmutator.js",
-      "concurrency.js"
-    ]
-  },
   "Source §3 Typed": {
     "readme": "README_3_TYPED.md",
     "dst": "source_3_typed/",
@@ -188,13 +174,6 @@ const configs = {
     "dst": "PAIRMUTATORS/",
     "libs": [
       "pairmutator.js"
-    ]
-  },
-  "CONCURRENCY": {
-    "readme": "README_CONCURRENCY.md",
-    "dst": "CONCURRENCY/",
-    "libs": [
-      "concurrency.js"
     ]
   },
   "MCE": {

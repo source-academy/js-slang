@@ -3,19 +3,17 @@ import * as _ from 'lodash'
 import type { RawSourceMap } from 'source-map'
 
 import { type IOptions, type Result } from '..'
-import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
+import { JSSLANG_PROPERTIES } from '../constants'
 import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
-import { AsyncScheduler, PreemptiveScheduler } from '../schedulers'
 import {
   callee,
   getEvaluationSteps,
@@ -25,12 +23,11 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, type Context, type RecursivePartial, type Scheduler, Variant } from '../types'
+import { Chapter, type Context, type RecursivePartial, Variant } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
-import { compileForConcurrent } from '../vm/svml-compiler'
-import { runWithProgram } from '../vm/svml-machine'
 import type { FileGetter } from '../modules/moduleTypes'
 import { mapResult } from '../alt-langs/mapper'
+import assert from '../utils/assert'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
@@ -60,29 +57,6 @@ let previousCode: {
 } | null = null
 let isPreviousCodeTimeoutError = false
 
-function runConcurrent(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  if (context.shouldIncreaseEvaluationTimeout) {
-    context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-  } else {
-    context.nativeStorage.maxExecTime = options.originalMaxExecTime
-  }
-
-  try {
-    return Promise.resolve({
-      status: 'finished',
-      context,
-      value: runWithProgram(compileForConcurrent(program, context), context)
-    })
-  } catch (error) {
-    if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
-      context.errors.push(error) // use ExceptionErrors for non Source Errors
-      return resolvedErrorPromise
-    }
-    context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-    return resolvedErrorPromise
-  }
-}
-
 function runSubstitution(
   program: es.Program,
   context: Context,
@@ -108,17 +82,6 @@ function runSubstitution(
     context,
     value: redexedSteps
   })
-}
-
-function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context)
-  let scheduler: Scheduler
-  if (options.scheduler === 'async') {
-    scheduler = new AsyncScheduler()
-  } else {
-    scheduler = new PreemptiveScheduler(options.steps)
-  }
-  return scheduler.run(it, context)
 }
 
 async function runNative(
@@ -226,10 +189,6 @@ async function sourceRunner(
     return resolvedErrorPromise
   }
 
-  if (context.variant === Variant.CONCURRENT) {
-    return runConcurrent(program, context, theOptions)
-  }
-
   if (theOptions.useSubst) {
     return runSubstitution(program, context, theOptions)
   }
@@ -238,7 +197,7 @@ async function sourceRunner(
 
   // native, don't evaluate prelude
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(program, context, theOptions.importOptions)
+    return fullJSRunner(program, context, theOptions.importOptions)
   }
 
   // All runners after this point evaluate the prelude.
@@ -264,11 +223,8 @@ async function sourceRunner(
     return runCSEMachine(program, context, theOptions)
   }
 
-  if (context.executionMethod === 'native') {
-    return runNative(program, context, theOptions)
-  }
-
-  return runInterpreter(program, context, theOptions)
+  assert(context.executionMethod !== 'auto', 'Execution method should have been properly determined!')
+  return runNative(program, context, theOptions)
 }
 
 /**

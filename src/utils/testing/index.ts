@@ -1,11 +1,11 @@
 import type { MockedFunction } from 'jest-mock'
 
-import createContext, { defineBuiltin } from '../createContext'
-import { parseError, Result, runInContext } from '../index'
-import { mockContext } from '../mocks/context'
-import { ImportOptions } from '../modules/moduleTypes'
-import { parse } from '../parser/parser'
-import { transpile } from '../transpiler/transpiler'
+import createContext, { defineBuiltin } from '../../createContext'
+import { parseError, Result, runInContext } from '../../'
+import { mockContext } from '../../mocks/context'
+import type { ImportOptions } from '../../modules/moduleTypes'
+import { parse } from '../../parser/parser'
+import { transpile } from '../../transpiler/transpiler'
 import {
   Chapter,
   Context,
@@ -14,8 +14,8 @@ import {
   Value,
   Variant,
   type Finished
-} from '../types'
-import { stringify } from './stringify'
+} from '../../types'
+import { stringify } from '../stringify'
 
 export interface CodeSnippetTestCase {
   name: string

@@ -6,7 +6,7 @@ import { mockContext } from '../../../mocks/context'
 import { Chapter, type RecursivePartial } from '../../../types'
 import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
 import preprocessFileImports from '..'
-import { sanitizeAST } from '../../../utils/ast/sanitizer'
+import { sanitizeAST } from '../../../utils/testing/sanitizer'
 import { parse } from '../../../parser/parser'
 import {
   accessExportFunctionName,

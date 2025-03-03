@@ -2,7 +2,7 @@ import { mockContext } from '../../../../mocks/context'
 import { parse } from '../../../../parser/parser'
 import { Chapter, type Context } from '../../../../types'
 import removeExports from '../../transformers/removeExports'
-import { sanitizeAST } from '../../../../utils/ast/sanitizer'
+import { sanitizeAST } from '../../../../utils/testing/sanitizer'
 
 type TestCase = [description: string, inputCode: string, expectedCode: string]
 
