@@ -6,6 +6,7 @@ import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
 
 import * as resolver from '../resolver'
+import { expectTrue } from '../../../utils/testing/misc'
 jest.spyOn(resolver, 'default')
 
 beforeEach(() => {
@@ -130,13 +131,8 @@ test('Linker does tree-shaking', async () => {
     '/a.js'
   )
 
-  // Wrap to appease typescript
-  function expectWrapper(cond: boolean): asserts cond {
-    expect(cond).toEqual(true)
-  }
-
   expect(errors.length).toEqual(0)
-  expectWrapper(result.ok)
+  expectTrue(result.ok)
   expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
   expect(Object.keys(result.programs)).not.toContain('/b.js')
 })

@@ -148,12 +148,18 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   return parseError(context.errors)
 }
 
+/**
+ * Run the given code, expect it to finish without errors and also match a snapshot
+ */
 export async function snapshotSuccess(code: string, options: TestOptions = {}) {
   const results = await testSuccess(code, options)
   expect(results).toMatchSnapshot()
   return results
 }
 
+/**
+ * Run the given code, expect it to finish with errors and that those errors match a snapshot
+ */
 export async function snapshotFailure(code: string, options: TestOptions = {}) {
   const results = await testFailure(code, options)
   expect(results).toMatchSnapshot()
