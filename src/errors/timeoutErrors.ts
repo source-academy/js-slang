@@ -19,7 +19,10 @@ export class PotentialInfiniteLoopError extends TimeoutError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
 
-  constructor(node: Node, private maxExecTime: number) {
+  constructor(
+    node: Node,
+    private maxExecTime: number
+  ) {
     super(node)
   }
 
@@ -37,7 +40,11 @@ export class PotentialInfiniteRecursionError extends TimeoutError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
 
-  constructor(node: Node, private calls: [string, any[]][], private maxExecTime: number) {
+  constructor(
+    node: Node,
+    private calls: [string, any[]][],
+    private maxExecTime: number
+  ) {
     super(node)
     this.calls = this.calls.slice(-3)
   }

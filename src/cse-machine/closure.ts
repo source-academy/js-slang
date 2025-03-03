@@ -98,14 +98,14 @@ export default class Closure extends Callable {
       !isBlockStatement(node.body) && !isStatementSequence(node.body)
         ? ast.blockStatement([ast.returnStatement(node.body, node.body.loc)], node.body.loc)
         : dummyReturn && !hasReturnStatement(node.body)
-        ? ast.blockStatement(
-            [
-              ...node.body.body,
-              ast.returnStatement(ast.identifier('undefined', node.body.loc), node.body.loc)
-            ],
-            node.body.loc
-          )
-        : node.body
+          ? ast.blockStatement(
+              [
+                ...node.body.body,
+                ast.returnStatement(ast.identifier('undefined', node.body.loc), node.body.loc)
+              ],
+              node.body.loc
+            )
+          : node.body
 
     const closure = new Closure(
       ast.blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),
