@@ -36,8 +36,7 @@ test('Bare early returns work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -58,8 +57,7 @@ test('Recursive call early returns work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`3`)
 })
 
@@ -80,8 +78,7 @@ test('Tail call early returns work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -102,8 +99,7 @@ test('Bare early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -127,8 +123,7 @@ test('Recursive call early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`3`)
 })
 
@@ -152,8 +147,7 @@ test('Tail call early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -175,7 +169,7 @@ test('Bare early returns in while loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    Chapter.SOURCE_3
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -200,7 +194,7 @@ test('Recursive call early returns in while loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    Chapter.SOURCE_3
   ).toMatchInlineSnapshot(`3`)
 })
 
@@ -225,7 +219,7 @@ test('Tail call early returns in while loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -247,7 +241,7 @@ test('Bare early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -269,7 +263,7 @@ test('Recursive call early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`3`)
 })
 
@@ -294,6 +288,6 @@ test('Tail call early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`1`)
 })

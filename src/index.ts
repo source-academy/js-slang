@@ -34,7 +34,6 @@ import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
 
 export interface IOptions {
-  scheduler: 'preemptive' | 'async'
   steps: number
   stepLimit: number
   executionMethod: ExecutionMethod

@@ -15,7 +15,7 @@ describe('__access_named_export__', () => {
       const square = __access_named_export__(importedFile(), "square");
       square(5);
     `,
-      { chapter: Chapter.SOURCE_2, native: true }
+      { chapter: Chapter.SOURCE_2 }
     ).toMatchInlineSnapshot(`25`)
   })
 
@@ -31,7 +31,7 @@ describe('__access_named_export__', () => {
       const square = __access_named_export__(importedFile(), "square");
       square(5);
     `,
-      { chapter: Chapter.SOURCE_2, native: true }
+      { chapter: Chapter.SOURCE_2 }
     ).toMatchInlineSnapshot(`25`)
   })
 
@@ -45,7 +45,7 @@ describe('__access_named_export__', () => {
       }
       __access_named_export__(importedFile(), "identity");
     `,
-      { chapter: Chapter.SOURCE_2, native: true }
+      { chapter: Chapter.SOURCE_2 }
     ).toMatchInlineSnapshot(`undefined`)
   })
 
@@ -59,7 +59,7 @@ describe('__access_named_export__', () => {
       }
       __access_named_export__(importedFile(), "identity");
     `,
-      { chapter: Chapter.SOURCE_2, native: true }
+      { chapter: Chapter.SOURCE_2 }
     ).toMatchInlineSnapshot(`undefined`)
   })
 })
@@ -76,7 +76,7 @@ describe('__access_export__', () => {
       const square = __access_export__(importedFile(), "square");
       square(5);
     `,
-      { chapter: Chapter.SOURCE_2, native: true }
+      { chapter: Chapter.SOURCE_2 }
     ).toMatchInlineSnapshot(`25`)
   })
 
@@ -93,7 +93,7 @@ describe('__access_export__', () => {
       const square = __access_export__(importedFile(), "${defaultExportLookupName}");
       square(5);
     `,
-      { chapter: Chapter.SOURCE_2, native: true }
+      { chapter: Chapter.SOURCE_2 }
     ).toMatchInlineSnapshot(`125`)
   })
 })

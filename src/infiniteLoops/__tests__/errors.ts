@@ -3,7 +3,7 @@ import * as es from 'estree'
 import { ExceptionError } from '../../errors/errors'
 import { RuntimeSourceError } from '../../errors/runtimeSourceError'
 import { TimeoutError } from '../../errors/timeoutErrors'
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../types'
 import {
   getInfiniteLoopData,

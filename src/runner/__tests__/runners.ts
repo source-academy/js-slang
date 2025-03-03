@@ -1,11 +1,17 @@
-import { Context, Result, runInContext } from '../..'
+import { type Context, type Result, runInContext } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { FatalSyntaxError } from '../../parser/errors'
-import { Chapter, Finished, Variant } from '../../types'
+import { Chapter, type Finished, type SourceError, Variant } from '../../types'
 import { locationDummyNode } from '../../utils/ast/astCreator'
-import { CodeSnippetTestCase } from '../../utils/testing'
 import { htmlErrorHandlingScript } from '../htmlRunner'
+
+interface CodeSnippetTestCase {
+  name: string
+  snippet: string
+  value: any
+  errors: SourceError[]
+}
 
 const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
   {

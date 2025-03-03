@@ -1,4 +1,4 @@
-import { mockContext } from '../../../mocks/context'
+import { mockContext } from '../../../utils/testing/mocks'
 import { MissingSemicolonError } from '../../../parser/errors'
 import { Chapter, type Context } from '../../../types'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'

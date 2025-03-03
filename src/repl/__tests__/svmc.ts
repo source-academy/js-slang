@@ -1,8 +1,7 @@
+import * as fs from 'fs/promises'
 import { asMockedFunc } from '../../utils/testing/misc'
 import { compileToChoices, getSVMCCommand } from '../svmc'
 import * as vm from '../../vm/svml-compiler'
-import * as fs from 'fs/promises'
-import { INTERNAL_FUNCTIONS } from '../../stdlib/vm.prelude'
 import { expectWritten, getCommandRunner } from './utils'
 
 jest.mock('fs/promises', () => ({
@@ -78,22 +77,6 @@ describe('--internals option', () => {
       "error: option '-i, --internals <names>' argument '{ \\"a\\": 1, \\"b\\": 2}' is invalid. Expected a JSON array of strings!
       "
     `)
-  })
-
-  it('is ignored if variant is concurrent', async () => {
-    await expectSuccess(
-      '1+1;',
-      'test.js',
-      '--internals',
-      '["func1", "func2"]',
-      '--variant',
-      'concurrent'
-    )
-
-    expect(vm.compileToIns).toHaveBeenCalledTimes(1)
-    const [[, , internals]] = asMockedFunc(vm.compileToIns).mock.calls
-    const expectedNames = INTERNAL_FUNCTIONS.map(([name]) => name)
-    expect(internals).toEqual(expectedNames)
   })
 })
 

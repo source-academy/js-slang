@@ -343,21 +343,13 @@ test.each([
   (chapter: Chapter, snippet: string, skipSuccessTests: boolean = false) => {
     snippet = stripIndent(snippet)
     const parseSnippet = `parse(${JSON.stringify(snippet)});`
-    const tests: ReturnType<typeof snapshotSuccess>[] = []
+    const tests: Promise<any>[] = []
     if (!skipSuccessTests) {
-      tests.push(
-        snapshotSuccess(snippet, { chapter, native: chapter !== Chapter.LIBRARY_PARSER }, 'passes')
-      )
-      tests.push(
-        snapshotSuccess(
-          parseSnippet,
-          { chapter: Math.max(4, chapter), native: true },
-          'parse passes'
-        )
-      )
+      tests.push(snapshotSuccess(snippet, chapter))
+      tests.push(snapshotSuccess(parseSnippet, Math.max(4, chapter)))
     }
     if (chapter > 1) {
-      tests.push(snapshotFailure(snippet, { chapter: chapter - 1 }, 'fails a chapter below'))
+      tests.push(snapshotFailure(snippet, chapter - 1))
     }
     return Promise.all(tests)
   }

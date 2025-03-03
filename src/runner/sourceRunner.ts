@@ -32,8 +32,7 @@ import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
 
-const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
-  scheduler: 'async',
+export const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   steps: 1000,
   stepLimit: -1,
   executionMethod: 'auto',

@@ -1,6 +1,15 @@
 import type { MockedFunction } from 'jest-mock'
 import type { Result } from '../..'
-import type { Finished, Value, Node, NodeTypeToNode } from '../../types'
+import type { Finished, Value, Node, NodeTypeToNode, Chapter } from '../../types'
+import type { TestBuiltins, TestOptions } from './types'
+
+export function processTestOptions(rawOptions: TestOptions = {}): Exclude<TestOptions, Chapter> {
+  return typeof rawOptions === 'number'
+    ? {
+        chapter: rawOptions
+      }
+    : rawOptions
+}
 
 export function asMockedFunc<T extends (...args: any[]) => any>(func: T) {
   return func as MockedFunction<T>
@@ -24,4 +33,13 @@ export function expectNodeType<T extends Node['type']>(
   node: Node
 ): asserts node is NodeTypeToNode<T> {
   expect(node.type).toEqual(typeStr)
+}
+
+export function evalWithBuiltins(code: string, testBuiltins: TestBuiltins = {}) {
+  // Ugly, but if you know how to `eval` code with some builtins attached, please change this.
+  const builtins = Object.keys(testBuiltins).map(key => `const ${key} = testBuiltins.${key};`)
+  const evalstring = builtins.join('\n') + code
+
+  // tslint:disable-next-line:no-eval
+  return eval(evalstring + code)
 }
