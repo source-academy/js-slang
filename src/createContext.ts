@@ -119,7 +119,7 @@ const createEmptyDebugger = () => ({
   state: {
     it: (function* (): any {
       return
-    })(),
+    })()
   }
 })
 

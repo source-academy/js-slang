@@ -20,10 +20,7 @@ export const getTranspilerCommand = () =>
   new Command('transpiler')
     .addOption(getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.NATIVE]))
     .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
-    .option(
-      '-p, --pretranspile',
-      "only pretranspile and don't perform Source -> JS transpilation"
-    )
+    .option('-p, --pretranspile', "only pretranspile and don't perform Source -> JS transpilation")
     .option('-o, --out <outFile>', 'Specify a file to write to')
     .argument('<filename>')
     .action(async (fileName, opts) => {

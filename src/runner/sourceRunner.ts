@@ -223,7 +223,10 @@ async function sourceRunner(
     return runCSEMachine(program, context, theOptions)
   }
 
-  assert(context.executionMethod !== 'auto', 'Execution method should have been properly determined!')
+  assert(
+    context.executionMethod !== 'auto',
+    'Execution method should have been properly determined!'
+  )
   return runNative(program, context, theOptions)
 }
 

@@ -253,7 +253,7 @@ export async function runFilesInContext(
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
   if (result.status === 'finished' || result.status === 'error') {
     return result
-  } 
+  }
   const value = resumeEvaluate(result.context)
   return CSEResultPromise(result.context, value)
 }
