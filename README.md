@@ -131,7 +131,7 @@ Documentation of libraries is displayed in autocomplete in the frontend. This do
 `js-slang` comes with an extensive test suite. To run the tests after you made your modifications, run `yarn test`. Regression tests are run automatically when you want to push changes to this repository. The regression tests are generated using `jest` and stored as snapshots in `src/\_\_tests\_\_`. After modifying `js-slang`, carefully inspect any failing regression tests reported in red in the command line. If you are convinced that the regression tests and not your changes are at fault, you can update the regression tests as follows:
 
 ```bash
-$ yarn test -- --updateSnapshot
+$ yarn test --updateSnapshot
 ```
 
 ## Error messages
