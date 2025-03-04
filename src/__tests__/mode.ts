@@ -1,5 +1,5 @@
 import * as ace from 'ace-builds'
-import DefaultMode from 'ace-builds/src-noconflict/mode-javascript'
+import { Mode as DefaultMode } from 'ace-builds/src-noconflict/mode-javascript'
 
 import { HighlightRulesSelector, ModeSelector } from '../editors/ace/modes/source'
 import { Chapter, Variant } from '../types'
@@ -14,7 +14,7 @@ const defaultVariant: Variant = Variant.DEFAULT
 const defaultExternal: string = 'NONE'
 
 // define session
-const session = ace.createEditSession('', new DefaultMode.Mode())
+const session = ace.createEditSession('', new DefaultMode())
 
 // tested token types
 const CATEGORY = {
