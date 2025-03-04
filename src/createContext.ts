@@ -11,9 +11,7 @@ import {
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
 import Heap from './cse-machine/heap'
-import * as gpu_lib from './gpu/lib'
 import { AsyncScheduler } from './schedulers'
-import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
@@ -33,21 +31,11 @@ import {
   Value,
   Variant
 } from './types'
-import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 import { schemeVisualise } from './alt-langs/scheme/scheme-mapper'
 import { cset_apply, cset_eval } from './cse-machine/scheme-macros'
 import { Transformers } from './cse-machine/interpreter'
-
-export class LazyBuiltIn {
-  func: (...arg0: any) => any
-  evaluateArgs: boolean
-  constructor(func: (...arg0: any) => any, evaluateArgs: boolean) {
-    this.func = func
-    this.evaluateArgs = evaluateArgs
-  }
-}
 
 export class EnvTree {
   private _root: EnvTreeNode | null = null
@@ -149,10 +137,10 @@ const createNativeStorage = (): NativeStorage => ({
   builtins: new Map(),
   previousProgramsIdentifiers: new Set(),
   operators: new Map(Object.entries(operators)),
-  gpu: new Map(Object.entries(gpu_lib)),
   maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
   evaller: null,
-  loadedModules: {}
+  loadedModules: {},
+  loadedModuleTypes: {}
 })
 
 export const createEmptyContext = <T>(
@@ -261,16 +249,6 @@ export function defineBuiltin(
     value.funParameters = funParameters
 
     defineSymbol(context, funName, value)
-  } else if (value instanceof LazyBuiltIn) {
-    const wrapped = (...args: any) => value.func(...args)
-    const funName = extractName(name)
-    const funParameters = extractParameters(name)
-    const repr = `function ${name} {\n\t[implementation hidden]\n}`
-    wrapped.toString = () => repr
-    wrapped.funName = funName
-    wrapped.funParameters = funParameters
-    makeWrapper(value.func, wrapped)
-    defineSymbol(context, funName, new LazyBuiltIn(wrapped, value.evaluateArgs))
   } else {
     defineSymbol(context, name, value)
   }
@@ -361,27 +339,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 2) {
     // List library
-
-    if (context.variant === Variant.LAZY) {
-      defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair, false))
-      defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list, false), 0)
-      defineBuiltin(context, 'is_pair(val)', new LazyBuiltIn(list.is_pair, true))
-      defineBuiltin(context, 'head(xs)', new LazyBuiltIn(list.head, true))
-      defineBuiltin(context, 'tail(xs)', new LazyBuiltIn(list.tail, true))
-      defineBuiltin(context, 'is_null(val)', new LazyBuiltIn(list.is_null, true))
-      defineBuiltin(context, 'draw_data(...xs)', new LazyBuiltIn(visualiseList, true), 1)
-      defineBuiltin(context, 'is_list(val)', new LazyBuiltIn(list.is_list, true))
-    } else {
-      defineBuiltin(context, 'pair(left, right)', list.pair)
-      defineBuiltin(context, 'is_pair(val)', list.is_pair)
-      defineBuiltin(context, 'head(xs)', list.head)
-      defineBuiltin(context, 'tail(xs)', list.tail)
-      defineBuiltin(context, 'is_null(val)', list.is_null)
-      defineBuiltin(context, 'list(...values)', list.list, 0)
-      defineBuiltin(context, 'draw_data(...xs)', visualiseList, 1)
-      defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList, 0)
-      defineBuiltin(context, 'is_list(val)', list.is_list)
-    }
+    defineBuiltin(context, 'pair(left, right)', list.pair)
+    defineBuiltin(context, 'is_pair(val)', list.is_pair)
+    defineBuiltin(context, 'head(xs)', list.head)
+    defineBuiltin(context, 'tail(xs)', list.tail)
+    defineBuiltin(context, 'is_null(val)', list.is_null)
+    defineBuiltin(context, 'list(...values)', list.list, 0)
+    defineBuiltin(context, 'draw_data(...xs)', visualiseList, 1)
+    defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList, 0)
+    defineBuiltin(context, 'is_list(val)', list.is_list)
   }
 
   if (context.chapter >= 3) {
@@ -408,15 +374,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
     )
 
-    if (context.variant === Variant.GPU) {
-      defineBuiltin(context, '__clearKernelCache()', gpu_lib.__clearKernelCache)
-      defineBuiltin(
-        context,
-        '__createKernelSource(shape, extern, localNames, output, fun, kernelId)',
-        gpu_lib.__createKernelSource
-      )
-    }
-
     // Continuations for explicit-control variant
     if (context.chapter >= 4) {
       defineBuiltin(
@@ -440,13 +397,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
       misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
     )
-  }
-
-  if (context.variant === Variant.LAZY) {
-    defineBuiltin(context, 'wrapLazyCallee(f)', new LazyBuiltIn(operators.wrapLazyCallee, true))
-    defineBuiltin(context, 'makeLazyFunction(f)', new LazyBuiltIn(operators.makeLazyFunction, true))
-    defineBuiltin(context, 'forceIt(val)', new LazyBuiltIn(operators.forceIt, true))
-    defineBuiltin(context, 'delayIt(xs)', new LazyBuiltIn(operators.delayIt, true))
   }
 
   if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
@@ -843,7 +793,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 function importPrelude(context: Context) {
   let prelude = ''
   if (context.chapter >= 2) {
-    prelude += context.variant === Variant.LAZY ? lazyListPrelude : listPrelude
+    prelude += listPrelude
     prelude += localImportPrelude
   }
   if (context.chapter >= 3) {
