@@ -1,20 +1,10 @@
 import { generate } from 'astring'
-import * as es from 'estree'
-
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import type { IfStatement } from 'estree'
+import { Chapter } from '../../../types'
+import { type Rule, RuleError } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
-export class NoIfWithoutElseError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.IfStatement) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoIfWithoutElseError extends RuleError<IfStatement> {
   public explain() {
     return 'Missing "else" in "if-else" statement.'
   }
@@ -30,11 +20,24 @@ export class NoIfWithoutElseError implements SourceError {
   }
 }
 
-const noIfWithoutElse: Rule<es.IfStatement> = {
+const noIfWithoutElse: Rule<IfStatement> = {
   name: 'no-if-without-else',
   disableFromChapter: Chapter.SOURCE_3,
+  testSnippets: [
+    [
+      `
+      function f() {
+        if (true) {
+          return true;
+        }
+        return false;
+      }
+      `,
+      'Line 3: Missing "else" in "if-else" statement.'
+    ]
+  ],
   checkers: {
-    IfStatement(node: es.IfStatement, _ancestors: [Node]) {
+    IfStatement(node) {
       if (!node.alternate) {
         return [new NoIfWithoutElseError(node)]
       } else {

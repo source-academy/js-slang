@@ -1,12 +1,13 @@
 import { parse as acornParse, Token, tokenizer } from 'acorn'
-import * as es from 'estree'
+import type * as es from 'estree'
 
 import { DEFAULT_ECMA_VERSION } from '../../constants'
-import { Chapter, Context, Node, Rule, SourceError, Variant } from '../../types'
+import { Chapter, Context, Node, SourceError, Variant } from '../../types'
 import { ancestor, AncestorWalkerFn } from '../../utils/walkers'
 import { DisallowedConstructError, FatalSyntaxError } from '../errors'
-import { AcornOptions, Parser } from '../types'
+import type { AcornOptions, Rule, Parser } from '../types'
 import { createAcornParserOptions, positionToSourceLocation } from '../utils'
+import { mapToObj } from '../../utils/misc'
 import defaultRules from './rules'
 import syntaxBlacklist from './syntax'
 
@@ -16,9 +17,6 @@ const combineAncestorWalkers =
     w1(node, state, ancestors)
     w2(node, state, ancestors)
   }
-
-const mapToObj = <T>(map: Map<string, T>) =>
-  Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
 
 export class SourceParser implements Parser<AcornOptions> {
   private chapter: Chapter

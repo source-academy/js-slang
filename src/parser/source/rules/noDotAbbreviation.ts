@@ -1,20 +1,12 @@
-import * as es from 'estree'
+import type { MemberExpression } from 'estree'
+import { Chapter } from '../../../types'
+import { type Rule, RuleError } from '../../types'
 
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+const errorMessage = 'Dot abbreviations are not allowed.'
 
-export class NoDotAbbreviationError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.MemberExpression) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoDotAbbreviationError extends RuleError<MemberExpression> {
   public explain() {
-    return 'Dot abbreviations are not allowed.'
+    return errorMessage
   }
 
   public elaborate() {
@@ -23,13 +15,20 @@ export class NoDotAbbreviationError implements SourceError {
   }
 }
 
-const noDotAbbreviation: Rule<es.MemberExpression> = {
+const noDotAbbreviation: Rule<MemberExpression> = {
   name: 'no-dot-abbreviation',
-
   disableFromChapter: Chapter.LIBRARY_PARSER,
-
+  testSnippets: [
+    [
+      `
+        const obj = {};
+        obj.o;
+      `,
+      `Line 3: ${errorMessage}`
+    ]
+  ],
   checkers: {
-    MemberExpression(node: es.MemberExpression, _ancestors: [Node]) {
+    MemberExpression(node: MemberExpression) {
       if (!node.computed) {
         return [new NoDotAbbreviationError(node)]
       } else {

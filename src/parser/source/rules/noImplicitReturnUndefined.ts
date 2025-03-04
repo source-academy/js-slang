@@ -1,19 +1,8 @@
-import * as es from 'estree'
-
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import type { ReturnStatement } from 'estree'
+import { type Rule, RuleError } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
-export class NoImplicitReturnUndefinedError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.ReturnStatement) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoImplicitReturnUndefinedError extends RuleError<ReturnStatement> {
   public explain() {
     return 'Missing value in return statement.'
   }
@@ -28,11 +17,11 @@ export class NoImplicitReturnUndefinedError implements SourceError {
   }
 }
 
-const noImplicitReturnUndefined: Rule<es.ReturnStatement> = {
+const noImplicitReturnUndefined: Rule<ReturnStatement> = {
   name: 'no-implicit-return-undefined',
-
+  testSnippets: [['function f() { return; }', 'Line 1: Missing value in return statement.']],
   checkers: {
-    ReturnStatement(node: es.ReturnStatement, _ancestors: [Node]) {
+    ReturnStatement(node) {
       if (!node.argument) {
         return [new NoImplicitReturnUndefinedError(node)]
       } else {
