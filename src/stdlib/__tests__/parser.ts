@@ -7,7 +7,7 @@ test('Parses empty program', () => {
     stripIndent`
     stringify(parse(""), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -16,7 +16,7 @@ test('Parses literals', () => {
     stripIndent`
     stringify(parse("3; true; false; ''; \\"\\"; 'bob'; 1; 20;"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -25,7 +25,7 @@ test('Parses name expression', () => {
     stripIndent`
     stringify(parse("x;"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -34,7 +34,7 @@ test('Parses name expressions', () => {
     stripIndent`
     stringify(parse("x; moreNames; undefined;"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -43,7 +43,7 @@ test('Parses infix expressions', () => {
     stripIndent`
     stringify(parse("3 + 5 === 8 || !true && false;"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -52,7 +52,7 @@ test('Parses declaration statements', () => {
     stripIndent`
     stringify(parse("const x = 5; let y = x;"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -61,7 +61,7 @@ test('Parses assignment statements', () => {
     stripIndent`
     stringify(parse("x = 5; x = x; if (true) { x = 5; } else {}"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -70,7 +70,7 @@ test('Parses if statements', () => {
     stripIndent`
     stringify(parse("if (true) { hi; } else { haha; } if (false) {} else {}"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -79,7 +79,7 @@ test('Parses multi-argument arrow function expressions properly', () => {
     stripIndent`
     stringify(parse("(x, y) => x + 1;"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -88,7 +88,7 @@ test('Parses multi-argument arrow function expressions properly', () => {
     stripIndent`
     stringify(parse("(x, y) => x + 1;"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -97,7 +97,7 @@ test('Parses multi-argument arrow function assignments properly', () => {
     stripIndent`
     stringify(parse("const y = (x, y) => x + 1;"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -106,7 +106,7 @@ test('Parses arrow function expressions properly', () => {
     stripIndent`
     stringify(parse("x => x + 1;"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -115,7 +115,7 @@ test('Parses arrow function assignments properly', () => {
     stripIndent`
     stringify(parse("const y = x => x + 1;"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -124,7 +124,7 @@ test('Parses function calls', () => {
     stripIndent`
     stringify(parse("f(x); thrice(thrice)(plus_one)(0);"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -133,7 +133,7 @@ test('Parses fibonacci', () => {
     stripIndent`
     stringify(parse("function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); } fib(4);"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 
@@ -181,7 +181,7 @@ test('Parses loops', () => {
         break;
       }"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   )
 })
 

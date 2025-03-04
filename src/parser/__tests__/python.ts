@@ -1,5 +1,5 @@
 import { parseError } from '../..'
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { parse } from '../parser'

@@ -2,7 +2,7 @@ import type es from 'estree'
 
 import { runInContext } from '../..'
 import createContext from '../../createContext'
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
 import { Chapter, Variant } from '../../types'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'

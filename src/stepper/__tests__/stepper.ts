@@ -1,6 +1,6 @@
 import type es from 'estree'
 
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
 import { Chapter, Context, substituterNodes } from '../../types'
 import { codify, getEvaluationSteps } from '../stepper'

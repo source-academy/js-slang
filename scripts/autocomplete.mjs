@@ -18,7 +18,6 @@ const TARGETS = [
   "source_2",
   "source_2_typed",
   "source_3",
-  "source_3_concurrent",
   "source_3_typed",
   "source_4",
   "source_4_typed",

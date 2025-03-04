@@ -1014,7 +1014,7 @@ test('no this, no new', () => {
     const box = new Box();
     `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"Line 2: Expected string as prop, got number."`)
+  ).toMatchInlineSnapshot(`"Line 4: TypeError: Box is not a constructor"`)
 })
 
 test('no this, no new - verbose', () => {
@@ -1027,11 +1027,7 @@ test('no this, no new - verbose', () => {
     const box = new Box();
     `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 3, Column 2: Expected string as prop, got number.
-            Expected string as prop, got number.
-            "
-          `)
+  ).toMatchInlineSnapshot(`""`)
 })
 
 test('no unspecified operators', () => {

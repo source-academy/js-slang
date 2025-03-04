@@ -105,7 +105,6 @@ test('display_list is linear runtime', () => {
     `,
       {
         chapter: Chapter.SOURCE_3,
-        native: false, // we're measuring a builtin, no need for native
         testBuiltins: {
           no_display_list: noDisplayList
         }
