@@ -1,7 +1,6 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../interpreter/closure'
 import { Type, Value } from '../types'
-import { forceIt } from './operators'
 
 export interface ArrayLike {
   replPrefix: string
@@ -22,7 +21,6 @@ export const stringify = (
   indent: number | string = 2,
   splitlineThreshold = 80
 ): string => {
-  value = forceIt(value)
   if (typeof indent === 'string') {
     throw 'stringify with arbitrary indent string not supported'
   }

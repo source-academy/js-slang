@@ -5,7 +5,6 @@ import * as source_2 from './source_2.json'
 import * as source_2_typed from './source_2_typed.json'
 import * as source_3 from './source_3.json'
 import * as source_3_concurrent from './source_3_concurrent.json'
-import * as source_3_non_det from './source_3_non-det.json'
 import * as source_3_typed from './source_3_typed.json'
 import * as source_4 from './source_4.json'
 import * as source_4_typed from './source_4_typed.json'
@@ -42,14 +41,11 @@ function resolveImportInconsistency(json: any) {
 export const SourceDocumentation = {
   builtins: {
     '1': resolveImportInconsistency(source_1),
-    '1_lazy': resolveImportInconsistency(source_1),
     '1_typed': resolveImportInconsistency(source_1_typed),
     '2': resolveImportInconsistency(source_2),
-    '2_lazy': resolveImportInconsistency(source_2),
     '2_typed': resolveImportInconsistency(source_2_typed),
     '3': resolveImportInconsistency(source_3),
     '3_concurrent': resolveImportInconsistency(source_3_concurrent),
-    '3_non-det': resolveImportInconsistency(source_3_non_det),
     '3_typed': resolveImportInconsistency(source_3_typed),
     '4': resolveImportInconsistency(source_4),
     '4_typed': resolveImportInconsistency(source_4_typed),

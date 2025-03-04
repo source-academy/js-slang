@@ -170,7 +170,7 @@ export function checkForUndefinedVariables(
 ) {
   const preludes = context.prelude
     ? getFunctionDeclarationNamesInProgram(parse(context.prelude, context)!)
-    : new Set<String>()
+    : new Set<string>()
 
   const env = context.runtime.environments[0].head || {}
 

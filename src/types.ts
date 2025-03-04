@@ -94,10 +94,7 @@ export enum Variant {
   TYPED = 'typed',
   NATIVE = 'native',
   WASM = 'wasm',
-  LAZY = 'lazy',
-  NON_DET = 'non-det',
   CONCURRENT = 'concurrent',
-  GPU = 'gpu',
   EXPLICIT_CONTROL = 'explicit-control'
 }
 
@@ -123,7 +120,6 @@ export interface NativeStorage {
   builtins: Map<string, Value>
   previousProgramsIdentifiers: Set<string>
   operators: Map<string, (...operands: Value[]) => Value>
-  gpu: Map<string, (...operands: Value[]) => Value>
   maxExecTime: number
   evaller: null | ((program: string) => Value)
   /*
@@ -132,6 +128,7 @@ export interface NativeStorage {
   close in the surrounding values, so no problem
    */
   loadedModules: Record<string, ModuleFunctions>
+  loadedModuleTypes: Record<string, Record<string, string>>
 }
 
 export interface Context<T = any> {
@@ -194,7 +191,7 @@ export interface Context<T = any> {
 
   /**
    * Describes the strategy / paradigm to be used for evaluation
-   * Examples: lazy, concurrent or nondeterministic
+   * Examples: concurrent
    */
   variant: Variant
 
@@ -263,12 +260,6 @@ export interface Environment {
   thisContext?: Value
 }
 
-export interface Thunk {
-  value: any
-  isMemoized: boolean
-  f: () => any
-}
-
 export interface Error {
   status: 'error'
 }
@@ -290,17 +281,12 @@ export interface Suspended {
   context: Context
 }
 
-export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-non-det' } & {
-  value: Value
-  representation?: Representation // never used, only kept for consistency with Finished
-}
-
 export interface SuspendedCseEval {
   status: 'suspended-cse-eval'
   context: Context
 }
 
-export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedCseEval
+export type Result = Suspended | Finished | Error | SuspendedCseEval
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>

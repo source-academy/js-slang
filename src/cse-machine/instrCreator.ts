@@ -142,3 +142,8 @@ export const breakMarkerInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.BREAK_MARKER,
   srcNode
 })
+
+export const spreadInstr = (srcNode: Node): Instr => ({
+  instrType: InstrType.SPREAD,
+  srcNode
+})
