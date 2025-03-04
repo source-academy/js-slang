@@ -329,7 +329,7 @@ export const createEnvironment = (
   const environment: Environment = {
     name: isIdentifier(callExpression.callee)
       ? callExpression.callee.name
-      : closure.declaredName ?? closure.functionName,
+      : (closure.declaredName ?? closure.functionName),
     tail: closure.environment,
     head: {},
     heap: new Heap(),
@@ -1004,8 +1004,8 @@ export function isEnvDependent(item: ControlItem | null | undefined): boolean {
   const setter = isNode(item)
     ? propertySetter.get(item.type)
     : isInstr(item)
-    ? propertySetter.get(item.instrType)
-    : undefined
+      ? propertySetter.get(item.instrType)
+      : undefined
 
   if (setter) {
     return setter(item)?.isEnvDependent ?? false

@@ -21,7 +21,7 @@ test-report.html
 
 # yarn files
 
-.yarn/*
+.yarn
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
