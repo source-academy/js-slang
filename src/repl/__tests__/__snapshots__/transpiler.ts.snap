@@ -93,7 +93,7 @@ exports[`Nothing should be written to disk if no output file was specified 1`] =
     const builtins = native.operators.get(\\"builtins\\");
     native.evaller = program => eval(program);
     undefined;
-    binaryOp(\\"+\\", 4, 1, 1, 1, 0, \\"C:\\\\\\\\source\\\\\\\\source_academy\\\\\\\\js-slang\\\\\\\\test.js\\");
+    binaryOp(\\"+\\", 4, 1, 1, 1, 0, \\"/Users/henz/Repos/SourceAcademy/js-slang/test.js\\");
   }
 }
 "
@@ -192,7 +192,7 @@ exports[`Writing to file 1`] = `
     const builtins = native.operators.get(\\"builtins\\");
     native.evaller = program => eval(program);
     undefined;
-    binaryOp(\\"+\\", 4, 1, 1, 1, 0, \\"C:\\\\\\\\source\\\\\\\\source_academy\\\\\\\\js-slang\\\\\\\\test.js\\");
+    binaryOp(\\"+\\", 4, 1, 1, 1, 0, \\"/Users/henz/Repos/SourceAcademy/js-slang/test.js\\");
   }
 }
 "
