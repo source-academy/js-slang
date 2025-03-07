@@ -64,7 +64,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
+export type ExecutionMethod = 'native' | 'auto' | 'cse-machine'
 
 export enum Chapter {
   SOURCE_1 = 1,
@@ -94,7 +94,6 @@ export enum Variant {
   TYPED = 'typed',
   NATIVE = 'native',
   WASM = 'wasm',
-  CONCURRENT = 'concurrent',
   EXPLICIT_CONTROL = 'explicit-control'
 }
 
@@ -168,7 +167,6 @@ export interface Context<T = any> {
     status: boolean
     state: {
       it: IterableIterator<T>
-      scheduler: Scheduler
     }
   }
 
@@ -274,23 +272,12 @@ export interface Finished {
   // field instead
 }
 
-export interface Suspended {
-  status: 'suspended'
-  it: IterableIterator<Value>
-  scheduler: Scheduler
-  context: Context
-}
-
 export interface SuspendedCseEval {
   status: 'suspended-cse-eval'
   context: Context
 }
 
-export type Result = Suspended | Finished | Error | SuspendedCseEval
-
-export interface Scheduler {
-  run(it: IterableIterator<Value>, context: Context): Promise<Result>
-}
+export type Result = Finished | Error | SuspendedCseEval
 
 /**
  * StatementSequence : A sequence of statements not surrounded by braces.
@@ -510,3 +497,5 @@ export type RecursivePartial<T> = T extends Array<any>
       [K in keyof T]: RecursivePartial<T[K]>
     }>
   : T
+
+export type NodeTypeToNode<T extends Node['type']> = Extract<Node, { type: T }>

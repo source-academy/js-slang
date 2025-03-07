@@ -1,5 +1,5 @@
 import { compileFiles, parseError, runFilesInContext } from '../../index'
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../types'
 
 describe('runFilesInContext', () => {

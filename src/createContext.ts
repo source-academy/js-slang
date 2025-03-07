@@ -11,7 +11,6 @@ import {
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
 import Heap from './cse-machine/heap'
-import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
@@ -120,8 +119,7 @@ const createEmptyDebugger = () => ({
   state: {
     it: (function* (): any {
       return
-    })(),
-    scheduler: new AsyncScheduler()
+    })()
   }
 })
 

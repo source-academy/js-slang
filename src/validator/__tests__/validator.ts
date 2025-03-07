@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
 import { Chapter, NodeWithInferredType } from '../../types'
 import { getVariableDeclarationName } from '../../utils/ast/astCreator'
