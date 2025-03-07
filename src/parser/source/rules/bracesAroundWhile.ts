@@ -1,8 +1,19 @@
 import { generate } from 'astring'
-import type { WhileStatement } from 'estree'
-import { type Rule, RuleError } from '../../types'
+import * as es from 'estree'
 
-export class BracesAroundWhileError extends RuleError<WhileStatement> {
+import { UNKNOWN_LOCATION } from '../../../constants'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+
+export class BracesAroundWhileError implements SourceError {
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: es.WhileStatement) {}
+
+  get location() {
+    return this.node.loc ?? UNKNOWN_LOCATION
+  }
+
   public explain() {
     return 'Missing curly braces around "while" block.'
   }
@@ -15,19 +26,11 @@ export class BracesAroundWhileError extends RuleError<WhileStatement> {
   }
 }
 
-const bracesAroundWhile: Rule<WhileStatement> = {
+const bracesAroundWhile: Rule<es.WhileStatement> = {
   name: 'braces-around-while',
-  testSnippets: [
-    [
-      `
-        let i = 0;
-        while (true) i = i + 1;
-      `,
-      'Line 3: Missing curly braces around "while" block.'
-    ]
-  ],
+
   checkers: {
-    WhileStatement(node: WhileStatement) {
+    WhileStatement(node: es.WhileStatement, _ancestors: [Node]) {
       if (node.body.type !== 'BlockStatement') {
         return [new BracesAroundWhileError(node)]
       } else {

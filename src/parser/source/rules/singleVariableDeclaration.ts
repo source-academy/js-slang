@@ -1,40 +1,15 @@
 import { generate } from 'astring'
-import type { Identifier, VariableDeclaration, VariableDeclarator } from 'estree'
+import * as es from 'estree'
 
-import { RuleError, type Rule } from '../../types'
-import { stripIndent } from '../../../utils/formatters'
-import { mapAndFilter } from '../../../utils/misc'
+import { UNKNOWN_LOCATION } from '../../../constants'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
-export class NoImplicitDeclareUndefinedError extends RuleError<VariableDeclarator> {
-  private readonly name: string
+export class MultipleDeclarationsError implements SourceError {
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
+  private fixs: es.VariableDeclaration[]
 
-  constructor(node: VariableDeclarator) {
-    super(node)
-    this.name = (node.id as Identifier).name
-  }
-
-  public explain() {
-    return 'Missing value in variable declaration.'
-  }
-
-  public elaborate() {
-    return stripIndent`
-      A variable declaration assigns a value to a name.
-      For instance, to assign 20 to ${this.name}, you can write:
-
-        let ${this.name} = 20;
-
-        ${this.name} + ${this.name}; // 40
-    `
-  }
-}
-
-export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
-  private fixs: VariableDeclaration[]
-
-  constructor(node: VariableDeclaration) {
-    super(node)
-
+  constructor(public node: es.VariableDeclaration) {
     this.fixs = node.declarations.map(declaration => ({
       type: 'VariableDeclaration' as const,
       kind: 'let' as const,
@@ -43,8 +18,12 @@ export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
     }))
   }
 
+  get location() {
+    return this.node.loc ?? UNKNOWN_LOCATION
+  }
+
   public explain() {
-    return 'Multiple declarations in a single statement.'
+    return 'Multiple declaration in a single statement.'
   }
 
   public elaborate() {
@@ -53,28 +32,16 @@ export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
   }
 }
 
-const singleVariableDeclaration: Rule<VariableDeclaration> = {
+const singleVariableDeclaration: Rule<es.VariableDeclaration> = {
   name: 'single-variable-declaration',
-  testSnippets: [
-    ['let i = 0, j = 0;', 'Line 1: Multiple declarations in a single statement.'],
-    ['let i;', 'Line 1: Missing value in variable declaration.'],
-    ['for (const x of []) {}', undefined]
-  ],
 
   checkers: {
-    VariableDeclaration(node, ancestors) {
+    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {
       if (node.declarations.length > 1) {
         return [new MultipleDeclarationsError(node)]
-      }
-
-      const ancestor = ancestors[ancestors.length - 2]
-      if (ancestor.type === 'ForOfStatement' || ancestor.type === 'ForInStatement') {
+      } else {
         return []
       }
-
-      return mapAndFilter(node.declarations, decl =>
-        decl.init ? undefined : new NoImplicitDeclareUndefinedError(decl)
-      )
     }
   }
 }

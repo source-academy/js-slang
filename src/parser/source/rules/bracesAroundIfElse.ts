@@ -1,12 +1,18 @@
 import { generate } from 'astring'
-import type { IfStatement } from 'estree'
-import type { SourceError } from '../../../types'
-import { type Rule, RuleError } from '../../types'
+import * as es from 'estree'
+
+import { UNKNOWN_LOCATION } from '../../../constants'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 import { stripIndent } from '../../../utils/formatters'
 
-export class BracesAroundIfElseError extends RuleError<IfStatement> {
-  constructor(public node: IfStatement, private branch: 'consequent' | 'alternate') {
-    super(node)
+export class BracesAroundIfElseError implements SourceError {
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: es.IfStatement, private branch: 'consequent' | 'alternate') {}
+
+  get location() {
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -63,21 +69,11 @@ export class BracesAroundIfElseError extends RuleError<IfStatement> {
   }
 }
 
-const bracesAroundIfElse: Rule<IfStatement> = {
+const bracesAroundIfElse: Rule<es.IfStatement> = {
   name: 'braces-around-if-else',
-  testSnippets: [
-    [
-      `
-        function f() {
-          if (true) return false;
-          else return true;
-        }
-      `,
-      'Line 3: Missing curly braces around "if" block.'
-    ]
-  ],
+
   checkers: {
-    IfStatement(node: IfStatement) {
+    IfStatement(node: es.IfStatement, _ancestors: [Node]) {
       const errors: SourceError[] = []
       if (node.consequent && node.consequent.type !== 'BlockStatement') {
         errors.push(new BracesAroundIfElseError(node, 'consequent'))

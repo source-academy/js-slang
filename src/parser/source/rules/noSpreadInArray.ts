@@ -1,7 +1,18 @@
-import type { SpreadElement } from 'estree'
-import { RuleError, type Rule } from '../../types'
+import * as es from 'estree'
 
-export class NoSpreadInArray extends RuleError<SpreadElement> {
+import { UNKNOWN_LOCATION } from '../../../constants'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+
+export class NoSpreadInArray implements SourceError {
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: es.SpreadElement) {}
+
+  get location() {
+    return this.node.loc ?? UNKNOWN_LOCATION
+  }
+
   public explain() {
     return 'Spread syntax is not allowed in arrays.'
   }
@@ -11,14 +22,11 @@ export class NoSpreadInArray extends RuleError<SpreadElement> {
   }
 }
 
-const noSpreadInArray = {
+const noSpreadInArray: Rule<es.SpreadElement> = {
   name: 'no-assignment-expression',
-  testSnippets: [
-    ['const a = [...b];', 'Line 1: Spread syntax is not allowed in arrays.'],
-    ['display(...args);', undefined]
-  ],
+
   checkers: {
-    SpreadElement(node, ancestors) {
+    SpreadElement(node: es.SpreadElement, ancestors: [Node]) {
       const parent = ancestors[ancestors.length - 2]
 
       if (parent.type === 'CallExpression') {
@@ -28,6 +36,6 @@ const noSpreadInArray = {
       }
     }
   }
-} satisfies Rule<SpreadElement>
+}
 
 export default noSpreadInArray

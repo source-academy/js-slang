@@ -1,9 +1,20 @@
-import type { Literal } from 'estree'
-import { type Rule, RuleError } from '../../types'
+import * as es from 'estree'
+
+import { UNKNOWN_LOCATION } from '../../../constants'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 const specifiedLiterals = ['boolean', 'string', 'number']
 
-export class NoUnspecifiedLiteral extends RuleError<Literal> {
+export class NoUnspecifiedLiteral implements SourceError {
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: es.Literal) {}
+
+  get location() {
+    return this.node.loc ?? UNKNOWN_LOCATION
+  }
+
   public explain() {
     /**
      * A check is used for RegExp to ensure that only RegExp are caught.
@@ -18,11 +29,10 @@ export class NoUnspecifiedLiteral extends RuleError<Literal> {
   }
 }
 
-const noUnspecifiedLiteral: Rule<Literal> = {
+const noUnspecifiedLiteral: Rule<es.Literal> = {
   name: 'no-unspecified-literal',
-  testSnippets: [['const x = /hi/;', "Line 1: 'RegExp' literals are not allowed."]],
   checkers: {
-    Literal(node) {
+    Literal(node: es.Literal, _ancestors: [Node]) {
       if (node.value !== null && !specifiedLiterals.includes(typeof node.value)) {
         return [new NoUnspecifiedLiteral(node)]
       } else {

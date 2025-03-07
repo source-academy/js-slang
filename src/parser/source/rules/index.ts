@@ -1,5 +1,4 @@
-import type { Node } from '../../../types'
-import type { Rule } from '../../types'
+import { Node, Rule } from '../../../types'
 import bracesAroundFor from './bracesAroundFor'
 import bracesAroundIfElse from './bracesAroundIfElse'
 import bracesAroundWhile from './bracesAroundWhile'
@@ -11,6 +10,7 @@ import noExportNamedDeclarationWithDefault from './noExportNamedDeclarationWithD
 import noFunctionDeclarationWithoutIdentifier from './noFunctionDeclarationWithoutIdentifier'
 import noHolesInArrays from './noHolesInArrays'
 import noIfWithoutElse from './noIfWithoutElse'
+import noImplicitDeclareUndefined from './noImplicitDeclareUndefined'
 import noImplicitReturnUndefined from './noImplicitReturnUndefined'
 import noImportSpecifierWithDefault from './noImportSpecifierWithDefault'
 import noNull from './noNull'
@@ -34,6 +34,7 @@ const rules: Rule<Node>[] = [
   noFunctionDeclarationWithoutIdentifier,
   noIfWithoutElse,
   noImportSpecifierWithDefault,
+  noImplicitDeclareUndefined,
   noImplicitReturnUndefined,
   noNull,
   noUnspecifiedLiteral,

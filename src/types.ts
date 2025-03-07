@@ -47,6 +47,15 @@ export interface SourceError {
   elaborate(): string
 }
 
+export interface Rule<T extends Node> {
+  name: string
+  disableFromChapter?: Chapter
+  disableForVariants?: Variant[]
+  checkers: {
+    [name: string]: (node: T, ancestors: Node[]) => SourceError[]
+  }
+}
+
 export interface Comment {
   type: 'Line' | 'Block'
   value: string

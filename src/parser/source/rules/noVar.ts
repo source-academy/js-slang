@@ -1,26 +1,36 @@
 import { generate } from 'astring'
-import type { VariableDeclaration } from 'estree'
-import { type Rule, RuleError } from '../../types'
-import { getVariableDeclarationName } from '../../../utils/ast/astCreator'
+import * as es from 'estree'
 
-export class NoVarError extends RuleError<VariableDeclaration> {
+import { UNKNOWN_LOCATION } from '../../../constants'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+
+export class NoVarError implements SourceError {
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: es.VariableDeclaration) {}
+
+  get location() {
+    return this.node.loc ?? UNKNOWN_LOCATION
+  }
+
   public explain() {
     return 'Variable declaration using "var" is not allowed.'
   }
 
   public elaborate() {
-    const name = getVariableDeclarationName(this.node)
+    const name = (this.node.declarations[0].id as es.Identifier).name
     const value = generate(this.node.declarations[0].init)
 
     return `Use keyword "let" instead, to declare a variable:\n\n\tlet ${name} = ${value};`
   }
 }
 
-const noVar: Rule<VariableDeclaration> = {
+const noVar: Rule<es.VariableDeclaration> = {
   name: 'no-var',
-  testSnippets: [['var x = 0;', 'Line 1: Variable declaration using "var" is not allowed.']],
+
   checkers: {
-    VariableDeclaration(node) {
+    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {
       if (node.kind === 'var') {
         return [new NoVarError(node)]
       } else {

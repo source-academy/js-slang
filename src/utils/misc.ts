@@ -42,5 +42,3 @@ export function objectKeys<T extends string | number | symbol>(obj: Record<T, an
 export function objectValues<T>(obj: Record<any, T>) {
   return Object.values(obj) as T[]
 }
-export const mapToObj = <T>(map: Map<string, T>) =>
-  Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
