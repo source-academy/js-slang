@@ -40,7 +40,7 @@ function formatComments(state: any, comments: any, indent: any, lineEnd: any) {
   }
 }
 
-const sourceGen = Object.assign({}, astring.GENERATOR, {
+export const sourceGen = Object.assign({}, astring.GENERATOR, {
   StatementSequence: function (node: any, state: any) {
     const indent = state.indent.repeat(state.indentLevel)
     const { lineEnd, writeComments } = state

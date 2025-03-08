@@ -1,11 +1,9 @@
-import { BinaryExpression, BinaryOperator, Comment, SimpleLiteral, SourceLocation } from 'estree'
+import { BinaryExpression, BinaryOperator, Comment, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../interface'
-import { binaryExpression, literal } from '../../../utils/ast/astCreator'
 import { redex } from '..'
-import { createStepperExpression, StepperExpression } from './Expression'
 import { StepperLiteral } from './Literal'
-import { StepperProgram } from './Program'
-
+import { StepperExpression } from '.'
+import { convert } from '../generator'
 export class StepperBinaryExpression implements BinaryExpression, StepperBaseNode {
   type: 'BinaryExpression'
   operator: BinaryOperator
@@ -16,15 +14,35 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
   loc?: SourceLocation | null
   range?: [number, number]
 
-  constructor(expression: BinaryExpression) {
+  constructor(
+    operator: BinaryOperator,
+    left: StepperExpression,
+    right: StepperExpression,
+    leadingComments?: Comment[],
+    trailingComments?: Comment[],
+    loc?: SourceLocation | null,
+    range?: [number, number],
+  ) {
     this.type = 'BinaryExpression'
-    this.operator = expression.operator
-    this.left = createStepperExpression(expression.left)
-    this.right = createStepperExpression(expression.right)
-    this.leadingComments = expression.leadingComments
-    this.trailingComments = expression.trailingComments
-    this.loc = expression.loc
-    this.range = expression.range
+    this.operator = operator
+    this.left = left
+    this.right = right
+    this.leadingComments = leadingComments
+    this.trailingComments = trailingComments
+    this.loc = loc
+    this.range = range
+  }
+
+  static create(node: BinaryExpression) {
+    return new StepperBinaryExpression(
+      node.operator,
+      convert(node.left) as StepperExpression,
+      convert(node.right) as StepperExpression,
+      node.leadingComments,
+      node.trailingComments,
+      node.loc,
+      node.range
+    )
   }
 
   isContractible(): boolean {
@@ -55,7 +73,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
   isOneStepPossible(): boolean {
     return this.isContractible() || this.left.isOneStepPossible() || this.right.isOneStepPossible()
   }
-  contract(): SimpleLiteral & StepperBaseNode {
+  contract(): StepperExpression {
     redex.preRedex = this
     if (this.left.type !== 'Literal' || this.right.type !== 'Literal') throw new Error()
 
@@ -83,19 +101,16 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
         ? left! < right!
         : left! > right!
 
-    let ret = createStepperExpression(
-      literal(value as string | number | boolean | null)
-    ) as StepperLiteral
-
+    let ret = new StepperLiteral(value)
     redex.postRedex = ret
     return ret
   }
 
-  oneStep(): StepperExpression | StepperProgram | StepperExpressionStatement {
+  oneStep(): StepperExpression {
     return this.isContractible()
-      ? createStepperExpression(this.contract())
+      ? this.contract()
       : this.left.isOneStepPossible()
-      ? createStepperExpression(binaryExpression(this.operator, this.left.oneStep(), this.right))
-      : createStepperExpression(binaryExpression(this.operator, this.left, this.right.oneStep()))
+      ? new StepperBinaryExpression(this.operator, this.left.oneStep(), this.right)
+      : new StepperBinaryExpression(this.operator, this.left, this.right.oneStep())
   }
 }

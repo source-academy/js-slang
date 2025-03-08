@@ -1,23 +1,47 @@
-import { StepperExpression } from './nodes/Expression'
-import { redex } from '.'
+import { Marker, redex } from '.'
+import { IStepperPropContents } from '.'
+import { StepperBaseNode } from './interface'
 
-export function getSteps(
-  node: StepperExpression
-): [StepperExpression, StepperExpression | null, string][] {
-  const steps: [StepperExpression, StepperExpression | null, string][] = []
-  function evaluate(node: StepperExpression): StepperExpression {
+export function getSteps(node: StepperBaseNode): IStepperPropContents[] {
+  const steps: IStepperPropContents[] = []
+  function evaluate(node: StepperBaseNode): StepperBaseNode {
     const isOneStepPossible = node.isOneStepPossible()
     if (isOneStepPossible) {
       const oldNode = node
       const newNode = node.oneStep()
-      steps.push([oldNode, redex ? redex.preRedex : null, redex.preRedex ? 'before' : ''])
-      steps.push([newNode, redex ? redex.postRedex : null, redex.postRedex ? 'after' : ''])
+      if (redex) {
+        const markers: Marker = {
+          redex: redex.preRedex,
+          redexType: 'beforeMarker'
+        }
+        steps.push({
+          ast: oldNode,
+          markers: [markers]
+        })
+      }
+      if (redex) {
+        const markers: Marker = {
+          redex: redex.postRedex,
+          redexType: 'afterMarker'
+        }
+        steps.push({
+          ast: newNode,
+          markers: [markers]
+        })
+      }
+      // reset
+      redex.preRedex = null;
+      redex.postRedex = null;
       return evaluate(newNode)
     } else {
       return node
     }
   }
-
-  steps.push([evaluate(node), null, ''])
+  // First node
+  steps.push({
+    ast: node,
+    markers: []
+  })
+  evaluate(node)
   return steps
 }

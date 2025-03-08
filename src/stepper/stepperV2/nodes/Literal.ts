@@ -12,7 +12,6 @@
  */
 import { Comment, SimpleLiteral, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../interface'
-import { StepperExpression } from './Expression'
 
 export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   type: 'Literal'
@@ -23,14 +22,24 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   loc?: SourceLocation | null
   range?: [number, number]
 
-  constructor(literal: SimpleLiteral) {
+  constructor(value: string | number | boolean | null,
+    raw?: string,
+    leadingComments?: Comment[],
+    trailingComments?: Comment[],
+    loc?: SourceLocation | null,
+    range?: [number, number],
+  ) {
     this.type = 'Literal'
-    this.value = literal.value
-    this.raw = literal.raw
-    this.leadingComments = literal.leadingComments
-    this.trailingComments = literal.trailingComments
-    this.loc = literal.loc
-    this.range = literal.range
+    this.value = value
+    this.raw = raw
+    this.leadingComments = leadingComments
+    this.trailingComments = trailingComments
+    this.loc = loc
+    this.range = range
+  }
+
+  static create(literal: SimpleLiteral) {
+    return new StepperLiteral(literal.value, literal.raw, literal.leadingComments, literal.trailingComments, literal.loc, literal.range)
   }
 
   isContractible(): boolean {
@@ -41,11 +50,11 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
     return false
   }
 
-  contract(): SimpleLiteral & StepperBaseNode {
+  contract(): StepperLiteral {
     throw new Error('Method not implemented.')
   }
 
-  oneStep(): StepperExpression {
+  oneStep(): StepperLiteral {
     throw new Error('Method not implemented.')
   }
 }

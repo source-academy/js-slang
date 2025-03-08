@@ -1,4 +1,4 @@
-import { Declaration } from 'estree'
-import { StepperExpressionStatement } from './StepperExpressionStatement'
+import { StepperExpressionStatement } from "./StepperExpressionStatement";
+import { StepperVariableDeclaration } from "./StepperVariableDeclaration";
 
-type StepperStatement = StepperExpressionStatement | Declaration
+export type StepperStatement = StepperExpressionStatement | StepperVariableDeclaration ;

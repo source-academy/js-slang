@@ -1,9 +1,14 @@
-import { Comment, SimpleLiteral, SourceLocation, UnaryExpression, UnaryOperator } from 'estree'
+import {
+  Comment,
+  SourceLocation,
+  UnaryExpression,
+  UnaryOperator
+} from 'estree'
 import { StepperBaseNode } from '../interface'
-import { literal, unaryExpression } from '../../../utils/ast/astCreator'
 import { redex } from '..'
-import { createStepperExpression, StepperExpression } from './Expression'
 import { StepperLiteral } from './Literal'
+import { convert } from '../generator'
+import { StepperExpression } from '.'
 
 export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode {
   type: 'UnaryExpression'
@@ -15,15 +20,33 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
   loc?: SourceLocation | null
   range?: [number, number]
 
-  constructor(node: UnaryExpression) {
+  constructor(
+    operator: UnaryOperator,
+    argument: StepperExpression,
+    leadingComments?: Comment[],
+    trailingComments?: Comment[],
+    loc?: SourceLocation | null,
+    range?: [number, number]
+  ) {
     this.type = 'UnaryExpression'
-    this.operator = node.operator
-    this.prefix = node.prefix
-    this.argument = createStepperExpression(node.argument)
-    this.leadingComments = node.leadingComments
-    this.trailingComments = node.trailingComments
-    this.loc = node.loc
-    this.range = node.range
+    this.operator = operator
+    this.prefix = true
+    this.argument = argument
+    this.leadingComments = leadingComments
+    this.trailingComments = trailingComments
+    this.loc = loc
+    this.range = range
+  }
+
+  static create(node: UnaryExpression) {
+    return new StepperUnaryExpression(
+      node.operator,
+      convert(node.argument) as StepperExpression,
+      node.leadingComments,
+      node.trailingComments,
+      node.loc,
+      node.range
+    )
   }
 
   isContractible(): boolean {
@@ -49,17 +72,17 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
     return this.isContractible() || this.argument.isOneStepPossible()
   }
 
-  contract(): SimpleLiteral & StepperBaseNode {
+  contract(): StepperLiteral {
     redex.preRedex = this
     if (this.argument.type !== 'Literal') throw new Error()
 
     const operand = this.argument.value
     if (this.operator === '!') {
-      const ret = createStepperExpression(literal(!operand)) as StepperLiteral
+      const ret = new StepperLiteral(!operand)
       redex.postRedex = ret
       return ret
     } else if (this.operator === '-') {
-      const ret = createStepperExpression(literal(-(operand as number))) as StepperLiteral
+      const ret = new StepperLiteral(-(operand as number))
       redex.postRedex = ret
       return ret
     }
@@ -67,7 +90,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
     throw new Error()
   }
 
-  oneStep(): StepperExpression & StepperBaseNode {
-    return createStepperExpression(unaryExpression(this.operator, this.argument.oneStep()))
+  oneStep(): StepperExpression {
+    return new StepperUnaryExpression(this.operator, this.argument.oneStep())
   }
 }
