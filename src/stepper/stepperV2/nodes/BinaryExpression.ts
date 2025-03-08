@@ -4,6 +4,7 @@ import { binaryExpression, literal } from '../../../utils/ast/astCreator'
 import { redex } from '..'
 import { createStepperExpression, StepperExpression } from './Expression'
 import { StepperLiteral } from './Literal'
+import { StepperProgram } from './Program'
 
 export class StepperBinaryExpression implements BinaryExpression, StepperBaseNode {
   type: 'BinaryExpression'
@@ -90,7 +91,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
     return ret
   }
 
-  oneStep(): StepperExpression {
+  oneStep(): StepperExpression | StepperProgram | StepperExpressionStatement {
     return this.isContractible()
       ? createStepperExpression(this.contract())
       : this.left.isOneStepPossible()

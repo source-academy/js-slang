@@ -1,3 +1,15 @@
+/**
+ * This class represents a literal node in the stepper's AST (Abstract Syntax Tree).
+ * It extends both SimpleLiteral and StepperBaseNode to integrate with the stepper system.
+ * The class stores value-related properties such as type, value, raw representation,
+ * and location metadata.
+ *
+ * Methods:
+ * - isContractible(): Indicates whether this node can be contracted (returns false).
+ * - isOneStepPossible(): Indicates whether a single step evaluation is possible (returns false).
+ * - contract(): Throws an error as contraction is not implemented.
+ * - oneStep(): Throws an error as one-step evaluation is not implemented.
+ */
 import { Comment, SimpleLiteral, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../interface'
 import { StepperExpression } from './Expression'
