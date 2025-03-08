@@ -1,61 +1,77 @@
 import { Comment, Program, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../interface'
 import { convert } from '../generator'
-import { StepperStatement } from './StepperStatement'
-import { undefinedNode } from '.'
+import { StepperStatement } from './Statement'
+import { StepperExpression, undefinedNode } from '.'
+import { SubstitutionScope } from '..'
+import { StepperIdentifier } from './Expression/Identifier'
 
 export class StepperProgram implements Program, StepperBaseNode {
-  isContractible(): boolean {
-    return this.body[0].isContractible() || this.body.length >= 2
-  }
-
-  isOneStepPossible(): boolean {
-    return this.body.length === 0 || this.isContractible()
-  }
-
-  contract(): StepperProgram | typeof undefinedNode {
-    if (this.body[0].isContractible()) {
-      // E1; E2; -> E1'; E2;
-      const firstStatementContracted = this.body[0].contract(); 
-      if (firstStatementContracted === undefinedNode) {
-        return new StepperProgram(this.body.slice(1));
-      } else {
-        return new StepperProgram([firstStatementContracted as StepperStatement, this.body.slice(1)].flat());
-      }
-    }
-    if (this.body.length >= 2 && this.body[1].isContractible()) {
-      // V; E; -> V; E';
-      const secondStatementContract = this.body[1].contract();
-      if (secondStatementContract === undefinedNode) {
-        return new StepperProgram([this.body[0], this.body.slice(2)].flat());
-      } else {
-        return new StepperProgram([this.body[0], secondStatementContract as StepperStatement, this.body.slice(2)].flat());
-      }
-    }
-    // V1; V2; -> {}, V2; -> V2;
-    this.body[0].contractEmpty() // update the contracted statement onto redex
-    return new StepperProgram(this.body.slice(1));
-  }
-
-  oneStep(): StepperProgram | typeof undefinedNode {
-    if (this.body.length == 0) {
-      return undefinedNode;
-    }
-    return this.contract()
-  }
-
   type: 'Program'
   sourceType: 'script' | 'module'
-  body: (StepperStatement)[]
+  body: StepperStatement[]
   comments?: Comment[] | undefined
   leadingComments?: Comment[] | undefined
   trailingComments?: Comment[] | undefined
   loc?: SourceLocation | null | undefined
   range?: [number, number] | undefined
 
+  isContractible(): boolean {
+    if (this.body.length <= 1) {
+      return this.body[0].isContractible()
+    } else {
+      return true
+    }
+  }
+
+  isOneStepPossible(): boolean {
+    return this.body.length === 0 || this.body[0].isOneStepPossible() || this.body.length >= 2
+  }
+
+  contract(): StepperProgram | typeof undefinedNode {
+    // V1; V2; -> {}, V2; -> V2;
+    this.body[0].contractEmpty() // update the contracted statement onto redex
+    return new StepperProgram(this.body.slice(1))
+  }
+
+  oneStep(): StepperProgram | typeof undefinedNode {
+    if (this.body.length == 0) {
+      return undefinedNode
+    }
+
+    if (this.body[0].isOneStepPossible()) {
+      SubstitutionScope.set(this.body.slice(1))
+      const firstStatementOneStep = this.body[0].oneStep()
+      const afterSubstitutedScope = SubstitutionScope.get();
+      SubstitutionScope.reset()
+      if (firstStatementOneStep === undefinedNode) {
+        return new StepperProgram([afterSubstitutedScope].flat())
+      }
+      return new StepperProgram(
+        [firstStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
+      )
+    }
+
+    if (this.body.length >= 2 && this.body[1].isOneStepPossible()) {
+      // V; E; -> V; E';
+      SubstitutionScope.set(this.body.slice(2))
+      const secondStatementOneStep = this.body[1].oneStep()
+      const afterSubstitutedScope = SubstitutionScope.get();
+      SubstitutionScope.reset();
+      if (secondStatementOneStep === undefinedNode) {
+        return new StepperProgram([this.body[0], afterSubstitutedScope].flat());
+      }
+      return new StepperProgram(
+        [this.body[0], secondStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
+      )
+    }
+
+    return this.contract()
+  }
+
   static create(node: Program) {
     return new StepperProgram(
-      node.body.map((ast) => convert(ast) as StepperStatement),
+      node.body.map(ast => convert(ast) as StepperStatement),
       node.comments,
       node.leadingComments,
       node.trailingComments,
@@ -65,20 +81,26 @@ export class StepperProgram implements Program, StepperBaseNode {
   }
 
   constructor(
-    body: (StepperStatement)[], // TODO: Add support for variable declaration
+    body: StepperStatement[], // TODO: Add support for variable declaration
     comments?: Comment[] | undefined,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined,
+    range?: [number, number] | undefined
   ) {
     this.type = 'Program'
-    this.sourceType = 'module';
+    this.sourceType = 'module'
     this.body = body
     this.comments = comments
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
+    this.leadingComments = leadingComments
+    this.trailingComments = trailingComments
+    this.loc = loc
+    this.range = range
+  }
+
+  substitute(id: StepperIdentifier, value: StepperExpression): StepperBaseNode {
+      return new StepperProgram(
+        this.body.map((statement) => statement.substitute(id, value) as StepperStatement)
+      ) 
   }
 }

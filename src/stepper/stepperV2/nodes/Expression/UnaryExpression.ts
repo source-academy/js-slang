@@ -4,11 +4,12 @@ import {
   UnaryExpression,
   UnaryOperator
 } from 'estree'
-import { StepperBaseNode } from '../interface'
-import { redex } from '..'
+import { StepperBaseNode } from '../../interface'
+import { redex } from '../..'
 import { StepperLiteral } from './Literal'
-import { convert } from '../generator'
-import { StepperExpression } from '.'
+import { convert } from '../../generator'
+import { StepperExpression } from '..'
+import { StepperIdentifier } from './Identifier'
 
 export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode {
   type: 'UnaryExpression'
@@ -55,12 +56,12 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
     switch (typeof this.argument.value) {
       case 'boolean':
         if (this.operator === '!') {
-          redex.preRedex = this
+          redex.preRedex = [this]
         }
         return this.operator === '!'
       case 'number':
         if (this.operator === '-') {
-          redex.preRedex = this
+          redex.preRedex = [this]
         }
         return this.operator === '-'
       default:
@@ -73,17 +74,17 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
   }
 
   contract(): StepperLiteral {
-    redex.preRedex = this
+    redex.preRedex = [this]
     if (this.argument.type !== 'Literal') throw new Error()
 
     const operand = this.argument.value
     if (this.operator === '!') {
       const ret = new StepperLiteral(!operand)
-      redex.postRedex = ret
+      redex.postRedex = [ret]
       return ret
     } else if (this.operator === '-') {
       const ret = new StepperLiteral(-(operand as number))
-      redex.postRedex = ret
+      redex.postRedex = [ret]
       return ret
     }
 
@@ -92,5 +93,9 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
 
   oneStep(): StepperExpression {
     return new StepperUnaryExpression(this.operator, this.argument.oneStep())
+  }
+
+  substitute(id: StepperIdentifier, value: StepperExpression): StepperExpression {
+      return new StepperUnaryExpression(this.operator, this.argument.substitute(id, value))
   }
 }

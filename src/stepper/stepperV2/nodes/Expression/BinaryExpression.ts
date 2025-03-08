@@ -1,9 +1,10 @@
 import { BinaryExpression, BinaryOperator, Comment, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../interface'
-import { redex } from '..'
+import { StepperBaseNode } from '../../interface'
+import { redex } from '../..'
 import { StepperLiteral } from './Literal'
-import { StepperExpression } from '.'
-import { convert } from '../generator'
+import { StepperExpression } from '..'
+import { convert } from '../../generator'
+import { StepperIdentifier } from './Identifier'
 export class StepperBinaryExpression implements BinaryExpression, StepperBaseNode {
   type: 'BinaryExpression'
   operator: BinaryOperator
@@ -54,7 +55,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
     if (left_type === 'boolean' && right_type === 'boolean') {
       const ret = (this.operator as string) === '&&' || (this.operator as string) === '||'
       if (ret) {
-        redex.preRedex = this
+        redex.preRedex = [this]
       }
       return ret
     } else if (left_type === 'number' && right_type === 'number') {
@@ -62,7 +63,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
         ['*', '+', '/', '-', '===', '<', '>'].includes(this.operator as string) &&
         !(this.operator === '/' && this.right.value === 0)
       if (ret) {
-        redex.preRedex = this
+        redex.preRedex = [this]
       }
       return ret
     } else {
@@ -73,8 +74,9 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
   isOneStepPossible(): boolean {
     return this.isContractible() || this.left.isOneStepPossible() || this.right.isOneStepPossible()
   }
+
   contract(): StepperExpression {
-    redex.preRedex = this
+    redex.preRedex = [this]
     if (this.left.type !== 'Literal' || this.right.type !== 'Literal') throw new Error()
 
     const left = this.left.value
@@ -102,7 +104,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
         : left! > right!
 
     let ret = new StepperLiteral(value)
-    redex.postRedex = ret
+    redex.postRedex = [ret]
     return ret
   }
 
@@ -112,5 +114,9 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       : this.left.isOneStepPossible()
       ? new StepperBinaryExpression(this.operator, this.left.oneStep(), this.right)
       : new StepperBinaryExpression(this.operator, this.left, this.right.oneStep())
+  }
+
+  substitute(id: StepperIdentifier, value: StepperExpression): StepperExpression {
+      return new StepperBinaryExpression(this.operator, this.left.substitute(id, value), this.right.substitute(id, value)) 
   }
 }

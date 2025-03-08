@@ -5,11 +5,15 @@ import { convert } from '../stepperV2/generator'
 import * as astring from 'astring'
 import { StepperBaseNode } from '../stepperV2/interface'
 
-// TODO: handle case like const x = 1 + 1;
+
 test('arithmetic', () => {
     const code = `
-    const x = 1 + 2;
-  `
+    const x = 5;
+      {
+        const x = 3;
+        x + 2;
+      }
+    `
 const program = parse(code, mockContext())!
 const stringify = (ast: StepperBaseNode | null) => {
   if (ast === null) {

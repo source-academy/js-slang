@@ -1,8 +1,9 @@
 import { Comment, SourceLocation, ExpressionStatement } from 'estree'
-import { StepperBaseNode } from '../interface'
-import { convert } from '../generator'
-import { StepperExpression } from '.'
-import { redex } from '..'
+import { StepperBaseNode } from '../../interface'
+import { convert } from '../../generator'
+import { StepperExpression } from '..'
+import { redex } from '../..'
+import { StepperIdentifier } from '../Expression/Identifier'
 
 export class StepperExpressionStatement implements ExpressionStatement, StepperBaseNode {
   
@@ -18,9 +19,10 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
 
   contractEmpty() { 
     // Handle cases such as 1; 2; -> 2;
-    redex.preRedex = this
-    redex.postRedex = null
+    redex.preRedex = [this]
+    redex.postRedex = []
   }
+  
   oneStep(): StepperExpressionStatement {
     return new StepperExpressionStatement(this.expression.oneStep())
   }
@@ -56,5 +58,9 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
     this.trailingComments = trailingComments;
     this.loc = loc;
     this.range = range;
+  }
+
+  substitute(id: StepperIdentifier, value: StepperExpression): StepperBaseNode {
+      return new StepperExpressionStatement(this.expression.substitute(id, value))
   }
 }

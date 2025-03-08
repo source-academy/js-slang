@@ -1,25 +1,26 @@
-import { VariableDeclaration, VariableDeclarator, Pattern } from 'estree'
-import { StepperBaseNode } from '../interface'
-import { convert } from '../generator'
-import { StepperExpression, undefinedNode } from '.'
-import { redex } from '..'
+import { VariableDeclaration, VariableDeclarator } from 'estree'
+import { StepperBaseNode } from '../../interface'
+import { convert } from '../../generator'
+import { StepperExpression, StepperPattern, undefinedNode } from '..'
+import { redex, SubstitutionScope } from '../..'
+import { StepperIdentifier } from '../Expression/Identifier'
 
 export class StepperVariableDeclarator implements VariableDeclarator, StepperBaseNode {
   type: 'VariableDeclarator'
-  id: Pattern // use estree for convenient
+  id: StepperPattern // use estree for convenient
   init?: StepperExpression | null | undefined
 
-  constructor(id: Pattern, init: StepperExpression | null | undefined) {
-    this.type = 'VariableDeclarator';
-    this.id = id;
+  constructor(id: StepperPattern, init: StepperExpression | null | undefined) {
+    this.type = 'VariableDeclarator'
+    this.id = id
     this.init = init
   }
 
   static create(node: VariableDeclarator) {
     return new StepperVariableDeclarator(
-      node.id,
-      node.init ? convert(node.init) as StepperExpression : node.init
-    );
+      convert(node.id) as StepperIdentifier,
+      node.init ? (convert(node.init) as StepperExpression) : node.init
+    )
   }
 
   isContractible(): boolean {
@@ -29,12 +30,17 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
   isOneStepPossible(): boolean {
     return this.init ? this.init.isOneStepPossible() : false
   }
+
   contract(): StepperVariableDeclarator {
     return new StepperVariableDeclarator(this.id, this.init!.contract())
   }
 
   oneStep(): StepperVariableDeclarator {
     return new StepperVariableDeclarator(this.id, this.init!.oneStep())
+  }
+
+  substitute(id: StepperIdentifier, value: StepperExpression): StepperBaseNode {
+    return new StepperVariableDeclarator(this.id, this.init!.substitute(id, value))
   }
 }
 
@@ -46,8 +52,8 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
   kind: 'var' | 'let' | 'const'
 
   constructor(declarations: StepperVariableDeclarator[], kind: 'var' | 'let' | 'const') {
-    this.type = 'VariableDeclaration';
-    this.declarations = declarations;
+    this.type = 'VariableDeclaration'
+    this.declarations = declarations
     this.kind = kind
   }
 
@@ -59,11 +65,11 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
   }
 
   isContractible(): boolean {
-    return true // variable declarations always open for contraction 
+    return true // variable declarations always open for contraction
   }
 
   isOneStepPossible(): boolean {
-    return this.isContractible()
+    return true
   }
 
   contract(): StepperVariableDeclaration | typeof undefinedNode {
@@ -81,19 +87,45 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
         )
       }
     }
-    // If everything is compatible, trigger substitution
-    // TODO: add substitution (but where?)
-    // console.log("SUBSTITUTE", this.declarations[0])
-    this.contractEmpty()
-    return undefinedNode;
+    redex.preRedex = [this]
+    redex.postRedex = []
+    // If everything is compatible, trigger substitution on Substitution.Scope
+    this.declarations.forEach(declarator =>
+      SubstitutionScope.substitute(declarator.id, declarator.init)
+    )
+    return undefinedNode
   }
 
   contractEmpty() {
-    redex.preRedex = this;
-    redex.postRedex = null;
+    redex.preRedex = [this]
+    redex.postRedex = []
   }
 
   oneStep(): StepperVariableDeclaration | typeof undefinedNode {
+    // Find the one that is not contractible.
+    for (let i = 0; i < this.declarations.length; i++) {
+      const ast = this.declarations[i]
+      if (ast.isOneStepPossible()) {
+        return new StepperVariableDeclaration(
+          [
+            this.declarations.slice(0, i),
+            ast.oneStep() as StepperVariableDeclarator,
+            this.declarations.slice(i + 1)
+          ].flat(),
+          this.kind
+        )
+      }
+    }
+
     return this.contract()
+  }
+
+  substitute(id: StepperIdentifier, value: StepperExpression): StepperBaseNode {
+    return new StepperVariableDeclaration(
+      this.declarations.map(
+        declaration => declaration.substitute(id, value) as StepperVariableDeclarator
+      ),
+      this.kind
+    )
   }
 }
