@@ -97,4 +97,8 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
       return new StepperUnaryExpression(this.operator, this.argument.substitute(id, value))
   }
+
+  freeNames(): string[] {
+    return this.argument.freeNames();
+  }
 }

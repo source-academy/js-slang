@@ -62,4 +62,8 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
       return new StepperExpressionStatement(this.expression.substitute(id, value))
   }
+
+  freeNames(): string[] {
+    return this.expression.freeNames();
+  }
 }

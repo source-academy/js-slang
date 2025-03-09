@@ -118,4 +118,8 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
       return new StepperBinaryExpression(this.operator, this.left.substitute(id, value), this.right.substitute(id, value)) 
   }
+
+  freeNames(): string[] {
+    return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()));
+  }
 }

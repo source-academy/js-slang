@@ -7,4 +7,5 @@ export interface StepperBaseNode {
   contract(): StepperBaseNode
   oneStep(): StepperBaseNode
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode
+  freeNames(): string[]
 }

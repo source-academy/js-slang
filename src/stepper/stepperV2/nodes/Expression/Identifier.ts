@@ -40,4 +40,8 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
       return this
     }
   }
+
+  freeNames(): string[] {
+    return [this.name];
+  }
 }

@@ -95,4 +95,10 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       .flatMap((ast: StepperVariableDeclaration) => ast.declarations)
       .map((ast: StepperVariableDeclarator) => ast.id.name)
   }
+
+  freeNames(): string[] {
+    const names = new Set(this.body.flatMap((ast) => ast.freeNames()));
+    this.scanAllDeclarationNames().forEach(name => names.delete(name));
+    return Array.from(names);
+  }
 }

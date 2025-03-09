@@ -62,4 +62,8 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   substitute(id: StepperPattern, value: StepperExpression): StepperLiteral {
       return this;
   }
+
+  freeNames(): string[] {
+    return [];
+  }
 }

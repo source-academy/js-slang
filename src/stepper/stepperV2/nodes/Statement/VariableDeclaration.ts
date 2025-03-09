@@ -41,6 +41,10 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperVariableDeclarator(this.id, this.init!.substitute(id, value))
   }
+  
+  freeNames(): string[] {
+    return this.init!.freeNames();
+  }
 }
 
 // After all variable declarators have been contracted,
@@ -126,5 +130,9 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
       ),
       this.kind
     )
+  }
+
+  freeNames(): string[] {
+    return Array.from(new Set(this.declarations.flatMap((ast) => ast.freeNames())));
   }
 }

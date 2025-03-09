@@ -4,6 +4,7 @@ import { convert } from '../generator'
 import { StepperStatement } from './Statement'
 import { StepperExpression, StepperPattern, undefinedNode } from '.'
 import { SubstitutionScope } from '..'
+import { StepperVariableDeclaration, StepperVariableDeclarator } from './Statement/VariableDeclaration'
 
 export class StepperProgram implements Program, StepperBaseNode {
   type: 'Program'
@@ -101,5 +102,18 @@ export class StepperProgram implements Program, StepperBaseNode {
       return new StepperProgram(
         this.body.map((statement) => statement.substitute(id, value) as StepperStatement)
       ) 
+  }
+
+  scanAllDeclarationNames(): string[] {
+      return this.body
+        .filter(ast => ast.type === 'VariableDeclaration')
+        .flatMap((ast: StepperVariableDeclaration) => ast.declarations)
+        .map((ast: StepperVariableDeclarator) => ast.id.name)
+    }
+  
+  freeNames(): string[] {
+    const names = new Set(this.body.flatMap((ast) => ast.freeNames()));
+    this.scanAllDeclarationNames().forEach(name => names.delete(name));
+    return Array.from(names);
   }
 }
