@@ -118,6 +118,8 @@ export function HighlightRulesSelector(
       return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|(?<!&)&(?!&)|(?<!\|)\|(?!\|)/
     }
 
+    // Documentation for token types:
+    // https://github.com/ajaxorg/ace/wiki/Creating-or-Extending-an-Edit-Mode#common-tokens
     // @ts-ignore
     const SourceHighlightRules = function (options) {
       // @ts-ignore
