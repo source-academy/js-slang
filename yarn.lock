@@ -2180,10 +2180,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ace-builds@npm:^1.39.0":
-  version: 1.39.0
-  resolution: "ace-builds@npm:1.39.0"
-  checksum: 10c0/b315f86d170a373a437455413251e27a5c264acc9403cca6a7559354081eb8666ecfa85ccc75da4c44e0db29e64304ed9146c6269e003d39e8b399c993c12e11
+"ace-builds@npm:~1.17.0":
+  version: 1.17.0
+  resolution: "ace-builds@npm:1.17.0"
+  checksum: 10c0/ca6df38b97e098f837fa8ec91fab14099fb2dddfd67de801c0c1e0ec5da2904d101eb498356956035f656dfe2539d6467695bdcad068b04f6b3301c537c18df5
   languageName: node
   linkType: hard
 
@@ -5138,7 +5138,7 @@ __metadata:
     "@types/lodash": "npm:^4.14.202"
     "@types/node": "npm:^20.0.0"
     "@types/offscreencanvas": "npm:^2019.7.0"
-    ace-builds: "npm:^1.39.0"
+    ace-builds: "npm:~1.17.0"
     acorn: "npm:^8.8.2"
     acorn-class-fields: "npm:^1.0.0"
     acorn-loose: "npm:^8.0.0"
