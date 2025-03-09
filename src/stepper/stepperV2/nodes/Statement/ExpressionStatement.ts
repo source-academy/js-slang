@@ -1,9 +1,8 @@
 import { Comment, SourceLocation, ExpressionStatement } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { convert } from '../../generator'
-import { StepperExpression } from '..'
+import { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
-import { StepperIdentifier } from '../Expression/Identifier'
 
 export class StepperExpressionStatement implements ExpressionStatement, StepperBaseNode {
   
@@ -60,7 +59,7 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
     this.range = range;
   }
 
-  substitute(id: StepperIdentifier, value: StepperExpression): StepperBaseNode {
+  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
       return new StepperExpressionStatement(this.expression.substitute(id, value))
   }
 }

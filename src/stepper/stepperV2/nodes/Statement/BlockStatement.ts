@@ -1,10 +1,10 @@
 import { BlockStatement } from 'estree'
 import { StepperBaseNode } from '../../interface'
-import { StepperExpression, undefinedNode } from '..'
+import { StepperExpression, StepperPattern, undefinedNode } from '..'
 import { StepperStatement } from '.'
 import { convert } from '../../generator'
 import { redex, SubstitutionScope } from '../..'
-import { StepperIdentifier } from '../Expression/Identifier'
+import { StepperVariableDeclaration, StepperVariableDeclarator } from './VariableDeclaration'
 
 export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   type: 'BlockStatement'
@@ -20,23 +20,23 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   }
 
   isContractible(): boolean {
-    return true;
+    return true
   }
 
   isOneStepPossible(): boolean {
-    return true;
+    return true
   }
 
   contract(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
     if (this.body.length === 0) {
       redex.preRedex = [this]
       redex.postRedex = []
-      return undefinedNode;
+      return undefinedNode
     }
     if (this.body.length === 1) {
       redex.preRedex = [this]
-      redex.postRedex = [this.body[0]]g
-      return this.body[0];
+      redex.postRedex = [this.body[0]]
+      return this.body[0]
     }
     // V1; V2; -> {}, V2; -> V2;
     this.body[0].contractEmpty()
@@ -45,7 +45,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
 
   oneStep(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
     if (this.body.length == 0) {
-      return this.contract();
+      return this.contract()
     }
 
     if (this.body[0].isOneStepPossible()) {
@@ -78,10 +78,21 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     return this.contract()
   }
 
-  // TODO: Scan local names
-  substitute(id: StepperIdentifier, value: StepperExpression): StepperBaseNode {
+  
+  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+    if (this.scanAllDeclarationNames().includes(id.name)) {
+      // DO nothing
+      return this;
+    }
     return new StepperBlockStatement(
       this.body.map(statement => statement.substitute(id, value) as StepperStatement)
     )
+  }
+
+  scanAllDeclarationNames(): string[] {
+    return this.body
+      .filter(ast => ast.type === 'VariableDeclaration')
+      .flatMap((ast: StepperVariableDeclaration) => ast.declarations)
+      .map((ast: StepperVariableDeclarator) => ast.id.name)
   }
 }

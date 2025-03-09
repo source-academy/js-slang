@@ -9,10 +9,10 @@ import { StepperBaseNode } from '../stepperV2/interface'
 test('arithmetic', () => {
     const code = `
     const x = 5;
-      {
-        const x = 3;
-        x + 2;
-      }
+    const y = 2;
+    {
+      const x = y + 3;
+    }
     `
 const program = parse(code, mockContext())!
 const stringify = (ast: StepperBaseNode | null) => {

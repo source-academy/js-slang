@@ -12,8 +12,7 @@
  */
 import { Comment, SimpleLiteral, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../../interface'
-import { StepperExpression } from '..'
-import { StepperIdentifier } from './Identifier'
+import { StepperExpression, StepperPattern } from '..'
 
 export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   type: 'Literal'
@@ -60,7 +59,7 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
     throw new Error('Method not implemented.')
   }
 
-  substitute(id: StepperIdentifier, value: StepperExpression): StepperLiteral {
+  substitute(id: StepperPattern, value: StepperExpression): StepperLiteral {
       return this;
   }
 }

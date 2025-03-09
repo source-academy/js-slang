@@ -2,9 +2,8 @@ import { BinaryExpression, BinaryOperator, Comment, SourceLocation } from 'estre
 import { StepperBaseNode } from '../../interface'
 import { redex } from '../..'
 import { StepperLiteral } from './Literal'
-import { StepperExpression } from '..'
+import { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
-import { StepperIdentifier } from './Identifier'
 export class StepperBinaryExpression implements BinaryExpression, StepperBaseNode {
   type: 'BinaryExpression'
   operator: BinaryOperator
@@ -116,7 +115,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       : new StepperBinaryExpression(this.operator, this.left, this.right.oneStep())
   }
 
-  substitute(id: StepperIdentifier, value: StepperExpression): StepperExpression {
+  substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
       return new StepperBinaryExpression(this.operator, this.left.substitute(id, value), this.right.substitute(id, value)) 
   }
 }

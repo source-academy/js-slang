@@ -3,7 +3,6 @@ import { StepperBaseNode } from '../../interface'
 import { convert } from '../../generator'
 import { StepperExpression, StepperPattern, undefinedNode } from '..'
 import { redex, SubstitutionScope } from '../..'
-import { StepperIdentifier } from '../Expression/Identifier'
 
 export class StepperVariableDeclarator implements VariableDeclarator, StepperBaseNode {
   type: 'VariableDeclarator'
@@ -18,7 +17,7 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
 
   static create(node: VariableDeclarator) {
     return new StepperVariableDeclarator(
-      convert(node.id) as StepperIdentifier,
+      convert(node.id) as StepperPattern,
       node.init ? (convert(node.init) as StepperExpression) : node.init
     )
   }
@@ -39,7 +38,7 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
     return new StepperVariableDeclarator(this.id, this.init!.oneStep())
   }
 
-  substitute(id: StepperIdentifier, value: StepperExpression): StepperBaseNode {
+  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperVariableDeclarator(this.id, this.init!.substitute(id, value))
   }
 }
@@ -120,7 +119,7 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
     return this.contract()
   }
 
-  substitute(id: StepperIdentifier, value: StepperExpression): StepperBaseNode {
+  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperVariableDeclaration(
       this.declarations.map(
         declaration => declaration.substitute(id, value) as StepperVariableDeclarator

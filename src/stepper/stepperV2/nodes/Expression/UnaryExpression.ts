@@ -8,8 +8,7 @@ import { StepperBaseNode } from '../../interface'
 import { redex } from '../..'
 import { StepperLiteral } from './Literal'
 import { convert } from '../../generator'
-import { StepperExpression } from '..'
-import { StepperIdentifier } from './Identifier'
+import { StepperExpression, StepperPattern } from '..'
 
 export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode {
   type: 'UnaryExpression'
@@ -95,7 +94,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
     return new StepperUnaryExpression(this.operator, this.argument.oneStep())
   }
 
-  substitute(id: StepperIdentifier, value: StepperExpression): StepperExpression {
+  substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
       return new StepperUnaryExpression(this.operator, this.argument.substitute(id, value))
   }
 }

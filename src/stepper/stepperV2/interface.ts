@@ -1,5 +1,4 @@
-import { StepperExpression } from "./nodes"
-import { StepperIdentifier } from "./nodes/Identifier"
+import { StepperExpression, StepperPattern } from "./nodes"
 
 export interface StepperBaseNode {
   type: string
@@ -7,5 +6,5 @@ export interface StepperBaseNode {
   isOneStepPossible(): boolean
   contract(): StepperBaseNode
   oneStep(): StepperBaseNode
-  substitute(id: StepperIdentifier, value: StepperExpression): StepperBaseNode
+  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode
 }

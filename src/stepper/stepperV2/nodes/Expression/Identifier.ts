@@ -1,6 +1,6 @@
 import { Identifier } from 'estree'
 import { StepperBaseNode } from '../../interface'
-import { StepperExpression } from '..'
+import { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 
 export class StepperIdentifier implements Identifier, StepperBaseNode {
@@ -32,7 +32,7 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
     throw new Error('Method not implemented.')
   }
 
-  substitute(id: StepperIdentifier, value: StepperExpression): StepperExpression {
+  substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
     if (id.name === this.name) {
       redex.postRedex.push(value)
       return value
