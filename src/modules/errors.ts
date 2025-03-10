@@ -6,7 +6,11 @@ import { ErrorSeverity, ErrorType, Node, SourceError } from '../types'
 import { nonAlphanumericCharEncoding } from './preprocessor/filePaths'
 
 export class ModuleInternalError extends RuntimeSourceError {
-  constructor(public moduleName: string, public error?: any, node?: Node) {
+  constructor(
+    public moduleName: string,
+    public error?: any,
+    node?: Node
+  ) {
     super(node)
   }
 
@@ -49,7 +53,10 @@ export class ModuleConnectionError extends ImportError {
 }
 
 export class ModuleNotFoundError extends ImportError {
-  constructor(public moduleName: string, node?: Node) {
+  constructor(
+    public moduleName: string,
+    node?: Node
+  ) {
     super(node)
   }
 
@@ -169,7 +176,10 @@ export class DuplicateImportNameError extends ImportError {
     return this.nodes[0].loc ?? UNKNOWN_LOCATION
   }
 
-  constructor(public readonly name: string, public readonly nodes: Node[]) {
+  constructor(
+    public readonly name: string,
+    public readonly nodes: Node[]
+  ) {
     super()
 
     this.locString = nodes
