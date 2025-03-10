@@ -8,4 +8,5 @@ export interface StepperBaseNode {
   oneStep(): StepperBaseNode
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode
   freeNames(): string[]
+  rename(before: string, after: string): StepperBaseNode
 }

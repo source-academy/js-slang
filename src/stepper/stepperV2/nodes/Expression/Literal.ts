@@ -66,4 +66,8 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   freeNames(): string[] {
     return [];
   }
+
+  rename(before: string, after: string) {
+    return this;
+  }
 }

@@ -4,7 +4,10 @@ import { convert } from '../generator'
 import { StepperStatement } from './Statement'
 import { StepperExpression, StepperPattern, undefinedNode } from '.'
 import { SubstitutionScope } from '..'
-import { StepperVariableDeclaration, StepperVariableDeclarator } from './Statement/VariableDeclaration'
+import {
+  StepperVariableDeclaration,
+  StepperVariableDeclarator
+} from './Statement/VariableDeclaration'
 
 export class StepperProgram implements Program, StepperBaseNode {
   type: 'Program'
@@ -42,7 +45,7 @@ export class StepperProgram implements Program, StepperBaseNode {
     if (this.body[0].isOneStepPossible()) {
       SubstitutionScope.set(this.body.slice(1))
       const firstStatementOneStep = this.body[0].oneStep()
-      const afterSubstitutedScope = SubstitutionScope.get();
+      const afterSubstitutedScope = SubstitutionScope.get()
       SubstitutionScope.reset()
       if (firstStatementOneStep === undefinedNode) {
         return new StepperProgram([afterSubstitutedScope].flat())
@@ -56,10 +59,10 @@ export class StepperProgram implements Program, StepperBaseNode {
       // V; E; -> V; E';
       SubstitutionScope.set(this.body.slice(2))
       const secondStatementOneStep = this.body[1].oneStep()
-      const afterSubstitutedScope = SubstitutionScope.get();
-      SubstitutionScope.reset();
+      const afterSubstitutedScope = SubstitutionScope.get()
+      SubstitutionScope.reset()
       if (secondStatementOneStep === undefinedNode) {
-        return new StepperProgram([this.body[0], afterSubstitutedScope].flat());
+        return new StepperProgram([this.body[0], afterSubstitutedScope].flat())
       }
       return new StepperProgram(
         [this.body[0], secondStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
@@ -99,21 +102,27 @@ export class StepperProgram implements Program, StepperBaseNode {
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
-      return new StepperProgram(
-        this.body.map((statement) => statement.substitute(id, value) as StepperStatement)
-      ) 
+    return new StepperProgram(
+      this.body.map(statement => statement.substitute(id, value) as StepperStatement)
+    )
   }
 
   scanAllDeclarationNames(): string[] {
-      return this.body
-        .filter(ast => ast.type === 'VariableDeclaration')
-        .flatMap((ast: StepperVariableDeclaration) => ast.declarations)
-        .map((ast: StepperVariableDeclarator) => ast.id.name)
-    }
-  
+    return this.body
+      .filter(ast => ast.type === 'VariableDeclaration')
+      .flatMap((ast: StepperVariableDeclaration) => ast.declarations)
+      .map((ast: StepperVariableDeclarator) => ast.id.name)
+  }
+
   freeNames(): string[] {
-    const names = new Set(this.body.flatMap((ast) => ast.freeNames()));
-    this.scanAllDeclarationNames().forEach(name => names.delete(name));
-    return Array.from(names);
+    const names = new Set(this.body.flatMap(ast => ast.freeNames()))
+    this.scanAllDeclarationNames().forEach(name => names.delete(name))
+    return Array.from(names)
+  }
+
+  rename(before: string, after: string): StepperProgram {
+    return new StepperProgram(
+      this.body.map(statement => statement.rename(before, after) as StepperStatement)
+    )
   }
 }

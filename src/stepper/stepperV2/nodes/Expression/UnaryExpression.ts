@@ -1,9 +1,4 @@
-import {
-  Comment,
-  SourceLocation,
-  UnaryExpression,
-  UnaryOperator
-} from 'estree'
+import { Comment, SourceLocation, UnaryExpression, UnaryOperator } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { redex } from '../..'
 import { StepperLiteral } from './Literal'
@@ -95,10 +90,14 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
-      return new StepperUnaryExpression(this.operator, this.argument.substitute(id, value))
+    return new StepperUnaryExpression(this.operator, this.argument.substitute(id, value))
   }
 
   freeNames(): string[] {
-    return this.argument.freeNames();
+    return this.argument.freeNames()
+  }
+
+  rename(before: string, after: string): StepperExpression {
+    return new StepperUnaryExpression(this.operator, this.argument.rename(before, after))
   }
 }

@@ -5,6 +5,7 @@ import { StepperStatement } from '.'
 import { convert } from '../../generator'
 import { redex, SubstitutionScope } from '../..'
 import { StepperVariableDeclaration, StepperVariableDeclarator } from './VariableDeclaration'
+import { getFreshName } from '../../utils'
 
 export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   type: 'BlockStatement'
@@ -80,12 +81,22 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
 
   
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
-    if (this.scanAllDeclarationNames().includes(id.name)) {
+    // Alpha renaming
+    // Check whether should be renamed
+    const valueFreeNames = value.freeNames()
+    const scopeNames = this.scanAllDeclarationNames()
+    const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
+    var currentBlockStatement: StepperBlockStatement = this;
+    repeatedNames.forEach(name => {
+      currentBlockStatement = this.rename(name, getFreshName(name)) as StepperBlockStatement
+    }) 
+
+    if (currentBlockStatement.scanAllDeclarationNames().includes(id.name)) {
       // DO nothing
-      return this;
+      return currentBlockStatement;
     }
     return new StepperBlockStatement(
-      this.body.map(statement => statement.substitute(id, value) as StepperStatement)
+      currentBlockStatement.body.map(statement => statement.substitute(id, value) as StepperStatement)
     )
   }
 
@@ -100,5 +111,11 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     const names = new Set(this.body.flatMap((ast) => ast.freeNames()));
     this.scanAllDeclarationNames().forEach(name => names.delete(name));
     return Array.from(names);
+  }
+
+  rename(before: string, after: string): StepperBlockStatement  {
+    return new StepperBlockStatement(
+      this.body.map(statement => statement.rename(before, after) as StepperStatement)
+    )
   }
 }

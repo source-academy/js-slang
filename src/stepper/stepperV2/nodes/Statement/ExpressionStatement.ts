@@ -66,4 +66,8 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
   freeNames(): string[] {
     return this.expression.freeNames();
   }
+
+  rename(before: string, after: string): StepperExpressionStatement  {
+    return new StepperExpressionStatement(this.expression.rename(before, after))
+  }
 }
