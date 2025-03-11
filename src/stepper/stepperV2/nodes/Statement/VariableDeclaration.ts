@@ -47,7 +47,7 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
   }
 
   rename(before: string, after: string): StepperVariableDeclarator  {
-    return new StepperVariableDeclarator(this.id.rename(before,after), this.init!.rename(before, after))
+    return new StepperVariableDeclarator(this.id.rename(before, after), this.init!.rename(before, after))
   }
 }
 

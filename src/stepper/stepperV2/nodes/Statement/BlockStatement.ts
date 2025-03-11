@@ -83,13 +83,15 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     // Alpha renaming
     // Check whether should be renamed
+    // Renaming stage should not be counted as one step.
     const valueFreeNames = value.freeNames()
     const scopeNames = this.scanAllDeclarationNames()
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
     var currentBlockStatement: StepperBlockStatement = this;
-    repeatedNames.forEach(name => {
-      currentBlockStatement = this.rename(name, getFreshName(name)) as StepperBlockStatement
-    }) 
+    for (var index in repeatedNames) {
+      const name = repeatedNames[index]
+      currentBlockStatement = currentBlockStatement.rename(name, getFreshName(name)) as StepperBlockStatement
+    }
 
     if (currentBlockStatement.scanAllDeclarationNames().includes(id.name)) {
       // DO nothing
