@@ -223,7 +223,11 @@ const tsPlugin = (BaseParser: any) => {
         this.awaitPos = 0
         // Do not save awaitIdentPos to allow checking awaits nested in parameters
         while (this.type !== tokTypes.parenR) {
-          first ? (first = false) : this.expect(tokTypes.comma)
+          if (first) {
+            first = false
+          } else {
+            this.expect(tokTypes.comma)
+          }
           if (allowTrailingComma && this.afterTrailingComma(tokTypes.parenR, true)) {
             lastIsComma = true
             break
@@ -325,7 +329,9 @@ const tsPlugin = (BaseParser: any) => {
     }
 
     parseTSTypeAnnotation(eatColon = true) {
-      eatColon && this.expect(tokTypes.colon)
+      if (eatColon) {
+        this.expect(tokTypes.colon)
+      }
       const node = this.startNodeAt(this.lastTokStart, this.lastTokStartLoc)
       this._parseTSTypeAnnotation(node)
       return this.finishNode(node, 'TSTypeAnnotation')
@@ -481,7 +487,11 @@ const tsPlugin = (BaseParser: any) => {
       this.eat(tokTypes.bracketL)
       let first = true
       while (!this.eat(tokTypes.bracketR)) {
-        first ? (first = false) : this.expect(tokTypes.comma)
+        if (first) {
+          first = false
+        } else {
+          this.expect(tokTypes.comma)
+        }
         switch (this.type) {
           case tokTypes.name:
             const elem = this.parseTSTypeReference()
@@ -563,10 +573,13 @@ const tsPlugin = (BaseParser: any) => {
               return false
           }
         case tokTypes.braceL:
-        case tokTypes.bracketL:
-          this.type === tokTypes.braceL
-            ? this.parseObj(/* isPattern */ true)
-            : this.parseBindingAtom()
+        case tokTypes.bracketL: {
+          if (this.type === tokTypes.braceL) {
+            this.parseObj(/* isPattern */ true)
+          } else {
+            this.parseBindingAtom()
+          }
+
           switch (this.type) {
             case tokTypes.colon:
             case tokTypes.comma:
@@ -578,6 +591,7 @@ const tsPlugin = (BaseParser: any) => {
             default:
               return false
           }
+        }
         default:
           return false
       }
@@ -608,7 +622,7 @@ const tsPlugin = (BaseParser: any) => {
     parseTSUnionType(first: any) {
       const node = first ? this.startNodeAtNode(first) : this.startNode()
       const types = []
-      first && types.push(first)
+      if (first) types.push(first)
       while (this.eat(tokTypes.bitwiseOR)) {
         types.push(this._parseTSIntersectionTypeOrPrimaryType())
       }
@@ -622,7 +636,7 @@ const tsPlugin = (BaseParser: any) => {
     parseTSIntersectionType(first: any) {
       const node = first ? this.startNodeAtNode(first) : this.startNode()
       const types = []
-      first && types.push(first)
+      if (first) types.push(first)
       while (this.eat(tokTypes.bitwiseAND)) {
         types.push(this._parsePrimaryType())
       }
@@ -817,7 +831,11 @@ const tsPlugin = (BaseParser: any) => {
         let first = true
         this.next()
         while (!this.eat(tokTypes.relational)) {
-          first ? (first = false) : this.expect(tokTypes.comma)
+          if (first) {
+            first = false
+          } else {
+            this.expect(tokTypes.comma)
+          }
           if (this._isEndOfTypeParameters()) {
             break
           }
@@ -834,7 +852,11 @@ const tsPlugin = (BaseParser: any) => {
       this.next() // <
       let first = true
       while ((this.value && !this._isEndOfTypeParameters()) || this.type === tokTypes.comma) {
-        first ? (first = false) : this.expect(tokTypes.comma)
+        if (first) {
+          first = false
+        } else {
+          this.expect(tokTypes.comma)
+        }
 
         params.push(this._parseTSType())
       }
@@ -934,7 +956,7 @@ const tsPlugin = (BaseParser: any) => {
       if (this.type === tokTypes.colon) {
         node.typeAnnotation = this.parseTSTypeAnnotation(true)
       }
-      this.eat(tokTypes.comma) || this.eat(tokTypes.semi)
+      if (!this.eat(tokTypes.comma)) this.eat(tokTypes.semi)
       return this.finishNode(node, 'TSMethodSignature')
     }
 
@@ -956,7 +978,7 @@ const tsPlugin = (BaseParser: any) => {
       if (this.type === tokTypes.colon) {
         node.typeAnnotation = this.parseTSTypeAnnotation(true)
       }
-      this.eat(tokTypes.comma) || this.eat(tokTypes.semi)
+      if (!this.eat(tokTypes.comma)) this.eat(tokTypes.semi)
       return this.finishNode(node, 'TSPropertySignature')
     }
 
@@ -972,7 +994,7 @@ const tsPlugin = (BaseParser: any) => {
       node.index = index
       this.expect(tokTypes.bracketR)
       node.typeAnnotation = this.parseTSTypeAnnotation(true)
-      this.eat(tokTypes.comma) || this.eat(tokTypes.semi)
+      if (!this.eat(tokTypes.comma)) this.eat(tokTypes.semi)
       return this.finishNode(node, 'TSIndexSignature')
     }
 
@@ -1041,6 +1063,7 @@ const tsPlugin = (BaseParser: any) => {
 }
 
 // acorn-class-fields plugin is needed, else parsing of some function types will not work
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const TypeParser = Parser.extend(tsPlugin as any, require('acorn-class-fields'))
 
 export default TypeParser
