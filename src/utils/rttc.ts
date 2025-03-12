@@ -138,7 +138,5 @@ export const isIdentifier = (node: any): node is es.Identifier => {
 }
 
 export const checkArray = (node: Node, test: Value, chapter: Chapter = Chapter.SOURCE_4) => {
-  return isArray(test)
-    ? undefined
-    : new TypeError(node, '', 'array', typeOf(test), chapter)
+  return isArray(test) ? undefined : new TypeError(node, '', 'array', typeOf(test), chapter)
 }
