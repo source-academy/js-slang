@@ -136,3 +136,10 @@ export const checkMemberAccess = (node: Node, obj: Value, prop: Value) => {
 export const isIdentifier = (node: any): node is es.Identifier => {
   return (node as es.Identifier).name !== undefined
 }
+
+// used for run-time check of RHS of spread instr
+export const checkArray = (node: Node, test: Value, chapter: Chapter = Chapter.SOURCE_4) => {
+  return isArray(test)
+    ? undefined
+    : new TypeError(node, ' as iterable', 'array', typeOf(test), chapter)
+}

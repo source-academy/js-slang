@@ -1268,7 +1268,20 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     const index = stash.pop()
     const array = stash.pop()
-    stash.push(array[index])
+
+    // Check if left-hand side is array
+    const error = rttc.checkArray(command.srcNode, array, context.chapter)
+    if (error) {
+      handleRuntimeError(context, error)
+    }
+
+    // Check if index is out-of-bounds with array, in which case, returns undefined as per spec
+    if (index >= array.length) {
+      stash.push(undefined)
+    } else {
+      stash.push(array[index])
+    }
+    
   },
 
   [InstrType.ARRAY_ASSIGNMENT]: function (
@@ -1326,6 +1339,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash: Stash
   ) {
     const array = stash.pop()
+
+    // Check if right-hand side is array
+    const error = rttc.checkArray(command.srcNode, array, context.chapter)
+    if (error) {
+      handleRuntimeError(context, error)
+    }
 
     // spread array
     for (let i = 0; i < array.length; i++) {
