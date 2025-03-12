@@ -24,7 +24,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "resolveJsonModule": true,
     "noUnusedLocals": true,
-    "incremental": true
+    "incremental": true,
   },
   "exclude": [
     "src/stdlib/metacircular-interpreter",

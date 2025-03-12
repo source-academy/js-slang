@@ -13,15 +13,18 @@ jobs:
         run: |
           sudo apt-get update && \
           sudo apt-get install -y --no-install-recommends \
-          texlive texlive-fonts-extra texlive-lang-cjk latexmk latex-cjk-all \
-          libxi-dev libgl1-mesa-dev
+          texlive texlive-fonts-extra texlive-lang-cjk latexmk latex-cjk-all
+      # Has to be run before actions/setup-node.
+      # See: https://github.com/actions/setup-node/issues/480
+      - name: Enable corepack for Yarn
+        run: corepack enable
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: yarn
       - name: Install yarn dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Build
         run: |
           yarn run jsdoc prepare

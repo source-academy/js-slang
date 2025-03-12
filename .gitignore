@@ -1,7 +1,11 @@
 node_modules
 *.js
+
+# docs
 !docs/jsdoc/templates/**/*.js
 !docs/lib/**/*.js
+docs/source
+
 *.map
 dist/
 .idea/
@@ -15,4 +19,12 @@ coverage/
 *.tsbuildinfo
 test-report.html
 
+# yarn files
+
+.yarn
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 yarn-error.log

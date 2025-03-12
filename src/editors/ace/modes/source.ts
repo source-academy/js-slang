@@ -21,7 +21,7 @@ import { SourceDocumentation } from '../docTooltip'
 export function HighlightRulesSelector(
   id: number,
   variant: Variant = Variant.DEFAULT,
-  external: String = 'NONE',
+  external: string = 'NONE',
   externalLibraries: (
     | {
         caption: string
@@ -118,6 +118,8 @@ export function HighlightRulesSelector(
       return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|(?<!&)&(?!&)|(?<!\|)\|(?!\|)/
     }
 
+    // Documentation for token types:
+    // https://github.com/ajaxorg/ace/wiki/Creating-or-Extending-an-Edit-Mode#common-tokens
     // @ts-ignore
     const SourceHighlightRules = function (options) {
       // @ts-ignore
