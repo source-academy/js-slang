@@ -1281,7 +1281,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     } else {
       stash.push(array[index])
     }
-    
   },
 
   [InstrType.ARRAY_ASSIGNMENT]: function (
