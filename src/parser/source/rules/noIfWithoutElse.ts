@@ -1,21 +1,11 @@
 import { generate } from 'astring'
-import * as es from 'estree'
-
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import type { IfStatement } from 'estree'
+import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
+import { RuleError } from '../../errors'
+import { Chapter } from '../../../types'
 
-export class NoIfWithoutElseError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.IfStatement) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoIfWithoutElseError extends RuleError<IfStatement> {
   public explain() {
     return 'Missing "else" in "if-else" statement.'
   }
@@ -31,11 +21,11 @@ export class NoIfWithoutElseError implements SourceError {
   }
 }
 
-const noIfWithoutElse: Rule<es.IfStatement> = {
+const noIfWithoutElse: Rule<IfStatement> = {
   name: 'no-if-without-else',
   disableFromChapter: Chapter.SOURCE_3,
   checkers: {
-    IfStatement(node: es.IfStatement, _ancestors: [Node]) {
+    IfStatement(node) {
       if (!node.alternate) {
         return [new NoIfWithoutElseError(node)]
       } else {

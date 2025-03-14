@@ -2,7 +2,7 @@ import type { Program } from 'estree'
 
 import type { Context, Chapter, Node, SourceError, Variant } from '../types'
 
-export type { Options as AcornOptions } from 'acorn';
+export type { Options as AcornOptions } from 'acorn'
 export type { ParserOptions as BabelOptions } from '@babel/parser'
 
 export interface Parser<TOptions> {

@@ -1,20 +1,15 @@
-import * as es from 'estree'
+import type { AssignmentExpression, BinaryExpression, UnaryExpression } from 'estree'
+import type { Rule } from '../../types'
+import { RuleError } from '../../errors'
 
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+type ExpressionNodeType = AssignmentExpression | BinaryExpression | UnaryExpression
 
-export class NoUnspecifiedOperatorError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-  public unspecifiedOperator: string
+export class NoUnspecifiedOperatorError<T extends ExpressionNodeType> extends RuleError<T> {
+  public unspecifiedOperator: T['operator']
 
-  constructor(public node: es.BinaryExpression | es.UnaryExpression) {
+  constructor(node: T) {
+    super(node)
     this.unspecifiedOperator = node.operator
-  }
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -26,11 +21,25 @@ export class NoUnspecifiedOperatorError implements SourceError {
   }
 }
 
-const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression> = {
+export class StrictEqualityError extends NoUnspecifiedOperatorError<BinaryExpression> {
+  public explain() {
+    if (this.node.operator === '==') {
+      return 'Use === instead of =='
+    } else {
+      return 'Use !== instead of !='
+    }
+  }
+
+  public elaborate() {
+    return '== and != is not a valid operator'
+  }
+}
+
+const noUnspecifiedOperator: Rule<BinaryExpression | UnaryExpression> = {
   name: 'no-unspecified-operator',
 
   checkers: {
-    BinaryExpression(node: es.BinaryExpression, _ancestors: [Node]) {
+    BinaryExpression(node) {
       const permittedOperators = [
         '+',
         '-',
@@ -46,13 +55,16 @@ const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression> = {
         '&&',
         '||'
       ]
-      if (!permittedOperators.includes(node.operator)) {
+
+      if (node.operator === '!=' || node.operator === '==') {
+        return [new StrictEqualityError(node)]
+      } else if (!permittedOperators.includes(node.operator)) {
         return [new NoUnspecifiedOperatorError(node)]
       } else {
         return []
       }
     },
-    UnaryExpression(node: es.UnaryExpression) {
+    UnaryExpression(node) {
       const permittedOperators = ['-', '!', 'typeof']
       if (!permittedOperators.includes(node.operator)) {
         return [new NoUnspecifiedOperatorError(node)]

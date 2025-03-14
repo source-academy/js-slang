@@ -1,18 +1,8 @@
-import type { ExportNamedDeclaration } from "estree";
-import { UNKNOWN_LOCATION } from "../../../constants";
-import { ErrorSeverity, ErrorType, type SourceError } from "../../../types";
-import { type Rule } from '../../types';
+import type { ExportNamedDeclaration } from 'estree'
+import type { Rule } from '../../types'
+import { RuleError } from '../../errors'
 
-export class NoExportNamedDeclarationWithSourceError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: ExportNamedDeclaration) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoExportNamedDeclarationWithSourceError extends RuleError<ExportNamedDeclaration> {
   public explain() {
     return 'exports of the form export { a } from "./file.js"; are not allowed.'
   }

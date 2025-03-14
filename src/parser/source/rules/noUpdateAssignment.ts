@@ -1,20 +1,9 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type { AssignmentExpression } from 'estree'
+import type { Rule } from '../../types'
+import { NoUnspecifiedOperatorError } from './noUnspecifiedOperator'
 
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
-
-export class NoUpdateAssignment implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.AssignmentExpression) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoUpdateAssignment extends NoUnspecifiedOperatorError<AssignmentExpression> {
   public explain() {
     return 'The assignment operator ' + this.node.operator + ' is not allowed. Use = instead.'
   }
@@ -34,11 +23,11 @@ export class NoUpdateAssignment implements SourceError {
   }
 }
 
-const noUpdateAssignment: Rule<es.AssignmentExpression> = {
+const noUpdateAssignment: Rule<AssignmentExpression> = {
   name: 'no-update-assignment',
 
   checkers: {
-    AssignmentExpression(node: es.AssignmentExpression, _ancestors: [Node]) {
+    AssignmentExpression(node) {
       if (node.operator !== '=') {
         return [new NoUpdateAssignment(node)]
       } else {

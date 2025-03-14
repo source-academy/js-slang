@@ -1,21 +1,10 @@
-import * as es from 'estree'
-
-import { UNKNOWN_LOCATION } from '../../../constants'
+import type { ExportNamedDeclaration } from 'estree'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import type { Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
+import { RuleError } from '../../errors'
 
-export class NoExportNamedDeclarationWithDefaultError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.ExportNamedDeclaration) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoExportNamedDeclarationWithDefaultError extends RuleError<ExportNamedDeclaration> {
   public explain() {
     return 'Export default declarations are not allowed'
   }
@@ -25,14 +14,14 @@ export class NoExportNamedDeclarationWithDefaultError implements SourceError {
   }
 }
 
-const noExportNamedDeclarationWithDefault: Rule<es.ExportNamedDeclaration> = {
+const noExportNamedDeclarationWithDefault: Rule<ExportNamedDeclaration> = {
   name: 'no-declare-mutable',
   disableFromChapter: syntaxBlacklist['ExportDefaultDeclaration'],
 
   checkers: {
-    ExportNamedDeclaration(node: es.ExportNamedDeclaration, _ancestors: [Node]) {
+    ExportNamedDeclaration(node) {
       const errors: NoExportNamedDeclarationWithDefaultError[] = []
-      node.specifiers.forEach((specifier: es.ExportSpecifier) => {
+      node.specifiers.forEach(specifier => {
         if (specifier.exported.name === defaultExportLookupName) {
           errors.push(new NoExportNamedDeclarationWithDefaultError(node))
         }
