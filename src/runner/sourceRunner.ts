@@ -34,6 +34,7 @@ import { mapResult } from '../alt-langs/mapper'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
+import { getSteps } from '../stepper/stepperV2/steppers'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   scheduler: 'async',
@@ -88,25 +89,11 @@ function runSubstitution(
   context: Context,
   options: IOptions
 ): Promise<Result> {
-  const steps = getEvaluationSteps(program, context, options)
-  if (context.errors.length > 0) {
-    return resolvedErrorPromise
-  }
-  const redexedSteps: IStepperPropContents[] = []
-  for (const step of steps) {
-    const redex = getRedex(step[0], step[1])
-    const redexed = redexify(step[0], step[1])
-    redexedSteps.push({
-      code: redexed[0],
-      redex: redexed[1],
-      explanation: step[2],
-      function: callee(redex, context)
-    })
-  }
+  const steps = getSteps(program)
   return Promise.resolve({
     status: 'finished',
     context,
-    value: redexedSteps
+    value: steps
   })
 }
 

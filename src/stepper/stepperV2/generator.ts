@@ -31,7 +31,7 @@ const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
   BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node)
 };
 
-export function convert(node: es.Node): StepperBaseNode {
+export function convert(node: es.BaseNode): StepperBaseNode {
   const converter = nodeConverters[node.type as keyof typeof nodeConverters];
   return converter ? converter(node as any) : undefinedNode;
 }

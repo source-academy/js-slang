@@ -1,8 +1,11 @@
+import * as es from 'estree'
 import { Marker, redex } from '.'
 import { IStepperPropContents } from '.'
 import { StepperBaseNode } from './interface'
+import { convert } from './generator'
 
-export function getSteps(node: StepperBaseNode): IStepperPropContents[] {
+export function getSteps(inputNode: es.BaseNode): IStepperPropContents[] {
+  const node: StepperBaseNode = convert(inputNode);
   const steps: IStepperPropContents[] = []
   function evaluate(node: StepperBaseNode): StepperBaseNode {
     const isOneStepPossible = node.isOneStepPossible()
