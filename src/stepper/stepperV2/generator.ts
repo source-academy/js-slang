@@ -19,6 +19,8 @@ import { StepperIdentifier } from './nodes/Expression/Identifier'
 import { StepperBlockStatement } from './nodes/Statement/BlockStatement'
 import { StepperIfStatement } from './nodes/Statement/IfStatement'
 import { StepperConditionalExpression } from './nodes/Expression/ConditionalExpression'
+import { StepperArrowFunctionExpression } from './nodes/Expression/ArrowFunctionExpression'
+import { StepperFunctionApplication } from './nodes/Expression/FunctionApplication'
 const undefinedNode = new StepperLiteral('undefined');
 
 const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
@@ -27,6 +29,8 @@ const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
   BinaryExpression: (node: es.BinaryExpression) => StepperBinaryExpression.create(node),
   ExpressionStatement: (node: es.ExpressionStatement) => StepperExpressionStatement.create(node),
   ConditionalExpression: (node: es.ConditionalExpression) => StepperConditionalExpression.create(node),
+  ArrowFunctionExpression: (node: es.ArrowFunctionExpression) => StepperArrowFunctionExpression.create(node),
+  CallExpression: (node: es.CallExpression) => StepperFunctionApplication.create(node as es.SimpleCallExpression),
   Program: (node: es.Program) => StepperProgram.create(node),
   VariableDeclaration: (node: es.VariableDeclaration) => StepperVariableDeclaration.create(node),
   VariableDeclarator: (node: es.VariableDeclarator) => StepperVariableDeclarator.create(node),
