@@ -44,6 +44,11 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     return new StepperBlockStatement(this.body.slice(1))
   }
 
+  contractEmpty() {
+    redex.preRedex = [this]
+    redex.postRedex = []
+  }
+
   oneStep(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
     if (this.body.length == 0) {
       return this.contract()

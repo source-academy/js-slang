@@ -7,11 +7,13 @@ import { StepperBaseNode } from '../stepperV2/interface'
 
 test('arithmetic', () => {
   const code = `
-    const y = x;
-    {
+  if (1 === 2) {
       const x = 1;
-      y + x;
-    }
+      1 + x;
+} else {
+    const y = 2;
+    y + 2;
+}
     `
   const program = parse(code, mockContext())!
   const stringify = (ast: StepperBaseNode | null) => {
@@ -22,6 +24,7 @@ test('arithmetic', () => {
   }
 
   const steps = getSteps(convert(program))
+  console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(x => stringify(x.ast))
   console.log(output.join('\n'))

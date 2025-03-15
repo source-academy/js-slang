@@ -17,6 +17,7 @@ import { StepperProgram } from './nodes/Program'
 import { StepperVariableDeclaration, StepperVariableDeclarator } from './nodes/Statement/VariableDeclaration'
 import { StepperIdentifier } from './nodes/Expression/Identifier'
 import { StepperBlockStatement } from './nodes/Statement/BlockStatement'
+import { StepperIfStatement } from './nodes/Statement/IfStatement'
 const undefinedNode = new StepperLiteral('undefined');
 
 const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
@@ -28,7 +29,8 @@ const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
   VariableDeclaration: (node: es.VariableDeclaration) => StepperVariableDeclaration.create(node),
   VariableDeclarator: (node: es.VariableDeclarator) => StepperVariableDeclarator.create(node),
   Identifier: (node: es.Identifier) => StepperIdentifier.create(node),
-  BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node)
+  BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node),
+  IfStatement: (node: es.IfStatement) => StepperIfStatement.create(node)
 };
 
 export function convert(node: es.Node): StepperBaseNode {
