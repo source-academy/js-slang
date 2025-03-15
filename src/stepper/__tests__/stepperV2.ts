@@ -7,13 +7,7 @@ import { StepperBaseNode } from '../stepperV2/interface'
 
 test('arithmetic', () => {
   const code = `
-  if (1 === 2) {
-      const x = 1;
-      1 + x;
-} else {
-    const y = 2;
-    y + 2;
-}
+  1 === 2 ? 1 : 2;
     `
   const program = parse(code, mockContext())!
   const stringify = (ast: StepperBaseNode | null) => {
