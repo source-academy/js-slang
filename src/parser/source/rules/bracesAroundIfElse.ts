@@ -7,7 +7,7 @@ import { RuleError } from '../../errors'
 export class BracesAroundIfElseError extends RuleError<IfStatement> {
   constructor(
     node: IfStatement,
-    private branch: 'consequent' | 'alternate'
+    private readonly branch: 'consequent' | 'alternate'
   ) {
     super(node)
   }

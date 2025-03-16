@@ -5,7 +5,7 @@ import { RuleError } from '../../errors'
 type ExpressionNodeType = AssignmentExpression | BinaryExpression | UnaryExpression
 
 export class NoUnspecifiedOperatorError<T extends ExpressionNodeType> extends RuleError<T> {
-  public unspecifiedOperator: T['operator']
+  public readonly unspecifiedOperator: T['operator']
 
   constructor(node: T) {
     super(node)
@@ -22,16 +22,16 @@ export class NoUnspecifiedOperatorError<T extends ExpressionNodeType> extends Ru
 }
 
 export class StrictEqualityError extends NoUnspecifiedOperatorError<BinaryExpression> {
-  public explain() {
+  public override explain() {
     if (this.node.operator === '==') {
-      return 'Use === instead of =='
+      return 'Use === instead of ==.'
     } else {
-      return 'Use !== instead of !='
+      return 'Use !== instead of !=.'
     }
   }
 
-  public elaborate() {
-    return '== and != is not a valid operator'
+  public override elaborate() {
+    return '== and != are not valid operators.'
   }
 }
 

@@ -1,6 +1,7 @@
-import { Chapter } from '../../types'
+import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { snapshotFailure, snapshotSuccess } from '../../utils/testing'
+import { snapshotFailure, snapshotSuccess, testSuccess } from '../../utils/testing'
+import { expectFinishedResultValue } from '../../utils/testing/misc'
 
 jest.mock('../../modules/loader/loaders')
 
@@ -354,3 +355,8 @@ test.each([
     return Promise.all(tests)
   }
 )
+
+test('typeof operator is allowed in typed variant', async () => {
+  const { result } = await testSuccess(`typeof "0";`, { variant: Variant.TYPED })
+  expectFinishedResultValue(result, 'string')
+})

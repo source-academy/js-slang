@@ -1,22 +1,23 @@
 import { generate } from 'astring'
 import type { VariableDeclaration } from 'estree'
 import type { Rule } from '../../types'
-import { getVariableDeclarationName } from '../../../utils/ast/astCreator'
 import { RuleError } from '../../errors'
 import { Chapter } from '../../../types'
+import { getSourceVariableDeclaration } from '../../../utils/ast/helpers'
 
-const mutableDeclarators = ['let', 'var']
+const mutableDeclarators: VariableDeclaration['kind'][] = ['let', 'var']
 
 export class NoDeclareMutableError extends RuleError<VariableDeclaration> {
   public explain() {
-    return (
-      'Mutable variable declaration using keyword ' + `'${this.node.kind}'` + ' is not allowed.'
-    )
+    return `Mutable variable declaration using keyword '${this.node.kind}' is not allowed.`
   }
 
   public elaborate() {
-    const name = getVariableDeclarationName(this.node)
-    const value = generate(this.node.declarations[0].init)
+    const {
+      id: { name },
+      init
+    } = getSourceVariableDeclaration(this.node)
+    const value = generate(init)
 
     return `Use keyword "const" instead, to declare a constant:\n\n\tconst ${name} = ${value};`
   }

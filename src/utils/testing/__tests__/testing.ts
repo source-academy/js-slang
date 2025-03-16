@@ -24,7 +24,7 @@ describe('Testing createTestContext', () => {
     expect(context.variant).toEqual(Variant.DEFAULT)
   })
 
-  test('Providing a chaper runs default variant and that chapter', () => {
+  test('Providing a chapter runs default variant and that chapter', () => {
     const context = createTestContext(Chapter.SOURCE_3)
     expect(context.chapter).toEqual(Chapter.SOURCE_3)
     expect(context.variant).toEqual(Variant.DEFAULT)

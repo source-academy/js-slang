@@ -4,11 +4,11 @@ import type { Rule } from '../../types'
 import { NoUnspecifiedOperatorError } from './noUnspecifiedOperator'
 
 export class NoUpdateAssignment extends NoUnspecifiedOperatorError<AssignmentExpression> {
-  public explain() {
-    return 'The assignment operator ' + this.node.operator + ' is not allowed. Use = instead.'
+  public override explain() {
+    return `The assignment operator ${this.node.operator} is not allowed. Use = instead.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     const leftStr = generate(this.node.left)
     const rightStr = generate(this.node.right)
     const newOpStr = this.node.operator.slice(0, -1)

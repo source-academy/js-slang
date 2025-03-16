@@ -2,7 +2,7 @@ import type { VariableDeclaration } from 'estree'
 import { generate } from 'astring'
 import type { Rule } from '../../types'
 import { RuleError } from '../../errors'
-import { getVariableDeclarationName } from '../../../utils/ast/astCreator'
+import { getSourceVariableDeclaration } from '../../../utils/ast/helpers'
 
 export class NoVarError extends RuleError<VariableDeclaration> {
   public explain() {
@@ -10,8 +10,11 @@ export class NoVarError extends RuleError<VariableDeclaration> {
   }
 
   public elaborate() {
-    const name = getVariableDeclarationName(this.node)
-    const value = generate(this.node.declarations[0].init)
+    const {
+      id: { name },
+      init
+    } = getSourceVariableDeclaration(this.node)
+    const value = generate(init)
 
     return `Use keyword "let" instead, to declare a variable:\n\n\tlet ${name} = ${value};`
   }

@@ -3,10 +3,11 @@ import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
 import type { Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
 import { RuleError } from '../../errors'
+import { mapAndFilter } from '../../../utils/misc'
 
 export class NoExportNamedDeclarationWithDefaultError extends RuleError<ExportNamedDeclaration> {
   public explain() {
-    return 'Export default declarations are not allowed'
+    return 'Export default declarations are not allowed.'
   }
 
   public elaborate() {
@@ -20,13 +21,11 @@ const noExportNamedDeclarationWithDefault: Rule<ExportNamedDeclaration> = {
 
   checkers: {
     ExportNamedDeclaration(node) {
-      const errors: NoExportNamedDeclarationWithDefaultError[] = []
-      node.specifiers.forEach(specifier => {
-        if (specifier.exported.name === defaultExportLookupName) {
-          errors.push(new NoExportNamedDeclarationWithDefaultError(node))
-        }
-      })
-      return errors
+      return mapAndFilter(node.specifiers, specifier =>
+        specifier.exported.name === defaultExportLookupName
+          ? new NoExportNamedDeclarationWithDefaultError(node)
+          : undefined
+      )
     }
   }
 }

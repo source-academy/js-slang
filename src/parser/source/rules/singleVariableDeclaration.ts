@@ -21,7 +21,7 @@ export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
   }
 
   public elaborate() {
-    const fixs = this.fixs.map(n => '\t' + generate(n)).join('\n')
+    const fixs = this.fixs.map(n => '  ' + generate(n)).join('\n')
     return 'Split the variable declaration into multiple lines as follows\n\n' + fixs + '\n'
   }
 }

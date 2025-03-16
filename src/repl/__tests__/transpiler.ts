@@ -1,12 +1,21 @@
+import * as fs from 'fs/promises'
+import type pathlib from 'path'
 import { asMockedFunc } from '../../utils/testing/misc'
 import { getTranspilerCommand } from '../transpiler'
-import * as fs from 'fs/promises'
 import { expectWritten, getCommandRunner } from './utils'
 
 jest.mock('fs/promises', () => ({
   readFile: jest.fn(),
   writeFile: jest.fn()
 }))
+
+jest.mock('path', () => {
+  const actualPath: typeof pathlib = jest.requireActual('path/posix')
+  return {
+    ...actualPath,
+    resolve: (...args: string[]) => actualPath.resolve('/', ...args)
+  }
+})
 
 beforeEach(() => {
   jest.clearAllMocks()
