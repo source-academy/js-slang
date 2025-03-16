@@ -8,9 +8,6 @@ import {
   type StatementSequence
 } from '../../types'
 
-export const getVariableDeclarationName = (decl: es.VariableDeclaration) =>
-  (decl.declarations[0].id as es.Identifier).name
-
 export const locationDummyNode = (line: number, column: number, source: string | null) =>
   literal('Dummy', { start: { line, column }, end: { line, column }, source })
 
@@ -85,18 +82,18 @@ export const declaration = (
   kind: AllowedDeclarations,
   init: es.Expression,
   loc?: es.SourceLocation | null
-): es.VariableDeclaration => ({
-  type: 'VariableDeclaration',
-  declarations: [
-    {
-      type: 'VariableDeclarator',
-      id: identifier(name),
-      init
-    }
-  ],
-  kind,
-  loc
-})
+) =>
+  variableDeclaration(
+    [
+      {
+        type: 'VariableDeclarator',
+        id: identifier(name),
+        init
+      }
+    ],
+    kind,
+    loc
+  )
 
 export const constantDeclaration = (
   name: string,
@@ -376,10 +373,11 @@ export const arrowFunctionExpression = (
 
 export const variableDeclaration = (
   declarations: es.VariableDeclarator[],
+  kind: es.VariableDeclaration['kind'] = 'const',
   loc?: es.SourceLocation | null
 ): es.VariableDeclaration => ({
   type: 'VariableDeclaration',
-  kind: 'const',
+  kind,
   declarations,
   loc
 })

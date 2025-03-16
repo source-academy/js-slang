@@ -3,7 +3,7 @@ import type es from 'estree'
 import assert from '../assert'
 import { simple } from '../walkers'
 import { ArrayMap } from '../dict'
-import { isImportDeclaration, isVariableDeclaration } from './typeGuards'
+import { isIdentifier, isImportDeclaration, isVariableDeclaration } from './typeGuards'
 
 export function getModuleDeclarationSource(
   node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
@@ -71,10 +71,27 @@ export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: boolean)
   return rawIds
 }
 
+export function getSourceVariableDeclaration(decl: es.VariableDeclaration) {
+  assert(
+    decl.declarations.length === 1,
+    'Variable Declarations in Source should only have 1 declarator!'
+  )
+
+  const [declaration] = decl.declarations
+  assert(
+    isIdentifier(declaration.id),
+    'Variable Declarations in Source should be declared using an Identifier!'
+  )
+
+  return {
+    id: declaration.id,
+    init: declaration.init!,
+    loc: declaration.loc
+  }
+}
+
 export const getImportedName = (
-  spec:
-    | Exclude<es.ImportDeclaration['specifiers'][number], es.ImportNamespaceSpecifier>
-    | es.ExportSpecifier
+  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
 ) => {
   switch (spec.type) {
     case 'ImportDefaultSpecifier':
@@ -83,5 +100,26 @@ export const getImportedName = (
       return spec.imported.name
     case 'ExportSpecifier':
       return spec.local.name
+  }
+}
+
+export const speciferToString = (
+  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
+) => {
+  switch (spec.type) {
+    case 'ImportSpecifier': {
+      if (spec.imported.name === spec.local.name) {
+        return spec.imported.name
+      }
+      return `${spec.imported.name} as ${spec.local.name}`
+    }
+    case 'ImportDefaultSpecifier':
+      return `default as ${spec.local.name}`
+    case 'ExportSpecifier': {
+      if (spec.local.name === spec.exported.name) {
+        return spec.local.name
+      }
+      return `${spec.local.name} as ${spec.exported.name}`
+    }
   }
 }
