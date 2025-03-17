@@ -1,4 +1,4 @@
-import type { DebuggerStatement, Program } from 'estree'
+import type { Program } from 'estree'
 
 import type { IOptions, Result } from '..'
 import { areBreakpointsSet } from '../stdlib/inspector'
@@ -43,33 +43,12 @@ export function determineExecutionMethod(
   }
 
   let isNativeRunnable
-  if (verboseErrors) {
+  if (verboseErrors || areBreakpointsSet()) {
     isNativeRunnable = false
-  } else if (areBreakpointsSet()) {
-    isNativeRunnable = false
-  } else if (theOptions.executionMethod === 'auto') {
-    if (context.executionMethod === 'auto') {
-      if (verboseErrors) {
-        isNativeRunnable = false
-      } else if (areBreakpointsSet()) {
-        isNativeRunnable = false
-      } else {
-        let hasDebuggerStatement = false
-        simple(program, {
-          DebuggerStatement() {
-            hasDebuggerStatement = true
-          }
-        })
-        isNativeRunnable = !hasDebuggerStatement
-      }
-      context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine'
-    } else {
-      isNativeRunnable = context.executionMethod === 'native'
-    }
   } else {
     let hasDebuggerStatement = false
     simple(program, {
-      DebuggerStatement(_node: DebuggerStatement) {
+      DebuggerStatement() {
         hasDebuggerStatement = true
       }
     })
