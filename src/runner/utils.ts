@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { DebuggerStatement, Program } from 'estree'
 
 import type { IOptions, Result } from '..'
@@ -57,7 +56,7 @@ export function determineExecutionMethod(
       } else {
         let hasDebuggerStatement = false
         simple(program, {
-          DebuggerStatement(node: DebuggerStatement) {
+          DebuggerStatement() {
             hasDebuggerStatement = true
           }
         })

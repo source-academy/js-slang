@@ -1,4 +1,3 @@
-import { JestAssertionError } from 'expect'
 import runners, { type RunnerTypes } from '../sourceRunner'
 import { Chapter, type ExecutionMethod, Variant } from '../../types'
 import type { Runner } from '../types'
@@ -98,10 +97,7 @@ const sourceCases: FullTestCase[] = [
 
 // These JS cases never evaluate a prelude,
 // nor ever have verbose errors enabled
-const fullJSCases: TestCase[] = [
-  { chapter: Chapter.FULL_JS },
-  { chapter: Chapter.FULL_TS }
-]
+const fullJSCases: TestCase[] = [{ chapter: Chapter.FULL_JS }, { chapter: Chapter.FULL_TS }]
 
 // The alt langs never evaluate a prelude,
 // always use fullJS regardless of variant,
@@ -126,14 +122,18 @@ function expectCalls(count: number, expected: RunnerTypes) {
 
   switch (unexpectedRunner) {
     case undefined:
-      throw new JestAssertionError(`Expected ${expected} to be called ${count} times, but no runners were called`)
+      throw new Error(
+        `Expected ${expected} to be called ${count} times, but no runners were called`
+      )
     case expected: {
       expect(runners[expected]).toHaveBeenCalledTimes(count)
       return asMockedFunc(runners[expected]).mock.calls
     }
     default: {
       const callCount = asMockedFunc(runners[unexpectedRunner]).mock.calls.length
-      throw new JestAssertionError(`Expected ${expected} to be called ${count} times, but ${unexpectedRunner} was called ${callCount} times`)
+      throw new Error(
+        `Expected ${expected} to be called ${count} times, but ${unexpectedRunner} was called ${callCount} times`
+      )
     }
   }
 }
@@ -217,31 +217,30 @@ describe('Ensure that the correct runner is used for the given evaluation contex
   testCases('Test regular source cases', sourceCases)
   testCases(
     'Test source verbose error cases',
-    sourceCases.map(
-      tc => ({
-        ...tc,
-        verboseErrors: true,
-        expectedRunner: 'cse-machine'
-      })
-    )
+    sourceCases.map(tc => ({
+      ...tc,
+      verboseErrors: true,
+      expectedRunner: 'cse-machine'
+    }))
   )
 
   testCases(
     'Test source cases with debugger statements',
-    sourceCases.map(
-      tc => ({
-        ...tc,
-        code: 'debugger;\n' + (tc.code ?? ''),
-        expectedRunner: 'cse-machine'
-      })
-    )
+    sourceCases.map(tc => ({
+      ...tc,
+      code: 'debugger;\n' + (tc.code ?? ''),
+      expectedRunner: 'cse-machine'
+    }))
   )
 
-  testCases('Test explicit control variant', sourceCases.map(tc => ({
-    ...tc,
-    variant: Variant.EXPLICIT_CONTROL,
-    expectedRunner: 'cse-machine'
-  })))
+  testCases(
+    'Test explicit control variant',
+    sourceCases.map(tc => ({
+      ...tc,
+      variant: Variant.EXPLICIT_CONTROL,
+      expectedRunner: 'cse-machine'
+    }))
+  )
 
   testCases(
     'Test FullJS cases',
@@ -278,57 +277,63 @@ describe('Ensure that the correct runner is used for the given evaluation contex
     )
   )
 
-  test('if optionMethod is specified, verbose errors is ignored', () => testCase({
-    code: '"enable verbose"; 0;',
-    optionMethod: 'native',
-    chapter: Chapter.SOURCE_4,
-    variant: Variant.DEFAULT,
-    expectedPrelude: true,
-    expectedRunner: 'native'
-  }))
+  test('if optionMethod is specified, verbose errors is ignored', () =>
+    testCase({
+      code: '"enable verbose"; 0;',
+      optionMethod: 'native',
+      chapter: Chapter.SOURCE_4,
+      variant: Variant.DEFAULT,
+      expectedPrelude: true,
+      expectedRunner: 'native'
+    }))
 
-  test('if optionMethod is specified, debubger statements are ignored', () => testCase({
-    code: 'debugger; 0;',
-    optionMethod: 'native',
-    chapter: Chapter.SOURCE_4,
-    variant: Variant.DEFAULT,
-    expectedPrelude: true,
-    expectedRunner: 'native'
-  }))
+  test('if optionMethod is specified, debubger statements are ignored', () =>
+    testCase({
+      code: 'debugger; 0;',
+      optionMethod: 'native',
+      chapter: Chapter.SOURCE_4,
+      variant: Variant.DEFAULT,
+      expectedPrelude: true,
+      expectedRunner: 'native'
+    }))
 
-  test('if contextMethod is specified, verbose errors is ignored', () => testCase({
-    code: '"enable verbose"; 0;',
-    contextMethod: 'native',
-    chapter: Chapter.SOURCE_4,
-    variant: Variant.DEFAULT,
-    expectedPrelude: true,
-    expectedRunner: 'native'
-  }))
+  test('if contextMethod is specified, verbose errors is ignored', () =>
+    testCase({
+      code: '"enable verbose"; 0;',
+      contextMethod: 'native',
+      chapter: Chapter.SOURCE_4,
+      variant: Variant.DEFAULT,
+      expectedPrelude: true,
+      expectedRunner: 'native'
+    }))
 
-  test('if contextMethod is specified, debugger statements are ignored', () => testCase({
-    code: 'debugger; 0;',
-    contextMethod: 'native',
-    chapter: Chapter.SOURCE_4,
-    variant: Variant.DEFAULT,
-    expectedPrelude: true,
-    expectedRunner: 'native'
-  }))
+  test('if contextMethod is specified, debugger statements are ignored', () =>
+    testCase({
+      code: 'debugger; 0;',
+      contextMethod: 'native',
+      chapter: Chapter.SOURCE_4,
+      variant: Variant.DEFAULT,
+      expectedPrelude: true,
+      expectedRunner: 'native'
+    }))
 
-  test('optionMethod takes precedence over contextMethod', () => testCase({
-    code: '0;',
-    contextMethod: 'native',
-    optionMethod: 'cse-machine',
-    chapter: Chapter.SOURCE_4,
-    variant: Variant.DEFAULT,
-    expectedPrelude: true,
-    expectedRunner: 'cse-machine'
-  }))
+  test('optionMethod takes precedence over contextMethod', () =>
+    testCase({
+      code: '0;',
+      contextMethod: 'native',
+      optionMethod: 'cse-machine',
+      chapter: Chapter.SOURCE_4,
+      variant: Variant.DEFAULT,
+      expectedPrelude: true,
+      expectedRunner: 'cse-machine'
+    }))
 
-  test('debugger statements require cse-machine', () => testCase({
-    code: 'debugger; 0;',
-    chapter: Chapter.SOURCE_4,
-    variant: Variant.DEFAULT,
-    expectedPrelude: true,
-    expectedRunner: 'cse-machine'
-  }))
+  test('debugger statements require cse-machine', () =>
+    testCase({
+      code: 'debugger; 0;',
+      chapter: Chapter.SOURCE_4,
+      variant: Variant.DEFAULT,
+      expectedPrelude: true,
+      expectedRunner: 'cse-machine'
+    }))
 })
