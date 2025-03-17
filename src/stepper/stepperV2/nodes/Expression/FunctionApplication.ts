@@ -65,6 +65,11 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     const args = this.arguments
     
     let result = lambda.body
+    
+    if (lambda.name) {
+      result = result.substitute({ type: 'Identifier', name: lambda.name } as StepperPattern, lambda)
+    }
+    
     lambda.params.forEach((param, i) => {
       result = result.substitute(param as StepperPattern, args[i])
     })

@@ -10,6 +10,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
   expression: boolean
   generator: boolean
   async: boolean
+  name?: string
   leadingComments?: Comment[]
   trailingComments?: Comment[]
   loc?: SourceLocation | null
@@ -66,6 +67,10 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
 
   oneStep(): StepperExpression {
     throw new Error("Cannot step an arrow function expression")
+  }
+
+  setGivenName(name: string) {
+    this.name = name
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {

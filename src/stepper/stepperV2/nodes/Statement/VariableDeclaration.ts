@@ -97,9 +97,13 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
     redex.preRedex = [this]
     redex.postRedex = []
     // If everything is compatible, trigger substitution on Substitution.Scope
-    this.declarations.forEach(declarator =>
+    this.declarations.forEach(declarator => {
+      if (declarator.init?.type === 'ArrowFunctionExpression') {
+        declarator.init.setGivenName(declarator.id.name)
+        console.log(declarator.id.name)
+      }
       SubstitutionScope.substitute(declarator.id, declarator.init)
-    )
+    })
     return undefinedNode
   }
 
