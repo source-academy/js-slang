@@ -329,7 +329,7 @@ function evaluateImports(program: es.Program, context: Context) {
  * @returns The corresponding promise.
  */
 export function CSEResultPromise(context: Context, value: Value): Promise<Result> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (value instanceof CSEBreak) {
       resolve({ status: 'suspended-cse-eval', context })
     } else if (value instanceof CseError) {
@@ -564,7 +564,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.WhileStatement,
     context: Context,
     control: Control,
-    stash: Stash
   ) {
     if (hasBreakStatement(command.body as es.BlockStatement)) {
       control.push(instr.breakMarkerInstr(command))
@@ -645,7 +644,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.IfStatement,
     context: Context,
     control: Control,
-    stash: Stash
   ) {
     control.push(...reduceConditional(command))
   },
@@ -718,7 +716,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.ContinueStatement,
     context: Context,
     control: Control,
-    stash: Stash
   ) {
     control.push(instr.contInstr(command))
   },
@@ -727,7 +724,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.BreakStatement,
     context: Context,
     control: Control,
-    stash: Stash
   ) {
     control.push(instr.breakInstr(command))
   },
@@ -780,7 +776,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.MemberExpression,
     context: Context,
     control: Control,
-    stash: Stash
   ) {
     control.push(instr.arrAccInstr(command))
     control.push(command.property)
@@ -791,7 +786,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.ConditionalExpression,
     context: Context,
     control: Control,
-    stash: Stash
+
   ) {
     control.push(...reduceConditional(command))
   },
@@ -854,7 +849,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    * Instructions
    */
 
-  [InstrType.RESET]: function (command: Instr, context: Context, control: Control, stash: Stash) {
+  [InstrType.RESET]: function (command: Instr, context: Context, control: Control) {
     // Keep pushing reset instructions until marker is found.
     const cmdNext: ControlItem | undefined = control.pop()
     if (cmdNext && (!isInstr(cmdNext) || cmdNext.instrType !== InstrType.MARKER)) {
@@ -1266,10 +1261,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const index = stash.pop()
     const array = stash.pop()
 
+    //Check if the index is legal
+    const indexLegalError = rttc.checkoutofRange(command.srcNode, index, context.chapter)
+    if (indexLegalError) {
+      handleRuntimeError(context, indexLegalError)
+    }
+
     // Check if left-hand side is array
-    const error = rttc.checkArray(command.srcNode, array, context.chapter)
-    if (error) {
-      handleRuntimeError(context, error)
+    const LHSerror = rttc.checkArray(command.srcNode, array, context.chapter)
+    if (LHSerror) {
+      handleRuntimeError(context, LHSerror)
     }
 
     // Check if index is out-of-bounds with array, in which case, returns undefined as per spec

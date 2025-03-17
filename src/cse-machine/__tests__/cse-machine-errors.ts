@@ -60,6 +60,27 @@ test('Undefined variable error message differs from verbose version', () => {
   )
 })
 
+const arrayaccessnotarray  = stripIndent`
+1[3];
+`
+
+test('Array access should have an array as object', () => {
+  return expectParsedError(arrayaccessnotarray, optionEC4).toMatchInlineSnapshot(
+    `"Line 1: Expected array, got number."`
+  )
+})
+
+const spreadelementnotarray  = stripIndent`
+const f = x => x;
+f(...1);
+`
+
+test('Spread should have array as the argument', () => {
+  return expectParsedError(spreadelementnotarray, optionEC4).toMatchInlineSnapshot(
+    `"Line 2: Expected array, got number."`
+  )
+})
+
 const assignToBuiltin = stripIndent`
 map = 5;
 `

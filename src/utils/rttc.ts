@@ -119,6 +119,12 @@ export const checkIfStatement = (node: Node, test: Value, chapter: Chapter = Cha
     : new TypeError(node, ' as condition', 'boolean', typeOf(test), chapter)
 }
 
+export const checkoutofRange = (node: Node, test: Value, chapter: Chapter = Chapter.SOURCE_4) => {
+  return (test >= 0 && test <= 2147483647) // as per Source 3 spec
+    ? undefined
+    : new TypeError(node, ' in reasonable range', 'index', 'out of range', chapter)
+}
+
 export const checkMemberAccess = (node: Node, obj: Value, prop: Value) => {
   if (isObject(obj)) {
     return isString(prop) ? undefined : new TypeError(node, ' as prop', 'string', typeOf(prop))

@@ -106,26 +106,6 @@ f(5000, 5000);",
 }
 `;
 
-exports[`Tail calls in mixed tail-call/non-tail-call recursion work: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function f(x, y, z) {
-  if (x <= 0) {
-    return y;
-  } else {
-    return f(x-1, y+f(0, z, 0), z);
-  }
-}
-f(5000, 5000, 2);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 15000,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Tail calls in mutual recursion with arrow functions work: expectResult 1`] = `
 Object {
   "alertResult": Array [],
