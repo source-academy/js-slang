@@ -27,8 +27,8 @@ export class SubstitutionScope {
 }
 
 export interface Marker {
-  redex: StepperBaseNode | null // area of highlighted ast
-  redexType: 'beforeMarker' | 'afterMarker'
+  redex?: StepperBaseNode | null // area of highlighted ast
+  redexType?: 'beforeMarker' | 'afterMarker'
   explanation?: string
 }
 
