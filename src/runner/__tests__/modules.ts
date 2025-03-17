@@ -2,7 +2,8 @@ import { mockContext } from '../../utils/testing/mocks'
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResultValue } from '../../utils/testing/misc'
-import { runCodeInSource } from '../sourceRunner'
+import { runCodeInSource } from '..'
+import { getChapterName } from '../../utils/misc'
 
 jest.mock('../../modules/loader/loaders')
 
@@ -57,7 +58,7 @@ describe.each(describeCases)(
   'Ensuring that %s chapters are able to load modules',
   (_, chapters, variants, code) => {
     const chapterCases = chapters.map(chapterVal => {
-      const [chapterName] = Object.entries(Chapter).find(([, value]) => value === chapterVal)!
+      const chapterName = getChapterName(chapterVal)
       const index = chapters.indexOf(chapterVal)
       const variant = variants[index]
       return [`Testing ${chapterName}`, chapterVal, variant] as [string, Chapter, Variant]

@@ -3,10 +3,8 @@ import { generate } from 'astring'
 import type es from 'estree'
 import { RawSourceMap } from 'source-map'
 
-import type { Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import type { ImportOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import {
   evallerReplacer,
@@ -19,6 +17,7 @@ import * as create from '../utils/ast/astCreator'
 import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
+import { Runner } from './types'
 
 function fullJSEval(code: string, nativeStorage: NativeStorage): any {
   if (nativeStorage.evaller) {
@@ -46,11 +45,7 @@ function containsPrevEval(context: Context): boolean {
   return context.nativeStorage.evaller != null
 }
 
-export async function fullJSRunner(
-  program: es.Program,
-  context: Context,
-  importOptions: ImportOptions
-): Promise<Result> {
+const fullJSRunner: Runner = async (program, context) => {
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
   const prelude = preparePrelude(context)
@@ -91,3 +86,5 @@ export async function fullJSRunner(
     return resolvedErrorPromise
   }
 }
+
+export default fullJSRunner
