@@ -4,13 +4,14 @@ import { getSteps } from '../stepperV2/steppers'
 import { convert } from '../stepperV2/generator'
 import * as astring from 'astring'
 import { StepperBaseNode } from '../stepperV2/interface'
+import { ArrowFunctionExpression, CallExpression, ExpressionStatement } from 'estree'
 
 test('arithmetic', () => {
   const code = `
-  ((x, y) => x + y)(1, 2);
+  (x => {return x + 1;})(1);
     `
   const program = parse(code, mockContext())!
-  console.log(program.body[0])
+  console.log((((program.body[0] as ExpressionStatement).expression as CallExpression).callee as ArrowFunctionExpression).body)
   const stringify = (ast: StepperBaseNode | null) => {
     if (ast === null) {
       return ''

@@ -6,6 +6,7 @@ import { convert } from '../../generator'
 import { redex, SubstitutionScope } from '../..'
 import { StepperVariableDeclaration, StepperVariableDeclarator } from './VariableDeclaration'
 import { getFreshName } from '../../utils'
+import { StepperExpressionStatement } from './ExpressionStatement'
 
 export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   type: 'BlockStatement'
@@ -35,6 +36,15 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       return undefinedNode
     }
     if (this.body.length === 1) {
+      if (this.body[0].type === 'ReturnStatement') {
+        redex.preRedex = [this]
+        redex.postRedex = [this.body[0].argument as StepperExpression]
+        if (this.body[0].argument) {
+          return new StepperExpressionStatement(this.body[0].argument)
+        } else {
+          return undefinedNode
+        }
+      }
       redex.preRedex = [this]
       redex.postRedex = [this.body[0]]
       return this.body[0]

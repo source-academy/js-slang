@@ -47,7 +47,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
 
   isContractible(): boolean {
     if (this.callee.type !== 'ArrowFunctionExpression') return false
-    return this.arguments.every(arg => arg.type === 'Literal')
+    return this.arguments.every(arg => !(arg.isContractible()))
   }
 
   isOneStepPossible(): boolean {
