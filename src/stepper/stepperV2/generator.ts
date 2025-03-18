@@ -18,6 +18,11 @@ import { StepperProgram } from './nodes/Program'
 import { StepperVariableDeclaration, StepperVariableDeclarator } from './nodes/Statement/VariableDeclaration'
 import { StepperIdentifier } from './nodes/Expression/Identifier'
 import { StepperBlockStatement } from './nodes/Statement/BlockStatement'
+import { StepperIfStatement } from './nodes/Statement/IfStatement'
+import { StepperConditionalExpression } from './nodes/Expression/ConditionalExpression'
+import { StepperArrowFunctionExpression } from './nodes/Expression/ArrowFunctionExpression'
+import { StepperFunctionApplication } from './nodes/Expression/FunctionApplication'
+import { StepperReturnStatement } from './nodes/Statement/ReturnStatement'
 const undefinedNode = new StepperLiteral('undefined');
 
 const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
@@ -25,11 +30,16 @@ const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
   UnaryExpression: (node: es.UnaryExpression) => StepperUnaryExpression.create(node),
   BinaryExpression: (node: es.BinaryExpression) => StepperBinaryExpression.create(node),
   ExpressionStatement: (node: es.ExpressionStatement) => StepperExpressionStatement.create(node),
+  ConditionalExpression: (node: es.ConditionalExpression) => StepperConditionalExpression.create(node),
+  ArrowFunctionExpression: (node: es.ArrowFunctionExpression) => StepperArrowFunctionExpression.create(node),
+  CallExpression: (node: es.CallExpression) => StepperFunctionApplication.create(node as es.SimpleCallExpression),
+  ReturnStatement: (node: es.ReturnStatement) => StepperReturnStatement.create(node),
   Program: (node: es.Program) => StepperProgram.create(node),
   VariableDeclaration: (node: es.VariableDeclaration) => StepperVariableDeclaration.create(node),
   VariableDeclarator: (node: es.VariableDeclarator) => StepperVariableDeclarator.create(node),
   Identifier: (node: es.Identifier) => StepperIdentifier.create(node),
-  BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node)
+  BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node),
+  IfStatement: (node: es.IfStatement) => StepperIfStatement.create(node)
 };
 
 export function convert(node: es.BaseNode): StepperBaseNode {
@@ -57,6 +67,33 @@ export function explain(redex: StepperBaseNode): string {
     ExpressionStatement: (node: StepperExpressionStatement) => {
       return generate(node.expression) + " finished evaluating"
     }, 
+    ConditionalExpression: (node: StepperConditionalExpression) => {
+      const test = node.test; // test should have typeof literal
+      if (test.type !== 'Literal') {
+        throw new Error("Invalid conditional contraction. `test` should be literal.")
+      } 
+      const testStatus = (test as StepperLiteral).value;
+      if (typeof testStatus !== 'boolean') {
+        throw new Error("Invalid conditional contraction. `test` should be boolean, got " + typeof testStatus + " instead.")
+      }
+      if (testStatus === true) {
+        return "Conditional expression evaluated, condition is true, consequent evaluated";
+      } else {
+        return "Conditional expression evaluated, condition is false, alternate evaluated"
+      }
+    }, 
+    CallExpression: (node: StepperFunctionApplication) => {
+      if (node.callee.type !== "ArrowFunctionExpression") { // TODO
+        throw new Error("`callee` should be function expression.")
+      }
+      return node.arguments.map(generate).join(", ") + 
+        " substituted into " + 
+        (node.callee as StepperArrowFunctionExpression).params.map(generate).join(", ") + " of "
+        + generate(node.callee);
+    },
+    ArrowFunctionExpression: (node: StepperArrowFunctionExpression) => {
+      throw new Error("Not implemented.")
+    },
     Default: (_: StepperBaseNode) => {
       return "...";
     },

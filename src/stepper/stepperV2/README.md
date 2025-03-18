@@ -105,4 +105,3 @@ SubstitutionScope.substitute(identifier, value) // trigger substitution on Subst
 - Reduce the `init` field first. `const x = 1 + 1;`: `1+1` is an init field.
 - If the `init` field is reduced, toggle substitution and reduce the statement to `StepperUndefined`.
 - VariableDeclaration is always contractable. PreRedex is the variable declaration statement. PostRedexes are all variables substituted.
-
