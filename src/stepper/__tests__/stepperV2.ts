@@ -7,8 +7,13 @@ import { IStepperPropContents } from '../stepperV2'
 
 test('recursion', () => {
   const code = `
-  const f = x => x === 0 ? 1 : x * f(x-1);
-  f(3);
+  const f = () => x;
+  const x = 1;
+
+  {
+    const x = 2;
+    f();
+  }
     `
   const program = parse(code, {ecmaVersion: 10})!
   const stringify = (ast: StepperBaseNode) => {

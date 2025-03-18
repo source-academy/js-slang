@@ -2,6 +2,7 @@ import { ArrowFunctionExpression, Comment, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
+import { getFreshName } from '../../utils'
 
 export class StepperArrowFunctionExpression implements ArrowFunctionExpression, StepperBaseNode {
   type: 'ArrowFunctionExpression'
@@ -73,18 +74,28 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     this.name = name
   }
 
+  scanAllDeclarationNames(): string[] {
+    return this.params.map(param => param.name)
+  }
+
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
-    // Only substitute in body if parameter name doesn't shadow the id
-    if (!this.params.some(param => param.type === 'Identifier' && param.name === id.name)) {
-      return new StepperArrowFunctionExpression(
-        this.params,
-        this.body.substitute(id, value),
-        this.expression,
-        this.generator,
-        this.async
-      )
+    const valueFreeNames = value.freeNames()
+    const scopeNames = this.scanAllDeclarationNames()
+    const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
+    var currentArrowFunction: StepperArrowFunctionExpression = this;
+    for (var index in repeatedNames) {
+      const name = repeatedNames[index]
+      currentArrowFunction = currentArrowFunction.rename(name, getFreshName(name)) as StepperArrowFunctionExpression
     }
-    return this
+
+    if (currentArrowFunction.scanAllDeclarationNames().includes(id.name)) {
+      return currentArrowFunction;
+    }
+
+    return new StepperArrowFunctionExpression(
+        currentArrowFunction.params,
+        currentArrowFunction.body.substitute(id, value)
+    )
   }
 
   freeNames(): string[] {
