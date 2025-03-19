@@ -83,9 +83,11 @@ export function getSourceVariableDeclaration(decl: es.VariableDeclaration) {
     'Variable Declarations in Source should be declared using an Identifier!'
   )
 
+  assert(!!declaration.init, 'Variable declarations in Source must be initialized!')
+
   return {
     id: declaration.id,
-    init: declaration.init!,
+    init: declaration.init,
     loc: declaration.loc
   }
 }

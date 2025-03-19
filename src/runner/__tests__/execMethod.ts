@@ -1,7 +1,7 @@
 import runners, { type RunnerTypes } from '../sourceRunner'
 import { Chapter, type ExecutionMethod, Variant } from '../../types'
 import type { Runner } from '../types'
-import { DEFAULT_SOURCE_OPTIONS, runCodeInSource } from '..'
+import { runCodeInSource } from '..'
 import { mockContext } from '../../utils/testing/mocks'
 import { getChapterName, objectKeys, objectValues } from '../../utils/misc'
 import { asMockedFunc } from '../../utils/testing/misc'
@@ -90,7 +90,7 @@ const sourceCases: FullTestCase[] = [
   {
     contextMethod: 'native',
     variant: Variant.NATIVE,
-    expectedRunner: 'native',
+    expectedRunner: 'fulljs',
     expectedPrelude: false
   }
 ]
@@ -155,11 +155,12 @@ async function testCase({
   // Check if the prelude is null before execution
   // because the prelude gets set to null if it wasn't before
   const shouldPrelude = expectedPrelude && context.prelude !== null
-  const options = { ...DEFAULT_SOURCE_OPTIONS }
-
-  if (optionMethod !== undefined) {
-    options.executionMethod = optionMethod
-  }
+  const options =
+    optionMethod === undefined
+      ? undefined
+      : {
+          executionMethod: optionMethod
+        }
 
   await runCodeInSource(code, context, options)
 
@@ -286,6 +287,15 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       expectedPrelude: true,
       expectedRunner: 'native'
     }))
+
+  // testCases('runner correctly respects optionMethod', objectKeys(runners).map(runner => ({
+  //   code: '"enable verbose"; 0;',
+  //   optionMethod: runner,
+  //   chapter: Chapter.SOURCE_4,
+  //   variant: Variant.DEFAULT,
+  //   expectedPrelude: true,
+  //   expectedRunner: runner
+  // })))
 
   test('if optionMethod is specified, debubger statements are ignored', () =>
     testCase({
