@@ -1,6 +1,6 @@
 /**
  * Setup multiple threads for concurrent execution. For each
- * function <CODE>f_i</CODE>, 
+ * function <CODE>f_i</CODE>,
  * setup a thread <CODE>t_i</CODE> that executes the body of
  * <CODE>f_i</CODE>. Any parameters of <CODE>f_i</CODE> refer
  * to <CODE>undefined</CODE> during execution.

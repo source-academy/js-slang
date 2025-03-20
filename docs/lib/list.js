@@ -8,7 +8,7 @@
  * @returns {pair} pair with <CODE>x</CODE> as head and <CODE>y</CODE> as tail.
  */
 function pair(x, y) {}
- 
+
 /**
  *  **primitive**; returns <CODE>true</CODE> if <CODE>x</CODE> is a
  * pair and false otherwise; time: <CODE>Theta(1)</CODE, space: <CODE>Theta(1)</CODE>.
@@ -23,7 +23,7 @@ function is_pair(x) {}
  * @returns {value} head of <CODE>p</CODE>
  */
 function head(p) {}
- 
+
 /**
  *  **primitive**; returns tail (second component of given pair <CODE>p</CODE>; time: <CODE>Theta(1)</CODE, space: <CODE>Theta(1)</CODE>.
  * @param {pair} p - given pair
@@ -38,13 +38,13 @@ function tail(p) {}
  * @returns {boolean} whether <CODE>x</CODE> is <CODE>null</CODE>
  */
 function is_null(x) {}
- 
+
 /**
  * **primitive**; returns <CODE>true</CODE> if
  * <CODE>xs</CODE> is a list as defined in the textbook, and
- * <CODE>false</CODE> otherwise. Iterative process; 
+ * <CODE>false</CODE> otherwise. Iterative process;
  * time: <CODE>Theta(n)</CODE>, space: <CODE>Theta(1)</CODE>, where <CODE>n</CODE>
- * is the length of the 
+ * is the length of the
  * chain of <CODE>tail</CODE> operations that can be applied to <CODE>xs</CODE>.
  * <CODE>is_list</CODE> recurses down the list and checks that it ends with the empty list null
  * @param {value} xs - given candidate
@@ -58,7 +58,7 @@ function is_list(xs) {}
  * @param {value} value1,value2,...,value_n - given values
  * @returns {list} list containing all values
  */
-function list(value1, value2, ...values ) {}
+function list(value1, value2, ...values) {}
 
 /**
  * visualizes the arguments in a separate drawing
@@ -68,14 +68,14 @@ function list(value1, value2, ...values ) {}
  * @param {value} value1,value2,...,value_n - given values
  * @returns {value} given <CODE>x</CODE>
  */
- function draw_data(value1, value2, ...values ) {}
+function draw_data(value1, value2, ...values) {}
 
 /**
  * Returns <CODE>true</CODE> if both
  * have the same structure with respect to <CODE>pair</CODE>,
- * and identical values at corresponding leave positions (places that are not 
+ * and identical values at corresponding leave positions (places that are not
  * themselves pairs), and <CODE>false</CODE> otherwise. For the "identical",
- * the values need to have the same type, otherwise the result is 
+ * the values need to have the same type, otherwise the result is
  * <CODE>false</CODE>. If corresponding leaves are boolean values, these values
  * need to be the same. If both are <CODE>undefined</CODE> or both are
  * <CODE>null</CODE>, the result is <CODE>true</CODE>. Otherwise they are compared
@@ -89,61 +89,56 @@ function list(value1, value2, ...values ) {}
  * @returns {boolean} whether <CODE>x</CODE> is structurally equal to <CODE>y</CODE>
  */
 function equal(xs, ys) {
-    return is_pair(xs)
-        ? (is_pair(ys) &&
-           equal(head(xs), head(ys)) && 
-           equal(tail(xs), tail(ys)))
-        : is_null(xs)
-        ? is_null(ys)
-        : is_number(xs)
-        ? (is_number(ys) && xs === ys)
+  return is_pair(xs)
+    ? is_pair(ys) && equal(head(xs), head(ys)) && equal(tail(xs), tail(ys))
+    : is_null(xs)
+      ? is_null(ys)
+      : is_number(xs)
+        ? is_number(ys) && xs === ys
         : is_boolean(xs)
-        ? (is_boolean(ys) && ((xs && ys) || (!xs && !ys)))
-        : is_string(xs)
-        ? (is_string(ys) && xs === ys)
-        : is_undefined(xs)
-        ? is_undefined(ys)
-        : // we know now that xs is a function
-          (is_function(ys) && xs === ys);
+          ? is_boolean(ys) && ((xs && ys) || (!xs && !ys))
+          : is_string(xs)
+            ? is_string(ys) && xs === ys
+            : is_undefined(xs)
+              ? is_undefined(ys)
+              : // we know now that xs is a function
+                is_function(ys) && xs === ys
 }
 
 /**
  * Returns the length of the list
- * <CODE>xs</CODE>. 
+ * <CODE>xs</CODE>.
  * Iterative process; time: <CODE>Theta(n)</CODE>, space:
  * <CODE>Theta(1)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
  * @param {list} xs - given list
  * @returns {number} length of <CODE>xs</CODE>
  */
 function length(xs) {
-  return $length(xs, 0);
+  return $length(xs, 0)
 }
 function $length(xs, acc) {
-    return is_null(xs) ? acc : $length(tail(xs), acc + 1);
+  return is_null(xs) ? acc : $length(tail(xs), acc + 1)
 }
 
 /**
  * Returns a list that results from list
- * <CODE>xs</CODE> by element-wise application of unary function <CODE>f</CODE>. 
+ * <CODE>xs</CODE> by element-wise application of unary function <CODE>f</CODE>.
  * Iterative process; time: <CODE>Theta(n)</CODE> (apart from <CODE>f</CODE>),
  * space: <CODE>Theta(n)</CODE> (apart from <CODE>f</CODE>), where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
  * <CODE>f</CODE> is applied element-by-element:
  * <CODE>map(f, list(1, 2))</CODE> results in <CODE>list(f(1), f(2))</CODE>.
- * @param {function} f - unary 
+ * @param {function} f - unary
  * @param {list} xs - given list
  * @returns {list} result of mapping
  */
 function map(f, xs) {
-    return $map(f, xs, null);
+  return $map(f, xs, null)
 }
 function $map(f, xs, acc) {
-    return is_null(xs)
-           ? reverse(acc)
-           : $map(f, tail(xs), pair(f(head(xs)), acc));
+  return is_null(xs) ? reverse(acc) : $map(f, tail(xs), pair(f(head(xs)), acc))
 }
 
-
-/** 
+/**
  * Makes a list with <CODE>n</CODE>
  * elements by applying the unary function <CODE>f</CODE>
  * to the numbers 0 to <CODE>n - 1</CODE>, assumed to be a nonnegative integer.
@@ -153,10 +148,10 @@ function $map(f, xs, acc) {
  * @returns {list} resulting list
  */
 function build_list(fun, n) {
-  return $build_list(n - 1, fun, null);
+  return $build_list(n - 1, fun, null)
 }
 function $build_list(i, fun, already_built) {
-    return i < 0 ? already_built : $build_list(i - 1, fun, pair(fun(i), already_built));
+  return i < 0 ? already_built : $build_list(i - 1, fun, pair(fun(i), already_built))
 }
 
 /**
@@ -167,20 +162,19 @@ function $build_list(i, fun, already_built) {
  * <CODE>f</CODE> is applied element-by-element:
  * <CODE>for_each(fun, list(1, 2))</CODE> results in the calls
  * <CODE>fun(1)</CODE> and <CODE>fun(2)</CODE>.
- * @param {function} f - unary 
+ * @param {function} f - unary
  * @param {list} xs - given list
  * @returns {boolean} true
  */
 
 function for_each(fun, xs) {
   if (is_null(xs)) {
-    return true;
+    return true
   } else {
-    fun(head(xs));
-    return for_each(fun, tail(xs));
+    fun(head(xs))
+    return for_each(fun, tail(xs))
   }
 }
-
 
 /**
  * Returns a string that represents
@@ -193,18 +187,16 @@ function for_each(fun, xs) {
  * @returns {string} <CODE>xs</CODE> converted to string
  */
 function list_to_string(xs) {
-    return $list_to_string(xs, x => x);
+  return $list_to_string(xs, x => x)
 }
 function $list_to_string(xs, cont) {
-    return is_null(xs)
-        ? cont("null")
-        : is_pair(xs)
-        ? $list_to_string(
-              head(xs),
-              x => $list_to_string(
-                       tail(xs),
-                       y => cont("[" + x + "," + y + "]")))
-        : cont(stringify(xs));
+  return is_null(xs)
+    ? cont('null')
+    : is_pair(xs)
+      ? $list_to_string(head(xs), x =>
+          $list_to_string(tail(xs), y => cont('[' + x + ',' + y + ']'))
+        )
+      : cont(stringify(xs))
 }
 
 /**
@@ -217,16 +209,14 @@ function $list_to_string(xs, cont) {
  * @returns {list} <CODE>xs</CODE> in reverse
  */
 function reverse(xs) {
-    return $reverse(xs, null);
+  return $reverse(xs, null)
 }
 function $reverse(original, reversed) {
-    return is_null(original)
-           ? reversed
-           : $reverse(tail(original), pair(head(original), reversed));
+  return is_null(original) ? reversed : $reverse(tail(original), pair(head(original), reversed))
 }
 
 /**
- * Returns a list that results from 
+ * Returns a list that results from
  * appending the list <CODE>ys</CODE> to the list <CODE>xs</CODE>.
  * Iterative process; time: <CODE>Theta(n)</CODE>, space:
  * <CODE>Theta(n)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
@@ -238,12 +228,10 @@ function $reverse(original, reversed) {
  * @returns {list} result of appending <CODE>xs</CODE> and <CODE>ys</CODE>
  */
 function append(xs, ys) {
-    return $append(xs, ys, xs => xs);
+  return $append(xs, ys, xs => xs)
 }
 function $append(xs, ys, cont) {
-    return is_null(xs)
-           ? cont(ys)
-           : $append(tail(xs), ys, zs => cont(pair(head(xs), zs)));
+  return is_null(xs) ? cont(ys) : $append(tail(xs), ys, zs => cont(pair(head(xs), zs)))
 }
 
 /**
@@ -258,11 +246,7 @@ function $append(xs, ys, cont) {
  * @returns {list} postfix sublist that starts with <CODE>v</CODE>
  */
 function member(v, xs) {
-    return is_null(xs)
-           ? null
-           : (v === head(xs))
-           ? xs
-           : member(v, tail(xs));
+  return is_null(xs) ? null : v === head(xs) ? xs : member(v, tail(xs))
 }
 
 /** Returns a list that results from
@@ -277,14 +261,14 @@ function member(v, xs) {
  * @returns {list} <CODE>xs</CODE> with first occurrence of <CODE>v</CODE> removed
  */
 function remove(v, xs) {
-    return $remove(v, xs, null);
+  return $remove(v, xs, null)
 }
 function $remove(v, xs, acc) {
   return is_null(xs)
-         ? append(reverse(acc), xs)
-         : v === head(xs)
-         ? append(reverse(acc), tail(xs))
-         : $remove(v, tail(xs), pair(head(xs), acc));
+    ? append(reverse(acc), xs)
+    : v === head(xs)
+      ? append(reverse(acc), tail(xs))
+      : $remove(v, tail(xs), pair(head(xs), acc))
 }
 
 /**
@@ -292,7 +276,7 @@ function $remove(v, xs, acc) {
  * <CODE>xs</CODE> by removing all items from <CODE>xs</CODE> that
  * are identical (<CODE>===</CODE>) to <CODE>v</CODE>.
  * Returns the original
- * list if there is no occurrence.  
+ * list if there is no occurrence.
  * Iterative process;
  * time: <CODE>Theta(n)</CODE>, space: <CODE>Theta(n)</CODE>, where <CODE>n</CODE>
  * is the length of <CODE>xs</CODE>.
@@ -301,14 +285,14 @@ function $remove(v, xs, acc) {
  * @returns {list} <CODE>xs</CODE> with all occurrences of <CODE>v</CODE> removed
  */
 function remove_all(v, xs) {
-    return $remove_all(v, xs, null);
+  return $remove_all(v, xs, null)
 }
 function $remove_all(v, xs, acc) {
   return is_null(xs)
-         ? append(reverse(acc), xs)
-         : v === head(xs)
-         ? $remove_all(v, tail(xs), acc)
-         : $remove_all(v, tail(xs), pair(head(xs), acc));
+    ? append(reverse(acc), xs)
+    : v === head(xs)
+      ? $remove_all(v, tail(xs), acc)
+      : $remove_all(v, tail(xs), pair(head(xs), acc))
 }
 
 /**
@@ -324,14 +308,14 @@ function $remove_all(v, xs, acc) {
  * @returns {list} list with those elements of <CODE>xs</CODE> for which <CODE>pred</CODE> holds.
  */
 function filter(pred, xs) {
-    return $filter(pred, xs, null);
+  return $filter(pred, xs, null)
 }
 function $filter(pred, xs, acc) {
   return is_null(xs)
     ? reverse(acc)
     : pred(head(xs))
-    ? $filter(pred, tail(xs), pair(head(xs), acc))
-    : $filter(pred, tail(xs), acc);
+      ? $filter(pred, tail(xs), pair(head(xs), acc))
+      : $filter(pred, tail(xs), acc)
 }
 
 /**
@@ -346,17 +330,15 @@ function $filter(pred, xs, acc) {
  * @returns {list} list from <CODE>start</CODE> to <CODE>end</CODE>
  */
 function enum_list(start, end) {
-    return $enum_list(start, end, null);
+  return $enum_list(start, end, null)
 }
 function $enum_list(start, end, acc) {
-  return start > end
-         ? reverse(acc)
-         : $enum_list(start + 1, end, pair(start, acc));
+  return start > end ? reverse(acc) : $enum_list(start + 1, end, pair(start, acc))
 }
 
-/** 
+/**
  * Returns the element
- * of list <CODE>xs</CODE> at position <CODE>n</CODE>, 
+ * of list <CODE>xs</CODE> at position <CODE>n</CODE>,
  * where the first element has index 0.
  * Iterative process;
  * time: <CODE>Theta(n)</CODE>, space: <CODE>Theta(1)</CODE>,
@@ -366,16 +348,14 @@ function $enum_list(start, end, acc) {
  * @returns {value} item in <CODE>xs</CODE> at position <CODE>n</CODE>
  */
 function list_ref(xs, n) {
-    return n === 0
-           ? head(xs)
-           : list_ref(tail(xs), n - 1);
+  return n === 0 ? head(xs) : list_ref(tail(xs), n - 1)
 }
 
 /** Applies binary
  * function <CODE>f</CODE> to the elements of <CODE>xs</CODE> from
  * right-to-left order, first applying <CODE>f</CODE> to the last element
  * and the value <CODE>initial</CODE>, resulting in <CODE>r</CODE><SUB>1</SUB>,
- * then to the 
+ * then to the
  * second-last element and <CODE>r</CODE><SUB>1</SUB>, resulting in
  * <CODE>r</CODE><SUB>2</SUB>,
  * etc, and finally
@@ -392,14 +372,11 @@ function list_ref(xs, n) {
  * @returns {value} result of accumulating <CODE>xs</CODE> using <CODE>f</CODE> starting with <CODE>initial</CODE>
  */
 function accumulate(f, initial, xs) {
-  return $accumulate(f, initial, xs, x => x);
+  return $accumulate(f, initial, xs, x => x)
 }
 function $accumulate(f, initial, xs, cont) {
-    return is_null(xs)
-           ? cont(initial)
-           : $accumulate(f, initial, tail(xs), x => cont(f(head(xs), x)));
+  return is_null(xs) ? cont(initial) : $accumulate(f, initial, tail(xs), x => cont(f(head(xs), x)))
 }
-
 
 /**
  * Optional second argument.

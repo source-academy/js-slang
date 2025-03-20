@@ -1,8 +1,8 @@
 /**
  * returns the parse tree that results from parsing
  * the string <CODE>str</CODE> as a Source program. The format
- * of the parse tree is described in chapter 4 of 
- * the textbook 
+ * of the parse tree is described in chapter 4 of
+ * the textbook
  * in <a href="https://sourceacademy.org/sicpjs/">Structure and
  * Interpretation of Computer Programs, JavaScript Adaptation</a> (SICP).
  * @param {string} x - given program as a string
@@ -28,4 +28,3 @@ function tokenize(str) {}
  * @returns {whatever} whatever <CODE>f</CODE> returns
  */
 function apply_in_underlying_javascript(f, xs) {}
-
