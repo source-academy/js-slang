@@ -22,9 +22,9 @@ const CATEGORY = {
   types: /\bstorage.type\b/,
   forbidden: /\bvariable.language\b/,
   keywords: /\bkeyword\b/,
+  consts: /\bbuiltinconsts\b/,
   number: /\bconstant.numeric\b/,
-  bool: /\bconstant.language.boolean\b/,
-  identifier: /\bidentifier\b/
+  bool: /\bconstant.language.boolean\b/
 }
 
 const setSession = (chapter: Chapter, variant: Variant, external: string, code: string): void => {
@@ -49,15 +49,15 @@ test('function token type error', () => {
   const token2 = session.getTokenAt(1, 3)
 
   // at source 2, pair is function but set_tail is not
-  expect(expectedBool(token1, CATEGORY.identifier)).toBe(true)
+  expect(expectedBool(token1, CATEGORY.functions)).toBe(true)
   expect(expectedBool(token2, CATEGORY.functions)).toBe(false)
 
   // at source 4, set_tail is function as well
   setSession(Chapter.SOURCE_4, defaultVariant, defaultExternal, code)
   const newToken1 = session.getTokenAt(0, 11)
   const newToken2 = session.getTokenAt(1, 3)
-  expect(expectedBool(newToken1, CATEGORY.identifier)).toBe(true)
-  expect(expectedBool(newToken2, CATEGORY.identifier)).toBe(true)
+  expect(expectedBool(newToken1, CATEGORY.functions)).toBe(true)
+  expect(expectedBool(newToken2, CATEGORY.functions)).toBe(true)
 })
 
 test('constants are not correctly loaded', () => {
@@ -72,7 +72,7 @@ test('constants are not correctly loaded', () => {
   expect(expectedBool(token2, CATEGORY.number)).toBe(true)
 
   const token3 = session.getTokenAt(2, 1)
-  expect(expectedBool(token3, CATEGORY.identifier)).toBe(true)
+  expect(expectedBool(token3, CATEGORY.consts)).toBe(true)
 })
 
 test('operator syntax type error', () => {
