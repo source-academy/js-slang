@@ -1,18 +1,18 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { NoAssignmentToForVariable } from '../errors/validityErrors'
 import { parse } from '../parser/parser'
-import { Context, Node, NodeWithInferredType } from '../types'
-import { getVariableDeclarationName } from '../utils/ast/astCreator'
+import type { Context, Node, NodeWithInferredType } from '../types'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getNativeIds,
-  NativeIds
+  type NativeIds
 } from '../utils/uniqueIds'
-import { ancestor, base, FullWalkerCallback } from '../utils/walkers'
+import { ancestor, base, type FullWalkerCallback } from '../utils/walkers'
+import { getSourceVariableDeclaration } from '../utils/ast/helpers'
 
 class Declaration {
   public accessedBeforeDeclaration: boolean = false
@@ -30,7 +30,7 @@ export function validateAndAnnotate(
     for (const statement of node.body) {
       if (statement.type === 'VariableDeclaration') {
         initialisedIdentifiers.set(
-          getVariableDeclarationName(statement),
+          getSourceVariableDeclaration(statement).id.name,
           new Declaration(statement.kind === 'const')
         )
       } else if (statement.type === 'FunctionDeclaration') {
@@ -64,7 +64,9 @@ export function validateAndAnnotate(
       if (init.type === 'VariableDeclaration') {
         accessedBeforeDeclarationMap.set(
           forStatement,
-          new Map([[getVariableDeclarationName(init), new Declaration(init.kind === 'const')]])
+          new Map([
+            [getSourceVariableDeclaration(init).id.name, new Declaration(init.kind === 'const')]
+          ])
         )
         scopeHasCallExpressionMap.set(forStatement, false)
       }
@@ -105,7 +107,7 @@ export function validateAndAnnotate(
     {
       VariableDeclaration(node: NodeWithInferredType<es.VariableDeclaration>, ancestors: Node[]) {
         const lastAncestor = ancestors[ancestors.length - 2]
-        const name = getVariableDeclarationName(node)
+        const { name } = getSourceVariableDeclaration(node).id
         const accessedBeforeDeclaration = accessedBeforeDeclarationMap
           .get(lastAncestor)!
           .get(name)!.accessedBeforeDeclaration
@@ -180,7 +182,10 @@ export function checkForUndefinedVariables(
     const identifiers = new Set<string>()
     for (const statement of node.body) {
       if (statement.type === 'VariableDeclaration') {
-        identifiers.add((statement.declarations[0].id as es.Identifier).name)
+        const {
+          id: { name }
+        } = getSourceVariableDeclaration(statement)
+        identifiers.add(name)
       } else if (statement.type === 'FunctionDeclaration') {
         if (statement.id === null) {
           throw new Error(
@@ -217,13 +222,13 @@ export function checkForUndefinedVariables(
     BlockStatement: processBlock,
     FunctionDeclaration: processFunction,
     ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
+    ForStatement(forStatement: es.ForStatement) {
       const init = forStatement.init!
       if (init.type === 'VariableDeclaration') {
-        identifiersIntroducedByNode.set(
-          forStatement,
-          new Set([(init.declarations[0].id as es.Identifier).name])
-        )
+        const {
+          id: { name }
+        } = getSourceVariableDeclaration(init)
+        identifiersIntroducedByNode.set(forStatement, new Set([name]))
       }
     },
     Identifier(identifier: es.Identifier, ancestors: es.Node[]) {

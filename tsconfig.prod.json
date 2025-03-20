@@ -14,6 +14,6 @@
     "sicp_publish",
     "src/**/__tests__/**",
     "src/**/__mocks__/**",
-    "src/testing"
+    "src/utils/testing"
   ]
 }

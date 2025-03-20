@@ -2,11 +2,11 @@ import type { Program } from 'estree'
 import type { MockedFunction } from 'jest-mock'
 
 import { parseError, type IOptions } from '../../..'
-import { mockContext } from '../../../mocks/context'
+import { mockContext } from '../../../utils/testing/mocks'
 import { Chapter, type RecursivePartial } from '../../../types'
 import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
 import preprocessFileImports from '..'
-import { sanitizeAST } from '../../../utils/ast/sanitizer'
+import { sanitizeAST } from '../../../utils/testing/sanitizer'
 import { parse } from '../../../parser/parser'
 import {
   accessExportFunctionName,
