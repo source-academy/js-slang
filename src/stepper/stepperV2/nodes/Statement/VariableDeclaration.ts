@@ -100,7 +100,6 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
     this.declarations.forEach(declarator => {
       if (declarator.init?.type === 'ArrowFunctionExpression') {
         declarator.init.setGivenName(declarator.id.name)
-        console.log(declarator.id.name)
       }
       SubstitutionScope.substitute(declarator.id, declarator.init)
     })

@@ -82,6 +82,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     const valueFreeNames = value.freeNames()
     const scopeNames = this.scanAllDeclarationNames()
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
+
     var currentArrowFunction: StepperArrowFunctionExpression = this;
     for (var index in repeatedNames) {
       const name = repeatedNames[index]
@@ -106,15 +107,12 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
   }
 
   rename(before: string, after: string): StepperExpression {
-    if (!this.params.some(param => param.type === 'Identifier' && param.name === before)) {
-      return new StepperArrowFunctionExpression(
-        this.params,
-        this.body.rename(before, after),
-        this.expression,
-        this.generator,
-        this.async
-      )
-    }
-    return this
+    return new StepperArrowFunctionExpression(
+      this.params.map(param => param.rename(before, after)),
+      this.body.rename(before, after),
+      this.expression,
+      this.generator,
+      this.async
+    )
   }
 }

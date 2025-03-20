@@ -66,7 +66,9 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     
     let result = lambda.body
     
-    if (lambda.name) {
+    console.log("substituting", lambda.name, lambda)
+    if (lambda.name && !(this.callee.scanAllDeclarationNames().includes(lambda.name))) {
+      console.log("substituting", lambda.name, lambda)
       result = result.substitute({ type: 'Identifier', name: lambda.name } as StepperPattern, lambda)
     }
     
