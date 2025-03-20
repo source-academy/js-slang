@@ -50,4 +50,4 @@ export const SourceDocumentation = {
     '4_explicit-control': resolveImportInconsistency(source_4_explicit_control)
   },
   ext_lib
-} as const
+}
