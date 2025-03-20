@@ -141,22 +141,6 @@ Object {
 }
 `;
 
-exports[`primitive stream functions stream is properly created: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const s = stream(true, false, undefined, 1, x=>x, null, -123, head);
-const result = [];
-stream_for_each(item => {result[array_length(result)] = item;}, s);
-stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": false,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`primitive stream functions stream_tail is lazy: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -187,6 +171,22 @@ Object {
 `;
 
 exports[`primitive stream functions stream_to_list works for null: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const s = stream(true, false, undefined, 1, x=>x, null, -123, head);
+const result = [];
+stream_for_each(item => {result[array_length(result)] = item;}, s);
+stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`primitive stream functions stream_to_list works for null: expectResult 2`] = `
 Object {
   "alertResult": Array [],
   "code": "stream_to_list(null);",

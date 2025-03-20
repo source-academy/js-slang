@@ -945,6 +945,19 @@ Object {
 }
 `;
 
+exports[`test false && false: expect to match JS 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "false && false;",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": false,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`test false && true: expect to match JS 1`] = `
 Object {
   "alertResult": Array [],
@@ -998,19 +1011,6 @@ Object {
 `;
 
 exports[`test true && false: expect to match JS 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "false && false;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": false,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`test true && false: expect to match JS 2`] = `
 Object {
   "alertResult": Array [],
   "code": "true && false;",
