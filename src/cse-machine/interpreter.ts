@@ -329,7 +329,7 @@ function evaluateImports(program: es.Program, context: Context) {
  * @returns The corresponding promise.
  */
 export function CSEResultPromise(context: Context, value: Value): Promise<Result> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (value instanceof CSEBreak) {
       resolve({ status: 'suspended-cse-eval', context })
     } else if (value instanceof CseError) {
@@ -560,11 +560,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     return
   },
 
-  WhileStatement: function (
-    command: es.WhileStatement,
-    context: Context,
-    control: Control,
-  ) {
+  WhileStatement: function (command: es.WhileStatement, context: Context, control: Control) {
     if (hasBreakStatement(command.body as es.BlockStatement)) {
       control.push(instr.breakMarkerInstr(command))
     }
@@ -640,11 +636,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  IfStatement: function (
-    command: es.IfStatement,
-    context: Context,
-    control: Control,
-  ) {
+  IfStatement: function (command: es.IfStatement, context: Context, control: Control) {
     control.push(...reduceConditional(command))
   },
 
@@ -712,19 +704,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  ContinueStatement: function (
-    command: es.ContinueStatement,
-    context: Context,
-    control: Control,
-  ) {
+  ContinueStatement: function (command: es.ContinueStatement, context: Context, control: Control) {
     control.push(instr.contInstr(command))
   },
 
-  BreakStatement: function (
-    command: es.BreakStatement,
-    context: Context,
-    control: Control,
-  ) {
+  BreakStatement: function (command: es.BreakStatement, context: Context, control: Control) {
     control.push(instr.breakInstr(command))
   },
 
@@ -772,11 +756,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  MemberExpression: function (
-    command: es.MemberExpression,
-    context: Context,
-    control: Control,
-  ) {
+  MemberExpression: function (command: es.MemberExpression, context: Context, control: Control) {
     control.push(instr.arrAccInstr(command))
     control.push(command.property)
     control.push(command.object)
@@ -785,8 +765,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ConditionalExpression: function (
     command: es.ConditionalExpression,
     context: Context,
-    control: Control,
-
+    control: Control
   ) {
     control.push(...reduceConditional(command))
   },

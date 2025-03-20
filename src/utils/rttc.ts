@@ -120,7 +120,7 @@ export const checkIfStatement = (node: Node, test: Value, chapter: Chapter = Cha
 }
 
 export const checkoutofRange = (node: Node, test: Value, chapter: Chapter = Chapter.SOURCE_4) => {
-  return (test >= 0 && test <= 2147483647) // as per Source 3 spec
+  return test >= 0 && test <= 2147483647 // as per Source 3 spec
     ? undefined
     : new TypeError(node, ' in reasonable range', 'index', 'out of range', chapter)
 }
