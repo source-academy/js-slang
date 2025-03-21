@@ -31,7 +31,7 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
   }
 
   contract(): StepperVariableDeclarator {
-    return new StepperVariableDeclarator(this.id, this.init!.contract())
+    return new StepperVariableDeclarator(this.id, this.init!.oneStep())
   }
 
   oneStep(): StepperVariableDeclarator {

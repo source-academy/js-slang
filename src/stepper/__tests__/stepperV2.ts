@@ -4,13 +4,11 @@ import { convert } from '../stepperV2/generator'
 import * as astring from 'astring'
 import { StepperBaseNode } from '../stepperV2/interface'
 import { IStepperPropContents } from '../stepperV2'
+import { ExpressionStatement, Program } from 'estree'
 
 test('recursion', () => {
   const code = `
-  const f = () => x + 1;
-  const x = 1;
-  const h = x => f();
-  h(2);
+  1 + 1;
     `
   const program = parse(code, {ecmaVersion: 10})!
   const stringify = (ast: StepperBaseNode) => {
@@ -41,12 +39,15 @@ test('recursion', () => {
 // FIX: x not renamed to x_1
 test('renaming', () => {
   const code = `
-  const f = () => x;
+  const f = () => {
+    return x + 1;
+  };
   const x = 1;
-  (x => f())(2);
-
+  const h = x => f();
+  h(1);
   `
   const program = parse(code, {ecmaVersion: 10})!
+
   const stringify = (ast: StepperBaseNode) => {
     if (ast === undefined || ast!.type === undefined) {
       return ''

@@ -3,6 +3,8 @@ import { StepperBaseNode } from '../../interface'
 import { redex } from '../..'
 import { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
+import { StepperBlockExpression } from './BlockExpression'
+import { StepperBlockStatement } from '../Statement/BlockStatement'
 
 export class StepperFunctionApplication implements SimpleCallExpression, StepperBaseNode {
   type: 'CallExpression'
@@ -56,19 +58,27 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     return this.arguments.some(arg => arg.isOneStepPossible())
   }
 
-  contract(): StepperExpression {
+  contract(): StepperExpression | StepperBlockExpression {
     redex.preRedex = [this]
     if (!this.isContractible()) throw new Error()
     if (this.callee.type !== 'ArrowFunctionExpression') throw new Error()
 
     const lambda = this.callee
     const args = this.arguments
+
+    let result: StepperBlockExpression | StepperExpression = lambda.body;
     
-    let result = lambda.body
+    if (result instanceof StepperBlockStatement) {
+      const blockStatement = lambda.body as unknown as StepperBlockStatement;
+      result = new StepperBlockExpression(
+        blockStatement.body
+      );
+    } else {
+      result = lambda.body as StepperExpression;
+    }
     
-    console.log("substituting", lambda.name, lambda)
+
     if (lambda.name && !(this.callee.scanAllDeclarationNames().includes(lambda.name))) {
-      console.log("substituting", lambda.name, lambda)
       result = result.substitute({ type: 'Identifier', name: lambda.name } as StepperPattern, lambda)
     }
     
@@ -82,7 +92,8 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
 
   oneStep(): StepperExpression {
     if (this.isContractible()) {
-      return this.contract()
+      // @ts-ignore: contract can return StepperBlockExpression but it's handled at runtime
+      return this.contract();
     }
     
     if (this.callee.isOneStepPossible()) {

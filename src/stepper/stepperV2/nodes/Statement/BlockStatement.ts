@@ -6,11 +6,11 @@ import { convert } from '../../generator'
 import { redex, SubstitutionScope } from '../..'
 import { StepperVariableDeclaration, StepperVariableDeclarator } from './VariableDeclaration'
 import { getFreshName } from '../../utils'
-import { StepperExpressionStatement } from './ExpressionStatement'
 
 export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   type: 'BlockStatement'
   body: StepperStatement[]
+  leadingComments: any
 
   constructor(body: StepperStatement[]) {
     this.type = 'BlockStatement'

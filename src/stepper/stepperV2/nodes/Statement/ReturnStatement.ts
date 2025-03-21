@@ -3,6 +3,7 @@ import { StepperBaseNode } from '../../interface'
 import { convert } from '../../generator'
 import { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
+import { StepperLiteral } from '../Expression/Literal'
 
 export class StepperReturnStatement implements ReturnStatement, StepperBaseNode {
   type: 'ReturnStatement'
@@ -13,18 +14,19 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
   range?: [number, number] | undefined
   
   isContractible(): boolean {
-    return this.argument ? this.argument.isContractible() : false
+    if (!this.argument) return true;
+    return this.argument.type === 'Literal';
   }
   
   isOneStepPossible(): boolean {
     return this.argument ? this.argument.isOneStepPossible() : false
   }
   
-  contract(): StepperReturnStatement {
+  contract(): StepperLiteral {
     if (!this.argument) {
       throw new Error('Cannot contract return statement without argument')
     }
-    return new StepperReturnStatement(this.argument.contract())
+    return this.argument.oneStep() as StepperLiteral;
   }
 
   contractEmpty() { 

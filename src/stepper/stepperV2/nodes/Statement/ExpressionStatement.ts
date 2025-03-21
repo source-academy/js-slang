@@ -13,7 +13,7 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
     return this.expression.isOneStepPossible()
   }
   contract(): StepperExpressionStatement {
-    return new StepperExpressionStatement(this.expression.contract())
+    return new StepperExpressionStatement(this.expression.oneStep())
   }
 
   contractEmpty() { 
