@@ -154,33 +154,6 @@ Object {
 }
 `;
 
-exports[`Recursive call early returns in for loops work: expectResult 2`] = `
-Object {
-  "alertResult": Array [],
-  "code": "
-    function unreachable() {
-      return 1 < true; // Will cause an error
-    }
-    function id(x) {
-      return x;
-    }
-    function f() {
-      for (let i = 0; i < 100; i = i + 1) {
-        return id(i+1) + id(i+2);
-      }
-      return 0;
-    }
-    f();
-  ",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 3,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Recursive call early returns in if statements work: expectResult 1`] = `
 Object {
   "alertResult": Array [],
