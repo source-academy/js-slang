@@ -1,5 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Array access should have an array as object: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1[3];",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected array, got number.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Builtins don't create additional errors when it's not their fault: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -963,6 +976,20 @@ test();",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 3: Name variable not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Spread should have array as the argument: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+f(...1);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Expected array, got number.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

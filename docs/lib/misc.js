@@ -4,16 +4,14 @@
  * @param {value} v to be checked
  * @returns {boolean} indicating whether the value is a number
  */
-function is_number(v) {
-}
+function is_number(v) {}
 
 /**
  * checks whether a given value is a boolean
  * @param {value} v to be checked
  * @returns {boolean} indicating whether the value is a boolean
  */
-function is_boolean(v) {
-}
+function is_boolean(v) {}
 
 /**
  * checks whether a given value is a string.
@@ -21,24 +19,21 @@ function is_boolean(v) {
  * @param {value} v to be checked
  * @returns {boolean} indicating whether the value is a string
  */
-function is_string(v) {
-}
+function is_string(v) {}
 
 /**
  * checks whether a given value is a function
  * @param {value} v to be checked
  * @returns {boolean} indicating whether the value is a function
  */
-function is_function(v) {
-}
+function is_function(v) {}
 
 /**
  * checks whether a given value is the special value <CODE>undefined</CODE>
  * @param {value} v to be checked
  * @returns {boolean} indicating whether the value is <CODE>undefined</CODE>
  */
-function is_undefined(v) {
-}
+function is_undefined(v) {}
 
 /**
  * Returns number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.
@@ -68,7 +63,7 @@ function parse_int(s, i) {}
  * See also <a href="https://sourceacademy.org/sicpjs/4.1.1#h5">textbook explanation in section 4.1.1</a>.
  * @const {undefined}
  */
-const undefined = (() => {})();
+const undefined = (() => {})()
 
 /**
  * The name <CODE>NaN</CODE> refers to the special number value <CODE>NaN</CODE> ("not a number"). Note that
@@ -76,14 +71,14 @@ const undefined = (() => {})();
  * See <a href="https://www.ecma-international.org/ecma-262/9.0/index.html#sec-value-properties-of-the-global-object-nan">ECMAScript Specification, Section 4.3.24</a>
  * @const {number}
  */
-const NaN = 0 / 0;
+const NaN = 0 / 0
 
 /**
  * The name <CODE>Infinity</CODE> refers to the special number value <CODE>Infinity</CODE>.
  * See <a href="https://www.ecma-international.org/ecma-262/9.0/index.html#sec-value-properties-of-the-global-object-infinity">ECMAScript Specification, Section 4.3.23</a>
  * @const {number}
  */
-const Infinity = 1 / 0;
+const Infinity = 1 / 0
 
 /**
  * Pops up a window that displays the string <CODE>s</CODE>, provides
@@ -95,8 +90,7 @@ const Infinity = 1 / 0;
  * @param {string} s to be displayed in popup
  * @returns {string} entered text
  */
-function prompt(s) {
-}
+function prompt(s) {}
 
 /**
  * Optional second argument. If present,
@@ -112,8 +106,7 @@ function prompt(s) {
  * @param {string} s to be displayed, preceding <CODE>v</CODE>, optional argument
  * @returns {value} v, the first argument value
  */
-function display(v, s) {
-}
+function display(v, s) {}
 
 /**
  * Optional second argument.
@@ -131,8 +124,7 @@ function display(v, s) {
  * @param {value} v to be displayed
  * @param {string} s to be displayed, preceding <CODE>v</CODE>
  */
-function error(v, s) {
-}
+function error(v, s) {}
 
 /**
  * returns a string that represents the value <CODE>v</CODE>, using a
@@ -143,8 +135,7 @@ function error(v, s) {
  * @param {value} v the argument value
  * @returns {string} string representation of v
  */
-function stringify(v) {
-}
+function stringify(v) {}
 
 /**
  * Takes a string <CODE>s</CODE> as first argument and a nonnegative integer
@@ -165,5 +156,4 @@ function char_at(s, i) {}
  * @param {function} f - given function
  * @returns {number} number of parameters f expects
  */
- function arity(f) {
- }
+function arity(f) {}
