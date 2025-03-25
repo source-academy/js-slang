@@ -42,9 +42,9 @@ test('recursion', () => {
 // FIX: x not renamed to x_1
 test('renaming', () => {
   const code = `
-  const f = x => x < 1 ? 1 : f(x - 1) + g(x - 1);
-const g = y => y < 1 ? 1 : g(y - 1) + h(y - 1);
-const h = z => z < 1 ? 1 : h(z - 1) + f(z - 1);
+  const f = x => x <= 1 ? 1 : f(x - 1) + g(x - 1);
+const g = y => y <= 1 ? 1 : g(y - 1) + h(y - 1);
+const h = z => z <= 1 ? 1 : h(z - 1) + f(z - 1);
 f(3);
   `
   const program = parse(code, { ecmaVersion: 10 })!
