@@ -3,6 +3,7 @@ import { StepperBaseNode } from '../../interface'
 import { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
 import { getFreshName } from '../../utils'
+import { StepperBlockStatement } from '../Statement/BlockStatement'
 
 export class StepperArrowFunctionExpression implements ArrowFunctionExpression, StepperBaseNode {
   type: 'ArrowFunctionExpression'
@@ -75,7 +76,19 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
   }
 
   scanAllDeclarationNames(): string[] {
-    return this.params.map(param => param.name)
+    const paramNames = this.params.map(param => param.name);
+    
+    let bodyDeclarations: string[] = [];
+    // @ts-ignore
+    if (this.body.type === 'BlockStatement') {
+      
+      const body = this.body as StepperBlockStatement
+      bodyDeclarations = body.body
+        .filter(stmt => stmt.type === 'VariableDeclaration')
+        .flatMap(decl => (decl as any).declarations.map((d: any) => d.id.name));
+    }
+    
+    return [...paramNames, ...bodyDeclarations];
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
