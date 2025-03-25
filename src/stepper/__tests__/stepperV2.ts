@@ -38,10 +38,10 @@ test('recursion', () => {
 // FIX: x not renamed to x_1
 test('renaming', () => {
   const code = `
-  const f = (n) => {
-    return n === 0 ? 1 : n * f(n-1);
-};
-f(5);
+  function f() {
+    return x => x + 1;
+  }
+  f()(1);
   `
   const program = parse(code, {ecmaVersion: 10})!
 

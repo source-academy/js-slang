@@ -15,7 +15,7 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
   
   isContractible(): boolean {
     if (!this.argument) return true;
-    return this.argument.type === 'Literal';
+    return !this.argument.isOneStepPossible();
   }
   
   isOneStepPossible(): boolean {
@@ -26,7 +26,7 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
     if (!this.argument) {
       throw new Error('Cannot contract return statement without argument')
     }
-    return this.argument.oneStep() as StepperLiteral;
+    return this.argument as StepperLiteral;
   }
 
   contractEmpty() { 
