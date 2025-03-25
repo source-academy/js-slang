@@ -21,6 +21,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
   constructor(
     params: StepperPattern[],
     body: StepperExpression,
+    name?: string,
     expression: boolean = true,
     generator: boolean = false,
     async: boolean = false,
@@ -35,6 +36,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     this.expression = expression
     this.generator = generator
     this.async = async
+    this.name = name
     this.leadingComments = leadingComments
     this.trailingComments = trailingComments
     this.loc = loc
@@ -45,6 +47,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     return new StepperArrowFunctionExpression(
       node.params.map(param => convert(param) as StepperPattern),
       convert(node.body) as StepperExpression,
+      undefined,
       node.expression,
       node.generator,
       node.async,
@@ -108,7 +111,8 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
 
     return new StepperArrowFunctionExpression(
         currentArrowFunction.params,
-        currentArrowFunction.body.substitute(id, value)
+        currentArrowFunction.body.substitute(id, value),
+        currentArrowFunction.name
     )
   }
 
@@ -123,6 +127,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     return new StepperArrowFunctionExpression(
       this.params.map(param => param.rename(before, after)),
       this.body.rename(before, after),
+      this.name,
       this.expression,
       this.generator,
       this.async

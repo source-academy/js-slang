@@ -5,6 +5,7 @@ import { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
 import { StepperBlockExpression } from './BlockExpression'
 import { StepperBlockStatement } from '../Statement/BlockStatement'
+import { builtinFunctions } from '../../builtin'
 
 export class StepperFunctionApplication implements SimpleCallExpression, StepperBaseNode {
   type: 'CallExpression'
@@ -48,8 +49,15 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
   }
 
   isContractible(): boolean {
-    if (this.callee.type !== 'ArrowFunctionExpression') return false
-    return this.arguments.every(arg => !(arg.isContractible()))
+    const isValidCallee = 
+      this.callee.type === 'ArrowFunctionExpression' || 
+      (this.callee.type === 'Identifier' && Object.keys(builtinFunctions).includes(this.callee.name));
+    
+    if (!isValidCallee) {
+      return false;
+    }
+    
+    return this.arguments.every(arg => !arg.isContractible());
   }
 
   isOneStepPossible(): boolean {
@@ -61,6 +69,17 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
   contract(): StepperExpression | StepperBlockExpression {
     redex.preRedex = [this]
     if (!this.isContractible()) throw new Error()
+    
+    if (this.callee.type === 'Identifier') {
+      const functionName = this.callee.name;
+      if (Object.keys(builtinFunctions).includes(functionName)) {
+        const result = builtinFunctions[functionName as keyof typeof builtinFunctions](this.arguments);
+        redex.postRedex = [result];
+        return result;
+      }
+      throw new Error(`Unknown builtin function: ${functionName}`);
+    }
+    
     if (this.callee.type !== 'ArrowFunctionExpression') throw new Error()
 
     const lambda = this.callee
@@ -77,7 +96,6 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
       result = lambda.body as StepperExpression;
     }
     
-
     if (lambda.name && !(this.callee.scanAllDeclarationNames().includes(lambda.name))) {
       result = result.substitute({ type: 'Identifier', name: lambda.name } as StepperPattern, lambda)
     }

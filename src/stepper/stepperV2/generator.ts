@@ -24,6 +24,7 @@ import { StepperArrowFunctionExpression } from './nodes/Expression/ArrowFunction
 import { StepperFunctionApplication } from './nodes/Expression/FunctionApplication'
 import { StepperReturnStatement } from './nodes/Statement/ReturnStatement'
 import { StepperFunctionDeclaration } from './nodes/Statement/FunctionDeclaration'
+import { StepperArrayExpression } from './nodes/Expression/ArrayExpression'
 const undefinedNode = new StepperLiteral('undefined');
 
 const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
@@ -34,6 +35,7 @@ const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
   ExpressionStatement: (node: es.ExpressionStatement) => StepperExpressionStatement.create(node),
   ConditionalExpression: (node: es.ConditionalExpression) => StepperConditionalExpression.create(node),
   ArrowFunctionExpression: (node: es.ArrowFunctionExpression) => StepperArrowFunctionExpression.create(node),
+  ArrayExpression: (node: es.ArrayExpression) => StepperArrayExpression.create(node),
   CallExpression: (node: es.CallExpression) => StepperFunctionApplication.create(node as es.SimpleCallExpression),
   ReturnStatement: (node: es.ReturnStatement) => StepperReturnStatement.create(node),
   Program: (node: es.Program) => StepperProgram.create(node),
@@ -84,8 +86,9 @@ export function explain(redex: StepperBaseNode): string {
         return "Conditional expression evaluated, condition is false, alternate evaluated"
       }
     }, 
+    /*
     CallExpression: (node: StepperFunctionApplication) => {
-      if (node.callee.type !== "ArrowFunctionExpression") { // TODO
+      if (node.callee.type !== "ArrowFunctionExpression" && node.callee.type !== "Identifier") { // TODO
         throw new Error("`callee` should be function expression.")
       }
       return node.arguments.map(generate).join(", ") + 
@@ -93,6 +96,7 @@ export function explain(redex: StepperBaseNode): string {
         (node.callee as StepperArrowFunctionExpression).params.map(generate).join(", ") + " of "
         + generate(node.callee);
     },
+    */
     ArrowFunctionExpression: (node: StepperArrowFunctionExpression) => {
       throw new Error("Not implemented.")
     },

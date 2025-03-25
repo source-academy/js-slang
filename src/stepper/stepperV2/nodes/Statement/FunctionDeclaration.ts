@@ -74,6 +74,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       const arrowFunction = new StepperArrowFunctionExpression(
         this.params,
         this.body as unknown as StepperExpression,
+        this.id.name,
         false,
         this.async,
         this.generator

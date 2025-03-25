@@ -9,7 +9,7 @@ test('recursion', () => {
   const code = `
   1 + 1;
     `
-  const program = parse(code, {ecmaVersion: 10})!
+  const program = parse(code, { ecmaVersion: 10 })!
   const stringify = (ast: StepperBaseNode) => {
     if (ast === undefined || ast!.type === undefined) {
       return ''
@@ -18,12 +18,17 @@ test('recursion', () => {
   }
 
   const stringifyWithExplanation = (step: IStepperPropContents) => {
-    const stringifyAST = stringify(step.ast);
+    const stringifyAST = stringify(step.ast)
     if (step.markers && step.markers[0]) {
       const explanation = step.markers[0].explanation
-      return (step.markers[0].redexType ? `[${step.markers[0].redexType}] ` : '') + explanation + "\n" + stringifyAST;
+      return (
+        (step.markers[0].redexType ? `[${step.markers[0].redexType}] ` : '') +
+        explanation +
+        '\n' +
+        stringifyAST
+      )
     } else {
-      return stringifyAST;
+      return stringifyAST
     }
   }
 
@@ -34,16 +39,15 @@ test('recursion', () => {
   console.log(output.join('\n'))
 })
 
-
 // FIX: x not renamed to x_1
 test('renaming', () => {
   const code = `
-  function f() {
-    return x => x + 1;
-  }
-  f()(1);
+  const f = x => x < 1 ? 1 : f(x - 1) + g(x - 1);
+const g = y => y < 1 ? 1 : g(y - 1) + h(y - 1);
+const h = z => z < 1 ? 1 : h(z - 1) + f(z - 1);
+f(3);
   `
-  const program = parse(code, {ecmaVersion: 10})!
+  const program = parse(code, { ecmaVersion: 10 })!
 
   const stringify = (ast: StepperBaseNode) => {
     if (ast === undefined || ast!.type === undefined) {
@@ -53,12 +57,17 @@ test('renaming', () => {
   }
 
   const stringifyWithExplanation = (step: IStepperPropContents) => {
-    const stringifyAST = stringify(step.ast);
+    const stringifyAST = stringify(step.ast)
     if (step.markers && step.markers[0]) {
       const explanation = step.markers[0].explanation
-      return (step.markers[0].redexType ? `[${step.markers[0].redexType}] ` : '') + explanation + "\n" + stringifyAST;
+      return (
+        (step.markers[0].redexType ? `[${step.markers[0].redexType}] ` : '') +
+        explanation +
+        '\n' +
+        stringifyAST
+      )
     } else {
-      return stringifyAST;
+      return stringifyAST
     }
   }
 
