@@ -34,7 +34,7 @@ import { mapResult } from '../alt-langs/mapper'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
-import { getSteps } from '../stepper/stepperV2/steppers'
+import { getSteps } from '../tracer/steppers'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   scheduler: 'async',

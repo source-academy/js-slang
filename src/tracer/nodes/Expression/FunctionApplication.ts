@@ -57,7 +57,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
       return false;
     }
     
-    return this.arguments.every(arg => !arg.isContractible());
+    return this.arguments.every(arg => !arg.isOneStepPossible());
   }
 
   isOneStepPossible(): boolean {

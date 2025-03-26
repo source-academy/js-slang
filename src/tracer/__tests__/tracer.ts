@@ -1,9 +1,9 @@
 import { parse } from 'acorn'
-import { getSteps } from '../stepperV2/steppers'
-import { convert } from '../stepperV2/generator'
+import { getSteps } from '../steppers'
+import { convert } from '../generator'
 import * as astring from 'astring'
-import { StepperBaseNode } from '../stepperV2/interface'
-import { IStepperPropContents } from '../stepperV2'
+import { StepperBaseNode } from '../interface'
+import { IStepperPropContents } from '..'
 
 test('recursion', () => {
   const code = `
@@ -42,10 +42,7 @@ test('recursion', () => {
 // FIX: x not renamed to x_1
 test('renaming', () => {
   const code = `
-  const f = x => x <= 1 ? 1 : f(x - 1) + g(x - 1);
-const g = y => y <= 1 ? 1 : g(y - 1) + h(y - 1);
-const h = z => z <= 1 ? 1 : h(z - 1) + f(z - 1);
-f(3);
+  list(1, 2, 3);
   `
   const program = parse(code, { ecmaVersion: 10 })!
 
