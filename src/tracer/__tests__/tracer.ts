@@ -42,7 +42,7 @@ test('recursion', () => {
 // FIX: x not renamed to x_1
 test('renaming', () => {
   const code = `
-  list(1, 2, 3);
+  math_sqrt(4);
   `
   const program = parse(code, { ecmaVersion: 10 })!
 
