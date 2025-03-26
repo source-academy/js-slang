@@ -42,7 +42,7 @@ test('recursion', () => {
 // FIX: x not renamed to x_1
 test('renaming', () => {
   const code = `
-  parse_int("10");
+  true && (() => false)();
   `
   const program = parse(code, { ecmaVersion: 10 })!
 

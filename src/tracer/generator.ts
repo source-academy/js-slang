@@ -25,12 +25,14 @@ import { StepperFunctionApplication } from './nodes/Expression/FunctionApplicati
 import { StepperReturnStatement } from './nodes/Statement/ReturnStatement'
 import { StepperFunctionDeclaration } from './nodes/Statement/FunctionDeclaration'
 import { StepperArrayExpression } from './nodes/Expression/ArrayExpression'
+import { StepperLogicalExpression } from './nodes/Expression/LogicalExpression'
 const undefinedNode = new StepperLiteral('undefined');
 
 const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
   Literal: (node: es.SimpleLiteral) => StepperLiteral.create(node),
   UnaryExpression: (node: es.UnaryExpression) => StepperUnaryExpression.create(node),
   BinaryExpression: (node: es.BinaryExpression) => StepperBinaryExpression.create(node),
+  LogicalExpression: (node: es.LogicalExpression) => StepperLogicalExpression.create(node),
   FunctionDeclaration: (node: es.FunctionDeclaration) => StepperFunctionDeclaration.create(node),
   ExpressionStatement: (node: es.ExpressionStatement) => StepperExpressionStatement.create(node),
   ConditionalExpression: (node: es.ConditionalExpression) => StepperConditionalExpression.create(node),
