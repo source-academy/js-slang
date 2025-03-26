@@ -5,7 +5,7 @@ import { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
 import { StepperBlockExpression } from './BlockExpression'
 import { StepperBlockStatement } from '../Statement/BlockStatement'
-import { builtinFunctions } from '../../builtin'
+import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
 
 export class StepperFunctionApplication implements SimpleCallExpression, StepperBaseNode {
   type: 'CallExpression'
@@ -51,7 +51,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
   isContractible(): boolean {
     const isValidCallee = 
       this.callee.type === 'ArrowFunctionExpression' || 
-      (this.callee.type === 'Identifier' && Object.keys(builtinFunctions).includes(this.callee.name));
+      (this.callee.type === 'Identifier' && isBuiltinFunction(this.callee.name));
     
     if (!isValidCallee) {
       return false;
@@ -72,8 +72,8 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     
     if (this.callee.type === 'Identifier') {
       const functionName = this.callee.name;
-      if (Object.keys(builtinFunctions).includes(functionName)) {
-        const result = builtinFunctions[functionName as keyof typeof builtinFunctions](this.arguments);
+      if (isBuiltinFunction(functionName)) {
+        const result = getBuiltinFunction(functionName, this.arguments);
         redex.postRedex = [result];
         return result;
       }

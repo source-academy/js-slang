@@ -86,6 +86,9 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
   }
 
   oneStep(): StepperExpression {
+    if (this.isContractible()) {
+      return this.contract()
+    }
     return new StepperUnaryExpression(this.operator, this.argument.oneStep())
   }
 

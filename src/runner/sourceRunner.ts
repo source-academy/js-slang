@@ -16,13 +16,6 @@ import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
 import { AsyncScheduler, PreemptiveScheduler } from '../schedulers'
-import {
-  callee,
-  getEvaluationSteps,
-  getRedex,
-  type IStepperPropContents,
-  redexify
-} from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
 import { Chapter, type Context, type RecursivePartial, type Scheduler, Variant } from '../types'
