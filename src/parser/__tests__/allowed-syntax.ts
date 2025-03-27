@@ -1,11 +1,14 @@
+import { parseError } from '../..'
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { snapshotFailure, snapshotSuccess, testSuccess } from '../../utils/testing'
+import { testSuccess } from '../../utils/testing'
 import { expectFinishedResultValue } from '../../utils/testing/misc'
+import { mockContext } from '../../utils/testing/mocks'
+import { parse } from '../parser'
 
 jest.mock('../../modules/loader/loaders')
 
-test.each([
+describe.each([
   [Chapter.SOURCE_1, ''],
 
   [
@@ -96,13 +99,6 @@ test.each([
     Chapter.SOURCE_2,
     `
     pair(1, null);
-    `
-  ],
-
-  [
-    Chapter.SOURCE_2,
-    `
-    list(1);
     `
   ],
 
@@ -330,29 +326,38 @@ test.each([
     `
   ],
 
-  [
-    Chapter.LIBRARY_PARSER,
-    `
-    import { default as x } from './a.js';
-    `,
-    // Skip the success tests because the imported file does not exist.
-    true
-  ],
+  [Chapter.LIBRARY_PARSER, `import { default as x } from 'one_module';`],
   [Chapter.LIBRARY_PARSER, `import * as a from 'one_module';`, true]
 ] as [Chapter, string, boolean | undefined][])(
   'Syntaxes are allowed in the chapter they are introduced %#',
   (chapter: Chapter, snippet: string, skipSuccessTests: boolean = false) => {
     snippet = stripIndent(snippet)
-    const parseSnippet = `parse(${JSON.stringify(snippet)});`
-    const tests: Promise<any>[] = []
+
     if (!skipSuccessTests) {
-      tests.push(snapshotSuccess(snippet, chapter))
-      tests.push(snapshotSuccess(parseSnippet, Math.max(4, chapter)))
+      test('Test regular parser', () => {
+        const context = mockContext(chapter)
+        const result = parse(snippet, context)
+        expect(result).not.toBeNull()
+        expect(result).toMatchSnapshot()
+      })
+
+      test('Test stdlib parser', async () => {
+        const parseSnippet = `parse(${JSON.stringify(snippet)});`
+        const {
+          result: { value }
+        } = await testSuccess(parseSnippet, Math.max(4, chapter))
+        expect(value).toMatchSnapshot()
+      })
     }
+
     if (chapter > 1) {
-      tests.push(snapshotFailure(snippet, chapter - 1))
+      test('Test 1 chapter below', () => {
+        const context = mockContext(chapter - 1)
+        const result = parse(snippet, context)
+        expect(result).toBeNull()
+        expect(parseError(context.errors)).toMatchSnapshot()
+      })
     }
-    return Promise.all(tests)
   }
 )
 
