@@ -17,7 +17,7 @@ import * as create from '../utils/ast/astCreator'
 import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
-import { Runner } from './types'
+import type { Runner } from './types'
 
 function fullJSEval(code: string, nativeStorage: NativeStorage): any {
   if (nativeStorage.evaller) {

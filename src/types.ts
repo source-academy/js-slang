@@ -13,6 +13,7 @@ import Heap from './cse-machine/heap'
 import { Control, Stash, Transformers } from './cse-machine/interpreter'
 import type { ModuleFunctions } from './modules/moduleTypes'
 import { Representation } from './alt-langs/mapper'
+import { RunnerTypes } from './runner/sourceRunner'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -55,7 +56,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'auto' | 'cse-machine'
+export type ExecutionMethod = RunnerTypes | 'auto'
 
 export enum Chapter {
   SOURCE_1 = 1,
@@ -176,7 +177,7 @@ export interface Context<T = any> {
   /**
    * Describes the language processor to be used for evaluation
    */
-  executionMethod: ExecutionMethod
+  executionMethod?: RunnerTypes
 
   /**
    * Describes the strategy / paradigm to be used for evaluation

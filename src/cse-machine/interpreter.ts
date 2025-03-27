@@ -9,12 +9,11 @@
 import * as es from 'estree'
 import { isArray, reverse } from 'lodash'
 
-import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, Value, type StatementSequence } from '../types'
+import type { Context, ContiguousArrayElements, Result, Value, StatementSequence } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
@@ -22,6 +21,7 @@ import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
 import { isSchemeLanguage } from '../alt-langs/mapper'
+import type { ExecutionOptions } from '../runner/types'
 import Closure from './closure'
 import {
   Continuation,
@@ -233,7 +233,7 @@ export class Transformers {
  * @param context The context to evaluate the program in.
  * @returns The result of running the CSE machine.
  */
-export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
+export function evaluate(program: es.Program, context: Context, options: ExecutionOptions): Value {
   try {
     checkProgramForUndefinedVariables(program, context)
   } catch (error) {

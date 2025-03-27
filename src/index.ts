@@ -10,16 +10,15 @@ import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactor
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
   Chapter,
-  Context,
-  Error as ResultError,
-  ExecutionMethod,
-  Finished,
-  ModuleContext,
-  RecursivePartial,
-  Result,
-  SourceError,
-  SVMProgram,
-  Variant
+  type Context,
+  type Error as ResultError,
+  type Finished,
+  type ModuleContext,
+  type RecursivePartial,
+  type Result,
+  type SourceError,
+  type SVMProgram,
+  ExecutionMethod
 } from './types'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
@@ -32,17 +31,10 @@ import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
+import { ExecutionOptions } from './runner/types'
 
-export interface IOptions {
-  steps: number
-  stepLimit: number
+export interface IOptions extends ExecutionOptions {
   executionMethod: ExecutionMethod
-  variant: Variant
-  originalMaxExecTime: number
-  useSubst: boolean
-  isPrelude: boolean
-  throwInfiniteLoops: boolean
-  envSteps: number
 
   importOptions: ImportOptions
 
@@ -270,8 +262,9 @@ export function compile(
   vmInternalFunctions?: string[]
 ): Promise<SVMProgram | undefined> {
   const defaultFilePath = '/default.js'
-  const files: Partial<Record<string, string>> = {}
-  files[defaultFilePath] = code
+  const files: Partial<Record<string, string>> = {
+    [defaultFilePath]: code
+  }
   return compileFiles(files, defaultFilePath, context, vmInternalFunctions)
 }
 
@@ -308,4 +301,11 @@ export async function compileFiles(
   }
 }
 
-export { createContext, Context, ModuleContext, Result, setBreakpointAtLine, assemble }
+export {
+  createContext,
+  type Context,
+  type ModuleContext,
+  type Result,
+  setBreakpointAtLine,
+  assemble
+}

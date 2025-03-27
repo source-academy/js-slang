@@ -2,8 +2,15 @@ import type { Program } from 'estree'
 
 import type { IOptions, Result } from '..'
 import { areBreakpointsSet } from '../stdlib/inspector'
-import type { Context, RecursivePartial, Variant } from '../types'
+import {
+  Chapter,
+  Variant,
+  type Context,
+  type ExecutionMethod,
+  type RecursivePartial
+} from '../types'
 import { simple } from '../utils/walkers'
+import type { RunnerTypes } from './sourceRunner'
 
 // Context Utils
 
@@ -28,23 +35,24 @@ export function determineVariant(context: Context, options: RecursivePartial<IOp
 }
 
 export function determineExecutionMethod(
-  theOptions: IOptions,
+  optionMethod: ExecutionMethod,
   context: Context,
   program: Program,
   verboseErrors: boolean
-): void {
-  if (theOptions.executionMethod !== 'auto') {
-    context.executionMethod = theOptions.executionMethod
-    return
-  }
+): RunnerTypes {
+  if (
+    context.chapter === Chapter.FULL_JS ||
+    context.chapter === Chapter.FULL_TS ||
+    context.chapter === Chapter.PYTHON_1
+  )
+    return 'fulljs'
 
-  if (context.executionMethod !== 'auto') {
-    return
-  }
+  if (context.variant === Variant.EXPLICIT_CONTROL) return 'cse-machine'
 
-  let isNativeRunnable
+  if (optionMethod !== 'auto') return optionMethod
+
   if (verboseErrors || areBreakpointsSet()) {
-    isNativeRunnable = false
+    return 'cse-machine'
   } else {
     let hasDebuggerStatement = false
     simple(program, {
@@ -52,10 +60,10 @@ export function determineExecutionMethod(
         hasDebuggerStatement = true
       }
     })
-    isNativeRunnable = !hasDebuggerStatement
+    if (hasDebuggerStatement) return 'cse-machine'
   }
 
-  context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine'
+  return 'native'
 }
 
 // AST Utils

@@ -4,101 +4,64 @@ import type { Context, IOptions, Result } from '..'
 import { mapResult } from '../alt-langs/mapper'
 import type { FileGetter } from '../modules/moduleTypes'
 import preprocessFileImports from '../modules/preprocessor'
-import { Chapter, Variant, type RecursivePartial } from '../types'
+import { Variant, type RecursivePartial } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
 import { parse } from '../parser/parser'
-import assert from '../utils/assert'
-import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
-import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
 import runners from './sourceRunner'
+import type { ExecutionOptions } from './types'
 
 let previousCode: {
   files: Partial<Record<string, string>>
   entrypointFilePath: string
 } | null = null
 
-export const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
+export const DEFAULT_SOURCE_OPTIONS: Readonly<ExecutionOptions> = {
   steps: 1000,
   stepLimit: -1,
-  executionMethod: 'auto',
   variant: Variant.DEFAULT,
   originalMaxExecTime: 1000,
-  useSubst: false,
   isPrelude: false,
   throwInfiniteLoops: true,
-  envSteps: -1,
-  importOptions: {
-    ...defaultAnalysisOptions,
-    ...defaultLinkerOptions,
-    loadTabs: true
-  },
-  shouldAddFileName: null
+  envSteps: -1
 }
 
-async function sourceRunner(
+async function runProgramInContext(
   program: Program,
   context: Context,
   isVerboseErrorsEnabled: boolean,
   options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
-  // It is necessary to make a copy of the DEFAULT_SOURCE_OPTIONS object because merge()
-  // will modify it rather than create a new object
-  const theOptions = _.merge({ ...DEFAULT_SOURCE_OPTIONS }, options)
+  const theOptions: ExecutionOptions = {
+    ...DEFAULT_SOURCE_OPTIONS,
+    ...options
+  }
+
   context.variant = determineVariant(context, options)
+  const execMethod = determineExecutionMethod(
+    options.executionMethod ?? 'auto',
+    context,
+    program,
+    isVerboseErrorsEnabled
+  )
+  context.executionMethod = execMethod
+  const { runner, prelude: evaluatePrelude, validate } = runners[execMethod]
 
-  if (
-    context.chapter === Chapter.FULL_JS ||
-    context.chapter === Chapter.FULL_TS ||
-    context.chapter === Chapter.PYTHON_1
-  ) {
-    return runners.fulljs(program, context, theOptions)
-  }
-
-  validateAndAnnotate(program, context)
-  if (context.errors.length > 0) {
-    return resolvedErrorPromise
-  }
-
-  if (theOptions.useSubst) {
-    return runners.substitution(program, context, theOptions)
-  }
-
-  determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
-
-  // native, don't evaluate prelude
-  if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return runners.fulljs(program, context, theOptions)
-  }
-
-  // All runners after this point evaluate the prelude.
-  if (context.prelude !== null) {
-    context.unTypecheckedCode.push(context.prelude)
-    const prelude = parse(context.prelude, context)
-    if (prelude === null) {
+  if (validate) {
+    validateAndAnnotate(program, context)
+    if (context.errors.length > 0) {
       return resolvedErrorPromise
     }
-    context.prelude = null
-    await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true })
-    return sourceRunner(program, context, isVerboseErrorsEnabled, options)
   }
 
-  if (context.variant === Variant.EXPLICIT_CONTROL || context.executionMethod === 'cse-machine') {
-    if (options.isPrelude) {
-      const preludeContext = { ...context, runtime: { ...context.runtime, debuggerOn: false } }
-      const result = await runners['cse-machine'](program, preludeContext, theOptions)
-      // Update object count in main program context after prelude is run
-      context.runtime.objectCount = preludeContext.runtime.objectCount
-      return result
-    }
-    return runners['cse-machine'](program, context, theOptions)
+  if (evaluatePrelude && context.prelude !== null) {
+    context.unTypecheckedCode.push(context.prelude)
+    const prelude = parse(context.prelude, context)
+    if (prelude === null) return resolvedErrorPromise
+    await runner(prelude, context, { ...theOptions, isPrelude: true })
   }
 
-  assert(
-    context.executionMethod !== 'auto',
-    'Execution method should have been properly determined!'
-  )
-  return runners.native(program, context, theOptions)
+  return runner(program, context, theOptions)
 }
 
 /**
@@ -147,7 +110,7 @@ export async function sourceFilesRunner(
 
   context.previousPrograms.unshift(preprocessedProgram)
 
-  const result = await sourceRunner(preprocessedProgram, context, verboseErrors, options)
+  const result = await runProgramInContext(preprocessedProgram, context, verboseErrors, options)
   const resultMapper = mapResult(context)
 
   return {

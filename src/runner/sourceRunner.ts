@@ -20,110 +20,131 @@ import { transpile } from '../transpiler/transpiler'
 import { Variant } from '../types'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
-import type { Runner } from './types'
+import type { RunnerInfo } from './types'
 import fullJSRunner from './fullJSRunner'
 
 let isPreviousCodeTimeoutError = false
 const runners = {
-  fulljs: fullJSRunner,
-  'cse-machine': (program, context, options) => {
-    const value = CSEvaluate(program, context, options)
-    return CSEResultPromise(context, value)
+  fulljs: {
+    runner: fullJSRunner,
+    validate: false,
+    prelude: false
   },
-  substitution: (program, context, options) => {
-    const steps = getEvaluationSteps(program, context, options)
-    if (context.errors.length > 0) {
-      return resolvedErrorPromise
-    }
-    const redexedSteps: IStepperPropContents[] = []
-    for (const step of steps) {
-      const redex = getRedex(step[0], step[1])
-      const redexed = redexify(step[0], step[1])
-      redexedSteps.push({
-        code: redexed[0],
-        redex: redexed[1],
-        explanation: step[2],
-        function: callee(redex, context)
+  'cse-machine': {
+    runner: (program, context, options) => {
+      const value = CSEvaluate(program, context, options)
+      return CSEResultPromise(context, value)
+    },
+    validate: true,
+    prelude: true
+  },
+  substitution: {
+    runner: (program, context, options) => {
+      const steps = getEvaluationSteps(program, context, options)
+      if (context.errors.length > 0) {
+        return resolvedErrorPromise
+      }
+      const redexedSteps = steps.map((step): IStepperPropContents => {
+        const redex = getRedex(step[0], step[1])
+        const redexed = redexify(step[0], step[1])
+        return {
+          code: redexed[0],
+          redex: redexed[1],
+          explanation: step[2],
+          function: callee(redex, context)
+        }
       })
-    }
-    return Promise.resolve({
-      status: 'finished',
-      context,
-      value: redexedSteps
-    })
-  },
-  native: async (program, context, options) => {
-    if (!options.isPrelude) {
-      if (context.shouldIncreaseEvaluationTimeout && isPreviousCodeTimeoutError) {
-        context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-      } else {
-        context.nativeStorage.maxExecTime = options.originalMaxExecTime
-      }
-    }
 
-    // For whatever reason, the transpiler mutates the state of the AST as it is transpiling and inserts
-    // a bunch of global identifiers to it. Once that happens, the infinite loop detection instrumentation
-    // ends up generating code that has syntax errors. As such, we need to make a deep copy here to preserve
-    // the original AST for future use, such as with the infinite loop detector.
-    const transpiledProgram = _.cloneDeep(program)
-    let transpiled
-    let sourceMapJson: RawSourceMap | undefined
-    try {
-      ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
-      let value = sandboxedEval(transpiled, context.nativeStorage)
-
-      if (!options.isPrelude) {
-        isPreviousCodeTimeoutError = false
-      }
-
-      return {
+      return Promise.resolve({
         status: 'finished',
         context,
-        value
+        value: redexedSteps
+      })
+    },
+    validate: true,
+    prelude: false
+  },
+  native: {
+    runner: async (program, context, options) => {
+      if (context.variant === Variant.NATIVE) {
+        return fullJSRunner(program, context, options)
       }
-    } catch (error) {
-      const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
-      if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-        const detectedInfiniteLoop = testForInfiniteLoop(
-          program,
-          context.previousPrograms.slice(1),
-          context.nativeStorage.loadedModules
-        )
-        if (detectedInfiniteLoop !== undefined) {
-          if (options.throwInfiniteLoops) {
-            context.errors.push(detectedInfiniteLoop)
-            return resolvedErrorPromise
-          } else {
-            error.infiniteLoopError = detectedInfiniteLoop
-            if (error instanceof ExceptionError) {
-              ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
+
+      if (!options.isPrelude) {
+        if (context.shouldIncreaseEvaluationTimeout && isPreviousCodeTimeoutError) {
+          context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+        } else {
+          context.nativeStorage.maxExecTime = options.originalMaxExecTime
+        }
+      }
+
+      // For whatever reason, the transpiler mutates the state of the AST as it is transpiling and inserts
+      // a bunch of global identifiers to it. Once that happens, the infinite loop detection instrumentation
+      // ends up generating code that has syntax errors. As such, we need to make a deep copy here to preserve
+      // the original AST for future use, such as with the infinite loop detector.
+      const transpiledProgram = _.cloneDeep(program)
+      let transpiled
+      let sourceMapJson: RawSourceMap | undefined
+      try {
+        ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
+        let value = sandboxedEval(transpiled, context.nativeStorage)
+
+        if (!options.isPrelude) {
+          isPreviousCodeTimeoutError = false
+        }
+
+        return {
+          status: 'finished',
+          context,
+          value
+        }
+      } catch (error) {
+        const isDefaultVariant =
+          options.variant === undefined || options.variant === Variant.DEFAULT
+        if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
+          const detectedInfiniteLoop = testForInfiniteLoop(
+            program,
+            context.previousPrograms.slice(1),
+            context.nativeStorage.loadedModules
+          )
+          if (detectedInfiniteLoop !== undefined) {
+            if (options.throwInfiniteLoops) {
+              context.errors.push(detectedInfiniteLoop)
+              return resolvedErrorPromise
+            } else {
+              error.infiniteLoopError = detectedInfiniteLoop
+              if (error instanceof ExceptionError) {
+                ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
+              }
             }
           }
         }
-      }
-      if (error instanceof RuntimeSourceError) {
-        context.errors.push(error)
-        if (error instanceof TimeoutError) {
-          isPreviousCodeTimeoutError = true
+        if (error instanceof RuntimeSourceError) {
+          context.errors.push(error)
+          if (error instanceof TimeoutError) {
+            isPreviousCodeTimeoutError = true
+          }
+          return resolvedErrorPromise
         }
+        if (error instanceof ExceptionError) {
+          // if we know the location of the error, just throw it
+          if (error.location.start.line !== -1) {
+            context.errors.push(error)
+            return resolvedErrorPromise
+          } else {
+            error = error.error // else we try to get the location from source map
+          }
+        }
+
+        const sourceError = await toSourceError(error, sourceMapJson)
+        context.errors.push(sourceError)
         return resolvedErrorPromise
       }
-      if (error instanceof ExceptionError) {
-        // if we know the location of the error, just throw it
-        if (error.location.start.line !== -1) {
-          context.errors.push(error)
-          return resolvedErrorPromise
-        } else {
-          error = error.error // else we try to get the location from source map
-        }
-      }
-
-      const sourceError = await toSourceError(error, sourceMapJson)
-      context.errors.push(sourceError)
-      return resolvedErrorPromise
-    }
+    },
+    prelude: true,
+    validate: true
   }
-} satisfies Record<string, Runner>
+} satisfies Record<string, RunnerInfo>
 
 export default runners
 
