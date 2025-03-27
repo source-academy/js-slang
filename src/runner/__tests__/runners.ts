@@ -5,6 +5,7 @@ import { FatalSyntaxError } from '../../parser/errors'
 import { Chapter, type Finished, type SourceError, Variant } from '../../types'
 import { locationDummyNode } from '../../utils/ast/astCreator'
 import { htmlErrorHandlingScript } from '../htmlRunner'
+import { expectFinishedResult } from '../../utils/testing/misc'
 
 interface CodeSnippetTestCase {
   name: string
@@ -147,7 +148,8 @@ describe('Native javascript programs are valid in fullJSRunner', () => {
       const result = await runInContext(snippet, fullJSContext)
 
       expect(result.status).toStrictEqual('finished')
-      expect((result as any).value).toStrictEqual(value)
+      expectFinishedResult(result)
+      expect(result.value).toStrictEqual(value)
       expect(fullJSContext.errors).toStrictEqual(errors)
     }
   )

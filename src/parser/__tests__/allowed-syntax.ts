@@ -5,7 +5,7 @@ import { expectFinishedResultValue } from '../../utils/testing/misc'
 
 jest.mock('../../modules/loader/loaders')
 
-test.each([
+describe.each([
   [Chapter.SOURCE_1, ''],
 
   [
@@ -29,82 +29,27 @@ test.each([
     `
   ],
 
-  [
-    Chapter.SOURCE_1,
-    `
-    (() => true)();
-    `
-  ],
+  [Chapter.SOURCE_1, `(() => true)();`],
 
-  [
-    Chapter.SOURCE_1,
-    `
-    ((x, y) => { return x + y; })(1, 2);
-    `
-  ],
+  [Chapter.SOURCE_1, `((x, y) => { return x + y; })(1, 2);`],
 
-  [
-    Chapter.SOURCE_1,
-    `
-    true;
-    `
-  ],
+  [Chapter.SOURCE_1, `true;`],
 
-  [
-    Chapter.SOURCE_1,
-    `
-    false;
-    `
-  ],
+  [Chapter.SOURCE_1, `false;`],
 
-  [
-    Chapter.SOURCE_1,
-    `
-    'a string "" \\'\\'';
-    `
-  ],
+  [Chapter.SOURCE_1, `'a string "" \\'\\'';`],
 
-  [
-    Chapter.SOURCE_1,
-    `
-    31.4 + (-3.14e10) * -1 % 2 / 1.5;
-    `
-  ],
+  [Chapter.SOURCE_1, `31.4 + (-3.14e10) * -1 % 2 / 1.5;`],
 
-  [
-    Chapter.SOURCE_1,
-    `
-    1 === 1 && 1 < 2 && 1 <= 2 && 2 >= 1 && 2 > 1 || false;
-    `
-  ],
+  [Chapter.SOURCE_1, `1 === 1 && 1 < 2 && 1 <= 2 && 2 >= 1 && 2 > 1 || false;`],
 
-  [
-    Chapter.SOURCE_1,
-    `
-    true ? 1 : 2;
-    `
-  ],
+  [Chapter.SOURCE_1, `true ? 1 : 2;`],
 
-  [
-    Chapter.SOURCE_2,
-    `
-    null;
-    `
-  ],
+  [Chapter.SOURCE_2, `null;`],
 
-  [
-    Chapter.SOURCE_2,
-    `
-    pair(1, null);
-    `
-  ],
+  [Chapter.SOURCE_2, `pair(1, null);`],
 
-  [
-    Chapter.SOURCE_2,
-    `
-    list(1);
-    `
-  ],
+  [Chapter.SOURCE_2, `list(1);`],
 
   [
     Chapter.SOURCE_2,
@@ -344,15 +289,14 @@ test.each([
   (chapter: Chapter, snippet: string, skipSuccessTests: boolean = false) => {
     snippet = stripIndent(snippet)
     const parseSnippet = `parse(${JSON.stringify(snippet)});`
-    const tests: Promise<any>[] = []
+
     if (!skipSuccessTests) {
-      tests.push(snapshotSuccess(snippet, chapter))
-      tests.push(snapshotSuccess(parseSnippet, Math.max(4, chapter)))
+      test('Test regular parser', () => snapshotSuccess(snippet, chapter))
+      test('Test stdlib parser', () => snapshotSuccess(parseSnippet, Math.max(4, chapter)))
     }
     if (chapter > 1) {
-      tests.push(snapshotFailure(snippet, chapter - 1))
+      test('Test 1 chapter below', () => snapshotFailure(snippet, chapter - 1))
     }
-    return Promise.all(tests)
   }
 )
 
