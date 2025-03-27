@@ -1,3 +1,5 @@
+import { StepperVariableDeclarator } from "./nodes/Statement/VariableDeclaration";
+
 /*
 Generate new name for alpha renaming
 X -> X_1 -> X_2 -> X_3 -> ...
@@ -11,4 +13,14 @@ export function getFreshName(name: string): string {
     } else {
         return name + "_1";
     }
+}
+
+export function assignMuTerms(declarations: StepperVariableDeclarator[]): StepperVariableDeclarator[] {
+    // Scan out arrow function expression and assign mu term
+    declarations = declarations.map(
+    (declarator) => declarator.init && declarator.init.type === "ArrowFunctionExpression"
+        ? new StepperVariableDeclarator(declarator.id, declarator.init.assignName(declarator.id.name))
+        : declarator
+    )
+    return declarations;
 }

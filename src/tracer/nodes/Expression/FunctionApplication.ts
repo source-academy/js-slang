@@ -95,7 +95,6 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     } else {
       result = lambda.body as StepperExpression;
     }
-    
     if (lambda.name && !(this.callee.scanAllDeclarationNames().includes(lambda.name))) {
       result = result.substitute({ type: 'Identifier', name: lambda.name } as StepperPattern, lambda)
     }

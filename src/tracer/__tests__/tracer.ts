@@ -40,12 +40,54 @@ test('recursion', () => {
 })
 
 // FIX: x not renamed to x_1
-test('renaming', () => {
+test('fact', () => {
   const code = `
-  true && (() => false)();
+  const fact = n => n === 1 ? 1 : fact(n - 1) * n;
+  fact(5); 
   `
   const program = parse(code, { ecmaVersion: 10 })!
 
+  const stringify = (ast: StepperBaseNode) => {
+    if (ast === undefined || ast!.type === undefined) {
+      return ''
+    }
+    return astring.generate(ast).replace(/\n/g, '').replace(/\s+/g, ' ')
+  }
+
+  const stringifyWithExplanation = (step: IStepperPropContents) => {
+    const stringifyAST = stringify(step.ast)
+    if (step.markers && step.markers[0]) {
+      const explanation = step.markers[0].explanation
+      return (
+        (step.markers[0].redexType ? `[${step.markers[0].redexType}] ` : '') +
+        explanation +
+        '\n' +
+        stringifyAST
+      )
+    } else {
+      return stringifyAST
+    }
+  }
+
+  const steps = getSteps(convert(program))
+  console.log(steps.length)
+  // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
+  const output = steps.map(stringifyWithExplanation)
+  console.log(output.join('\n'))
+})
+
+
+test('substitution-block', () => {
+  const code = `
+  const x = 3;
+  const y = 5;
+  x + y;
+  {
+    const x = 2;
+    x + y;
+  }
+    `
+  const program = parse(code, { ecmaVersion: 10 })!
   const stringify = (ast: StepperBaseNode) => {
     if (ast === undefined || ast!.type === undefined) {
       return ''

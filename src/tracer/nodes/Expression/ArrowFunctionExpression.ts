@@ -74,8 +74,9 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     throw new Error("Cannot step an arrow function expression")
   }
 
-  setGivenName(name: string) {
+  assignName(name: string): StepperArrowFunctionExpression {
     this.name = name
+    return this;
   }
 
   scanAllDeclarationNames(): string[] {

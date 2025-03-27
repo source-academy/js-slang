@@ -3,9 +3,9 @@ import { StepperBaseNode } from '../../interface'
 import { StepperExpression, StepperPattern, undefinedNode } from '..'
 import { StepperStatement } from '.'
 import { convert } from '../../generator'
-import { redex, SubstitutionScope } from '../..'
+import { redex } from '../..'
 import { StepperVariableDeclaration, StepperVariableDeclarator } from './VariableDeclaration'
-import { getFreshName } from '../../utils'
+import { assignMuTerms, getFreshName } from '../../utils'
 
 export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   type: 'BlockStatement'
@@ -55,11 +55,10 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       return this.contract()
     }
 
+    // reduce the first statement
     if (this.body[0].isOneStepPossible()) {
-      SubstitutionScope.set(this.body.slice(1))
       const firstStatementOneStep = this.body[0].oneStep()
-      const afterSubstitutedScope = SubstitutionScope.get()
-      SubstitutionScope.reset()
+      const afterSubstitutedScope = this.body.slice(1)
       if (firstStatementOneStep === undefinedNode) {
         return new StepperBlockStatement([afterSubstitutedScope].flat())
       }
@@ -68,24 +67,67 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       )
     }
 
+    // If the first statement is constant declaration, gracefully handle it!
+    if (this.body[0].type == 'VariableDeclaration') {
+      const declarations = assignMuTerms(this.body[0].declarations);
+      const afterSubstitutedScope = this.body
+        .slice(1)
+        .map(current =>
+          declarations
+            .filter(declarator => declarator.init)
+            .reduce(
+              (statement, declarator) => statement.substitute(declarator.id, declarator.init!),
+              current
+            )
+        ) as StepperStatement[]
+      const substitutedProgram = new StepperBlockStatement(afterSubstitutedScope)
+      redex.preRedex = [this.body[0]]
+      redex.postRedex = declarations.map(x => x.id)
+      return substitutedProgram
+    }
+
+    const firstValueStatement = this.body[0]
+    // After this stage, the first statement is a value statement. Now, proceed until getting the second value statement.
     if (this.body.length >= 2 && this.body[1].isOneStepPossible()) {
-      // V; E; -> V; E';
-      SubstitutionScope.set(this.body.slice(2))
       const secondStatementOneStep = this.body[1].oneStep()
-      const afterSubstitutedScope = SubstitutionScope.get()
-      SubstitutionScope.reset()
+      const afterSubstitutedScope = this.body.slice(2)
       if (secondStatementOneStep === undefinedNode) {
-        return new StepperBlockStatement([this.body[0], afterSubstitutedScope].flat())
+        return new StepperBlockStatement([firstValueStatement, afterSubstitutedScope].flat())
       }
       return new StepperBlockStatement(
-        [this.body[0], secondStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
+        [
+          firstValueStatement,
+          secondStatementOneStep as StepperStatement,
+          afterSubstitutedScope
+        ].flat()
       )
     }
+
+    // If the second statement is constant declaration, gracefully handle it!
+    if (this.body.length >= 2 && this.body[1].type == 'VariableDeclaration') {
+      const declarations = assignMuTerms(this.body[1].declarations);
+      const afterSubstitutedScope = this.body
+        .slice(2)
+        .map(current =>
+          declarations
+            .filter(declarator => declarator.init)
+            .reduce(
+              (statement, declarator) => statement.substitute(declarator.id, declarator.init!),
+              current
+            )
+        ) as StepperStatement[]
+      const substitutedProgram = new StepperBlockStatement(
+        [firstValueStatement, afterSubstitutedScope].flat()
+      )
+      redex.preRedex = [this.body[1]]
+      redex.postRedex = declarations.map(x => x.id)
+      return substitutedProgram
+    }
+    // After this stage, we have two value inducing statement. Remove the first one.
 
     return this.contract()
   }
 
-  
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     // Alpha renaming
     // Check whether should be renamed
@@ -93,18 +135,23 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     const valueFreeNames = value.freeNames()
     const scopeNames = this.scanAllDeclarationNames()
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
-    var currentBlockStatement: StepperBlockStatement = this;
+    var currentBlockStatement: StepperBlockStatement = this
     for (var index in repeatedNames) {
       const name = repeatedNames[index]
-      currentBlockStatement = currentBlockStatement.rename(name, getFreshName(name)) as StepperBlockStatement
+      currentBlockStatement = currentBlockStatement.rename(
+        name,
+        getFreshName(name)
+      ) as StepperBlockStatement
     }
 
     if (currentBlockStatement.scanAllDeclarationNames().includes(id.name)) {
       // DO nothing
-      return currentBlockStatement;
+      return currentBlockStatement
     }
     return new StepperBlockStatement(
-      currentBlockStatement.body.map(statement => statement.substitute(id, value) as StepperStatement)
+      currentBlockStatement.body.map(
+        statement => statement.substitute(id, value) as StepperStatement
+      )
     )
   }
 
@@ -116,12 +163,12 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   }
 
   freeNames(): string[] {
-    const names = new Set(this.body.flatMap((ast) => ast.freeNames()));
-    this.scanAllDeclarationNames().forEach(name => names.delete(name));
-    return Array.from(names);
+    const names = new Set(this.body.flatMap(ast => ast.freeNames()))
+    this.scanAllDeclarationNames().forEach(name => names.delete(name))
+    return Array.from(names)
   }
 
-  rename(before: string, after: string): StepperBlockStatement  {
+  rename(before: string, after: string): StepperBlockStatement {
     return new StepperBlockStatement(
       this.body.map(statement => statement.rename(before, after) as StepperStatement)
     )

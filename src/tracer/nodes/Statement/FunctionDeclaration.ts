@@ -4,7 +4,7 @@ import { StepperIdentifier } from "../Expression/Identifier"
 import { StepperBlockStatement } from "./BlockStatement"
 import { StepperExpression, StepperPattern, undefinedNode } from ".."
 import { convert } from "../../generator"
-import { redex, SubstitutionScope } from "../.."
+import { redex } from "../.."
 import { StepperArrowFunctionExpression } from "../Expression/ArrowFunctionExpression"
 import { getFreshName } from "../../utils"
 
@@ -67,6 +67,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     }
   
     contract(): typeof undefinedNode {
+      
       redex.preRedex = [this]
       redex.postRedex = []
       
@@ -80,12 +81,8 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
         this.generator
       );
       
-      if (this.id && arrowFunction.type === 'ArrowFunctionExpression') {
-        arrowFunction.setGivenName?.(this.id.name);
-      }
-      
-      SubstitutionScope.substitute(this.id, arrowFunction);
-      
+      arrowFunction;
+      // FIX SubstitutionScope.substitute(this.id, arrowFunction);
       return undefinedNode;
     }
   

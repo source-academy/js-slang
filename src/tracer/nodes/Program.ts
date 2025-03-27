@@ -3,11 +3,13 @@ import { StepperBaseNode } from '../interface'
 import { convert } from '../generator'
 import { StepperStatement } from './Statement'
 import { StepperExpression, StepperPattern, undefinedNode } from '.'
-import { SubstitutionScope } from '..'
+
 import {
   StepperVariableDeclaration,
   StepperVariableDeclarator
 } from './Statement/VariableDeclaration'
+import { redex } from '..'
+import { assignMuTerms } from '../utils'
 
 export class StepperProgram implements Program, StepperBaseNode {
   type: 'Program'
@@ -28,11 +30,14 @@ export class StepperProgram implements Program, StepperBaseNode {
   }
 
   isOneStepPossible(): boolean {
-    return this.body.length === 0 || this.body[0].isOneStepPossible() || this.body.length >= 2
+    return this.body.length === 0 
+      || this.body[0].isOneStepPossible() 
+      || this.body.length >= 2 
+      || (this.body.length == 1 && this.body[0].type == "VariableDeclaration")
   }
 
   contract(): StepperProgram | typeof undefinedNode {
-    // V1; V2; -> {}, V2; -> V2;
+    // V1; V2; -> V2;
     this.body[0].contractEmpty() // update the contracted statement onto redex
     return new StepperProgram(this.body.slice(1))
   }
@@ -42,34 +47,60 @@ export class StepperProgram implements Program, StepperBaseNode {
       return undefinedNode
     }
 
+    // reduce the first statement
     if (this.body[0].isOneStepPossible()) {
-      SubstitutionScope.set(this.body.slice(1))
-      const firstStatementOneStep = this.body[0].oneStep()
-      const afterSubstitutedScope = SubstitutionScope.get()
-      SubstitutionScope.reset()
-      if (firstStatementOneStep === undefinedNode) {
-        return new StepperProgram([afterSubstitutedScope].flat())
-      }
-      return new StepperProgram(
-        [firstStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
-      )
+        const firstStatementOneStep = this.body[0].oneStep()
+        const afterSubstitutedScope = this.body.slice(1);
+        if (firstStatementOneStep === undefinedNode) {
+          return new StepperProgram([afterSubstitutedScope].flat())
+        }
+        return new StepperProgram(
+          [firstStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
+        )
     }
 
+    // TODO: Refactor this code
+    // If the first statement is constant declaration, gracefully handle it!
+    if (this.body[0].type == "VariableDeclaration") {
+      const declarations = assignMuTerms(this.body[0].declarations);
+      const afterSubstitutedScope = this.body.slice(1).map(
+        (current) => declarations.filter(declarator => declarator.init).reduce(
+        (statement, declarator) => statement.substitute(declarator.id, declarator.init!), current
+      )) as StepperStatement[];
+      const substitutedProgram  = new StepperProgram(afterSubstitutedScope);
+      redex.preRedex = [this.body[0]];
+      redex.postRedex = declarations.map(x => x.id);
+      return substitutedProgram;
+    }
+
+    const firstValueStatement = this.body[0];
+    // After this stage, the first statement is a value statement. Now, proceed until getting the second value statement.
     if (this.body.length >= 2 && this.body[1].isOneStepPossible()) {
-      // V; E; -> V; E';
-      SubstitutionScope.set(this.body.slice(2))
-      const secondStatementOneStep = this.body[1].oneStep()
-      const afterSubstitutedScope = SubstitutionScope.get()
-      SubstitutionScope.reset()
-      if (secondStatementOneStep === undefinedNode) {
-        return new StepperProgram([this.body[0], afterSubstitutedScope].flat())
-      }
-      return new StepperProgram(
-        [this.body[0], secondStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
-      )
+        const secondStatementOneStep = this.body[1].oneStep()
+        const afterSubstitutedScope = this.body.slice(2);
+        if (secondStatementOneStep === undefinedNode) {
+          return new StepperProgram([firstValueStatement, afterSubstitutedScope].flat())
+        }
+        return new StepperProgram(
+          [firstValueStatement, secondStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
+        ) 
     }
 
-    return this.contract()
+    // If the second statement is constant declaration, gracefully handle it!
+    if (this.body.length >= 2 && this.body[1].type == "VariableDeclaration") {
+      const declarations = assignMuTerms(this.body[1].declarations);
+      const afterSubstitutedScope = this.body.slice(2).map(
+        (current) => declarations.filter(declarator => declarator.init).reduce(
+        (statement, declarator) => statement.substitute(declarator.id, declarator.init!), current
+      )) as StepperStatement[];
+      const substitutedProgram  = new StepperProgram([firstValueStatement, afterSubstitutedScope].flat());
+      redex.preRedex = [this.body[1]];
+      redex.postRedex = declarations.map(x => x.id);
+      return substitutedProgram;
+    }
+    
+    // After this stage, we have two value inducing statement. Remove the first one.
+    return this.contract();
   }
 
   static create(node: Program) {

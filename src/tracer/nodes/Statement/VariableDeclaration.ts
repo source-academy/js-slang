@@ -2,7 +2,7 @@ import { VariableDeclaration, VariableDeclarator } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { convert } from '../../generator'
 import { StepperExpression, StepperPattern, undefinedNode } from '..'
-import { redex, SubstitutionScope } from '../..'
+import { redex } from '../..'
 
 export class StepperVariableDeclarator implements VariableDeclarator, StepperBaseNode {
   type: 'VariableDeclarator'
@@ -72,37 +72,18 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
   }
 
   isContractible(): boolean {
-    return true // variable declarations always open for contraction
+    return false;
   }
 
   isOneStepPossible(): boolean {
-    return true
+    return this.declarations
+      .map(x => x.isOneStepPossible())
+      .reduce((acc, next) => acc || next, false);
   }
 
-  contract(): StepperVariableDeclaration | typeof undefinedNode {
-    // Find the one that is not contractible.
-    for (let i = 0; i < this.declarations.length; i++) {
-      const ast = this.declarations[i]
-      if (ast.isContractible()) {
-        return new StepperVariableDeclaration(
-          [
-            this.declarations.slice(0, i),
-            ast.contract() as StepperVariableDeclarator,
-            this.declarations.slice(i + 1)
-          ].flat(),
-          this.kind
-        )
-      }
-    }
+  contract(): typeof undefinedNode {
     redex.preRedex = [this]
     redex.postRedex = []
-    // If everything is compatible, trigger substitution on Substitution.Scope
-    this.declarations.forEach(declarator => {
-      if (declarator.init?.type === 'ArrowFunctionExpression') {
-        declarator.init.setGivenName(declarator.id.name)
-      }
-      SubstitutionScope.substitute(declarator.id, declarator.init)
-    })
     return undefinedNode
   }
 
@@ -127,7 +108,7 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
       }
     }
 
-    return this.contract()
+    return this;
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
@@ -138,6 +119,8 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
       this.kind
     )
   }
+
+  
 
   freeNames(): string[] {
     return Array.from(new Set(this.declarations.flatMap((ast) => ast.freeNames())));
