@@ -615,11 +615,10 @@ test.each([
   (chapter: Chapter, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {
       return expectResult(stripIndent(snippet), {
-        chapter,
-        native: chapter !== Chapter.LIBRARY_PARSER
+        chapter
       }).toEqual(returnValue)
     } else {
-      return snapshotFailure(stripIndent(snippet), { chapter }, 'fails')
+      return snapshotFailure(stripIndent(snippet), { chapter })
     }
   }
 )

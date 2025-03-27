@@ -436,11 +436,7 @@ test.each([
         variant: Variant.EXPLICIT_CONTROL
       }).toEqual(returnValue)
     } else {
-      return snapshotFailure(
-        stripIndent(snippet),
-        { chapter, variant: Variant.EXPLICIT_CONTROL },
-        'fails'
-      )
+      return snapshotFailure(stripIndent(snippet), { chapter, variant: Variant.EXPLICIT_CONTROL })
     }
   }
 )

@@ -64,7 +64,7 @@ You can set additional options:
 Usage: js-slang [PROGRAM_STRING] [OPTION]
 
   -c, --chapter=CHAPTER set the Source chapter number (i.e., 1-4)                                                              (default: 1)
-  -v, --variant=VARIANT set the Source variant (i.e., default, interpreter, substituter, typed, concurrent, wasm) (default: default)
+  -v, --variant=VARIANT set the Source variant (i.e., default, interpreter, substituter, typed, wasm) (default: default)
   -h, --help            display this help
   -e, --eval            don't show REPL, only display output of evaluation
 ```
@@ -81,7 +81,6 @@ Currently, valid CHAPTER/VARIANT combinations are:
 - `--chapter=2 --variant=interpreter`
 - `--chapter=2 --variant=typed`
 - `--chapter=3 --variant=default`
-- `--chapter=3 --variant=concurrent`
 - `--chapter=3 --variant=interpreter`
 - `--chapter=3 --variant=typed`
 - `--chapter=4 --variant=default`

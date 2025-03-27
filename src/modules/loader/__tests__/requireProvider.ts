@@ -1,4 +1,4 @@
-import { mockContext } from '../../../mocks/context'
+import { mockContext } from '../../../utils/testing/mocks'
 import { Chapter } from '../../../types'
 import { getRequireProvider } from '../requireProvider'
 
