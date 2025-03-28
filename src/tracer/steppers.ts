@@ -3,6 +3,9 @@ import { Marker, redex } from '.'
 import { IStepperPropContents } from '.'
 import { StepperBaseNode } from './interface'
 import { convert, explain } from './generator'
+import { StepperProgram } from './nodes/Program'
+import { undefinedNode } from './nodes'
+import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
 
 export function getSteps(inputNode: es.BaseNode): IStepperPropContents[] {
   const node: StepperBaseNode = convert(inputNode);
@@ -50,7 +53,11 @@ export function getSteps(inputNode: es.BaseNode): IStepperPropContents[] {
       }
     ]
   })
-  const result = evaluate(node)
+  let result = evaluate(node);
+  // If the program does not return anything, return undefined
+  if (result.type === "Program" && (result as StepperProgram).body.length === 0) {
+    result = new StepperExpressionStatement(undefinedNode);
+  }
   steps.push({
     ast: result,
     markers: [

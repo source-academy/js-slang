@@ -11,4 +11,4 @@ import { StepperUnaryExpression } from "./Expression/UnaryExpression";
 export type StepperExpression = StepperUnaryExpression | StepperBinaryExpression | StepperLiteral | StepperPattern | StepperConditionalExpression | StepperFunctionApplication | StepperArrowFunctionExpression | StepperArrayExpression | StepperLogicalExpression;
 export type StepperPattern = StepperIdentifier
 
-export const undefinedNode = new StepperLiteral('undefined');
+export const undefinedNode = new StepperLiteral('undefined', "undefined");

@@ -30,23 +30,20 @@ export class StepperProgram implements Program, StepperBaseNode {
   }
 
   isOneStepPossible(): boolean {
-    return this.body.length === 0 
-      || this.body[0].isOneStepPossible() 
+    return this.body.length === 0
+      ? false  // unlike BlockStatement 
+      : this.body[0].isOneStepPossible() 
       || this.body.length >= 2 
       || (this.body.length == 1 && this.body[0].type == "VariableDeclaration")
   }
 
-  contract(): StepperProgram | typeof undefinedNode {
+  contract(): StepperProgram  {
     // V1; V2; -> V2;
     this.body[0].contractEmpty() // update the contracted statement onto redex
     return new StepperProgram(this.body.slice(1))
   }
 
-  oneStep(): StepperProgram | typeof undefinedNode {
-    if (this.body.length == 0) {
-      return undefinedNode
-    }
-
+  oneStep(): StepperProgram {
     // reduce the first statement
     if (this.body[0].isOneStepPossible()) {
         const firstStatementOneStep = this.body[0].oneStep()
