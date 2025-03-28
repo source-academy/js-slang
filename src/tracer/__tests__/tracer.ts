@@ -7,7 +7,10 @@ import { IStepperPropContents } from '..'
 
 test('recursion', () => {
   const code = `
-  1 + 1;
+  const f = x => x <= 1 ? 1 : f(x - 1) + g(x - 1);
+  const g = y => y <= 1 ? 1 : g(y - 1) + h(y - 1);
+  const h = z => z <= 1 ? 1 : h(z - 1) + f(z - 1);
+  f(2);
     `
   const program = parse(code, { ecmaVersion: 10 })!
   const stringify = (ast: StepperBaseNode) => {
@@ -39,7 +42,7 @@ test('recursion', () => {
   console.log(output.join('\n'))
 })
 
-// FIX: x not renamed to x_1
+
 test('fact', () => {
   const code = `
   const fact = n => n === 1 ? 1 : fact(n - 1) * n;
@@ -114,5 +117,25 @@ test('substitution-block', () => {
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(stringifyWithExplanation)
+  console.log(output.join('\n'))
+})
+
+test('blocks', () => {
+  const code = `
+    {}
+    `
+  const program = parse(code, { ecmaVersion: 10 })!
+  const stringify = (ast: StepperBaseNode) => {
+    if (ast === undefined || ast!.type === undefined) {
+      return ''
+    }
+    return astring.generate(ast).replace(/\n/g, '').replace(/\s+/g, ' ')
+  }
+
+
+  const steps = getSteps(convert(program))
+  console.log(steps.length)
+  // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
+  const output = steps.map(x => stringify(x.ast))
   console.log(output.join('\n'))
 })
