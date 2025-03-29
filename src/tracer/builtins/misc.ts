@@ -1,4 +1,3 @@
-import { arity } from "../../stdlib/misc";
 import { StepperExpression } from "../nodes";
 import { StepperArrowFunctionExpression } from "../nodes/Expression/ArrowFunctionExpression";
 import { StepperIdentifier } from "../nodes/Expression/Identifier";
@@ -17,7 +16,8 @@ export const miscBuiltinFunctions = {
                 return new StepperLiteral(1);
             }
             if (Object.keys(Math).includes(args[0].name)) {
-                return new StepperLiteral(arity(Math[args[0].name as keyof typeof Math] as Function));
+                return new StepperLiteral(1); // TODO: FIX THIS THING
+                // return new StepperLiteral(arity(Math[args[0].name as keyof typeof Math] as Function));
             }
         }
         return new StepperLiteral(0);

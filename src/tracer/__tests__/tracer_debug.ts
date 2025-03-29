@@ -5,6 +5,28 @@ import * as astring from 'astring'
 import { StepperBaseNode } from '../interface'
 import { IStepperPropContents } from '..'
 
+const stringify = (ast: StepperBaseNode) => {
+  if (ast === undefined || ast!.type === undefined) {
+    return ''
+  }
+  return astring.generate(ast).replace(/\n/g, '').replace(/\s+/g, ' ')
+}
+
+const stringifyWithExplanation = (step: IStepperPropContents) => {
+  const stringifyAST = stringify(step.ast)
+  if (step.markers && step.markers[0]) {
+    const explanation = step.markers[0].explanation
+    return (
+      (step.markers[0].redexType ? `[${step.markers[0].redexType}] ` : '') +
+      explanation +
+      '\n' +
+      stringifyAST
+    )
+  } else {
+    return stringifyAST
+  }
+}
+
 test('recursion', () => {
   const code = `
   const f = x => x <= 1 ? 1 : f(x - 1) + g(x - 1);
@@ -13,28 +35,6 @@ test('recursion', () => {
   f(2);
     `
   const program = parse(code, { ecmaVersion: 10 })!
-  const stringify = (ast: StepperBaseNode) => {
-    if (ast === undefined || ast!.type === undefined) {
-      return ''
-    }
-    return astring.generate(ast).replace(/\n/g, '').replace(/\s+/g, ' ')
-  }
-
-  const stringifyWithExplanation = (step: IStepperPropContents) => {
-    const stringifyAST = stringify(step.ast)
-    if (step.markers && step.markers[0]) {
-      const explanation = step.markers[0].explanation
-      return (
-        (step.markers[0].redexType ? `[${step.markers[0].redexType}] ` : '') +
-        explanation +
-        '\n' +
-        stringifyAST
-      )
-    } else {
-      return stringifyAST
-    }
-  }
-
   const steps = getSteps(convert(program))
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
@@ -50,27 +50,6 @@ test('fact', () => {
   `
   const program = parse(code, { ecmaVersion: 10 })!
 
-  const stringify = (ast: StepperBaseNode) => {
-    if (ast === undefined || ast!.type === undefined) {
-      return ''
-    }
-    return astring.generate(ast).replace(/\n/g, '').replace(/\s+/g, ' ')
-  }
-
-  const stringifyWithExplanation = (step: IStepperPropContents) => {
-    const stringifyAST = stringify(step.ast)
-    if (step.markers && step.markers[0]) {
-      const explanation = step.markers[0].explanation
-      return (
-        (step.markers[0].redexType ? `[${step.markers[0].redexType}] ` : '') +
-        explanation +
-        '\n' +
-        stringifyAST
-      )
-    } else {
-      return stringifyAST
-    }
-  }
 
   const steps = getSteps(convert(program))
   console.log(steps.length)
@@ -91,27 +70,6 @@ test('substitution-block', () => {
   }
     `
   const program = parse(code, { ecmaVersion: 10 })!
-  const stringify = (ast: StepperBaseNode) => {
-    if (ast === undefined || ast!.type === undefined) {
-      return ''
-    }
-    return astring.generate(ast).replace(/\n/g, '').replace(/\s+/g, ' ')
-  }
-
-  const stringifyWithExplanation = (step: IStepperPropContents) => {
-    const stringifyAST = stringify(step.ast)
-    if (step.markers && step.markers[0]) {
-      const explanation = step.markers[0].explanation
-      return (
-        (step.markers[0].redexType ? `[${step.markers[0].redexType}] ` : '') +
-        explanation +
-        '\n' +
-        stringifyAST
-      )
-    } else {
-      return stringifyAST
-    }
-  }
 
   const steps = getSteps(convert(program))
   console.log(steps.length)
@@ -122,28 +80,17 @@ test('substitution-block', () => {
 
 test('function calling', () => {
   const code = `
-    function add(x) { 
-      function $add(y) {
-        return x + y;
-      }
-      return $add;
-    }
-    add(5)(6);
+function f(y) {
+    y;
+    return 1 + y;
+}
+f(5);
+
     `
   const program = parse(code, { ecmaVersion: 10 })!
-  
-  const stringify = (ast: StepperBaseNode) => {
-    if (ast === undefined || ast!.type === undefined) {
-      return ''
-    }
-    return astring.generate(ast).replace(/\n/g, '').replace(/\s+/g, ' ')
-  }
-
 
   const steps = getSteps(convert(program))
-  console.log(steps.length)
-  // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
-  const output = steps.map(x => stringify(x.ast))
+  const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
 

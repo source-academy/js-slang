@@ -6,6 +6,7 @@ import { convert } from '../../generator'
 import { StepperBlockExpression } from './BlockExpression'
 import { StepperBlockStatement } from '../Statement/BlockStatement'
 import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
+import { StepperReturnStatement } from '../Statement/ReturnStatement'
 
 export class StepperFunctionApplication implements SimpleCallExpression, StepperBaseNode {
   type: 'CallExpression'
@@ -89,9 +90,14 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     
     if (result instanceof StepperBlockStatement) {
       const blockStatement = lambda.body as unknown as StepperBlockStatement;
-      result = new StepperBlockExpression(
-        blockStatement.body
-      );
+      if (blockStatement.body[0].type === "ReturnStatement") {
+        // (x => {return 2 + 3;})(3) -> 2 + 3;
+        result = (blockStatement.body[0] as StepperReturnStatement).argument!;
+      } else {
+        result = new StepperBlockExpression(
+          blockStatement.body
+        );
+      }
     } else {
       result = lambda.body as StepperExpression;
     }

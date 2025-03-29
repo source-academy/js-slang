@@ -26,6 +26,7 @@ import { StepperReturnStatement } from './nodes/Statement/ReturnStatement'
 import { StepperFunctionDeclaration } from './nodes/Statement/FunctionDeclaration'
 import { StepperArrayExpression } from './nodes/Expression/ArrayExpression'
 import { StepperLogicalExpression } from './nodes/Expression/LogicalExpression'
+import { StepperBlockExpression } from './nodes/Expression/BlockExpression'
 const undefinedNode = new StepperLiteral('undefined');
 
 const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
@@ -70,9 +71,24 @@ export function explain(redex: StepperBaseNode): string {
         return "..."
       }
     },
+    ReturnStatement: (node: StepperReturnStatement) => {
+      if (!node.argument) {
+        throw new Error("return argument should not be empty")
+      }
+      return generate(node.argument!) + " returned"
+    },
+    FunctionDeclaration: (node: StepperFunctionDeclaration) => {
+      return `Function ${node.id.name} declared, parameter(s) ${node.params.map(x => generate(x))} required`
+    },
     ExpressionStatement: (node: StepperExpressionStatement) => {
       return generate(node.expression) + " finished evaluating"
     }, 
+    BlockStatement: (node: StepperBlockStatement) => {
+      return generate(node.body[0]) + " finished evaluating"
+    },
+    BlockExpression: (node: StepperBlockExpression) => {
+      throw new Error("Not implemented");
+    },
     ConditionalExpression: (node: StepperConditionalExpression) => {
       const test = node.test; // test should have typeof literal
       if (test.type !== 'Literal') {
@@ -88,17 +104,28 @@ export function explain(redex: StepperBaseNode): string {
         return "Conditional expression evaluated, condition is false, alternate evaluated"
       }
     }, 
-    /*
     CallExpression: (node: StepperFunctionApplication) => {
-      if (node.callee.type !== "ArrowFunctionExpression" && node.callee.type !== "Identifier") { // TODO
+      if (node.callee.type !== "ArrowFunctionExpression" && node.callee.type !== "Identifier") { 
         throw new Error("`callee` should be function expression.")
       }
-      return node.arguments.map(generate).join(", ") + 
+      
+      const func: StepperArrowFunctionExpression = node.callee as StepperArrowFunctionExpression;
+      // @ts-expect-error func.body.type can be StepperBlockExpression
+      if (func.body.type === "BlockStatement") {
+        const paramDisplay = func.params.map(x => x.name).join(", ")
+        const argDisplay = node.arguments.map(x => generate(x)).join(", ");
+        return "Function " + func.name + ", defined as "
+        + paramDisplay + " => {...}"
+        + ", takes in " + paramDisplay
+        + " as input " + argDisplay;
+      } else {
+        return node.arguments.map(x => generate(x)).join(", ") + 
         " substituted into " + 
-        (node.callee as StepperArrowFunctionExpression).params.map(generate).join(", ") + " of "
-        + generate(node.callee);
+        func.params.map(x => x.name).join(", ") + " of "
+        + generate(func);
+      }
+      
     },
-    */
     ArrowFunctionExpression: (node: StepperArrowFunctionExpression) => {
       throw new Error("Not implemented.")
     },

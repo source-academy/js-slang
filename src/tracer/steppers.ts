@@ -16,11 +16,11 @@ export function getSteps(inputNode: es.BaseNode): IStepperPropContents[] {
       const oldNode = node
       const newNode = node.oneStep()
       if (redex) {
-        const explainations: string[] = redex.preRedex.map(explain);
+        const explanations: string[] = redex.preRedex.map(explain);
         const beforeMarkers: Marker[] = redex.preRedex.map((redex, index) => ({
           redex: redex,
           redexType: 'beforeMarker',
-          explanation: explainations[index]
+          explanation: explanations[index]
         }));
         steps.push({
           ast: oldNode,
@@ -29,7 +29,7 @@ export function getSteps(inputNode: es.BaseNode): IStepperPropContents[] {
         const afterMarkers: Marker[] = redex.postRedex.map((redex, index) => ({
           redex: redex,
           redexType: 'afterMarker',
-          explanation: explainations[index]
+          explanation: explanations[index]
         }));
         steps.push({
           ast: newNode,

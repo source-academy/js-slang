@@ -3,7 +3,6 @@ import { StepperBaseNode } from '../../interface'
 import { convert } from '../../generator'
 import { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
-import { StepperLiteral } from '../Expression/Literal'
 
 export class StepperReturnStatement implements ReturnStatement, StepperBaseNode {
   type: 'ReturnStatement'
@@ -14,19 +13,20 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
   range?: [number, number] | undefined
   
   isContractible(): boolean {
-    if (!this.argument) return true;
-    return !this.argument.isOneStepPossible();
+    return true;
   }
   
   isOneStepPossible(): boolean {
-    return this.argument ? this.argument.isOneStepPossible() : false
+    return true; 
   }
   
-  contract(): StepperLiteral {
+  contract(): StepperExpression {
     if (!this.argument) {
       throw new Error('Cannot contract return statement without argument')
     }
-    return this.argument as StepperLiteral;
+    redex.preRedex = [this]
+    redex.postRedex = [this.argument];
+    return this.argument as StepperExpression;
   }
 
   contractEmpty() { 
@@ -34,11 +34,11 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
     redex.postRedex = []
   }
   
-  oneStep(): StepperReturnStatement {
+  oneStep(): StepperExpression {
     if (!this.argument) {
       throw new Error('Cannot step return statement without argument')
     }
-    return new StepperReturnStatement(this.argument.oneStep())
+    return this.contract();
   }
 
   

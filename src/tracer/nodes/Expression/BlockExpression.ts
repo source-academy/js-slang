@@ -42,9 +42,9 @@ export class StepperBlockExpression implements StepperBaseNode {
 
     if (this.body[0].type === 'ReturnStatement' && this.body[0].isContractible()) {
       const returnStmt = this.body[0] as StepperReturnStatement;
+      returnStmt.contract();
       return returnStmt.argument || undefinedNode;
     }
-
     throw new Error('Cannot contract block expression')
   }
 
@@ -91,7 +91,17 @@ export class StepperBlockExpression implements StepperBaseNode {
     }
 
     const firstValueStatement = this.body[0];
+    
     // After this stage, the first statement is a value statement. Now, proceed until getting the second value statement.
+    
+    // if the second statement is return statement, ignore the first statement
+    if (this.body.length >= 2 && this.body[1].type == "ReturnStatement") {
+      redex.preRedex = [this.body[0]];
+      const afterSubstitutedScope = this.body.slice(1);
+      redex.postRedex = []; 
+      return new StepperBlockExpression(afterSubstitutedScope);
+    } 
+
     if (this.body.length >= 2 && this.body[1].isOneStepPossible()) {
         const secondStatementOneStep = this.body[1].oneStep()
         const afterSubstitutedScope = this.body.slice(2);
@@ -128,13 +138,6 @@ export class StepperBlockExpression implements StepperBaseNode {
       return substitutedProgram;
     }
 
-    // For block expression, if the second statement is return statement, ignore the first statement
-    if (this.body[1].type == "ReturnStatement") {
-      redex.preRedex = [this.body[0]];
-      const afterSubstitutedScope = this.body.slice(1);
-      redex.postRedex = []; 
-      return new StepperBlockExpression(afterSubstitutedScope);
-    } 
     // After this stage, we have two value inducing statement. Remove the first one.
     return this.contract();
   }
