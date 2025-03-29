@@ -120,11 +120,18 @@ test('substitution-block', () => {
   console.log(output.join('\n'))
 })
 
-test('blocks', () => {
+test('function calling', () => {
   const code = `
-    {}
+    function add(x) { 
+      function $add(y) {
+        return x + y;
+      }
+      return $add;
+    }
+    add(5)(6);
     `
   const program = parse(code, { ecmaVersion: 10 })!
+  
   const stringify = (ast: StepperBaseNode) => {
     if (ast === undefined || ast!.type === undefined) {
       return ''
@@ -139,3 +146,4 @@ test('blocks', () => {
   const output = steps.map(x => stringify(x.ast))
   console.log(output.join('\n'))
 })
+

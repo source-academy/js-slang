@@ -59,30 +59,26 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     }
   
     isContractible(): boolean {
-      return true
+      return false
     }
   
     isOneStepPossible(): boolean {
-      return true
+      return false
     }
   
-    contract(): typeof undefinedNode {
-      
-      redex.preRedex = [this]
-      redex.postRedex = []
-      
-
-      const arrowFunction = new StepperArrowFunctionExpression(
+    getArrowFunctionExpression() {
+      return new StepperArrowFunctionExpression(
         this.params,
         this.body as unknown as StepperExpression,
-        this.id.name,
+        this.id.name, // mu term
         false,
         this.async,
         this.generator
       );
-      
-      arrowFunction;
-      // FIX SubstitutionScope.substitute(this.id, arrowFunction);
+    }
+
+    contract(): typeof undefinedNode {
+      // contraction occurs at Program, BlockStatement, BlockExpression
       return undefinedNode;
     }
   

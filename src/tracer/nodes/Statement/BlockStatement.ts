@@ -6,6 +6,7 @@ import { convert } from '../../generator'
 import { redex } from '../..'
 import { StepperVariableDeclaration, StepperVariableDeclarator } from './VariableDeclaration'
 import { assignMuTerms, getFreshName } from '../../utils'
+import { StepperFunctionDeclaration } from './FunctionDeclaration'
 
 export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   type: 'BlockStatement'
@@ -76,7 +77,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
           declarations
             .filter(declarator => declarator.init)
             .reduce(
-              (statement, declarator) => statement.substitute(declarator.id, declarator.init!),
+              (statement, declarator) => statement.substitute(declarator.id, declarator.init!) as StepperStatement,
               current
             )
         ) as StepperStatement[]
@@ -84,6 +85,18 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       redex.preRedex = [this.body[0]]
       redex.postRedex = declarations.map(x => x.id)
       return substitutedProgram
+    }
+
+    // If the first statement is function declaration, also gracefully handle it!
+    if (this.body[0].type == "FunctionDeclaration") {
+      const arrowFunction = (this.body[0] as StepperFunctionDeclaration).getArrowFunctionExpression();
+      const functionIdentifier = (this.body[0] as StepperFunctionDeclaration).id;
+      const afterSubstitutedScope = this.body.slice(1)
+        .map(statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement) as StepperStatement[];
+      const substitutedProgram  = new StepperBlockStatement(afterSubstitutedScope);
+      redex.preRedex = [this.body[0]];
+      redex.postRedex = afterSubstitutedScope;
+      return substitutedProgram;
     }
 
     const firstValueStatement = this.body[0]
@@ -112,7 +125,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
           declarations
             .filter(declarator => declarator.init)
             .reduce(
-              (statement, declarator) => statement.substitute(declarator.id, declarator.init!),
+              (statement, declarator) => statement.substitute(declarator.id, declarator.init!) as StepperStatement,
               current
             )
         ) as StepperStatement[]
@@ -123,6 +136,19 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       redex.postRedex = declarations.map(x => x.id)
       return substitutedProgram
     }
+
+    // If the second statement is function declaration, also gracefully handle it!
+    if (this.body.length >= 2 && this.body[1].type == "FunctionDeclaration") {
+      const arrowFunction = (this.body[1] as StepperFunctionDeclaration).getArrowFunctionExpression();
+      const functionIdentifier = (this.body[1] as StepperFunctionDeclaration).id;
+      const afterSubstitutedScope = this.body.slice(1)
+        .map(statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement) as StepperStatement[];
+      const substitutedProgram  = new StepperBlockStatement([firstValueStatement, afterSubstitutedScope].flat());
+      redex.preRedex = [this.body[1]];
+      redex.postRedex = afterSubstitutedScope;
+      return substitutedProgram;
+    }
+
     // After this stage, we have two value inducing statement. Remove the first one.
 
     return this.contract()

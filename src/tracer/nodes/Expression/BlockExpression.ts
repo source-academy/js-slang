@@ -7,6 +7,7 @@ import { assignMuTerms, getFreshName } from '../../utils'
 import { StepperReturnStatement } from '../Statement/ReturnStatement'
 import { StepperStatement } from '../Statement'
 import {  BlockStatement } from 'estree'
+import { StepperFunctionDeclaration } from '../Statement/FunctionDeclaration'
 
 // TODO: add docs, because this is a block expression, not a block statement, and this does not follow official estree spec
 export class StepperBlockExpression implements StepperBaseNode {
@@ -23,11 +24,13 @@ export class StepperBlockExpression implements StepperBaseNode {
   }
 
   isContractible(): boolean {
-    return this.body.length === 0 || (this.body[0].type === 'ReturnStatement' && this.body[0].isContractible())
+    return this.body.length === 0 
+    || (this.body[0].type === 'ReturnStatement' && this.body[0].isContractible())
   }
 
   isOneStepPossible(): boolean {
-    return this.isContractible() || this.body[0].isOneStepPossible()
+    return this.isContractible() || this.body[0].isOneStepPossible() || 
+    (this.body.length >= 2)
   }
 
   contract(): StepperExpression | typeof undefinedNode {
@@ -67,11 +70,23 @@ export class StepperBlockExpression implements StepperBaseNode {
       const declarations = assignMuTerms(this.body[0].declarations);
       const afterSubstitutedScope = this.body.slice(1).map(
         (current) => declarations.filter(declarator => declarator.init).reduce(
-        (statement, declarator) => statement.substitute(declarator.id, declarator.init!), current
+        (statement, declarator) => statement.substitute(declarator.id, declarator.init!) as StepperStatement, current
       )) as StepperStatement[];
       const substitutedProgram  = new StepperBlockExpression(afterSubstitutedScope);
       redex.preRedex = [this.body[0]];
       redex.postRedex = declarations.map(x => x.id);
+      return substitutedProgram;
+    }
+
+    // If the first statement is function declaration, also gracefully handle it!
+    if (this.body[0].type == "FunctionDeclaration") {
+      const arrowFunction = (this.body[0] as StepperFunctionDeclaration).getArrowFunctionExpression();
+      const functionIdentifier = (this.body[0] as StepperFunctionDeclaration).id;
+      const afterSubstitutedScope = this.body.slice(1)
+        .map(statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement) as StepperStatement[];
+      const substitutedProgram  = new StepperBlockExpression(afterSubstitutedScope);
+      redex.preRedex = [this.body[0]];
+      redex.postRedex = afterSubstitutedScope;
       return substitutedProgram;
     }
 
@@ -93,13 +108,33 @@ export class StepperBlockExpression implements StepperBaseNode {
       const declarations = assignMuTerms(this.body[1].declarations);
       const afterSubstitutedScope = this.body.slice(2).map(
         (current) => declarations.filter(declarator => declarator.init).reduce(
-        (statement, declarator) => statement.substitute(declarator.id, declarator.init!), current
+        (statement, declarator) => statement.substitute(declarator.id, declarator.init!) as StepperStatement, current
       )) as StepperStatement[];
       const substitutedProgram  = new StepperBlockExpression([firstValueStatement, afterSubstitutedScope].flat());
       redex.preRedex = [this.body[1]];
       redex.postRedex = declarations.map(x => x.id);
       return substitutedProgram;
     }
+
+    // If the second statement is function declaration, also gracefully handle it!
+    if (this.body.length >= 2 && this.body[1].type == "FunctionDeclaration") {
+      const arrowFunction = (this.body[1] as StepperFunctionDeclaration).getArrowFunctionExpression();
+      const functionIdentifier = (this.body[1] as StepperFunctionDeclaration).id;
+      const afterSubstitutedScope = this.body.slice(1)
+        .map(statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement) as StepperStatement[];
+      const substitutedProgram  = new StepperBlockExpression([firstValueStatement, afterSubstitutedScope].flat());
+      redex.preRedex = [this.body[1]];
+      redex.postRedex = afterSubstitutedScope;
+      return substitutedProgram;
+    }
+
+    // For block expression, if the second statement is return statement, ignore the first statement
+    if (this.body[1].type == "ReturnStatement") {
+      redex.preRedex = [this.body[0]];
+      const afterSubstitutedScope = this.body.slice(1);
+      redex.postRedex = []; 
+      return new StepperBlockExpression(afterSubstitutedScope);
+    } 
     // After this stage, we have two value inducing statement. Remove the first one.
     return this.contract();
   }
