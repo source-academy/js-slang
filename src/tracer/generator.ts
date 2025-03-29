@@ -27,6 +27,7 @@ import { StepperFunctionDeclaration } from './nodes/Statement/FunctionDeclaratio
 import { StepperArrayExpression } from './nodes/Expression/ArrayExpression'
 import { StepperLogicalExpression } from './nodes/Expression/LogicalExpression'
 import { StepperBlockExpression } from './nodes/Expression/BlockExpression'
+import { isBuiltinFunction } from './builtins'
 const undefinedNode = new StepperLiteral('undefined');
 
 const nodeConverters: {[Key: string]: (node: any) => StepperBaseNode} = {
@@ -110,8 +111,10 @@ export function explain(redex: StepperBaseNode): string {
       }
       
       const func: StepperArrowFunctionExpression = node.callee as StepperArrowFunctionExpression;
-      // @ts-expect-error func.body.type can be StepperBlockExpression
-      if (func.body.type === "BlockStatement") {
+        if (func.name && isBuiltinFunction(func.name)) {
+          return `${func.name} runs`
+        // @ts-expect-error func.body.type can be StepperBlockExpression
+        } else if (func.body.type === "BlockStatement") {
         const paramDisplay = func.params.map(x => x.name).join(", ")
         const argDisplay = node.arguments.map(x => generate(x)).join(", ");
         return "Function " + func.name + ", defined as "

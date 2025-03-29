@@ -80,13 +80,21 @@ test('substitution-block', () => {
 
 test('function calling', () => {
   const code = `
-function f(y) {
-    y;
-    return 1 + y;
-}
-f(5);
+    const getFirst = xs => head(xs);
+    getFirst(list(1, 3, 5));
+  `
+  const program = parse(code, { ecmaVersion: 10 })!
 
-    `
+  const steps = getSteps(convert(program))
+  const output = steps.map(stringifyWithExplanation)
+  console.log(output.join('\n'))
+})
+
+
+test('constant', () => {
+  const code = `
+    math_PI;
+  `
   const program = parse(code, { ecmaVersion: 10 })!
 
   const steps = getSteps(convert(program))

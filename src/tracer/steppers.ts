@@ -6,9 +6,10 @@ import { convert, explain } from './generator'
 import { StepperProgram } from './nodes/Program'
 import { undefinedNode } from './nodes'
 import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
+import { prelude } from './builtins'
 
 export function getSteps(inputNode: es.BaseNode): IStepperPropContents[] {
-  const node: StepperBaseNode = convert(inputNode);
+  const node: StepperBaseNode = prelude(convert(inputNode));
   const steps: IStepperPropContents[] = []
   function evaluate(node: StepperBaseNode): StepperBaseNode {
     const isOneStepPossible = node.isOneStepPossible()
