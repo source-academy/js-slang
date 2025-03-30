@@ -25,7 +25,9 @@ export class StepperBlockExpression implements StepperBaseNode {
 
   isContractible(): boolean {
     return this.body.length === 0 
+    || (this.body.length === 1 && !this.body[0].isOneStepPossible()) // { 1; } -> undefined;
     || (this.body[0].type === 'ReturnStatement' && this.body[0].isContractible())
+    
   }
 
   isOneStepPossible(): boolean {
@@ -34,7 +36,7 @@ export class StepperBlockExpression implements StepperBaseNode {
   }
 
   contract(): StepperExpression | typeof undefinedNode {
-    if (this.body.length === 0) {
+    if (this.body.length === 0 || (this.body.length === 1 && !this.body[0].isOneStepPossible())) {
       redex.preRedex = [this];
       redex.postRedex = [];
       return undefinedNode;

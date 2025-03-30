@@ -34,7 +34,7 @@ export function getBuiltinFunction(name: string, args: StepperExpression[]): Ste
             return new StepperLiteral(fn(...argVal));
         }
     }
-    return builtinFunctions[name as keyof typeof builtinFunctions](args);
+    return builtinFunctions[name as keyof typeof builtinFunctions].definition(args);
 }
 
 export function isBuiltinFunction(name: string): boolean {
