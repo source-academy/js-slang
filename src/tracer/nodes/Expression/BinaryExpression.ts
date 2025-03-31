@@ -46,8 +46,9 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
   }
 
   isContractible(): boolean {
-    if (this.left.type !== 'Literal' || this.right.type !== 'Literal') return false
-
+    if (this.left.type !== 'Literal' || this.right.type !== 'Literal') {
+      return false;
+    }
     const left_type = typeof this.left.value
     const right_type = typeof this.right.value
 

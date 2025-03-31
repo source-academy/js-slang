@@ -1,4 +1,4 @@
-import { Comment, SourceLocation, UnaryExpression, UnaryOperator } from 'estree'
+import { Comment, Literal, SourceLocation, UnaryExpression, UnaryOperator } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { redex } from '../..'
 import { StepperLiteral } from './Literal'
@@ -33,7 +33,25 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
     this.range = range
   }
 
+  static createLiteral(node: StepperUnaryExpression | UnaryExpression): StepperLiteral | undefined {
+    // if node argument is positive literal(x) and node operator is "-", we replace them with literal(-x) instead.
+    if (node.operator === '-' 
+      && node.argument.type === "Literal"
+      && typeof (node.argument as Literal).value === "number"
+      && (node.argument as Literal).value as number > 0
+    ) {
+      return new StepperLiteral(
+        - ((node.argument as Literal).value as number)
+      );
+    }
+    return undefined;
+  }
+
   static create(node: UnaryExpression) {
+    const literal = StepperUnaryExpression.createLiteral(node);
+    if (literal) {
+      return literal;
+    }
     return new StepperUnaryExpression(
       node.operator,
       convert(node.argument) as StepperExpression,
@@ -89,11 +107,15 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
     if (this.isContractible()) {
       return this.contract()
     }
-    return new StepperUnaryExpression(this.operator, this.argument.oneStep())
+    const res = new StepperUnaryExpression(this.operator, this.argument.oneStep());
+    const literal = StepperUnaryExpression.createLiteral(res);
+    return literal ? literal : res;
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
-    return new StepperUnaryExpression(this.operator, this.argument.substitute(id, value))
+    const res = new StepperUnaryExpression(this.operator, this.argument.substitute(id, value))
+    const literal = StepperUnaryExpression.createLiteral(res);
+    return literal ? literal : res;
   }
 
   freeNames(): string[] {
