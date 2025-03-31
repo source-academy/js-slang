@@ -91,9 +91,12 @@ test('function calling', () => {
 })
 
 
-test('constant', () => {
+test('general', () => {
   const code = `
-    math_PI;
+      const f = x => g();
+        const g = () => x;
+        const x = 1;
+        f(0);
   `
   const program = parse(code, { ecmaVersion: 10 })!
 
@@ -101,4 +104,5 @@ test('constant', () => {
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
+
 
