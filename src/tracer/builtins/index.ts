@@ -4,9 +4,12 @@ import { StepperIdentifier } from '../nodes/Expression/Identifier'
 import { StepperLiteral } from '../nodes/Expression/Literal'
 import { listBuiltinFunctions } from './lists'
 import { miscBuiltinFunctions } from './misc'
+import { auxiliaryBuiltinFunctions } from './auxiliary'
+
 const builtinFunctions = {
   ...listBuiltinFunctions,
-  ...miscBuiltinFunctions
+  ...miscBuiltinFunctions,
+  ...auxiliaryBuiltinFunctions
 }
 
 export function prelude(inputNode: StepperBaseNode) {

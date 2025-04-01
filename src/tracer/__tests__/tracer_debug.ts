@@ -105,4 +105,3 @@ test('general', () => {
   console.log(output.join('\n'))
 })
 
-
