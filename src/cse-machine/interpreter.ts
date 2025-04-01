@@ -1272,11 +1272,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash.push(value)
   },
 
-  [InstrType.CONTINUE]: function (
-    command: Instr,
-    context: Context,
-    control: Control,
-  ) {
+  [InstrType.CONTINUE]: function (command: Instr, context: Context, control: Control) {
     const next = control.pop() as ControlItem
     if (isInstr(next) && next.instrType == InstrType.CONTINUE_MARKER) {
       // Encountered continue mark, stop popping
