@@ -9,11 +9,7 @@ const testCases: [string, string, Chapter][] = [
     `stringify(parse("3; true; false; ''; \\"\\"; 'bob'; 1; 20;"), undefined, 2);`,
     Chapter.SOURCE_4
   ],
-  [
-    'name expression',
-    `stringify(parse("x;"), undefined, 2);`,
-    Chapter.SOURCE_4
-  ],
+  ['name expression', `stringify(parse("x;"), undefined, 2);`, Chapter.SOURCE_4],
   [
     'name expressions',
     `stringify(parse("x; moreNames; undefined;"), undefined, 2);`,

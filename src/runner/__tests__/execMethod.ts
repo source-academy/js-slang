@@ -110,7 +110,7 @@ const sourceCases: TestCase[] = [
 
 // These JS cases never evaluate a prelude,
 // nor ever have verbose errors enabled
-const fullJSCases: Chapter[] = [Chapter.FULL_JS, Chapter.FULL_TS ]
+const fullJSCases: Chapter[] = [Chapter.FULL_JS, Chapter.FULL_TS]
 
 // These alt langs never evaluate a prelude,
 // always use fullJS regardless of variant,
@@ -210,7 +210,6 @@ async function testCase({
     // with just the user program
     expect(validator.validateAndAnnotate).toHaveBeenCalledTimes(expectedValidate ? 1 : 0)
   }
-
 }
 
 function testCases(desc: string, cases: TestCase[]) {
