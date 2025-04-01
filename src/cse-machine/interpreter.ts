@@ -1276,7 +1276,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: Instr,
     context: Context,
     control: Control,
-    stash: Stash
   ) {
     const next = control.pop() as ControlItem
     if (isInstr(next) && next.instrType == InstrType.CONTINUE_MARKER) {
@@ -1292,7 +1291,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   [InstrType.CONTINUE_MARKER]: function () {},
 
-  [InstrType.BREAK]: function (command: Instr, context: Context, control: Control, stash: Stash) {
+  [InstrType.BREAK]: function (command: Instr, context: Context, control: Control) {
     const next = control.pop() as ControlItem
     if (isInstr(next) && next.instrType == InstrType.BREAK_MARKER) {
       // Encountered break mark, stop popping
