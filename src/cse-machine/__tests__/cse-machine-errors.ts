@@ -3,7 +3,7 @@ import * as _ from 'lodash'
 
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectResult, testFailure } from '../../utils/testing'
+import { expectParsedError, expectFinishedResult, testFailure } from '../../utils/testing'
 import { TestOptions } from '../../utils/testing/types'
 
 jest.spyOn(_, 'memoize').mockImplementation(func => func as any)
@@ -617,7 +617,7 @@ test('Error when calling builtin function in with too few arguments', () => {
 })
 
 test('No error when calling list function in with variable arguments', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     list();
     list(1);
@@ -652,7 +652,7 @@ test('No error when calling list function in with variable arguments', () => {
 })
 
 test('No error when calling display function in with variable arguments', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     display(1);
     display(1, "test");
@@ -662,7 +662,7 @@ test('No error when calling display function in with variable arguments', () => 
 })
 
 test('No error when calling stringify function in with variable arguments', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     stringify(1, 2);
     stringify(1, 2, 3);
@@ -672,7 +672,7 @@ test('No error when calling stringify function in with variable arguments', () =
 })
 
 test('No error when calling math_max function in with variable arguments', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     math_max();
     math_max(1, 2);
@@ -683,7 +683,7 @@ test('No error when calling math_max function in with variable arguments', () =>
 })
 
 test('No error when calling math_min function in with variable arguments', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     math_min();
     math_min(1, 2);

@@ -1,11 +1,11 @@
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectResult } from '../../utils/testing'
+import { expectFinishedResult } from '../../utils/testing'
 import { defaultExportLookupName } from '../localImport.prelude'
 
 describe('__access_named_export__', () => {
   it('returns identifier if name exists in list of exported names', () => {
-    return expectResult(
+    return expectFinishedResult(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -20,7 +20,7 @@ describe('__access_named_export__', () => {
   })
 
   it('returns first identifier if name exists multiple times in list of exported names', () => {
-    return expectResult(
+    return expectFinishedResult(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -36,7 +36,7 @@ describe('__access_named_export__', () => {
   })
 
   it('returns undefined if name does not exist in list of exported names', () => {
-    return expectResult(
+    return expectFinishedResult(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -50,7 +50,7 @@ describe('__access_named_export__', () => {
   })
 
   it('returns undefined if list of exported names is empty', () => {
-    return expectResult(
+    return expectFinishedResult(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -66,7 +66,7 @@ describe('__access_named_export__', () => {
 
 describe('__access_export__', () => {
   it('returns named export if it exists', () => {
-    return expectResult(
+    return expectFinishedResult(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -81,7 +81,7 @@ describe('__access_export__', () => {
   })
 
   it('returns default export if it exists', () => {
-    return expectResult(
+    return expectFinishedResult(
       stripIndent`
       function importedFile() {
         const square = x => x * x;

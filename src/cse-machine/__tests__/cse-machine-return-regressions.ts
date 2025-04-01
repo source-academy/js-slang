@@ -4,7 +4,7 @@
  */
 
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectResult } from '../../utils/testing'
+import { expectParsedError, expectFinishedResult } from '../../utils/testing'
 
 const optionEC = { variant: Variant.EXPLICIT_CONTROL }
 const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
@@ -28,7 +28,7 @@ test('Calling unreachable results in error', () => {
 
 // This is bad practice. Don't do this!
 test('Bare early returns work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -47,7 +47,7 @@ test('Bare early returns work', () => {
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -69,7 +69,7 @@ test('Recursive call early returns work', () => {
 
 // This is bad practice. Don't do this!
 test('Tail call early returns work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -91,7 +91,7 @@ test('Tail call early returns work', () => {
 
 // This is bad practice. Don't do this!
 test('Bare early returns in if statements work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -113,7 +113,7 @@ test('Bare early returns in if statements work', () => {
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in if statements work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -138,7 +138,7 @@ test('Recursive call early returns in if statements work', () => {
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in if statements work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -163,7 +163,7 @@ test('Tail call early returns in if statements work', () => {
 
 // This is bad practice. Don't do this!
 test('Bare early returns in while loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -185,7 +185,7 @@ test('Bare early returns in while loops work', () => {
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in while loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -210,7 +210,7 @@ test('Recursive call early returns in while loops work', () => {
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in while loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -235,7 +235,7 @@ test('Tail call early returns in while loops work', () => {
 
 // This is bad practice. Don't do this!
 test('Bare early returns in for loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -257,7 +257,7 @@ test('Bare early returns in for loops work', () => {
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in for loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -279,7 +279,7 @@ test('Recursive call early returns in for loops work', () => {
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in for loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error

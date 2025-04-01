@@ -72,15 +72,13 @@ async function sourceRunner(
   }
 
   // All runners after this point evaluate the prelude.
-  if (context.prelude !== null) {
+  if (context.prelude !== null && !options.isPrelude) {
     context.unTypecheckedCode.push(context.prelude)
+    
     const prelude = parse(context.prelude, context)
-    if (prelude === null) {
-      return resolvedErrorPromise
-    }
-    context.prelude = null
+    if (prelude === null) return resolvedErrorPromise
+
     await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true })
-    return sourceRunner(program, context, isVerboseErrorsEnabled, options)
   }
 
   if (context.variant === Variant.EXPLICIT_CONTROL || context.executionMethod === 'cse-machine') {

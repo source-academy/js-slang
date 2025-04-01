@@ -1,8 +1,8 @@
 import { parseError } from '../..'
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { testSuccess } from '../../utils/testing'
-import { expectFinishedResultValue } from '../../utils/testing/misc'
+import { expectFinishedResult, testSuccess } from '../../utils/testing'
+import { assertFinishedResultValue } from '../../utils/testing/misc'
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../parser'
 
@@ -341,12 +341,9 @@ describe.each([
         expect(result).toMatchSnapshot()
       })
 
-      test('Test stdlib parser', async () => {
+      test('Test stdlib parser', () => {
         const parseSnippet = `parse(${JSON.stringify(snippet)});`
-        const {
-          result: { value }
-        } = await testSuccess(parseSnippet, Math.max(4, chapter))
-        expect(value).toMatchSnapshot()
+        return expectFinishedResult(parseSnippet).toMatchSnapshot()
       })
     }
 
@@ -363,5 +360,5 @@ describe.each([
 
 test('typeof operator is allowed in typed variant', async () => {
   const { result } = await testSuccess(`typeof "0";`, { variant: Variant.TYPED })
-  expectFinishedResultValue(result, 'string')
+  assertFinishedResultValue(result, 'string')
 })

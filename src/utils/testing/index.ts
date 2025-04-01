@@ -1,7 +1,7 @@
 import { Chapter, type CustomBuiltIns } from '../../types'
 import { parseError, runInContext } from '../..'
 import createContext, { defineBuiltin } from '../../createContext'
-import { expectFinishedResult, processTestOptions } from './misc'
+import { assertIsFinished, processTestOptions } from './misc'
 import { mockContext } from './mocks'
 import type { TestContext, TestOptions, TestResults } from './types'
 
@@ -51,23 +51,6 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
   }
 }
 
-/**
- * Convenience wrapper for testing multiple cases with the same
- * test function
- */
-export function testMultipleCases<T extends Array<any>>(
-  cases: [string, ...T][],
-  tester: (args: T, i: number) => void | Promise<void>,
-  includeIndex?: boolean,
-  timeout?: number
-) {
-  const withIndex = cases.map(([desc, ...c], i) => {
-    const newDesc = includeIndex ? `${i + 1}. ${desc}` : desc
-    return [newDesc, i, ...c] as [string, number, ...T]
-  })
-  test.each(withIndex)('%s', (_, i, ...args) => tester(args, i), timeout)
-}
-
 async function testInContext(code: string, rawOptions: TestOptions) {
   const options = processTestOptions(rawOptions)
   const context = createTestContext(options)
@@ -88,7 +71,7 @@ export async function testSuccess(code: string, options: TestOptions = {}) {
     console.log(context.errors)
   }
 
-  expectFinishedResult(result)
+  assertIsFinished(result)
   return {
     context,
     result
@@ -109,13 +92,13 @@ export async function testFailure(code: string, options: TestOptions = {}) {
  * Run the given code and expect it to finish without errors. Use
  * as if using `expect()`
  */
-export function expectResult(code: string, options: TestOptions = {}) {
+export function expectFinishedResult(code: string, options: TestOptions = {}) {
   return expect(
     testInContext(code, options).then(({ result, context }) => {
       if (result.status === 'error') {
         console.log(context.errors)
       }
-      expectFinishedResult(result)
+      assertIsFinished(result)
       return result.value
     })
   ).resolves

@@ -4,47 +4,53 @@ import { SourceLocation } from 'estree'
 import { findDeclaration, getScope, runInContext } from '../index'
 import { Chapter, Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { createTestContext, expectParsedError, expectResult, testSuccess } from '../utils/testing'
+import {
+  createTestContext,
+  expectParsedError,
+  expectFinishedResult,
+  testSuccess
+} from '../utils/testing'
 import { TestOptions } from '../utils/testing/types'
 import {
   evalWithBuiltins,
-  expectFinishedResultValue,
+  assertFinishedResultValue,
   processTestOptions
 } from '../utils/testing/misc'
 
 const toString = (x: Value) => '' + x
 
 test('Empty code returns undefined', () => {
-  return expectResult('').toBe(undefined)
+  return expectFinishedResult('').toBe(undefined)
 })
 
 test('Single string self-evaluates to itself', () => {
-  return expectResult("'42';").toBe('42')
+  return expectFinishedResult("'42';").toBe('42')
 })
 
 test('Multiline string self-evaluates to itself', () => {
-  return expectResult('`1\n1`;').toBe(`1
+  return expectFinishedResult('`1\n1`;').toBe(`1
 1`)
 })
 
 test('Allow display to return value it is displaying', () => {
-  return expectResult('25*(display(1+1));').toBe(50)
+  return expectFinishedResult('25*(display(1+1));').toBe(50)
 })
 
 test('Single number self-evaluates to itself', () => {
-  return expectResult('42;').toBe(42)
+  return expectFinishedResult('42;').toBe(42)
 })
 
 test('Single boolean self-evaluates to itself', () => {
-  return expectResult('true;').toBe(true)
+  return expectFinishedResult('true;').toBe(true)
 })
 
 test('Arrow function definition returns itself', () => {
-  return expectResult('() => 42;').toMatchInlineSnapshot(`[Function]`)
+  return expectFinishedResult('() => 42;').toMatchInlineSnapshot(`[Function]`)
 })
 
 test('Builtins hide their implementation when stringify', () => {
-  return expectResult('stringify(pair);', { chapter: Chapter.SOURCE_2 }).toMatchInlineSnapshot(`
+  return expectFinishedResult('stringify(pair);', { chapter: Chapter.SOURCE_2 })
+    .toMatchInlineSnapshot(`
             "function pair(left, right) {
             	[implementation hidden]
             }"
@@ -52,7 +58,7 @@ test('Builtins hide their implementation when stringify', () => {
 })
 
 test('Builtins hide their implementation when toString', () => {
-  return expectResult('toString(pair);', {
+  return expectFinishedResult('toString(pair);', {
     chapter: Chapter.SOURCE_2,
     testBuiltins: { toString }
   }).toMatchInlineSnapshot(`
@@ -78,7 +84,7 @@ test('functions toString (mostly) matches up with JS', async () => {
 })
 
 test('Factorial arrow function', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
@@ -125,7 +131,7 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
 })
 
 test('Assignment has value', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     let a = 1;
     let b = a = 4;
@@ -137,7 +143,7 @@ test('Assignment has value', () => {
 })
 
 test('Array assignment has value', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     let arr = [];
     const a = arr[0] = 1;
@@ -149,7 +155,7 @@ test('Array assignment has value', () => {
 })
 
 test('Can overwrite lets when assignment is allowed', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function test() {
       let variable = false;
@@ -202,7 +208,7 @@ test('Function infinite recursion with different args represents CallExpression 
 }, 30000)
 
 test('Functions passed into non-source functions remain equal', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function t(x, y, z) {
       return x + y + z;
@@ -214,7 +220,7 @@ test('Functions passed into non-source functions remain equal', () => {
 })
 
 test('Accessing array with nonexistent index returns undefined', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     const a = [];
     a[1];
@@ -224,7 +230,7 @@ test('Accessing array with nonexistent index returns undefined', () => {
 })
 
 test('Accessing object with nonexistent property returns undefined', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     const o = {};
     o.nonexistent;
@@ -234,7 +240,7 @@ test('Accessing object with nonexistent property returns undefined', () => {
 })
 
 test('Simple object assignment and retrieval', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     const o = {};
     o.a = 1;
@@ -245,7 +251,7 @@ test('Simple object assignment and retrieval', () => {
 })
 
 test('Deep object assignment and retrieval', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     const o = {};
     o.a = {};
@@ -258,7 +264,7 @@ test('Deep object assignment and retrieval', () => {
 })
 
 test('Test apply_in_underlying_javascript', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
   `,
@@ -267,7 +273,7 @@ test('Test apply_in_underlying_javascript', () => {
 })
 
 test('Test equal for primitives', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
   `,
@@ -276,7 +282,7 @@ test('Test equal for primitives', () => {
 })
 
 test('Test equal for lists', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
   `,
@@ -285,7 +291,7 @@ test('Test equal for lists', () => {
 })
 
 test('Test equal for different lists', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
   `,
@@ -294,7 +300,7 @@ test('Test equal for different lists', () => {
 })
 
 test('true if with empty if works', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     if (true) {
     } else {
@@ -304,7 +310,7 @@ test('true if with empty if works', () => {
 })
 
 test('true if with nonempty if works', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     if (true) {
       1;
@@ -315,7 +321,7 @@ test('true if with nonempty if works', () => {
 })
 
 test('false if with empty else works', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     if (false) {
     } else {
@@ -325,7 +331,7 @@ test('false if with empty else works', () => {
 })
 
 test('false if with nonempty if works', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     if (false) {
     } else {
@@ -433,7 +439,7 @@ describe('matchJSTests', () => {
 })
 
 test('Rest parameters work', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function rest(a, b, ...c) {
       let sum = a + b;
@@ -469,7 +475,7 @@ test('Test context reuse', async () => {
 
   for (const [code, expected] of snippets) {
     const result = await runInContext(code, context)
-    expectFinishedResultValue(result, expected)
+    assertFinishedResultValue(result, expected)
   }
 })
 

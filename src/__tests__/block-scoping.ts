@@ -1,10 +1,10 @@
 import { Chapter } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { expectParsedError, expectResult } from '../utils/testing'
+import { expectParsedError, expectFinishedResult } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function test(){
       const x = true;
@@ -20,7 +20,7 @@ test('standalone block statements', () => {
 
 // This is bad practice. Don't do this!
 test('const uses block scoping instead of function scoping', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function test(){
       const x = true;
@@ -38,7 +38,7 @@ test('const uses block scoping instead of function scoping', () => {
 
 // This is bad practice. Don't do this!
 test('let uses block scoping instead of function scoping', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function test(){
       let x = true;
@@ -57,7 +57,7 @@ test('let uses block scoping instead of function scoping', () => {
 
 // This is bad practice. Don't do this!
 test('for loops use block scoping instead of function scoping', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function test(){
       let x = true;
@@ -73,7 +73,7 @@ test('for loops use block scoping instead of function scoping', () => {
 
 // This is bad practice. Don't do this!
 test('while loops use block scoping instead of function scoping', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function test(){
       let x = true;
@@ -92,7 +92,7 @@ test('while loops use block scoping instead of function scoping', () => {
 // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
 // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
 test('for loop `let` variables are copied into the block scope', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
   function test(){
     let z = [];

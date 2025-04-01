@@ -6,24 +6,29 @@ import { mockContext } from '../../utils/testing/mocks'
 import { getChapterName, objectKeys, objectValues } from '../../utils/misc'
 import { asMockedFunc } from '../../utils/testing/misc'
 import { parseError } from '../..'
+import * as validator from '../../validator/validator'
 
-jest.mock('../sourceRunner', () => ({
-  default: new Proxy({} as Record<string, Runner>, {
-    get: (obj, prop: string) => {
-      if (!(prop in obj)) {
-        const mockRunner: Runner = (_, context) =>
-          Promise.resolve({
-            status: 'finished',
-            value: '',
-            context
-          })
+jest.spyOn(validator, 'validateAndAnnotate')
 
-        obj[prop] = jest.fn(mockRunner)
+jest.mock('../sourceRunner', () => {
+  const { default: actualRunners } = jest.requireActual('../sourceRunner')
+
+  return {
+    default: Object.keys(actualRunners as typeof runners).reduce((res, key) => {
+      const mockRunner: Runner = (_, context) =>
+        Promise.resolve({
+          status: 'finished',
+          value: '',
+          context
+        })
+
+      return {
+        ...res,
+        [key]: jest.fn(mockRunner)
       }
-      return obj[prop]
-    }
-  })
-}))
+    }, {})
+  }
+})
 
 // Required since Typed variant tries to load modules
 jest.mock('../../modules/loader')
@@ -46,9 +51,7 @@ interface TestCase {
    * execution method set
    */
   contextMethod?: ExecutionMethod
-}
 
-interface FullTestCase extends TestCase {
   /**
    * Which runner was expected to be called
    */
@@ -59,56 +62,67 @@ interface FullTestCase extends TestCase {
    */
   expectedPrelude: boolean
 
+  /**
+   * Should the validator have been called?
+   */
+  expectedValidate: boolean
+
   verboseErrors?: boolean
 }
 
-const sourceCases: FullTestCase[] = [
+const sourceCases: TestCase[] = [
   {
     chapter: Chapter.SOURCE_1,
     variant: Variant.DEFAULT,
     expectedRunner: 'native',
-    expectedPrelude: true
+    expectedPrelude: true,
+    expectedValidate: true
   },
   {
     chapter: Chapter.SOURCE_2,
     variant: Variant.DEFAULT,
     expectedRunner: 'native',
-    expectedPrelude: true
+    expectedPrelude: true,
+    expectedValidate: true
   },
   {
     chapter: Chapter.SOURCE_3,
     variant: Variant.DEFAULT,
     expectedRunner: 'native',
-    expectedPrelude: true
+    expectedPrelude: true,
+    expectedValidate: true
   },
   {
     chapter: Chapter.SOURCE_4,
     variant: Variant.DEFAULT,
     expectedRunner: 'native',
-    expectedPrelude: true
+    expectedPrelude: true,
+    expectedValidate: true
   },
   {
     contextMethod: 'native',
     variant: Variant.NATIVE,
     expectedRunner: 'fulljs',
-    expectedPrelude: false
+    expectedPrelude: false,
+    expectedValidate: true
   }
 ]
 
 // These JS cases never evaluate a prelude,
 // nor ever have verbose errors enabled
-const fullJSCases: TestCase[] = [{ chapter: Chapter.FULL_JS }, { chapter: Chapter.FULL_TS }]
+const fullJSCases: Chapter[] = [Chapter.FULL_JS, Chapter.FULL_TS ]
 
-// The alt langs never evaluate a prelude,
+// These alt langs never evaluate a prelude,
 // always use fullJS regardless of variant,
 // but we don't need to check for verbose errors
-const altLangCases: Chapter[] = [Chapter.PYTHON_1]
+const altLangCases: [Chapter, RunnerTypes][] = [[Chapter.PYTHON_1, 'fulljs']]
 
 type TestObject = {
   code: string
   chapter: Chapter
   variant: Variant
   expectedPrelude: boolean
+  expectedValidate: boolean
   expectedRunner: RunnerTypes
   optionMethod?: ExecutionMethod
   contextMethod?: ExecutionMethod
@@ -145,7 +159,8 @@ async function testCase({
   contextMethod,
   optionMethod,
   expectedPrelude,
-  expectedRunner
+  expectedRunner,
+  expectedValidate
 }: TestObject) {
   const context = mockContext(chapter, variant)
   if (contextMethod !== undefined) {
@@ -180,16 +195,25 @@ async function testCase({
 
     // and then with isPrelude false
     expect(call1[2].isPrelude).toEqual(false)
+
+    // If the validator is to be called, then it should've been called
+    // with both the user program and the prelude
+    expect(validator.validateAndAnnotate).toHaveBeenCalledTimes(expectedValidate ? 2 : 1)
   } else {
     // If not, the runner should only have been called once
     const [call0] = expectCalls(1, expectedRunner)
 
     // with isPrelude false
     expect(call0[2].isPrelude).toEqual(false)
+
+    // If the validator is to be called, then it should've been called
+    // with just the user program
+    expect(validator.validateAndAnnotate).toHaveBeenCalledTimes(expectedValidate ? 1 : 0)
   }
+
 }
 
-function testCases(desc: string, cases: FullTestCase[]) {
+function testCases(desc: string, cases: TestCase[]) {
   describe(desc, () =>
     test.each(
       cases.map(({ code, verboseErrors, contextMethod, chapter, variant, ...tc }, i) => {
@@ -245,34 +269,48 @@ describe('Ensure that the correct runner is used for the given evaluation contex
 
   testCases(
     'Test FullJS cases',
-    fullJSCases.flatMap((tc): FullTestCase[] => {
-      const fullCase: FullTestCase = {
-        ...tc,
+    fullJSCases.flatMap((chapter): TestCase[] => {
+      const fullCase: TestCase = {
+        chapter,
         verboseErrors: false,
         expectedPrelude: false,
-        expectedRunner: 'fulljs'
+        expectedRunner: 'fulljs',
+        expectedValidate: false
       }
 
-      const verboseErrorCase: FullTestCase = {
+      const verboseErrorCase: TestCase = {
         ...fullCase,
         verboseErrors: true
       }
 
-      return [fullCase, verboseErrorCase]
-    })
-  )
-
-  testCases(
-    'Test alt-langs',
-    altLangCases.flatMap(chapter =>
-      objectValues(Variant).map(
-        (variant): FullTestCase => ({
+      const variantCases = objectValues(Variant).map(
+        (variant): TestCase => ({
           code: '',
           variant,
           chapter,
           expectedPrelude: false,
           expectedRunner: 'fulljs',
-          verboseErrors: false
+          verboseErrors: false,
+          expectedValidate: false
+        })
+      )
+
+      return [fullCase, verboseErrorCase, ...variantCases]
+    })
+  )
+
+  testCases(
+    'Test alt-langs',
+    altLangCases.flatMap(([chapter, expectedRunner]) =>
+      objectValues(Variant).map(
+        (variant): TestCase => ({
+          code: '',
+          variant,
+          chapter,
+          expectedPrelude: false,
+          expectedRunner,
+          verboseErrors: false,
+          expectedValidate: false
         })
       )
     )
@@ -285,7 +323,8 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       chapter: Chapter.SOURCE_4,
       variant: Variant.DEFAULT,
       expectedPrelude: true,
-      expectedRunner: 'native'
+      expectedRunner: 'native',
+      expectedValidate: true
     }))
 
   // testCases('runner correctly respects optionMethod', objectKeys(runners).map(runner => ({
@@ -304,7 +343,8 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       chapter: Chapter.SOURCE_4,
       variant: Variant.DEFAULT,
       expectedPrelude: true,
-      expectedRunner: 'native'
+      expectedRunner: 'native',
+      expectedValidate: true
     }))
 
   test('if contextMethod is specified, verbose errors is ignored', () =>
@@ -314,7 +354,8 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       chapter: Chapter.SOURCE_4,
       variant: Variant.DEFAULT,
       expectedPrelude: true,
-      expectedRunner: 'native'
+      expectedRunner: 'native',
+      expectedValidate: true
     }))
 
   test('if contextMethod is specified, debugger statements are ignored', () =>
@@ -324,7 +365,8 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       chapter: Chapter.SOURCE_4,
       variant: Variant.DEFAULT,
       expectedPrelude: true,
-      expectedRunner: 'native'
+      expectedRunner: 'native',
+      expectedValidate: true
     }))
 
   test('optionMethod takes precedence over contextMethod', () =>
@@ -335,7 +377,8 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       chapter: Chapter.SOURCE_4,
       variant: Variant.DEFAULT,
       expectedPrelude: true,
-      expectedRunner: 'cse-machine'
+      expectedRunner: 'cse-machine',
+      expectedValidate: true
     }))
 
   test('debugger statements require cse-machine', () =>
@@ -344,6 +387,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       chapter: Chapter.SOURCE_4,
       variant: Variant.DEFAULT,
       expectedPrelude: true,
-      expectedRunner: 'cse-machine'
+      expectedRunner: 'cse-machine',
+      expectedValidate: true
     }))
 })

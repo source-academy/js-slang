@@ -1,8 +1,8 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import createContext, { EnvTree } from '../../createContext'
 import Closure from '../../cse-machine/closure'
-import { Chapter, Context, Environment, Variant } from '../../types'
+import { Chapter, type Context, type Environment, Variant } from '../../types'
 import { Transformers } from '../../cse-machine/interpreter'
 import { createBlockEnvironment } from '../../cse-machine/utils'
 

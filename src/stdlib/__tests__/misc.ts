@@ -1,9 +1,9 @@
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectResult } from '../../utils/testing'
+import { expectParsedError, expectFinishedResult } from '../../utils/testing'
 
 test('parse_int with valid args is ok, radix 2', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     parse_int('1100101010101', 2);
   `,
@@ -12,7 +12,7 @@ test('parse_int with valid args is ok, radix 2', () => {
 })
 
 test('parse_int with valid args is ok, radix 36', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     parse_int('uu1', 36);
   `,
@@ -21,7 +21,7 @@ test('parse_int with valid args is ok, radix 36', () => {
 })
 
 test('parse_int with valid args is ok, but invalid str for radix', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     parse_int('uu1', 2);
   `,
@@ -92,7 +92,7 @@ test('char_at with non nonnegative integer second argument errors', () => {
 })
 
 test('char_at with valid args is ok', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     char_at("123", 0);
   `
@@ -100,7 +100,7 @@ test('char_at with valid args is ok', () => {
 })
 
 test('char_at with valid args (but index out of bounds) returns undefined', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     char_at("123", 3);
   `
@@ -108,7 +108,7 @@ test('char_at with valid args (but index out of bounds) returns undefined', () =
 })
 
 test('arity with nullary function is ok', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     arity(math_random);
   `,
@@ -117,7 +117,7 @@ test('arity with nullary function is ok', () => {
 })
 
 test('arity with function with parameters is ok', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     arity(arity);
   `,
@@ -126,7 +126,7 @@ test('arity with function with parameters is ok', () => {
 })
 
 test('arity ignores the rest parameter', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     arity(display);
   `,
@@ -135,7 +135,7 @@ test('arity ignores the rest parameter', () => {
 })
 
 test('arity with user-made function is ok', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function test(x, y) {
       return x + y;
@@ -147,7 +147,7 @@ test('arity with user-made function is ok', () => {
 })
 
 test('arity with user-made lambda function is ok', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     arity(x => x);
   `,
@@ -156,7 +156,7 @@ test('arity with user-made lambda function is ok', () => {
 })
 
 test('arity with user-made nullary function is ok', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     arity(() => undefined);
   `,
@@ -165,7 +165,7 @@ test('arity with user-made nullary function is ok', () => {
 })
 
 test('arity with user-made function with rest parameter is ok', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function test(...xs) {
       return xs;
