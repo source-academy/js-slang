@@ -1240,15 +1240,15 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const array = stash.pop()
 
     //Check if the index is legal
-    const indexLegalError = rttc.checkoutofRange(command.srcNode, index, context.chapter)
-    if (indexLegalError) {
-      handleRuntimeError(context, indexLegalError)
+    const indexRangeError = rttc.checkoutofRange(command.srcNode, index, context.chapter)
+    if (indexRangeError) {
+      handleRuntimeError(context, indexRangeError)
     }
 
     // Check if left-hand side is array
-    const LHSerror = rttc.checkArray(command.srcNode, array, context.chapter)
-    if (LHSerror) {
-      handleRuntimeError(context, LHSerror)
+    const lhsArrayCheckError = rttc.checkArray(command.srcNode, array, context.chapter)
+    if (lhsArrayCheckError) {
+      handleRuntimeError(context, lhsArrayCheckError)
     }
 
     // Check if index is out-of-bounds with array, in which case, returns undefined as per spec
@@ -1316,9 +1316,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const array = stash.pop()
 
     // Check if right-hand side is array
-    const error = rttc.checkArray(command.srcNode, array, context.chapter)
-    if (error) {
-      handleRuntimeError(context, error)
+    const rhsArrayCheckError = rttc.checkArray(command.srcNode, array, context.chapter)
+    if (rhsArrayCheckError) {
+      handleRuntimeError(context, rhsArrayCheckError)
     }
 
     // spread array

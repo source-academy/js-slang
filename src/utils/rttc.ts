@@ -119,8 +119,9 @@ export const checkIfStatement = (node: Node, test: Value, chapter: Chapter = Cha
     : new TypeError(node, ' as condition', 'boolean', typeOf(test), chapter)
 }
 
-export const checkoutofRange = (node: Node, test: Value, chapter: Chapter = Chapter.SOURCE_4) => {
-  return test >= 0 && test <= 2147483647 // as per Source 3 spec
+const MAX_SOURCE_ARRAY_INDEX = 4294967295;
+export const checkoutofRange = (node: Node, index: Value, chapter: Chapter = Chapter.SOURCE_4) => {
+  return index >= 0 && index <= MAX_SOURCE_ARRAY_INDEX // as per Source 3 spec
     ? undefined
     : new TypeError(node, ' in reasonable range', 'index', 'out of range', chapter)
 }
@@ -143,6 +144,6 @@ export const isIdentifier = (node: any): node is es.Identifier => {
   return (node as es.Identifier).name !== undefined
 }
 
-export const checkArray = (node: Node, test: Value, chapter: Chapter = Chapter.SOURCE_4) => {
-  return isArray(test) ? undefined : new TypeError(node, '', 'array', typeOf(test), chapter)
+export const checkArray = (node: Node, maybeArray: Value, chapter: Chapter = Chapter.SOURCE_4) => {
+  return isArray(maybeArray) ? undefined : new TypeError(node, '', 'array', typeOf(maybeArray), chapter)
 }
