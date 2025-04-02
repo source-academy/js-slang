@@ -35,7 +35,7 @@ test('recursion', () => {
   f(2);
     `
   const program = parse(code, { ecmaVersion: 10 })!
-  const steps = getSteps(convert(program))
+  const steps = getSteps(convert(program), {stepLimit: 1000})
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(stringifyWithExplanation)
@@ -51,7 +51,7 @@ test('fact', () => {
   const program = parse(code, { ecmaVersion: 10 })!
 
 
-  const steps = getSteps(convert(program))
+  const steps = getSteps(convert(program), {stepLimit: 1000})
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(stringifyWithExplanation)
@@ -71,7 +71,7 @@ test('substitution-block', () => {
     `
   const program = parse(code, { ecmaVersion: 10 })!
 
-  const steps = getSteps(convert(program))
+  const steps = getSteps(convert(program), {stepLimit: 1000})
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(stringifyWithExplanation)
@@ -85,7 +85,7 @@ test('function calling', () => {
   `
   const program = parse(code, { ecmaVersion: 10 })!
 
-  const steps = getSteps(convert(program))
+  const steps = getSteps(convert(program), {stepLimit: 1000})
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
@@ -93,14 +93,13 @@ test('function calling', () => {
 
 test('general', () => {
   const code = `
-      const f = x => g();
-        const g = () => x;
-        const x = 1;
-        f(0);
+   const flatMap = (f, xs) => 
+    accumulate((acc, init) => append(f(acc), init), null, xs);
+    
+flatMap(x => list(x, x + 1), list(2, 3, 4));
   `
   const program = parse(code, { ecmaVersion: 10 })!
-
-  const steps = getSteps(convert(program))
+  const steps = getSteps(convert(program), {stepLimit: 1000})
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })

@@ -42,7 +42,7 @@ export class StepperBlockExpression implements StepperBaseNode {
       return undefinedNode;
     }
 
-    if (this.body[0].type === 'ReturnStatement' && this.body[0].isContractible()) {
+    if (this.body[0].type === 'ReturnStatement') {
       const returnStmt = this.body[0] as StepperReturnStatement;
       returnStmt.contract();
       return returnStmt.argument || undefinedNode;
@@ -96,7 +96,7 @@ export class StepperBlockExpression implements StepperBaseNode {
     
     // After this stage, the first statement is a value statement. Now, proceed until getting the second value statement.
     
-    // if the second statement is return statement, ignore the first statement
+    // if the second statement is return statement, remove the first statement
     if (this.body.length >= 2 && this.body[1].type == "ReturnStatement") {
       redex.preRedex = [this.body[0]];
       const afterSubstitutedScope = this.body.slice(1);
