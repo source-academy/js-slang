@@ -343,7 +343,7 @@ describe.each([
 
       test('Test stdlib parser', () => {
         const parseSnippet = `parse(${JSON.stringify(snippet)});`
-        return expectFinishedResult(parseSnippet).toMatchSnapshot()
+        return expectFinishedResult(parseSnippet, chapter).toMatchSnapshot()
       })
     }
 
