@@ -8,7 +8,7 @@ import type { TestBuiltins, TestOptions } from './types'
  * Convert the options provided by the user for each test into the full options
  * used by the testing system
  */
-export function processTestOptions(rawOptions: TestOptions = {}): Exclude<TestOptions, Chapter> {
+export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions, Chapter> {
   return typeof rawOptions === 'number'
     ? {
         chapter: rawOptions

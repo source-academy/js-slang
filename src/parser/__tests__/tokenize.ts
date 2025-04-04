@@ -17,7 +17,55 @@ test('tokenize works for a good program', () => {
       `) +
       '));',
     { chapter: Chapter.SOURCE_4 }
-  ).toMatchInlineSnapshot(`Array []`)
+  ).toMatchInlineSnapshot(`
+Array [
+  "list(\\"function\\",
+     \\"f\\",
+     \\"(\\",
+     \\"x\\",
+     \\")\\",
+     \\"{\\",
+     \\"const\\",
+     \\"y\\",
+     \\"=\\",
+     \\"x\\",
+     \\"+\\",
+     \\"x\\",
+     \\"+\\",
+     \\"x\\",
+     \\"+\\",
+     \\"\\\\\\"123\\\\\\"\\",
+     \\";\\",
+     \\"return\\",
+     \\"z\\",
+     \\"=>\\",
+     \\"(\\",
+     \\"a\\",
+     \\",\\",
+     \\"b\\",
+     \\")\\",
+     \\"=>\\",
+     \\"{\\",
+     \\"let\\",
+     \\"w\\",
+     \\"=\\",
+     \\"z\\",
+     \\"+\\",
+     \\"1\\",
+     \\";\\",
+     \\"return\\",
+     \\"y\\",
+     \\";\\",
+     \\"}\\",
+     \\";\\",
+     \\"}\\",
+     \\"f\\",
+     \\"(\\",
+     \\"\\\\\\"55\\\\\\"\\",
+     \\")\\",
+     \\";\\")",
+]
+`)
 })
 
 test('tokenize works even with parse errors', () => {
@@ -29,7 +77,11 @@ test('tokenize works even with parse errors', () => {
       `) +
       '));',
     { chapter: Chapter.SOURCE_4 }
-  ).toMatchInlineSnapshot(`Array []`)
+  ).toMatchInlineSnapshot(`
+Array [
+  "list(\\"function\\", \\"f\\", \\"(\\", \\"x\\", \\")\\", \\"{\\", \\";\\", \\";\\", \\";\\", \\";\\", \\";\\", \\";\\", \\";\\")",
+]
+`)
 })
 
 test('tokenize prints suitable error when tokenization fails', () => {

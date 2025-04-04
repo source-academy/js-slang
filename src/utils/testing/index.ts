@@ -13,7 +13,7 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
         }
       : rawOptions
 
-  const testContext: TestResults = {
+  const otherTestResults: TestResults = {
     displayResult: [],
     promptResult: [],
     alertResult: [],
@@ -22,18 +22,18 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
 
   const customBuiltIns: CustomBuiltIns = {
     rawDisplay(str1, str2, _externalContext) {
-      testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
+      otherTestResults.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
       return str1
     },
     prompt(str, _externalContext) {
-      testContext.promptResult.push(str)
+      otherTestResults.promptResult.push(str)
       return null
     },
     alert(str, _externalContext) {
-      testContext.alertResult.push(str)
+      otherTestResults.alertResult.push(str)
     },
     visualiseList(value) {
-      testContext.visualiseListResult.push(value)
+      otherTestResults.visualiseListResult.push(value)
     }
   }
 
@@ -44,10 +44,7 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
 
   return {
     ...evalContext,
-    displayResult: [],
-    promptResult: [],
-    alertResult: [],
-    visualiseListResult: []
+    ...otherTestResults
   }
 }
 
@@ -120,11 +117,10 @@ export function expectParsedError(code: string, options: TestOptions = {}, verbo
 export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
   const start = Date.now()
   const context = mockContext(Chapter.SOURCE_4)
-  const promise = runInContext(code, context, {
+  await runInContext(code, context, {
     executionMethod: 'native',
     throwInfiniteLoops: false
   })
-  await promise
   const timeTaken = Date.now() - start
   expect(timeTaken).toBeLessThan(timeout * 5)
   expect(timeTaken).toBeGreaterThanOrEqual(timeout)
@@ -134,18 +130,18 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
 /**
  * Run the given code, expect it to finish without errors and also match a snapshot
  */
-export async function snapshotSuccess(code: string, options: TestOptions = {}) {
+export async function snapshotSuccess(code: string, options: TestOptions = {}, name?: string) {
   const results = await testSuccess(code, options)
-  expect(results).toMatchSnapshot()
+  expect(results).toMatchSnapshot(name)
   return results
 }
 
 /**
  * Run the given code, expect it to finish with errors and that those errors match a snapshot
  */
-export async function snapshotFailure(code: string, options: TestOptions = {}) {
+export async function snapshotFailure(code: string, options: TestOptions = {}, name?: string) {
   const results = await testFailure(code, options)
-  expect(results).toMatchSnapshot()
+  expect(results).toMatchSnapshot(name)
   return results
 }
 

@@ -622,7 +622,11 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "list(0, 1, 2, 3, 4)",
+]
+`)
   })
 
   test('standard acyclic 2', () => {
@@ -632,7 +636,11 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "list(null, list(0), list(0, 1), list(0, 1, 2), list(0, 1, 2, 3))",
+]
+`)
   })
 
   test('standard acyclic with pairs', () => {
@@ -642,7 +650,15 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "list(null,
+     list([0, 0]),
+     list([0, 0], [1, 1]),
+     list([0, 0], [1, 1], [2, 2]),
+     list([0, 0], [1, 1], [2, 2], [3, 3]))",
+]
+`)
   })
 
   test('standard acyclic with pairs 2', () => {
@@ -652,7 +668,15 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "list(null,
+     list([null, 0]),
+     list([null, 0], [list(0), 1]),
+     list([null, 0], [list(0), 1], [list(0, 1), 2]),
+     list([null, 0], [list(0), 1], [list(0, 1), 2], [list(0, 1, 2), 3]))",
+]
+`)
   })
 
   test('returns argument', () => {
@@ -693,7 +717,11 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "build_list: list(0, 1, 2, 3, 4)",
+]
+`)
   })
 
   test('checks prepend type', () => {
@@ -719,7 +747,25 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_4 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "list(\\"constant_declaration\\",
+     list(\\"name\\", \\"twice\\"),
+     list(\\"lambda_expression\\",
+          list(list(\\"name\\", \\"f\\")),
+          list(\\"return_statement\\",
+               list(\\"lambda_expression\\",
+                    list(list(\\"name\\", \\"x\\")),
+                    list(\\"block\\",
+                         list(\\"sequence\\",
+                              list(list(\\"constant_declaration\\",
+                                        list(\\"name\\", \\"result\\"),
+                                        list(\\"application\\",
+                                             list(\\"name\\", \\"f\\"),
+                                             list(list(\\"application\\", list(\\"name\\", \\"f\\"), list(list(\\"name\\", \\"x\\")))))),
+                                   list(\\"return_statement\\", list(\\"name\\", \\"two\\")))))))))",
+]
+`)
   })
 
   test('standard acyclic multiline', () => {
@@ -729,7 +775,30 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "list(null,
+     list(0),
+     list(0, 1),
+     list(0, 1, 2),
+     list(0, 1, 2, 3),
+     list(0, 1, 2, 3, 4),
+     list(0, 1, 2, 3, 4, 5),
+     list(0, 1, 2, 3, 4, 5, 6),
+     list(0, 1, 2, 3, 4, 5, 6, 7),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17),
+     list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18))",
+]
+`)
   })
 
   test('infinite list', () => {
@@ -741,7 +810,11 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "[1, ...<circular>]",
+]
+`)
   })
 
   test('infinite list 2', () => {
@@ -753,7 +826,11 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "[1, [2, [3, ...<circular>]]]",
+]
+`)
   })
 
   test('reusing lists', () => {
@@ -766,7 +843,11 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "list(list(1), list(list(1), 1))",
+]
+`)
   })
 
   test('reusing lists 2', () => {
@@ -779,7 +860,11 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "list(list(1), list(2, 1))",
+]
+`)
   })
   test('list of infinite list', () => {
     return expectDisplayResult(
@@ -797,7 +882,15 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "list([0, ...<circular>],
+     [0, [1, ...<circular>]],
+     [0, [1, [2, ...<circular>]]],
+     [0, [1, [2, [3, ...<circular>]]]],
+     [0, [1, [2, [3, [4, ...<circular>]]]]])",
+]
+`)
   })
 
   test('list of infinite list of list', () => {
@@ -816,7 +909,13 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "list([null, ...<circular>],
+     [null, [list(0), ...<circular>]],
+     [null, [list(0), [list(0, 1), ...<circular>]]])",
+]
+`)
   })
 
   test('infinite list of list of infinite list', () => {
@@ -835,6 +934,14 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`Array []`)
+    ).toMatchInlineSnapshot(`
+Array [
+  "[ null,
+[ list([0, ...<circular>]),
+[ list([0, ...<circular>], [0, [1, ...<circular>]]),
+[ list([0, ...<circular>], [0, [1, ...<circular>]], [0, [1, [2, ...<circular>]]]),
+...<circular>]]]]",
+]
+`)
   })
 })

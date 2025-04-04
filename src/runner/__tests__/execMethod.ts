@@ -10,6 +10,9 @@ import * as validator from '../../validator/validator'
 
 jest.spyOn(validator, 'validateAndAnnotate')
 
+// Required since the Typed variant tries to load modules
+jest.mock('../../modules/loader/loaders')
+
 jest.mock('../sourceRunner', () => {
   const { default: actualRunners } = jest.requireActual('../sourceRunner')
 
@@ -29,9 +32,6 @@ jest.mock('../sourceRunner', () => {
     }, {})
   }
 })
-
-// Required since Typed variant tries to load modules
-jest.mock('../../modules/loader')
 
 beforeEach(() => {
   jest.clearAllMocks()
