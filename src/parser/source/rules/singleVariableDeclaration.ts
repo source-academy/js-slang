@@ -1,42 +1,36 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type { VariableDeclaration } from 'estree'
+import type { Rule } from '../../types'
+import { RuleError } from '../../errors'
 
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
+  private readonly fixs: VariableDeclaration[]
 
-export class MultipleDeclarationsError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-  private fixs: es.VariableDeclaration[]
-
-  constructor(public node: es.VariableDeclaration) {
+  constructor(node: VariableDeclaration) {
+    super(node)
     this.fixs = node.declarations.map(declaration => ({
-      type: 'VariableDeclaration' as const,
-      kind: 'let' as const,
+      type: 'VariableDeclaration',
+      kind: node.kind,
       loc: declaration.loc,
       declarations: [declaration]
     }))
   }
 
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
   public explain() {
-    return 'Multiple declaration in a single statement.'
+    return 'Multiple declarations in a single statement.'
   }
 
   public elaborate() {
-    const fixs = this.fixs.map(n => '\t' + generate(n)).join('\n')
+    const fixs = this.fixs.map(n => '  ' + generate(n)).join('\n')
     return 'Split the variable declaration into multiple lines as follows\n\n' + fixs + '\n'
   }
 }
 
-const singleVariableDeclaration: Rule<es.VariableDeclaration> = {
+const singleVariableDeclaration: Rule<VariableDeclaration> = {
   name: 'single-variable-declaration',
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {
+    VariableDeclaration(node) {
       if (node.declarations.length > 1) {
         return [new MultipleDeclarationsError(node)]
       } else {

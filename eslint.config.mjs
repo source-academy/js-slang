@@ -32,6 +32,7 @@ export default tseslint.config(
       'import/order': 'warn',
       '@typescript-eslint/no-base-to-string': 'off', // TODO: Remove
       'prefer-const': 'off', // TODO: Remove
+      'no-constant-condition': ['warn', { checkLoops: false }],
       'no-var': 'off', // TODO: Remove
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/ban-types': 'off',

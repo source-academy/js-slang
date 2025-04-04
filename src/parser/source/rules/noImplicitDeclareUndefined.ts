@@ -1,19 +1,10 @@
-import * as es from 'estree'
-
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import type { Identifier, VariableDeclaration } from 'estree'
+import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
+import { RuleError } from '../../errors'
+import { mapAndFilter } from '../../../utils/misc'
 
-export class NoImplicitDeclareUndefinedError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.Identifier) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoImplicitDeclareUndefinedError extends RuleError<Identifier> {
   public explain() {
     return 'Missing value in variable declaration.'
   }
@@ -30,18 +21,22 @@ export class NoImplicitDeclareUndefinedError implements SourceError {
   }
 }
 
-const noImplicitDeclareUndefined: Rule<es.VariableDeclaration> = {
+const noImplicitDeclareUndefined: Rule<VariableDeclaration> = {
   name: 'no-implicit-declare-undefined',
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {
-      const errors: SourceError[] = []
-      for (const decl of node.declarations) {
-        if (!decl.init) {
-          errors.push(new NoImplicitDeclareUndefinedError(decl.id as es.Identifier))
+    VariableDeclaration(node, ancestors) {
+      if (ancestors.length > 1) {
+        switch (ancestors[ancestors.length - 2].type) {
+          case 'ForOfStatement':
+          case 'ForInStatement':
+            return []
         }
       }
-      return errors
+
+      return mapAndFilter(node.declarations, decl =>
+        decl.init ? undefined : new NoImplicitDeclareUndefinedError(decl.id as Identifier)
+      )
     }
   }
 }

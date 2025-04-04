@@ -51,20 +51,6 @@ const configs = {
       'pairmutator.js'
     ]
   },
-  'Source §3 Concurrent': {
-    readme: 'README_3_CONCURRENT.md',
-    dst: 'source_3_concurrent/',
-    libs: [
-      'auxiliary.js',
-      'misc.js',
-      'math.js',
-      'list.js',
-      'stream.js',
-      'array.js',
-      'pairmutator.js',
-      'concurrency.js'
-    ]
-  },
   'Source §3 Typed': {
     readme: 'README_3_TYPED.md',
     dst: 'source_3_typed/',
@@ -126,16 +112,6 @@ const configs = {
     dst: 'AUXILIARY/',
     libs: ['auxiliary.js']
   },
-  MISC: {
-    readme: 'README_MISC.md',
-    dst: 'MISC/',
-    libs: ['misc.js']
-  },
-  MATH: {
-    readme: 'README_MATH.md',
-    dst: 'MATH/',
-    libs: ['math.js']
-  },
   LIST: {
     readme: 'README_LISTS.md',
     dst: 'LISTS/',
@@ -177,9 +153,11 @@ const configs = {
     libs: ['ev3.js']
   },
   EXTERNAL: {
-    readme: 'README_EXTERNAL.md',
-    dst: 'External libraries',
-    libs: ['ev3.js']
+    "readme": "README_EXTERNAL.md",
+    "dst": "External libraries",
+    "libs": [
+      "ev3.js"
+    ]
   }
 }
 

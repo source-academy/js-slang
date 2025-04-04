@@ -1,41 +1,34 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type { VariableDeclaration } from 'estree'
+import type { Rule } from '../../types'
+import { RuleError } from '../../errors'
+import { Chapter } from '../../../types'
+import { getSourceVariableDeclaration } from '../../../utils/ast/helpers'
 
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+const mutableDeclarators: VariableDeclaration['kind'][] = ['let', 'var']
 
-const mutableDeclarators = ['let', 'var']
-
-export class NoDeclareMutableError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.VariableDeclaration) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoDeclareMutableError extends RuleError<VariableDeclaration> {
   public explain() {
-    return (
-      'Mutable variable declaration using keyword ' + `'${this.node.kind}'` + ' is not allowed.'
-    )
+    return `Mutable variable declaration using keyword '${this.node.kind}' is not allowed.`
   }
 
   public elaborate() {
-    const name = (this.node.declarations[0].id as es.Identifier).name
-    const value = generate(this.node.declarations[0].init)
+    const {
+      id: { name },
+      init
+    } = getSourceVariableDeclaration(this.node)
+    const value = generate(init)
 
     return `Use keyword "const" instead, to declare a constant:\n\n\tconst ${name} = ${value};`
   }
 }
 
-const noDeclareMutable: Rule<es.VariableDeclaration> = {
+const noDeclareMutable: Rule<VariableDeclaration> = {
   name: 'no-declare-mutable',
   disableFromChapter: Chapter.SOURCE_3,
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {
+    VariableDeclaration(node) {
       if (mutableDeclarators.includes(node.kind)) {
         return [new NoDeclareMutableError(node)]
       } else {

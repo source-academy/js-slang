@@ -1,11 +1,11 @@
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectResult } from '../../utils/testing'
+import { expectParsedError, expectFinishedResult } from '../../utils/testing'
 import { stripIndent } from '../../utils/formatters'
 // Continuation tests for Source
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('call_cc works with normal functions', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
       1 + 2 + call_cc((cont) => 3) + 4;
     `,
@@ -14,7 +14,7 @@ test('call_cc works with normal functions', () => {
 })
 
 test('call_cc can be used to return early', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
         let x = 1;
         call_cc((cont) => {
@@ -48,7 +48,7 @@ test('call_cc throws error when given > 1 arguments', () => {
 })
 
 test('continuations can be stored as a value', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
         let a = 0;
         call_cc((cont) => {

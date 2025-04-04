@@ -1,4 +1,4 @@
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { Chapter, Variant } from '../../types'
 import { parse } from '../../parser/parser'
 import { parseError } from '../../index'

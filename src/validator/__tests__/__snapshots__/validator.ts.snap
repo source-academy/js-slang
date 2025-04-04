@@ -1,37 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`for loop variable cannot be reassigned in closure: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "for (let i = 0; i < 10; i = i + 1) {
-  function f() {
-    i = 10;
-  }
-}",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 3: Assignment to a for loop variable in the for loop is not allowed.",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`for loop variable cannot be reassigned: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "for (let i = 0; i < 10; i = i + 1) {
-  i = 10;
-}",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 2: Assignment to a for loop variable in the for loop is not allowed.",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`testing typability 1`] = `
 Node {
   "body": Array [

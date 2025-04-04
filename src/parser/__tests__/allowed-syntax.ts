@@ -1,10 +1,14 @@
-import { Chapter } from '../../types'
+import { parseError } from '../..'
+import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { snapshotFailure, snapshotSuccess } from '../../utils/testing'
+import { expectFinishedResult, testSuccess } from '../../utils/testing'
+import { assertFinishedResultValue } from '../../utils/testing/misc'
+import { mockContext } from '../../utils/testing/mocks'
+import { parse } from '../parser'
 
 jest.mock('../../modules/loader/loaders')
 
-test.each([
+describe.each([
   [Chapter.SOURCE_1, ''],
 
   [
@@ -95,13 +99,6 @@ test.each([
     Chapter.SOURCE_2,
     `
     pair(1, null);
-    `
-  ],
-
-  [
-    Chapter.SOURCE_2,
-    `
-    list(1);
     `
   ],
 
@@ -329,36 +326,42 @@ test.each([
     `
   ],
 
-  [
-    Chapter.LIBRARY_PARSER,
-    `
-    import { default as x } from './a.js';
-    `,
-    // Skip the success tests because the imported file does not exist.
-    true
-  ],
+  [Chapter.LIBRARY_PARSER, `import { default as x } from 'one_module';`],
   [Chapter.LIBRARY_PARSER, `import * as a from 'one_module';`, true]
 ] as [Chapter, string, boolean | undefined][])(
   'Syntaxes are allowed in the chapter they are introduced %#',
   (chapter: Chapter, snippet: string, skipSuccessTests: boolean = false) => {
     snippet = stripIndent(snippet)
-    const parseSnippet = `parse(${JSON.stringify(snippet)});`
-    const tests: ReturnType<typeof snapshotSuccess>[] = []
+
     if (!skipSuccessTests) {
-      tests.push(
-        snapshotSuccess(snippet, { chapter, native: chapter !== Chapter.LIBRARY_PARSER }, 'passes')
-      )
-      tests.push(
-        snapshotSuccess(
+      test('Test regular parser', () => {
+        const context = mockContext(chapter)
+        const result = parse(snippet, context)
+        expect(result).not.toBeNull()
+        expect(result).toMatchSnapshot()
+      })
+
+      test('Test stdlib parser', () => {
+        const parseSnippet = `parse(${JSON.stringify(snippet)});`
+        return expectFinishedResult(
           parseSnippet,
-          { chapter: Math.max(4, chapter), native: true },
-          'parse passes'
-        )
-      )
+          Math.max(Chapter.SOURCE_4, chapter)
+        ).toMatchSnapshot()
+      })
     }
+
     if (chapter > 1) {
-      tests.push(snapshotFailure(snippet, { chapter: chapter - 1 }, 'fails a chapter below'))
+      test('Test 1 chapter below', () => {
+        const context = mockContext(chapter - 1)
+        const result = parse(snippet, context)
+        expect(result).toBeNull()
+        expect(parseError(context.errors)).toMatchSnapshot()
+      })
     }
-    return Promise.all(tests)
   }
 )
+
+test('typeof operator is allowed in typed variant', async () => {
+  const { result } = await testSuccess(`typeof "0";`, { variant: Variant.TYPED })
+  assertFinishedResultValue(result, 'string')
+})

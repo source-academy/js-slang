@@ -1,5 +1,5 @@
 import { runInContext } from '../../index'
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { Chapter, Finished } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectNativeToTimeoutAndError } from '../../utils/testing'

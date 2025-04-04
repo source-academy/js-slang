@@ -4,7 +4,7 @@
  */
 
 import { Chapter } from '../types'
-import { expectParsedError, expectResult } from '../utils/testing'
+import { expectParsedError, expectFinishedResult } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('Calling unreachable results in error', () => {
@@ -24,7 +24,7 @@ test('Calling unreachable results in error', () => {
 
 // This is bad practice. Don't do this!
 test('Bare early returns work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -36,14 +36,13 @@ test('Bare early returns work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -58,14 +57,13 @@ test('Recursive call early returns work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`3`)
 })
 
 // This is bad practice. Don't do this!
 test('Tail call early returns work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -80,14 +78,13 @@ test('Tail call early returns work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Bare early returns in if statements work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -102,14 +99,13 @@ test('Bare early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in if statements work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -127,14 +123,13 @@ test('Recursive call early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`3`)
 })
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in if statements work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -152,14 +147,13 @@ test('Tail call early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `,
-    { native: true }
+  `
   ).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Bare early returns in while loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -175,13 +169,13 @@ test('Bare early returns in while loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    Chapter.SOURCE_3
   ).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in while loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -200,13 +194,13 @@ test('Recursive call early returns in while loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    Chapter.SOURCE_3
   ).toMatchInlineSnapshot(`3`)
 })
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in while loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -225,13 +219,13 @@ test('Tail call early returns in while loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Bare early returns in for loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -247,13 +241,13 @@ test('Bare early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`1`)
 })
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in for loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -269,13 +263,13 @@ test('Recursive call early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`3`)
 })
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in for loops work', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -294,6 +288,6 @@ test('Tail call early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`1`)
 })

@@ -1,11 +1,11 @@
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectResult } from '../../utils/testing'
+import { expectParsedError, expectFinishedResult } from '../../utils/testing'
 
 // CSET tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('eval of numbers', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (eval 1)
   `,
@@ -19,7 +19,7 @@ test('eval of numbers', () => {
 })
 
 test('eval of booleans', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (eval #t)
   `,
@@ -28,7 +28,7 @@ test('eval of booleans', () => {
 })
 
 test('eval of strings', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (eval "hello")
   `,
@@ -37,7 +37,7 @@ test('eval of strings', () => {
 })
 
 test('eval of symbols', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (define hello 1)
     (eval 'hello)
@@ -61,7 +61,7 @@ test('eval of empty list', () => {
 })
 
 test('eval of define', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (eval '(define x 1))
     x
@@ -76,7 +76,7 @@ test('eval of define', () => {
 })
 
 test('eval of lambda', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (eval '(lambda (x) x))
   `,
@@ -85,7 +85,7 @@ test('eval of lambda', () => {
 })
 
 test('eval of if', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (eval '(if #t 1 2))
   `,
@@ -99,7 +99,7 @@ test('eval of if', () => {
 })
 
 test('eval of begin', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (eval '(begin 1 2 3))
   `,
@@ -113,7 +113,7 @@ test('eval of begin', () => {
 })
 
 test('eval of set!', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (define x 2)
     (eval '(set! x 1))
@@ -129,7 +129,7 @@ test('eval of set!', () => {
 })
 
 test('eval of application', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (eval '(+ 1 2))
   `,
@@ -143,7 +143,7 @@ test('eval of application', () => {
 })
 
 test('eval of quote', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (eval '(quote (1 2 3)))
   `,
