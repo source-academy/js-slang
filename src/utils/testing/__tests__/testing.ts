@@ -56,43 +56,6 @@ describe('Testing createTestContext', () => {
   })
 })
 
-describe('Extra test results', () => {
-  test('Test context contains the extra results', () => {
-    const context = createTestContext()
-    expect('displayResult' in context).toEqual(true)
-    expect('alertResult' in context).toEqual(true)
-    expect('visualiseListResult' in context).toEqual(true)
-    expect('promptResult' in context).toEqual(true)
-  })
-
-  test('Calling display actually adds to displayResult', async () => {
-    const { context } = await testSuccess(`display("hi"); display("bye");`)
-    expect(context.displayResult).toMatchObject(['"hi"', '"bye"'])
-  })
-
-  test('Calling alert actually adds to alertResult', async () => {
-    const { context } = await testSuccess(`alert("hi"); alert("bye");`, Chapter.LIBRARY_PARSER)
-    expect(context.alertResult).toMatchObject(['hi', 'bye'])
-  })
-
-  test('Calling draw_data actually adds to visualizeList', async () => {
-    const { context } = await testSuccess(`draw_data(list(1, 2));`, Chapter.SOURCE_2)
-    expect(context.visualiseListResult).toMatchInlineSnapshot(`
-Array [
-  Array [
-    Array [
-      1,
-      Array [
-        2,
-        null,
-      ],
-    ],
-  ],
-]
-`)
-  })
-})
-
 describe('Test testing functions', () => {
   test('Test testSuccess resolves on evaluation success', () => {
     asMockedFunc(main.runInContext).mockResolvedValueOnce({
@@ -128,5 +91,42 @@ describe('Test testing functions', () => {
     })
 
     return expect(testFailure('')).rejects.toThrow()
+  })
+})
+
+describe('Extra test results', () => {
+  test('Test context contains the extra results', () => {
+    const context = createTestContext()
+    expect('displayResult' in context).toEqual(true)
+    expect('alertResult' in context).toEqual(true)
+    expect('visualiseListResult' in context).toEqual(true)
+    expect('promptResult' in context).toEqual(true)
+  })
+
+  test('Calling display actually adds to displayResult', async () => {
+    const { context } = await testSuccess(`display("hi"); display("bye");`)
+    expect(context.displayResult).toMatchObject(['"hi"', '"bye"'])
+  })
+
+  test('Calling alert actually adds to alertResult', async () => {
+    const { context } = await testSuccess(`alert("hi"); alert("bye");`, Chapter.LIBRARY_PARSER)
+    expect(context.alertResult).toMatchObject(['hi', 'bye'])
+  })
+
+  test('Calling draw_data actually adds to visualizeList', async () => {
+    const { context } = await testSuccess(`draw_data(list(1, 2));`, Chapter.SOURCE_2)
+    expect(context.visualiseListResult).toMatchInlineSnapshot(`
+Array [
+  Array [
+    Array [
+      1,
+      Array [
+        2,
+        null,
+      ],
+    ],
+  ],
+]
+`)
   })
 })

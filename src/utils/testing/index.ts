@@ -132,7 +132,11 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
  */
 export async function snapshotSuccess(code: string, options: TestOptions = {}, name?: string) {
   const results = await testSuccess(code, options)
-  expect(results).toMatchSnapshot(name)
+  if (name === undefined) {
+    expect(results).toMatchSnapshot()
+  } else {
+    expect(results).toMatchSnapshot(name)
+  }
   return results
 }
 
@@ -141,7 +145,11 @@ export async function snapshotSuccess(code: string, options: TestOptions = {}, n
  */
 export async function snapshotFailure(code: string, options: TestOptions = {}, name?: string) {
   const results = await testFailure(code, options)
-  expect(results).toMatchSnapshot(name)
+  if (name === undefined) {
+    expect(results).toMatchSnapshot()
+  } else {
+    expect(results).toMatchSnapshot(name)
+  }
   return results
 }
 
