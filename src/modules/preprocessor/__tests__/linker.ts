@@ -6,7 +6,7 @@ import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
 
 import * as resolver from '../resolver'
-import { assertTrue } from '../../../utils/testing/misc'
+import { assertNodeType, assertTrue } from '../../../utils/testing/misc'
 jest.spyOn(resolver, 'default')
 
 beforeEach(() => {
@@ -135,4 +135,130 @@ test('Linker does tree-shaking', async () => {
   assertTrue(result.ok)
   expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
   expect(Object.keys(result.programs)).not.toContain('/b.js')
+})
+
+test('Linker updates the source paths of Import Declaration nodes', async () => {
+  const [, result] = await testCode(
+    {
+      '/dir0/a.js': 'export const x = 0;',
+      '/b.js': `import { x } from "./dir0/a.js";
+        export { x };
+      `,
+      '/dir1/c.js': 'import { x } from "../b.js";',
+    },
+    '/dir1/c.js'
+  )
+
+  assertTrue(result.ok)
+  const [bNode] = result.programs['/b.js'].body
+  assertNodeType('ImportDeclaration', bNode)
+  expect(bNode.source.value).toEqual('/dir0/a.js')
+
+  const [cNode] = result.programs['/dir1/c.js'].body
+  assertNodeType('ImportDeclaration', cNode)
+  expect(cNode.source.value).toEqual('/b.js')
+})
+
+describe('Test determining verbose errors', () => {
+   test('Verbose errors is normally false', async () => {
+    const [, result] = await testCode({
+      '/a.js': "const a = 0;"
+    }, '/a.js')
+    
+    assertTrue(result.ok)
+    assertTrue(!result.verboseErrors)
+  })
+
+  test('Verbose errors enables normally', async () => {
+    const [, result] = await testCode({
+      '/a.js': "'enable verbose';"
+    }, '/a.js')
+    
+    assertTrue(result.ok)
+    assertTrue(result.verboseErrors)
+  })
+
+  test('Verbose errors does not enable when it is not the entrypoint', async () => {
+    const [, result] = await testCode({
+      '/a.js': `
+        'enable verbose';
+        export const a = "a";
+      `,
+      '/b.js': "import { a } from './a.js';"
+    }, '/b.js')
+    
+    assertTrue(result.ok)
+    assertTrue(!result.verboseErrors)
+  })
+
+  test('Verbose errors does not enable when it is not the first statement', async () => {
+    const [, result] = await testCode({
+      '/a.js': `
+      export const a = "a";
+      'enable verbose';
+      `,
+    }, '/a.js')
+    
+    assertTrue(result.ok)
+    assertTrue(!result.verboseErrors)
+  })
+
+  test('Verbose errors does not enable when it is an unknown entrypoint', async () => {
+    const [, result] = await testCode({
+      '/a.js': `
+      export const a = "a";
+      'enable verbose';
+      `,
+    }, '/d.js' as any)
+    
+    assertTrue(!result.ok)
+    assertTrue(!result.verboseErrors)
+  })
+
+  test('Verbose errors enables even if other files have parse errors', async () => {
+    const [{ errors }, result] = await testCode({
+      '/a.js': `
+      'enable verbose';
+      import { b } from "./b.js";
+      `,
+      '/b.js': `export const b = "b"`
+    }, '/a.js')
+    
+    assertTrue(!result.ok)
+    assertTrue(result.verboseErrors)
+    expect(errors.length).toEqual(1)
+    expect(errors[0]).toBeInstanceOf(MissingSemicolonError)
+  })
+
+  test('Verbose errors enables even if the entrypoint has parse errors', async () => {
+    const [{ errors }, result] = await testCode({
+      '/a.js': `
+      'enable verbose';
+      const x = 0
+      `,
+    }, '/a.js')
+    
+    assertTrue(!result.ok)
+    assertTrue(result.verboseErrors)
+    expect(errors.length).toEqual(1)
+    expect(errors[0]).toBeInstanceOf(MissingSemicolonError)
+  })
+
+  test('Verbose errors enables even if there is a module resolution problem', async () => {
+    const [{ errors }, result] = await testCode({
+      '/a.js': `
+      'enable verbose';
+      import { b } from "./b.js";
+      `,
+     '/b.js': `
+        import { c } from "./c.js";
+        export { c as b };
+      `
+    }, '/a.js')
+    
+    assertTrue(!result.ok)
+    assertTrue(result.verboseErrors)
+    expect(errors.length).toEqual(1)
+    expect(errors[0]).toBeInstanceOf(ModuleNotFoundError)
+  })
 })
