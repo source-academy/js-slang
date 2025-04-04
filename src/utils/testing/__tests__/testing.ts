@@ -72,11 +72,11 @@ describe('Extra test results', () => {
 
   test('Calling alert actually adds to alertResult', async () => {
     const { context } = await testSuccess(`alert("hi"); alert("bye");`, Chapter.LIBRARY_PARSER)
-    expect(context.alertResult).toMatchObject(["hi", 'bye'])
+    expect(context.alertResult).toMatchObject(['hi', 'bye'])
   })
 
   test('Calling draw_data actually adds to visualizeList', async () => {
-    const { context } = await testSuccess(`draw_data(list(1, 2));`, Chapter.SOURCE_2);
+    const { context } = await testSuccess(`draw_data(list(1, 2));`, Chapter.SOURCE_2)
     expect(context.visualiseListResult).toMatchInlineSnapshot(`
 Array [
   Array [
@@ -101,7 +101,7 @@ describe('Test testing functions', () => {
       status: 'finished'
     })
 
-    return expect(testSuccess('').then(({ result: { value }}) => value)).resolves.toEqual(0)
+    return expect(testSuccess('').then(({ result: { value } }) => value)).resolves.toEqual(0)
   })
 
   test('Test testSuccess rejects on evaluation failure', () => {
@@ -117,7 +117,7 @@ describe('Test testing functions', () => {
       status: 'error'
     })
 
-    return expect(testFailure('')).resolves.toEqual("")
+    return expect(testFailure('')).resolves.toEqual('')
   })
 
   test('Test testFailure rejects on evaluation success', () => {
