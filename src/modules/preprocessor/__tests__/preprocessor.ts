@@ -424,9 +424,17 @@ describe('preprocessFileImports', () => {
   it('catches errors thrown by the bundler', async () => {
     const context = mockContext(Chapter.SOURCE_4)
     const errorToThrow = new Error()
-    const promise = preprocessFileImports(wrapFiles({ 
-      '/a.js': 'const a = 0;',
-    }), '/a.js', context, {}, () => { throw errorToThrow })
+    const promise = preprocessFileImports(
+      wrapFiles({
+        '/a.js': 'const a = 0;'
+      }),
+      '/a.js',
+      context,
+      {},
+      () => {
+        throw errorToThrow
+      }
+    )
 
     await expect(promise).resolves.not.toThrow()
     expect(context.errors[0]).toBe(errorToThrow)
@@ -435,10 +443,18 @@ describe('preprocessFileImports', () => {
   it('catches import analysis errors', async () => {
     const context = mockContext(Chapter.SOURCE_4)
     const errorToThrow = new Error()
-    const promise = preprocessFileImports(wrapFiles({ 
-      '/a.js': `import { b } from "./b.js";`,
-      '/b.js': 'export const a = "b";'
-    }), '/a.js', context, {}, () => { throw errorToThrow })
+    const promise = preprocessFileImports(
+      wrapFiles({
+        '/a.js': `import { b } from "./b.js";`,
+        '/b.js': 'export const a = "b";'
+      }),
+      '/a.js',
+      context,
+      {},
+      () => {
+        throw errorToThrow
+      }
+    )
 
     await expect(promise).resolves.not.toThrow()
     expect(context.errors[0]).toBeInstanceOf(UndefinedImportError)
