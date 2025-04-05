@@ -91,6 +91,15 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     return Array.from(names)
   }
 
+  allNames(): string[] {
+    const names = new Set([
+      ...this.test.allNames(),
+      ...this.consequent.allNames(),
+      ...(this.alternate ? this.alternate.allNames() : [])
+    ])
+    return Array.from(names)
+  }
+
   rename(before: string, after: string): StepperIfStatement {
     return new StepperIfStatement(
       this.test.rename(before, after) as StepperExpression,

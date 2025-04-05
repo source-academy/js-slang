@@ -101,6 +101,10 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()));
   }
 
+  allNames(): string[] {
+    return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()));
+  }
+
   rename(before: string, after: string): StepperExpression {
     return new StepperLogicalExpression(
       this.operator, 

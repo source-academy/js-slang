@@ -331,6 +331,23 @@ describe('Alpha renaming', () => {
     expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
   })
 
+  test(`multiple clash for lambda function with block expression`, async () => {
+    const code = `
+      const f = x => {
+        const x_1 = 1;
+        return x_1 => x_2 + g();  
+      };
+      const g = () => x + x_1;
+      const x_2 = 0;
+      const x_1 = 2;
+      const x = 1;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+
   test(`multiple clash 2 for function expression`, async () => {
     const code = `
       function f(x) {
@@ -1309,3 +1326,19 @@ describe(`Expressions: conditionals`, () => {
     expect(steps[steps.length - 1]).toEqual('5;\n[noMarker] Evaluation complete\n')
   })
 })
+
+
+// Other tests
+test("Church numerals", async () => {
+  const code = `
+  const one = f => x => f(x);
+  const inc = a => f => x => f(a(f)(x));
+  const decode = a => a(x => x + 1)(0);
+  decode(inc(inc(one))) === 3;
+  
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
+});

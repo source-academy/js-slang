@@ -134,6 +134,10 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
     return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()));
   }
 
+  allNames(): string[] {
+    return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()));
+  }
+
   rename(before: string, after: string): StepperExpression  {
     return new StepperBinaryExpression(this.operator, 
         this.left.rename(before, after), this.right.rename(before, after));

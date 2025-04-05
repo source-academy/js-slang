@@ -89,7 +89,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
 
   scanAllDeclarationNames(): string[] {
     const paramNames = this.params.map(param => param.name);
-    
+
     let bodyDeclarations: string[] = [];
     // @ts-ignore
     if (this.body.type === 'BlockStatement') {
@@ -103,16 +103,22 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     return [...paramNames, ...bodyDeclarations];
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  // TODO: Fix name handling for lambda
+  substitute(id: StepperPattern, value: StepperExpression, upperBoundName?: string[]): StepperExpression {
     const valueFreeNames = value.freeNames()
     const scopeNames = this.scanAllDeclarationNames()
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
 
     var currentArrowFunction: StepperArrowFunctionExpression = this;
-    for (var index in repeatedNames) {
-      const name = repeatedNames[index]
-      currentArrowFunction = currentArrowFunction.rename(name, getFreshName(name)) as StepperArrowFunctionExpression
+    let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat());
+    repeatedNames.forEach(name => protectedNamesSet.delete(name));
+    const protectedNames = Array.from(protectedNamesSet);
+    const newNames = getFreshName(repeatedNames, protectedNames);
+    for (var index in newNames) {
+      currentArrowFunction = currentArrowFunction
+        .rename(repeatedNames[index], newNames[index]) as StepperArrowFunctionExpression
     }
+
 
     if (currentArrowFunction.scanAllDeclarationNames().includes(id.name)) {
       return currentArrowFunction;
@@ -120,7 +126,9 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
 
     return new StepperArrowFunctionExpression(
         currentArrowFunction.params,
-        currentArrowFunction.body.substitute(id, value),
+        currentArrowFunction.body.substitute(id, 
+          value, 
+          currentArrowFunction.params.flatMap(p => p.allNames())),
         currentArrowFunction.name
     )
   }
@@ -130,6 +138,13 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
       .filter(param => param.type === 'Identifier')
       .map(param => param.name)
     return this.body.freeNames().filter(name => !paramNames.includes(name))
+  }
+
+  allNames(): string[] {
+    const paramNames = this.params
+      .filter(param => param.type === 'Identifier')
+      .map(param => param.name)
+    return Array.from(new Set([paramNames, this.body.allNames()].flat()))
   }
 
   rename(before: string, after: string): StepperExpression {
@@ -143,3 +158,5 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     )
   }
 }
+
+

@@ -96,6 +96,14 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
     ]))
   }
 
+  allNames(): string[] {
+    return Array.from(new Set([
+      ...this.test.allNames(),
+      ...this.consequent.allNames(),
+      ...this.alternate.allNames()
+    ]))
+  }
+
   rename(before: string, after: string): StepperExpression {
     return new StepperConditionalExpression(
       this.test.rename(before, after),

@@ -3094,32 +3094,32 @@ const g = () => x_1 + x_3 + x_2;const x_1 = 1;const x_3 = 3;const x_2 = 2;((x_1,
 const g = () => x_1 + x_3 + x_2;const x_1 = 1;const x_3 = 3;const x_2 = 2;((x_1, x_3, x_2) => g())(0, 1, 2);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const x_1 = 1;const x_3 = 3;const x_2 = 2;((x2, x4, x3) => (() => x_1 + x_3 + x_2)())(0, 1, 2);
+const x_1 = 1;const x_3 = 3;const x_2 = 2;((x_4, x_5, x_6) => (() => x_1 + x_3 + x_2)())(0, 1, 2);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const x_1 = 1;const x_3 = 3;const x_2 = 2;((x2, x4, x3) => (() => x_1 + x_3 + x_2)())(0, 1, 2);
+const x_1 = 1;const x_3 = 3;const x_2 = 2;((x_4, x_5, x_6) => (() => x_1 + x_3 + x_2)())(0, 1, 2);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_3 = 3;const x_2 = 2;((x2, x4, x3) => (() => 1 + x_3 + x_2)())(0, 1, 2);
+const x_3 = 3;const x_2 = 2;((x_4, x_5, x_6) => (() => 1 + x_3 + x_2)())(0, 1, 2);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_3 = 3;const x_2 = 2;((x2, x4, x3) => (() => 1 + x_3 + x_2)())(0, 1, 2);
+const x_3 = 3;const x_2 = 2;((x_4, x_5, x_6) => (() => 1 + x_3 + x_2)())(0, 1, 2);
 [beforeMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;((x2, x4, x3) => (() => 1 + 3 + x_2)())(0, 1, 2);
+const x_2 = 2;((x_4, x_5, x_6) => (() => 1 + 3 + x_2)())(0, 1, 2);
 [afterMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;((x2, x4, x3) => (() => 1 + 3 + x_2)())(0, 1, 2);
+const x_2 = 2;((x_4, x_5, x_6) => (() => 1 + 3 + x_2)())(0, 1, 2);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-((x2, x4, x3) => (() => 1 + 3 + 2)())(0, 1, 2);
+((x_4, x_5, x_6) => (() => 1 + 3 + 2)())(0, 1, 2);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-((x2, x4, x3) => (() => 1 + 3 + 2)())(0, 1, 2);
-[beforeMarker] 0, 1, 2 substituted into x2, x4, x3 of (x2, x4, x3) => (() => 1 + 3 + 2)()
+((x_4, x_5, x_6) => (() => 1 + 3 + 2)())(0, 1, 2);
+[beforeMarker] 0, 1, 2 substituted into x_4, x_5, x_6 of (x_4, x_5, x_6) => (() => 1 + 3 + 2)()
 
 (() => 1 + 3 + 2)();
-[afterMarker] 0, 1, 2 substituted into x2, x4, x3 of (x2, x4, x3) => (() => 1 + 3 + 2)()
+[afterMarker] 0, 1, 2 substituted into x_4, x_5, x_6 of (x_4, x_5, x_6) => (() => 1 + 3 + 2)()
 
 (() => 1 + 3 + 2)();
 [beforeMarker] () => 1 + 3 + 2 runs
@@ -3190,84 +3190,84 @@ exports[`Alpha renaming multiple clash 2 for function declaration 1`] = `
 function g() { return x + x_1;}function f(x) { function h(x_1) { return x_2 + g(); } return h;}const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-function f(x_1) { function h(x2) { return x_2 + (() => { return x + x_1; })(); } return h;}const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
+function f(x_3) { function h(x_3) { return x_2 + (() => { return x + x_1; })(); } return h;}const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-function f(x_1) { function h(x2) { return x_2 + (() => { return x + x_1; })(); } return h;}const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
-[beforeMarker] Function f declared, parameter(s) x_1 required
+function f(x_3) { function h(x_3) { return x_2 + (() => { return x + x_1; })(); } return h;}const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
+[beforeMarker] Function f declared, parameter(s) x_3 required
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_1 => { function h(x2) { return x_2 + (() => { return x + x_1; })(); } return h;})(1)(1);
-[afterMarker] Function f declared, parameter(s) x_1 required
+const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return x_2 + (() => { return x + x_1; })(); } return h;})(1)(1);
+[afterMarker] Function f declared, parameter(s) x_3 required
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_1 => { function h(x2) { return x_2 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return x_2 + (() => { return x + x_1; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_1 => { function h(x2) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_1 => { function h(x2) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_1 => { function h(x2) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x = 1;(x_3 => { function h(x_3) { return 0 + (() => { return x + 2; })(); } return h;})(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_1 => { function h(x2) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x = 1;(x_3 => { function h(x_3) { return 0 + (() => { return x + 2; })(); } return h;})(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_1 => { function h(x2) { return 0 + (() => { return 1 + x_1; })(); } return h;})(1)(1);
+(x_3 => { function h(x_3) { return 0 + (() => { return 1 + 2; })(); } return h;})(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_1 => { function h(x2) { return 0 + (() => { return 1 + x_1; })(); } return h;})(1)(1);
-[beforeMarker] Function f, defined as x_1 => {...}, takes in x_1 as input 1
+(x_3 => { function h(x_3) { return 0 + (() => { return 1 + 2; })(); } return h;})(1)(1);
+[beforeMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 1
 
-{ function h(x2) { return 0 + (() => { return 1 + 1; })(); } return h;}(1);
-[afterMarker] Function f, defined as x_1 => {...}, takes in x_1 as input 1
+{ function h(x_3) { return 0 + (() => { return 1 + 2; })(); } return h;}(1);
+[afterMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 1
 
-{ function h(x2) { return 0 + (() => { return 1 + 1; })(); } return h;}(1);
-[beforeMarker] Function h declared, parameter(s) x2 required
+{ function h(x_3) { return 0 + (() => { return 1 + 2; })(); } return h;}(1);
+[beforeMarker] Function h declared, parameter(s) x_3 required
 
-{ return x2 => { return 0 + (() => { return 1 + 1; })(); };}(1);
-[afterMarker] Function h declared, parameter(s) x2 required
+{ return x_3 => { return 0 + (() => { return 1 + 2; })(); };}(1);
+[afterMarker] Function h declared, parameter(s) x_3 required
 
-{ return x2 => { return 0 + (() => { return 1 + 1; })(); };}(1);
-[beforeMarker] x2 => {
+{ return x_3 => { return 0 + (() => { return 1 + 2; })(); };}(1);
+[beforeMarker] x_3 => {
   return 0 + (() => {
-    return 1 + 1;
+    return 1 + 2;
   })();
 } returned
 
-(x2 => { return 0 + (() => { return 1 + 1; })();})(1);
-[afterMarker] x2 => {
+(x_3 => { return 0 + (() => { return 1 + 2; })();})(1);
+[afterMarker] x_3 => {
   return 0 + (() => {
-    return 1 + 1;
+    return 1 + 2;
   })();
 } returned
 
-(x2 => { return 0 + (() => { return 1 + 1; })();})(1);
-[beforeMarker] Function h, defined as x2 => {...}, takes in x2 as input 1
+(x_3 => { return 0 + (() => { return 1 + 2; })();})(1);
+[beforeMarker] Function h, defined as x_3 => {...}, takes in x_3 as input 1
 
-0 + (() => { return 1 + 1;})();
-[afterMarker] Function h, defined as x2 => {...}, takes in x2 as input 1
+0 + (() => { return 1 + 2;})();
+[afterMarker] Function h, defined as x_3 => {...}, takes in x_3 as input 1
 
-0 + (() => { return 1 + 1;})();
+0 + (() => { return 1 + 2;})();
 [beforeMarker] () => {...} runs
 
-0 + (1 + 1);
+0 + (1 + 2);
 [afterMarker] () => {...} runs
 
-0 + (1 + 1);
-[beforeMarker] Binary expression 1 + 1 evaluated
+0 + (1 + 2);
+[beforeMarker] Binary expression 1 + 2 evaluated
 
-0 + 2;
-[afterMarker] Binary expression 1 + 1 evaluated
+0 + 3;
+[afterMarker] Binary expression 1 + 2 evaluated
 
-0 + 2;
-[beforeMarker] Binary expression 0 + 2 evaluated
+0 + 3;
+[beforeMarker] Binary expression 0 + 3 evaluated
 
-2;
-[afterMarker] Binary expression 0 + 2 evaluated
+3;
+[afterMarker] Binary expression 0 + 3 evaluated
 
-2;
+3;
 [noMarker] Evaluation complete
 "
 `;
@@ -3285,78 +3285,78 @@ function g() { return x + x_1;}const x_2 = 0;const x_1 = 2;const x = 1;(x => { f
 function g() { return x + x_1;}const x_2 = 0;const x_1 = 2;const x = 1;(x => { function h(x_1) { return x_2 + g(); } return h;})(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_1 => { function h(x2) { return x_2 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return x_2 + (() => { return x + x_1; })(); } return h;})(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_1 => { function h(x2) { return x_2 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return x_2 + (() => { return x + x_1; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_1 => { function h(x2) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_1 => { function h(x2) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_1 => { function h(x2) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x = 1;(x_3 => { function h(x_3) { return 0 + (() => { return x + 2; })(); } return h;})(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_1 => { function h(x2) { return 0 + (() => { return x + x_1; })(); } return h;})(1)(1);
+const x = 1;(x_3 => { function h(x_3) { return 0 + (() => { return x + 2; })(); } return h;})(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_1 => { function h(x2) { return 0 + (() => { return 1 + x_1; })(); } return h;})(1)(1);
+(x_3 => { function h(x_3) { return 0 + (() => { return 1 + 2; })(); } return h;})(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_1 => { function h(x2) { return 0 + (() => { return 1 + x_1; })(); } return h;})(1)(1);
-[beforeMarker] Function f, defined as x_1 => {...}, takes in x_1 as input 1
+(x_3 => { function h(x_3) { return 0 + (() => { return 1 + 2; })(); } return h;})(1)(1);
+[beforeMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 1
 
-{ function h(x2) { return 0 + (() => { return 1 + 1; })(); } return h;}(1);
-[afterMarker] Function f, defined as x_1 => {...}, takes in x_1 as input 1
+{ function h(x_3) { return 0 + (() => { return 1 + 2; })(); } return h;}(1);
+[afterMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 1
 
-{ function h(x2) { return 0 + (() => { return 1 + 1; })(); } return h;}(1);
-[beforeMarker] Function h declared, parameter(s) x2 required
+{ function h(x_3) { return 0 + (() => { return 1 + 2; })(); } return h;}(1);
+[beforeMarker] Function h declared, parameter(s) x_3 required
 
-{ return x2 => { return 0 + (() => { return 1 + 1; })(); };}(1);
-[afterMarker] Function h declared, parameter(s) x2 required
+{ return x_3 => { return 0 + (() => { return 1 + 2; })(); };}(1);
+[afterMarker] Function h declared, parameter(s) x_3 required
 
-{ return x2 => { return 0 + (() => { return 1 + 1; })(); };}(1);
-[beforeMarker] x2 => {
+{ return x_3 => { return 0 + (() => { return 1 + 2; })(); };}(1);
+[beforeMarker] x_3 => {
   return 0 + (() => {
-    return 1 + 1;
+    return 1 + 2;
   })();
 } returned
 
-(x2 => { return 0 + (() => { return 1 + 1; })();})(1);
-[afterMarker] x2 => {
+(x_3 => { return 0 + (() => { return 1 + 2; })();})(1);
+[afterMarker] x_3 => {
   return 0 + (() => {
-    return 1 + 1;
+    return 1 + 2;
   })();
 } returned
 
-(x2 => { return 0 + (() => { return 1 + 1; })();})(1);
-[beforeMarker] Function h, defined as x2 => {...}, takes in x2 as input 1
+(x_3 => { return 0 + (() => { return 1 + 2; })();})(1);
+[beforeMarker] Function h, defined as x_3 => {...}, takes in x_3 as input 1
 
-0 + (() => { return 1 + 1;})();
-[afterMarker] Function h, defined as x2 => {...}, takes in x2 as input 1
+0 + (() => { return 1 + 2;})();
+[afterMarker] Function h, defined as x_3 => {...}, takes in x_3 as input 1
 
-0 + (() => { return 1 + 1;})();
+0 + (() => { return 1 + 2;})();
 [beforeMarker] () => {...} runs
 
-0 + (1 + 1);
+0 + (1 + 2);
 [afterMarker] () => {...} runs
 
-0 + (1 + 1);
-[beforeMarker] Binary expression 1 + 1 evaluated
+0 + (1 + 2);
+[beforeMarker] Binary expression 1 + 2 evaluated
 
-0 + 2;
-[afterMarker] Binary expression 1 + 1 evaluated
+0 + 3;
+[afterMarker] Binary expression 1 + 2 evaluated
 
-0 + 2;
-[beforeMarker] Binary expression 0 + 2 evaluated
+0 + 3;
+[beforeMarker] Binary expression 0 + 3 evaluated
 
-2;
-[afterMarker] Binary expression 0 + 2 evaluated
+3;
+[afterMarker] Binary expression 0 + 3 evaluated
 
-2;
+3;
 [noMarker] Evaluation complete
 "
 `;
@@ -3374,58 +3374,58 @@ const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;(x => x_1 => x_2
 const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;(x => x_1 => x_2 + g())(1)(1);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_1 => x2 => x_2 + (() => x + x_1)())(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => x_4 => x_2 + (() => x + x_1)())(1)(1);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_1 => x2 => x_2 + (() => x + x_1)())(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => x_4 => x_2 + (() => x + x_1)())(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_1 => x2 => 0 + (() => x + x_1)())(1)(1);
+const x_1 = 2;const x = 1;(x_3 => x_4 => 0 + (() => x + x_1)())(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_1 => x2 => 0 + (() => x + x_1)())(1)(1);
+const x_1 = 2;const x = 1;(x_3 => x_4 => 0 + (() => x + x_1)())(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_1 => x2 => 0 + (() => x + x_1)())(1)(1);
+const x = 1;(x_3 => x_4 => 0 + (() => x + 2)())(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_1 => x2 => 0 + (() => x + x_1)())(1)(1);
+const x = 1;(x_3 => x_4 => 0 + (() => x + 2)())(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_1 => x2 => 0 + (() => 1 + x_1)())(1)(1);
+(x_3 => x_4 => 0 + (() => 1 + 2)())(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_1 => x2 => 0 + (() => 1 + x_1)())(1)(1);
-[beforeMarker] 1 substituted into x_1 of x_1 => x2 => 0 + (() => 1 + x_1)()
+(x_3 => x_4 => 0 + (() => 1 + 2)())(1)(1);
+[beforeMarker] 1 substituted into x_3 of x_3 => x_4 => 0 + (() => 1 + 2)()
 
-(x2 => 0 + (() => 1 + 1)())(1);
-[afterMarker] 1 substituted into x_1 of x_1 => x2 => 0 + (() => 1 + x_1)()
+(x_4 => 0 + (() => 1 + 2)())(1);
+[afterMarker] 1 substituted into x_3 of x_3 => x_4 => 0 + (() => 1 + 2)()
 
-(x2 => 0 + (() => 1 + 1)())(1);
-[beforeMarker] 1 substituted into x2 of x2 => 0 + (() => 1 + 1)()
+(x_4 => 0 + (() => 1 + 2)())(1);
+[beforeMarker] 1 substituted into x_4 of x_4 => 0 + (() => 1 + 2)()
 
-0 + (() => 1 + 1)();
-[afterMarker] 1 substituted into x2 of x2 => 0 + (() => 1 + 1)()
+0 + (() => 1 + 2)();
+[afterMarker] 1 substituted into x_4 of x_4 => 0 + (() => 1 + 2)()
 
-0 + (() => 1 + 1)();
-[beforeMarker] () => 1 + 1 runs
+0 + (() => 1 + 2)();
+[beforeMarker] () => 1 + 2 runs
 
-0 + (1 + 1);
-[afterMarker] () => 1 + 1 runs
+0 + (1 + 2);
+[afterMarker] () => 1 + 2 runs
 
-0 + (1 + 1);
-[beforeMarker] Binary expression 1 + 1 evaluated
+0 + (1 + 2);
+[beforeMarker] Binary expression 1 + 2 evaluated
 
-0 + 2;
-[afterMarker] Binary expression 1 + 1 evaluated
+0 + 3;
+[afterMarker] Binary expression 1 + 2 evaluated
 
-0 + 2;
-[beforeMarker] Binary expression 0 + 2 evaluated
+0 + 3;
+[beforeMarker] Binary expression 0 + 3 evaluated
 
-2;
-[afterMarker] Binary expression 0 + 2 evaluated
+3;
+[afterMarker] Binary expression 0 + 3 evaluated
 
-2;
+3;
 [noMarker] Evaluation complete
 "
 `;
@@ -3437,64 +3437,64 @@ exports[`Alpha renaming multiple clash for function declaration 1`] = `
 function g() { return x_2 + x_3;}function f(x_2) { function h(x_3) { return x_4 + g(); } return h;}const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-function f(x3) { function h(x4) { return x_4 + (() => { return x_2 + x_3; })(); } return h;}const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
+function f(x_5) { function h(x_5) { return x_4 + (() => { return x_2 + x_3; })(); } return h;}const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-function f(x3) { function h(x4) { return x_4 + (() => { return x_2 + x_3; })(); } return h;}const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
-[beforeMarker] Function f declared, parameter(s) x3 required
+function f(x_5) { function h(x_5) { return x_4 + (() => { return x_2 + x_3; })(); } return h;}const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
+[beforeMarker] Function f declared, parameter(s) x_5 required
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return x_2 + x_3; })(); } return h;})(1)(1);
-[afterMarker] Function f declared, parameter(s) x3 required
+const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return x_2 + x_3; })(); } return h;})(1)(1);
+[afterMarker] Function f declared, parameter(s) x_5 required
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return x_2 + x_3; })(); } return h;})(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return x_2 + x_3; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return x_2 + 0; })(); } return h;})(1)(1);
+const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return x_2 + 0; })(); } return h;})(1)(1);
 [afterMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return x_2 + 0; })(); } return h;})(1)(1);
+const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return x_2 + 0; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return 2 + 0; })(); } return h;})(1)(1);
+const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return 2 + 0; })(); } return h;})(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return 2 + 0; })(); } return h;})(1)(1);
+const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return 2 + 0; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_4 declared and substituted into the rest of block
 
-(x3 => { function h(x4) { return 2 + (() => { return 2 + 0; })(); } return h;})(1)(1);
+(x_5 => { function h(x_5) { return 2 + (() => { return 2 + 0; })(); } return h;})(1)(1);
 [afterMarker] Constant x_4 declared and substituted into the rest of block
 
-(x3 => { function h(x4) { return 2 + (() => { return 2 + 0; })(); } return h;})(1)(1);
-[beforeMarker] Function f, defined as x3 => {...}, takes in x3 as input 1
+(x_5 => { function h(x_5) { return 2 + (() => { return 2 + 0; })(); } return h;})(1)(1);
+[beforeMarker] Function f, defined as x_5 => {...}, takes in x_5 as input 1
 
-{ function h(x4) { return 2 + (() => { return 2 + 0; })(); } return h;}(1);
-[afterMarker] Function f, defined as x3 => {...}, takes in x3 as input 1
+{ function h(x_5) { return 2 + (() => { return 2 + 0; })(); } return h;}(1);
+[afterMarker] Function f, defined as x_5 => {...}, takes in x_5 as input 1
 
-{ function h(x4) { return 2 + (() => { return 2 + 0; })(); } return h;}(1);
-[beforeMarker] Function h declared, parameter(s) x4 required
+{ function h(x_5) { return 2 + (() => { return 2 + 0; })(); } return h;}(1);
+[beforeMarker] Function h declared, parameter(s) x_5 required
 
-{ return x4 => { return 2 + (() => { return 2 + 0; })(); };}(1);
-[afterMarker] Function h declared, parameter(s) x4 required
+{ return x_5 => { return 2 + (() => { return 2 + 0; })(); };}(1);
+[afterMarker] Function h declared, parameter(s) x_5 required
 
-{ return x4 => { return 2 + (() => { return 2 + 0; })(); };}(1);
-[beforeMarker] x4 => {
+{ return x_5 => { return 2 + (() => { return 2 + 0; })(); };}(1);
+[beforeMarker] x_5 => {
   return 2 + (() => {
     return 2 + 0;
   })();
 } returned
 
-(x4 => { return 2 + (() => { return 2 + 0; })();})(1);
-[afterMarker] x4 => {
+(x_5 => { return 2 + (() => { return 2 + 0; })();})(1);
+[afterMarker] x_5 => {
   return 2 + (() => {
     return 2 + 0;
   })();
 } returned
 
-(x4 => { return 2 + (() => { return 2 + 0; })();})(1);
-[beforeMarker] Function h, defined as x4 => {...}, takes in x4 as input 1
+(x_5 => { return 2 + (() => { return 2 + 0; })();})(1);
+[beforeMarker] Function h, defined as x_5 => {...}, takes in x_5 as input 1
 
 2 + (() => { return 2 + 0;})();
-[afterMarker] Function h, defined as x4 => {...}, takes in x4 as input 1
+[afterMarker] Function h, defined as x_5 => {...}, takes in x_5 as input 1
 
 2 + (() => { return 2 + 0;})();
 [beforeMarker] () => {...} runs
@@ -3532,58 +3532,58 @@ function g() { return x_2 + x_3;}const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_2 
 function g() { return x_2 + x_3;}const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_2 => { function h(x_3) { return x_4 + g(); } return h;})(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return x_2 + x_3; })(); } return h;})(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return x_2 + x_3; })(); } return h;})(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return x_2 + x_3; })(); } return h;})(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return x_2 + x_3; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return x_2 + 0; })(); } return h;})(1)(1);
+const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return x_2 + 0; })(); } return h;})(1)(1);
 [afterMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return x_2 + 0; })(); } return h;})(1)(1);
+const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return x_2 + 0; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return 2 + 0; })(); } return h;})(1)(1);
+const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return 2 + 0; })(); } return h;})(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x3 => { function h(x4) { return x_4 + (() => { return 2 + 0; })(); } return h;})(1)(1);
+const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + (() => { return 2 + 0; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_4 declared and substituted into the rest of block
 
-(x3 => { function h(x4) { return 2 + (() => { return 2 + 0; })(); } return h;})(1)(1);
+(x_5 => { function h(x_5) { return 2 + (() => { return 2 + 0; })(); } return h;})(1)(1);
 [afterMarker] Constant x_4 declared and substituted into the rest of block
 
-(x3 => { function h(x4) { return 2 + (() => { return 2 + 0; })(); } return h;})(1)(1);
-[beforeMarker] Function f, defined as x3 => {...}, takes in x3 as input 1
+(x_5 => { function h(x_5) { return 2 + (() => { return 2 + 0; })(); } return h;})(1)(1);
+[beforeMarker] Function f, defined as x_5 => {...}, takes in x_5 as input 1
 
-{ function h(x4) { return 2 + (() => { return 2 + 0; })(); } return h;}(1);
-[afterMarker] Function f, defined as x3 => {...}, takes in x3 as input 1
+{ function h(x_5) { return 2 + (() => { return 2 + 0; })(); } return h;}(1);
+[afterMarker] Function f, defined as x_5 => {...}, takes in x_5 as input 1
 
-{ function h(x4) { return 2 + (() => { return 2 + 0; })(); } return h;}(1);
-[beforeMarker] Function h declared, parameter(s) x4 required
+{ function h(x_5) { return 2 + (() => { return 2 + 0; })(); } return h;}(1);
+[beforeMarker] Function h declared, parameter(s) x_5 required
 
-{ return x4 => { return 2 + (() => { return 2 + 0; })(); };}(1);
-[afterMarker] Function h declared, parameter(s) x4 required
+{ return x_5 => { return 2 + (() => { return 2 + 0; })(); };}(1);
+[afterMarker] Function h declared, parameter(s) x_5 required
 
-{ return x4 => { return 2 + (() => { return 2 + 0; })(); };}(1);
-[beforeMarker] x4 => {
+{ return x_5 => { return 2 + (() => { return 2 + 0; })(); };}(1);
+[beforeMarker] x_5 => {
   return 2 + (() => {
     return 2 + 0;
   })();
 } returned
 
-(x4 => { return 2 + (() => { return 2 + 0; })();})(1);
-[afterMarker] x4 => {
+(x_5 => { return 2 + (() => { return 2 + 0; })();})(1);
+[afterMarker] x_5 => {
   return 2 + (() => {
     return 2 + 0;
   })();
 } returned
 
-(x4 => { return 2 + (() => { return 2 + 0; })();})(1);
-[beforeMarker] Function h, defined as x4 => {...}, takes in x4 as input 1
+(x_5 => { return 2 + (() => { return 2 + 0; })();})(1);
+[beforeMarker] Function h, defined as x_5 => {...}, takes in x_5 as input 1
 
 2 + (() => { return 2 + 0;})();
-[afterMarker] Function h, defined as x4 => {...}, takes in x4 as input 1
+[afterMarker] Function h, defined as x_5 => {...}, takes in x_5 as input 1
 
 2 + (() => { return 2 + 0;})();
 [beforeMarker] () => {...} runs
@@ -3621,38 +3621,38 @@ const g = () => x_2 + x_3;const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_2 => x_3 
 const g = () => x_2 + x_3;const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_2 => x_3 => x_4 + g())(1)(1);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x3 => x4 => x_4 + (() => x_2 + x_3)())(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => x_6 => x_4 + (() => x_2 + x_3)())(1)(1);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x3 => x4 => x_4 + (() => x_2 + x_3)())(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => x_6 => x_4 + (() => x_2 + x_3)())(1)(1);
 [beforeMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x3 => x4 => x_4 + (() => x_2 + 0)())(1)(1);
+const x_2 = 2;const x_4 = 2;(x_5 => x_6 => x_4 + (() => x_2 + 0)())(1)(1);
 [afterMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x3 => x4 => x_4 + (() => x_2 + 0)())(1)(1);
+const x_2 = 2;const x_4 = 2;(x_5 => x_6 => x_4 + (() => x_2 + 0)())(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x3 => x4 => x_4 + (() => 2 + 0)())(1)(1);
+const x_4 = 2;(x_5 => x_6 => x_4 + (() => 2 + 0)())(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x3 => x4 => x_4 + (() => 2 + 0)())(1)(1);
+const x_4 = 2;(x_5 => x_6 => x_4 + (() => 2 + 0)())(1)(1);
 [beforeMarker] Constant x_4 declared and substituted into the rest of block
 
-(x3 => x4 => 2 + (() => 2 + 0)())(1)(1);
+(x_5 => x_6 => 2 + (() => 2 + 0)())(1)(1);
 [afterMarker] Constant x_4 declared and substituted into the rest of block
 
-(x3 => x4 => 2 + (() => 2 + 0)())(1)(1);
-[beforeMarker] 1 substituted into x3 of x3 => x4 => 2 + (() => 2 + 0)()
+(x_5 => x_6 => 2 + (() => 2 + 0)())(1)(1);
+[beforeMarker] 1 substituted into x_5 of x_5 => x_6 => 2 + (() => 2 + 0)()
 
-(x4 => 2 + (() => 2 + 0)())(1);
-[afterMarker] 1 substituted into x3 of x3 => x4 => 2 + (() => 2 + 0)()
+(x_6 => 2 + (() => 2 + 0)())(1);
+[afterMarker] 1 substituted into x_5 of x_5 => x_6 => 2 + (() => 2 + 0)()
 
-(x4 => 2 + (() => 2 + 0)())(1);
-[beforeMarker] 1 substituted into x4 of x4 => 2 + (() => 2 + 0)()
+(x_6 => 2 + (() => 2 + 0)())(1);
+[beforeMarker] 1 substituted into x_6 of x_6 => 2 + (() => 2 + 0)()
 
 2 + (() => 2 + 0)();
-[afterMarker] 1 substituted into x4 of x4 => 2 + (() => 2 + 0)()
+[afterMarker] 1 substituted into x_6 of x_6 => 2 + (() => 2 + 0)()
 
 2 + (() => 2 + 0)();
 [beforeMarker] () => 2 + 0 runs
@@ -3677,6 +3677,87 @@ const x_4 = 2;(x3 => x4 => x_4 + (() => 2 + 0)())(1)(1);
 "
 `;
 
+exports[`Alpha renaming multiple clash for lambda function with block expression 1`] = `
+"const f = x => { const x_1 = 1; return x_1 => x_2 + g();};const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
+[noMarker] Start of evaluation
+
+const f = x => { const x_1 = 1; return x_1 => x_2 + g();};const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
+[beforeMarker] Constant f declared and substituted into the rest of block
+
+const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;(x => { const x_1 = 1; return x_1 => x_2 + g();})(1)(1);
+[afterMarker] Constant f declared and substituted into the rest of block
+
+const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;(x => { const x_1 = 1; return x_1 => x_2 + g();})(1)(1);
+[beforeMarker] Constant g declared and substituted into the rest of block
+
+const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { const x_4 = 1; return x_4 => x_2 + (() => x + x_1)();})(1)(1);
+[afterMarker] Constant g declared and substituted into the rest of block
+
+const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { const x_4 = 1; return x_4 => x_2 + (() => x + x_1)();})(1)(1);
+[beforeMarker] Constant x_2 declared and substituted into the rest of block
+
+const x_1 = 2;const x = 1;(x_3 => { const x_4 = 1; return x_4 => 0 + (() => x + x_1)();})(1)(1);
+[afterMarker] Constant x_2 declared and substituted into the rest of block
+
+const x_1 = 2;const x = 1;(x_3 => { const x_4 = 1; return x_4 => 0 + (() => x + x_1)();})(1)(1);
+[beforeMarker] Constant x_1 declared and substituted into the rest of block
+
+const x = 1;(x_3 => { const x_4 = 1; return x_4 => 0 + (() => x + 2)();})(1)(1);
+[afterMarker] Constant x_1 declared and substituted into the rest of block
+
+const x = 1;(x_3 => { const x_4 = 1; return x_4 => 0 + (() => x + 2)();})(1)(1);
+[beforeMarker] Constant x declared and substituted into the rest of block
+
+(x_3 => { const x_4 = 1; return x_4 => 0 + (() => 1 + 2)();})(1)(1);
+[afterMarker] Constant x declared and substituted into the rest of block
+
+(x_3 => { const x_4 = 1; return x_4 => 0 + (() => 1 + 2)();})(1)(1);
+[beforeMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 1
+
+{ const x_4 = 1; return x_4 => 0 + (() => 1 + 2)();}(1);
+[afterMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 1
+
+{ const x_4 = 1; return x_4 => 0 + (() => 1 + 2)();}(1);
+[beforeMarker] Constant x_4 declared and substituted into the rest of block
+
+{ return x_4 => 0 + (() => 1 + 2)();}(1);
+[afterMarker] Constant x_4 declared and substituted into the rest of block
+
+{ return x_4 => 0 + (() => 1 + 2)();}(1);
+[beforeMarker] x_4 => 0 + (() => 1 + 2)() returned
+
+(x_4 => 0 + (() => 1 + 2)())(1);
+[afterMarker] x_4 => 0 + (() => 1 + 2)() returned
+
+(x_4 => 0 + (() => 1 + 2)())(1);
+[beforeMarker] 1 substituted into x_4 of x_4 => 0 + (() => 1 + 2)()
+
+0 + (() => 1 + 2)();
+[afterMarker] 1 substituted into x_4 of x_4 => 0 + (() => 1 + 2)()
+
+0 + (() => 1 + 2)();
+[beforeMarker] () => 1 + 2 runs
+
+0 + (1 + 2);
+[afterMarker] () => 1 + 2 runs
+
+0 + (1 + 2);
+[beforeMarker] Binary expression 1 + 2 evaluated
+
+0 + 3;
+[afterMarker] Binary expression 1 + 2 evaluated
+
+0 + 3;
+[beforeMarker] Binary expression 0 + 3 evaluated
+
+3;
+[afterMarker] Binary expression 0 + 3 evaluated
+
+3;
+[noMarker] Evaluation complete
+"
+`;
+
 exports[`Alpha renaming renaming clash in replacement for function declaration 1`] = `
 "function g() { return x_1 + x_2;}function f(x_1) { function h(x_2) { return g(); } return h;}const x_1 = 0;const x_2 = 0;f(1)(1);
 [noMarker] Start of evaluation
@@ -3684,58 +3765,58 @@ exports[`Alpha renaming renaming clash in replacement for function declaration 1
 function g() { return x_1 + x_2;}function f(x_1) { function h(x_2) { return g(); } return h;}const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-function f(x2) { function h(x3) { return (() => { return x_1 + x_2; })(); } return h;}const x_1 = 0;const x_2 = 0;f(1)(1);
+function f(x_3) { function h(x_3) { return (() => { return x_1 + x_2; })(); } return h;}const x_1 = 0;const x_2 = 0;f(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-function f(x2) { function h(x3) { return (() => { return x_1 + x_2; })(); } return h;}const x_1 = 0;const x_2 = 0;f(1)(1);
-[beforeMarker] Function f declared, parameter(s) x2 required
+function f(x_3) { function h(x_3) { return (() => { return x_1 + x_2; })(); } return h;}const x_1 = 0;const x_2 = 0;f(1)(1);
+[beforeMarker] Function f declared, parameter(s) x_3 required
 
-const x_1 = 0;const x_2 = 0;(x2 => { function h(x3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
-[afterMarker] Function f declared, parameter(s) x2 required
+const x_1 = 0;const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
+[afterMarker] Function f declared, parameter(s) x_3 required
 
-const x_1 = 0;const x_2 = 0;(x2 => { function h(x3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
+const x_1 = 0;const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x2 => { function h(x3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
+const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x2 => { function h(x3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
+const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-(x2 => { function h(x3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
+(x_3 => { function h(x_3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-(x2 => { function h(x3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
-[beforeMarker] Function f, defined as x2 => {...}, takes in x2 as input 1
+(x_3 => { function h(x_3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
+[beforeMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 1
 
-{ function h(x3) { return (() => { return 0 + 0; })(); } return h;}(1);
-[afterMarker] Function f, defined as x2 => {...}, takes in x2 as input 1
+{ function h(x_3) { return (() => { return 0 + 0; })(); } return h;}(1);
+[afterMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 1
 
-{ function h(x3) { return (() => { return 0 + 0; })(); } return h;}(1);
-[beforeMarker] Function h declared, parameter(s) x3 required
+{ function h(x_3) { return (() => { return 0 + 0; })(); } return h;}(1);
+[beforeMarker] Function h declared, parameter(s) x_3 required
 
-{ return x3 => { return (() => { return 0 + 0; })(); };}(1);
-[afterMarker] Function h declared, parameter(s) x3 required
+{ return x_3 => { return (() => { return 0 + 0; })(); };}(1);
+[afterMarker] Function h declared, parameter(s) x_3 required
 
-{ return x3 => { return (() => { return 0 + 0; })(); };}(1);
-[beforeMarker] x3 => {
+{ return x_3 => { return (() => { return 0 + 0; })(); };}(1);
+[beforeMarker] x_3 => {
   return (() => {
     return 0 + 0;
   })();
 } returned
 
-(x3 => { return (() => { return 0 + 0; })();})(1);
-[afterMarker] x3 => {
+(x_3 => { return (() => { return 0 + 0; })();})(1);
+[afterMarker] x_3 => {
   return (() => {
     return 0 + 0;
   })();
 } returned
 
-(x3 => { return (() => { return 0 + 0; })();})(1);
-[beforeMarker] Function h, defined as x3 => {...}, takes in x3 as input 1
+(x_3 => { return (() => { return 0 + 0; })();})(1);
+[beforeMarker] Function h, defined as x_3 => {...}, takes in x_3 as input 1
 
 (() => { return 0 + 0;})();
-[afterMarker] Function h, defined as x3 => {...}, takes in x3 as input 1
+[afterMarker] Function h, defined as x_3 => {...}, takes in x_3 as input 1
 
 (() => { return 0 + 0;})();
 [beforeMarker] () => {...} runs
@@ -3767,52 +3848,52 @@ function g() { return x_1 + x_2;}const x_1 = 0;const x_2 = 0;(x_1 => { function 
 function g() { return x_1 + x_2;}const x_1 = 0;const x_2 = 0;(x_1 => { function h(x_2) { return g(); } return h;})(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-const x_1 = 0;const x_2 = 0;(x2 => { function h(x3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
+const x_1 = 0;const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-const x_1 = 0;const x_2 = 0;(x2 => { function h(x3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
+const x_1 = 0;const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x2 => { function h(x3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
+const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x2 => { function h(x3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
+const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-(x2 => { function h(x3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
+(x_3 => { function h(x_3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-(x2 => { function h(x3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
-[beforeMarker] Function f, defined as x2 => {...}, takes in x2 as input 1
+(x_3 => { function h(x_3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
+[beforeMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 1
 
-{ function h(x3) { return (() => { return 0 + 0; })(); } return h;}(1);
-[afterMarker] Function f, defined as x2 => {...}, takes in x2 as input 1
+{ function h(x_3) { return (() => { return 0 + 0; })(); } return h;}(1);
+[afterMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 1
 
-{ function h(x3) { return (() => { return 0 + 0; })(); } return h;}(1);
-[beforeMarker] Function h declared, parameter(s) x3 required
+{ function h(x_3) { return (() => { return 0 + 0; })(); } return h;}(1);
+[beforeMarker] Function h declared, parameter(s) x_3 required
 
-{ return x3 => { return (() => { return 0 + 0; })(); };}(1);
-[afterMarker] Function h declared, parameter(s) x3 required
+{ return x_3 => { return (() => { return 0 + 0; })(); };}(1);
+[afterMarker] Function h declared, parameter(s) x_3 required
 
-{ return x3 => { return (() => { return 0 + 0; })(); };}(1);
-[beforeMarker] x3 => {
+{ return x_3 => { return (() => { return 0 + 0; })(); };}(1);
+[beforeMarker] x_3 => {
   return (() => {
     return 0 + 0;
   })();
 } returned
 
-(x3 => { return (() => { return 0 + 0; })();})(1);
-[afterMarker] x3 => {
+(x_3 => { return (() => { return 0 + 0; })();})(1);
+[afterMarker] x_3 => {
   return (() => {
     return 0 + 0;
   })();
 } returned
 
-(x3 => { return (() => { return 0 + 0; })();})(1);
-[beforeMarker] Function h, defined as x3 => {...}, takes in x3 as input 1
+(x_3 => { return (() => { return 0 + 0; })();})(1);
+[beforeMarker] Function h, defined as x_3 => {...}, takes in x_3 as input 1
 
 (() => { return 0 + 0;})();
-[afterMarker] Function h, defined as x3 => {...}, takes in x3 as input 1
+[afterMarker] Function h, defined as x_3 => {...}, takes in x_3 as input 1
 
 (() => { return 0 + 0;})();
 [beforeMarker] () => {...} runs
@@ -3838,38 +3919,38 @@ exports[`Alpha renaming renaming clash in replacement for lambda function 1`] = 
 const g = () => x_1 + x_2;const f = x_1 => x_2 => g();const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const f = x2 => x3 => (() => x_1 + x_2)();const x_1 = 0;const x_2 = 0;f(1)(1);
+const f = x_3 => x_4 => (() => x_1 + x_2)();const x_1 = 0;const x_2 = 0;f(1)(1);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const f = x2 => x3 => (() => x_1 + x_2)();const x_1 = 0;const x_2 = 0;f(1)(1);
+const f = x_3 => x_4 => (() => x_1 + x_2)();const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const x_1 = 0;const x_2 = 0;(x2 => x3 => (() => x_1 + x_2)())(1)(1);
+const x_1 = 0;const x_2 = 0;(x_3 => x_4 => (() => x_1 + x_2)())(1)(1);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const x_1 = 0;const x_2 = 0;(x2 => x3 => (() => x_1 + x_2)())(1)(1);
+const x_1 = 0;const x_2 = 0;(x_3 => x_4 => (() => x_1 + x_2)())(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x2 => x3 => (() => 0 + x_2)())(1)(1);
+const x_2 = 0;(x_3 => x_4 => (() => 0 + x_2)())(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x2 => x3 => (() => 0 + x_2)())(1)(1);
+const x_2 = 0;(x_3 => x_4 => (() => 0 + x_2)())(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-(x2 => x3 => (() => 0 + 0)())(1)(1);
+(x_3 => x_4 => (() => 0 + 0)())(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-(x2 => x3 => (() => 0 + 0)())(1)(1);
-[beforeMarker] 1 substituted into x2 of x2 => x3 => (() => 0 + 0)()
+(x_3 => x_4 => (() => 0 + 0)())(1)(1);
+[beforeMarker] 1 substituted into x_3 of x_3 => x_4 => (() => 0 + 0)()
 
-(x3 => (() => 0 + 0)())(1);
-[afterMarker] 1 substituted into x2 of x2 => x3 => (() => 0 + 0)()
+(x_4 => (() => 0 + 0)())(1);
+[afterMarker] 1 substituted into x_3 of x_3 => x_4 => (() => 0 + 0)()
 
-(x3 => (() => 0 + 0)())(1);
-[beforeMarker] 1 substituted into x3 of x3 => (() => 0 + 0)()
+(x_4 => (() => 0 + 0)())(1);
+[beforeMarker] 1 substituted into x_4 of x_4 => (() => 0 + 0)()
 
 (() => 0 + 0)();
-[afterMarker] 1 substituted into x3 of x3 => (() => 0 + 0)()
+[afterMarker] 1 substituted into x_4 of x_4 => (() => 0 + 0)()
 
 (() => 0 + 0)();
 [beforeMarker] () => 0 + 0 runs
@@ -3901,46 +3982,46 @@ function g() { return w_9;}const w_9 = 0;(w_8 => { function h(w_9) { return w_8 
 function g() { return w_9;}const w_9 = 0;(w_8 => { function h(w_9) { return w_8 + w_9 + g(); } return h;})(1)(2);
 [beforeMarker] Function g declared, parameter(s)  required
 
-const w_9 = 0;(w_8 => { function h(w10) { return w_8 + w10 + (() => { return w_9; })(); } return h;})(1)(2);
+const w_9 = 0;(w_8 => { function h(w_10) { return w_8 + w_10 + (() => { return w_9; })(); } return h;})(1)(2);
 [afterMarker] Function g declared, parameter(s)  required
 
-const w_9 = 0;(w_8 => { function h(w10) { return w_8 + w10 + (() => { return w_9; })(); } return h;})(1)(2);
+const w_9 = 0;(w_8 => { function h(w_10) { return w_8 + w_10 + (() => { return w_9; })(); } return h;})(1)(2);
 [beforeMarker] Constant w_9 declared and substituted into the rest of block
 
-(w_8 => { function h(w10) { return w_8 + w10 + (() => { return 0; })(); } return h;})(1)(2);
+(w_8 => { function h(w_10) { return w_8 + w_10 + (() => { return 0; })(); } return h;})(1)(2);
 [afterMarker] Constant w_9 declared and substituted into the rest of block
 
-(w_8 => { function h(w10) { return w_8 + w10 + (() => { return 0; })(); } return h;})(1)(2);
+(w_8 => { function h(w_10) { return w_8 + w_10 + (() => { return 0; })(); } return h;})(1)(2);
 [beforeMarker] Function f, defined as w_8 => {...}, takes in w_8 as input 1
 
-{ function h(w10) { return 1 + w10 + (() => { return 0; })(); } return h;}(2);
+{ function h(w_10) { return 1 + w_10 + (() => { return 0; })(); } return h;}(2);
 [afterMarker] Function f, defined as w_8 => {...}, takes in w_8 as input 1
 
-{ function h(w10) { return 1 + w10 + (() => { return 0; })(); } return h;}(2);
-[beforeMarker] Function h declared, parameter(s) w10 required
+{ function h(w_10) { return 1 + w_10 + (() => { return 0; })(); } return h;}(2);
+[beforeMarker] Function h declared, parameter(s) w_10 required
 
-{ return w10 => { return 1 + w10 + (() => { return 0; })(); };}(2);
-[afterMarker] Function h declared, parameter(s) w10 required
+{ return w_10 => { return 1 + w_10 + (() => { return 0; })(); };}(2);
+[afterMarker] Function h declared, parameter(s) w_10 required
 
-{ return w10 => { return 1 + w10 + (() => { return 0; })(); };}(2);
-[beforeMarker] w10 => {
-  return 1 + w10 + (() => {
+{ return w_10 => { return 1 + w_10 + (() => { return 0; })(); };}(2);
+[beforeMarker] w_10 => {
+  return 1 + w_10 + (() => {
     return 0;
   })();
 } returned
 
-(w10 => { return 1 + w10 + (() => { return 0; })();})(2);
-[afterMarker] w10 => {
-  return 1 + w10 + (() => {
+(w_10 => { return 1 + w_10 + (() => { return 0; })();})(2);
+[afterMarker] w_10 => {
+  return 1 + w_10 + (() => {
     return 0;
   })();
 } returned
 
-(w10 => { return 1 + w10 + (() => { return 0; })();})(2);
-[beforeMarker] Function h, defined as w10 => {...}, takes in w10 as input 2
+(w_10 => { return 1 + w_10 + (() => { return 0; })();})(2);
+[beforeMarker] Function h, defined as w_10 => {...}, takes in w_10 as input 2
 
 1 + 2 + (() => { return 0;})();
-[afterMarker] Function h, defined as w10 => {...}, takes in w10 as input 2
+[afterMarker] Function h, defined as w_10 => {...}, takes in w_10 as input 2
 
 1 + 2 + (() => { return 0;})();
 [beforeMarker] Binary expression 1 + 2 evaluated
@@ -3978,26 +4059,26 @@ const g = () => w_10;const w_10 = 0;(w_11 => w_10 => w_11 + w_10 + g())(1)(2);
 const g = () => w_10;const w_10 = 0;(w_11 => w_10 => w_11 + w_10 + g())(1)(2);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const w_10 = 0;(w_11 => w11 => w_11 + w11 + (() => w_10)())(1)(2);
+const w_10 = 0;(w_11 => w_12 => w_11 + w_12 + (() => w_10)())(1)(2);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const w_10 = 0;(w_11 => w11 => w_11 + w11 + (() => w_10)())(1)(2);
+const w_10 = 0;(w_11 => w_12 => w_11 + w_12 + (() => w_10)())(1)(2);
 [beforeMarker] Constant w_10 declared and substituted into the rest of block
 
-(w_11 => w11 => w_11 + w11 + (() => 0)())(1)(2);
+(w_11 => w_12 => w_11 + w_12 + (() => 0)())(1)(2);
 [afterMarker] Constant w_10 declared and substituted into the rest of block
 
-(w_11 => w11 => w_11 + w11 + (() => 0)())(1)(2);
-[beforeMarker] 1 substituted into w_11 of w_11 => w11 => w_11 + w11 + (() => 0)()
+(w_11 => w_12 => w_11 + w_12 + (() => 0)())(1)(2);
+[beforeMarker] 1 substituted into w_11 of w_11 => w_12 => w_11 + w_12 + (() => 0)()
 
-(w11 => 1 + w11 + (() => 0)())(2);
-[afterMarker] 1 substituted into w_11 of w_11 => w11 => w_11 + w11 + (() => 0)()
+(w_12 => 1 + w_12 + (() => 0)())(2);
+[afterMarker] 1 substituted into w_11 of w_11 => w_12 => w_11 + w_12 + (() => 0)()
 
-(w11 => 1 + w11 + (() => 0)())(2);
-[beforeMarker] 2 substituted into w11 of w11 => 1 + w11 + (() => 0)()
+(w_12 => 1 + w_12 + (() => 0)())(2);
+[beforeMarker] 2 substituted into w_12 of w_12 => 1 + w_12 + (() => 0)()
 
 1 + 2 + (() => 0)();
-[afterMarker] 2 substituted into w11 of w11 => 1 + w11 + (() => 0)()
+[afterMarker] 2 substituted into w_12 of w_12 => 1 + w_12 + (() => 0)()
 
 1 + 2 + (() => 0)();
 [beforeMarker] Binary expression 1 + 2 evaluated
@@ -4029,98 +4110,98 @@ exports[`Alpha renaming renaming clash with declaration in replacement for funct
 function g() { const x_2 = 2; return x_1 + x_2 + x;}function f(x) { function h(x_1) { return x + g(); } return h;}const x_1 = 0;const x = 0;f(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-function f(x_1) { function h(x2) { return x2 + (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;}const x_1 = 0;const x = 0;f(1)(1);
+function f(x_2) { function h(x_3) { return x_2 + (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;}const x_1 = 0;const x = 0;f(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-function f(x_1) { function h(x2) { return x2 + (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;}const x_1 = 0;const x = 0;f(1)(1);
-[beforeMarker] Function f declared, parameter(s) x_1 required
+function f(x_2) { function h(x_3) { return x_2 + (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;}const x_1 = 0;const x = 0;f(1)(1);
+[beforeMarker] Function f declared, parameter(s) x_2 required
 
-const x_1 = 0;const x = 0;(x_1 => { function h(x2) { return x2 + (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
-[afterMarker] Function f declared, parameter(s) x_1 required
+const x_1 = 0;const x = 0;(x_2 => { function h(x_3) { return x_2 + (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
+[afterMarker] Function f declared, parameter(s) x_2 required
 
-const x_1 = 0;const x = 0;(x_1 => { function h(x2) { return x2 + (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
+const x_1 = 0;const x = 0;(x_2 => { function h(x_3) { return x_2 + (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 0;(x_1 => { function h(x2) { return x2 + (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
+const x = 0;(x_2 => { function h(x_3) { return x_2 + (() => { const x_2 = 2; return 0 + x_2 + x; })(); } return h;})(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 0;(x_1 => { function h(x2) { return x2 + (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
+const x = 0;(x_2 => { function h(x_3) { return x_2 + (() => { const x_2 = 2; return 0 + x_2 + x; })(); } return h;})(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_1 => { function h(x2) { return x2 + (() => { const x_2 = 2; return x_1 + x_2 + 0; })(); } return h;})(1)(1);
+(x_2 => { function h(x_3) { return x_2 + (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;})(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_1 => { function h(x2) { return x2 + (() => { const x_2 = 2; return x_1 + x_2 + 0; })(); } return h;})(1)(1);
-[beforeMarker] Function f, defined as x_1 => {...}, takes in x_1 as input 1
+(x_2 => { function h(x_3) { return x_2 + (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;})(1)(1);
+[beforeMarker] Function f, defined as x_2 => {...}, takes in x_2 as input 1
 
-{ function h(x2) { return x2 + (() => { const x_2 = 2; return 1 + x_2 + 0; })(); } return h;}(1);
-[afterMarker] Function f, defined as x_1 => {...}, takes in x_1 as input 1
+{ function h(x_3) { return 1 + (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;}(1);
+[afterMarker] Function f, defined as x_2 => {...}, takes in x_2 as input 1
 
-{ function h(x2) { return x2 + (() => { const x_2 = 2; return 1 + x_2 + 0; })(); } return h;}(1);
-[beforeMarker] Function h declared, parameter(s) x2 required
+{ function h(x_3) { return 1 + (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;}(1);
+[beforeMarker] Function h declared, parameter(s) x_3 required
 
-{ return x2 => { return x2 + (() => { const x_2 = 2; return 1 + x_2 + 0; })(); };}(1);
-[afterMarker] Function h declared, parameter(s) x2 required
+{ return x_3 => { return 1 + (() => { const x_2 = 2; return 0 + x_2 + 0; })(); };}(1);
+[afterMarker] Function h declared, parameter(s) x_3 required
 
-{ return x2 => { return x2 + (() => { const x_2 = 2; return 1 + x_2 + 0; })(); };}(1);
-[beforeMarker] x2 => {
-  return x2 + (() => {
+{ return x_3 => { return 1 + (() => { const x_2 = 2; return 0 + x_2 + 0; })(); };}(1);
+[beforeMarker] x_3 => {
+  return 1 + (() => {
     const x_2 = 2;
-    return 1 + x_2 + 0;
+    return 0 + x_2 + 0;
   })();
 } returned
 
-(x2 => { return x2 + (() => { const x_2 = 2; return 1 + x_2 + 0; })();})(1);
-[afterMarker] x2 => {
-  return x2 + (() => {
+(x_3 => { return 1 + (() => { const x_2 = 2; return 0 + x_2 + 0; })();})(1);
+[afterMarker] x_3 => {
+  return 1 + (() => {
     const x_2 = 2;
-    return 1 + x_2 + 0;
+    return 0 + x_2 + 0;
   })();
 } returned
 
-(x2 => { return x2 + (() => { const x_2 = 2; return 1 + x_2 + 0; })();})(1);
-[beforeMarker] Function h, defined as x2 => {...}, takes in x2 as input 1
+(x_3 => { return 1 + (() => { const x_2 = 2; return 0 + x_2 + 0; })();})(1);
+[beforeMarker] Function h, defined as x_3 => {...}, takes in x_3 as input 1
 
-1 + (() => { const x_2 = 2; return 1 + x_2 + 0;})();
-[afterMarker] Function h, defined as x2 => {...}, takes in x2 as input 1
+1 + (() => { const x_2 = 2; return 0 + x_2 + 0;})();
+[afterMarker] Function h, defined as x_3 => {...}, takes in x_3 as input 1
 
-1 + (() => { const x_2 = 2; return 1 + x_2 + 0;})();
+1 + (() => { const x_2 = 2; return 0 + x_2 + 0;})();
 [beforeMarker] () => {...} runs
 
-1 + { const x_2 = 2; return 1 + x_2 + 0;};
+1 + { const x_2 = 2; return 0 + x_2 + 0;};
 [afterMarker] () => {...} runs
 
-1 + { const x_2 = 2; return 1 + x_2 + 0;};
+1 + { const x_2 = 2; return 0 + x_2 + 0;};
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-1 + { return 1 + 2 + 0;};
+1 + { return 0 + 2 + 0;};
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-1 + { return 1 + 2 + 0;};
-[beforeMarker] 1 + 2 + 0 returned
+1 + { return 0 + 2 + 0;};
+[beforeMarker] 0 + 2 + 0 returned
 
-1 + (1 + 2 + 0);
-[afterMarker] 1 + 2 + 0 returned
+1 + (0 + 2 + 0);
+[afterMarker] 0 + 2 + 0 returned
 
-1 + (1 + 2 + 0);
+1 + (0 + 2 + 0);
+[beforeMarker] Binary expression 0 + 2 evaluated
+
+1 + (2 + 0);
+[afterMarker] Binary expression 0 + 2 evaluated
+
+1 + (2 + 0);
+[beforeMarker] Binary expression 2 + 0 evaluated
+
+1 + 2;
+[afterMarker] Binary expression 2 + 0 evaluated
+
+1 + 2;
 [beforeMarker] Binary expression 1 + 2 evaluated
 
-1 + (3 + 0);
+3;
 [afterMarker] Binary expression 1 + 2 evaluated
 
-1 + (3 + 0);
-[beforeMarker] Binary expression 3 + 0 evaluated
-
-1 + 3;
-[afterMarker] Binary expression 3 + 0 evaluated
-
-1 + 3;
-[beforeMarker] Binary expression 1 + 3 evaluated
-
-4;
-[afterMarker] Binary expression 1 + 3 evaluated
-
-4;
+3;
 [noMarker] Evaluation complete
 "
 `;
@@ -4138,86 +4219,86 @@ function g() { const x_2 = 2; return x_1 + x_2 + x;}const x_1 = 0;const x = 0;(x
 function g() { const x_2 = 2; return x_1 + x_2 + x;}const x_1 = 0;const x = 0;(x => { function h(x_1) { return g(); } return h;})(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-const x_1 = 0;const x = 0;(x_1 => { function h(x2) { return (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
+const x_1 = 0;const x = 0;(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-const x_1 = 0;const x = 0;(x_1 => { function h(x2) { return (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
+const x_1 = 0;const x = 0;(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 0;(x_1 => { function h(x2) { return (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
+const x = 0;(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + x; })(); } return h;})(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 0;(x_1 => { function h(x2) { return (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
+const x = 0;(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + x; })(); } return h;})(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_1 => { function h(x2) { return (() => { const x_2 = 2; return x_1 + x_2 + 0; })(); } return h;})(1)(1);
+(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;})(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_1 => { function h(x2) { return (() => { const x_2 = 2; return x_1 + x_2 + 0; })(); } return h;})(1)(1);
-[beforeMarker] Function f, defined as x_1 => {...}, takes in x_1 as input 1
+(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;})(1)(1);
+[beforeMarker] Function f, defined as x_2 => {...}, takes in x_2 as input 1
 
-{ function h(x2) { return (() => { const x_2 = 2; return 1 + x_2 + 0; })(); } return h;}(1);
-[afterMarker] Function f, defined as x_1 => {...}, takes in x_1 as input 1
+{ function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;}(1);
+[afterMarker] Function f, defined as x_2 => {...}, takes in x_2 as input 1
 
-{ function h(x2) { return (() => { const x_2 = 2; return 1 + x_2 + 0; })(); } return h;}(1);
-[beforeMarker] Function h declared, parameter(s) x2 required
+{ function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;}(1);
+[beforeMarker] Function h declared, parameter(s) x_2 required
 
-{ return x2 => { return (() => { const x_2 = 2; return 1 + x_2 + 0; })(); };}(1);
-[afterMarker] Function h declared, parameter(s) x2 required
+{ return x_2 => { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); };}(1);
+[afterMarker] Function h declared, parameter(s) x_2 required
 
-{ return x2 => { return (() => { const x_2 = 2; return 1 + x_2 + 0; })(); };}(1);
-[beforeMarker] x2 => {
+{ return x_2 => { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); };}(1);
+[beforeMarker] x_2 => {
   return (() => {
     const x_2 = 2;
-    return 1 + x_2 + 0;
+    return 0 + x_2 + 0;
   })();
 } returned
 
-(x2 => { return (() => { const x_2 = 2; return 1 + x_2 + 0; })();})(1);
-[afterMarker] x2 => {
+(x_2 => { return (() => { const x_2 = 2; return 0 + x_2 + 0; })();})(1);
+[afterMarker] x_2 => {
   return (() => {
     const x_2 = 2;
-    return 1 + x_2 + 0;
+    return 0 + x_2 + 0;
   })();
 } returned
 
-(x2 => { return (() => { const x_2 = 2; return 1 + x_2 + 0; })();})(1);
-[beforeMarker] Function h, defined as x2 => {...}, takes in x2 as input 1
+(x_2 => { return (() => { const x_2 = 2; return 0 + x_2 + 0; })();})(1);
+[beforeMarker] Function h, defined as x_2 => {...}, takes in x_2 as input 1
 
-(() => { const x_2 = 2; return 1 + x_2 + 0;})();
-[afterMarker] Function h, defined as x2 => {...}, takes in x2 as input 1
+(() => { const x_2 = 2; return 0 + x_2 + 0;})();
+[afterMarker] Function h, defined as x_2 => {...}, takes in x_2 as input 1
 
-(() => { const x_2 = 2; return 1 + x_2 + 0;})();
+(() => { const x_2 = 2; return 0 + x_2 + 0;})();
 [beforeMarker] () => {...} runs
 
-{ const x_2 = 2; return 1 + x_2 + 0;};
+{ const x_2 = 2; return 0 + x_2 + 0;};
 [afterMarker] () => {...} runs
 
-{ const x_2 = 2; return 1 + x_2 + 0;};
+{ const x_2 = 2; return 0 + x_2 + 0;};
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-{ return 1 + 2 + 0;};
+{ return 0 + 2 + 0;};
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-{ return 1 + 2 + 0;};
-[beforeMarker] 1 + 2 + 0 returned
+{ return 0 + 2 + 0;};
+[beforeMarker] 0 + 2 + 0 returned
 
-1 + 2 + 0;
-[afterMarker] 1 + 2 + 0 returned
+0 + 2 + 0;
+[afterMarker] 0 + 2 + 0 returned
 
-1 + 2 + 0;
-[beforeMarker] Binary expression 1 + 2 evaluated
+0 + 2 + 0;
+[beforeMarker] Binary expression 0 + 2 evaluated
 
-3 + 0;
-[afterMarker] Binary expression 1 + 2 evaluated
+2 + 0;
+[afterMarker] Binary expression 0 + 2 evaluated
 
-3 + 0;
-[beforeMarker] Binary expression 3 + 0 evaluated
+2 + 0;
+[beforeMarker] Binary expression 2 + 0 evaluated
 
-3;
-[afterMarker] Binary expression 3 + 0 evaluated
+2;
+[afterMarker] Binary expression 2 + 0 evaluated
 
-3;
+2;
 [noMarker] Evaluation complete
 "
 `;
@@ -4235,76 +4316,76 @@ const g = () => { const x_2 = 2; return x_1 + x + x_2;};const x = 0;const x_1 = 
 const g = () => { const x_2 = 2; return x_1 + x + x_2;};const x = 0;const x_1 = 0;(x => x_1 => g())(1)(1);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const x = 0;const x_1 = 0;(x_1 => x2 => (() => { const x_2 = 2; return x_1 + x + x_2;})())(1)(1);
+const x = 0;const x_1 = 0;(x_2 => x_3 => (() => { const x_2 = 2; return x_1 + x + x_2;})())(1)(1);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const x = 0;const x_1 = 0;(x_1 => x2 => (() => { const x_2 = 2; return x_1 + x + x_2;})())(1)(1);
+const x = 0;const x_1 = 0;(x_2 => x_3 => (() => { const x_2 = 2; return x_1 + x + x_2;})())(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-const x_1 = 0;(x_1 => x2 => (() => { const x_2 = 2; return x_1 + 0 + x_2;})())(1)(1);
+const x_1 = 0;(x_2 => x_3 => (() => { const x_2 = 2; return x_1 + 0 + x_2;})())(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-const x_1 = 0;(x_1 => x2 => (() => { const x_2 = 2; return x_1 + 0 + x_2;})())(1)(1);
+const x_1 = 0;(x_2 => x_3 => (() => { const x_2 = 2; return x_1 + 0 + x_2;})())(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-(x_1 => x2 => (() => { const x_2 = 2; return x_1 + 0 + x_2;})())(1)(1);
+(x_2 => x_3 => (() => { const x_2 = 2; return 0 + 0 + x_2;})())(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-(x_1 => x2 => (() => { const x_2 = 2; return x_1 + 0 + x_2;})())(1)(1);
-[beforeMarker] 1 substituted into x_1 of x_1 => x2 => (() => {
+(x_2 => x_3 => (() => { const x_2 = 2; return 0 + 0 + x_2;})())(1)(1);
+[beforeMarker] 1 substituted into x_2 of x_2 => x_3 => (() => {
   const x_2 = 2;
-  return x_1 + 0 + x_2;
+  return 0 + 0 + x_2;
 })()
 
-(x2 => (() => { const x_2 = 2; return 1 + 0 + x_2;})())(1);
-[afterMarker] 1 substituted into x_1 of x_1 => x2 => (() => {
+(x_3 => (() => { const x_2 = 2; return 0 + 0 + x_2;})())(1);
+[afterMarker] 1 substituted into x_2 of x_2 => x_3 => (() => {
   const x_2 = 2;
-  return x_1 + 0 + x_2;
+  return 0 + 0 + x_2;
 })()
 
-(x2 => (() => { const x_2 = 2; return 1 + 0 + x_2;})())(1);
-[beforeMarker] 1 substituted into x2 of x2 => (() => {
+(x_3 => (() => { const x_2 = 2; return 0 + 0 + x_2;})())(1);
+[beforeMarker] 1 substituted into x_3 of x_3 => (() => {
   const x_2 = 2;
-  return 1 + 0 + x_2;
+  return 0 + 0 + x_2;
 })()
 
-(() => { const x_2 = 2; return 1 + 0 + x_2;})();
-[afterMarker] 1 substituted into x2 of x2 => (() => {
+(() => { const x_2 = 2; return 0 + 0 + x_2;})();
+[afterMarker] 1 substituted into x_3 of x_3 => (() => {
   const x_2 = 2;
-  return 1 + 0 + x_2;
+  return 0 + 0 + x_2;
 })()
 
-(() => { const x_2 = 2; return 1 + 0 + x_2;})();
+(() => { const x_2 = 2; return 0 + 0 + x_2;})();
 [beforeMarker] () => {...} runs
 
-{ const x_2 = 2; return 1 + 0 + x_2;};
+{ const x_2 = 2; return 0 + 0 + x_2;};
 [afterMarker] () => {...} runs
 
-{ const x_2 = 2; return 1 + 0 + x_2;};
+{ const x_2 = 2; return 0 + 0 + x_2;};
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-{ return 1 + 0 + 2;};
+{ return 0 + 0 + 2;};
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-{ return 1 + 0 + 2;};
-[beforeMarker] 1 + 0 + 2 returned
+{ return 0 + 0 + 2;};
+[beforeMarker] 0 + 0 + 2 returned
 
-1 + 0 + 2;
-[afterMarker] 1 + 0 + 2 returned
+0 + 0 + 2;
+[afterMarker] 0 + 0 + 2 returned
 
-1 + 0 + 2;
-[beforeMarker] Binary expression 1 + 0 evaluated
+0 + 0 + 2;
+[beforeMarker] Binary expression 0 + 0 evaluated
 
-1 + 2;
-[afterMarker] Binary expression 1 + 0 evaluated
+0 + 2;
+[afterMarker] Binary expression 0 + 0 evaluated
 
-1 + 2;
-[beforeMarker] Binary expression 1 + 2 evaluated
+0 + 2;
+[beforeMarker] Binary expression 0 + 2 evaluated
 
-3;
-[afterMarker] Binary expression 1 + 2 evaluated
+2;
+[afterMarker] Binary expression 0 + 2 evaluated
 
-3;
+2;
 [noMarker] Evaluation complete
 "
 `;
@@ -4316,26 +4397,26 @@ exports[`Alpha renaming renaming clash with parameter of function declaration in
 function g() { return x_1;}function f(x_1) { function h(x_2) { return x_1 + g(); } return h;}const x_1 = 1;f(3)(2);
 [beforeMarker] Function g declared, parameter(s)  required
 
-function f(x2) { function h(x_2) { return x2 + (() => { return x_1; })(); } return h;}const x_1 = 1;f(3)(2);
+function f(x_3) { function h(x_2) { return x_3 + (() => { return x_1; })(); } return h;}const x_1 = 1;f(3)(2);
 [afterMarker] Function g declared, parameter(s)  required
 
-function f(x2) { function h(x_2) { return x2 + (() => { return x_1; })(); } return h;}const x_1 = 1;f(3)(2);
-[beforeMarker] Function f declared, parameter(s) x2 required
+function f(x_3) { function h(x_2) { return x_3 + (() => { return x_1; })(); } return h;}const x_1 = 1;f(3)(2);
+[beforeMarker] Function f declared, parameter(s) x_3 required
 
-const x_1 = 1;(x2 => { function h(x_2) { return x2 + (() => { return x_1; })(); } return h;})(3)(2);
-[afterMarker] Function f declared, parameter(s) x2 required
+const x_1 = 1;(x_3 => { function h(x_2) { return x_3 + (() => { return x_1; })(); } return h;})(3)(2);
+[afterMarker] Function f declared, parameter(s) x_3 required
 
-const x_1 = 1;(x2 => { function h(x_2) { return x2 + (() => { return x_1; })(); } return h;})(3)(2);
+const x_1 = 1;(x_3 => { function h(x_2) { return x_3 + (() => { return x_1; })(); } return h;})(3)(2);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-(x2 => { function h(x_2) { return x2 + (() => { return 1; })(); } return h;})(3)(2);
+(x_3 => { function h(x_2) { return x_3 + (() => { return 1; })(); } return h;})(3)(2);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-(x2 => { function h(x_2) { return x2 + (() => { return 1; })(); } return h;})(3)(2);
-[beforeMarker] Function f, defined as x2 => {...}, takes in x2 as input 3
+(x_3 => { function h(x_2) { return x_3 + (() => { return 1; })(); } return h;})(3)(2);
+[beforeMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 3
 
 { function h(x_2) { return 3 + (() => { return 1; })(); } return h;}(2);
-[afterMarker] Function f, defined as x2 => {...}, takes in x2 as input 3
+[afterMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 3
 
 { function h(x_2) { return 3 + (() => { return 1; })(); } return h;}(2);
 [beforeMarker] Function h declared, parameter(s) x_2 required
@@ -4387,26 +4468,26 @@ exports[`Alpha renaming renaming clash with parameter of lambda function declara
 const g = () => x_1;const f = x_1 => { const h = x_2 => x_1 + g(); return h;};const x_1 = 1;f(3)(2);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const f = x2 => { const h = x_2 => x2 + (() => x_1)(); return h;};const x_1 = 1;f(3)(2);
+const f = x_3 => { const h = x_2 => x_3 + (() => x_1)(); return h;};const x_1 = 1;f(3)(2);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const f = x2 => { const h = x_2 => x2 + (() => x_1)(); return h;};const x_1 = 1;f(3)(2);
+const f = x_3 => { const h = x_2 => x_3 + (() => x_1)(); return h;};const x_1 = 1;f(3)(2);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const x_1 = 1;(x2 => { const h = x_2 => x2 + (() => x_1)(); return h;})(3)(2);
+const x_1 = 1;(x_3 => { const h = x_2 => x_3 + (() => x_1)(); return h;})(3)(2);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const x_1 = 1;(x2 => { const h = x_2 => x2 + (() => x_1)(); return h;})(3)(2);
+const x_1 = 1;(x_3 => { const h = x_2 => x_3 + (() => x_1)(); return h;})(3)(2);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-(x2 => { const h = x_2 => x2 + (() => 1)(); return h;})(3)(2);
+(x_3 => { const h = x_2 => x_3 + (() => 1)(); return h;})(3)(2);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-(x2 => { const h = x_2 => x2 + (() => 1)(); return h;})(3)(2);
-[beforeMarker] Function f, defined as x2 => {...}, takes in x2 as input 3
+(x_3 => { const h = x_2 => x_3 + (() => 1)(); return h;})(3)(2);
+[beforeMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 3
 
 { const h = x_2 => 3 + (() => 1)(); return h;}(2);
-[afterMarker] Function f, defined as x2 => {...}, takes in x2 as input 3
+[afterMarker] Function f, defined as x_3 => {...}, takes in x_3 as input 3
 
 { const h = x_2 => 3 + (() => 1)(); return h;}(2);
 [beforeMarker] Constant h declared and substituted into the rest of block
@@ -4450,26 +4531,26 @@ exports[`Alpha renaming renaming of outer parameter in lambda function 1`] = `
 const g = () => w_1;const f = w_1 => w_2 => w_1 + g();const w_1 = 0;f(1)(1);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const f = w2 => w_2 => w2 + (() => w_1)();const w_1 = 0;f(1)(1);
+const f = w_3 => w_2 => w_3 + (() => w_1)();const w_1 = 0;f(1)(1);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const f = w2 => w_2 => w2 + (() => w_1)();const w_1 = 0;f(1)(1);
+const f = w_3 => w_2 => w_3 + (() => w_1)();const w_1 = 0;f(1)(1);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const w_1 = 0;(w2 => w_2 => w2 + (() => w_1)())(1)(1);
+const w_1 = 0;(w_3 => w_2 => w_3 + (() => w_1)())(1)(1);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const w_1 = 0;(w2 => w_2 => w2 + (() => w_1)())(1)(1);
+const w_1 = 0;(w_3 => w_2 => w_3 + (() => w_1)())(1)(1);
 [beforeMarker] Constant w_1 declared and substituted into the rest of block
 
-(w2 => w_2 => w2 + (() => 0)())(1)(1);
+(w_3 => w_2 => w_3 + (() => 0)())(1)(1);
 [afterMarker] Constant w_1 declared and substituted into the rest of block
 
-(w2 => w_2 => w2 + (() => 0)())(1)(1);
-[beforeMarker] 1 substituted into w2 of w2 => w_2 => w2 + (() => 0)()
+(w_3 => w_2 => w_3 + (() => 0)())(1)(1);
+[beforeMarker] 1 substituted into w_3 of w_3 => w_2 => w_3 + (() => 0)()
 
 (w_2 => 1 + (() => 0)())(1);
-[afterMarker] 1 substituted into w2 of w2 => w_2 => w2 + (() => 0)()
+[afterMarker] 1 substituted into w_3 of w_3 => w_2 => w_3 + (() => 0)()
 
 (w_2 => 1 + (() => 0)())(1);
 [beforeMarker] 1 substituted into w_2 of w_2 => 1 + (() => 0)()
@@ -4529,6 +4610,252 @@ math_sin(-1);
 [afterMarker] math_sin runs
 
 -0.8414709848078965;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Church numerals 1`] = `
+"const one = f => x => f(x);const inc = a => f => x => f(a(f)(x));const decode = a => a(x => x + 1)(0);decode(inc(inc(one))) === 3;
+[noMarker] Start of evaluation
+
+const one = f => x => f(x);const inc = a => f => x => f(a(f)(x));const decode = a => a(x => x + 1)(0);decode(inc(inc(one))) === 3;
+[beforeMarker] Constant one declared and substituted into the rest of block
+
+const inc = a => f => x => f(a(f)(x));const decode = a => a(x => x + 1)(0);decode(inc(inc(f => x => f(x)))) === 3;
+[afterMarker] Constant one declared and substituted into the rest of block
+
+const inc = a => f => x => f(a(f)(x));const decode = a => a(x => x + 1)(0);decode(inc(inc(f => x => f(x)))) === 3;
+[beforeMarker] Constant inc declared and substituted into the rest of block
+
+const decode = a => a(x => x + 1)(0);decode((a => f => x => f(a(f)(x)))((a => f => x => f(a(f)(x)))(f => x => f(x)))) === 3;
+[afterMarker] Constant inc declared and substituted into the rest of block
+
+const decode = a => a(x => x + 1)(0);decode((a => f => x => f(a(f)(x)))((a => f => x => f(a(f)(x)))(f => x => f(x)))) === 3;
+[beforeMarker] Constant decode declared and substituted into the rest of block
+
+(a => a(x => x + 1)(0))((a => f => x => f(a(f)(x)))((a => f => x => f(a(f)(x)))(f => x => f(x)))) === 3;
+[afterMarker] Constant decode declared and substituted into the rest of block
+
+(a => a(x => x + 1)(0))((a => f => x => f(a(f)(x)))((a => f => x => f(a(f)(x)))(f => x => f(x)))) === 3;
+[beforeMarker] f => x => f(x) substituted into a of a => f => x => f(a(f)(x))
+
+(a => a(x => x + 1)(0))((a => f => x => f(a(f)(x)))(f => x => f((f => x => f(x))(f)(x)))) === 3;
+[afterMarker] f => x => f(x) substituted into a of a => f => x => f(a(f)(x))
+
+(a => a(x => x + 1)(0))((a => f => x => f(a(f)(x)))(f => x => f((f => x => f(x))(f)(x)))) === 3;
+[beforeMarker] f => x => f((f => x => f(x))(f)(x)) substituted into a of a => f => x => f(a(f)(x))
+
+(a => a(x => x + 1)(0))(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))) === 3;
+[afterMarker] f => x => f((f => x => f(x))(f)(x)) substituted into a of a => f => x => f(a(f)(x))
+
+(a => a(x => x + 1)(0))(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))) === 3;
+[beforeMarker] f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)) substituted into a of a => a(x => x + 1)(0)
+
+(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)))(x => x + 1)(0) === 3;
+[afterMarker] f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)) substituted into a of a => a(x => x + 1)(0)
+
+(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)))(x => x + 1)(0) === 3;
+[beforeMarker] x => x + 1 substituted into f of f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))
+
+(x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x)))(0) === 3;
+[afterMarker] x => x + 1 substituted into f of f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))
+
+(x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x)))(0) === 3;
+[beforeMarker] 0 substituted into x of x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x))
+
+(x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(0)) === 3;
+[afterMarker] 0 substituted into x of x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x))
+
+(x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(0)) === 3;
+[beforeMarker] x => x + 1 substituted into f of f => x => f((f => x => f(x))(f)(x))
+
+(x => x + 1)((x => (x => x + 1)((f => x => f(x))(x => x + 1)(x)))(0)) === 3;
+[afterMarker] x => x + 1 substituted into f of f => x => f((f => x => f(x))(f)(x))
+
+(x => x + 1)((x => (x => x + 1)((f => x => f(x))(x => x + 1)(x)))(0)) === 3;
+[beforeMarker] 0 substituted into x of x => (x => x + 1)((f => x => f(x))(x => x + 1)(x))
+
+(x => x + 1)((x => x + 1)((f => x => f(x))(x => x + 1)(0))) === 3;
+[afterMarker] 0 substituted into x of x => (x => x + 1)((f => x => f(x))(x => x + 1)(x))
+
+(x => x + 1)((x => x + 1)((f => x => f(x))(x => x + 1)(0))) === 3;
+[beforeMarker] x => x + 1 substituted into f of f => x => f(x)
+
+(x => x + 1)((x => x + 1)((x => (x => x + 1)(x))(0))) === 3;
+[afterMarker] x => x + 1 substituted into f of f => x => f(x)
+
+(x => x + 1)((x => x + 1)((x => (x => x + 1)(x))(0))) === 3;
+[beforeMarker] 0 substituted into x of x => (x => x + 1)(x)
+
+(x => x + 1)((x => x + 1)((x => x + 1)(0))) === 3;
+[afterMarker] 0 substituted into x of x => (x => x + 1)(x)
+
+(x => x + 1)((x => x + 1)((x => x + 1)(0))) === 3;
+[beforeMarker] 0 substituted into x of x => x + 1
+
+(x => x + 1)((x => x + 1)(0 + 1)) === 3;
+[afterMarker] 0 substituted into x of x => x + 1
+
+(x => x + 1)((x => x + 1)(0 + 1)) === 3;
+[beforeMarker] Binary expression 0 + 1 evaluated
+
+(x => x + 1)((x => x + 1)(1)) === 3;
+[afterMarker] Binary expression 0 + 1 evaluated
+
+(x => x + 1)((x => x + 1)(1)) === 3;
+[beforeMarker] 1 substituted into x of x => x + 1
+
+(x => x + 1)(1 + 1) === 3;
+[afterMarker] 1 substituted into x of x => x + 1
+
+(x => x + 1)(1 + 1) === 3;
+[beforeMarker] Binary expression 1 + 1 evaluated
+
+(x => x + 1)(2) === 3;
+[afterMarker] Binary expression 1 + 1 evaluated
+
+(x => x + 1)(2) === 3;
+[beforeMarker] 2 substituted into x of x => x + 1
+
+2 + 1 === 3;
+[afterMarker] 2 substituted into x of x => x + 1
+
+2 + 1 === 3;
+[beforeMarker] Binary expression 2 + 1 evaluated
+
+3 === 3;
+[afterMarker] Binary expression 2 + 1 evaluated
+
+3 === 3;
+[beforeMarker] Binary expression 3 === 3 evaluated
+
+true;
+[afterMarker] Binary expression 3 === 3 evaluated
+
+true;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Church numerals 2`] = `
+"const one = f => x => f(x);const inc = a => f => x => f(a(f)(x));const decode = a => a(x => x + 1)(0);decode(inc(inc(one))) === 3;
+[noMarker] Start of evaluation
+
+const one = f => x => f(x);const inc = a => f => x => f(a(f)(x));const decode = a => a(x => x + 1)(0);decode(inc(inc(one))) === 3;
+[beforeMarker] Constant one declared and substituted into the rest of block
+
+const inc = a => f => x => f(a(f)(x));const decode = a => a(x => x + 1)(0);decode(inc(inc(f => x => f(x)))) === 3;
+[afterMarker] Constant one declared and substituted into the rest of block
+
+const inc = a => f => x => f(a(f)(x));const decode = a => a(x => x + 1)(0);decode(inc(inc(f => x => f(x)))) === 3;
+[beforeMarker] Constant inc declared and substituted into the rest of block
+
+const decode = a => a(x => x + 1)(0);decode((a => f => x => f(a(f)(x)))((a => f => x => f(a(f)(x)))(f => x => f(x)))) === 3;
+[afterMarker] Constant inc declared and substituted into the rest of block
+
+const decode = a => a(x => x + 1)(0);decode((a => f => x => f(a(f)(x)))((a => f => x => f(a(f)(x)))(f => x => f(x)))) === 3;
+[beforeMarker] Constant decode declared and substituted into the rest of block
+
+(a => a(x => x + 1)(0))((a => f => x => f(a(f)(x)))((a => f => x => f(a(f)(x)))(f => x => f(x)))) === 3;
+[afterMarker] Constant decode declared and substituted into the rest of block
+
+(a => a(x => x + 1)(0))((a => f => x => f(a(f)(x)))((a => f => x => f(a(f)(x)))(f => x => f(x)))) === 3;
+[beforeMarker] f => x => f(x) substituted into a of a => f => x => f(a(f)(x))
+
+(a => a(x => x + 1)(0))((a => f => x => f(a(f)(x)))(f => x => f((f => x => f(x))(f)(x)))) === 3;
+[afterMarker] f => x => f(x) substituted into a of a => f => x => f(a(f)(x))
+
+(a => a(x => x + 1)(0))((a => f => x => f(a(f)(x)))(f => x => f((f => x => f(x))(f)(x)))) === 3;
+[beforeMarker] f => x => f((f => x => f(x))(f)(x)) substituted into a of a => f => x => f(a(f)(x))
+
+(a => a(x => x + 1)(0))(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))) === 3;
+[afterMarker] f => x => f((f => x => f(x))(f)(x)) substituted into a of a => f => x => f(a(f)(x))
+
+(a => a(x => x + 1)(0))(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))) === 3;
+[beforeMarker] f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)) substituted into a of a => a(x => x + 1)(0)
+
+(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)))(x => x + 1)(0) === 3;
+[afterMarker] f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)) substituted into a of a => a(x => x + 1)(0)
+
+(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)))(x => x + 1)(0) === 3;
+[beforeMarker] x => x + 1 substituted into f of f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))
+
+(x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x)))(0) === 3;
+[afterMarker] x => x + 1 substituted into f of f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))
+
+(x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x)))(0) === 3;
+[beforeMarker] 0 substituted into x of x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x))
+
+(x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(0)) === 3;
+[afterMarker] 0 substituted into x of x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x))
+
+(x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(0)) === 3;
+[beforeMarker] x => x + 1 substituted into f of f => x => f((f => x => f(x))(f)(x))
+
+(x => x + 1)((x => (x => x + 1)((f => x => f(x))(x => x + 1)(x)))(0)) === 3;
+[afterMarker] x => x + 1 substituted into f of f => x => f((f => x => f(x))(f)(x))
+
+(x => x + 1)((x => (x => x + 1)((f => x => f(x))(x => x + 1)(x)))(0)) === 3;
+[beforeMarker] 0 substituted into x of x => (x => x + 1)((f => x => f(x))(x => x + 1)(x))
+
+(x => x + 1)((x => x + 1)((f => x => f(x))(x => x + 1)(0))) === 3;
+[afterMarker] 0 substituted into x of x => (x => x + 1)((f => x => f(x))(x => x + 1)(x))
+
+(x => x + 1)((x => x + 1)((f => x => f(x))(x => x + 1)(0))) === 3;
+[beforeMarker] x => x + 1 substituted into f of f => x => f(x)
+
+(x => x + 1)((x => x + 1)((x => (x => x + 1)(x))(0))) === 3;
+[afterMarker] x => x + 1 substituted into f of f => x => f(x)
+
+(x => x + 1)((x => x + 1)((x => (x => x + 1)(x))(0))) === 3;
+[beforeMarker] 0 substituted into x of x => (x => x + 1)(x)
+
+(x => x + 1)((x => x + 1)((x => x + 1)(0))) === 3;
+[afterMarker] 0 substituted into x of x => (x => x + 1)(x)
+
+(x => x + 1)((x => x + 1)((x => x + 1)(0))) === 3;
+[beforeMarker] 0 substituted into x of x => x + 1
+
+(x => x + 1)((x => x + 1)(0 + 1)) === 3;
+[afterMarker] 0 substituted into x of x => x + 1
+
+(x => x + 1)((x => x + 1)(0 + 1)) === 3;
+[beforeMarker] Binary expression 0 + 1 evaluated
+
+(x => x + 1)((x => x + 1)(1)) === 3;
+[afterMarker] Binary expression 0 + 1 evaluated
+
+(x => x + 1)((x => x + 1)(1)) === 3;
+[beforeMarker] 1 substituted into x of x => x + 1
+
+(x => x + 1)(1 + 1) === 3;
+[afterMarker] 1 substituted into x of x => x + 1
+
+(x => x + 1)(1 + 1) === 3;
+[beforeMarker] Binary expression 1 + 1 evaluated
+
+(x => x + 1)(2) === 3;
+[afterMarker] Binary expression 1 + 1 evaluated
+
+(x => x + 1)(2) === 3;
+[beforeMarker] 2 substituted into x of x => x + 1
+
+2 + 1 === 3;
+[afterMarker] 2 substituted into x of x => x + 1
+
+2 + 1 === 3;
+[beforeMarker] Binary expression 2 + 1 evaluated
+
+3 === 3;
+[afterMarker] Binary expression 2 + 1 evaluated
+
+3 === 3;
+[beforeMarker] Binary expression 3 === 3 evaluated
+
+true;
+[afterMarker] Binary expression 3 === 3 evaluated
+
+true;
 [noMarker] Evaluation complete
 "
 `;
@@ -15964,39 +16291,39 @@ function f(g) { const z = 3; return g(z);}f(y => y + 1);
 `;
 
 exports[`function declarations in blocks are protected 1`] = `
-"function repeat_pattern(n, p, r) { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);}function plus_one(x) { return x + 1;}repeat_pattern(5, plus_one, 0);
+"function repeat_pattern(n, p, r) { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);}function plus_one(x) { return x + 1;}repeat_pattern(3, plus_one, 0);
 [noMarker] Start of evaluation
 
-function repeat_pattern(n, p, r) { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);}function plus_one(x) { return x + 1;}repeat_pattern(5, plus_one, 0);
+function repeat_pattern(n, p, r) { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);}function plus_one(x) { return x + 1;}repeat_pattern(3, plus_one, 0);
 [beforeMarker] Function repeat_pattern declared, parameter(s) n,p,r required
 
-function plus_one(x) { return x + 1;}((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);})(5, plus_one, 0);
+function plus_one(x) { return x + 1;}((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);})(3, plus_one, 0);
 [afterMarker] Function repeat_pattern declared, parameter(s) n,p,r required
 
-function plus_one(x) { return x + 1;}((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);})(5, plus_one, 0);
+function plus_one(x) { return x + 1;}((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);})(3, plus_one, 0);
 [beforeMarker] Function plus_one declared, parameter(s) x required
 
-((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);})(5, x => { return x + 1;}, 0);
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);})(3, x => { return x + 1;}, 0);
 [afterMarker] Function plus_one declared, parameter(s) x required
 
-((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);})(5, x => { return x + 1;}, 0);
-[beforeMarker] Function repeat_pattern, defined as n, p, r => {...}, takes in n, p, r as input 5, x => {
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r);})(3, x => { return x + 1;}, 0);
+[beforeMarker] Function repeat_pattern, defined as n, p, r => {...}, takes in n, p, r as input 3, x => {
   return x + 1;
 }, 0
 
-{ function twice_p(r) { return (x => { return x + 1; })((x => { return x + 1; })(r)); } return 5 === 0 ? 0 : 5 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r); })(5 - 1, x => { return x + 1; }, (x => { return x + 1; })(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r); })(5 / 2, twice_p, 0);};
-[afterMarker] Function repeat_pattern, defined as n, p, r => {...}, takes in n, p, r as input 5, x => {
+{ function twice_p(r) { return (x => { return x + 1; })((x => { return x + 1; })(r)); } return 3 === 0 ? 0 : 3 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r); })(3 - 1, x => { return x + 1; }, (x => { return x + 1; })(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r); })(3 / 2, twice_p, 0);};
+[afterMarker] Function repeat_pattern, defined as n, p, r => {...}, takes in n, p, r as input 3, x => {
   return x + 1;
 }, 0
 
-{ function twice_p(r) { return (x => { return x + 1; })((x => { return x + 1; })(r)); } return 5 === 0 ? 0 : 5 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r); })(5 - 1, x => { return x + 1; }, (x => { return x + 1; })(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r); })(5 / 2, twice_p, 0);};
+{ function twice_p(r) { return (x => { return x + 1; })((x => { return x + 1; })(r)); } return 3 === 0 ? 0 : 3 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r); })(3 - 1, x => { return x + 1; }, (x => { return x + 1; })(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, twice_p, r); })(3 / 2, twice_p, 0);};
 [beforeMarker] Function twice_p declared, parameter(s) r required
 
-{ return 5 === 0 ? 0 : 5 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(5 - 1, x => { return x + 1; }, (x => { return x + 1; })(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(5 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 0);};
+{ return 3 === 0 ? 0 : 3 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(3 - 1, x => { return x + 1; }, (x => { return x + 1; })(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 0);};
 [afterMarker] Function twice_p declared, parameter(s) r required
 
-{ return 5 === 0 ? 0 : 5 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(5 - 1, x => { return x + 1; }, (x => { return x + 1; })(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(5 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 0);};
-[beforeMarker] 5 === 0 ? 0 : 5 % 2 !== 0 ? ((n, p, r) => {
+{ return 3 === 0 ? 0 : 3 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(3 - 1, x => { return x + 1; }, (x => { return x + 1; })(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 0);};
+[beforeMarker] 3 === 0 ? 0 : 3 % 2 !== 0 ? ((n, p, r) => {
   function twice_p(r) {
     return p(p(r));
   }
@@ -16007,7 +16334,7 @@ function plus_one(x) { return x + 1;}((n, p, r) => { function twice_p(r) { retur
       return x + 1;
     })(r));
   }, r);
-})(5 - 1, x => {
+})(3 - 1, x => {
   return x + 1;
 }, (x => {
   return x + 1;
@@ -16022,7 +16349,7 @@ function plus_one(x) { return x + 1;}((n, p, r) => { function twice_p(r) { retur
       return x + 1;
     })(r));
   }, r);
-})(5 / 2, r => {
+})(3 / 2, r => {
   return (x => {
     return x + 1;
   })((x => {
@@ -16030,8 +16357,8 @@ function plus_one(x) { return x + 1;}((n, p, r) => { function twice_p(r) { retur
   })(r));
 }, 0) returned
 
-5 === 0 ? 0 : 5 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
-[afterMarker] 5 === 0 ? 0 : 5 % 2 !== 0 ? ((n, p, r) => {
+3 === 0 ? 0 : 3 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+[afterMarker] 3 === 0 ? 0 : 3 % 2 !== 0 ? ((n, p, r) => {
   function twice_p(r) {
     return p(p(r));
   }
@@ -16042,7 +16369,7 @@ function plus_one(x) { return x + 1;}((n, p, r) => { function twice_p(r) { retur
       return x + 1;
     })(r));
   }, r);
-})(5 - 1, x => {
+})(3 - 1, x => {
   return x + 1;
 }, (x => {
   return x + 1;
@@ -16057,7 +16384,7 @@ function plus_one(x) { return x + 1;}((n, p, r) => { function twice_p(r) { retur
       return x + 1;
     })(r));
   }, r);
-})(5 / 2, r => {
+})(3 / 2, r => {
   return (x => {
     return x + 1;
   })((x => {
@@ -16065,25 +16392,475 @@ function plus_one(x) { return x + 1;}((n, p, r) => { function twice_p(r) { retur
   })(r));
 }, 0) returned
 
-5 === 0 ? 0 : 5 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
-[beforeMarker] Binary expression 5 === 0 evaluated
+3 === 0 ? 0 : 3 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+[beforeMarker] Binary expression 3 === 0 evaluated
 
-false ? 0 : 5 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
-[afterMarker] Binary expression 5 === 0 evaluated
+false ? 0 : 3 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+[afterMarker] Binary expression 3 === 0 evaluated
 
-false ? 0 : 5 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+false ? 0 : 3 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
 [beforeMarker] Conditional expression evaluated, condition is false, alternate evaluated
 
-5 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+3 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
 [afterMarker] Conditional expression evaluated, condition is false, alternate evaluated
 
-5 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
-[beforeMarker] Binary expression 5 % 2 evaluated
+3 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+[beforeMarker] Binary expression 3 % 2 evaluated
 
-1 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
-[afterMarker] Binary expression 5 % 2 evaluated
+1 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+[afterMarker] Binary expression 3 % 2 evaluated
 
-1 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(5 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+1 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+[beforeMarker] Binary expression 1 !== 0 evaluated
+
+true ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+[afterMarker] Binary expression 1 !== 0 evaluated
+
+true ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 0);
+[beforeMarker] Conditional expression evaluated, condition is true, consequent evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0));
+[afterMarker] Conditional expression evaluated, condition is true, consequent evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(3 - 1, x => { return x + 1;}, (x => { return x + 1;})(0));
+[beforeMarker] Binary expression 3 - 1 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2, x => { return x + 1;}, (x => { return x + 1;})(0));
+[afterMarker] Binary expression 3 - 1 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2, x => { return x + 1;}, (x => { return x + 1;})(0));
+[beforeMarker] Function plus_one, defined as x => {...}, takes in x as input 0
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2, x => { return x + 1;}, 0 + 1);
+[afterMarker] Function plus_one, defined as x => {...}, takes in x as input 0
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2, x => { return x + 1;}, 0 + 1);
+[beforeMarker] Binary expression 0 + 1 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2, x => { return x + 1;}, 1);
+[afterMarker] Binary expression 0 + 1 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2, x => { return x + 1;}, 1);
+[beforeMarker] Function repeat_pattern, defined as n, p, r => {...}, takes in n, p, r as input 2, x => {
+  return x + 1;
+}, 1
+
+{ function twice_p(r) { return (x => { return x + 1; })((x => { return x + 1; })(r)); } return 2 === 0 ? 1 : 2 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(2 - 1, x => { return x + 1; }, (x => { return x + 1; })(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 1);};
+[afterMarker] Function repeat_pattern, defined as n, p, r => {...}, takes in n, p, r as input 2, x => {
+  return x + 1;
+}, 1
+
+{ function twice_p(r) { return (x => { return x + 1; })((x => { return x + 1; })(r)); } return 2 === 0 ? 1 : 2 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(2 - 1, x => { return x + 1; }, (x => { return x + 1; })(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 1);};
+[beforeMarker] Function twice_p declared, parameter(s) r required
+
+{ return 2 === 0 ? 1 : 2 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(2 - 1, x => { return x + 1; }, (x => { return x + 1; })(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 1);};
+[afterMarker] Function twice_p declared, parameter(s) r required
+
+{ return 2 === 0 ? 1 : 2 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(2 - 1, x => { return x + 1; }, (x => { return x + 1; })(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 1);};
+[beforeMarker] 2 === 0 ? 1 : 2 % 2 !== 0 ? ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(2 - 1, x => {
+  return x + 1;
+}, (x => {
+  return x + 1;
+})(1)) : ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(2 / 2, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, 1) returned
+
+2 === 0 ? 1 : 2 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 - 1, x => { return x + 1;}, (x => { return x + 1;})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] 2 === 0 ? 1 : 2 % 2 !== 0 ? ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(2 - 1, x => {
+  return x + 1;
+}, (x => {
+  return x + 1;
+})(1)) : ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(2 / 2, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, 1) returned
+
+2 === 0 ? 1 : 2 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 - 1, x => { return x + 1;}, (x => { return x + 1;})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Binary expression 2 === 0 evaluated
+
+false ? 1 : 2 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 - 1, x => { return x + 1;}, (x => { return x + 1;})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] Binary expression 2 === 0 evaluated
+
+false ? 1 : 2 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 - 1, x => { return x + 1;}, (x => { return x + 1;})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Conditional expression evaluated, condition is false, alternate evaluated
+
+2 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 - 1, x => { return x + 1;}, (x => { return x + 1;})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] Conditional expression evaluated, condition is false, alternate evaluated
+
+2 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 - 1, x => { return x + 1;}, (x => { return x + 1;})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Binary expression 2 % 2 evaluated
+
+0 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 - 1, x => { return x + 1;}, (x => { return x + 1;})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] Binary expression 2 % 2 evaluated
+
+0 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 - 1, x => { return x + 1;}, (x => { return x + 1;})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Binary expression 0 !== 0 evaluated
+
+false ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 - 1, x => { return x + 1;}, (x => { return x + 1;})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] Binary expression 0 !== 0 evaluated
+
+false ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 - 1, x => { return x + 1;}, (x => { return x + 1;})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Conditional expression evaluated, condition is false, alternate evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] Conditional expression evaluated, condition is false, alternate evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(2 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Binary expression 2 / 2 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] Binary expression 2 / 2 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Function repeat_pattern, defined as n, p, r => {...}, takes in n, p, r as input 1, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, 1
+
+{ function twice_p(r) { return (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })((r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(r)); } return 1 === 0 ? 1 : 1 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 1);};
+[afterMarker] Function repeat_pattern, defined as n, p, r => {...}, takes in n, p, r as input 1, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, 1
+
+{ function twice_p(r) { return (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })((r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(r)); } return 1 === 0 ? 1 : 1 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 1);};
+[beforeMarker] Function twice_p declared, parameter(s) r required
+
+{ return 1 === 0 ? 1 : 1 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 1);};
+[afterMarker] Function twice_p declared, parameter(s) r required
+
+{ return 1 === 0 ? 1 : 1 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 1);};
+[beforeMarker] 1 === 0 ? 1 : 1 % 2 !== 0 ? ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(1 - 1, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, (r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+})(1)) : ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(1 / 2, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, 1) returned
+
+1 === 0 ? 1 : 1 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] 1 === 0 ? 1 : 1 % 2 !== 0 ? ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(1 - 1, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, (r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+})(1)) : ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(1 / 2, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, 1) returned
+
+1 === 0 ? 1 : 1 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Binary expression 1 === 0 evaluated
+
+false ? 1 : 1 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] Binary expression 1 === 0 evaluated
+
+false ? 1 : 1 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Conditional expression evaluated, condition is false, alternate evaluated
+
+1 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] Conditional expression evaluated, condition is false, alternate evaluated
+
+1 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Binary expression 1 % 2 evaluated
+
+1 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] Binary expression 1 % 2 evaluated
+
+1 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Binary expression 1 !== 0 evaluated
+
+true ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[afterMarker] Binary expression 1 !== 0 evaluated
+
+true ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 1);
+[beforeMarker] Conditional expression evaluated, condition is true, consequent evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1));
+[afterMarker] Conditional expression evaluated, condition is true, consequent evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(1 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1));
+[beforeMarker] Binary expression 1 - 1 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1));
+[afterMarker] Binary expression 1 - 1 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(1));
+[beforeMarker] Function twice_p, defined as r => {...}, takes in r as input 1
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (x => { return x + 1;})((x => { return x + 1;})(1)));
+[afterMarker] Function twice_p, defined as r => {...}, takes in r as input 1
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (x => { return x + 1;})((x => { return x + 1;})(1)));
+[beforeMarker] Function plus_one, defined as x => {...}, takes in x as input 1
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (x => { return x + 1;})(1 + 1));
+[afterMarker] Function plus_one, defined as x => {...}, takes in x as input 1
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (x => { return x + 1;})(1 + 1));
+[beforeMarker] Binary expression 1 + 1 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (x => { return x + 1;})(2));
+[afterMarker] Binary expression 1 + 1 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (x => { return x + 1;})(2));
+[beforeMarker] Function plus_one, defined as x => {...}, takes in x as input 2
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 2 + 1);
+[afterMarker] Function plus_one, defined as x => {...}, takes in x as input 2
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 2 + 1);
+[beforeMarker] Binary expression 2 + 1 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 3);
+[afterMarker] Binary expression 2 + 1 evaluated
+
+((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 3);
+[beforeMarker] Function repeat_pattern, defined as n, p, r => {...}, takes in n, p, r as input 0, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, 3
+
+{ function twice_p(r) { return (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })((r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(r)); } return 0 === 0 ? 3 : 0 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(0 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(3)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(0 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 3);};
+[afterMarker] Function repeat_pattern, defined as n, p, r => {...}, takes in n, p, r as input 0, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, 3
+
+{ function twice_p(r) { return (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })((r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(r)); } return 0 === 0 ? 3 : 0 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(0 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(3)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(0 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 3);};
+[beforeMarker] Function twice_p declared, parameter(s) r required
+
+{ return 0 === 0 ? 3 : 0 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(0 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(3)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(0 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 3);};
+[afterMarker] Function twice_p declared, parameter(s) r required
+
+{ return 0 === 0 ? 3 : 0 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(0 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); })(3)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r); })(0 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, 3);};
+[beforeMarker] 0 === 0 ? 3 : 0 % 2 !== 0 ? ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(0 - 1, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, (r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+})(3)) : ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(0 / 2, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, 3) returned
+
+0 === 0 ? 3 : 0 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(3)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 3);
+[afterMarker] 0 === 0 ? 3 : 0 % 2 !== 0 ? ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(0 - 1, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, (r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+})(3)) : ((n, p, r) => {
+  function twice_p(r) {
+    return p(p(r));
+  }
+  return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => {
+    return (x => {
+      return x + 1;
+    })((x => {
+      return x + 1;
+    })(r));
+  }, r);
+})(0 / 2, r => {
+  return (x => {
+    return x + 1;
+  })((x => {
+    return x + 1;
+  })(r));
+}, 3) returned
+
+0 === 0 ? 3 : 0 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(3)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 3);
+[beforeMarker] Binary expression 0 === 0 evaluated
+
+true ? 3 : 0 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(3)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 3);
+[afterMarker] Binary expression 0 === 0 evaluated
+
+true ? 3 : 0 % 2 !== 0 ? ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0 - 1, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, (r => { return (x => { return x + 1; })((x => { return x + 1; })(r));})(3)) : ((n, p, r) => { function twice_p(r) { return p(p(r)); } return n === 0 ? r : n % 2 !== 0 ? repeat_pattern(n - 1, p, p(r)) : repeat_pattern(n / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r)); }, r);})(0 / 2, r => { return (x => { return x + 1; })((x => { return x + 1; })(r));}, 3);
+[beforeMarker] Conditional expression evaluated, condition is true, consequent evaluated
+
+3;
+[afterMarker] Conditional expression evaluated, condition is true, consequent evaluated
+
+3;
 [noMarker] Evaluation complete
 "
 `;

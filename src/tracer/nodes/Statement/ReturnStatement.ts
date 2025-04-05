@@ -78,6 +78,10 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
     return this.argument ? this.argument.freeNames() : [];
   }
 
+  allNames(): string[] {
+    return this.argument ? this.argument.allNames() : [];
+  }
+
   rename(before: string, after: string): StepperReturnStatement {
     return new StepperReturnStatement(
       this.argument ? this.argument.rename(before, after) as StepperExpression : null

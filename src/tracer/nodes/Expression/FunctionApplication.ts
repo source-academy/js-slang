@@ -154,6 +154,13 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     ]))
   }
 
+  allNames(): string[] {
+    return Array.from(new Set([
+      ...this.callee.allNames(),
+      ...this.arguments.flatMap(arg => arg.allNames())
+    ]))
+  }
+
   rename(before: string, after: string): StepperExpression {
     return new StepperFunctionApplication(
       this.callee.rename(before, after),

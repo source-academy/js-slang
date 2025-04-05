@@ -45,6 +45,10 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
     return [this.name];
   }
 
+  allNames(): string[] {
+    return [this.name];
+  }
+
   rename(before: string, after: string) {
     return before === this.name ? new StepperIdentifier(after) : this;
   }

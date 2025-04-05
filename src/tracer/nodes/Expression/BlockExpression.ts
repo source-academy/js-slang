@@ -149,8 +149,13 @@ export class StepperBlockExpression implements StepperBaseNode {
     const scopeNames = this.scanAllDeclarationNames();
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name));
     let currentBlockExpression: StepperBlockExpression = this;
-    for (const name of repeatedNames) {
-      currentBlockExpression = currentBlockExpression.rename(name, getFreshName(name)) as StepperBlockExpression;
+    let protectedNamesSet = new Set(this.allNames());
+    repeatedNames.forEach(name => protectedNamesSet.delete(name));
+    const protectedNames = Array.from(protectedNamesSet);
+    const newNames = getFreshName(repeatedNames, protectedNames);
+    for (var index in newNames) {
+      currentBlockExpression = currentBlockExpression
+        .rename(repeatedNames[index], newNames[index]) as StepperBlockExpression
     }
 
     if (currentBlockExpression.scanAllDeclarationNames().includes(id.name)) {
@@ -172,6 +177,10 @@ export class StepperBlockExpression implements StepperBaseNode {
     const names = new Set(this.body.flatMap((ast) => ast.freeNames()));
     this.scanAllDeclarationNames().forEach(name => names.delete(name));
     return Array.from(names);
+  }
+
+  allNames(): string[] {
+    return Array.from(new Set(this.body.flatMap((ast) => ast.allNames())));
   }
 
   rename(before: string, after: string): StepperBlockExpression {

@@ -170,20 +170,21 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     return new StepperBlockStatement(this.body.slice(1))   
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  substitute(id: StepperPattern, value: StepperExpression, upperBoundName?: string[]): StepperBaseNode {
     // Alpha renaming
     // Check whether should be renamed
     // Renaming stage should not be counted as one step.
     const valueFreeNames = value.freeNames()
     const scopeNames = this.scanAllDeclarationNames()
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
-    var currentBlockStatement: StepperBlockStatement = this
-    for (var index in repeatedNames) {
-      const name = repeatedNames[index]
-      currentBlockStatement = currentBlockStatement.rename(
-        name,
-        getFreshName(name)
-      ) as StepperBlockStatement
+    var currentBlockStatement: StepperBlockStatement = this;
+    let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat());
+    repeatedNames.forEach(name => protectedNamesSet.delete(name));
+    const protectedNames = Array.from(protectedNamesSet);
+    const newNames = getFreshName(repeatedNames, protectedNames);
+    for (var index in newNames) {
+      currentBlockStatement = currentBlockStatement
+        .rename(repeatedNames[index], newNames[index]) as StepperBlockStatement
     }
 
     if (currentBlockStatement.scanAllDeclarationNames().includes(id.name)) {
@@ -208,6 +209,10 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     const names = new Set(this.body.flatMap(ast => ast.freeNames()))
     this.scanAllDeclarationNames().forEach(name => names.delete(name))
     return Array.from(names)
+  }
+
+  allNames(): string[] {
+    return Array.from(new Set(this.body.flatMap((ast) => ast.allNames())));
   }
 
   rename(before: string, after: string): StepperBlockStatement {

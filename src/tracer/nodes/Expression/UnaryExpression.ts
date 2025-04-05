@@ -122,6 +122,10 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
     return this.argument.freeNames()
   }
 
+  allNames(): string[] {
+    return this.argument.allNames()
+  }
+
   rename(before: string, after: string): StepperExpression {
     return new StepperUnaryExpression(this.operator, this.argument.rename(before, after))
   }

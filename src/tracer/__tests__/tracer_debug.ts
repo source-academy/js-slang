@@ -93,26 +93,18 @@ test('function calling', () => {
 */
 test('general', () => {
   const code = `
-       function repeat_pattern(n, p, r) {
-    function twice_p(r) {
-        return p(p(r));
-    }
-    return n === 0
-        ? r
-        : n % 2 !== 0
-          ? repeat_pattern(n - 1, p, p(r))
-          : repeat_pattern(n / 2, twice_p, r);
-}
-
-function plus_one(x) {
-    return x + 1;
-}
-
-repeat_pattern(5, plus_one, 0);
+const f = x => {
+    const x_1 = 1;
+  return x_1 => x_2 + g();  
+};
+  const g = () => x + x_1;
+  const x_2 = 0;
+  const x_1 = 2;
+  const x = 1;
+  f(1)(1);
   `
   const program = parse(code, { ecmaVersion: 10 })!
-  const steps = getSteps(convert(program), {stepLimit: 200})
+  const steps = getSteps(convert(program), { stepLimit: 200 })
   const output = steps.map(stringifyWithExplanation)
-  console.log(output.join('\n'))
+  console.log(output)
 })
-

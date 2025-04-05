@@ -81,6 +81,14 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
     return Array.from(new Set(names))
   }
 
+  allNames(): string[] {
+    const names = this.elements
+      .filter(element => element !== null)
+      .map(element => element!.allNames())
+      .flat()
+    return Array.from(new Set(names))
+  }
+
   rename(before: string, after: string): StepperExpression {
     return new StepperArrayExpression(
       this.elements.map(element => (element ? element.rename(before, after) : null))

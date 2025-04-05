@@ -167,6 +167,10 @@ export class StepperProgram implements Program, StepperBaseNode {
     return Array.from(names)
   }
 
+  allNames(): string[] {
+     return Array.from(new Set(this.body.flatMap((ast) => ast.allNames())));
+  }
+
   rename(before: string, after: string): StepperProgram {
     return new StepperProgram(
       this.body.map(statement => statement.rename(before, after) as StepperStatement)
