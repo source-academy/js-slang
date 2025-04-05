@@ -12,6 +12,7 @@ import { Chapter, Variant } from '../types'
 import {
   chapterParser,
   getChapterOption,
+  getLanguageOption,
   getVariantOption,
   validateChapterAndVariantCombo
 } from './utils'
@@ -19,6 +20,7 @@ import {
 export const transpilerCommand = new Command('transpiler')
   .addOption(getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.NATIVE]))
   .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
+  .addOption(getLanguageOption())
   .option(
     '-p, --pretranspile',
     "only pretranspile (e.g. GPU -> Source) and don't perform Source -> JS transpilation"
@@ -32,7 +34,7 @@ export const transpilerCommand = new Command('transpiler')
     }
 
     const fs: typeof fslib = require('fs/promises')
-    const context = createContext(opts.chapter, opts.variant)
+    const context = createContext(opts.chapter, opts.variant, opts.languageOptions)
     const entrypointFilePath = resolve(fileName)
 
     const linkerResult = await parseProgramsAndConstructImportGraph(

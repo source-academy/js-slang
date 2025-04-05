@@ -13,7 +13,8 @@ import {
   SourceError,
   Value,
   Variant,
-  type Finished
+  type Finished,
+  LanguageOptions
 } from '../types'
 import { stringify } from './stringify'
 
@@ -62,18 +63,20 @@ export function createTestContext({
   context,
   chapter = Chapter.SOURCE_1,
   variant = Variant.DEFAULT,
+  languageOptions = new Map<string, string>(),
   testBuiltins = {}
 }: {
   context?: TestContext
   chapter?: Chapter
   variant?: Variant
+  languageOptions?: LanguageOptions
   testBuiltins?: TestBuiltins
 } = {}): TestContext {
   if (context !== undefined) {
     return context
   } else {
     const testContext: TestContext = {
-      ...createContext(chapter, variant, [], undefined, {
+      ...createContext(chapter, variant, languageOptions, [], undefined, {
         rawDisplay: (str1, str2, _externalContext) => {
           testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
           return str1
