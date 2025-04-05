@@ -132,11 +132,6 @@ const configs = {
     dst: 'PAIRMUTATORS/',
     libs: ['pairmutator.js']
   },
-  CONCURRENCY: {
-    readme: 'README_CONCURRENCY.md',
-    dst: 'CONCURRENCY/',
-    libs: ['concurrency.js']
-  },
   MCE: {
     readme: 'README_MCE.md',
     dst: 'MCE/',
