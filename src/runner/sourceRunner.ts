@@ -82,7 +82,7 @@ function runSubstitution(
   context: Context,
   options: IOptions
 ): Promise<Result> {
-  const steps = getSteps(program)
+  const steps = getSteps(program, options)
   return Promise.resolve({
     status: 'finished',
     context,
