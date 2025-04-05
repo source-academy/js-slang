@@ -123,6 +123,9 @@ export function explain(redex: StepperBaseNode): string {
       return generate(node.expression) + ' finished evaluating'
     },
     BlockStatement: (node: StepperBlockStatement) => {
+      if (node.body.length === 0) {
+        return "Empty block expression evaluated"
+      }
       return generate(node.body[0]) + ' finished evaluating'
     },
     BlockExpression: (node: StepperBlockExpression) => {

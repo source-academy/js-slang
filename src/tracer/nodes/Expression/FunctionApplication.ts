@@ -90,7 +90,10 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     
     if (result instanceof StepperBlockStatement) {
       const blockStatement = lambda.body as unknown as StepperBlockStatement;
-      if (blockStatement.body[0].type === "ReturnStatement") {
+      if (blockStatement.body.length === 0) {
+        result = new StepperBlockExpression([]);
+
+      } else if (blockStatement.body[0].type === "ReturnStatement") {
         // (x => {return 2 + 3;})(3) -> 2 + 3;
         result = (blockStatement.body[0] as StepperReturnStatement).argument!;
       } else {
