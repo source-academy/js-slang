@@ -19,10 +19,9 @@ export function getFreshName(name: string): string {
 // Assign mu term for arrow function expression
 export function assignMuTerms(declarations: StepperVariableDeclarator[]): StepperVariableDeclarator[] {
     // Scan out arrow function expression and assign mu term
-    declarations = declarations.map(
+    return declarations.map(
     (declarator) => declarator.init && declarator.init.type === "ArrowFunctionExpression"
         ? new StepperVariableDeclarator(declarator.id, declarator.init.assignName(declarator.id.name))
         : declarator
     )
-    return declarations;
 }

@@ -6,6 +6,7 @@ import { StepperBaseNode } from '../interface'
 import { StepperProgram } from '../nodes/Program'
 import { StepperExpressionStatement } from '../nodes/Statement/ExpressionStatement'
 import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
+import { StepperVariableDeclaration } from '../nodes/Statement/VariableDeclaration'
 
 function codify(node: StepperBaseNode) {
   const steps = getSteps(convert(node), { stepLimit: 1000 })
@@ -374,6 +375,14 @@ describe('Lambda expression', () => {
     `
       const steps = await getSteps(convert(acornParser(code)), { stepLimit: 1000 })
       expect(steps.length).toBe(6)
+      const firstStatement = (steps[0].ast as StepperProgram).body[0]
+      // No mu term before substitution
+      expect(firstStatement.type).toBe('VariableDeclaration')
+      const declaration = (firstStatement as StepperVariableDeclaration).declarations[0].init!
+      expect(declaration.type).toBe('ArrowFunctionExpression')
+      expect((declaration as StepperArrowFunctionExpression).name).toBeUndefined();
+      
+      // Mu term after substitution
       const lastStatement = ((steps[5].ast as StepperProgram).body[0] as StepperExpressionStatement)
         .expression
       expect(lastStatement.type).toBe('ArrowFunctionExpression')

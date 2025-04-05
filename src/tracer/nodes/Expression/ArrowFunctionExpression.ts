@@ -75,8 +75,16 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
   }
 
   assignName(name: string): StepperArrowFunctionExpression {
-    this.name = name
-    return this;
+    return new StepperArrowFunctionExpression(this.params, 
+      this.body, 
+      name, 
+      this.expression, 
+      this.generator, 
+      this.async, 
+      this.leadingComments, 
+      this.trailingComments, 
+      this.loc, 
+      this.range)
   }
 
   scanAllDeclarationNames(): string[] {
