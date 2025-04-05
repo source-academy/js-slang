@@ -23,11 +23,7 @@ export class StepperProgram implements Program, StepperBaseNode {
   range?: [number, number] | undefined
 
   isContractible(): boolean {
-    if (this.body.length <= 1) {
-      return this.body[0].isContractible()
-    } else {
-      return true
-    }
+    return false;
   }
 
   isOneStepPossible(): boolean {
@@ -35,13 +31,12 @@ export class StepperProgram implements Program, StepperBaseNode {
       ? false  // unlike BlockStatement 
       : this.body[0].isOneStepPossible() 
       || this.body.length >= 2 
-      || (this.body.length == 1 && this.body[0].type == "VariableDeclaration")
+      || (this.body.length == 1 && 
+        (this.body[0].type == "VariableDeclaration" || this.body[0].type == "FunctionDeclaration"))
   }
 
   contract(): StepperProgram  {
-    // V1; V2; -> V2;
-    this.body[0].contractEmpty() // update the contracted statement onto redex
-    return new StepperProgram(this.body.slice(1))
+    throw new Error("not implemented");
   }
 
   oneStep(): StepperProgram {
@@ -57,7 +52,6 @@ export class StepperProgram implements Program, StepperBaseNode {
         )
     }
 
-    // TODO: Refactor this code
     // If the first statement is constant declaration, gracefully handle it!
     if (this.body[0].type == "VariableDeclaration") {
       const declarations = assignMuTerms(this.body[0].declarations); // for arrow function expression
@@ -113,7 +107,7 @@ export class StepperProgram implements Program, StepperBaseNode {
     if (this.body.length >= 2 && this.body[1].type == "FunctionDeclaration") {
       const arrowFunction = (this.body[1] as StepperFunctionDeclaration).getArrowFunctionExpression();
       const functionIdentifier = (this.body[1] as StepperFunctionDeclaration).id;
-      const afterSubstitutedScope = this.body.slice(1)
+      const afterSubstitutedScope = this.body.slice(2)
         .map(statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement) as StepperStatement[];
       const substitutedProgram  = new StepperProgram([firstValueStatement, afterSubstitutedScope].flat());
       redex.preRedex = [this.body[1]];
@@ -121,8 +115,8 @@ export class StepperProgram implements Program, StepperBaseNode {
       return substitutedProgram;
     }
 
-    // After this stage, we have two value inducing statement. Remove the first one.
-    return this.contract();
+    this.body[0].contractEmpty() // update the contracted statement onto redex
+    return new StepperProgram(this.body.slice(1))
   }
 
   static create(node: Program) {

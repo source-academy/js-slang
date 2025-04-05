@@ -27,6 +27,7 @@ const stringifyWithExplanation = (step: IStepperPropContents) => {
   }
 }
 
+/*
 test('recursion', () => {
   const code = `
   const f = x => x <= 1 ? 1 : f(x - 1) + g(x - 1);
@@ -89,17 +90,28 @@ test('function calling', () => {
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
-
-
+*/
 test('general', () => {
   const code = `
-   const flatMap = (f, xs) => 
-    accumulate((acc, init) => append(f(acc), init), null, xs);
-    
-flatMap(x => list(x, x + 1), list(2, 3, 4));
+       function repeat_pattern(n, p, r) {
+    function twice_p(r) {
+        return p(p(r));
+    }
+    return n === 0
+        ? r
+        : n % 2 !== 0
+          ? repeat_pattern(n - 1, p, p(r))
+          : repeat_pattern(n / 2, twice_p, r);
+}
+
+function plus_one(x) {
+    return x + 1;
+}
+
+repeat_pattern(5, plus_one, 0);
   `
   const program = parse(code, { ecmaVersion: 10 })!
-  const steps = getSteps(convert(program), {stepLimit: 1000})
+  const steps = getSteps(convert(program), {stepLimit: 200})
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })

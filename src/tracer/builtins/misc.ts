@@ -24,7 +24,7 @@ export const miscBuiltinFunctions = {
             return new StepperLiteral(listBuiltinFunctions[args[0].name as keyof typeof listBuiltinFunctions].arity);
         }
         if (Object.keys(miscBuiltinFunctions).includes(args[0].name)) {
-            return new StepperLiteral(listBuiltinFunctions[args[0].name as keyof typeof listBuiltinFunctions].arity);
+            return new StepperLiteral(miscBuiltinFunctions[args[0].name as keyof typeof miscBuiltinFunctions].arity);
         }
       }
       return new StepperLiteral(0)

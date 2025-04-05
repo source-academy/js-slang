@@ -26,7 +26,7 @@ export class StepperBlockExpression implements StepperBaseNode {
   isContractible(): boolean {
     return this.body.length === 0 
     || (this.body.length === 1 && !this.body[0].isOneStepPossible()) // { 1; } -> undefined;
-    || (this.body[0].type === 'ReturnStatement' && this.body[0].isContractible())
+    || (this.body[0].type === 'ReturnStatement')
     
   }
 
@@ -47,14 +47,13 @@ export class StepperBlockExpression implements StepperBaseNode {
       returnStmt.contract();
       return returnStmt.argument || undefinedNode;
     }
-    throw new Error('Cannot contract block expression')
+    throw new Error('Cannot contract block expression ' + JSON.stringify(this.isContractible()))
   }
 
   oneStep(): StepperBlockExpression | typeof undefinedNode | StepperExpression {
     if (this.isContractible()) {
       return this.contract();
     }
-
     // reduce the first statement
     if (this.body[0].isOneStepPossible()) {
         const firstStatementOneStep = this.body[0].oneStep()
@@ -132,7 +131,7 @@ export class StepperBlockExpression implements StepperBaseNode {
     if (this.body.length >= 2 && this.body[1].type == "FunctionDeclaration") {
       const arrowFunction = (this.body[1] as StepperFunctionDeclaration).getArrowFunctionExpression();
       const functionIdentifier = (this.body[1] as StepperFunctionDeclaration).id;
-      const afterSubstitutedScope = this.body.slice(1)
+      const afterSubstitutedScope = this.body.slice(2)
         .map(statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement) as StepperStatement[];
       const substitutedProgram  = new StepperBlockExpression([firstValueStatement, afterSubstitutedScope].flat());
       redex.preRedex = [this.body[1]];
@@ -141,7 +140,8 @@ export class StepperBlockExpression implements StepperBaseNode {
     }
 
     // After this stage, we have two value inducing statement. Remove the first one.
-    return this.contract();
+    this.body[0].contractEmpty() // update the contracted statement onto redex
+    return new StepperBlockExpression(this.body.slice(1))
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBlockExpression {

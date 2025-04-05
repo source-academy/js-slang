@@ -77,10 +77,11 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       );
     }
 
-    contract(): typeof undefinedNode {
-      // contraction occurs at Program, BlockStatement, BlockExpression
-      return undefinedNode;
-    }
+   contract(): typeof undefinedNode {
+    redex.preRedex = [this]
+    redex.postRedex = []
+    return undefinedNode
+  }
   
     contractEmpty() {
       redex.preRedex = [this]

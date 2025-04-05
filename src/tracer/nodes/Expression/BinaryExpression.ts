@@ -60,7 +60,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       return ret
     } else if (left_type === 'number' && right_type === 'number') {
       const ret =
-        ['*', '+', '/', '-', '===', '<', '>', '<=', '>=', '%'].includes(this.operator as string) &&
+        ['*', '+', '/', '-', '===', '!==', '<', '>', '<=', '>=', '%'].includes(this.operator as string) &&
         !(this.operator === '/' && this.right.value === 0)
       if (ret) {
         redex.preRedex = [this]
@@ -103,6 +103,8 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
         ? (left as number) / (right as number)
         : op === '==='
         ? left === right
+        : op === '!=='
+        ? left !== right
         : op === '<'
         ? left! < right!
         : op === '<='

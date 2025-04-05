@@ -52,116 +52,28 @@ describe('Expressions', () => {
     - (1 - 5);
     `
       const steps = await codify(acornParser(code))
-      expect(steps.join('')).toMatchInlineSnapshot(`
-        "-(1 - 5);
-        [noMarker] Start of evaluation
-        -(1 - 5);
-        [beforeMarker] Binary expression 1 - 5 evaluated
-        --4;
-        [afterMarker] Binary expression 1 - 5 evaluated
-        --4;
-        [beforeMarker] Unary expression evaluated, value -4 negated.
-        4;
-        [afterMarker] Unary expression evaluated, value -4 negated.
-        4;
-        [noMarker] Evaluation complete
-        "
-      `)
+      expect(steps.join('')).toMatchSnapshot()
     }),
     test('Unary and Binary Expressions', async () => {
       const code = `
     - 1 + 2 * 3 - (5 * 6 - 7);
     `
       const steps = await codify(acornParser(code))
-      expect(steps.join('')).toMatchInlineSnapshot(`
-        "-1 + 2 * 3 - (5 * 6 - 7);
-        [noMarker] Start of evaluation
-        -1 + 2 * 3 - (5 * 6 - 7);
-        [beforeMarker] Binary expression 2 * 3 evaluated
-        -1 + 6 - (5 * 6 - 7);
-        [afterMarker] Binary expression 2 * 3 evaluated
-        -1 + 6 - (5 * 6 - 7);
-        [beforeMarker] Binary expression -1 + 6 evaluated
-        5 - (5 * 6 - 7);
-        [afterMarker] Binary expression -1 + 6 evaluated
-        5 - (5 * 6 - 7);
-        [beforeMarker] Binary expression 5 * 6 evaluated
-        5 - (30 - 7);
-        [afterMarker] Binary expression 5 * 6 evaluated
-        5 - (30 - 7);
-        [beforeMarker] Binary expression 30 - 7 evaluated
-        5 - 23;
-        [afterMarker] Binary expression 30 - 7 evaluated
-        5 - 23;
-        [beforeMarker] Binary expression 5 - 23 evaluated
-        -18;
-        [afterMarker] Binary expression 5 - 23 evaluated
-        -18;
-        [noMarker] Evaluation complete
-        "
-      `)
+      expect(steps.join('')).toMatchSnapshot()
     }),
     test('Logical Expression', async () => {
       const code = `
     !!!true || true;
     `
       const steps = await codify(acornParser(code))
-      expect(steps.join('')).toMatchInlineSnapshot(`
-        "!!!true || true;
-        [noMarker] Start of evaluation
-        !!!true || true;
-        [beforeMarker] Unary expression evaluated, boolean true negated.
-        !!false || true;
-        [afterMarker] Unary expression evaluated, boolean true negated.
-        !!false || true;
-        [beforeMarker] Unary expression evaluated, boolean false negated.
-        !true || true;
-        [afterMarker] Unary expression evaluated, boolean false negated.
-        !true || true;
-        [beforeMarker] Unary expression evaluated, boolean true negated.
-        false || true;
-        [afterMarker] Unary expression evaluated, boolean true negated.
-        false || true;
-        [beforeMarker] OR operation evaluated, left of operator is false, continue evaluating right of operator
-        true;
-        [afterMarker] OR operation evaluated, left of operator is false, continue evaluating right of operator
-        true;
-        [noMarker] Evaluation complete
-        "
-      `)
+      expect(steps.join('')).toMatchSnapshot()
     })
   test('Conditional Expression', async () => {
     const code = `
     (-1 * 3 === 3) ? 2 * 4 - 7 : 1 + 3 * 6;
     `
     const steps = await codify(acornParser(code))
-    expect(steps.join('')).toMatchInlineSnapshot(`
-      "-1 * 3 === 3 ? 2 * 4 - 7 : 1 + 3 * 6;
-      [noMarker] Start of evaluation
-      -1 * 3 === 3 ? 2 * 4 - 7 : 1 + 3 * 6;
-      [beforeMarker] Binary expression -1 * 3 evaluated
-      -3 === 3 ? 2 * 4 - 7 : 1 + 3 * 6;
-      [afterMarker] Binary expression -1 * 3 evaluated
-      -3 === 3 ? 2 * 4 - 7 : 1 + 3 * 6;
-      [beforeMarker] Binary expression -3 === 3 evaluated
-      false ? 2 * 4 - 7 : 1 + 3 * 6;
-      [afterMarker] Binary expression -3 === 3 evaluated
-      false ? 2 * 4 - 7 : 1 + 3 * 6;
-      [beforeMarker] Conditional expression evaluated, condition is false, alternate evaluated
-      1 + 3 * 6;
-      [afterMarker] Conditional expression evaluated, condition is false, alternate evaluated
-      1 + 3 * 6;
-      [beforeMarker] Binary expression 3 * 6 evaluated
-      1 + 18;
-      [afterMarker] Binary expression 3 * 6 evaluated
-      1 + 18;
-      [beforeMarker] Binary expression 1 + 18 evaluated
-      19;
-      [afterMarker] Binary expression 1 + 18 evaluated
-      19;
-      [noMarker] Evaluation complete
-      "
-    `)
+    expect(steps.join('')).toMatchSnapshot()
   })
 })
 
@@ -171,44 +83,7 @@ test('Test two statements', async () => {
     3 * 5;
   `
   const steps = await codify(acornParser(code))
-  expect(steps.join('\n')).toMatchInlineSnapshot(`
-    "(1 + 2) * (3 + 4);3 * 5;
-    [noMarker] Start of evaluation
-
-    (1 + 2) * (3 + 4);3 * 5;
-    [beforeMarker] Binary expression 1 + 2 evaluated
-
-    3 * (3 + 4);3 * 5;
-    [afterMarker] Binary expression 1 + 2 evaluated
-
-    3 * (3 + 4);3 * 5;
-    [beforeMarker] Binary expression 3 + 4 evaluated
-
-    3 * 7;3 * 5;
-    [afterMarker] Binary expression 3 + 4 evaluated
-
-    3 * 7;3 * 5;
-    [beforeMarker] Binary expression 3 * 7 evaluated
-
-    21;3 * 5;
-    [afterMarker] Binary expression 3 * 7 evaluated
-
-    21;3 * 5;
-    [beforeMarker] Binary expression 3 * 5 evaluated
-
-    21;15;
-    [afterMarker] Binary expression 3 * 5 evaluated
-
-    21;15;
-    [beforeMarker] 21 finished evaluating
-
-    15;
-    [afterMarker] 21 finished evaluating
-
-    15;
-    [noMarker] Evaluation complete
-    "
-  `)
+  expect(steps.join('\n')).toMatchSnapshot()
 })
 
 test('Test constant declaration substitution', async () => {
@@ -219,32 +94,7 @@ test('Test constant declaration substitution', async () => {
     y;
   `
   const steps = await codify(acornParser(code))
-  expect(steps.join('\n')).toMatchInlineSnapshot(`
-    "const x = -1;x;const y = 2;y;
-    [noMarker] Start of evaluation
-
-    const x = -1;x;const y = 2;y;
-    [beforeMarker] Constant x declared and substituted into the rest of block
-
-    -1;const y = 2;y;
-    [afterMarker] Constant x declared and substituted into the rest of block
-
-    -1;const y = 2;y;
-    [beforeMarker] Constant y declared and substituted into the rest of block
-
-    -1;2;
-    [afterMarker] Constant y declared and substituted into the rest of block
-
-    -1;2;
-    [beforeMarker] -1 finished evaluating
-
-    2;
-    [afterMarker] -1 finished evaluating
-
-    2;
-    [noMarker] Evaluation complete
-    "
-  `)
+  expect(steps.join('\n')).toMatchSnapshot()
 })
 
 describe('Lambda expression', () => {
@@ -255,38 +105,7 @@ describe('Lambda expression', () => {
       f(1);
     `
     const steps = await codify(acornParser(code))
-    expect(steps.join('\n')).toMatchInlineSnapshot(`
-      "const y = 2;const f = x => x + y;f(1);
-      [noMarker] Start of evaluation
-
-      const y = 2;const f = x => x + y;f(1);
-      [beforeMarker] Constant y declared and substituted into the rest of block
-
-      const f = x => x + 2;f(1);
-      [afterMarker] Constant y declared and substituted into the rest of block
-
-      const f = x => x + 2;f(1);
-      [beforeMarker] Constant f declared and substituted into the rest of block
-
-      (x => x + 2)(1);
-      [afterMarker] Constant f declared and substituted into the rest of block
-
-      (x => x + 2)(1);
-      [beforeMarker] 1 substituted into x of x => x + 2
-
-      1 + 2;
-      [afterMarker] 1 substituted into x of x => x + 2
-
-      1 + 2;
-      [beforeMarker] Binary expression 1 + 2 evaluated
-
-      3;
-      [afterMarker] Binary expression 1 + 2 evaluated
-
-      3;
-      [noMarker] Evaluation complete
-      "
-    `)
+    expect(steps.join('\n')).toMatchSnapshot()
   }),
     test('Basic bi function', async () => {
       const code = `
@@ -294,32 +113,7 @@ describe('Lambda expression', () => {
       add(2, 3);
     `
       const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchInlineSnapshot(`
-        "const add = (x, y) => x + y;add(2, 3);
-        [noMarker] Start of evaluation
-
-        const add = (x, y) => x + y;add(2, 3);
-        [beforeMarker] Constant add declared and substituted into the rest of block
-
-        ((x, y) => x + y)(2, 3);
-        [afterMarker] Constant add declared and substituted into the rest of block
-
-        ((x, y) => x + y)(2, 3);
-        [beforeMarker] 2, 3 substituted into x, y of (x, y) => x + y
-
-        2 + 3;
-        [afterMarker] 2, 3 substituted into x, y of (x, y) => x + y
-
-        2 + 3;
-        [beforeMarker] Binary expression 2 + 3 evaluated
-
-        5;
-        [afterMarker] Binary expression 2 + 3 evaluated
-
-        5;
-        [noMarker] Evaluation complete
-        "
-      `)
+      expect(steps.join('\n')).toMatchSnapshot()
     }),
     test('Currying', async () => {
       const code = `
@@ -327,38 +121,7 @@ describe('Lambda expression', () => {
       add(2)(3);
     `
       const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchInlineSnapshot(`
-        "const add = x => y => x + y;add(2)(3);
-        [noMarker] Start of evaluation
-
-        const add = x => y => x + y;add(2)(3);
-        [beforeMarker] Constant add declared and substituted into the rest of block
-
-        (x => y => x + y)(2)(3);
-        [afterMarker] Constant add declared and substituted into the rest of block
-
-        (x => y => x + y)(2)(3);
-        [beforeMarker] 2 substituted into x of x => y => x + y
-
-        (y => 2 + y)(3);
-        [afterMarker] 2 substituted into x of x => y => x + y
-
-        (y => 2 + y)(3);
-        [beforeMarker] 3 substituted into y of y => 2 + y
-
-        2 + 3;
-        [afterMarker] 3 substituted into y of y => 2 + y
-
-        2 + 3;
-        [beforeMarker] Binary expression 2 + 3 evaluated
-
-        5;
-        [afterMarker] Binary expression 2 + 3 evaluated
-
-        5;
-        [noMarker] Evaluation complete
-        "
-      `)
+      expect(steps.join('\n')).toMatchSnapshot()
     }),
     test('Recursive function call', async () => {
       const code = `
@@ -380,8 +143,8 @@ describe('Lambda expression', () => {
       expect(firstStatement.type).toBe('VariableDeclaration')
       const declaration = (firstStatement as StepperVariableDeclaration).declarations[0].init!
       expect(declaration.type).toBe('ArrowFunctionExpression')
-      expect((declaration as StepperArrowFunctionExpression).name).toBeUndefined();
-      
+      expect((declaration as StepperArrowFunctionExpression).name).toBeUndefined()
+
       // Mu term after substitution
       const lastStatement = ((steps[5].ast as StepperProgram).body[0] as StepperExpressionStatement)
         .expression
@@ -413,9 +176,311 @@ describe('Alpha renaming', () => {
       const steps = await codify(acornParser(code))
       expect(steps.join('\n')).toMatchSnapshot()
     })
+  test('renaming clash test for lambda function', async () => {
+    const code = `
+      const f = w_11 => w_10 => w_11 + w_10 + g();
+      const g = () => w_10;
+      const w_10 = 0;
+      f(1)(2);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+  test('renaming clash test for functions', async () => {
+    const code = `
+      function f(w_8) {
+        function h(w_9) {
+            return w_8 + w_9 + g();
+        }
+        return h;
+    }
+    
+    function g() {
+        return w_9;
+    }
+    
+    const w_9 = 0;
+    f(1)(2);
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+
+  test('renaming clash in replacement for lambda function', async () => {
+    const code = `
+      const g = () => x_1 + x_2;
+      const f = x_1 => x_2 => g();
+      const x_1 = 0;
+      const x_2 = 0;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('0;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`renaming clash in replacement for function expression`, async () => {
+    const code = `
+      function f(x_1) {
+        function h(x_2) {
+            return g();
+        }
+          return h;
+      }
+      function g() {
+        return x_1 + x_2;
+      }
+      const x_1 = 0;
+      const x_2 = 0;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('0;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`renaming clash in replacement for function declaration`, async () => {
+    const code = `
+      function g() {
+        return x_1 + x_2;
+      }
+      function f(x_1) {
+          function h(x_2) {
+              return g();
+          }
+          return h;
+      }
+      const x_1 = 0;
+      const x_2 = 0;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('0;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`multiple clash for function declaration`, async () => {
+    const code = `
+      function g() {
+        return x_2 + x_3;
+      }
+      function f(x_2) {
+          function h(x_3) {
+              return x_4 + g();
+          }
+          return h;
+      }
+      const x_3 = 0;
+      const x_2 = 2;
+      const x_4 = 2;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('4;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`multiple clash for function expression`, async () => {
+    const code = `
+      function f(x_2) {
+        function h(x_3) {
+            return x_4 + g();
+        }
+        return h;
+      }
+      function g() {
+          return x_2 + x_3;
+      }
+      const x_3 = 0;
+      const x_2 = 2;
+      const x_4 = 2;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('4;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`multiple clash for lambda function`, async () => {
+    const code = `
+      const f = x_2 => x_3 => x_4 + g();
+      const g = () => x_2 + x_3;
+      const x_3 = 0;
+      const x_2 = 2;
+      const x_4 = 2;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('4;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`multiple clash 2 for lambda function`, async () => {
+    const code = `
+      const f = x => x_1 => x_2 + g();
+      const g = () => x + x_1;
+      const x_2 = 0;
+      const x_1 = 2;
+      const x = 1;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`multiple clash 2 for function expression`, async () => {
+    const code = `
+      function f(x) {
+        function h(x_1) {
+            return x_2 + g();
+        }
+        return h;
+      }
+      function g() {
+          return x + x_1;
+      }
+      const x_2 = 0;
+      const x_1 = 2;
+      const x = 1;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`multiple clash 2 for function declaration`, async () => {
+    const code = `
+      function g() {
+        return x + x_1;
+      }
+      function f(x) {
+          function h(x_1) {
+              return x_2 + g();
+          }
+          return h;
+      }
+      const x_2 = 0;
+      const x_1 = 2;
+      const x = 1;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`renaming clash with declaration in replacement for function declaration`, async () => {
+    const code = `
+      function g() {
+        const x_2 = 2;
+        return x_1 + x_2 + x;
+      }
+    
+      function f(x) {
+          function h(x_1) {
+              return x + g();
+          }
+            return h;
+      }
+    
+      const x_1 = 0;
+      const x = 0;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`renaming clash with declaration in replacement for function expression`, async () => {
+    const code = `
+      function f(x) {
+        function h(x_1) {
+            return g();
+        }
+          return h;
+      }
+    
+      function g() {
+          const x_2 = 2;
+          return x_1 + x_2 + x;
+      }
+    
+      const x_1 = 0;
+      const x = 0;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`renaming clash with declaration in replacement for lambda function`, async () => {
+    const code = `
+      const f = x => x_1 => g();
+      const g = () => { const x_2 = 2; return x_1 + x + x_2; };
+      const x = 0;
+      const x_1 = 0;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`renaming clash with parameter of lambda function declaration in block`, async () => {
+    const code = `
+      const g = () => x_1;
+      const f = x_1 => {
+          const h = x_2 => x_1 + g();
+          return h;
+      };
+    
+      const x_1 = 1;
+      f(3)(2);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('4;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`renaming clash with parameter of function declaration in block`, async () => {
+    const code = `
+      function g() {
+        return x_1;
+      }
+      function f (x_1) {
+          function h(x_2) {
+              return x_1 + g();
+          }
+          return h;
+      }
+      const x_1 = 1;
+      f(3)(2);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('4;\n[noMarker] Evaluation complete\n')
+  })
+
+  test(`renaming of outer parameter in lambda function`, async () => {
+    const code = `
+      const g = () =>  w_1;
+      const f = w_1 => w_2 => w_1 + g();
+      const w_1 = 0;
+      f(1)(1);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+  })
 })
 
-describe('SOURCE 0', () => {
+describe('SOURCE 0 (Tests from previous stepper)', () => {
   test('undefined || 1', async () => {
     const code = `
     undefined || 1;
@@ -489,6 +554,45 @@ describe('SOURCE 0', () => {
     })
 })
 
+describe('Builtin math', () => {
+  test('PI returns its value', async () => {
+    const code = 'math_PI;'
+    const steps = await codify(acornParser(code))
+    expect(steps[steps.length - 1]).toEqual('3.141592653589793;\n[noMarker] Evaluation complete\n')
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('math_sin() returns NaN', async () => {
+    const code = 'math_sin();'
+    const steps = await codify(acornParser(code))
+    expect(steps[steps.length - 1]).toEqual('NaN;\n[noMarker] Evaluation complete\n')
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('negative numbers as arguments', async () => {
+    const code = `
+    math_sin(-1);
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+})
+
+describe('Misc', () => {
+  test('is function', async () => {
+    const code = `
+        is_function(is_function);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
+  }),
+  test('arity', async () => {
+    const code = `
+        arity(is_function) === arity(arity);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
+  })
+})
+
 describe('List operations', () => {
   test('is_null', async () => {
     const code = 'is_null(tail(list(1)));'
@@ -528,7 +632,7 @@ describe('List operations', () => {
    subsets(list(1, 2, 3));
     `
       const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot();
+      expect(steps.join('\n')).toMatchSnapshot()
     }),
     test('flatmap', async () => {
       const code = `
@@ -553,7 +657,7 @@ test('triple equals work on function', async () => {
 })
 
 test('Function declaration with if else block', async () => {
-const code = `
+  const code = `
 function f() {
     const x = 2;
     if (true) {
@@ -564,6 +668,644 @@ function f() {
 
 f();
 `
-const steps = await codify(acornParser(code))
+  const steps = await codify(acornParser(code))
   expect(steps.join('\n')).toMatchSnapshot()
+})
+
+test('constant declarations in blocks are protected', async () => {
+  const code = `
+    const z = 1;
+
+function f(g) {
+    const z = 3;
+    return g(z);
+}
+
+f(y => y + z);
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps[steps.length - 1]).toEqual('4;\n[noMarker] Evaluation complete\n')
+  expect(steps.join('\n')).toMatchSnapshot()
+})
+
+test('function declarations in blocks are protected', async () => {
+  const code = `
+    function repeat_pattern(n, p, r) {
+    function twice_p(r) {
+        return p(p(r));
+    }
+    return n === 0
+        ? r
+        : n % 2 !== 0
+          ? repeat_pattern(n - 1, p, p(r))
+          : repeat_pattern(n / 2, twice_p, r);
+}
+
+function plus_one(x) {
+    return x + 1;
+}
+
+repeat_pattern(5, plus_one, 0);
+
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps[steps.length - 1]).toEqual('5;\n[noMarker] Evaluation complete\n')
+  expect(steps.join('\n')).toMatchSnapshot()
+})
+
+test('const declarations in blocks subst into call expressions', async () => {
+  const code = `
+  const z = 1;
+  function f(g) {
+    const z = 3;
+    return (y => z + z)(z);
+  }
+  f(undefined);
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps[steps.length - 1]).toEqual('6;\n[noMarker] Evaluation complete\n')
+})
+
+test('scoping test for lambda expressions nested in blocks', async () => {
+  const code = `
+  {
+    const f = x => g();
+    const g = () => x;
+    const x = 1;
+    f(0);
+  }
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+})
+
+test('scoping test for blocks nested in lambda expressions', async () => {
+  const code = `
+  const f = x => { g(); };
+  const g = () => { x; };
+  const x = 1;
+  f(0);
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+})
+
+test('scoping test for function expressions', async () => {
+  const code = `
+  function f(x) {
+    return g();
+  }
+  function g() {
+    return x;
+  }
+  const x = 1;
+  f(0);
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+})
+
+test('scoping test for lambda expressions', async () => {
+  const code = `
+  const f = x => g();
+  const g = () => x;
+  const x = 1;
+  f(0);
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+})
+
+test('scoping test for block expressions', async () => {
+  const code = `
+  function f(x) {
+    const y = x;
+    return g();
+  }
+  function g() {
+    return y;
+  }
+  const y = 1;
+  f(0);
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+})
+
+test('scoping test for block expressions, no renaming', async () => {
+  const code = `
+  function h(w) {
+    function f(w) {
+        return g();
+    }
+    function g() {
+        return w;
+    }
+    return f(0);
+  }
+  h(1);
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+})
+
+test('return in nested blocks', async () => {
+  const code = `
+  function f(x) {{ return 1; }}
+  f(0);
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+})
+
+describe(`#1109: Empty function bodies don't break execution`, () => {
+  test('Function declaration', async () => {
+    const code = `
+    function a() {}
+    "other statement";
+    a();
+    "Gets returned by normal run";
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('"Gets returned by normal run";\n[noMarker] Evaluation complete\n')
+  })
+
+  test('Constant declaration of lambda', async () => {
+    const code = `
+    const a = () => {};
+    "other statement";
+    a();
+    "Gets returned by normal run";
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('"Gets returned by normal run";\n[noMarker] Evaluation complete\n')
+  })
+})
+
+
+describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
+  test('Program steps equal to Stepper limit', async () => {
+    const code = `
+      function factorial(n) {
+        return n === 1
+          ? 1
+          : n * factorial(n - 1);
+      }
+      factorial(100);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('9.33262154439441e+157;\n[noMarker] Evaluation complete\n')
+  })
+})
+
+describe(`Evaluation of empty code and imports`, () => {
+  test('Evaluate empty program', async () => {
+    const code = ``
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+})
+
+/**
+ * start of stepper specification tests
+ */
+describe(`Programs`, () => {
+  //Program-intro:
+  test('Program-intro test case 1', async () => {
+    const code = `1 + 1;`
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+
+  test('Program-intro test case 2', async () => {
+    const code = `
+      1;
+      1 + 1;
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+  //Program-reduce:
+  test('Program-reduce test case', async () => {
+    const code = `
+      1;
+      2;
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+  //Eliminate-function-declaration:
+  test('Eliminate-function-declaration test case 1', async () => {
+    const code = `
+      function foo(x) {
+        return 0;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+
+  test('Eliminate-function-declaration test case 2', async () => {
+    const code = `
+      1;
+      function foo(x) {
+        return 0;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+  })
+  //Eliminate-constant-declaration:
+  test('Eliminate-constant-declaration test case 1', async () => {
+    const code = `
+      const x = 0;
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+
+  test('Eliminate-constant-declaration test case 2', async () => {
+    const code = `
+      1;
+      const x = 0;
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+  })
+})
+
+describe(`Statements: Expression statements`, () => {
+  //Expression-statement-reduce:
+  test('Expression-statement-reduce test case', async () => {
+    const code = `
+      1 + 2 + 3;
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('6;\n[noMarker] Evaluation complete\n')
+  })
+})
+
+describe(`Statements: Constant declarations`, () => {
+  //Evaluate-constant-declaration:
+  test('Evaluate-constant-declaration test case', async () => {
+    const code = `
+      const x = 1 + 2 + 3;
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+})
+
+describe(`Statements: Conditionals`, () => {
+  //Conditional-statement-predicate:
+  test('Conditional-statement-predicate test case', async () => {
+    const code = `
+      if (1 + 2 + 3 === 1) {
+
+      } else {
+
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+  //Conditional-statement-consequent:
+  test('Conditional-statement-consequent test case', async () => {
+    const code = `
+      if (true) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+  })
+  //Conditional-statement-alternative:
+  test('Conditional-statement-alternative test case', async () => {
+    const code = `
+      if (false) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+  //Conditional-statement-blockexpr-consequent:
+  test('Conditional-statement-blockexpr-consequent test case 1', async () => {
+    const code = `
+      function foo(x) {
+        if (true) {
+          1;
+        } else {
+          2;
+        }
+      }
+      foo(0);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+
+  test('Conditional-statement-blockexpr-consequent test case 2', async () => {
+    const code = `
+      function foo(x) {
+        3;
+        if (true) {
+          1;
+        } else {
+          2;
+        }
+      }
+      foo(0);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+  //Conditional-statement-blockexpr-alternative:
+  test('Conditional-statement-blockexpr-alternative test case 1', async () => {
+    const code = `
+    function foo(x) {
+      if (false) {
+        1;
+      } else {
+        2;
+      }
+    }
+    foo(0);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+
+  test('Conditional-statement-blockexpr-alternative test case 2', async () => {
+    const code = `
+    function foo(x) {
+      3;
+      if (false) {
+        1;
+      } else {
+        2;
+      }
+    }
+    foo(0);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+})
+
+describe(`Statements: Blocks`, () => {
+  //Block-statement-intro:
+  test('Block-statement-intro test case', async () => {
+    const code = `
+      {
+        1 + 1;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+  //Block-statement-single-reduce:
+  test('Block-statement-single-reduce test case', async () => {
+    const code = `
+      {
+        1;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+  })
+  //Block-statement-empty-reduce:
+  test('Block-statement-empty-reduce test case 1', async () => {
+    const code = `
+      {
+
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+
+  test('Block-statement-empty-reduce test case 2', async () => {
+    const code = `
+      {
+        {
+          {
+
+          }
+          {
+
+          }
+        }
+
+        {
+          {
+
+          }
+          {
+
+          }
+        }
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+})
+
+describe(`Expresssions: Blocks`, () => {
+  //Block-expression-intro:
+  test('Block-expression-intro test case', async () => {
+    const code = `
+      function foo(x) {
+        1 + 1;
+      }
+      foo(0);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+  //Block-expression-single-reduce:
+  test('Block-expression-single-reduce test case', async () => {
+    const code = `
+      function foo(x) {
+        1;
+      }
+      foo(0);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+  //Block-expression-empty-reduce:
+  test('Block-expression-empty-reduce test case', async () => {
+    const code = `
+      function foo(x) {
+      }
+      foo(0);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+  /**
+   * Block-expression-return-reduce is not included as test cases
+   * This section needs further discussion
+   */
+})
+
+describe(`Expressions: Binary operators`, () => {
+  //Left-binary-reduce:
+  test('Left-binary-reduce test case', async () => {
+    const code = `
+      if (1 + 2 + 3 === 1 + 2 + 3) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+  })
+  //And-shortcut-false:
+  test('And-shortcut-false test case', async () => {
+    const code = `
+      if (false && 1 + 2 === 1 + 2) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+  //And-shortcut-true:
+  test('And-shortcut-true test case', async () => {
+    const code = `
+      if (true && 1 + 2 === 2 + 3) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+  //Or-shortcut-true:
+  test('Or-shortcut-true test case', async () => {
+    const code = `
+      if (true || 1 + 2 === 2 + 3) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+  })
+  //Or-shortcut-false:
+  test('Or-shortcut-false test case', async () => {
+    const code = `
+      if (false || 1 + 2 === 1 + 2) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+  })
+  //Right-binary-reduce:
+  test('Right-binary-reduce test case', async () => {
+    const code = `
+      if (1 >= 1 + 1) {
+        1;
+      } else {
+        2;
+      }
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+  //Prim-binary-reduce:
+  test('Prim-binary-reduce test case', async () => {
+    const code = `
+      if (1 >= 2) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+})
+
+describe(`Expressions: conditionals`, () => {
+  //Conditional-predicate-reduce:
+  test('Conditional-predicate-reduce test case', async () => {
+    const code = `
+      1 + 1 === 2 ? 1 + 2 : 2 + 3;
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+  //Conditional-true-reduce:
+  test('Conditional-true-reduce test case', async () => {
+    const code = `true ? 1 + 2 : 2 + 3;`
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+  //Conditional-false-reduce:
+  test('Conditional-false-reduce test case', async () => {
+    const code = `false ? 1 + 2 : 2 + 3;`
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('5;\n[noMarker] Evaluation complete\n')
+  })
 })

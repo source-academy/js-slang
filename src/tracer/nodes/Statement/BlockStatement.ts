@@ -24,7 +24,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   }
 
   isContractible(): boolean {
-    return true
+    return this.body.length === 0 || this.body.length === 1 && !this.body[0].isContractible();
   }
 
   isOneStepPossible(): boolean {
@@ -43,9 +43,8 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       redex.postRedex = [this.body[0]]
       return this.body[0]
     }
-    // V1; V2; -> {}, V2; -> V2;
-    this.body[0].contractEmpty()
-    return new StepperBlockStatement(this.body.slice(1))
+
+    throw new Error("Not implemented");
   }
 
   contractEmpty() {
@@ -54,7 +53,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   }
 
   oneStep(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
-    if (this.body.length == 0) {
+    if (this.isContractible()) {
       return this.contract()
     }
 
@@ -158,7 +157,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     if (this.body.length >= 2 && this.body[1].type == "FunctionDeclaration") {
       const arrowFunction = (this.body[1] as StepperFunctionDeclaration).getArrowFunctionExpression();
       const functionIdentifier = (this.body[1] as StepperFunctionDeclaration).id;
-      const afterSubstitutedScope = this.body.slice(1)
+      const afterSubstitutedScope = this.body.slice(2)
         .map(statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement) as StepperStatement[];
       const substitutedProgram  = new StepperBlockStatement([firstValueStatement, afterSubstitutedScope].flat());
       redex.preRedex = [this.body[1]];
@@ -167,8 +166,8 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     }
 
     // After this stage, we have two value inducing statement. Remove the first one.
-
-    return this.contract()
+    this.body[0].contractEmpty() // update the contracted statement onto redex
+    return new StepperBlockStatement(this.body.slice(1))   
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
