@@ -32,7 +32,8 @@ export function getBuiltinFunction(name: string, args: StepperExpression[]): Ste
     if (mathFnName in Math) {
       const fn = (Math as any)[mathFnName]
       const argVal = args.map(arg => (arg as StepperLiteral).value)
-      return new StepperLiteral(fn(...argVal))
+      const result = fn(...argVal);
+      return new StepperLiteral(result, result)
     }
   }
   return builtinFunctions[name as keyof typeof builtinFunctions].definition(args)
