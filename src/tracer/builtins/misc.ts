@@ -1,3 +1,4 @@
+import { isBuiltinFunction } from '.'
 import { StepperExpression } from '../nodes'
 import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
 import { StepperIdentifier } from '../nodes/Expression/Identifier'
@@ -65,7 +66,10 @@ export const miscBuiltinFunctions = {
   },
   is_function: {
     definition: (args: StepperExpression[]): StepperExpression => {
-      return new StepperLiteral(args[0] instanceof StepperArrowFunctionExpression)
+      return new StepperLiteral(
+        args[0] instanceof StepperArrowFunctionExpression || 
+        (args[0] instanceof StepperIdentifier && isBuiltinFunction((args[0] as StepperIdentifier).name))
+      )
     },
     arity: 1
   },
