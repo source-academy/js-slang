@@ -4,7 +4,7 @@ import * as util from 'util'
 import { createEmptyContext } from '../createContext'
 import { parse } from '../parser/parser'
 import { INTERNAL_FUNCTIONS as concurrentInternalFunctions } from '../stdlib/vm.prelude'
-import { Chapter, Variant } from '../types'
+import { Chapter, LanguageOptions, Variant } from '../types'
 import { assemble } from './svml-assembler'
 import { compileToIns } from './svml-compiler'
 import { stringifyProgram } from './util'
@@ -13,6 +13,7 @@ interface CliOptions {
   compileTo: 'debug' | 'json' | 'binary' | 'ast'
   sourceChapter: Chapter.SOURCE_1 | Chapter.SOURCE_2 | Chapter.SOURCE_3
   sourceVariant: Variant.DEFAULT | Variant.CONCURRENT // does not support other variants
+  sourceLanguageOptions: LanguageOptions
   inputFilename: string
   outputFilename: string | null
   vmInternalFunctions: string[] | null
@@ -29,6 +30,7 @@ function parseOptions(): CliOptions | null {
     compileTo: 'binary',
     sourceChapter: Chapter.SOURCE_3,
     sourceVariant: Variant.DEFAULT,
+    sourceLanguageOptions: new Map<string, string>(),
     inputFilename: '',
     outputFilename: null,
     vmInternalFunctions: null
@@ -156,7 +158,13 @@ Options:
   }
 
   const source = await readFileAsync(options.inputFilename, 'utf8')
-  const context = createEmptyContext(options.sourceChapter, options.sourceVariant, [], null)
+  const context = createEmptyContext(
+    options.sourceChapter,
+    options.sourceVariant,
+    options.sourceLanguageOptions,
+    [],
+    null
+  )
   const program = parse(source, context)
 
   let numWarnings = 0
