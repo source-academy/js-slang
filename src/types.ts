@@ -98,9 +98,12 @@ export enum Variant {
   EXPLICIT_CONTROL = 'explicit-control'
 }
 
+export type LanguageOptions = Record<string, string>
+
 export interface Language {
   chapter: Chapter
   variant: Variant
+  languageOptions?: LanguageOptions
 }
 
 export type ValueWrapper = LetWrapper | ConstWrapper
@@ -194,6 +197,11 @@ export interface Context<T = any> {
    * Examples: concurrent
    */
   variant: Variant
+
+  /**
+   * Describes the custom language option to be used for evaluation
+   */
+  languageOptions: LanguageOptions
 
   /**
    * Contains the evaluated code that has not yet been typechecked.

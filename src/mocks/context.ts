@@ -9,9 +9,10 @@ import { Transformers } from '../cse-machine/interpreter'
 
 export function mockContext(
   chapter: Chapter = Chapter.SOURCE_1,
-  variant: Variant = Variant.DEFAULT
+  variant: Variant = Variant.DEFAULT,
+  languageOptions = {}
 ): Context {
-  return createContext(chapter, variant)
+  return createContext(chapter, variant, languageOptions)
 }
 
 export function mockImportDeclaration(): es.ImportDeclaration {
