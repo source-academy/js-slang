@@ -98,7 +98,7 @@ export enum Variant {
   EXPLICIT_CONTROL = 'explicit-control'
 }
 
-export type LanguageOptions = Map<string, string>
+export type LanguageOptions = Record<string, string>
 
 export interface Language {
   chapter: Chapter

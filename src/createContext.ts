@@ -150,7 +150,7 @@ const createNativeStorage = (): NativeStorage => ({
 export const createEmptyContext = <T>(
   chapter: Chapter,
   variant: Variant = Variant.DEFAULT,
-  languageOptions: LanguageOptions = new Map<string, string>(),
+  languageOptions: LanguageOptions = {},
   externalSymbols: string[],
   externalContext?: T
 ): Context<T> => {
@@ -844,7 +844,7 @@ const defaultBuiltIns: CustomBuiltIns = {
 const createContext = <T>(
   chapter: Chapter = Chapter.SOURCE_1,
   variant: Variant = Variant.DEFAULT,
-  languageOptions: LanguageOptions = new Map<string, string>(),
+  languageOptions: LanguageOptions = {},
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns

@@ -10,7 +10,7 @@ import { Transformers } from '../cse-machine/interpreter'
 export function mockContext(
   chapter: Chapter = Chapter.SOURCE_1,
   variant: Variant = Variant.DEFAULT,
-  languageOptions = new Map<string, string>()
+  languageOptions = {}
 ): Context {
   return createContext(chapter, variant, languageOptions)
 }

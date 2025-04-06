@@ -63,7 +63,7 @@ export function createTestContext({
   context,
   chapter = Chapter.SOURCE_1,
   variant = Variant.DEFAULT,
-  languageOptions = new Map<string, string>(),
+  languageOptions = {},
   testBuiltins = {}
 }: {
   context?: TestContext

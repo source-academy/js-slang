@@ -40,7 +40,7 @@ export const getVariantOption = <T extends Variant>(defaultValue: T, choices: T[
 
 export const getLanguageOption = <T extends LanguageOptions>() => {
   return new Option('--languageOptions <options>')
-    .default(new Map<string, string>())
+    .default({})
     .argParser((value: string): LanguageOptions => {
       const languageOptions = value.split(',').map(lang => {
         const [key, value] = lang.split('=')

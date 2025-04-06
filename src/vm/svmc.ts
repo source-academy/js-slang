@@ -30,7 +30,7 @@ function parseOptions(): CliOptions | null {
     compileTo: 'binary',
     sourceChapter: Chapter.SOURCE_3,
     sourceVariant: Variant.DEFAULT,
-    sourceLanguageOptions: new Map<string, string>(),
+    sourceLanguageOptions: {},
     inputFilename: '',
     outputFilename: null,
     vmInternalFunctions: null
