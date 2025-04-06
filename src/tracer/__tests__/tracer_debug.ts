@@ -93,18 +93,17 @@ test('function calling', () => {
 */
 test('general', () => {
   const code = `
-const f = x => {
-    const x_1 = 1;
-  return x_1 => x_2 + g();  
-};
-  const g = () => x + x_1;
-  const x_2 = 0;
-  const x_1 = 2;
-  const x = 1;
-  f(1)(1);
+function h(f, x) {
+    function h(g, x) {
+        return x <= 1 ? 1 : 3 * g(f, x - 1);
+    }
+        return x <= 1 ? 1 : 2 * f(h, x - 1);
+    }
+    h(h, 5);
+
   `
   const program = parse(code, { ecmaVersion: 10 })!
   const steps = getSteps(convert(program), { stepLimit: 200 })
   const output = steps.map(stringifyWithExplanation)
-  console.log(output)
+  console.log(output.join('\n\n'))
 })

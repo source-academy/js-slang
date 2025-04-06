@@ -1339,6 +1339,20 @@ test("Church numerals", async () => {
   `
   const steps = await codify(acornParser(code))
   expect(steps.join('\n')).toMatchSnapshot()
-  expect(steps.join('\n')).toMatchSnapshot()
   expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
+});
+
+test("steps appear as if capturing happens #1714", async () => {
+  const code = `
+  function h(f, x) {
+    function h(g, x) {
+        return x <= 1 ? 1 : 3 * g(f, x - 1);
+    }
+        return x <= 1 ? 1 : 2 * f(h, x - 1);
+    }
+    h(h, 5);
+  `
+  const steps = await codify(acornParser(code))
+  expect(steps.join('\n')).toMatchSnapshot()
+  expect(steps[steps.length - 1]).toEqual('36;\n[noMarker] Evaluation complete\n')
 });

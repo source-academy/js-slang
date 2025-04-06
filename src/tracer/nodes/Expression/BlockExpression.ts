@@ -2,7 +2,7 @@ import { StepperBaseNode } from '../../interface'
 import { StepperExpression, StepperPattern, undefinedNode } from '..'
 import { convert } from '../../generator'
 import { redex } from '../..'
-import { StepperVariableDeclaration, StepperVariableDeclarator } from '../Statement/VariableDeclaration'
+import { StepperVariableDeclaration } from '../Statement/VariableDeclaration'
 import { assignMuTerms, getFreshName } from '../../utils'
 import { StepperReturnStatement } from '../Statement/ReturnStatement'
 import { StepperStatement } from '../Statement'
@@ -168,9 +168,14 @@ export class StepperBlockExpression implements StepperBaseNode {
 
   scanAllDeclarationNames(): string[] {
     return this.body
-      .filter(ast => ast.type === 'VariableDeclaration')
-      .flatMap((ast: StepperVariableDeclaration) => ast.declarations)
-      .map((ast: StepperVariableDeclarator) => ast.id.name);
+      .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
+      .flatMap((ast: StepperVariableDeclaration | StepperFunctionDeclaration) => {
+        if (ast.type === 'VariableDeclaration') {
+          return ast.declarations.map(ast => ast.id.name);
+        } else { // Function Declaration
+          return [(ast as StepperFunctionDeclaration).id.name];
+        }
+      })
   }
 
   freeNames(): string[] {

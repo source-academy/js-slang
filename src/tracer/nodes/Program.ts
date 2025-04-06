@@ -5,8 +5,7 @@ import { StepperStatement } from './Statement'
 import { StepperExpression, StepperPattern, undefinedNode } from '.'
 
 import {
-  StepperVariableDeclaration,
-  StepperVariableDeclarator
+  StepperVariableDeclaration
 } from './Statement/VariableDeclaration'
 import { redex } from '..'
 import { assignMuTerms } from '../utils'
@@ -156,9 +155,14 @@ export class StepperProgram implements Program, StepperBaseNode {
 
   scanAllDeclarationNames(): string[] {
     return this.body
-      .filter(ast => ast.type === 'VariableDeclaration')
-      .flatMap((ast: StepperVariableDeclaration) => ast.declarations)
-      .map((ast: StepperVariableDeclarator) => ast.id.name)
+      .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
+      .flatMap((ast: StepperVariableDeclaration | StepperFunctionDeclaration) => {
+        if (ast.type === 'VariableDeclaration') {
+          return ast.declarations.map(ast => ast.id.name);
+        } else { // Function Declaration
+          return [(ast as StepperFunctionDeclaration).id.name];
+        }
+      })
   }
 
   freeNames(): string[] {

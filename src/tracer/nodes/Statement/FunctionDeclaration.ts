@@ -7,6 +7,7 @@ import { convert } from '../../generator'
 import { redex } from '../..'
 import { StepperArrowFunctionExpression } from '../Expression/ArrowFunctionExpression'
 import { getFreshName } from '../../utils'
+import { StepperVariableDeclaration } from './VariableDeclaration'
 
 export class StepperFunctionDeclaration implements FunctionDeclaration, StepperBaseNode {
   type: 'FunctionDeclaration'
@@ -33,7 +34,6 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
   ) {
     this.type = 'FunctionDeclaration'
     this.id = id
-    this.body = body
     this.params = params
     this.generator = generator
     this.async = async
@@ -41,8 +41,16 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     this.trailingComments = trailingComments
     this.loc = loc
     this.range = range
-  }
 
+    
+    const repeatedNames = body.scanAllDeclarationNames().filter(name => name === this.id.name);
+    const newNames = getFreshName([this.id.name], repeatedNames)
+    let currentBlockStatement = body
+    for (var index in newNames) {
+      currentBlockStatement = currentBlockStatement.rename(repeatedNames[index], newNames[index])
+    }
+    this.body = currentBlockStatement;
+  }
   static create(node: FunctionDeclaration) {
     return new StepperFunctionDeclaration(
       convert(node.id) as StepperIdentifier,
@@ -94,25 +102,37 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
   scanAllDeclarationNames(): string[] {
     const paramNames = this.params.map(param => param.name)
     const bodyDeclarations = this.body.body
-      .filter(stmt => stmt.type === 'VariableDeclaration')
-      .flatMap(decl => (decl as any).declarations.map((d: any) => d.id.name))
-
+      .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
+      .flatMap((ast: StepperVariableDeclaration | StepperFunctionDeclaration) => {
+        if (ast.type === 'VariableDeclaration') {
+          return ast.declarations.map(ast => ast.id.name)
+        } else {
+          // Function Declaration
+          return [(ast as StepperFunctionDeclaration).id.name]
+        }
+      })
     return [...paramNames, ...bodyDeclarations]
   }
 
-  substitute(id: StepperPattern, value: StepperExpression, upperBoundName?: string[]): StepperBaseNode {
+  substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    upperBoundName?: string[]
+  ): StepperBaseNode {
     const valueFreeNames = value.freeNames()
     const scopeNames = this.scanAllDeclarationNames()
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
 
-    var currentFunction: StepperFunctionDeclaration = this;
-    let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat());
-    repeatedNames.forEach(name => protectedNamesSet.delete(name));
-    const protectedNames = Array.from(protectedNamesSet);
-    const newNames = getFreshName(repeatedNames, protectedNames);
+    var currentFunction: StepperFunctionDeclaration = this
+    let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat())
+    repeatedNames.forEach(name => protectedNamesSet.delete(name))
+    const protectedNames = Array.from(protectedNamesSet)
+    const newNames = getFreshName(repeatedNames, protectedNames)
     for (var index in newNames) {
-      currentFunction = currentFunction
-        .rename(repeatedNames[index], newNames[index]) as StepperFunctionDeclaration
+      currentFunction = currentFunction.rename(
+        repeatedNames[index],
+        newNames[index]
+      ) as StepperFunctionDeclaration
     }
 
     if (currentFunction.scanAllDeclarationNames().includes(id.name)) {
@@ -141,12 +161,12 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     const paramNames = this.params
       .filter(param => param.type === 'Identifier')
       .map(param => param.name)
-    return Array.from(new Set([paramNames, this.body.allNames()].flat()));
+    return Array.from(new Set([paramNames, this.body.allNames()].flat()))
   }
 
   rename(before: string, after: string): StepperFunctionDeclaration {
     return new StepperFunctionDeclaration(
-      this.id,
+      this.id.rename(before, after),
       this.body.rename(before, after) as unknown as StepperBlockStatement,
       this.params.map(param => param.rename(before, after))
     )
