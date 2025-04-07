@@ -3,8 +3,8 @@
 import { execFile, fork, spawn } from 'child_process'
 import pathlib from 'path'
 import fs from 'fs/promises'
-import { Command } from 'commander'
 import process from 'process'
+import { Command } from 'commander'
 import autocomplete from './autocomplete.mjs'
 
 const configs = {

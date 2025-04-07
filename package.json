@@ -51,7 +51,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "test": "node ./scripts/run_jest.mjs",
-    "test-coverage": "test --coverage",
+    "test-coverage": "yarn test --coverage",
     "docs": "node ./scripts/docs.mjs docs",
     "jsdoc": "node ./scripts/docs.mjs",
     "autocomplete": "node ./scripts/docs.mjs autocomplete",
@@ -124,7 +124,8 @@
           "includeConsoleLog": true
         }
       ]
-    ]
+    ],
+    "prettierPath": null
   },
   "packageManager": "yarn@4.6.0"
 }

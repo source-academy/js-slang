@@ -44,6 +44,9 @@ export function objectValues<T>(obj: Record<any, T>) {
   return Object.values(obj) as T[]
 }
 
+/**
+ * Given the chapter value, return the string name of that chapter
+ */
 export function getChapterName(chapter: Chapter) {
   return objectKeys(Chapter).find(name => Chapter[name] === chapter)!
 }

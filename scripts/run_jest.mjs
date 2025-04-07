@@ -3,8 +3,8 @@
  * style paths to Posix style paths because Jest is fussy about those
  */
 import { fork } from 'child_process'
-import { Command } from '@commander-js/extra-typings'
 import pathlib from 'path'
+import { Command } from '@commander-js/extra-typings'
 
 await new Command()
   .argument('[patterns...]', 'Patterns to test')

@@ -1,10 +1,30 @@
-import { createTestContext, testFailure, testSuccess } from '..'
+import {
+  createTestContext,
+  expectFinishedResult,
+  expectParsedError,
+  testFailure,
+  testSuccess
+} from '..'
 import { Chapter, Variant } from '../../../types'
 import { asMockedFunc, processTestOptions } from '../misc'
 import type { TestOptions } from '../types'
 import * as main from '../../..'
 
 jest.spyOn(main, 'runInContext')
+
+function mockEvalSuccess(value: any = 0) {
+  asMockedFunc(main.runInContext).mockResolvedValueOnce({
+    value,
+    context: {} as main.Context,
+    status: 'finished'
+  })
+}
+
+function mockEvalFailure() {
+  asMockedFunc(main.runInContext).mockResolvedValueOnce({
+    status: 'error'
+  })
+}
 
 describe('Test processRawOptions', () => {
   const options: [string, TestOptions, TestOptions][] = [
@@ -58,39 +78,45 @@ describe('Testing createTestContext', () => {
 
 describe('Test testing functions', () => {
   test('Test testSuccess resolves on evaluation success', () => {
-    asMockedFunc(main.runInContext).mockResolvedValueOnce({
-      value: 0,
-      context: {} as main.Context,
-      status: 'finished'
-    })
-
+    mockEvalSuccess()
     return expect(testSuccess('').then(({ result: { value } }) => value)).resolves.toEqual(0)
   })
 
   test('Test testSuccess rejects on evaluation failure', () => {
-    asMockedFunc(main.runInContext).mockResolvedValueOnce({
-      status: 'error'
-    })
-
+    mockEvalFailure()
     return expect(testSuccess('')).rejects.toThrow()
   })
 
   test('Test testFailure resolves on evaluation failure', () => {
-    asMockedFunc(main.runInContext).mockResolvedValueOnce({
-      status: 'error'
-    })
-
+    mockEvalFailure()
     return expect(testFailure('')).resolves.toEqual('')
   })
 
   test('Test testFailure rejects on evaluation success', () => {
-    asMockedFunc(main.runInContext).mockResolvedValueOnce({
-      value: 0,
-      context: {} as main.Context,
-      status: 'finished'
-    })
-
+    mockEvalSuccess()
     return expect(testFailure('')).rejects.toThrow()
+  })
+})
+
+describe('Test expect functions', () => {
+  test('Test expectFinishedResult resolves on evaluation success', () => {
+    mockEvalSuccess()
+    return expectFinishedResult('').toEqual(0)
+  })
+
+  test('Test expectFinishedResult rejects on evaluation failure', () => {
+    mockEvalFailure()
+    return expect(expectFinishedResult('').toEqual(0)).rejects.toThrow()
+  })
+
+  test('Test expectParsedError rejects on evaluation success', () => {
+    mockEvalSuccess()
+    return expect(expectParsedError('').toEqual('')).rejects.toThrow()
+  })
+
+  test('Test expectParsedError resolves on evaluation failure', () => {
+    mockEvalFailure()
+    return expectParsedError('').toEqual('')
   })
 })
 
@@ -104,18 +130,24 @@ describe('Extra test results', () => {
   })
 
   test('Calling display actually adds to displayResult', async () => {
-    const { context } = await testSuccess(`display("hi"); display("bye");`)
-    expect(context.displayResult).toMatchObject(['"hi"', '"bye"'])
+    const {
+      context: { displayResult }
+    } = await testSuccess(`display("hi"); display("bye");`)
+    expect(displayResult).toMatchObject(['"hi"', '"bye"'])
   })
 
   test('Calling alert actually adds to alertResult', async () => {
-    const { context } = await testSuccess(`alert("hi"); alert("bye");`, Chapter.LIBRARY_PARSER)
-    expect(context.alertResult).toMatchObject(['hi', 'bye'])
+    const {
+      context: { alertResult }
+    } = await testSuccess(`alert("hi"); alert("bye");`, Chapter.LIBRARY_PARSER)
+    expect(alertResult).toMatchObject(['hi', 'bye'])
   })
 
   test('Calling draw_data actually adds to visualizeList', async () => {
-    const { context } = await testSuccess(`draw_data(list(1, 2));`, Chapter.SOURCE_2)
-    expect(context.visualiseListResult).toMatchInlineSnapshot(`
+    const {
+      context: { visualiseListResult }
+    } = await testSuccess(`draw_data(list(1, 2));`, Chapter.SOURCE_2)
+    expect(visualiseListResult).toMatchInlineSnapshot(`
 Array [
   Array [
     Array [
