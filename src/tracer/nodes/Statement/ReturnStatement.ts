@@ -11,6 +11,32 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
   trailingComments?: Comment[] | undefined
   loc?: SourceLocation | null | undefined
   range?: [number, number] | undefined
+
+
+  constructor(
+    argument: StepperExpression | null,
+    leadingComments?: Comment[] | undefined,
+    trailingComments?: Comment[] | undefined,
+    loc?: SourceLocation | null | undefined,
+    range?: [number, number] | undefined,
+  ) {
+    this.type = 'ReturnStatement'
+    this.argument = argument;
+    this.leadingComments = leadingComments;
+    this.trailingComments = trailingComments;
+    this.loc = loc;
+    this.range = range;
+  }
+
+  static create(node: ReturnStatement) {
+    return new StepperReturnStatement(
+      node.argument ? convert(node.argument) as StepperExpression : null,
+      node.leadingComments,
+      node.trailingComments,
+      node.loc,
+      node.range
+    )
+  }
   
   isContractible(): boolean {
     return true;
@@ -39,33 +65,6 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
       throw new Error('Cannot step return statement without argument')
     }
     return this.contract();
-  }
-
-  
-
-  static create(node: ReturnStatement) {
-    return new StepperReturnStatement(
-      node.argument ? convert(node.argument) as StepperExpression : null,
-      node.leadingComments,
-      node.trailingComments,
-      node.loc,
-      node.range
-    )
-  }
-
-  constructor(
-    argument: StepperExpression | null,
-    leadingComments?: Comment[] | undefined,
-    trailingComments?: Comment[] | undefined,
-    loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined,
-  ) {
-    this.type = 'ReturnStatement'
-    this.argument = argument;
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {

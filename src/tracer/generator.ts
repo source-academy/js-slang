@@ -163,6 +163,7 @@ export function explain(redex: StepperBaseNode): string {
         throw new Error('`callee` should be function expression.')
       }
 
+      // Determine whether the called function is built-in or not and create explanation accordingly
       const func: StepperArrowFunctionExpression = node.callee as StepperArrowFunctionExpression
       if (func.name && isBuiltinFunction(func.name)) {
         return `${func.name} runs`

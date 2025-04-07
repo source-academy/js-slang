@@ -5,6 +5,37 @@ import { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 
 export class StepperExpressionStatement implements ExpressionStatement, StepperBaseNode {
+  type: 'ExpressionStatement'
+  expression: StepperExpression
+  leadingComments?: Comment[] | undefined
+  trailingComments?: Comment[] | undefined
+  loc?: SourceLocation | null | undefined
+  range?: [number, number] | undefined
+  
+  constructor(
+    expression: StepperExpression,
+    leadingComments?: Comment[] | undefined,
+    trailingComments?: Comment[] | undefined,
+    loc?: SourceLocation | null | undefined,
+    range?: [number, number] | undefined,
+  ) {
+    this.type = 'ExpressionStatement'
+    this.expression = expression;
+    this.leadingComments = leadingComments;
+    this.trailingComments = trailingComments;
+    this.loc = loc;
+    this.range = range;
+  }
+
+  static create(node: ExpressionStatement) {
+    return new StepperExpressionStatement(
+      convert(node.expression) as StepperExpression,
+      node.leadingComments,
+      node.trailingComments,
+      node.loc,
+      node.range
+    )
+  }
   
   isContractible(): boolean {
     return this.expression.isContractible()
@@ -36,39 +67,6 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       this.loc,
       this.range
     )
-  }
-
-  type: 'ExpressionStatement'
-  expression: StepperExpression
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
-
-
-  static create(node: ExpressionStatement) {
-    return new StepperExpressionStatement(
-      convert(node.expression) as StepperExpression,
-      node.leadingComments,
-      node.trailingComments,
-      node.loc,
-      node.range
-    )
-  }
-
-  constructor(
-    expression: StepperExpression,
-    leadingComments?: Comment[] | undefined,
-    trailingComments?: Comment[] | undefined,
-    loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined,
-  ) {
-    this.type = 'ExpressionStatement'
-    this.expression = expression;
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
