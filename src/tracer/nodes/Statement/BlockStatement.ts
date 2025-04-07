@@ -1,4 +1,4 @@
-import { BlockStatement, Comment, SourceLocation, Statement } from 'estree'
+import { BlockStatement, Comment, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { StepperExpression, StepperPattern, undefinedNode } from '..'
 import { StepperStatement } from '.'
