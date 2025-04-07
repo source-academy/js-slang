@@ -112,7 +112,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
         ? left! >= right!
         : left! > right!
 
-    let ret = new StepperLiteral(value, value !== null ? value.toString() : "null")
+    let ret = new StepperLiteral(value, value !== null ? value.toString() : "null", undefined, undefined, this.loc, this.range)
     redex.postRedex = [ret]
     return ret
   }
@@ -126,7 +126,15 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
-      return new StepperBinaryExpression(this.operator, this.left.substitute(id, value), this.right.substitute(id, value)) 
+      return new StepperBinaryExpression(
+        this.operator, 
+        this.left.substitute(id, value), 
+        this.right.substitute(id, value),
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range
+      )
   }
 
   freeNames(): string[] {
@@ -139,6 +147,10 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
 
   rename(before: string, after: string): StepperExpression  {
     return new StepperBinaryExpression(this.operator, 
-        this.left.rename(before, after), this.right.rename(before, after));
+        this.left.rename(before, after), this.right.rename(before, after),
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range);
   }
 }

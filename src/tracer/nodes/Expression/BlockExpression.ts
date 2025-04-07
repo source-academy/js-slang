@@ -62,7 +62,7 @@ export class StepperBlockExpression implements StepperBaseNode {
           return new StepperBlockExpression([afterSubstitutedScope].flat())
         }
         return new StepperBlockExpression(
-          [firstStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
+          [firstStatementOneStep as StepperStatement, ...afterSubstitutedScope]
         )
     }
 

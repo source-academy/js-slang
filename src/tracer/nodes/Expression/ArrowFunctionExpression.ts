@@ -146,7 +146,14 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
         currentArrowFunction.body.substitute(id, 
           value, 
           currentArrowFunction.params.flatMap(p => p.allNames())),
-        currentArrowFunction.name
+        currentArrowFunction.name,
+        currentArrowFunction.expression,
+        currentArrowFunction.generator,
+        currentArrowFunction.async,
+        currentArrowFunction.leadingComments,
+        currentArrowFunction.trailingComments,
+        currentArrowFunction.loc,
+        currentArrowFunction.range
     )
   }
 
@@ -171,7 +178,11 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
       this.name,
       this.expression,
       this.generator,
-      this.async
+      this.async,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 }

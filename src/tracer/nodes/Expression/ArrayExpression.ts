@@ -60,7 +60,13 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
       if (element && element.isOneStepPossible()) {
         const newElements = [...this.elements]
         newElements[i] = element.oneStep()
-        return new StepperArrayExpression(newElements)
+        return new StepperArrayExpression(
+          newElements,
+          this.leadingComments,
+          this.trailingComments,
+          this.loc,
+          this.range
+        )
       }
     }
 
@@ -69,7 +75,11 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
     return new StepperArrayExpression(
-      this.elements.map(element => (element ? element.substitute(id, value) : null))
+      this.elements.map(element => (element ? element.substitute(id, value) : null)),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 
@@ -91,7 +101,11 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
 
   rename(before: string, after: string): StepperExpression {
     return new StepperArrayExpression(
-      this.elements.map(element => (element ? element.rename(before, after) : null))
+      this.elements.map(element => (element ? element.rename(before, after) : null)),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 }
