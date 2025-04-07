@@ -71,7 +71,14 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
     return [];
   }
 
-  rename(before: string, after: string) {
-    return this;
+  rename(before: string, after: string): StepperExpression {
+    return new StepperLiteral(
+      this.value,
+      this.raw,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
+    );
   }
 }

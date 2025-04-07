@@ -1,4 +1,4 @@
-import { Identifier } from 'estree'
+import { Identifier, Comment, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
@@ -6,14 +6,34 @@ import { redex } from '../..'
 export class StepperIdentifier implements Identifier, StepperBaseNode {
   type: 'Identifier'
   name: string
+  leadingComments?: Comment[]
+  trailingComments?: Comment[]
+  loc?: SourceLocation | null
+  range?: [number, number]
 
-  constructor(name: string) {
+  constructor(
+    name: string,
+    leadingComments?: Comment[],
+    trailingComments?: Comment[],
+    loc?: SourceLocation | null,
+    range?: [number, number]
+  ) {
     this.type = 'Identifier'
     this.name = name
+    this.leadingComments = leadingComments
+    this.trailingComments = trailingComments
+    this.loc = loc
+    this.range = range
   }
 
   static create(node: Identifier) {
-    return new StepperIdentifier(node.name)
+    return new StepperIdentifier(
+      node.name,
+      node.leadingComments,
+      node.trailingComments,
+      node.loc,
+      node.range
+    )
   }
 
   isContractible(): boolean {
@@ -50,6 +70,12 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
   }
 
   rename(before: string, after: string) {
-    return before === this.name ? new StepperIdentifier(after) : this;
+    return before === this.name ? new StepperIdentifier(
+      after,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
+    ) : this;
   }
 }

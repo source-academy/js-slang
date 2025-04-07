@@ -125,7 +125,12 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     if (this.callee.isOneStepPossible()) {
       return new StepperFunctionApplication(
         this.callee.oneStep(),
-        this.arguments
+        this.arguments,
+        this.optional,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range
       )
     }
 
@@ -133,7 +138,15 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
       if (this.arguments[i].isOneStepPossible()) {
         const newArgs = [...this.arguments]
         newArgs[i] = this.arguments[i].oneStep()
-        return new StepperFunctionApplication(this.callee, newArgs)
+        return new StepperFunctionApplication(
+          this.callee, 
+          newArgs,
+          this.optional,
+          this.leadingComments,
+          this.trailingComments,
+          this.loc,
+          this.range
+        )
       }
     }
 
@@ -143,7 +156,12 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
     return new StepperFunctionApplication(
       this.callee.substitute(id, value),
-      this.arguments.map(arg => arg.substitute(id, value))
+      this.arguments.map(arg => arg.substitute(id, value)),
+      this.optional,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 
@@ -164,7 +182,12 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
   rename(before: string, after: string): StepperExpression {
     return new StepperFunctionApplication(
       this.callee.rename(before, after),
-      this.arguments.map(arg => arg.rename(before, after))
+      this.arguments.map(arg => arg.rename(before, after)),
+      this.optional,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 }

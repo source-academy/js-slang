@@ -65,11 +65,25 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     const leftValue = this.left.value
     
     if (this.operator === '&&' && !leftValue) {
-      let ret = new StepperLiteral(false)
+      let ret = new StepperLiteral(
+        false, 
+        undefined, 
+        this.leadingComments, 
+        this.trailingComments, 
+        this.loc, 
+        this.range
+      )
       redex.postRedex = [ret]
       return ret
     } else if (this.operator === '||' && leftValue) {
-      let ret = new StepperLiteral(true)
+      let ret = new StepperLiteral(
+        true, 
+        undefined, 
+        this.leadingComments, 
+        this.trailingComments, 
+        this.loc, 
+        this.range
+      )
       redex.postRedex = [ret]
       return ret
     } else {
@@ -81,9 +95,25 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     if (this.isContractible()) {
       return this.contract()
     } else if (this.left.isOneStepPossible()) {
-      return new StepperLogicalExpression(this.operator, this.left.oneStep(), this.right)
+      return new StepperLogicalExpression(
+        this.operator, 
+        this.left.oneStep(), 
+        this.right, 
+        this.leadingComments, 
+        this.trailingComments, 
+        this.loc, 
+        this.range
+      )
     } else if (this.right.isOneStepPossible()) {
-      return new StepperLogicalExpression(this.operator, this.left, this.right.oneStep())
+      return new StepperLogicalExpression(
+        this.operator, 
+        this.left, 
+        this.right.oneStep(), 
+        this.leadingComments, 
+        this.trailingComments, 
+        this.loc, 
+        this.range
+      )
     } else {
       throw new Error("No step possible")
     }
@@ -93,7 +123,11 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     return new StepperLogicalExpression(
       this.operator, 
       this.left.substitute(id, value), 
-      this.right.substitute(id, value)
+      this.right.substitute(id, value),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 
@@ -109,7 +143,11 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     return new StepperLogicalExpression(
       this.operator, 
       this.left.rename(before, after), 
-      this.right.rename(before, after)
+      this.right.rename(before, after),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     );
   }
 }

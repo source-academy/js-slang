@@ -76,7 +76,11 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
     return new StepperConditionalExpression(
         this.test.oneStep(),
         this.consequent,
-        this.alternate
+        this.alternate,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range
     )
   }
 
@@ -84,7 +88,11 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
     return new StepperConditionalExpression(
       this.test.substitute(id, value),
       this.consequent.substitute(id, value),
-      this.alternate.substitute(id, value)
+      this.alternate.substitute(id, value),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 
@@ -108,7 +116,11 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
     return new StepperConditionalExpression(
       this.test.rename(before, after),
       this.consequent.rename(before, after),
-      this.alternate.rename(before, after)
+      this.alternate.rename(before, after),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 }
