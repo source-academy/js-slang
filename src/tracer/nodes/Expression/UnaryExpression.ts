@@ -41,8 +41,8 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       && (node.argument as Literal).value as number > 0
     ) {
       return new StepperLiteral(
-        - ((node.argument as Literal).value as number),
-        undefined,
+        -((node.argument as Literal).value as number),
+        (-((node.argument as Literal).value as number)).toString(),
         node.leadingComments,
         node.trailingComments,
         node.loc,
