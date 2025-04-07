@@ -70,7 +70,11 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperReturnStatement(
-      this.argument ? this.argument.substitute(id, value) as StepperExpression : null
+      this.argument ? this.argument.substitute(id, value) as StepperExpression : null,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 
@@ -84,7 +88,11 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
 
   rename(before: string, after: string): StepperReturnStatement {
     return new StepperReturnStatement(
-      this.argument ? this.argument.rename(before, after) as StepperExpression : null
+      this.argument ? this.argument.rename(before, after) as StepperExpression : null,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 }

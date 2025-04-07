@@ -13,7 +13,13 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
     return this.expression.isOneStepPossible()
   }
   contract(): StepperExpressionStatement {
-    return new StepperExpressionStatement(this.expression.oneStep())
+    return new StepperExpressionStatement(
+      this.expression.oneStep(),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
+    )
   }
 
   contractEmpty() { 
@@ -23,7 +29,13 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
   }
   
   oneStep(): StepperExpressionStatement {
-    return new StepperExpressionStatement(this.expression.oneStep())
+    return new StepperExpressionStatement(
+      this.expression.oneStep(),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
+    )
   }
 
   type: 'ExpressionStatement'
@@ -60,7 +72,13 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
-      return new StepperExpressionStatement(this.expression.substitute(id, value))
+      return new StepperExpressionStatement(
+        this.expression.substitute(id, value),
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range
+      )
   }
 
   freeNames(): string[] {
@@ -72,6 +90,12 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
   }
 
   rename(before: string, after: string): StepperExpressionStatement  {
-    return new StepperExpressionStatement(this.expression.rename(before, after))
+    return new StepperExpressionStatement(
+      this.expression.rename(before, after),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
+    )
   }
 }

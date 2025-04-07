@@ -146,7 +146,13 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
         value,
         currentFunction.params.flatMap(p => p.allNames())
       ) as unknown as StepperBlockStatement,
-      currentFunction.params
+      currentFunction.params,
+      this.generator,
+      this.async,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 
@@ -168,7 +174,13 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     return new StepperFunctionDeclaration(
       this.id.rename(before, after),
       this.body.rename(before, after) as unknown as StepperBlockStatement,
-      this.params.map(param => param.rename(before, after))
+      this.params.map(param => param.rename(before, after)),
+      this.generator,
+      this.async,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 }
