@@ -95,7 +95,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       redex.postRedex = [ret]
       return ret
     } else if (this.operator === '-') {
-      const ret = new StepperLiteral(-(operand as number))
+      const ret = new StepperLiteral(-(operand as number), (-(operand as number)).toString())
       redex.postRedex = [ret]
       return ret
     }

@@ -51,7 +51,15 @@ const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {
   Program: (node: es.Program) => StepperProgram.create(node),
   VariableDeclaration: (node: es.VariableDeclaration) => StepperVariableDeclaration.create(node),
   VariableDeclarator: (node: es.VariableDeclarator) => StepperVariableDeclarator.create(node),
-  Identifier: (node: es.Identifier) => StepperIdentifier.create(node),
+  Identifier: (node: es.Identifier) => {
+    if (node.name === 'NaN') {
+      return new StepperLiteral(NaN, 'NaN');
+    } else if (node.name === 'Infinity') {
+      return new StepperLiteral(Infinity, 'Infinity');
+    } else {
+      return StepperIdentifier.create(node);
+    }
+  },
   BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node),
   IfStatement: (node: es.IfStatement) => StepperIfStatement.create(node)
 }

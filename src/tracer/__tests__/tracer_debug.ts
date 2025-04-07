@@ -109,9 +109,10 @@ function h(f, x) {
 })
 
 
+// TODO: Check for -Infinity
 test('general', () => {
   const code = `
-  3 % 0;
+  -NaN;
   `
   const program = parse(code, { ecmaVersion: 10 })!
   const steps = getSteps(convert(program), { stepLimit: 200 })
