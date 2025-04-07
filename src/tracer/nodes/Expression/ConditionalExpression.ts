@@ -48,7 +48,10 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
   isContractible(): boolean {
     if (this.test.type !== 'Literal') return false
     const test_value = this.test.value
-    if (typeof test_value !== 'boolean') return false
+    if (typeof test_value !== 'boolean') {
+      throw new Error(`Line ${this.loc?.start.line || 0}: Expected boolean as condition, got ${typeof test_value}.`);
+    }
+    redex.preRedex = [this];
     return true
   }
 

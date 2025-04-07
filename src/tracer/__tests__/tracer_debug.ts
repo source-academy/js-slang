@@ -112,7 +112,7 @@ function h(f, x) {
 // TODO: Check for -Infinity
 test('general', () => {
   const code = `
-  1 && "";
+  1 ? 2: 2;
   `
   const program = parse(code, { ecmaVersion: 10, locations: true })!
   const steps = getSteps(convert(program), { stepLimit: 200 })
