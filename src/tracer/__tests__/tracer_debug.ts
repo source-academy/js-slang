@@ -107,3 +107,14 @@ function h(f, x) {
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n\n'))
 })
+
+
+test('general', () => {
+  const code = `
+  3 % 0;
+  `
+  const program = parse(code, { ecmaVersion: 10 })!
+  const steps = getSteps(convert(program), { stepLimit: 200 })
+  const output = steps.map(stringifyWithExplanation)
+  console.log(output.join('\n\n'))
+})

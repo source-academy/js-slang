@@ -59,9 +59,16 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       }
       return ret
     } else if (left_type === 'number' && right_type === 'number') {
+      if (this.operator === '/' && this.right.value === 0) {
+        throw new Error('Division by zero');
+      }
+
+      if (this.operator === '%' && this.right.value === 0) {
+        throw new Error('Modulo by zero');
+      }
+
       const ret =
-        ['*', '+', '/', '-', '===', '!==', '<', '>', '<=', '>=', '%'].includes(this.operator as string) &&
-        !(this.operator === '/' && this.right.value === 0)
+        ['*', '+', '/', '-', '===', '!==', '<', '>', '<=', '>=', '%'].includes(this.operator as string)
       if (ret) {
         redex.preRedex = [this]
       }
