@@ -70,19 +70,27 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
   isContractible(): boolean {
     if (this.argument.type !== 'Literal') return false
 
-    switch (typeof this.argument.value) {
-      case 'boolean':
-        if (this.operator === '!') {
-          redex.preRedex = [this]
+    const valueType = typeof this.argument.value;
+    const markContractible = () => {
+      redex.preRedex = [this];
+      return true;
+    };
+
+    switch (this.operator) {
+      case '!':
+        if (valueType === 'boolean') {
+          return markContractible();
+        } else {
+          throw new Error(`Line ${this.loc?.start.line || 0}: Expected boolean, got ${valueType}.`);
         }
-        return this.operator === '!'
-      case 'number':
-        if (this.operator === '-') {
-          redex.preRedex = [this]
+      case '-':
+        if (valueType === 'number') {
+          return markContractible();
+        } else {
+          throw new Error(`Line ${this.loc?.start.line || 0}: Expected number, got ${valueType}.`);
         }
-        return this.operator === '-'
       default:
-        return false
+        return false;
     }
   }
 

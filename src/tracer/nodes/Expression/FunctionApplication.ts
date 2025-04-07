@@ -7,6 +7,7 @@ import { StepperBlockExpression } from './BlockExpression'
 import { StepperBlockStatement } from '../Statement/BlockStatement'
 import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
 import { StepperReturnStatement } from '../Statement/ReturnStatement'
+import { StepperArrowFunctionExpression } from './ArrowFunctionExpression'
 
 export class StepperFunctionApplication implements SimpleCallExpression, StepperBaseNode {
   type: 'CallExpression'
@@ -56,6 +57,13 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     
     if (!isValidCallee) {
       return false;
+    }
+    
+    if (this.callee.type === 'ArrowFunctionExpression') {
+      const arrowFunction = this.callee as StepperArrowFunctionExpression;
+      if (arrowFunction.params.length !== this.arguments.length) {
+        throw new Error(`Line ${this.loc?.start.line || 0}: Expected ${arrowFunction.params.length} arguments, but got ${this.arguments.length}.`);
+      }
     }
     
     return this.arguments.every(arg => !arg.isOneStepPossible());

@@ -49,25 +49,46 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
     if (this.left.type !== 'Literal' || this.right.type !== 'Literal') {
       return false;
     }
-    const left_type = typeof this.left.value
-    const right_type = typeof this.right.value
+    
+    const leftType = typeof this.left.value;
+    const rightType = typeof this.right.value;
+    
+    const markContractible = () => {
+      redex.preRedex = [this];
+      return true;
+    };
 
-    if (left_type === 'boolean' && right_type === 'boolean') {
-      const ret = (this.operator as string) === '&&' || (this.operator as string) === '||'
-      if (ret) {
-        redex.preRedex = [this]
-      }
-      return ret
-    } else if (left_type === 'number' && right_type === 'number') {
-      const ret =
-        ['*', '+', '/', '-', '===', '!==', '<', '>', '<=', '>=', '%'].includes(this.operator as string)
-      if (ret) {
-        redex.preRedex = [this]
-      }
-      return ret
-    } else {
-      return false
+    if (leftType === 'boolean') {
+      throw new Error(`Line ${this.loc?.start.line || 0}: Expected number or string on left hand side of operation, got ${leftType}.`);
     }
+
+    if (leftType === 'string' && rightType === 'string') {
+      if (['+', '===', '!==', '<', '>', '<=', '>='].includes(this.operator)) {
+        return markContractible();
+      } else {
+        throw new Error(`Line ${this.loc?.start.line || 0}: Expected number on left hand side of operation, got ${leftType}.`);
+      }
+    }
+
+    if (leftType === 'string') {
+      if (['+', '===', '!==', '<', '>', '<=', '>='].includes(this.operator)) {
+        throw new Error(`Line ${this.loc?.start.line || 0}: Expected string on right hand side of operation, got ${rightType}.`);
+      } else {
+        throw new Error(`Line ${this.loc?.start.line || 0}: Expected number on left hand side of operation, got ${leftType}.`);
+      }
+    }
+    
+    if (leftType === 'number' && rightType === 'number') {
+      if (['*', '+', '/', '-', '===', '!==', '<', '>', '<=', '>=', '%'].includes(this.operator)) {
+        return markContractible();
+      }
+    }
+
+    if (leftType === 'number') {
+      throw new Error(`Line ${this.loc?.start.line || 0}: Expected number on right hand side of operation, got ${rightType}.`);
+    }
+    
+    return false;
   }
 
   isOneStepPossible(): boolean {

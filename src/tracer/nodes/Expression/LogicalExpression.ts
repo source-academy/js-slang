@@ -48,9 +48,17 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
 
   isContractible(): boolean {
     if (this.left.type === 'Literal') {
-      return true
+      const leftType = typeof this.left.value;
+      
+      if (leftType !== 'boolean') {
+        throw new Error(`Line ${this.loc?.start.line || 0}: Expected boolean on left hand side of operation, got ${leftType}.`);
+      }
+      
+      redex.preRedex = [this];
+      return true;
     }
-    return false
+    
+    return false;
   }
 
   isOneStepPossible(): boolean {

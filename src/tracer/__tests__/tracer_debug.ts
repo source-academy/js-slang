@@ -112,9 +112,9 @@ function h(f, x) {
 // TODO: Check for -Infinity
 test('general', () => {
   const code = `
-  -NaN;
+  1 && "";
   `
-  const program = parse(code, { ecmaVersion: 10 })!
+  const program = parse(code, { ecmaVersion: 10, locations: true })!
   const steps = getSteps(convert(program), { stepLimit: 200 })
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n\n'))
