@@ -41,7 +41,12 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       && (node.argument as Literal).value as number > 0
     ) {
       return new StepperLiteral(
-        - ((node.argument as Literal).value as number)
+        - ((node.argument as Literal).value as number),
+        undefined,
+        node.leadingComments,
+        node.trailingComments,
+        node.loc,
+        node.range
       );
     }
     return undefined;
@@ -91,11 +96,25 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
 
     const operand = this.argument.value
     if (this.operator === '!') {
-      const ret = new StepperLiteral(!operand)
+      const ret = new StepperLiteral(
+        !operand,
+        undefined,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range
+      )
       redex.postRedex = [ret]
       return ret
     } else if (this.operator === '-') {
-      const ret = new StepperLiteral(-(operand as number), (-(operand as number)).toString())
+      const ret = new StepperLiteral(
+        -(operand as number),
+        (-(operand as number)).toString(),
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range
+      )
       redex.postRedex = [ret]
       return ret
     }
@@ -107,13 +126,27 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
     if (this.isContractible()) {
       return this.contract()
     }
-    const res = new StepperUnaryExpression(this.operator, this.argument.oneStep());
+    const res = new StepperUnaryExpression(
+      this.operator,
+      this.argument.oneStep(),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
+    );
     const literal = StepperUnaryExpression.createLiteral(res);
     return literal ? literal : res;
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
-    const res = new StepperUnaryExpression(this.operator, this.argument.substitute(id, value))
+    const res = new StepperUnaryExpression(
+      this.operator,
+      this.argument.substitute(id, value),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
+    )
     const literal = StepperUnaryExpression.createLiteral(res);
     return literal ? literal : res;
   }
@@ -127,6 +160,13 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
   }
 
   rename(before: string, after: string): StepperExpression {
-    return new StepperUnaryExpression(this.operator, this.argument.rename(before, after))
+    return new StepperUnaryExpression(
+      this.operator,
+      this.argument.rename(before, after),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
+    )
   }
 }
