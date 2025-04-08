@@ -1,14 +1,14 @@
 import { SimpleCallExpression, Comment, SourceLocation } from 'estree'
+import * as astring from 'astring'
 import { StepperBaseNode } from '../../interface'
 import { redex } from '../..'
 import { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
-import { StepperBlockExpression } from './BlockExpression'
 import { StepperBlockStatement } from '../Statement/BlockStatement'
 import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
 import { StepperReturnStatement } from '../Statement/ReturnStatement'
+import { StepperBlockExpression } from './BlockExpression'
 import { StepperArrowFunctionExpression } from './ArrowFunctionExpression'
-import * as astring from 'astring'
 export class StepperFunctionApplication implements SimpleCallExpression, StepperBaseNode {
   type: 'CallExpression'
   callee: StepperExpression
@@ -26,7 +26,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number],
+    range?: [number, number]
   ) {
     this.type = 'CallExpression'
     this.callee = callee
@@ -51,26 +51,37 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
   }
 
   isContractible(): boolean {
-    const isValidCallee = 
-      this.callee.type === 'ArrowFunctionExpression' || 
-      (this.callee.type === 'Identifier' && isBuiltinFunction(this.callee.name));
-    
+    const isValidCallee =
+      this.callee.type === 'ArrowFunctionExpression' ||
+      (this.callee.type === 'Identifier' && isBuiltinFunction(this.callee.name))
+
     if (!isValidCallee) {
       // Since the callee can not be proceed further, calling non callables should result to an error.
-      if (!this.callee.isOneStepPossible() && this.arguments.every(arg => !arg.isOneStepPossible())) {
-        throw new Error(`Line ${this.loc?.start.line || 0}: Calling non-function value ${astring.generate(this.callee)}`);
+      if (
+        !this.callee.isOneStepPossible() &&
+        this.arguments.every(arg => !arg.isOneStepPossible())
+      ) {
+        throw new Error(
+          `Line ${this.loc?.start.line || 0}: Calling non-function value ${astring.generate(
+            this.callee
+          )}`
+        )
       }
-      return false;
+      return false
     }
-    
+
     if (this.callee.type === 'ArrowFunctionExpression') {
-      const arrowFunction = this.callee as StepperArrowFunctionExpression;
+      const arrowFunction = this.callee as StepperArrowFunctionExpression
       if (arrowFunction.params.length !== this.arguments.length) {
-        throw new Error(`Line ${this.loc?.start.line || 0}: Expected ${arrowFunction.params.length} arguments, but got ${this.arguments.length}.`);
+        throw new Error(
+          `Line ${this.loc?.start.line || 0}: Expected ${
+            arrowFunction.params.length
+          } arguments, but got ${this.arguments.length}.`
+        )
       }
     }
-    
-    return this.arguments.every(arg => !arg.isOneStepPossible());
+
+    return this.arguments.every(arg => !arg.isOneStepPossible())
   }
 
   isOneStepPossible(): boolean {
@@ -83,44 +94,44 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     redex.preRedex = [this]
     if (!this.isContractible()) throw new Error()
     if (this.callee.type === 'Identifier') {
-      const functionName = this.callee.name;
+      const functionName = this.callee.name
       if (isBuiltinFunction(functionName)) {
-        const result = getBuiltinFunction(functionName, this.arguments);
-        redex.postRedex = [result];
-        return result;
+        const result = getBuiltinFunction(functionName, this.arguments)
+        redex.postRedex = [result]
+        return result
       }
-      throw new Error(`Unknown builtin function: ${functionName}`);
+      throw new Error(`Unknown builtin function: ${functionName}`)
     }
-    
+
     if (this.callee.type !== 'ArrowFunctionExpression') {
-      throw new Error();
+      throw new Error()
     }
 
     const lambda = this.callee
     const args = this.arguments
 
-    let result: StepperBlockExpression | StepperExpression = lambda.body;
-    
-    if (result instanceof StepperBlockStatement) {
-      const blockStatement = lambda.body as unknown as StepperBlockStatement;
-      if (blockStatement.body.length === 0) {
-        result = new StepperBlockExpression([]);
+    let result: StepperBlockExpression | StepperExpression = lambda.body
 
-      } else if (blockStatement.body[0].type === "ReturnStatement") {
+    if (result instanceof StepperBlockStatement) {
+      const blockStatement = lambda.body as unknown as StepperBlockStatement
+      if (blockStatement.body.length === 0) {
+        result = new StepperBlockExpression([])
+      } else if (blockStatement.body[0].type === 'ReturnStatement') {
         // (x => {return 2 + 3;})(3) -> 2 + 3;
-        result = (blockStatement.body[0] as StepperReturnStatement).argument!;
+        result = (blockStatement.body[0] as StepperReturnStatement).argument!
       } else {
-        result = new StepperBlockExpression(
-          blockStatement.body
-        );
+        result = new StepperBlockExpression(blockStatement.body)
       }
     } else {
-      result = lambda.body as StepperExpression;
+      result = lambda.body as StepperExpression
     }
-    if (lambda.name && !(this.callee.scanAllDeclarationNames().includes(lambda.name))) {
-      result = result.substitute({ type: 'Identifier', name: lambda.name } as StepperPattern, lambda)
+    if (lambda.name && !this.callee.scanAllDeclarationNames().includes(lambda.name)) {
+      result = result.substitute(
+        { type: 'Identifier', name: lambda.name } as StepperPattern,
+        lambda
+      )
     }
-    
+
     lambda.params.forEach((param, i) => {
       result = result.substitute(param as StepperPattern, args[i])
     })
@@ -132,9 +143,9 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
   oneStep(): StepperExpression {
     if (this.isContractible()) {
       // @ts-ignore: contract can return StepperBlockExpression but it's handled at runtime
-      return this.contract();
+      return this.contract()
     }
-    
+
     if (this.callee.isOneStepPossible()) {
       return new StepperFunctionApplication(
         this.callee.oneStep(),
@@ -152,7 +163,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
         const newArgs = [...this.arguments]
         newArgs[i] = this.arguments[i].oneStep()
         return new StepperFunctionApplication(
-          this.callee, 
+          this.callee,
           newArgs,
           this.optional,
           this.leadingComments,
@@ -163,7 +174,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
       }
     }
 
-    throw new Error("No one step possible")
+    throw new Error('No one step possible')
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
@@ -179,17 +190,15 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
   }
 
   freeNames(): string[] {
-    return Array.from(new Set([
-      ...this.callee.freeNames(),
-      ...this.arguments.flatMap(arg => arg.freeNames())
-    ]))
+    return Array.from(
+      new Set([...this.callee.freeNames(), ...this.arguments.flatMap(arg => arg.freeNames())])
+    )
   }
 
   allNames(): string[] {
-    return Array.from(new Set([
-      ...this.callee.allNames(),
-      ...this.arguments.flatMap(arg => arg.allNames())
-    ]))
+    return Array.from(
+      new Set([...this.callee.allNames(), ...this.arguments.flatMap(arg => arg.allNames())])
+    )
   }
 
   rename(before: string, after: string): StepperExpression {

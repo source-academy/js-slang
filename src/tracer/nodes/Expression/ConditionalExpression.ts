@@ -21,7 +21,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number],
+    range?: [number, number]
   ) {
     this.type = 'ConditionalExpression'
     this.test = test
@@ -49,15 +49,18 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
     if (this.test.type !== 'Literal') return false
     const test_value = this.test.value
     if (typeof test_value !== 'boolean') {
-      throw new Error(`Line ${this.loc?.start.line || 0}: Expected boolean as condition, got ${typeof test_value}.`);
+      throw new Error(
+        `Line ${
+          this.loc?.start.line || 0
+        }: Expected boolean as condition, got ${typeof test_value}.`
+      )
     }
-    redex.preRedex = [this];
+    redex.preRedex = [this]
     return true
   }
 
   isOneStepPossible(): boolean {
-    return this.isContractible() || 
-           this.test.isOneStepPossible()
+    return this.isContractible() || this.test.isOneStepPossible()
   }
 
   contract(): StepperExpression {
@@ -77,13 +80,13 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
     }
 
     return new StepperConditionalExpression(
-        this.test.oneStep(),
-        this.consequent,
-        this.alternate,
-        this.leadingComments,
-        this.trailingComments,
-        this.loc,
-        this.range
+      this.test.oneStep(),
+      this.consequent,
+      this.alternate,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
     )
   }
 
@@ -100,19 +103,23 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
   }
 
   freeNames(): string[] {
-    return Array.from(new Set([
-      ...this.test.freeNames(),
-      ...this.consequent.freeNames(),
-      ...this.alternate.freeNames()
-    ]))
+    return Array.from(
+      new Set([
+        ...this.test.freeNames(),
+        ...this.consequent.freeNames(),
+        ...this.alternate.freeNames()
+      ])
+    )
   }
 
   allNames(): string[] {
-    return Array.from(new Set([
-      ...this.test.allNames(),
-      ...this.consequent.allNames(),
-      ...this.alternate.allNames()
-    ]))
+    return Array.from(
+      new Set([
+        ...this.test.allNames(),
+        ...this.consequent.allNames(),
+        ...this.alternate.allNames()
+      ])
+    )
   }
 
   rename(before: string, after: string): StepperExpression {

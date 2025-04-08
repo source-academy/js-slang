@@ -1,15 +1,13 @@
 import { Comment, Program, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../interface'
 import { convert } from '../generator'
-import { StepperStatement } from './Statement'
-import { StepperExpression, StepperPattern, undefinedNode } from '.'
 
-import {
-  StepperVariableDeclaration
-} from './Statement/VariableDeclaration'
 import { redex } from '..'
 import { assignMuTerms } from '../utils'
+import { StepperVariableDeclaration } from './Statement/VariableDeclaration'
+import { StepperStatement } from './Statement'
 import { StepperFunctionDeclaration } from './Statement/FunctionDeclaration'
+import { StepperExpression, StepperPattern, undefinedNode } from '.'
 
 export class StepperProgram implements Program, StepperBaseNode {
   type: 'Program'
@@ -22,96 +20,129 @@ export class StepperProgram implements Program, StepperBaseNode {
   range?: [number, number] | undefined
 
   isContractible(): boolean {
-    return false;
+    return false
   }
 
   isOneStepPossible(): boolean {
     return this.body.length === 0
-      ? false  // unlike BlockStatement 
-      : this.body[0].isOneStepPossible() 
-      || this.body.length >= 2 
-      || (this.body.length == 1 && 
-        (this.body[0].type == "VariableDeclaration" || this.body[0].type == "FunctionDeclaration"))
+      ? false // unlike BlockStatement
+      : this.body[0].isOneStepPossible() ||
+          this.body.length >= 2 ||
+          (this.body.length == 1 &&
+            (this.body[0].type == 'VariableDeclaration' ||
+              this.body[0].type == 'FunctionDeclaration'))
   }
 
-  contract(): StepperProgram  {
-    throw new Error("not implemented");
+  contract(): StepperProgram {
+    throw new Error('not implemented')
   }
 
   oneStep(): StepperProgram {
     // reduce the first statement
     if (this.body[0].isOneStepPossible()) {
-        const firstStatementOneStep = this.body[0].oneStep()
-        const afterSubstitutedScope = this.body.slice(1);
-        if (firstStatementOneStep === undefinedNode) {
-          return new StepperProgram([afterSubstitutedScope].flat())
-        }
-        return new StepperProgram(
-          [firstStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
-        )
+      const firstStatementOneStep = this.body[0].oneStep()
+      const afterSubstitutedScope = this.body.slice(1)
+      if (firstStatementOneStep === undefinedNode) {
+        return new StepperProgram([afterSubstitutedScope].flat())
+      }
+      return new StepperProgram(
+        [firstStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
+      )
     }
 
     // If the first statement is constant declaration, gracefully handle it!
-    if (this.body[0].type == "VariableDeclaration") {
-      const declarations = assignMuTerms(this.body[0].declarations); // for arrow function expression
-      const afterSubstitutedScope = this.body.slice(1).map(
-        (current) => declarations.filter(declarator => declarator.init).reduce(
-        (statement, declarator) => statement.substitute(declarator.id, declarator.init!) as StepperStatement, current
-      )) as StepperStatement[];
-      const substitutedProgram  = new StepperProgram(afterSubstitutedScope);
-      redex.preRedex = [this.body[0]];
-      redex.postRedex = afterSubstitutedScope;
-      return substitutedProgram;
+    if (this.body[0].type == 'VariableDeclaration') {
+      const declarations = assignMuTerms(this.body[0].declarations) // for arrow function expression
+      const afterSubstitutedScope = this.body
+        .slice(1)
+        .map(current =>
+          declarations
+            .filter(declarator => declarator.init)
+            .reduce(
+              (statement, declarator) =>
+                statement.substitute(declarator.id, declarator.init!) as StepperStatement,
+              current
+            )
+        ) as StepperStatement[]
+      const substitutedProgram = new StepperProgram(afterSubstitutedScope)
+      redex.preRedex = [this.body[0]]
+      redex.postRedex = afterSubstitutedScope
+      return substitutedProgram
     }
 
     // If the first statement is function declaration, also gracefully handle it!
-    if (this.body[0].type == "FunctionDeclaration") {
-      const arrowFunction = (this.body[0] as StepperFunctionDeclaration).getArrowFunctionExpression();
-      const functionIdentifier = (this.body[0] as StepperFunctionDeclaration).id;
-      const afterSubstitutedScope = this.body.slice(1)
-        .map(statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement) as StepperStatement[];
-      const substitutedProgram  = new StepperProgram(afterSubstitutedScope);
-      redex.preRedex = [this.body[0]];
-      redex.postRedex = afterSubstitutedScope;
-      return substitutedProgram;
+    if (this.body[0].type == 'FunctionDeclaration') {
+      const arrowFunction = (
+        this.body[0] as StepperFunctionDeclaration
+      ).getArrowFunctionExpression()
+      const functionIdentifier = (this.body[0] as StepperFunctionDeclaration).id
+      const afterSubstitutedScope = this.body
+        .slice(1)
+        .map(
+          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
+        ) as StepperStatement[]
+      const substitutedProgram = new StepperProgram(afterSubstitutedScope)
+      redex.preRedex = [this.body[0]]
+      redex.postRedex = afterSubstitutedScope
+      return substitutedProgram
     }
 
-    const firstValueStatement = this.body[0];
+    const firstValueStatement = this.body[0]
     // After this stage, the first statement is a value statement. Now, proceed until getting the second value statement.
     if (this.body.length >= 2 && this.body[1].isOneStepPossible()) {
-        const secondStatementOneStep = this.body[1].oneStep()
-        const afterSubstitutedScope = this.body.slice(2);
-        if (secondStatementOneStep === undefinedNode) {
-          return new StepperProgram([firstValueStatement, afterSubstitutedScope].flat())
-        }
-        return new StepperProgram(
-          [firstValueStatement, secondStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
-        ) 
+      const secondStatementOneStep = this.body[1].oneStep()
+      const afterSubstitutedScope = this.body.slice(2)
+      if (secondStatementOneStep === undefinedNode) {
+        return new StepperProgram([firstValueStatement, afterSubstitutedScope].flat())
+      }
+      return new StepperProgram(
+        [
+          firstValueStatement,
+          secondStatementOneStep as StepperStatement,
+          afterSubstitutedScope
+        ].flat()
+      )
     }
 
     // If the second statement is constant declaration, gracefully handle it!
-    if (this.body.length >= 2 && this.body[1].type == "VariableDeclaration") {
-      const declarations = assignMuTerms(this.body[1].declarations);
-      const afterSubstitutedScope = this.body.slice(2).map(
-        (current) => declarations.filter(declarator => declarator.init).reduce(
-        (statement, declarator) => statement.substitute(declarator.id, declarator.init!) as StepperStatement, current
-      )) as StepperStatement[];
-      const substitutedProgram  = new StepperProgram([firstValueStatement, afterSubstitutedScope].flat());
-      redex.preRedex = [this.body[1]];
-      redex.postRedex = declarations.map(x => x.id);
-      return substitutedProgram;
+    if (this.body.length >= 2 && this.body[1].type == 'VariableDeclaration') {
+      const declarations = assignMuTerms(this.body[1].declarations)
+      const afterSubstitutedScope = this.body
+        .slice(2)
+        .map(current =>
+          declarations
+            .filter(declarator => declarator.init)
+            .reduce(
+              (statement, declarator) =>
+                statement.substitute(declarator.id, declarator.init!) as StepperStatement,
+              current
+            )
+        ) as StepperStatement[]
+      const substitutedProgram = new StepperProgram(
+        [firstValueStatement, afterSubstitutedScope].flat()
+      )
+      redex.preRedex = [this.body[1]]
+      redex.postRedex = declarations.map(x => x.id)
+      return substitutedProgram
     }
-    
+
     // If the second statement is function declaration, also gracefully handle it!
-    if (this.body.length >= 2 && this.body[1].type == "FunctionDeclaration") {
-      const arrowFunction = (this.body[1] as StepperFunctionDeclaration).getArrowFunctionExpression();
-      const functionIdentifier = (this.body[1] as StepperFunctionDeclaration).id;
-      const afterSubstitutedScope = this.body.slice(2)
-        .map(statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement) as StepperStatement[];
-      const substitutedProgram  = new StepperProgram([firstValueStatement, afterSubstitutedScope].flat());
-      redex.preRedex = [this.body[1]];
-      redex.postRedex = afterSubstitutedScope;
-      return substitutedProgram;
+    if (this.body.length >= 2 && this.body[1].type == 'FunctionDeclaration') {
+      const arrowFunction = (
+        this.body[1] as StepperFunctionDeclaration
+      ).getArrowFunctionExpression()
+      const functionIdentifier = (this.body[1] as StepperFunctionDeclaration).id
+      const afterSubstitutedScope = this.body
+        .slice(2)
+        .map(
+          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
+        ) as StepperStatement[]
+      const substitutedProgram = new StepperProgram(
+        [firstValueStatement, afterSubstitutedScope].flat()
+      )
+      redex.preRedex = [this.body[1]]
+      redex.postRedex = afterSubstitutedScope
+      return substitutedProgram
     }
 
     this.body[0].contractEmpty() // update the contracted statement onto redex
@@ -158,9 +189,10 @@ export class StepperProgram implements Program, StepperBaseNode {
       .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
       .flatMap((ast: StepperVariableDeclaration | StepperFunctionDeclaration) => {
         if (ast.type === 'VariableDeclaration') {
-          return ast.declarations.map(ast => ast.id.name);
-        } else { // Function Declaration
-          return [(ast as StepperFunctionDeclaration).id.name];
+          return ast.declarations.map(ast => ast.id.name)
+        } else {
+          // Function Declaration
+          return [(ast as StepperFunctionDeclaration).id.name]
         }
       })
   }
@@ -172,7 +204,7 @@ export class StepperProgram implements Program, StepperBaseNode {
   }
 
   allNames(): string[] {
-     return Array.from(new Set(this.body.flatMap((ast) => ast.allNames())));
+    return Array.from(new Set(this.body.flatMap(ast => ast.allNames())))
   }
 
   rename(before: string, after: string): StepperProgram {

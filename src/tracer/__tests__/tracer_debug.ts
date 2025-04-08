@@ -1,7 +1,7 @@
 import { parse } from 'acorn'
+import * as astring from 'astring'
 import { getSteps } from '../steppers'
 import { convert } from '../generator'
-import * as astring from 'astring'
 import { StepperBaseNode } from '../interface'
 import { IStepperPropContents } from '..'
 
@@ -107,7 +107,6 @@ function h(f, x) {
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n\n'))
 })
-
 
 // TODO: Check for -Infinity
 test('general', () => {

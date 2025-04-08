@@ -53,11 +53,11 @@ const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {
   VariableDeclarator: (node: es.VariableDeclarator) => StepperVariableDeclarator.create(node),
   Identifier: (node: es.Identifier) => {
     if (node.name === 'NaN') {
-      return new StepperLiteral(NaN, 'NaN');
+      return new StepperLiteral(NaN, 'NaN')
     } else if (node.name === 'Infinity') {
-      return new StepperLiteral(Infinity, 'Infinity');
+      return new StepperLiteral(Infinity, 'Infinity')
     } else {
-      return StepperIdentifier.create(node);
+      return StepperIdentifier.create(node)
     }
   },
   BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node),
@@ -132,7 +132,7 @@ export function explain(redex: StepperBaseNode): string {
     },
     BlockStatement: (node: StepperBlockStatement) => {
       if (node.body.length === 0) {
-        return "Empty block expression evaluated"
+        return 'Empty block expression evaluated'
       }
       return generate(node.body[0]) + ' finished evaluating'
     },

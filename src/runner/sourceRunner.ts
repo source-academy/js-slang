@@ -24,10 +24,10 @@ import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
 import type { FileGetter } from '../modules/moduleTypes'
 import { mapResult } from '../alt-langs/mapper'
+import { getSteps } from '../tracer/steppers'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
-import { getSteps } from '../tracer/steppers'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   scheduler: 'async',

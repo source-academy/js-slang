@@ -1,7 +1,7 @@
 import * as acorn from 'acorn'
+import * as astring from 'astring'
 import { getSteps } from '../steppers'
 import { convert } from '../generator'
-import * as astring from 'astring'
 import { StepperBaseNode } from '../interface'
 import { StepperProgram } from '../nodes/Program'
 import { StepperExpressionStatement } from '../nodes/Statement/ExpressionStatement'
@@ -36,7 +36,7 @@ function codify(node: StepperBaseNode) {
 }
 
 function acornParser(code: string): StepperBaseNode {
-  return convert(acorn.parse(code, { ecmaVersion: 10, locations: true  }))
+  return convert(acorn.parse(code, { ecmaVersion: 10, locations: true }))
 }
 
 describe('Expressions', () => {
@@ -601,13 +601,13 @@ describe('Misc', () => {
     const steps = await codify(acornParser(code))
     expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
   }),
-  test('arity', async () => {
-    const code = `
+    test('arity', async () => {
+      const code = `
         arity(is_function) === arity(arity);
       `
-    const steps = await codify(acornParser(code))
-    expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
-  })
+      const steps = await codify(acornParser(code))
+      expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
+    })
 })
 
 describe('List operations', () => {
@@ -853,7 +853,9 @@ describe(`#1109: Empty function bodies don't break execution`, () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-    expect(steps[steps.length - 1]).toEqual('"Gets returned by normal run";\n[noMarker] Evaluation complete\n')
+    expect(steps[steps.length - 1]).toEqual(
+      '"Gets returned by normal run";\n[noMarker] Evaluation complete\n'
+    )
   })
 
   test('Constant declaration of lambda', async () => {
@@ -865,10 +867,11 @@ describe(`#1109: Empty function bodies don't break execution`, () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-    expect(steps[steps.length - 1]).toEqual('"Gets returned by normal run";\n[noMarker] Evaluation complete\n')
+    expect(steps[steps.length - 1]).toEqual(
+      '"Gets returned by normal run";\n[noMarker] Evaluation complete\n'
+    )
   })
 })
-
 
 describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
   test('Program steps equal to Stepper limit', async () => {
@@ -882,7 +885,9 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
       `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-    expect(steps[steps.length - 1]).toEqual('9.33262154439441e+157;\n[noMarker] Evaluation complete\n')
+    expect(steps[steps.length - 1]).toEqual(
+      '9.33262154439441e+157;\n[noMarker] Evaluation complete\n'
+    )
   })
 })
 
@@ -1466,7 +1471,7 @@ describe('Test correct evaluation sequence when first statement is a value', () 
   })
 })
 // Other tests
-test("Church numerals", async () => {
+test('Church numerals', async () => {
   const code = `
   const one = f => x => f(x);
   const inc = a => f => x => f(a(f)(x));
@@ -1477,9 +1482,9 @@ test("Church numerals", async () => {
   const steps = await codify(acornParser(code))
   expect(steps.join('\n')).toMatchSnapshot()
   expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
-});
+})
 
-test("steps appear as if capturing happens #1714", async () => {
+test('steps appear as if capturing happens #1714', async () => {
   const code = `
   function h(f, x) {
     function h(g, x) {
@@ -1492,9 +1497,9 @@ test("steps appear as if capturing happens #1714", async () => {
   const steps = await codify(acornParser(code))
   expect(steps.join('\n')).toMatchSnapshot()
   expect(steps[steps.length - 1]).toEqual('36;\n[noMarker] Evaluation complete\n')
-});
+})
 
-describe("Error handling on calling functions", () => {
+describe('Error handling on calling functions', () => {
   test('Literal function should error', async () => {
     const code = `
     1(2);
@@ -1504,7 +1509,7 @@ describe("Error handling on calling functions", () => {
     expect(steps[steps.length - 1]).toEqual('(1)(2);\n[noMarker] Evaluation stuck\n')
   })
   test('Literal function should error 2', async () => {
-      const code = `
+    const code = `
       (1 * 3)(2 * 3 + 10);
       `
     const steps = await codify(acornParser(code))
@@ -1532,9 +1537,11 @@ describe("Error handling on calling functions", () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-    expect(steps[steps.length - 1]).toEqual('(a => { return a;})(1, 2, 3);\n[noMarker] Evaluation stuck\n')
+    expect(steps[steps.length - 1]).toEqual(
+      '(a => { return a;})(1, 2, 3);\n[noMarker] Evaluation stuck\n'
+    )
   })
-});
+})
 
 describe('Test runtime errors', () => {
   test('Variable used before assigning in program', async () => {
@@ -1544,7 +1551,7 @@ describe('Test runtime errors', () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+    expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
 
   test('Variable used before assigning in functions', async () => {
@@ -1557,7 +1564,7 @@ describe('Test runtime errors', () => {
       `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+    expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
 
   test('Incompatible types operation', async () => {
@@ -1566,7 +1573,7 @@ describe('Test runtime errors', () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+    expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
 })
 
@@ -1577,7 +1584,7 @@ describe('Test catching errors from built in function', () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+    expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
 
   test('Incorrect type of arguments for module function', async () => {
@@ -1586,14 +1593,14 @@ describe('Test catching errors from built in function', () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+    expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
 
   test('Incorrect number of arguments', async () => {
     const code = `pair(2);`
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+    expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
 })
 

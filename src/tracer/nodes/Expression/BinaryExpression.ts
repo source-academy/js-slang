@@ -1,9 +1,9 @@
 import { BinaryExpression, BinaryOperator, Comment, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { redex } from '../..'
-import { StepperLiteral } from './Literal'
 import { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
+import { StepperLiteral } from './Literal'
 export class StepperBinaryExpression implements BinaryExpression, StepperBaseNode {
   type: 'BinaryExpression'
   operator: BinaryOperator
@@ -21,7 +21,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number],
+    range?: [number, number]
   ) {
     this.type = 'BinaryExpression'
     this.operator = operator
@@ -47,48 +47,68 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
 
   isContractible(): boolean {
     if (this.left.type !== 'Literal' || this.right.type !== 'Literal') {
-      return false;
+      return false
     }
-    
-    const leftType = typeof this.left.value;
-    const rightType = typeof this.right.value;
-    
+
+    const leftType = typeof this.left.value
+    const rightType = typeof this.right.value
+
     const markContractible = () => {
-      redex.preRedex = [this];
-      return true;
-    };
+      redex.preRedex = [this]
+      return true
+    }
 
     if (leftType === 'boolean') {
-      throw new Error(`Line ${this.loc?.start.line || 0}: Expected number or string on left hand side of operation, got ${leftType}.`);
+      throw new Error(
+        `Line ${
+          this.loc?.start.line || 0
+        }: Expected number or string on left hand side of operation, got ${leftType}.`
+      )
     }
 
     if (leftType === 'string' && rightType === 'string') {
       if (['+', '===', '!==', '<', '>', '<=', '>='].includes(this.operator)) {
-        return markContractible();
+        return markContractible()
       } else {
-        throw new Error(`Line ${this.loc?.start.line || 0}: Expected number on left hand side of operation, got ${leftType}.`);
+        throw new Error(
+          `Line ${
+            this.loc?.start.line || 0
+          }: Expected number on left hand side of operation, got ${leftType}.`
+        )
       }
     }
 
     if (leftType === 'string') {
       if (['+', '===', '!==', '<', '>', '<=', '>='].includes(this.operator)) {
-        throw new Error(`Line ${this.loc?.start.line || 0}: Expected string on right hand side of operation, got ${rightType}.`);
+        throw new Error(
+          `Line ${
+            this.loc?.start.line || 0
+          }: Expected string on right hand side of operation, got ${rightType}.`
+        )
       } else {
-        throw new Error(`Line ${this.loc?.start.line || 0}: Expected number on left hand side of operation, got ${leftType}.`);
+        throw new Error(
+          `Line ${
+            this.loc?.start.line || 0
+          }: Expected number on left hand side of operation, got ${leftType}.`
+        )
       }
     }
-    
+
     if (leftType === 'number' && rightType === 'number') {
       if (['*', '+', '/', '-', '===', '!==', '<', '>', '<=', '>=', '%'].includes(this.operator)) {
-        return markContractible();
+        return markContractible()
       }
     }
 
     if (leftType === 'number') {
-      throw new Error(`Line ${this.loc?.start.line || 0}: Expected number on right hand side of operation, got ${rightType}.`);
+      throw new Error(
+        `Line ${
+          this.loc?.start.line || 0
+        }: Expected number on right hand side of operation, got ${rightType}.`
+      )
     }
-    
-    return false;
+
+    return false
   }
 
   isOneStepPossible(): boolean {
@@ -133,7 +153,14 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
         ? left! >= right!
         : left! > right!
 
-    let ret = new StepperLiteral(value, value !== null ? value.toString() : "null", undefined, undefined, this.loc, this.range)
+    let ret = new StepperLiteral(
+      value,
+      value !== null ? value.toString() : 'null',
+      undefined,
+      undefined,
+      this.loc,
+      this.range
+    )
     redex.postRedex = [ret]
     return ret
   }
@@ -147,31 +174,34 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
-      return new StepperBinaryExpression(
-        this.operator, 
-        this.left.substitute(id, value), 
-        this.right.substitute(id, value),
-        this.leadingComments,
-        this.trailingComments,
-        this.loc,
-        this.range
-      )
+    return new StepperBinaryExpression(
+      this.operator,
+      this.left.substitute(id, value),
+      this.right.substitute(id, value),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
+    )
   }
 
   freeNames(): string[] {
-    return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()));
+    return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()))
   }
 
   allNames(): string[] {
-    return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()));
+    return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()))
   }
 
-  rename(before: string, after: string): StepperExpression  {
-    return new StepperBinaryExpression(this.operator, 
-        this.left.rename(before, after), this.right.rename(before, after),
-        this.leadingComments,
-        this.trailingComments,
-        this.loc,
-        this.range);
+  rename(before: string, after: string): StepperExpression {
+    return new StepperBinaryExpression(
+      this.operator,
+      this.left.rename(before, after),
+      this.right.rename(before, after),
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range
+    )
   }
 }

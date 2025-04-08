@@ -1,31 +1,33 @@
 import { Comment, IfStatement, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { StepperExpression, StepperPattern, undefinedNode } from '..'
-import { StepperStatement } from '.'
 import { convert } from '../../generator'
 import { redex } from '../..'
 import { StepperLiteral } from '../Expression/Literal'
 import { StepperBlockStatement } from './BlockStatement'
 import { StepperExpressionStatement } from './ExpressionStatement'
+import { StepperStatement } from '.'
 
 export class StepperIfStatement implements IfStatement, StepperBaseNode {
   type: 'IfStatement'
   test: StepperExpression
   consequent: StepperStatement
   alternate: StepperStatement | null
-  
+
   leadingComments?: Comment[] | undefined
   trailingComments?: Comment[] | undefined
   loc?: SourceLocation | null | undefined
   range?: [number, number] | undefined
 
-  constructor(test: StepperExpression,
-     consequent: StepperStatement,
-      alternate: StepperStatement | null,
-       leadingComments?: Comment[] | undefined,
-        trailingComments?: Comment[] | undefined,
-         loc?: SourceLocation | null | undefined,
-          range?: [number, number] | undefined) {
+  constructor(
+    test: StepperExpression,
+    consequent: StepperStatement,
+    alternate: StepperStatement | null,
+    leadingComments?: Comment[] | undefined,
+    trailingComments?: Comment[] | undefined,
+    loc?: SourceLocation | null | undefined,
+    range?: [number, number] | undefined
+  ) {
     this.type = 'IfStatement'
     this.test = test
     this.consequent = consequent
@@ -35,13 +37,12 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     this.loc = loc
     this.range = range
   }
-  
 
   static create(node: IfStatement) {
     return new StepperIfStatement(
       convert(node.test) as StepperExpression,
       convert(node.consequent) as StepperBlockStatement,
-      node.alternate ? convert(node.alternate) as StepperBlockStatement : null,
+      node.alternate ? (convert(node.alternate) as StepperBlockStatement) : null,
       node.leadingComments,
       node.trailingComments,
       node.loc,
@@ -59,20 +60,23 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     }
 
     redex.preRedex = [this]
-    const result = this.test.value ? this.consequent : (this.alternate || undefinedNode)
-    
+    const result = this.test.value ? this.consequent : this.alternate || undefinedNode
+
     if (result instanceof StepperBlockStatement) {
-        redex.postRedex = [result]
-        return new StepperBlockStatement(
-          [new StepperExpressionStatement(undefinedNode, undefined, undefined, this.loc, this.range), ...result.body],
-          result.innerComments,
-          this.leadingComments,
-          this.trailingComments,
-          this.loc,
-          this.range
-        )
+      redex.postRedex = [result]
+      return new StepperBlockStatement(
+        [
+          new StepperExpressionStatement(undefinedNode, undefined, undefined, this.loc, this.range),
+          ...result.body
+        ],
+        result.innerComments,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range
+      )
     } else {
-        throw new Error('Cannot contract to non-block statement')
+      throw new Error('Cannot contract to non-block statement')
     }
   }
 
@@ -86,7 +90,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     }
 
     if (this.isContractible()) {
-        return this.contract()
+      return this.contract()
     }
 
     return new StepperIfStatement(
@@ -104,7 +108,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     return new StepperIfStatement(
       this.test.substitute(id, value) as StepperExpression,
       this.consequent.substitute(id, value) as StepperStatement,
-      this.alternate ? this.alternate.substitute(id, value) as StepperStatement : null,
+      this.alternate ? (this.alternate.substitute(id, value) as StepperStatement) : null,
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -139,7 +143,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     return new StepperIfStatement(
       this.test.rename(before, after) as StepperExpression,
       this.consequent.rename(before, after) as StepperStatement,
-      this.alternate ? this.alternate.rename(before, after) as StepperStatement : null,
+      this.alternate ? (this.alternate.rename(before, after) as StepperStatement) : null,
       this.leadingComments,
       this.trailingComments,
       this.loc,

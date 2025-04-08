@@ -1,12 +1,12 @@
 import { Comment, FunctionDeclaration, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { StepperIdentifier } from '../Expression/Identifier'
-import { StepperBlockStatement } from './BlockStatement'
 import { StepperExpression, StepperPattern, undefinedNode } from '..'
 import { convert } from '../../generator'
 import { redex } from '../..'
 import { StepperArrowFunctionExpression } from '../Expression/ArrowFunctionExpression'
 import { getFreshName } from '../../utils'
+import { StepperBlockStatement } from './BlockStatement'
 import { StepperVariableDeclaration } from './VariableDeclaration'
 
 export class StepperFunctionDeclaration implements FunctionDeclaration, StepperBaseNode {
@@ -42,7 +42,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     this.loc = loc
     this.range = range
 
-  /*    
+    /*    
     const repeatedNames = body.scanAllDeclarationNames().filter(name => name === this.id.name);
     const newNames = getFreshName([this.id.name], repeatedNames)
     let currentBlockStatement = body
@@ -50,7 +50,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       currentBlockStatement = currentBlockStatement.rename(repeatedNames[index], newNames[index])
     }
   */
-    this.body = body;
+    this.body = body
   }
   static create(node: FunctionDeclaration) {
     return new StepperFunctionDeclaration(

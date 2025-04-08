@@ -23,12 +23,13 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   loc?: SourceLocation | null
   range?: [number, number]
 
-  constructor(value: string | number | boolean | null,
+  constructor(
+    value: string | number | boolean | null,
     raw?: string,
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number],
+    range?: [number, number]
   ) {
     this.type = 'Literal'
     this.value = value
@@ -40,7 +41,14 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   }
 
   static create(literal: SimpleLiteral) {
-    return new StepperLiteral(literal.value, literal.raw, literal.leadingComments, literal.trailingComments, literal.loc, literal.range)
+    return new StepperLiteral(
+      literal.value,
+      literal.raw,
+      literal.leadingComments,
+      literal.trailingComments,
+      literal.loc,
+      literal.range
+    )
   }
 
   isContractible(): boolean {
@@ -60,15 +68,15 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperLiteral {
-      return this;
+    return this
   }
 
   freeNames(): string[] {
-    return [];
+    return []
   }
 
   allNames(): string[] {
-    return [];
+    return []
   }
 
   rename(before: string, after: string): StepperExpression {
@@ -79,6 +87,6 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
       this.trailingComments,
       this.loc,
       this.range
-    );
+    )
   }
 }

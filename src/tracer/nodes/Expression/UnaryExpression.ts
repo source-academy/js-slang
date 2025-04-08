@@ -1,9 +1,9 @@
 import { Comment, Literal, SourceLocation, UnaryExpression, UnaryOperator } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { redex } from '../..'
-import { StepperLiteral } from './Literal'
 import { convert } from '../../generator'
 import { StepperExpression, StepperPattern } from '..'
+import { StepperLiteral } from './Literal'
 
 export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode {
   type: 'UnaryExpression'
@@ -35,10 +35,11 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
 
   static createLiteral(node: StepperUnaryExpression | UnaryExpression): StepperLiteral | undefined {
     // if node argument is positive literal(x) and node operator is "-", we replace them with literal(-x) instead.
-    if (node.operator === '-' 
-      && node.argument.type === "Literal"
-      && typeof (node.argument as Literal).value === "number"
-      && (node.argument as Literal).value as number > 0
+    if (
+      node.operator === '-' &&
+      node.argument.type === 'Literal' &&
+      typeof (node.argument as Literal).value === 'number' &&
+      ((node.argument as Literal).value as number) > 0
     ) {
       return new StepperLiteral(
         -((node.argument as Literal).value as number),
@@ -47,15 +48,15 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
         node.trailingComments,
         node.loc,
         node.range
-      );
+      )
     }
-    return undefined;
+    return undefined
   }
 
   static create(node: UnaryExpression) {
-    const literal = StepperUnaryExpression.createLiteral(node);
+    const literal = StepperUnaryExpression.createLiteral(node)
     if (literal) {
-      return literal;
+      return literal
     }
     return new StepperUnaryExpression(
       node.operator,
@@ -70,27 +71,27 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
   isContractible(): boolean {
     if (this.argument.type !== 'Literal') return false
 
-    const valueType = typeof this.argument.value;
+    const valueType = typeof this.argument.value
     const markContractible = () => {
-      redex.preRedex = [this];
-      return true;
-    };
+      redex.preRedex = [this]
+      return true
+    }
 
     switch (this.operator) {
       case '!':
         if (valueType === 'boolean') {
-          return markContractible();
+          return markContractible()
         } else {
-          throw new Error(`Line ${this.loc?.start.line || 0}: Expected boolean, got ${valueType}.`);
+          throw new Error(`Line ${this.loc?.start.line || 0}: Expected boolean, got ${valueType}.`)
         }
       case '-':
         if (valueType === 'number') {
-          return markContractible();
+          return markContractible()
         } else {
-          throw new Error(`Line ${this.loc?.start.line || 0}: Expected number, got ${valueType}.`);
+          throw new Error(`Line ${this.loc?.start.line || 0}: Expected number, got ${valueType}.`)
         }
       default:
-        return false;
+        return false
     }
   }
 
@@ -141,9 +142,9 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       this.trailingComments,
       this.loc,
       this.range
-    );
-    const literal = StepperUnaryExpression.createLiteral(res);
-    return literal ? literal : res;
+    )
+    const literal = StepperUnaryExpression.createLiteral(res)
+    return literal ? literal : res
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
@@ -155,8 +156,8 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       this.loc,
       this.range
     )
-    const literal = StepperUnaryExpression.createLiteral(res);
-    return literal ? literal : res;
+    const literal = StepperUnaryExpression.createLiteral(res)
+    return literal ? literal : res
   }
 
   freeNames(): string[] {

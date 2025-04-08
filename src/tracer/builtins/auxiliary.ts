@@ -1,8 +1,8 @@
 import { parse } from 'acorn'
+import { ArrowFunctionExpression, ExpressionStatement } from 'estree'
 import { StepperExpression } from '../nodes'
 import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
 import { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication'
-import { ArrowFunctionExpression, ExpressionStatement } from 'estree'
 
 export const auxiliaryBuiltinFunctions = {
   __access_export__: {
@@ -57,5 +57,5 @@ export const auxiliaryBuiltinFunctions = {
       )
     },
     arity: 2
-  },
+  }
 }

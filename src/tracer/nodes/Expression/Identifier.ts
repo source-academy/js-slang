@@ -62,20 +62,22 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
   }
 
   freeNames(): string[] {
-    return [this.name];
+    return [this.name]
   }
 
   allNames(): string[] {
-    return [this.name];
+    return [this.name]
   }
 
   rename(before: string, after: string) {
-    return before === this.name ? new StepperIdentifier(
-      after,
-      this.leadingComments,
-      this.trailingComments,
-      this.loc,
-      this.range
-    ) : this;
+    return before === this.name
+      ? new StepperIdentifier(
+          after,
+          this.leadingComments,
+          this.trailingComments,
+          this.loc,
+          this.range
+        )
+      : this
   }
 }

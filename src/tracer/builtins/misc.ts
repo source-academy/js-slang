@@ -1,9 +1,9 @@
-import { isBuiltinFunction } from '.'
 import { StepperExpression } from '../nodes'
 import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
 import { StepperIdentifier } from '../nodes/Expression/Identifier'
 import { StepperLiteral } from '../nodes/Expression/Literal'
 import { listBuiltinFunctions } from './lists'
+import { isBuiltinFunction } from '.'
 
 export const miscBuiltinFunctions = {
   arity: {
@@ -13,18 +13,23 @@ export const miscBuiltinFunctions = {
       }
 
       if (args[0] instanceof StepperIdentifier) {
-        if (args[0].name.startsWith("math_")) { // Math builtins
-            const func = Math[args[0].name.split("_")[1] as keyof typeof Math];
-            if (typeof func !== "function") {
-                throw new Error("arity expects a function as argument")
-            }
-            return new StepperLiteral(func.length);
-        } 
+        if (args[0].name.startsWith('math_')) {
+          // Math builtins
+          const func = Math[args[0].name.split('_')[1] as keyof typeof Math]
+          if (typeof func !== 'function') {
+            throw new Error('arity expects a function as argument')
+          }
+          return new StepperLiteral(func.length)
+        }
         if (Object.keys(listBuiltinFunctions).includes(args[0].name)) {
-            return new StepperLiteral(listBuiltinFunctions[args[0].name as keyof typeof listBuiltinFunctions].arity);
+          return new StepperLiteral(
+            listBuiltinFunctions[args[0].name as keyof typeof listBuiltinFunctions].arity
+          )
         }
         if (Object.keys(miscBuiltinFunctions).includes(args[0].name)) {
-            return new StepperLiteral(miscBuiltinFunctions[args[0].name as keyof typeof miscBuiltinFunctions].arity);
+          return new StepperLiteral(
+            miscBuiltinFunctions[args[0].name as keyof typeof miscBuiltinFunctions].arity
+          )
         }
       }
       return new StepperLiteral(0)
@@ -67,8 +72,9 @@ export const miscBuiltinFunctions = {
   is_function: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperLiteral(
-        args[0] instanceof StepperArrowFunctionExpression || 
-        (args[0] instanceof StepperIdentifier && isBuiltinFunction((args[0] as StepperIdentifier).name))
+        args[0] instanceof StepperArrowFunctionExpression ||
+          (args[0] instanceof StepperIdentifier &&
+            isBuiltinFunction((args[0] as StepperIdentifier).name))
       )
     },
     arity: 1
