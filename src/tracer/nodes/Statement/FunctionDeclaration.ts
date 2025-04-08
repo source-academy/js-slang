@@ -42,14 +42,15 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     this.loc = loc
     this.range = range
 
-    
+  /*    
     const repeatedNames = body.scanAllDeclarationNames().filter(name => name === this.id.name);
     const newNames = getFreshName([this.id.name], repeatedNames)
     let currentBlockStatement = body
     for (var index in newNames) {
       currentBlockStatement = currentBlockStatement.rename(repeatedNames[index], newNames[index])
     }
-    this.body = currentBlockStatement;
+  */
+    this.body = body;
   }
   static create(node: FunctionDeclaration) {
     return new StepperFunctionDeclaration(

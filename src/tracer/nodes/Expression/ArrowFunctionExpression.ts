@@ -4,7 +4,6 @@ import { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
 import { getFreshName } from '../../utils'
 import { StepperBlockStatement } from '../Statement/BlockStatement'
-import { StepperBlockExpression } from './BlockExpression'
 
 export class StepperArrowFunctionExpression implements ArrowFunctionExpression, StepperBaseNode {
   type: 'ArrowFunctionExpression'
@@ -41,23 +40,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     this.trailingComments = trailingComments
     this.loc = loc
     this.range = range
-
-    // check whether the declarations will not collide with this.name
-    // @ts-expect-error By nature of estree, block expression is a statement. 
-    if (body.type === "BlockStatement" && this.name !== undefined) {
-      const repeatedNames = (body as StepperBlockExpression).scanAllDeclarationNames()
-                              .filter(name => name === this.name);
-      const newNames = getFreshName([this.name], repeatedNames);
-      let currentBlockExpression: StepperBlockExpression = body;
-      for (var index in newNames) {
-        currentBlockExpression = currentBlockExpression
-          .rename(repeatedNames[index], newNames[index]) as StepperBlockExpression
-      }
-      // @ts-expect-error By nature of estree, block expression is a statement.
-      this.body = currentBlockExpression;
-    } else {
-      this.body = body;
-    }
+    this.body = body;
   }
 
   static create(node: ArrowFunctionExpression) {
