@@ -28,7 +28,7 @@ function codify(node: StepperBaseNode) {
       }
     }
     const markerAnnotation =
-      prop.markers && prop.markers[0] && prop.markers[0].redexType
+      prop.markers && prop.markers[0] && prop.markers[0].redexType !== undefined
         ? `[${prop.markers[0].redexType}]`
         : '[noMarker]'
     return code + '\n' + markerAnnotation + ' ' + explanation + '\n'
@@ -36,7 +36,7 @@ function codify(node: StepperBaseNode) {
 }
 
 function acornParser(code: string): StepperBaseNode {
-  return convert(acorn.parse(code, { ecmaVersion: 10 }))
+  return convert(acorn.parse(code, { ecmaVersion: 10, locations: true  }))
 }
 
 describe('Expressions', () => {
@@ -1327,7 +1327,144 @@ describe(`Expressions: conditionals`, () => {
   })
 })
 
+describe('Test reducing of empty block into epsilon', () => {
+  test('Empty block in program', async () => {
+    const code = `
+    3;
+    {}
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
 
+  test('Empty blocks in block', async () => {
+    const code = `
+    {
+      3;
+      {
+        {}
+        {}
+      }
+    }
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+
+  test('Empty block in function', async () => {
+    const code = `
+    function f() {
+      3;
+      {}
+    }
+    f();
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('undefined;\n[noMarker] Evaluation complete\n')
+  })
+})
+
+describe('Test correct evaluation sequence when first statement is a value', () => {
+  test('Reducible second statement in program', async () => {
+    const code = `
+    "value";
+    const x = 10;
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('"value";\n[noMarker] Evaluation complete\n')
+  })
+
+  test('Irreducible second statement in program', async () => {
+    const code = `
+    'value';
+    'also a value';
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual(`'also a value';\n[noMarker] Evaluation complete\n`)
+  })
+
+  test('Reducible second statement in block', async () => {
+    const code = `
+    {
+      'value';
+      const x = 10;
+    }
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual(`'value';\n[noMarker] Evaluation complete\n`)
+  })
+
+  test('Irreducible second statement in block', async () => {
+    const code = `
+    {
+      'value';
+      'also a value';
+    }
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual(`'also a value';\n[noMarker] Evaluation complete\n`)
+  })
+
+  test('Reducible second statement in function', async () => {
+    const code = `
+    function f () {
+      'value';
+      const x = 10;
+      return 'another value';
+    }
+    f();
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual(`'another value';\n[noMarker] Evaluation complete\n`)
+  })
+
+  test('Irreducible second statement in functions', async () => {
+    const code = `
+    function f () {
+      'value';
+      'also a value';
+      return 'another value';
+    }
+    f();
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual(`'another value';\n[noMarker] Evaluation complete\n`)
+  })
+
+  test('Mix statements', async () => {
+    const code = `
+    'value';
+    const x = 10;
+    function f() {
+      20;
+      function p() {
+        22;
+      }
+    }
+    const z = 30;
+    'also a value';
+    {
+      'another value';
+      const a = 40;
+      a;
+    }
+    'another value';
+    const a = 40;
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual(`'another value';\n[noMarker] Evaluation complete\n`)
+  })
+})
 // Other tests
 test("Church numerals", async () => {
   const code = `
@@ -1356,3 +1493,108 @@ test("steps appear as if capturing happens #1714", async () => {
   expect(steps.join('\n')).toMatchSnapshot()
   expect(steps[steps.length - 1]).toEqual('36;\n[noMarker] Evaluation complete\n')
 });
+
+describe("Error handling on calling functions", () => {
+  test('Literal function should error', async () => {
+    const code = `
+    1(2);
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('(1)(2);\n[noMarker] Evaluation stuck\n')
+  })
+  test('Literal function should error 2', async () => {
+      const code = `
+      (1 * 3)(2 * 3 + 10);
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('(3)(16);\n[noMarker] Evaluation stuck\n')
+  })
+  test('Incorrect number of argument (less)', async () => {
+    const code = `
+    function foo(a) {
+      return a;
+    }
+    foo();
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('(a => { return a;})();\n[noMarker] Evaluation stuck\n')
+  })
+
+  test('Incorrect number of argument (more)', async () => {
+    const code = `
+    function foo(a) {
+      return a;
+    }
+    foo(1, 2, 3);
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('(a => { return a;})(1, 2, 3);\n[noMarker] Evaluation stuck\n')
+  })
+});
+
+describe('Test runtime errors', () => {
+  test('Variable used before assigning in program', async () => {
+    const code = `
+    unassigned_variable;
+    const unassigned_variable = "assigned";
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+  })
+
+  test('Variable used before assigning in functions', async () => {
+    const code = `
+    function foo() {
+      unassigned_variable;
+      const unassigned_variable = "assigned";
+    }
+    foo();
+      `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+  })
+
+  test('Incompatible types operation', async () => {
+    const code = `
+    "1" + 2 * 3;
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+  })
+})
+
+describe('Test catching errors from built in function', () => {
+  test('Incorrect type of argument for math function', async () => {
+    const code = `
+    math_sin(true);
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+  })
+
+  test('Incorrect type of arguments for module function', async () => {
+    const code = `
+   arity("not a function"); 
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+  })
+
+  test('Incorrect number of arguments', async () => {
+    const code = `pair(2);`
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1].includes("Evaluation stuck")).toBe(true);
+  })
+})
+
+// Our new stepper does not handle undeclared variables

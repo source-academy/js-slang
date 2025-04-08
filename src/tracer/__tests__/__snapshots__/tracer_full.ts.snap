@@ -4737,6 +4737,84 @@ true;
 "
 `;
 
+exports[`Error handling on calling functions Incorrect number of argument (less) 1`] = `
+"function foo(a) { return a;}foo();
+[noMarker] Start of evaluation
+
+function foo(a) { return a;}foo();
+[beforeMarker] Function foo declared, parameter(s) a required
+
+(a => { return a;})();
+[afterMarker] Function foo declared, parameter(s) a required
+
+(a => { return a;})();
+[beforeMarker] Line 5: Expected 1 arguments, but got 0.
+
+(a => { return a;})();
+[noMarker] Evaluation stuck
+"
+`;
+
+exports[`Error handling on calling functions Incorrect number of argument (more) 1`] = `
+"function foo(a) { return a;}foo(1, 2, 3);
+[noMarker] Start of evaluation
+
+function foo(a) { return a;}foo(1, 2, 3);
+[beforeMarker] Function foo declared, parameter(s) a required
+
+(a => { return a;})(1, 2, 3);
+[afterMarker] Function foo declared, parameter(s) a required
+
+(a => { return a;})(1, 2, 3);
+[beforeMarker] Line 5: Expected 1 arguments, but got 3.
+
+(a => { return a;})(1, 2, 3);
+[noMarker] Evaluation stuck
+"
+`;
+
+exports[`Error handling on calling functions Literal function should error 1`] = `
+"(1)(2);
+[noMarker] Start of evaluation
+
+(1)(2);
+[beforeMarker] Line 2: Calling non-function value 1
+
+(1)(2);
+[noMarker] Evaluation stuck
+"
+`;
+
+exports[`Error handling on calling functions Literal function should error 2 1`] = `
+"(1 * 3)(2 * 3 + 10);
+[noMarker] Start of evaluation
+
+(1 * 3)(2 * 3 + 10);
+[beforeMarker] Binary expression 1 * 3 evaluated
+
+(3)(2 * 3 + 10);
+[afterMarker] Binary expression 1 * 3 evaluated
+
+(3)(2 * 3 + 10);
+[beforeMarker] Binary expression 2 * 3 evaluated
+
+(3)(6 + 10);
+[afterMarker] Binary expression 2 * 3 evaluated
+
+(3)(6 + 10);
+[beforeMarker] Binary expression 6 + 10 evaluated
+
+(3)(16);
+[afterMarker] Binary expression 6 + 10 evaluated
+
+(3)(16);
+[beforeMarker] Line 2: Calling non-function value 3
+
+(3)(16);
+[noMarker] Evaluation stuck
+"
+`;
+
 exports[`Evaluation of empty code and imports Evaluate empty program 1`] = `
 "
 [noMarker] Start of evaluation
@@ -15524,13 +15602,10 @@ math_pow(2, 20) || NaN;
 [afterMarker] math_pow runs
 
 1048576 || NaN;
-[beforeMarker] OR operation evaluated, left of operator is false, continue evaluating right of operator
+[beforeMarker] Line 2: Expected boolean on left hand side of operation, got number.
 
-true;
-[afterMarker] OR operation evaluated, left of operator is false, continue evaluating right of operator
-
-true;
-[noMarker] Evaluation complete
+1048576 || NaN;
+[noMarker] Evaluation stuck
 "
 `;
 
@@ -15999,6 +16074,51 @@ exports[`Statements: Expression statements Expression-statement-reduce test case
 "
 `;
 
+exports[`Test catching errors from built in function Incorrect number of arguments 1`] = `
+"pair(2);
+[noMarker] Start of evaluation
+
+pair(2);
+[beforeMarker] pair runs
+
+[2, , ];
+[afterMarker] pair runs
+
+[2, , ];
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test catching errors from built in function Incorrect type of argument for math function 1`] = `
+"math_sin(true);
+[noMarker] Start of evaluation
+
+math_sin(true);
+[beforeMarker] math_sin runs
+
+0.8414709848078965;
+[afterMarker] math_sin runs
+
+0.8414709848078965;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test catching errors from built in function Incorrect type of arguments for module function 1`] = `
+"arity(\\"not a function\\");
+[noMarker] Start of evaluation
+
+arity(\\"not a function\\");
+[beforeMarker] arity runs
+
+0;
+[afterMarker] arity runs
+
+0;
+[noMarker] Evaluation complete
+"
+`;
+
 exports[`Test constant declaration substitution 1`] = `
 "const x = -1;x;const y = 2;y;
 [noMarker] Start of evaluation
@@ -16022,6 +16142,372 @@ const x = -1;x;const y = 2;y;
 [afterMarker] -1 finished evaluating
 
 2;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in block 1`] = `
+"{ 'value'; 'also a value';}
+[noMarker] Start of evaluation
+
+{ 'value'; 'also a value';}
+[beforeMarker] 'value' finished evaluating
+
+{ 'also a value';}
+[afterMarker] 'value' finished evaluating
+
+{ 'also a value';}
+[beforeMarker] 'also a value'; finished evaluating
+
+'also a value';
+[afterMarker] 'also a value'; finished evaluating
+
+'also a value';
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in functions 1`] = `
+"function f() { 'value'; 'also a value'; return 'another value';}f();
+[noMarker] Start of evaluation
+
+function f() { 'value'; 'also a value'; return 'another value';}f();
+[beforeMarker] Function f declared, parameter(s)  required
+
+(() => { 'value'; 'also a value'; return 'another value';})();
+[afterMarker] Function f declared, parameter(s)  required
+
+(() => { 'value'; 'also a value'; return 'another value';})();
+[beforeMarker] () => {...} runs
+
+{ 'value'; 'also a value'; return 'another value';};
+[afterMarker] () => {...} runs
+
+{ 'value'; 'also a value'; return 'another value';};
+[beforeMarker] 'value' finished evaluating
+
+{ 'also a value'; return 'another value';};
+[afterMarker] 'value' finished evaluating
+
+{ 'also a value'; return 'another value';};
+[beforeMarker] 'also a value' finished evaluating
+
+{ return 'another value';};
+[afterMarker] 'also a value' finished evaluating
+
+{ return 'another value';};
+[beforeMarker] 'another value' returned
+
+'another value';
+[afterMarker] 'another value' returned
+
+'another value';
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in program 1`] = `
+"'value';'also a value';
+[noMarker] Start of evaluation
+
+'value';'also a value';
+[beforeMarker] 'value' finished evaluating
+
+'also a value';
+[afterMarker] 'value' finished evaluating
+
+'also a value';
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Mix statements 1`] = `
+"'value';const x = 10;function f() { 20; function p() { 22; }}const z = 30;'also a value';{ 'another value'; const a = 40; a;}'another value';const a = 40;
+[noMarker] Start of evaluation
+
+'value';const x = 10;function f() { 20; function p() { 22; }}const z = 30;'also a value';{ 'another value'; const a = 40; a;}'another value';const a = 40;
+[beforeMarker] Constant x declared and substituted into the rest of block
+
+'value';function f() { 20; function p() { 22; }}const z = 30;'also a value';{ 'another value'; const a = 40; a;}'another value';const a = 40;
+[afterMarker] Constant x declared and substituted into the rest of block
+
+'value';function f() { 20; function p() { 22; }}const z = 30;'also a value';{ 'another value'; const a = 40; a;}'another value';const a = 40;
+[beforeMarker] Function f declared, parameter(s)  required
+
+'value';const z = 30;'also a value';{ 'another value'; const a = 40; a;}'another value';const a = 40;
+[afterMarker] Function f declared, parameter(s)  required
+
+'value';const z = 30;'also a value';{ 'another value'; const a = 40; a;}'another value';const a = 40;
+[beforeMarker] Constant z declared and substituted into the rest of block
+
+'value';'also a value';{ 'another value'; const a = 40; a;}'another value';const a = 40;
+[afterMarker] Constant z declared and substituted into the rest of block
+
+'value';'also a value';{ 'another value'; const a = 40; a;}'another value';const a = 40;
+[beforeMarker] 'value' finished evaluating
+
+'also a value';{ 'another value'; const a = 40; a;}'another value';const a = 40;
+[afterMarker] 'value' finished evaluating
+
+'also a value';{ 'another value'; const a = 40; a;}'another value';const a = 40;
+[beforeMarker] Constant a declared and substituted into the rest of block
+
+'also a value';{ 'another value'; 40;}'another value';const a = 40;
+[afterMarker] Constant a declared and substituted into the rest of block
+
+'also a value';{ 'another value'; 40;}'another value';const a = 40;
+[beforeMarker] 'another value' finished evaluating
+
+'also a value';{ 40;}'another value';const a = 40;
+[afterMarker] 'another value' finished evaluating
+
+'also a value';{ 40;}'another value';const a = 40;
+[beforeMarker] 40; finished evaluating
+
+'also a value';40;'another value';const a = 40;
+[afterMarker] 40; finished evaluating
+
+'also a value';40;'another value';const a = 40;
+[beforeMarker] 'also a value' finished evaluating
+
+40;'another value';const a = 40;
+[afterMarker] 'also a value' finished evaluating
+
+40;'another value';const a = 40;
+[beforeMarker] 40 finished evaluating
+
+'another value';const a = 40;
+[afterMarker] 40 finished evaluating
+
+'another value';const a = 40;
+[beforeMarker] Constant a declared and substituted into the rest of block
+
+'another value';
+[afterMarker] Constant a declared and substituted into the rest of block
+
+'another value';
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in block 1`] = `
+"{ 'value'; const x = 10;}
+[noMarker] Start of evaluation
+
+{ 'value'; const x = 10;}
+[beforeMarker] Constant x declared and substituted into the rest of block
+
+{ 'value';}
+[afterMarker] Constant x declared and substituted into the rest of block
+
+{ 'value';}
+[beforeMarker] 'value'; finished evaluating
+
+'value';
+[afterMarker] 'value'; finished evaluating
+
+'value';
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in function 1`] = `
+"function f() { 'value'; const x = 10; return 'another value';}f();
+[noMarker] Start of evaluation
+
+function f() { 'value'; const x = 10; return 'another value';}f();
+[beforeMarker] Function f declared, parameter(s)  required
+
+(() => { 'value'; const x = 10; return 'another value';})();
+[afterMarker] Function f declared, parameter(s)  required
+
+(() => { 'value'; const x = 10; return 'another value';})();
+[beforeMarker] () => {...} runs
+
+{ 'value'; const x = 10; return 'another value';};
+[afterMarker] () => {...} runs
+
+{ 'value'; const x = 10; return 'another value';};
+[beforeMarker] Constant x declared and substituted into the rest of block
+
+{ 'value'; return 'another value';};
+[afterMarker] Constant x declared and substituted into the rest of block
+
+{ 'value'; return 'another value';};
+[beforeMarker] 'value' finished evaluating
+
+{ return 'another value';};
+[afterMarker] 'value' finished evaluating
+
+{ return 'another value';};
+[beforeMarker] 'another value' returned
+
+'another value';
+[afterMarker] 'another value' returned
+
+'another value';
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in program 1`] = `
+"\\"value\\";const x = 10;
+[noMarker] Start of evaluation
+
+\\"value\\";const x = 10;
+[beforeMarker] Constant x declared and substituted into the rest of block
+
+\\"value\\";
+[afterMarker] Constant x declared and substituted into the rest of block
+
+\\"value\\";
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test reducing of empty block into epsilon Empty block in function 1`] = `
+"function f() { 3; {}}f();
+[noMarker] Start of evaluation
+
+function f() { 3; {}}f();
+[beforeMarker] Function f declared, parameter(s)  required
+
+(() => { 3; {}})();
+[afterMarker] Function f declared, parameter(s)  required
+
+(() => { 3; {}})();
+[beforeMarker] () => {...} runs
+
+{ 3; {}};
+[afterMarker] () => {...} runs
+
+{ 3; {}};
+[beforeMarker] Empty block expression evaluated
+
+{ 3;};
+[afterMarker] Empty block expression evaluated
+
+{ 3;};
+[beforeMarker] 3; finished evaluating
+
+undefined;
+[afterMarker] 3; finished evaluating
+
+undefined;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test reducing of empty block into epsilon Empty block in program 1`] = `
+"3;{}
+[noMarker] Start of evaluation
+
+3;{}
+[beforeMarker] Empty block expression evaluated
+
+3;
+[afterMarker] Empty block expression evaluated
+
+3;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test reducing of empty block into epsilon Empty blocks in block 1`] = `
+"{ 3; { {} {} }}
+[noMarker] Start of evaluation
+
+{ 3; { {} {} }}
+[beforeMarker] Empty block expression evaluated
+
+{ 3; { {} }}
+[afterMarker] Empty block expression evaluated
+
+{ 3; { {} }}
+[beforeMarker] Empty block expression evaluated
+
+{ 3; {}}
+[afterMarker] Empty block expression evaluated
+
+{ 3; {}}
+[beforeMarker] Empty block expression evaluated
+
+{ 3;}
+[afterMarker] Empty block expression evaluated
+
+{ 3;}
+[beforeMarker] 3; finished evaluating
+
+3;
+[afterMarker] 3; finished evaluating
+
+3;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test runtime errors Incompatible types operation 1`] = `
+"\\"1\\" + 2 * 3;
+[noMarker] Start of evaluation
+
+\\"1\\" + 2 * 3;
+[beforeMarker] Binary expression 2 * 3 evaluated
+
+\\"1\\" + 6;
+[afterMarker] Binary expression 2 * 3 evaluated
+
+\\"1\\" + 6;
+[beforeMarker] Line 0: Expected string on right hand side of operation, got number.
+
+\\"1\\" + 6;
+[noMarker] Evaluation stuck
+"
+`;
+
+exports[`Test runtime errors Variable used before assigning in functions 1`] = `
+"function foo() { unassigned_variable; const unassigned_variable = \\"assigned\\";}foo();
+[noMarker] Start of evaluation
+
+function foo() { unassigned_variable; const unassigned_variable = \\"assigned\\";}foo();
+[beforeMarker] Function foo declared, parameter(s)  required
+
+(() => { unassigned_variable; const unassigned_variable = \\"assigned\\";})();
+[afterMarker] Function foo declared, parameter(s)  required
+
+(() => { unassigned_variable; const unassigned_variable = \\"assigned\\";})();
+[beforeMarker] () => {...} runs
+
+{ unassigned_variable; const unassigned_variable = \\"assigned\\";};
+[afterMarker] () => {...} runs
+
+{ unassigned_variable; const unassigned_variable = \\"assigned\\";};
+[beforeMarker] Constant unassigned_variable declared and substituted into the rest of block
+
+{ unassigned_variable;};
+[afterMarker] Constant unassigned_variable declared and substituted into the rest of block
+
+{ unassigned_variable;};
+[beforeMarker] unassigned_variable; finished evaluating
+
+undefined;
+[afterMarker] unassigned_variable; finished evaluating
+
+undefined;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Test runtime errors Variable used before assigning in program 1`] = `
+"unassigned_variable;const unassigned_variable = \\"assigned\\";
+[noMarker] Start of evaluation
+
+unassigned_variable;const unassigned_variable = \\"assigned\\";
+[beforeMarker] Constant unassigned_variable declared and substituted into the rest of block
+
+unassigned_variable;
+[afterMarker] Constant unassigned_variable declared and substituted into the rest of block
+
+unassigned_variable;
 [noMarker] Evaluation complete
 "
 `;

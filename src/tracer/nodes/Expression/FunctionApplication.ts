@@ -8,7 +8,7 @@ import { StepperBlockStatement } from '../Statement/BlockStatement'
 import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
 import { StepperReturnStatement } from '../Statement/ReturnStatement'
 import { StepperArrowFunctionExpression } from './ArrowFunctionExpression'
-
+import * as astring from 'astring'
 export class StepperFunctionApplication implements SimpleCallExpression, StepperBaseNode {
   type: 'CallExpression'
   callee: StepperExpression
@@ -56,6 +56,10 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
       (this.callee.type === 'Identifier' && isBuiltinFunction(this.callee.name));
     
     if (!isValidCallee) {
+      // Since the callee can not be proceed further, calling non callables should result to an error.
+      if (!this.callee.isOneStepPossible() && this.arguments.every(arg => !arg.isOneStepPossible())) {
+        throw new Error(`Line ${this.loc?.start.line || 0}: Calling non-function value ${astring.generate(this.callee)}`);
+      }
       return false;
     }
     
@@ -78,7 +82,6 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
   contract(): StepperExpression | StepperBlockExpression {
     redex.preRedex = [this]
     if (!this.isContractible()) throw new Error()
-    
     if (this.callee.type === 'Identifier') {
       const functionName = this.callee.name;
       if (isBuiltinFunction(functionName)) {
@@ -89,7 +92,9 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
       throw new Error(`Unknown builtin function: ${functionName}`);
     }
     
-    if (this.callee.type !== 'ArrowFunctionExpression') throw new Error()
+    if (this.callee.type !== 'ArrowFunctionExpression') {
+      throw new Error();
+    }
 
     const lambda = this.callee
     const args = this.arguments
