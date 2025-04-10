@@ -7,23 +7,23 @@ import createContext from '../dist/createContext.js'
 import { ACORN_PARSE_OPTIONS } from '../dist/constants.js'
 import { Chapter } from '../dist/types.js'
 
-async function recursiveDirCopy(fromPath, dstPath) {
+async function recursiveDirCopy(srcPath, dstPath) {
   // Copy and keep only necessary files
-  const files = await fsPromises.readdir(fromPath)
+  const files = await fsPromises.readdir(srcPath)
 
   return Promise.all(files.map(async fileName => {
-    const fullFromPath = join(fromPath, fileName)
-    const fullToPath = join(dstPath, fileName)
+    const fullSrcPath = join(srcPath, fileName)
+    const fullDstPath = join(dstPath, fileName)
     
-    const stats = await fsPromises.stat(fullFromPath)
+    const stats = await fsPromises.stat(fullSrcPath)
 
     if (stats.isFile()) {
       const extension = extname(fileName)
       if (extension !== '.js') return;
-      await fsPromises.copyFile(fullFromPath, fullToPath)
+      await fsPromises.copyFile(fullSrcPath, fullDstPath)
     } else if (stats.isDirectory()) {
-      await fsPromises.mkdir(fullToPath)
-      await recursiveDirCopy(fullFromPath, fullToPath)
+      await fsPromises.mkdir(fullDstPath)
+      await recursiveDirCopy(fullSrcPath, fullDstPath)
     }
   }))
 }
@@ -35,7 +35,7 @@ async function prepare() {
 
   // Remove unnecessary dependencies
   await Promise.all([
-    'finder.js', 'index.js', 'scope-refactoring.js', 'sicp-prepare.js'
+    'finder.js', 'index.js', 'scope-refactoring.js'
   ].map(fileName => fsPromises.rm(`sicp_publish/dist/${fileName}`)))
 }
 

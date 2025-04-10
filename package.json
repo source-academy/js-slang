@@ -55,7 +55,7 @@
     "docs": "node ./scripts/docs.mjs docs",
     "jsdoc": "node ./scripts/docs.mjs",
     "autocomplete": "node ./scripts/docs.mjs autocomplete",
-    "build_sicp_package": "./scripts/build_sicp_package.sh",
+    "build_sicp_package": "yarn build && node ./scripts/build_sicp_package.mjs",
     "publish_sicp_package": "./scripts/publish_sicp_package.sh",
     "benchmark": "jest --runInBand --testPathPattern='.*benchmark.*' --testPathIgnorePatterns='/dist/'",
     "prepare": "husky install"
