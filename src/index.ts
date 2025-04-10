@@ -34,7 +34,6 @@ import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
 
 export interface IOptions {
-  scheduler: 'preemptive' | 'async'
   steps: number
   stepLimit: number
   executionMethod: ExecutionMethod
@@ -253,12 +252,9 @@ export async function runFilesInContext(
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
   if (result.status === 'finished' || result.status === 'error') {
     return result
-  } else if (result.status === 'suspended-cse-eval') {
-    const value = resumeEvaluate(result.context)
-    return CSEResultPromise(result.context, value)
-  } else {
-    return result.scheduler.run(result.it, result.context)
   }
+  const value = resumeEvaluate(result.context)
+  return CSEResultPromise(result.context, value)
 }
 
 export function interrupt(context: Context) {

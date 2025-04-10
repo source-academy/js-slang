@@ -597,6 +597,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
                         command.loc
                       )
                     ],
+                    'const',
                     command.loc
                   ),
                   ast.blockStatement(
@@ -609,6 +610,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
                             command.loc
                           )
                         ],
+                        'const',
                         command.loc
                       ),
                       command.body

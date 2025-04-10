@@ -1,6 +1,6 @@
 import * as es from 'estree'
 import { IOptions } from '../..'
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
 import { runCodeInSource } from '../../runner'
 import { Chapter, RecursivePartial } from '../../types'

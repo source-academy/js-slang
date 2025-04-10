@@ -31,7 +31,7 @@ test('stringify is fast', () => {
         const end = get_time();
         end - start;
         `,
-      { chapter: Chapter.SOURCE_3, native: false }
+      { chapter: Chapter.SOURCE_3 }
     ).then(testResult => testResult.result)
   ).resolves.toBeLessThan(2000)
   // This benchmark takes 100ms on my machine,
@@ -140,7 +140,6 @@ test('display_list with stringify is linear runtime', () => {
     `,
       {
         chapter: Chapter.SOURCE_3,
-        native: false, // we're measuring a builtin, no need for native
         testBuiltins: {
           no_display_list: noDisplayList
         }

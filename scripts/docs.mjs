@@ -3,8 +3,8 @@
 import { execFile, fork, spawn } from 'child_process'
 import pathlib from 'path'
 import fs from 'fs/promises'
-import { Command } from 'commander'
 import process from 'process'
+import { Command } from 'commander'
 import autocomplete from './autocomplete.mjs'
 
 const configs = {
@@ -49,20 +49,6 @@ const configs = {
       'stream.js',
       'array.js',
       'pairmutator.js'
-    ]
-  },
-  'Source §3 Concurrent': {
-    readme: 'README_3_CONCURRENT.md',
-    dst: 'source_3_concurrent/',
-    libs: [
-      'auxiliary.js',
-      'misc.js',
-      'math.js',
-      'list.js',
-      'stream.js',
-      'array.js',
-      'pairmutator.js',
-      'concurrency.js'
     ]
   },
   'Source §3 Typed': {
@@ -126,16 +112,6 @@ const configs = {
     dst: 'AUXILIARY/',
     libs: ['auxiliary.js']
   },
-  MISC: {
-    readme: 'README_MISC.md',
-    dst: 'MISC/',
-    libs: ['misc.js']
-  },
-  MATH: {
-    readme: 'README_MATH.md',
-    dst: 'MATH/',
-    libs: ['math.js']
-  },
   LIST: {
     readme: 'README_LISTS.md',
     dst: 'LISTS/',
@@ -156,11 +132,6 @@ const configs = {
     dst: 'PAIRMUTATORS/',
     libs: ['pairmutator.js']
   },
-  CONCURRENCY: {
-    readme: 'README_CONCURRENCY.md',
-    dst: 'CONCURRENCY/',
-    libs: ['concurrency.js']
-  },
   MCE: {
     readme: 'README_MCE.md',
     dst: 'MCE/',
@@ -177,9 +148,11 @@ const configs = {
     libs: ['ev3.js']
   },
   EXTERNAL: {
-    readme: 'README_EXTERNAL.md',
-    dst: 'External libraries',
-    libs: ['ev3.js']
+    "readme": "README_EXTERNAL.md",
+    "dst": "External libraries",
+    "libs": [
+      "ev3.js"
+    ]
   }
 }
 

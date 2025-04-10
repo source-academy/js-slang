@@ -1,11 +1,11 @@
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectResult } from '../../utils/testing'
+import { expectParsedError, expectFinishedResult } from '../../utils/testing'
 
 // apply tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('two-operand apply', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (define args '(1 2))
     (apply + args)
@@ -20,7 +20,7 @@ test('two-operand apply', () => {
 })
 
 test('multi-operand apply', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (define args '(1 2 3 4 5))
     (apply + 6 7 8 9 10 args)
@@ -35,7 +35,7 @@ test('multi-operand apply', () => {
 })
 
 test('eval of strings', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (eval "hello")
   `,
