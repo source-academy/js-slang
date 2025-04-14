@@ -280,17 +280,19 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     const valueFreeNames = value.freeNames()
     const scopeNames = this.scanAllDeclarationNames()
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
-    var currentBlockStatement: StepperBlockStatement = this
     let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat())
     repeatedNames.forEach(name => protectedNamesSet.delete(name))
     const protectedNames = Array.from(protectedNamesSet)
     const newNames = getFreshName(repeatedNames, protectedNames)
-    for (var index in newNames) {
-      currentBlockStatement = currentBlockStatement.rename(
-        repeatedNames[index],
-        newNames[index]
-      ) as StepperBlockStatement
-    }
+
+    const currentBlockStatement = newNames.reduce(
+      (current: StepperBlockStatement, name: string, index: number) => 
+        current.rename(
+          repeatedNames[index],
+          name
+        ) as StepperBlockStatement, 
+        this
+    );
 
     if (currentBlockStatement.scanAllDeclarationNames().includes(id.name)) {
       // DO nothing

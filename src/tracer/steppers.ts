@@ -6,7 +6,7 @@ import { StepperProgram } from './nodes/Program'
 import { undefinedNode } from './nodes'
 import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
 import { prelude } from './builtins'
-import { IStepperPropContents , Marker, redex } from '.'
+import { IStepperPropContents, Marker, redex } from '.'
 
 export function getSteps(
   inputNode: es.BaseNode,

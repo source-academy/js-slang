@@ -136,7 +136,7 @@ export function explain(redex: StepperBaseNode): string {
       }
       return generate(node.body[0]) + ' finished evaluating'
     },
-    BlockExpression: (node: StepperBlockExpression) => {
+    BlockExpression: (_node: StepperBlockExpression) => {
       throw new Error('Not implemented')
     },
     ConditionalExpression: (node: StepperConditionalExpression) => {
@@ -173,20 +173,15 @@ export function explain(redex: StepperBaseNode): string {
           return '() => {...}' + ' runs'
         }
         const paramDisplay = func.params.map(x => x.name).join(', ')
-        const argDisplay: string = node.arguments.map(x =>  
-          (x.type === "ArrowFunctionExpression" || x.type === "Identifier")
-           && x.name !== undefined
-          ? x.name
-          : generate(x)
-        ).join(', ')
-        return (
-          'Function ' +
-          func.name +
-          ' takes in ' +
-           argDisplay +
-          ' as input ' +
-          paramDisplay
-        )
+        const argDisplay: string = node.arguments
+          .map(x =>
+            (x.type === 'ArrowFunctionExpression' || x.type === 'Identifier') &&
+            x.name !== undefined
+              ? x.name
+              : generate(x)
+          )
+          .join(', ')
+        return 'Function ' + func.name + ' takes in ' + argDisplay + ' as input ' + paramDisplay
       } else {
         if (func.params.length === 0) {
           return generate(func) + ' runs'
@@ -200,14 +195,14 @@ export function explain(redex: StepperBaseNode): string {
         )
       }
     },
-    ArrowFunctionExpression: (node: StepperArrowFunctionExpression) => {
+    ArrowFunctionExpression: (_node: StepperArrowFunctionExpression) => {
       throw new Error('Not implemented.')
     },
     Default: (_: StepperBaseNode) => {
       return '...'
     }
   }
-  //@ts-ignore
+  //@ts-expect-error gracefully handle default ast node
   const explainer = explainers[redex.type] ?? explainers.Default
   return explainer(redex)
 }

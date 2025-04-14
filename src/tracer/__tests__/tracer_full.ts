@@ -46,28 +46,28 @@ describe('Expressions', () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('')).toMatchSnapshot()
-  }),
-    test('Extra step for UnaryExpression', async () => {
-      const code = `
+  })
+  test('Extra step for UnaryExpression', async () => {
+    const code = `
     - (1 - 5);
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('')).toMatchSnapshot()
-    }),
-    test('Unary and Binary Expressions', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('')).toMatchSnapshot()
+  })
+  test('Unary and Binary Expressions', async () => {
+    const code = `
     - 1 + 2 * 3 - (5 * 6 - 7);
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('')).toMatchSnapshot()
-    }),
-    test('Logical Expression', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('')).toMatchSnapshot()
+  })
+  test('Logical Expression', async () => {
+    const code = `
     !!!true || true;
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('')).toMatchSnapshot()
-    })
+    const steps = await codify(acornParser(code))
+    expect(steps.join('')).toMatchSnapshot()
+  })
   test('Conditional Expression', async () => {
     const code = `
     (-1 * 3 === 3) ? 2 * 4 - 7 : 1 + 3 * 6;
@@ -106,51 +106,51 @@ describe('Lambda expression', () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-  }),
-    test('Basic bi function', async () => {
-      const code = `
+  })
+  test('Basic bi function', async () => {
+    const code = `
       const add = (x, y) => x + y;
       add(2, 3);
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('Currying', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('Currying', async () => {
+    const code = `
       const add = x => y => x + y;
       add(2)(3);
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('Recursive function call', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('Recursive function call', async () => {
+    const code = `
       const factorial = n => n === 0 ? 1 : n * factorial(n - 1);
       factorial(2);
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('Mu term after substitution', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('Mu term after substitution', async () => {
+    const code = `
       const f = x => f;
       f(1);
     `
-      const steps = await getSteps(convert(acornParser(code)), { stepLimit: 1000 })
-      expect(steps.length).toBe(6)
-      const firstStatement = (steps[0].ast as StepperProgram).body[0]
-      // No mu term before substitution
-      expect(firstStatement.type).toBe('VariableDeclaration')
-      const declaration = (firstStatement as StepperVariableDeclaration).declarations[0].init!
-      expect(declaration.type).toBe('ArrowFunctionExpression')
-      expect((declaration as StepperArrowFunctionExpression).name).toBeUndefined()
+    const steps = await getSteps(convert(acornParser(code)), { stepLimit: 1000 })
+    expect(steps.length).toBe(6)
+    const firstStatement = (steps[0].ast as StepperProgram).body[0]
+    // No mu term before substitution
+    expect(firstStatement.type).toBe('VariableDeclaration')
+    const declaration = (firstStatement as StepperVariableDeclaration).declarations[0].init!
+    expect(declaration.type).toBe('ArrowFunctionExpression')
+    expect((declaration as StepperArrowFunctionExpression).name).toBeUndefined()
 
-      // Mu term after substitution
-      const lastStatement = ((steps[5].ast as StepperProgram).body[0] as StepperExpressionStatement)
-        .expression
-      expect(lastStatement.type).toBe('ArrowFunctionExpression')
-      expect((lastStatement as StepperArrowFunctionExpression).name).toBe('f')
-    })
+    // Mu term after substitution
+    const lastStatement = ((steps[5].ast as StepperProgram).body[0] as StepperExpressionStatement)
+      .expression
+    expect(lastStatement.type).toBe('ArrowFunctionExpression')
+    expect((lastStatement as StepperArrowFunctionExpression).name).toBe('f')
+  })
 })
 
 describe('Alpha renaming', () => {
@@ -163,9 +163,9 @@ describe('Alpha renaming', () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-  }),
-    test('Avoiding naming conflicts', async () => {
-      const code = `
+  })
+  test('Avoiding naming conflicts', async () => {
+    const code = `
         const f = (x_1, x_3, x_2) => g();
         const g = () => x_1 + x_3 + x_2;
         const x_1 = 1;
@@ -173,9 +173,9 @@ describe('Alpha renaming', () => {
         const x_2 = 2;
         f(0, 1, 2);
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    })
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
   test('renaming clash test for lambda function', async () => {
     const code = `
       const f = w_11 => w_10 => w_11 + w_10 + g();
@@ -504,30 +504,30 @@ describe('SOURCE 0 (Tests from previous stepper)', () => {
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-  }),
-    test('1 + math_sin', async () => {
-      const code = `
+  })
+  test('1 + math_sin', async () => {
+    const code = `
     1 + math_sin;
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('plus undefined', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('plus undefined', async () => {
+    const code = `
     math_sin(1) + undefined;
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('math_pow', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('math_pow', async () => {
+    const code = `
     math_pow(2, 20) || NaN;
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('expmod', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('expmod', async () => {
+    const code = `
     function is_even(n) {
       return n % 2 === 0;
   }
@@ -547,28 +547,28 @@ describe('SOURCE 0 (Tests from previous stepper)', () => {
   
   expmod(4, 3, 5);
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('Even odd mutual', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('Even odd mutual', async () => {
+    const code = `
     const odd = n => n === 0 ? false : even(n-1);
     const even = n => n === 0 || odd(n-1);
     even(1);
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('Infinite recursion', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('Infinite recursion', async () => {
+    const code = `
     function f() {
       return f();
   }
   f();
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    })
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
 })
 
 describe('Builtin math', () => {
@@ -600,14 +600,14 @@ describe('Misc', () => {
       `
     const steps = await codify(acornParser(code))
     expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
-  }),
-    test('arity', async () => {
-      const code = `
+  })
+  test('arity', async () => {
+    const code = `
         arity(is_function) === arity(arity);
       `
-      const steps = await codify(acornParser(code))
-      expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
-    })
+    const steps = await codify(acornParser(code))
+    expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
+  })
 })
 
 describe('List operations', () => {
@@ -615,29 +615,29 @@ describe('List operations', () => {
     const code = 'is_null(tail(list(1)));'
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
-  }),
-    test('Append on list of null', async () => {
-      const code = 'const a = list(null); append(a, a);'
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('map on list', async () => {
-      const code = 'map(x => list(x, 1), list(1, 2, 3));'
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('filter on list', async () => {
-      const code = 'filter(x => x % 2 === 1, list(1, 2, 3));'
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('accumulate on list', async () => {
-      const code = 'accumulate((x, y) => x + y, 0, list(1, 2, 3));'
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('subsets', async () => {
-      const code = `
+  })
+  test('Append on list of null', async () => {
+    const code = 'const a = list(null); append(a, a);'
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('map on list', async () => {
+    const code = 'map(x => list(x, 1), list(1, 2, 3));'
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('filter on list', async () => {
+    const code = 'filter(x => x % 2 === 1, list(1, 2, 3));'
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('accumulate on list', async () => {
+    const code = 'accumulate((x, y) => x + y, 0, list(1, 2, 3));'
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('subsets', async () => {
+    const code = `
     function subsets(s) {
       if (is_null(s)) {
           return list(null);
@@ -648,18 +648,18 @@ describe('List operations', () => {
   }
    subsets(list(1, 2, 3));
     `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    }),
-    test('flatmap', async () => {
-      const code = `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
+  test('flatmap', async () => {
+    const code = `
     const flatMap = (f, xs) => 
     accumulate((acc, init) => append(f(acc), init), null, xs);
     flatMap(x => list(x, x + 1), list(2, 3, 4));
 `
-      const steps = await codify(acornParser(code))
-      expect(steps.join('\n')).toMatchSnapshot()
-    })
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+  })
 })
 
 test('triple equals work on function', async () => {

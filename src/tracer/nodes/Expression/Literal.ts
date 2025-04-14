@@ -67,7 +67,7 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
     throw new Error('Method not implemented.')
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperLiteral {
+  substitute(_id: StepperPattern, _value: StepperExpression): StepperLiteral {
     return this
   }
 
@@ -79,7 +79,7 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
     return []
   }
 
-  rename(before: string, after: string): StepperExpression {
+  rename(_before: string, _after: string): StepperExpression {
     return new StepperLiteral(
       this.value,
       this.raw,

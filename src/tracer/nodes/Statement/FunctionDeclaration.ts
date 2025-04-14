@@ -124,17 +124,19 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     const scopeNames = this.scanAllDeclarationNames()
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
 
-    var currentFunction: StepperFunctionDeclaration = this
     let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat())
     repeatedNames.forEach(name => protectedNamesSet.delete(name))
     const protectedNames = Array.from(protectedNamesSet)
     const newNames = getFreshName(repeatedNames, protectedNames)
-    for (var index in newNames) {
-      currentFunction = currentFunction.rename(
-        repeatedNames[index],
-        newNames[index]
-      ) as StepperFunctionDeclaration
-    }
+
+    const currentFunction = newNames.reduce(
+      (current: StepperFunctionDeclaration, name: string, index: number) => 
+        current.rename(
+          repeatedNames[index],
+          name
+        ) as StepperFunctionDeclaration, 
+        this
+    );
 
     if (currentFunction.scanAllDeclarationNames().includes(id.name)) {
       return currentFunction

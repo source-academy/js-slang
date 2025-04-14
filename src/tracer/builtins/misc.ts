@@ -58,7 +58,7 @@ export const miscBuiltinFunctions = {
     arity: 1
   },
   get_time: {
-    definition: (args: StepperExpression[]): StepperExpression => {
+    definition: (_args: StepperExpression[]): StepperExpression => {
       return new StepperLiteral(Date.now())
     },
     arity: 0

@@ -142,7 +142,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
 
   oneStep(): StepperExpression {
     if (this.isContractible()) {
-      // @ts-ignore: contract can return StepperBlockExpression but it's handled at runtime
+      // @ts-expect-error: contract can return StepperBlockExpression but it's handled at runtime
       return this.contract()
     }
 

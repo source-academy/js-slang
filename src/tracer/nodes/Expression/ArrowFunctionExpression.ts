@@ -93,7 +93,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     const paramNames = this.params.map(param => param.name)
 
     let bodyDeclarations: string[] = []
-    // @ts-ignore
+    // @ts-expect-error gracefully handle block statement as block expression
     if (this.body.type === 'BlockStatement') {
       const body = this.body as StepperBlockStatement
       bodyDeclarations = body.body
@@ -114,18 +114,18 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     const scopeNames = this.scanAllDeclarationNames()
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
 
-    var currentArrowFunction: StepperArrowFunctionExpression = this
     let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat())
     repeatedNames.forEach(name => protectedNamesSet.delete(name))
     const protectedNames = Array.from(protectedNamesSet)
     const newNames = getFreshName(repeatedNames, protectedNames)
-    for (var index in newNames) {
-      currentArrowFunction = currentArrowFunction.rename(
-        repeatedNames[index],
-        newNames[index]
-      ) as StepperArrowFunctionExpression
-    }
-
+    const currentArrowFunction = newNames.reduce(
+      (current: StepperArrowFunctionExpression, name: string, index: number) => 
+        current.rename(
+          repeatedNames[index],
+          name
+        ) as StepperArrowFunctionExpression, 
+        this
+    )
     if (currentArrowFunction.scanAllDeclarationNames().includes(id.name)) {
       return currentArrowFunction
     }

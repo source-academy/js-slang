@@ -2,10 +2,10 @@ import * as es from 'estree'
 import { StepperExpression } from '../nodes'
 import { StepperIdentifier } from '../nodes/Expression/Identifier'
 import { StepperLiteral } from '../nodes/Expression/Literal'
+import { convert } from '../generator'
 import { listBuiltinFunctions } from './lists'
 import { miscBuiltinFunctions } from './misc'
 import { auxiliaryBuiltinFunctions } from './auxiliary'
-import { convert } from '../generator'
 
 const builtinFunctions = {
   ...listBuiltinFunctions,
@@ -14,10 +14,8 @@ const builtinFunctions = {
 }
 
 export function prelude(node: es.BaseNode) {
-  node = node.type === "Program" 
-      ? removeDebuggerStatements(node as es.Program) 
-      : node;
-  let inputNode = convert(node);
+  node = node.type === 'Program' ? removeDebuggerStatements(node as es.Program) : node
+  let inputNode = convert(node)
   // Substitute math constant
   Object.getOwnPropertyNames(Math)
     .filter(name => name in Math && typeof Math[name as keyof typeof Math] !== 'function')
