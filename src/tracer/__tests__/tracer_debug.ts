@@ -108,10 +108,13 @@ function h(f, x) {
   console.log(output.join('\n\n'))
 })
 
-// TODO: Check for -Infinity
 test('general', () => {
   const code = `
-  -Infinity;
+  function apply(f, x) {
+    return f(x);
+  }
+  const inc = x => x + 1;
+  apply(inc, 2);
   `
   const program = parse(code, { ecmaVersion: 10, locations: true })!
   const steps = getSteps(convert(program), { stepLimit: 200 })

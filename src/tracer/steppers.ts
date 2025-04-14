@@ -1,7 +1,7 @@
 import * as es from 'estree'
 import { IOptions } from '..'
 import { StepperBaseNode } from './interface'
-import { convert, explain } from './generator'
+import { explain } from './generator'
 import { StepperProgram } from './nodes/Program'
 import { undefinedNode } from './nodes'
 import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
@@ -12,7 +12,7 @@ export function getSteps(
   inputNode: es.BaseNode,
   { stepLimit }: Pick<IOptions, 'stepLimit'>
 ): IStepperPropContents[] {
-  const node: StepperBaseNode = prelude(convert(inputNode))
+  const node: StepperBaseNode = prelude(inputNode)
   const steps: IStepperPropContents[] = []
   const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
   let hasError = false

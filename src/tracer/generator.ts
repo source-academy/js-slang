@@ -173,17 +173,19 @@ export function explain(redex: StepperBaseNode): string {
           return '() => {...}' + ' runs'
         }
         const paramDisplay = func.params.map(x => x.name).join(', ')
-        const argDisplay = node.arguments.map(x => generate(x)).join(', ')
+        const argDisplay: string = node.arguments.map(x =>  
+          (x.type === "ArrowFunctionExpression" || x.type === "Identifier")
+           && x.name !== undefined
+          ? x.name
+          : generate(x)
+        ).join(', ')
         return (
           'Function ' +
           func.name +
-          ', defined as ' +
-          paramDisplay +
-          ' => {...}' +
-          ', takes in ' +
-          paramDisplay +
+          ' takes in ' +
+           argDisplay +
           ' as input ' +
-          argDisplay
+          paramDisplay
         )
       } else {
         if (func.params.length === 0) {
