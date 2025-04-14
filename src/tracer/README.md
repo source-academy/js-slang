@@ -5,8 +5,7 @@
   - [Implementation Details](#implementation-details)
     - [Entry point](#entry-point)
     - [Reduction](#reduction)
-    - [Substitution](#substitution)
-  - [Stepper ASTs](#stepper-asts)
+  - [Stepper ASTs (To be updated)](#stepper-asts-to-be-updated)
     - [`UndefinedNode`](#undefinednode)
     - [`StepperProgram`](#stepperprogram)
       - [Reduction](#reduction-1)
@@ -18,12 +17,14 @@
 - Better visualisation of recursion using lambda calculus concepts such as µ-terms. 
 
 ## Quickstart
-First of all, make sure that you have already installed `js-slang` using `yarn`. There are many possible ways that you can work and test the code. One of my personal solution is using `yarn test`. You can edit the file from `../__test__/StepperV2.ts` and run it with the following command:
+First of all, make sure that you have already installed `js-slang` using `yarn`. There are many possible ways that you can work and test the code. One of my personal solution is using `yarn test`. During the development, you can edit the file from `../__test__/tracer_debug.ts` and run it with the following command:
 ```bash
-yarn test -- stepperV2.ts --silence=false  
+yarn test -- tracer_debug.ts  > testOutput.log
 ```
-Note that the flag `--silence=false` is set in order to see the output from `console.log`. 
-
+Note that the flag `--silence=false` is set in order to see the output from `console.log`. In order to fully test the stepper, you can execute the following command.
+```bash
+yarn test -- tracer_full.ts` 
+```
 ## Implementation Details
 Starting to work from raw estree is quite tricky, as it prevents us from using OOP principles directly. Therefore, we decided to create classes based on the original estree while implementing the `StepperBaseNode` interface. Note that this interface is subjected to change when adding more features to the stepper.
 ```typescript
@@ -78,19 +79,7 @@ The main entry point of our stepper is `oneStep()`. It is where our stepper star
 1 + 2 * 3 // (+ 1 (* 2 3))
 ```
 The binary expression `(+ 1 (* 2 3))` should not be contracted since its inner node `(* 2 3)` can be contracted to `6`, before contracting the outer expression. The methods `isContractible` and `isOneStepPossible` help maneuver the logic of where to contract.
-### Substitution
-At this stage, substitution can be triggered by `VariableDeclaration`. To track the entry point for substitution, we use global state `SubstitutedScope` to track the substitution scope. Here is an example:
-```typescript
-// method in class StepperProgram
-SubstitutionScope.set(this.body.slice(2)); // set the second statement onwards as a scope for substitution
-const secondStatementOneStep = this.body[1].oneStep(); // trigger substitution if init field has been reduced
-const afterSubstitutedScope = SubstitutionScope.get(); // get the substitution scope back
-SubstitutionScope.reset();
-// somewhere in this.body[1] node
-SubstitutionScope.substitute(identifier, value) // trigger substitution on SubstitutionScope
-```
-
-## Stepper ASTs
+## Stepper ASTs (To be updated)
 ### `UndefinedNode`
 - Global node, literal, representing undefined
 
