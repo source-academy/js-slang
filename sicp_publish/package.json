@@ -20,17 +20,14 @@
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
-    "gpu.js": "^2.16.0",
     "lodash": "^4.17.20",
     "source-map": "^0.7.3",
     "xmlhttprequest-ts": "^1.0.1"
-  },
-  "resolutions": {
-    "**/gl": "^6.0.2"
   },
   "main": "dist/sicp",
   "types": "dist/sicp",
   "files": [
     "dist"
-  ]
+  ],
+  "packageManager": "yarn@4.6.0"
 }

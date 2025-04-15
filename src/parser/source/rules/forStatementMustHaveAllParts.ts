@@ -8,7 +8,10 @@ export class ForStatmentMustHaveAllParts implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.ForStatement, private missingParts: string[]) {}
+  constructor(
+    public node: es.ForStatement,
+    private missingParts: string[]
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION

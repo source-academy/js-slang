@@ -119,6 +119,13 @@ export const checkIfStatement = (node: Node, test: Value, chapter: Chapter = Cha
     : new TypeError(node, ' as condition', 'boolean', typeOf(test), chapter)
 }
 
+const MAX_SOURCE_ARRAY_INDEX = 4294967295
+export const checkoutofRange = (node: Node, index: Value, chapter: Chapter = Chapter.SOURCE_4) => {
+  return index >= 0 && index <= MAX_SOURCE_ARRAY_INDEX // as per Source 3 spec
+    ? undefined
+    : new TypeError(node, ' in reasonable range', 'index', 'out of range', chapter)
+}
+
 export const checkMemberAccess = (node: Node, obj: Value, prop: Value) => {
   if (isObject(obj)) {
     return isString(prop) ? undefined : new TypeError(node, ' as prop', 'string', typeOf(prop))
@@ -126,8 +133,8 @@ export const checkMemberAccess = (node: Node, obj: Value, prop: Value) => {
     return isArrayIndex(prop)
       ? undefined
       : isNumber(prop)
-      ? new TypeError(node, ' as prop', 'array index', 'other number')
-      : new TypeError(node, ' as prop', 'array index', typeOf(prop))
+        ? new TypeError(node, ' as prop', 'array index', 'other number')
+        : new TypeError(node, ' as prop', 'array index', typeOf(prop))
   } else {
     return new TypeError(node, '', 'object or array', typeOf(obj))
   }
@@ -135,4 +142,10 @@ export const checkMemberAccess = (node: Node, obj: Value, prop: Value) => {
 
 export const isIdentifier = (node: any): node is es.Identifier => {
   return (node as es.Identifier).name !== undefined
+}
+
+export const checkArray = (node: Node, maybeArray: Value, chapter: Chapter = Chapter.SOURCE_4) => {
+  return isArray(maybeArray)
+    ? undefined
+    : new TypeError(node, '', 'array', typeOf(maybeArray), chapter)
 }

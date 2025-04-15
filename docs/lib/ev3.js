@@ -5,8 +5,7 @@
  * @returns {boolean} true if the peripheral is connected, false otherwise
  * @alias ev3_connected
  */
-var connected = function(obj) {
-};
+var connected = function (obj) {}
 
 /**
  * Gets the motor connected to port A.
@@ -14,8 +13,7 @@ var connected = function(obj) {
  * @returns {peripheral} The motor connected to port A
  * @alias ev3_motorA
  */
-var motorA = function() {
-};
+var motorA = function () {}
 
 /**
  * Gets the motor connected to port B.
@@ -23,8 +21,7 @@ var motorA = function() {
  * @returns {peripheral} The motor connected to port B
  * @alias ev3_motorB
  */
-var motorB = function() {
-};
+var motorB = function () {}
 
 /**
  * Gets the motor connected to port C.
@@ -32,8 +29,7 @@ var motorB = function() {
  * @returns {peripheral} The motor connected to port C
  * @alias ev3_motorC
  */
-var motorC = function() {
-};
+var motorC = function () {}
 
 /**
  * Gets the motor connected to port D.
@@ -41,9 +37,7 @@ var motorC = function() {
  * @returns {peripheral} The motor connected to port D
  * @alias ev3_motorD
  */
-var motorD = function() {
-};
-
+var motorD = function () {}
 
 /**
  * Causes the motor to rotate for a specified duration at the specified speed.
@@ -55,8 +49,7 @@ var motorD = function() {
  * @param {number} speed - The speed to run at, in tacho counts per second
  * @alias ev3_runForTime
  */
-var runForTime = function(motor, time, speed) {
-};
+var runForTime = function (motor, time, speed) {}
 
 /**
  * Causes the motor to rotate to the given absolute position (as reported by
@@ -69,8 +62,7 @@ var runForTime = function(motor, time, speed) {
  * @param {number} speed - The speed to run at, in tacho counts per second
  * @alias ev3_runToAbsolutePosition
  */
-var runToAbsolutePosition = function(motor, position, speed) {
-};
+var runToAbsolutePosition = function (motor, position, speed) {}
 
 /**
  * Causes the motor to rotate until the position reaches <code>{@link ev3_motorGetPosition}()
@@ -83,8 +75,7 @@ var runToAbsolutePosition = function(motor, position, speed) {
  * @param {number} speed - The speed to run at, in tacho counts per second
  * @alias ev3_runToRelativePosition
  */
-var runToRelativePosition = function(motor, position, speed) {
-};
+var runToRelativePosition = function (motor, position, speed) {}
 
 /**
  * Gets the motor's current position, in pulses of the rotary encoder.
@@ -93,8 +84,7 @@ var runToRelativePosition = function(motor, position, speed) {
  * @returns {number} The current position.
  * @alias ev3_motorGetPosition
  */
-var motorGetPosition = function(motor) {
-}
+var motorGetPosition = function (motor) {}
 
 /**
  * Gets the motor's current speed, in tacho counts per second.
@@ -103,8 +93,7 @@ var motorGetPosition = function(motor) {
  * @returns {number} The current speed.
  * @alias ev3_motorGetSpeed
  */
-var motorGetSpeed = function(motor) {
-}
+var motorGetSpeed = function (motor) {}
 
 /**
  * Sets the speed the motor will run at the next time {@link ev3_motorStart}
@@ -114,8 +103,7 @@ var motorGetSpeed = function(motor) {
  * @param {number} speed - The speed to run at, in tacho counts per second
  * @alias ev3_motorSetSpeed
  */
-var motorSetSpeed = function(motor, speed) {
-}
+var motorSetSpeed = function (motor, speed) {}
 
 /**
  * Causes the motor to start with the previously set speed and stop action
@@ -124,8 +112,7 @@ var motorSetSpeed = function(motor, speed) {
  * @param {peripheral} motor - The motor
  * @alias ev3_motorStart
  */
-var motorStart = function(motor) {
-};
+var motorStart = function (motor) {}
 
 /**
  * Causes the motor to stop using the previously set stop action.
@@ -133,8 +120,7 @@ var motorStart = function(motor) {
  * @param {peripheral} motor - The motor
  * @alias ev3_motorStop
  */
-var motorStop = function(motor) {
-};
+var motorStop = function (motor) {}
 
 /**
  * Sets the stop action of the motor.
@@ -149,8 +135,7 @@ var motorStop = function(motor) {
  * @param {string} stopAction - The stop action to use.
  * @alias ev3_motorSetStopAction
  */
-var motorSetStopAction = function(motor, stopAction) {
-}
+var motorSetStopAction = function (motor, stopAction) {}
 
 /**
  * Gets the colour sensor connected any of ports 1, 2, 3 or 4.
@@ -158,8 +143,7 @@ var motorSetStopAction = function(motor, stopAction) {
  * @returns {peripheral} The colour sensor.
  * @alias ev3_colorSensor
  */
-var colorSensor = function() {
-};
+var colorSensor = function () {}
 
 /**
  * Gets the amount of red seen by the colour sensor.
@@ -168,8 +152,7 @@ var colorSensor = function() {
  * @returns {number} The amount of red, in sensor-specific units.
  * @alias ev3_colorSensorRed
  */
-var colorSensorRed = function(colorSensor) {
-}
+var colorSensorRed = function (colorSensor) {}
 
 /**
  * Gets the amount of green seen by the colour sensor.
@@ -178,8 +161,7 @@ var colorSensorRed = function(colorSensor) {
  * @returns {number} The amount of green, in sensor-specific units.
  * @alias ev3_colorSensorGreen
  */
-var colorSensorGreen = function(colorSensor) {
-}
+var colorSensorGreen = function (colorSensor) {}
 
 /**
  * Gets the amount of blue seen by the colour sensor.
@@ -188,8 +170,7 @@ var colorSensorGreen = function(colorSensor) {
  * @returns {number} The amount of blue, in sensor-specific units.
  * @alias ev3_colorSensorBlue
  */
-var colorSensorBlue = function(colorSensor) {
-}
+var colorSensorBlue = function (colorSensor) {}
 
 /**
  * Gets the colour as seen by the colour sensor.
@@ -208,8 +189,7 @@ var colorSensorBlue = function(colorSensor) {
  * @returns {number} A number representing the colour observed by the device.
  * @alias ev3_colorSensorGetColor
  */
-var colorSensorGetColor = function(colorSensor) {
-}
+var colorSensorGetColor = function (colorSensor) {}
 
 /**
  * Gets the reflected light intensity seen by the colour sensor.
@@ -218,8 +198,7 @@ var colorSensorGetColor = function(colorSensor) {
  * @returns {number} The reflected light intensity, as a percentage from 0 to 100.
  * @alias ev3_reflectedLightIntensity
  */
-var reflectedLightIntensity = function(colorSensor) {
-};
+var reflectedLightIntensity = function (colorSensor) {}
 
 /**
  * Gets the ambient light intensity seen by the colour sensor.
@@ -228,8 +207,7 @@ var reflectedLightIntensity = function(colorSensor) {
  * @returns {number} The ambient light intensity, as a percentage from 0 to 100.
  * @alias ev3_ambientLightIntensity
  */
-var ambientLightIntensity = function(colorSensor) {
-};
+var ambientLightIntensity = function (colorSensor) {}
 
 /**
  * Gets the touch sensor connected to port 1.
@@ -237,8 +215,7 @@ var ambientLightIntensity = function(colorSensor) {
  * @returns {peripheral} The touch sensor.
  * @alias ev3_touchSensor1
  */
-var touchSensor1 = function() {
-};
+var touchSensor1 = function () {}
 
 /**
  * Gets the touch sensor connected to port 2.
@@ -246,8 +223,7 @@ var touchSensor1 = function() {
  * @returns {peripheral} The touch sensor.
  * @alias ev3_touchSensor2
  */
-var touchSensor2 = function() {
-};
+var touchSensor2 = function () {}
 
 /**
  * Gets the touch sensor connected to port 3.
@@ -255,8 +231,7 @@ var touchSensor2 = function() {
  * @returns {peripheral} The touch sensor.
  * @alias ev3_touchSensor3
  */
-var touchSensor3 = function() {
-};
+var touchSensor3 = function () {}
 
 /**
  * Gets the touch sensor connected to port 4.
@@ -264,8 +239,7 @@ var touchSensor3 = function() {
  * @returns {peripheral} The touch sensor.
  * @alias ev3_touchSensor4
  */
-var touchSensor4 = function() {
-};
+var touchSensor4 = function () {}
 
 /**
  * Gets whether the touch sensor is pressed.
@@ -274,8 +248,7 @@ var touchSensor4 = function() {
  * @returns {boolean} true when the touch sensor is pressed, false otherwise.
  * @alias ev3_touchSensorPressed
  */
-var touchSensorPressed = function(touchSensor) {
-};
+var touchSensorPressed = function (touchSensor) {}
 
 /**
  * Gets the ultrasonic sensor connected any of ports 1, 2, 3 or 4.
@@ -283,8 +256,7 @@ var touchSensorPressed = function(touchSensor) {
  * @returns {peripheral} The ultrasonic sensor.
  * @alias ev3_ultrasonicSensor
  */
-var ultrasonicSensor = function() {
-};
+var ultrasonicSensor = function () {}
 
 /**
  * Gets the distance read by the ultrasonic sensor in centimeters.
@@ -293,8 +265,7 @@ var ultrasonicSensor = function() {
  * @returns {number} The distance, in centimeters.
  * @alias ev3_ultrasonicSensorDistance
  */
-var ultrasonicSensorDistance = function(ultrasonicSensor) {
-};
+var ultrasonicSensorDistance = function (ultrasonicSensor) {}
 
 /**
  * Gets the gyro sensor connected any of ports 1, 2, 3 or 4.
@@ -302,8 +273,7 @@ var ultrasonicSensorDistance = function(ultrasonicSensor) {
  * @returns {peripheral} The gyro sensor.
  * @alias ev3_gyroSensor
  */
-var gyroSensor = function() {
-};
+var gyroSensor = function () {}
 
 /**
  * Gets the rate of rotation detected by the gyro sensor.
@@ -312,8 +282,7 @@ var gyroSensor = function() {
  * @returns {number} The rate of rotation, in degrees per second.
  * @alias ev3_gyroSensorRate
  */
-var gyroSensorRate = function(gyroSensor) {
-};
+var gyroSensorRate = function (gyroSensor) {}
 
 /**
  * Gets the absolute angle detected by the gyro sensor, measured from when
@@ -323,9 +292,7 @@ var gyroSensorRate = function(gyroSensor) {
  * @returns {number} The angle, in degrees.
  * @alias ev3_gyroSensorAngle
  */
-var gyroSensorAngle = function(gyroSensor) {
-};
-
+var gyroSensorAngle = function (gyroSensor) {}
 
 /**
  * Pauses for a period of time.
@@ -333,8 +300,7 @@ var gyroSensorAngle = function(gyroSensor) {
  * @param {number} time - The time to wait, in milliseconds.
  * @alias ev3_pause
  */
-var pause = function(time) {
-};
+var pause = function (time) {}
 
 /**
  * Returns a hello world message.
@@ -342,7 +308,7 @@ var pause = function(time) {
  * @returns {string} A hello world message.
  * @alias ev3_hello
  */
-var hello = function() {};
+var hello = function () {}
 
 /**
  * Waits for one of the buttons on the EV3's control face to be pressed, then
@@ -358,7 +324,7 @@ var hello = function() {};
  * @returns {number} A number corresponding to the button that was pressed
  * @alias ev3_waitForButtonPress
  */
-var waitForButtonPress = function() {};
+var waitForButtonPress = function () {}
 
 /**
  * Makes the robot speak the given words through its speaker. Returns after the
@@ -367,7 +333,7 @@ var waitForButtonPress = function() {};
  * @param {string} words - The words to speak.
  * @alias ev3_speak
  */
-var speak = function(words) {};
+var speak = function (words) {}
 
 /**
  * Causes the robot to emit a sequence of beeps. Returns after the beeps are
@@ -381,7 +347,7 @@ var speak = function(words) {};
  * @param {Array} beeps - The beep sequence.
  * @alias ev3_playSequence
  */
-var playSequence = function(beeps) {};
+var playSequence = function (beeps) {}
 
 /**
  * Gets the left green LED.
@@ -393,7 +359,7 @@ var playSequence = function(beeps) {};
  * @returns {peripheral} The left green LED
  * @alias ev3_ledLeftGreen
  */
-var ledLeftGreen = function() {};
+var ledLeftGreen = function () {}
 
 /**
  * Gets the left red LED.
@@ -405,7 +371,7 @@ var ledLeftGreen = function() {};
  * @returns {peripheral} The left red LED
  * @alias ev3_ledLeftRed
  */
-var ledLeftRed = function() {};
+var ledLeftRed = function () {}
 
 /**
  * Gets the right green LED.
@@ -417,7 +383,7 @@ var ledLeftRed = function() {};
  * @returns {peripheral} The right green LED
  * @alias ev3_ledRightGreen
  */
-var ledRightGreen = function() {};
+var ledRightGreen = function () {}
 
 /**
  * Gets the right red LED.
@@ -429,7 +395,7 @@ var ledRightGreen = function() {};
  * @returns {peripheral} The right red LED
  * @alias ev3_ledRightRed
  */
-var ledRightRed = function() {};
+var ledRightRed = function () {}
 
 /**
  * Gets the brightness of the given LED.
@@ -440,7 +406,7 @@ var ledRightRed = function() {};
  * @returns {number} The brightness of the given LED
  * @alias ev3_ledGetBrightness
  */
-var ledGetBrightness = function (led) {};
+var ledGetBrightness = function (led) {}
 
 /**
  * Sets the brightness of the given LED.
@@ -451,4 +417,4 @@ var ledGetBrightness = function (led) {};
  * @param {number} brightness - The desired brightness
  * @alias ev3_ledSetBrightness
  */
-var ledSetBrightness = function (led, brightness) {};
+var ledSetBrightness = function (led, brightness) {}
