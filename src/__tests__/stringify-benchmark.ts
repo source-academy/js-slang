@@ -59,7 +59,7 @@ test('display_list with stringify is linear runtime', () => {
       const make_complex_list = n => {
         // makes a complex list structure with O(n) pairs
         const cuberootn = math_floor(math_pow(n, 0.33));
-        return build_list(cuberootn, _ => build_inf(cuberootn, _ => build_list(cuberootn, i =>i)));
+        return build_list(_ => build_inf(cuberootn, _ => build_list(i => i, cuberootn)), cuberootn);
       };
       const time_display_list = xs => {
         const starttime = get_time();
