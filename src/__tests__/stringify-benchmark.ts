@@ -2,38 +2,36 @@ import * as list from '../stdlib/list'
 import { Chapter } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { stringify } from '../utils/stringify'
-import { testSuccess } from '../utils/testing'
+import { expectFinishedResult } from '../utils/testing'
 
 test('stringify is fast', () => {
-  return expect(
-    testSuccess(
-      stripIndent`
-        function make_k_list(k, d) {
-            const degree = k;
-            const depth = d;
-            let repeat = 0;
-            function helper(k, d, to_repeat) {
-                if (d === 0 && k === 0) {
-                    return null;
-                } else if (k === 0) {
-                    return helper(degree, d - 1, repeat);
-                } else {
-                    repeat = pair(to_repeat, helper(k - 1, d, to_repeat));
-                    return pair(to_repeat, helper(k - 1, d, to_repeat));
-                }
-            }
-            return helper(k, d, 0);
-        }
+  return expectFinishedResult(
+    stripIndent`
+      function make_k_list(k, d) {
+          const degree = k;
+          const depth = d;
+          let repeat = 0;
+          function helper(k, d, to_repeat) {
+              if (d === 0 && k === 0) {
+                  return null;
+              } else if (k === 0) {
+                  return helper(degree, d - 1, repeat);
+              } else {
+                  repeat = pair(to_repeat, helper(k - 1, d, to_repeat));
+                  return pair(to_repeat, helper(k - 1, d, to_repeat));
+              }
+          }
+          return helper(k, d, 0);
+      }
 
-        const bigstructure = make_k_list(2,2);
-        const start = get_time();
-        stringify(bigstructure);
-        const end = get_time();
-        end - start;
-        `,
-      { chapter: Chapter.SOURCE_3 }
-    ).then(testResult => testResult.result)
-  ).resolves.toBeLessThan(2000)
+      const bigstructure = make_k_list(2,2);
+      const start = get_time();
+      stringify(bigstructure);
+      const end = get_time();
+      end - start;
+      `,
+    Chapter.SOURCE_3
+  ).toBeLessThan(2000)
   // This benchmark takes 100ms on my machine,
   // but less than 2 seconds should be good enough on the test servers.
 })
@@ -47,9 +45,8 @@ test('display_list with stringify is linear runtime', () => {
     return stringify(list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s))
   }
 
-  return expect(
-    testSuccess(
-      stripIndent`
+  return expectFinishedResult(
+    stripIndent`
       const build_inf = (i, f) => {
         const t = list(f(i));
         let p = t;
@@ -138,14 +135,13 @@ test('display_list with stringify is linear runtime', () => {
       const slope = head(line);
       slope;
     `,
-      {
-        chapter: Chapter.SOURCE_3,
-        testBuiltins: {
-          no_display_list: noDisplayList
-        }
+    {
+      chapter: Chapter.SOURCE_3,
+      testBuiltins: {
+        no_display_list: noDisplayList
       }
-    ).then(testResult => testResult.result)
-  ).resolves.toBeLessThan(1.2)
+    }
+  ).toBeLessThan(1.2)
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?

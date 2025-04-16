@@ -13,7 +13,7 @@ await new Command()
     const newPatterns = patterns.map(pattern => pattern.split(pathlib.sep).join(pathlib.posix.sep))
 
     const proc = fork('node_modules/jest/bin/jest.js', [
-      ...Object.entries(args),
+      ...Object.entries(args).flat(),
       ...newPatterns
     ])
 

@@ -93,7 +93,8 @@ export function expectFinishedResult(code: string, options: TestOptions = {}) {
   return expect(
     testInContext(code, options).then(({ result, context }) => {
       if (result.status === 'error') {
-        console.log(context.errors)
+        const errStr = parseError(context.errors)
+        console.log(errStr)
       }
       assertIsFinished(result)
       return result.value
