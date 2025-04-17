@@ -17,7 +17,7 @@ import * as create from '../utils/ast/astCreator'
 import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
-import { Runner } from './types'
+import type { Runner } from './types'
 
 function fullJSEval(code: string, nativeStorage: NativeStorage): any {
   if (nativeStorage.evaller) {
@@ -68,7 +68,7 @@ const fullJSRunner: Runner = async (program, context) => {
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
   const preEvalCode: string = generate(preEvalProgram)
-  await fullJSEval(preEvalCode, context.nativeStorage)
+  fullJSEval(preEvalCode, context.nativeStorage)
 
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
@@ -77,7 +77,7 @@ const fullJSRunner: Runner = async (program, context) => {
     return {
       status: 'finished',
       context,
-      value: await fullJSEval(transpiled, context.nativeStorage)
+      value: fullJSEval(transpiled, context.nativeStorage)
     }
   } catch (error) {
     context.errors.push(

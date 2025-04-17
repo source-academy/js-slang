@@ -7,6 +7,8 @@ import createContext from '../dist/createContext.js'
 import { ACORN_PARSE_OPTIONS } from '../dist/constants.js'
 import { Chapter } from '../dist/types.js'
 
+const SICP_DIR = 'sicp_publish/dist'
+
 async function recursiveDirCopy(srcPath, dstPath) {
   // Copy and keep only necessary files
   const files = await fsPromises.readdir(srcPath)
@@ -29,26 +31,26 @@ async function recursiveDirCopy(srcPath, dstPath) {
 }
 
 async function prepare() {
-  await fsPromises.rm('sicp_publish/dist', { recursive: true, force: true })
-  await fsPromises.mkdir('sicp_publish/dist', { recursive: true })
-  await recursiveDirCopy('dist', 'sicp_publish/dist')
+  await fsPromises.rm(SICP_DIR, { recursive: true, force: true })
+  await fsPromises.mkdir(SICP_DIR, { recursive: true })
+  await recursiveDirCopy('dist', SICP_DIR)
 
   // Remove unnecessary dependencies
   await Promise.all([
     'finder.js', 'index.js', 'scope-refactoring.js'
-  ].map(fileName => fsPromises.rm(`sicp_publish/dist/${fileName}`)))
+  ].map(fileName => fsPromises.rm(`${SICP_DIR}/${fileName}`)))
 }
 
 function main() {
-  const writeStream = createWriteStream('sicp_publish/dist/sicp.js', {
+  const writeStream = createWriteStream(`${SICP_DIR}/sicp.js`, {
     encoding: 'utf-8',
     flags: 'w'
   })
   writeStream.write('"use strict";\n')
   writeStream.write('Object.defineProperty(exports, "__esModule", { value: true });\n')
   writeStream.write('const createContext_1 = require("./createContext");\n')
-  writeStream.write('const dict = createContext_1.default(4).nativeStorage.builtins;')
-  writeStream.write('\n// Declare functions for prelude\n')
+  writeStream.write('const dict = createContext_1.default(4).nativeStorage.builtins;\n')
+  writeStream.write('\n// Declare builtins for prelude\n')
 
   // @ts-expect-error Something to do with weird stuff going on between cjs and esm
   const context = createContext.default(Chapter.SOURCE_4)
@@ -66,7 +68,7 @@ function main() {
 
     const prelude = parse(context.prelude, ACORN_PARSE_OPTIONS)
 
-    writeStream.write('\n // Export prelude functions\n')
+    writeStream.write('\n// Export prelude functions\n')
     for (const func of prelude.body) {
       if (func.type !== 'FunctionDeclaration') {
         throw new Error(`Expected FunctionDeclarations, got '${func.type}' instead`)

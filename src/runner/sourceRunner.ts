@@ -35,17 +35,18 @@ const runners = {
     if (context.errors.length > 0) {
       return resolvedErrorPromise
     }
-    const redexedSteps: IStepperPropContents[] = []
-    for (const step of steps) {
+
+    const redexedSteps = steps.map((step): IStepperPropContents => {
       const redex = getRedex(step[0], step[1])
       const redexed = redexify(step[0], step[1])
-      redexedSteps.push({
+      return {
         code: redexed[0],
         redex: redexed[1],
         explanation: step[2],
         function: callee(redex, context)
-      })
-    }
+      }
+    })
+
     return Promise.resolve({
       status: 'finished',
       context,
