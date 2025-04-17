@@ -12,6 +12,7 @@ import type { FileGetter } from '../modules/moduleTypes'
 import {
   chapterParser,
   getChapterOption,
+  getLanguageOption,
   getVariantOption,
   handleResult,
   validChapterVariant
@@ -21,6 +22,7 @@ export const getReplCommand = () =>
   new Command('run')
     .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
     .addOption(getVariantOption(Variant.DEFAULT, objectValues(Variant)))
+    .addOption(getLanguageOption())
     .option('-v, --verbose', 'Enable verbose errors')
     .option('--modulesBackend <backend>')
     .option('-r, --repl', 'Start a REPL after evaluating files')
@@ -34,7 +36,7 @@ export const getReplCommand = () =>
 
       const fs: typeof fslib = require('fs/promises')
 
-      const context = createContext(lang.chapter, lang.variant)
+      const context = createContext(lang.chapter, lang.variant, lang.languageOptions)
 
       if (modulesBackend !== undefined) {
         setModulesStaticURL(modulesBackend)
