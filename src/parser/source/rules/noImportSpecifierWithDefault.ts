@@ -1,22 +1,12 @@
-import * as es from 'estree'
-
-import { UNKNOWN_LOCATION } from '../../../constants'
+import type { ImportSpecifier } from 'estree'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import type { Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
+import { RuleError } from '../../errors'
 
-export class NoImportSpecifierWithDefaultError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.ImportSpecifier) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoImportSpecifierWithDefaultError extends RuleError<ImportSpecifier> {
   public explain() {
-    return 'Import default specifiers are not allowed'
+    return 'Import default specifiers are not allowed.'
   }
 
   public elaborate() {
@@ -24,12 +14,12 @@ export class NoImportSpecifierWithDefaultError implements SourceError {
   }
 }
 
-const noImportSpecifierWithDefault: Rule<es.ImportSpecifier> = {
+const noImportSpecifierWithDefault: Rule<ImportSpecifier> = {
   name: 'no-declare-mutable',
   disableFromChapter: syntaxBlacklist['ImportDefaultSpecifier'],
 
   checkers: {
-    ImportSpecifier(node: es.ImportSpecifier, _ancestors: [Node]) {
+    ImportSpecifier(node) {
       if (node.imported.name === defaultExportLookupName) {
         return [new NoImportSpecifierWithDefaultError(node)]
       }

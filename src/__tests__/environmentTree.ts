@@ -1,6 +1,6 @@
 import { createGlobalEnvironment, EnvTree, EnvTreeNode } from '../createContext'
-import { pushEnvironment } from '../interpreter/interpreter'
-import { mockContext, mockEnvironment } from '../mocks/context'
+import { pushEnvironment } from '../cse-machine/utils'
+import { mockContext, mockEnvironment } from '../utils/testing/mocks'
 import { Chapter } from '../types'
 
 test('EnvTree root should be null upon instantiation', () => {

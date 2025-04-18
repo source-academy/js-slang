@@ -1,5 +1,5 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
-import Closure from '../interpreter/closure'
+import Closure from '../cse-machine/closure'
 import { Type, Value } from '../types'
 
 export interface ArrayLike {

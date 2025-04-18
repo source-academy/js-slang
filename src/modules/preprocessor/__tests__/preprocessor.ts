@@ -1,18 +1,19 @@
 import type { Program } from 'estree'
-import type { MockedFunction } from 'jest-mock'
 
 import { parseError, type IOptions } from '../../..'
-import { mockContext } from '../../../mocks/context'
+import { mockContext } from '../../../utils/testing/mocks'
 import { Chapter, type RecursivePartial } from '../../../types'
 import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
 import preprocessFileImports from '..'
-import { sanitizeAST } from '../../../utils/ast/sanitizer'
+import { sanitizeAST } from '../../../utils/testing/sanitizer'
 import { parse } from '../../../parser/parser'
 import {
   accessExportFunctionName,
   defaultExportLookupName
 } from '../../../stdlib/localImport.prelude'
 import type { SourceFiles } from '../../moduleTypes'
+import { UndefinedImportError } from '../../errors'
+import { asMockedFunc } from '../../../utils/testing/misc'
 
 jest.mock('../../loader/loaders')
 
@@ -48,7 +49,7 @@ describe('preprocessFileImports', () => {
   const assertASTsAreEquivalent = (
     actualProgram: Program | undefined,
     expectedCode: string,
-    log: boolean = false
+    _log: boolean = false
   ): void => {
     if (!actualProgram) {
       throw new Error('Actual program should not be undefined!')
@@ -139,9 +140,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program', async () => {
-    const docsMocked = memoizedGetModuleDocsAsync as MockedFunction<
-      typeof memoizedGetModuleDocsAsync
-    >
+    const docsMocked = asMockedFunc(memoizedGetModuleDocsAsync)
     docsMocked.mockResolvedValueOnce({
       default: {} as any,
       a: {} as any,
@@ -194,9 +193,8 @@ describe('preprocessFileImports', () => {
   })
 
   it('collates Source module imports at the start of the top-level environment of the preprocessed program', async () => {
-    const docsMocked = memoizedGetModuleDocsAsync as MockedFunction<
-      typeof memoizedGetModuleDocsAsync
-    >
+    const docsMocked = asMockedFunc(memoizedGetModuleDocsAsync)
+
     docsMocked.mockResolvedValue({
       f: {} as any,
       g: {} as any,
@@ -418,5 +416,44 @@ describe('preprocessFileImports', () => {
     })
 
     assertASTsAreEquivalent(actualProgram, expectedCode)
+  })
+
+  it('catches errors thrown by the bundler', async () => {
+    const context = mockContext(Chapter.SOURCE_4)
+    const errorToThrow = new Error()
+    const promise = preprocessFileImports(
+      wrapFiles({
+        '/a.js': 'const a = 0;'
+      }),
+      '/a.js',
+      context,
+      {},
+      () => {
+        throw errorToThrow
+      }
+    )
+
+    await expect(promise).resolves.not.toThrow()
+    expect(context.errors[0]).toBe(errorToThrow)
+  })
+
+  it('catches import analysis errors', async () => {
+    const context = mockContext(Chapter.SOURCE_4)
+    const errorToThrow = new Error()
+    const promise = preprocessFileImports(
+      wrapFiles({
+        '/a.js': `import { b } from "./b.js";`,
+        '/b.js': 'export const a = "b";'
+      }),
+      '/a.js',
+      context,
+      {},
+      () => {
+        throw errorToThrow
+      }
+    )
+
+    await expect(promise).resolves.not.toThrow()
+    expect(context.errors[0]).toBeInstanceOf(UndefinedImportError)
   })
 })

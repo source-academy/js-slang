@@ -96,20 +96,20 @@ const preprocessFileImports = async (
       context,
       options?.importOptions
     )
+
+    const program = bundler(programs, entrypointFilePath, topoOrder, context)
+    return {
+      ok: true,
+      program,
+      files: linkerResult.files,
+      verboseErrors: linkerResult.verboseErrors
+    }
   } catch (error) {
     context.errors.push(error)
     return {
       ok: false,
       verboseErrors: linkerResult.verboseErrors
     }
-  }
-
-  const program = bundler(programs, entrypointFilePath, topoOrder, context)
-  return {
-    ok: true,
-    program,
-    files: linkerResult.files,
-    verboseErrors: linkerResult.verboseErrors
   }
 }
 

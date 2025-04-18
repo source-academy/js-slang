@@ -1,11 +1,11 @@
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectResult } from '../../utils/testing'
+import { expectParsedError, expectFinishedResult } from '../../utils/testing'
 
 // Continuation tests for Scheme
 const optionECScm = { chapter: Chapter.SCHEME_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('basic call/cc works', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (+ 1 2 (call/cc
               (lambda (k) (k 3)))
@@ -21,7 +21,7 @@ SchemeInteger {
 })
 
 test('call/cc can be used to escape a computation', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (define test 1)
     (call/cc (lambda (k)
@@ -88,7 +88,7 @@ test('cont throws error given >1 argument', () => {
 })
 */
 test('call/cc can be stored as a value', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     ;; storing a continuation
     (define a #f)

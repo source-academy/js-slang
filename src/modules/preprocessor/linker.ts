@@ -139,7 +139,7 @@ export default async function parseProgramsAndConstructImportGraph(
     let statement: es.Node | null = null
 
     if (!programs[entrypointFilePath]) {
-      if (entrypointFileText == undefined) {
+      if (entrypointFileText === undefined) {
         // non-existent entrypoint
         return false
       }

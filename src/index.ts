@@ -1,5 +1,4 @@
-import { SourceLocation } from 'estree'
-import * as es from 'estree'
+import type es from 'estree'
 import { SourceMapConsumer } from 'source-map'
 
 import createContext from './createContext'
@@ -10,16 +9,16 @@ import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactor
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
   Chapter,
-  Context,
-  Error as ResultError,
-  ExecutionMethod,
-  Finished,
-  ModuleContext,
-  RecursivePartial,
-  Result,
-  SourceError,
-  SVMProgram,
-  Variant
+  type Context,
+  type Error as ResultError,
+  type ExecutionMethod,
+  type Finished,
+  type ModuleContext,
+  type RecursivePartial,
+  type Result,
+  type SourceError,
+  type SVMProgram,
+  type Variant
 } from './types'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
@@ -30,11 +29,10 @@ import { ModuleNotFoundError } from './modules/errors'
 import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
-import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
+import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
 import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
 
 export interface IOptions {
-  scheduler: 'preemptive' | 'async'
   steps: number
   stepLimit: number
   executionMethod: ExecutionMethod
@@ -58,7 +56,7 @@ export interface IOptions {
 
 // needed to work on browsers
 if (typeof window !== 'undefined') {
-  // @ts-ignore
+  // @ts-expect-error Initialize doesn't exist on SourceMapConsumer
   SourceMapConsumer.initialize({
     'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
   })
@@ -78,11 +76,13 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
       // TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
       // way to display it.
       const elaboration = error.elaborate()
-      return line < 1
+      return typeof line === 'number' && line < 1
         ? `${filePath}${explanation}\n${elaboration}\n`
         : `${filePath}Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
-      return line < 1 ? explanation : `${filePath}Line ${line}: ${explanation}`
+      return typeof line === 'number' && line < 1
+        ? explanation
+        : `${filePath}Line ${line}: ${explanation}`
     }
   })
   return errorMessagesArr.join('\n')
@@ -92,7 +92,7 @@ export function findDeclaration(
   code: string,
   context: Context,
   loc: { line: number; column: number }
-): SourceLocation | null | undefined {
+): es.SourceLocation | null | undefined {
   const program = looseParse(code, context)
   if (!program) {
     return null
@@ -112,7 +112,7 @@ export function getScope(
   code: string,
   context: Context,
   loc: { line: number; column: number }
-): SourceLocation[] {
+): es.SourceLocation[] {
   const program = looseParse(code, context)
   if (!program) {
     return []
@@ -133,7 +133,7 @@ export function getAllOccurrencesInScope(
   code: string,
   context: Context,
   loc: { line: number; column: number }
-): SourceLocation[] {
+): es.SourceLocation[] {
   const program = looseParse(code, context)
   if (!program) {
     return []
@@ -253,12 +253,9 @@ export async function runFilesInContext(
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
   if (result.status === 'finished' || result.status === 'error') {
     return result
-  } else if (result.status === 'suspended-cse-eval') {
-    const value = resumeEvaluate(result.context)
-    return CSEResultPromise(result.context, value)
-  } else {
-    return result.scheduler.run(result.it, result.context)
   }
+  const value = resumeEvaluate(result.context)
+  return CSEResultPromise(result.context, value)
 }
 
 export function interrupt(context: Context) {

@@ -189,7 +189,15 @@ test('Cannot have incomplete statements - verbose', () => {
           `)
 })
 
-test('no anonymous function declarations', () => {
+test('Equality operator has specific error', () => {
+  return expectParsedError('0 == 0;').toMatchInlineSnapshot(`"Line 1: Use === instead of ==."`)
+})
+
+test('Inequality operator has specific error', () => {
+  return expectParsedError('0 != 0;').toMatchInlineSnapshot(`"Line 1: Use !== instead of !=."`)
+})
+
+test('No anonymous function declarations', () => {
   return expectParsedError(
     stripIndent`
     export default function (x) {
@@ -200,7 +208,7 @@ test('no anonymous function declarations', () => {
   ).toMatchInlineSnapshot(`"Line 1: The 'function' keyword needs to be followed by a name."`)
 })
 
-test('no anonymous function declarations - verbose', () => {
+test('No anonymous function declarations - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -243,33 +251,52 @@ test('Cannot have if without else in chapter <= 2 - verbose', () => {
           `)
 })
 
-test('Cannot use multiple declarations', () => {
-  return expectParsedError(
-    stripIndent`
-    let x = 3, y = 5;
-    x;
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"Line 1: Multiple declaration in a single statement."`)
-})
+describe('Cannot use multiple declarations', () => {
+  test('let', () => {
+    return expectParsedError(
+      stripIndent`
+      let x = 3, y = 5;
+      x;
+      `,
+      Chapter.LIBRARY_PARSER
+    ).toMatchInlineSnapshot(`"Line 1: Multiple declarations in a single statement."`)
+  })
 
-test('Cannot use multiple declarations - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-    "enable verbose";
-    let x = 3, y = 5;
-    x;
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 2, Column 0: Multiple declaration in a single statement.
-            Split the variable declaration into multiple lines as follows
+  test('let - verbose', () => {
+    return expectParsedError(
+      stripIndent`
+      "enable verbose";
+      let x = 3, y = 5;
+      x;
+      `,
+      Chapter.LIBRARY_PARSER
+    ).toMatchInlineSnapshot(`
+      "Line 2, Column 0: Multiple declarations in a single statement.
+      Split the variable declaration into multiple lines as follows
 
-            	let x = 3;
-            	let y = 5;
+        let x = 3;
+        let y = 5;
 
-            "
-          `)
+      "
+    `)
+  })
+
+  test('const - verbose', () => {
+    return expectParsedError(
+      stripIndent`
+        "enable verbose";
+        const x = 3, y = 5;
+        `
+    ).toMatchInlineSnapshot(`
+        "Line 2, Column 0: Multiple declarations in a single statement.
+        Split the variable declaration into multiple lines as follows
+
+          const x = 3;
+          const y = 5;
+
+        "
+    `)
+  })
 })
 
 test('Cannot use destructuring declarations', () => {
@@ -299,7 +326,7 @@ test('Cannot use destructuring declarations - verbose', () => {
           `)
 })
 
-test('no declaration without assignment', () => {
+test('No declaration without assignment', () => {
   return expectParsedError(
     stripIndent`
     let x;
@@ -308,7 +335,7 @@ test('no declaration without assignment', () => {
   ).toMatchInlineSnapshot(`"Line 1: Missing value in variable declaration."`)
 })
 
-test('no declaration without assignment - verbose', () => {
+test('No declaration without assignment - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -327,7 +354,7 @@ test('no declaration without assignment - verbose', () => {
           `)
 })
 
-test('no var statements', () => {
+test('No var statements', () => {
   return expectParsedError(
     stripIndent`
     var x = 1;
@@ -336,7 +363,7 @@ test('no var statements', () => {
   ).toMatchInlineSnapshot(`"Line 1: Variable declaration using \\"var\\" is not allowed."`)
 })
 
-test('no var statements - verbose', () => {
+test('No var statements - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -378,6 +405,13 @@ test('Cannot use update statements - verbose', () => {
             	x = x + 5;
             "
           `)
+})
+
+test('No default exports', () => {
+  return expectParsedError(
+    'const a = 0; export { a as default };',
+    Chapter.SOURCE_4
+  ).toMatchInlineSnapshot(`"Line 1: Export default declarations are not allowed."`)
 })
 
 test('Cannot use update statements', () => {
@@ -690,7 +724,7 @@ test('No trailing commas in objects', () => {
   ).toMatchInlineSnapshot(`"Line 3: Trailing comma"`)
 })
 
-test('no try statements', () => {
+test('No try statements', () => {
   return expectParsedError(
     stripIndent`
     function f(x, y) {
@@ -709,7 +743,7 @@ test('no try statements', () => {
           `)
 })
 
-test('no try statements - verbose', () => {
+test('No try statements - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -733,20 +767,17 @@ test('no try statements - verbose', () => {
           `)
 })
 
-test('no for of loops', () => {
+test('No for of loops', () => {
   return expectParsedError(
     stripIndent`
     for (let i of list()) {
     }
   `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 1: Missing value in variable declaration.
-            Line 1: For of statements are not allowed"
-          `)
+  ).toMatchInlineSnapshot(`"Line 1: For of statements are not allowed"`)
 })
 
-test('no for of loops - verbose', () => {
+test('No for of loops - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -755,34 +786,23 @@ test('no for of loops - verbose', () => {
     `,
     { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 9: Missing value in variable declaration.
-            A variable declaration assigns a value to a name.
-            For instance, to assign 20 to i, you can write:
-
-              let i = 20;
-
-              i + i; // 40
-
-            Line 2, Column 0: For of statements are not allowed
+            "Line 2, Column 0: For of statements are not allowed
             You are trying to use For of statements, which is not allowed (yet).
             "
           `)
 })
 
-test('no for in loops', () => {
+test('No for in loops', () => {
   return expectParsedError(
     stripIndent`
     for (let i in { a: 1, b: 2 }) {
     }
     `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 1: Missing value in variable declaration.
-            Line 1: For in statements are not allowed"
-          `)
+  ).toMatchInlineSnapshot(`"Line 1: For in statements are not allowed"`)
 })
 
-test('no for in loops - verbose', () => {
+test('No for in loops - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -791,21 +811,13 @@ test('no for in loops - verbose', () => {
     `,
     { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 9: Missing value in variable declaration.
-            A variable declaration assigns a value to a name.
-            For instance, to assign 20 to i, you can write:
-
-              let i = 20;
-
-              i + i; // 40
-
-            Line 2, Column 0: For in statements are not allowed
+            "Line 2, Column 0: For in statements are not allowed
             You are trying to use For in statements, which is not allowed (yet).
             "
           `)
 })
 
-test('no generator functions', () => {
+test('No generator functions', () => {
   return expectParsedError(
     stripIndent`
     function* gen() {
@@ -817,7 +829,7 @@ test('no generator functions', () => {
   ).toMatchInlineSnapshot(`"Line 2: Yield expressions are not allowed"`)
 })
 
-test('no generator functions - verbose', () => {
+test('No generator functions - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -834,7 +846,7 @@ test('no generator functions - verbose', () => {
           `)
 })
 
-test('no classes', () => {
+test('No classes', () => {
   return expectParsedError(
     stripIndent`
     class Box {
@@ -847,7 +859,7 @@ test('no classes', () => {
           `)
 })
 
-test('no classes - verbose', () => {
+test('No classes - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -865,7 +877,7 @@ test('no classes - verbose', () => {
           `)
 })
 
-test('no super', () => {
+test('No super', () => {
   return expectParsedError(
     stripIndent`
     class BoxError extends Error {
@@ -884,7 +896,7 @@ test('no super', () => {
           `)
 })
 
-test('no super - verbose', () => {
+test('No super - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -914,7 +926,7 @@ test('no super - verbose', () => {
           `)
 })
 
-test('no sequence expression', () => {
+test('No sequence expression', () => {
   return expectParsedError(
     stripIndent`
     (1, 2);
@@ -923,7 +935,7 @@ test('no sequence expression', () => {
   ).toMatchInlineSnapshot(`"Line 1: Sequence expressions are not allowed"`)
 })
 
-test('no sequence expression - verbose', () => {
+test('No sequence expression - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -937,7 +949,7 @@ test('no sequence expression - verbose', () => {
           `)
 })
 
-test('no interface', () => {
+test('No interface', () => {
   return expectParsedError(
     stripIndent`
     interface Box {
@@ -947,7 +959,7 @@ test('no interface', () => {
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'interface' is reserved (1:0)"`)
 })
 
-test('no interface - verbose', () => {
+test('No interface - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -962,21 +974,13 @@ test('no interface - verbose', () => {
           `)
 })
 
-test('no template literals - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-    "enable verbose";
-    'hi'
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 2, Column 4: Missing semicolon at the end of statement
-            Every statement must be terminated by a semicolon.
-            "
-          `)
+test('No expressions in template literals', () => {
+  return expectParsedError(stripIndent('`hi${0}`;')).toMatchInlineSnapshot(
+    `"Line 1: Expressions are not allowed in template literals (\`multiline strings\`)"`
+  )
 })
 
-test('no regexp', () => {
+test('No regexp', () => {
   return expectParsedError(
     stripIndent`
     /pattern/
@@ -988,7 +992,7 @@ test('no regexp', () => {
           `)
 })
 
-test('no regexp - verbose', () => {
+test('No regexp - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -1005,7 +1009,7 @@ test('no regexp - verbose', () => {
           `)
 })
 
-test('no this, no new', () => {
+test('No this, no new', () => {
   return expectParsedError(
     stripIndent`
     function Box() {
@@ -1014,10 +1018,10 @@ test('no this, no new', () => {
     const box = new Box();
     `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"Line 2: Expected string as prop, got number."`)
+  ).toMatchInlineSnapshot(`"Line 4: TypeError: Box is not a constructor"`)
 })
 
-test('no this, no new - verbose', () => {
+test('No this, no new - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -1027,14 +1031,10 @@ test('no this, no new - verbose', () => {
     const box = new Box();
     `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 3, Column 2: Expected string as prop, got number.
-            Expected string as prop, got number.
-            "
-          `)
+  ).toMatchInlineSnapshot(`""`)
 })
 
-test('no unspecified operators', () => {
+test('No unspecified operators', () => {
   return expectParsedError(
     stripIndent`
     1 << 10;
@@ -1043,7 +1043,7 @@ test('no unspecified operators', () => {
   ).toMatchInlineSnapshot(`"Line 1: Operator '<<' is not allowed."`)
 })
 
-test('no unspecified operators - verbose', () => {
+test('No unspecified operators - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -1057,7 +1057,7 @@ test('no unspecified operators - verbose', () => {
           `)
 })
 
-test('no unspecified unary operators', () => {
+test('No unspecified unary operators', () => {
   return expectParsedError(
     stripIndent`
     let x = 5;
@@ -1067,7 +1067,7 @@ test('no unspecified unary operators', () => {
   ).toMatchInlineSnapshot(`"Line 2: Operator 'typeof' is not allowed."`)
 })
 
-test('no unspecified unary operators - verbose', () => {
+test('No unspecified unary operators - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -1082,7 +1082,7 @@ test('no unspecified unary operators - verbose', () => {
           `)
 })
 
-test('no implicit undefined return', () => {
+test('No implicit undefined return', () => {
   return expectParsedError(
     stripIndent`
     function f() {
@@ -1092,7 +1092,7 @@ test('no implicit undefined return', () => {
     { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Missing value in return statement."`)
 })
-test('no implicit undefined return - verbose', () => {
+test('No implicit undefined return - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -1111,7 +1111,7 @@ test('no implicit undefined return - verbose', () => {
           `)
 })
 
-test('no repeated params', () => {
+test('No repeated params', () => {
   return expectParsedError(
     stripIndent`
     function f(x, x) {
@@ -1122,7 +1122,7 @@ test('no repeated params', () => {
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: Argument name clash (1:14)"`)
 })
 
-test('no repeated params - verbose', () => {
+test('No repeated params - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -1138,7 +1138,7 @@ test('no repeated params - verbose', () => {
           `)
 })
 
-test('no declaring reserved keywords', () => {
+test('No declaring reserved keywords', () => {
   return expectParsedError(
     stripIndent`
     let yield = 5;
@@ -1147,7 +1147,7 @@ test('no declaring reserved keywords', () => {
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'yield' is reserved (1:4)"`)
 })
 
-test('no declaring reserved keywords - verbose', () => {
+test('No declaring reserved keywords - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -1161,7 +1161,7 @@ test('no declaring reserved keywords - verbose', () => {
           `)
 })
 
-test('no assigning to reserved keywords', () => {
+test('No assigning to reserved keywords', () => {
   return expectParsedError(
     stripIndent`
     package = 5;
@@ -1170,7 +1170,7 @@ test('no assigning to reserved keywords', () => {
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'package' is reserved (1:0)"`)
 })
 
-test('no assigning to reserved keywords - verbose', () => {
+test('No assigning to reserved keywords - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -1184,7 +1184,7 @@ test('no assigning to reserved keywords - verbose', () => {
           `)
 })
 
-test('no holes in arrays', () => {
+test('No holes in arrays', () => {
   return expectParsedError(
     stripIndent`
     [1, , 3];
@@ -1193,7 +1193,7 @@ test('no holes in arrays', () => {
   ).toMatchInlineSnapshot(`"Line 1: No holes are allowed in array literals."`)
 })
 
-test('no assigning to reserved keywords - verbose', () => {
+test('No assigning to reserved keywords - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -1208,7 +1208,7 @@ test('no assigning to reserved keywords - verbose', () => {
           `)
 })
 
-test('no namespace imports', () => {
+test('No namespace imports', () => {
   return expectParsedError(
     stripIndent`
     import * as x from "one_module";
@@ -1217,7 +1217,7 @@ test('no namespace imports', () => {
   ).toMatchInlineSnapshot(`"Line 1: Namespace imports are not allowed"`)
 })
 
-test('no namespace imports - verbose', () => {
+test('No namespace imports - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -1229,4 +1229,63 @@ test('no namespace imports - verbose', () => {
             You are trying to use Namespace imports, which is not allowed (yet).
             "
           `)
+})
+
+test('No reexports', () =>
+  expectParsedError('export { a } from "./hi.js";').toMatchInlineSnapshot(`
+    "Line 1: Export named declarations are not allowed
+    Line 1: exports of the form \`export { a } from \\"./file.js\\";\` are not allowed."
+  `))
+
+describe('No reexports - verbose', () => {
+  test('single export', () =>
+    expectParsedError(
+      stripIndent`
+    "enable verbose";
+    export { a } from "./hi.js";
+  `
+    ).toMatchInlineSnapshot(`
+    "Line 2, Column 0: Export named declarations are not allowed
+    You are trying to use Export named declarations, which is not allowed (yet).
+
+    Line 2, Column 0: exports of the form \`export { a } from \\"./file.js\\";\` are not allowed.
+    Import what you are trying to export, then export it again, like this:
+    import { a } from \\"./hi.js\\";
+    export { a };
+    "
+  `))
+
+  test('multiple exports', () =>
+    expectParsedError(
+      stripIndent`
+      "enable verbose";
+      export { a, b } from "./hi.js";
+    `
+    ).toMatchInlineSnapshot(`
+    "Line 2, Column 0: Export named declarations are not allowed
+    You are trying to use Export named declarations, which is not allowed (yet).
+
+    Line 2, Column 0: exports of the form \`export { a } from \\"./file.js\\";\` are not allowed.
+    Import what you are trying to export, then export it again, like this:
+    import { a, b } from \\"./hi.js\\";
+    export { a, b };
+    "
+  `))
+
+  test('aliased exports', () =>
+    expectParsedError(
+      stripIndent`
+      "enable verbose";
+      export { a as x, b } from "./hi.js";
+      `
+    ).toMatchInlineSnapshot(`
+    "Line 2, Column 0: Export named declarations are not allowed
+    You are trying to use Export named declarations, which is not allowed (yet).
+
+    Line 2, Column 0: exports of the form \`export { a } from \\"./file.js\\";\` are not allowed.
+    Import what you are trying to export, then export it again, like this:
+    import { a, b } from \\"./hi.js\\";
+    export { a as x, b };
+    "
+  `))
 })

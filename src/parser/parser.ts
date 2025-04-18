@@ -1,6 +1,6 @@
-import { Program } from 'estree'
+import type { Program } from 'estree'
 
-import { Context } from '..'
+import type { Context } from '..'
 import { Chapter, Variant } from '../types'
 import { FullJSParser } from './fullJS'
 import { FullTSParser } from './fullTS'
@@ -8,7 +8,7 @@ import { PythonParser } from './python'
 import { SchemeParser } from './scheme'
 import { SourceParser } from './source'
 import { SourceTypedParser } from './source/typed'
-import { AcornOptions, Parser } from './types'
+import type { AcornOptions, Parser } from './types'
 
 export function parse<TOptions extends AcornOptions>(
   programStr: string,

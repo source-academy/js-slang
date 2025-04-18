@@ -1,4 +1,4 @@
-import Closure from '../interpreter/closure'
+import Closure from '../cse-machine/closure'
 import { Context, Value } from '../types'
 import { stringify } from '../utils/stringify'
 

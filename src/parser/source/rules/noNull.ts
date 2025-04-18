@@ -1,18 +1,9 @@
-import * as es from 'estree'
+import type { Literal } from 'estree'
+import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
+import { Chapter } from '../../../types'
 
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
-
-export class NoNullError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.Literal) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoNullError extends RuleError<Literal> {
   public explain() {
     return `null literals are not allowed.`
   }
@@ -22,11 +13,11 @@ export class NoNullError implements SourceError {
   }
 }
 
-const noNull: Rule<es.Literal> = {
+const noNull: Rule<Literal> = {
   name: 'no-null',
   disableFromChapter: Chapter.SOURCE_2,
   checkers: {
-    Literal(node: es.Literal, _ancestors: [Node]) {
+    Literal(node) {
       if (node.value === null) {
         return [new NoNullError(node)]
       } else {
