@@ -16,6 +16,8 @@ beforeEach(() => {
         class Test1 {}
         class Test2 {}
         class Test3 {}
+        type Test4 = (arg: Test1) => Test2;
+        const Test4 = (arg: Test1) => Test2;
       `,
       x: 'const x: string = "hello"',
       y: 'const y: number = 42',
@@ -282,6 +284,27 @@ describe('Typed module tests', () => {
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
       `"Line 3: Type 'Test3' is not assignable to type 'boolean'."`
+    )
+  })
+
+  /* TEST CASES FOR THE 'Test4' TYPE */
+  it('should allow calling Test4 with a valid Test1 object', () => {
+    const code = `
+      import { test2 } from 'exampleModule';
+      const result: Test4 = (arg: Test1) => test2;
+    `
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('should error when calling Test4 with a string argument', () => {
+    const code = `
+      import { test1 } from 'exampleModule';
+      const result: Test4 = (arg: Test1) => test1;
+    `
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 3: Type '(Test1) => Test1' is not assignable to type 'Test4'."`
     )
   })
 })
