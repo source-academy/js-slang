@@ -64,4 +64,15 @@ describe('parse', () => {
       `"Line 1: Type 'Program | Statement' is not assignable to type 'number'."`
     )
   })
+
+  it('should error on variable redeclaration with different types', () => {
+    const code = `
+      const a: number = 10;
+      const a: string = "oops";
+    `
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 3: SyntaxError: Identifier 'a' has already been declared (3:12)"`
+    )
+  })
 })
