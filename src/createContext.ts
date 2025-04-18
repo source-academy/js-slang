@@ -23,11 +23,12 @@ import { streamPrelude } from './stdlib/stream.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils'
 import {
   Chapter,
-  Context,
-  CustomBuiltIns,
-  Environment,
-  NativeStorage,
-  Value,
+  type Context,
+  type CustomBuiltIns,
+  type Environment,
+  type LanguageOptions,
+  type NativeStorage,
+  type Value,
   Variant
 } from './types'
 import * as operators from './utils/operators'
@@ -147,6 +148,7 @@ const createNativeStorage = (): NativeStorage => ({
 export const createEmptyContext = <T>(
   chapter: Chapter,
   variant: Variant = Variant.DEFAULT,
+  languageOptions: LanguageOptions = {},
   externalSymbols: string[],
   externalContext?: T
 ): Context<T> => {
@@ -162,6 +164,7 @@ export const createEmptyContext = <T>(
     nativeStorage: createNativeStorage(),
     executionMethod: 'auto',
     variant,
+    languageOptions,
     moduleContexts: {},
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
@@ -839,6 +842,7 @@ const defaultBuiltIns: CustomBuiltIns = {
 const createContext = <T>(
   chapter: Chapter = Chapter.SOURCE_1,
   variant: Variant = Variant.DEFAULT,
+  languageOptions: LanguageOptions = {},
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
@@ -849,6 +853,7 @@ const createContext = <T>(
       ...createContext(
         Chapter.SOURCE_4,
         variant,
+        languageOptions,
         externalSymbols,
         externalContext,
         externalBuiltIns
@@ -856,7 +861,13 @@ const createContext = <T>(
       chapter
     } as Context
   }
-  const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
+  const context = createEmptyContext(
+    chapter,
+    variant,
+    languageOptions,
+    externalSymbols,
+    externalContext
+  )
 
   importBuiltins(context, externalBuiltIns)
   importPrelude(context)

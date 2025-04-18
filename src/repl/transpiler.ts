@@ -12,6 +12,7 @@ import { Chapter, Variant } from '../types'
 import {
   chapterParser,
   getChapterOption,
+  getLanguageOption,
   getVariantOption,
   validateChapterAndVariantCombo
 } from './utils'
@@ -20,7 +21,11 @@ export const getTranspilerCommand = () =>
   new Command('transpiler')
     .addOption(getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.NATIVE]))
     .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
-    .option('-p, --pretranspile', "only pretranspile and don't perform Source -> JS transpilation")
+    .addOption(getLanguageOption())
+    .option(
+      '-p, --pretranspile',
+      "only pretranspile (e.g. GPU -> Source) and don't perform Source -> JS transpilation"
+    )
     .option('-o, --out <outFile>', 'Specify a file to write to')
     .argument('<filename>')
     .action(async (fileName, opts) => {
@@ -30,7 +35,7 @@ export const getTranspilerCommand = () =>
       }
 
       const fs: typeof fslib = require('fs/promises')
-      const context = createContext(opts.chapter, opts.variant)
+      const context = createContext(opts.chapter, opts.variant, opts.languageOptions)
       const entrypointFilePath = resolve(fileName)
 
       const linkerResult = await parseProgramsAndConstructImportGraph(

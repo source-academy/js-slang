@@ -63,7 +63,7 @@ strings containing the names of the VM-internal functions.`
       const vmInternalFunctions = opts.internals || []
 
       const source = await fs.readFile(inputFile, 'utf-8')
-      const context = createEmptyContext(opts.chapter, Variant.DEFAULT, [], null)
+      const context = createEmptyContext(opts.chapter, Variant.DEFAULT, undefined, [], null)
       const program = parse(source, context)
       if (program === null) {
         process.stderr.write(parseError(context.errors))

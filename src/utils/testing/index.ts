@@ -6,7 +6,7 @@ import { mockContext } from './mocks'
 import type { TestContext, TestOptions, TestResults } from './types'
 
 export function createTestContext(rawOptions: TestOptions = {}): TestContext {
-  const { chapter, variant, testBuiltins }: Exclude<TestOptions, Chapter> =
+  const { chapter, variant, testBuiltins, languageOptions }: Exclude<TestOptions, Chapter> =
     typeof rawOptions === 'number'
       ? {
           chapter: rawOptions
@@ -37,7 +37,14 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
     }
   }
 
-  const evalContext = createContext(chapter, variant, [], undefined, customBuiltIns)
+  const evalContext = createContext(
+    chapter,
+    variant,
+    languageOptions,
+    [],
+    undefined,
+    customBuiltIns
+  )
   Object.entries(testBuiltins ?? {}).forEach(([key, value]) =>
     defineBuiltin(evalContext, key, value)
   )
