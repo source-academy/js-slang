@@ -21,13 +21,6 @@ export function setModulesStaticURL(url: string) {
 }
 
 function wrapImporter<T>(func: (p: string) => Promise<T>) {
-  /*
-    Browsers natively support esm's import() but Jest and Node do not. So we need
-    to change which import function we use based on the environment.
-
-    For the browser, we use the function constructor to hide the import calls from
-    webpack so that webpack doesn't try to compile them away.
-  */
   return async (p: string): Promise<T> => {
     try {
       const result = await timeoutPromise(func(p), 10000)
@@ -53,7 +46,7 @@ function wrapImporter<T>(func: (p: string) => Promise<T>) {
 
 // Exported for testing
 export const docsImporter = wrapImporter<{ default: any }>(async p => {
-  // TODO: USe import attributes when they become supported
+  // TODO: Use import attributes when they become supported
   // Import Assertions and Attributes are not widely supported by all
   // browsers yet, so we use fetch in the meantime
   const resp = await fetch(p)
@@ -117,6 +110,13 @@ function getMemoizedDocsImporter() {
 export const memoizedGetModuleManifestAsync = getManifestImporter()
 export const memoizedGetModuleDocsAsync = getMemoizedDocsImporter()
 
+/*
+  Browsers natively support esm's import() but Jest and Node do not. So we need
+  to change which import function we use based on the environment.
+
+  For the browser, we use the function constructor to hide the import calls from
+  webpack so that webpack doesn't try to compile them away.
+*/
 const bundleAndTabImporter = wrapImporter<{ default: ModuleBundle }>(
   typeof window !== 'undefined' && process.env.NODE_ENV !== 'test'
     ? (new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any)

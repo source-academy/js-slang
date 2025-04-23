@@ -1,9 +1,9 @@
-import { mockContext } from '../../../../mocks/context'
+import { mockContext } from '../../../../utils/testing/mocks'
 import { parse } from '../../../../parser/parser'
 import { defaultExportLookupName } from '../../../../stdlib/localImport.prelude'
 import { Chapter } from '../../../../types'
 import { transformProgramToFunctionDeclaration } from '../../transformers/transformProgramToFunctionDeclaration'
-import { sanitizeAST } from '../../../../utils/ast/sanitizer'
+import { sanitizeAST } from '../../../../utils/testing/sanitizer'
 
 describe('transformImportedFile', () => {
   const currentFileName = '/dir/a.js'

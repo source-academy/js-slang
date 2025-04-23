@@ -1,8 +1,8 @@
-import { mockContext } from '../../../../mocks/context'
+import { mockContext } from '../../../../utils/testing/mocks'
 import { parse } from '../../../../parser/parser'
 import { Chapter } from '../../../../types'
 import hoistAndMergeImports from '../../transformers/hoistAndMergeImports'
-import { sanitizeAST } from '../../../../utils/ast/sanitizer'
+import { sanitizeAST } from '../../../../utils/testing/sanitizer'
 
 describe('hoistAndMergeImports', () => {
   const assertASTsAreEqual = (actualCode: string, expectedCode: string) => {

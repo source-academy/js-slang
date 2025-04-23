@@ -1,8 +1,8 @@
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
 import { Chapter } from '../../types'
 import * as ast from '../../utils/ast/astCreator'
-import { sanitizeAST } from '../../utils/ast/sanitizer'
+import { sanitizeAST } from '../../utils/testing/sanitizer'
 import { stripIndent } from '../../utils/formatters'
 import { transformImportDeclarations, transpile } from '../transpiler'
 

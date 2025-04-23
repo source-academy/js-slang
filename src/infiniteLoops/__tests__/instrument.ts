@@ -1,6 +1,6 @@
 import { Program } from 'estree'
 
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
 import { Chapter } from '../../types'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../../utils/operators'
@@ -12,24 +12,26 @@ import {
 
 function mockFunctionsAndState() {
   const theState = undefined
-  const functions = {}
   const returnFirst = (...args: any[]) => args[0]
   const nothing = (..._args: any[]) => {}
-  functions[functionNames.nothingFunction] = nothing
-  functions[functionNames.concretize] = returnFirst
-  functions[functionNames.hybridize] = returnFirst
-  functions[functionNames.wrapArg] = returnFirst
-  functions[functionNames.dummify] = returnFirst
-  functions[functionNames.saveBool] = returnFirst
-  functions[functionNames.saveVar] = returnFirst
-  functions[functionNames.preFunction] = nothing
-  functions[functionNames.returnFunction] = returnFirst
-  functions[functionNames.postLoop] = (_: any, res?: any) => res
-  functions[functionNames.enterLoop] = nothing
-  functions[functionNames.exitLoop] = nothing
-  functions[functionNames.trackLoc] = (_1: any, _2: any, fn?: any) => (fn ? fn() : undefined)
-  functions[functionNames.evalB] = evaluateBinaryExpression
-  functions[functionNames.evalU] = evaluateUnaryExpression
+
+  const functions = {
+    [functionNames.nothingFunction]: nothing,
+    [functionNames.concretize]: returnFirst,
+    [functionNames.hybridize]: returnFirst,
+    [functionNames.wrapArg]: returnFirst,
+    [functionNames.dummify]: returnFirst,
+    [functionNames.saveBool]: returnFirst,
+    [functionNames.saveVar]: returnFirst,
+    [functionNames.preFunction]: nothing,
+    [functionNames.returnFunction]: returnFirst,
+    [functionNames.postLoop]: (_: any, res?: any) => res,
+    [functionNames.enterLoop]: nothing,
+    [functionNames.exitLoop]: nothing,
+    [functionNames.trackLoc]: (_1: any, _2: any, fn?: any) => (fn ? fn() : undefined),
+    [functionNames.evalB]: evaluateBinaryExpression,
+    [functionNames.evalU]: evaluateUnaryExpression
+  }
   return [functions, theState]
 }
 

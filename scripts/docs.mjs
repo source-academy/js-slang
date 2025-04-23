@@ -3,8 +3,8 @@
 import { execFile, fork, spawn } from 'child_process'
 import pathlib from 'path'
 import fs from 'fs/promises'
-import { Command } from 'commander'
 import process from 'process'
+import { Command } from '@commander-js/extra-typings'
 import autocomplete from './autocomplete.mjs'
 
 const configs = {
@@ -49,20 +49,6 @@ const configs = {
       'stream.js',
       'array.js',
       'pairmutator.js'
-    ]
-  },
-  'Source §3 Concurrent': {
-    readme: 'README_3_CONCURRENT.md',
-    dst: 'source_3_concurrent/',
-    libs: [
-      'auxiliary.js',
-      'misc.js',
-      'math.js',
-      'list.js',
-      'stream.js',
-      'array.js',
-      'pairmutator.js',
-      'concurrency.js'
     ]
   },
   'Source §3 Typed': {
@@ -126,16 +112,6 @@ const configs = {
     dst: 'AUXILIARY/',
     libs: ['auxiliary.js']
   },
-  MISC: {
-    readme: 'README_MISC.md',
-    dst: 'MISC/',
-    libs: ['misc.js']
-  },
-  MATH: {
-    readme: 'README_MATH.md',
-    dst: 'MATH/',
-    libs: ['math.js']
-  },
   LIST: {
     readme: 'README_LISTS.md',
     dst: 'LISTS/',
@@ -156,11 +132,6 @@ const configs = {
     dst: 'PAIRMUTATORS/',
     libs: ['pairmutator.js']
   },
-  CONCURRENCY: {
-    readme: 'README_CONCURRENCY.md',
-    dst: 'CONCURRENCY/',
-    libs: ['concurrency.js']
-  },
   MCE: {
     readme: 'README_MCE.md',
     dst: 'MCE/',
@@ -177,9 +148,11 @@ const configs = {
     libs: ['ev3.js']
   },
   EXTERNAL: {
-    readme: 'README_EXTERNAL.md',
-    dst: 'External libraries',
-    libs: ['ev3.js']
+    "readme": "README_EXTERNAL.md",
+    "dst": "External libraries",
+    "libs": [
+      "ev3.js"
+    ]
   }
 }
 
@@ -191,7 +164,11 @@ const jsdoc = 'node_modules/jsdoc/jsdoc.js'
 const template_location = 'docs/jsdoc/templates/template'
 const specs_dir = 'docs/specs'
 
-async function run() {
+/**
+ * Build the documentations using JSDOC
+ * @param {boolean | undefined} silent 
+ */
+async function run(silent) {
   await fs.mkdir(out_dir, { recursive: true })
 
   const promises = Object.entries(configs).map(([name, config]) => {
@@ -210,11 +187,14 @@ async function run() {
       ...config.libs.map(each => pathlib.join(libraries, each))
     ])
 
-    proc.on('spawn', () => console.log(`Building ${name}`))
+    if (!silent) {
+      proc.on('spawn', () => console.log(`Building ${name}`))
+    }
+
     return new Promise(resolve => {
       proc.on('exit', c => {
         if (c === 0) {
-          console.log(`Finished ${name}`)
+          if (!silent) console.log(`Finished ${name}`)
         } else {
           console.error(`Error occurred with ${name}: jsdoc exited with code ${c}`)
         }
@@ -236,8 +216,12 @@ async function run() {
   if (nonzeroRetcode !== undefined) process.exit(nonzeroRetcode)
 }
 
-async function prepare({ silent }) {
-  await run()
+/**
+ * Runs JSDOC, then `make`
+ * @param {boolean | undefined} silent 
+ */
+async function prepare(silent) {
+  await run(silent)
 
   // Copy images in images directory to out_dir
   await fs.readdir('docs/images').then(images =>
@@ -246,7 +230,7 @@ async function prepare({ silent }) {
         const srcPath = pathlib.join('docs/images', img)
         const dstPath = pathlib.join(out_dir, img)
         await fs.copyFile(srcPath, dstPath)
-        console.debug(`Copied ${srcPath} to ${dstPath}`)
+        if (!silent) console.log(`Copied ${srcPath} to ${dstPath}`)
       })
     )
   )
@@ -265,7 +249,7 @@ async function prepare({ silent }) {
   })
 
   if (makeretcode !== 0) process.exit(makeretcode)
-  console.log('Finished running make')
+  if (!silent) console.log('Finished running make')
 
   // Copy pdf files that make produced to out_dir
   await fs.readdir(specs_dir).then(files =>
@@ -276,7 +260,7 @@ async function prepare({ silent }) {
           const srcPath = pathlib.join(specs_dir, file)
           const dstPath = pathlib.join(out_dir, file)
           await fs.copyFile(srcPath, dstPath)
-          console.debug(`Copied ${srcPath} to ${dstPath}`)
+          if (!silent) console.debug(`Copied ${srcPath} to ${dstPath}`)
         })
     )
   )
@@ -312,13 +296,16 @@ async function checkGitRoot() {
 
 await new Command()
   .hook('preAction', checkGitRoot)
-  .addCommand(new Command('run').description('Run JSDOC and build documentation').action(run), {
-    isDefault: true
-  })
+  .addCommand(
+    new Command('run')
+      .description('Run JSDOC and build documentation')
+      .option('--silent', 'Run without outputting to stdout')
+      .action(args => run(args.silent)), { isDefault: true }
+  )
   .addCommand(
     new Command('prepare')
       .option('--silent', 'Run make without outputting to stdout')
-      .action(prepare)
+      .action(args => prepare(args.silent))
   )
   .addCommand(new Command('clean').description('Clear the output directory').action(clean))
   .addCommand(
@@ -329,6 +316,7 @@ await new Command()
   .addCommand(
     new Command('docs')
       .description("Execute the 'run' command and then the 'autocomplete' command")
-      .action(() => run().then(autocomplete))
+      .option('--silent', 'Run without outputting to stdout')
+      .action(args => run(args.silent).then(autocomplete))
   )
   .parseAsync()

@@ -11,7 +11,6 @@ import {
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
 import Heap from './cse-machine/heap'
-import { AsyncScheduler } from './schedulers'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
@@ -24,12 +23,12 @@ import { streamPrelude } from './stdlib/stream.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils'
 import {
   Chapter,
-  Context,
-  CustomBuiltIns,
-  Environment,
-  LanguageOptions,
-  NativeStorage,
-  Value,
+  type Context,
+  type CustomBuiltIns,
+  type Environment,
+  type LanguageOptions,
+  type NativeStorage,
+  type Value,
   Variant
 } from './types'
 import * as operators from './utils/operators'
@@ -124,8 +123,7 @@ const createEmptyDebugger = () => ({
   state: {
     it: (function* (): any {
       return
-    })(),
-    scheduler: new AsyncScheduler()
+    })()
   }
 })
 

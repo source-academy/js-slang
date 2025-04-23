@@ -1,6 +1,6 @@
-import * as es from 'estree'
+import type es from 'estree'
 
-import { mockContext, mockImportDeclaration } from '../mocks/context'
+import { mockContext, mockImportDeclaration } from '../utils/testing/mocks'
 import { parse } from '../parser/parser'
 import { Chapter, Context, substituterNodes } from '../types'
 import * as builtin from './lib'

@@ -1,5 +1,4 @@
 import type { Program } from 'estree'
-import createContext from '../../../createContext'
 import {
   DuplicateImportNameError,
   UndefinedDefaultImportError,
@@ -11,7 +10,7 @@ import { stripIndent } from '../../../utils/formatters'
 import parseProgramsAndConstructImportGraph from '../linker'
 import analyzeImportsAndExports from '../analyzer'
 import { parse } from '../../../parser/parser'
-import { mockContext } from '../../../mocks/context'
+import { mockContext } from '../../../utils/testing/mocks'
 import loadSourceModules from '../../loader'
 import type { SourceFiles as Files } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'
@@ -53,7 +52,7 @@ describe('Test throwing import validation errors', () => {
     allowUndefinedImports: boolean,
     throwOnDuplicateNames: boolean
   ) {
-    const context = createContext(Chapter.FULL_JS)
+    const context = mockContext(Chapter.FULL_JS)
     const importGraphResult = await parseProgramsAndConstructImportGraph(
       p => Promise.resolve(files[p]),
       entrypointFilePath as string,
@@ -712,7 +711,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       shouldThrow,
       errMsg
     ) => {
-      const context = createContext(Chapter.FULL_JS)
+      const context = mockContext(Chapter.FULL_JS)
       const [entrypointFilePath, ...topoOrder] = objectKeys(programs)
 
       await loadSourceModules(new Set(['one_module', 'another_module']), context, false)

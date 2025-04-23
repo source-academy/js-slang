@@ -1,6 +1,6 @@
 import { Chapter, Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { expectResult, snapshotFailure } from '../utils/testing'
+import { expectFinishedResult, snapshotFailure } from '../utils/testing'
 
 test.each([
   [
@@ -614,12 +614,11 @@ test.each([
   'Builtins work as expected %#',
   (chapter: Chapter, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {
-      return expectResult(stripIndent(snippet), {
-        chapter,
-        native: chapter !== Chapter.LIBRARY_PARSER
+      return expectFinishedResult(stripIndent(snippet), {
+        chapter
       }).toEqual(returnValue)
     } else {
-      return snapshotFailure(stripIndent(snippet), { chapter }, 'fails')
+      return snapshotFailure(stripIndent(snippet), { chapter })
     }
   }
 )
