@@ -1,20 +1,32 @@
-# Stepper Documentation (Draft)
-- [Stepper Documentation (Draft)](#stepper-documentation-draft)
-  - [Key changes](#key-changes)
-  - [Quickstart](#quickstart)
-  - [Implementation Details](#implementation-details)
-    - [Entry point](#entry-point)
-    - [Reduction](#reduction)
-  - [Stepper ASTs (To be updated)](#stepper-asts-to-be-updated)
-    - [`UndefinedNode`](#undefinednode)
-    - [`StepperProgram`](#stepperprogram)
-      - [Reduction](#reduction-1)
-    - [`VariableDeclaration`](#variabledeclaration)
-      - [Reduction](#reduction-2)
+# Stepper Documentation 
+## High-level ideas
+Our stepper is a program that reduces a piece of code to its simplest form until it can no longer be reduced. While the idea sounds abstract, the step-by-step reduction of code allows us to add explanations, further aiding student learning when they want to scrutinize how the code is evaluated. The method is formally defined as beta reduction.
 
-## Key changes
-- Rewritten the code to be more cohesive and readable.
-- Better visualisation of recursion using lambda calculus concepts such as µ-terms. 
+### Expression stepper
+In order to implement the program with such functionalities, we have to first parse the program string into certain structure that we can approach to, so-called Abstract Syntax Tree (AST). For instance, string `2 * 3` can be converted to AST as `BinExp[* Lit[2] Lit[3]]`, where `BinExp` is a binary expression node consisting of two literals `2` and `3` combined with operator `*`. Note that our programming language consists of various node types, it's difficult to implement a parser from scratch to cover all cases. Luckily, the library `acorn` helps us generate the AST from a piece of string which is very convenient. 
+
+Here comes the fun part. How are we supposed to evaluate `BinExp[* Lit[2] Lit[3]]`? Since we cannot do anything further, we just simply **contract** them to `Lit[6]` and we are done. However, considering the AST `BinExp[* Lit[2] BinExp[+ Lit[3] Lit[4]]]` generated from `2 * (3 + 4)`, if we contract this expression directly, we will get `2 * {OBJECT}` which is not computable since one of the operands is not a number. Hence, we have to contract `BinExp[+ Lit[3] Lit[4]]]` first before contracting the outer `BinExp`.  Note that our stepper only contracts one node for each step. This is our main constraint that we use during the implementation.
+
+### Augmenting functionalities
+Since our stepper takes AST (of any types) as an input and recursively navigate along the tree to find the next node to contract. There are many functionalities that we have to perform on each AST (such as contracting the AST as discussed in the previous section). Intuitively, we should add these functionalities as methods for each of the AST classes. Since the AST obtaining from the library is an `ESTree` interface, we have to implement our own concrete classes inherited from the ESTree AST Nodes. We also have to create our own convertor to convert the former ESTree into our own Stepper AST:
+
+```typescript
+// interface.ts
+export interface StepperBaseNode {
+  type: string
+  isContractible(): boolean
+  isOneStepPossible(): boolean
+  contract(): StepperBaseNode
+  oneStep(): StepperBaseNode
+  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode
+  freeNames(): string[]
+  allNames(): string[]
+  rename(before: string, after: string): StepperBaseNode
+}
+```
+
+
+// Not finished
 
 ## Quickstart
 First of all, make sure that you have already installed `js-slang` using `yarn`. There are many possible ways that you can work and test the code. One of my personal solution is using `yarn test`. During the development, you can edit the file from `../__test__/tracer_debug.ts` and run it with the following command:
@@ -36,6 +48,9 @@ export interface StepperBaseNode {
   contract(): StepperBaseNode
   oneStep(): StepperBaseNode
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode
+  freeNames(): string[]
+  allNames(): string[]
+  rename(before: string, after: string): StepperBaseNode
 }
 ```
 ### Entry point
@@ -79,18 +94,3 @@ The main entry point of our stepper is `oneStep()`. It is where our stepper star
 1 + 2 * 3 // (+ 1 (* 2 3))
 ```
 The binary expression `(+ 1 (* 2 3))` should not be contracted since its inner node `(* 2 3)` can be contracted to `6`, before contracting the outer expression. The methods `isContractible` and `isOneStepPossible` help maneuver the logic of where to contract.
-## Stepper ASTs (To be updated)
-### `UndefinedNode`
-- Global node, literal, representing undefined
-
-### `StepperProgram`
-#### Reduction
-- If `node.body.length === 0`, the program is reduced to `StepperUndefined`.
-- If the first two statements are `oneStepPossible()`, reduce the first two statements first.
-- If the first two statements are value-inducing (e.g., `1; 2;`), remove the first statement using `contractEmpty()`.
-
-### `VariableDeclaration`
-#### Reduction
-- Reduce the `init` field first. `const x = 1 + 1;`: `1+1` is an init field.
-- If the `init` field is reduced, toggle substitution and reduce the statement to `StepperUndefined`.
-- VariableDeclaration is always contractable. PreRedex is the variable declaration statement. PostRedexes are all variables substituted.
