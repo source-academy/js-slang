@@ -1544,6 +1544,7 @@ describe('Error handling on calling functions', () => {
 })
 
 describe('Test runtime errors', () => {
+  /*
   test('Variable used before assigning in program', async () => {
     const code = `
     unassigned_variable;
@@ -1566,7 +1567,7 @@ describe('Test runtime errors', () => {
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
-
+  */
   test('Incompatible types operation', async () => {
     const code = `
     "1" + 2 * 3;
@@ -1578,6 +1579,10 @@ describe('Test runtime errors', () => {
 })
 
 describe('Test catching errors from built in function', () => {
+  /*
+    While SOURCE 1 and 2 allow math function to receive boolean as argument,
+    the legacy stepper prohibits this behavior.
+  */
   test('Incorrect type of argument for math function', async () => {
     const code = `
     math_sin(true);

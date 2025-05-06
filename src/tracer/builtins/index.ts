@@ -15,6 +15,8 @@ const builtinFunctions = {
 
 export function prelude(node: es.BaseNode) {
   node = node.type === 'Program' ? removeDebuggerStatements(node as es.Program) : node
+  // check program for undefined variables
+  // checkProgramForUndefinedVariables(node as es.Program, createContext()); 
   let inputNode = convert(node)
   // Substitute math constant
   Object.getOwnPropertyNames(Math)
@@ -27,6 +29,7 @@ export function prelude(node: es.BaseNode) {
     })
   return inputNode
 }
+
 
 function removeDebuggerStatements(program: es.Program): es.Program {
   // recursively detect and remove debugger statements
@@ -49,6 +52,7 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
+
 export function getBuiltinFunction(name: string, args: StepperExpression[]): StepperExpression {
   if (name.startsWith('math_')) {
     const mathFnName = name.split('_')[1]
@@ -56,11 +60,21 @@ export function getBuiltinFunction(name: string, args: StepperExpression[]): Ste
     if (mathFnName in Math) {
       const fn = (Math as any)[mathFnName]
       const argVal = args.map(arg => (arg as StepperLiteral).value)
+      argVal.forEach(arg => {
+        if (typeof arg !== "number" || typeof arg !== "bigint") {
+          throw new Error("Math functions must be called with number arguments")
+        }
+      })
       const result = fn(...argVal)
       return new StepperLiteral(result, result)
     }
   }
-  return builtinFunctions[name as keyof typeof builtinFunctions].definition(args)
+  
+  const calledFunction = builtinFunctions[name as keyof typeof builtinFunctions];
+  if (calledFunction.arity != args.length) {
+    throw new Error(`Expected ${calledFunction.arity} arguments, but got ${args.length}.`)
+  }
+  return calledFunction.definition(args)
 }
 
 export function isBuiltinFunction(name: string): boolean {

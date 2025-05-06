@@ -91,30 +91,13 @@ test('function calling', () => {
   console.log(output.join('\n'))
 })
 */
-test('general', () => {
-  const code = `
-function h(f, x) {
-    function h(g, x) {
-        return x <= 1 ? 1 : 3 * g(f, x - 1);
-    }
-        return x <= 1 ? 1 : 2 * f(h, x - 1);
-    }
-    h(h, 5);
 
-  `
-  const program = parse(code, { ecmaVersion: 10 })!
-  const steps = getSteps(convert(program), { stepLimit: 200 })
-  const output = steps.map(stringifyWithExplanation)
-  console.log(output.join('\n\n'))
-})
 
 test('general', () => {
   const code = `
-  function apply(f, x) {
-    return f(x);
-  }
-  const inc = x => x + 1;
-  apply(inc, 2);
+  x;
+  const x = 1;
+  x;
   `
   const program = parse(code, { ecmaVersion: 10, locations: true })!
   const steps = getSteps(convert(program), { stepLimit: 200 })

@@ -32,7 +32,7 @@ export const miscBuiltinFunctions = {
           )
         }
       }
-      return new StepperLiteral(0)
+      throw new Error("arity expects a function as argument")
     },
     arity: 1
   },

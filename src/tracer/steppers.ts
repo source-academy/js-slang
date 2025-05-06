@@ -7,11 +7,11 @@ import { undefinedNode } from './nodes'
 import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
 import { prelude } from './builtins'
 import { IStepperPropContents, Marker, redex } from '.'
-
 export function getSteps(
   inputNode: es.BaseNode,
   { stepLimit }: Pick<IOptions, 'stepLimit'>
 ): IStepperPropContents[] {
+  // check for undefined variables
   const node: StepperBaseNode = prelude(inputNode)
   const steps: IStepperPropContents[] = []
   const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1

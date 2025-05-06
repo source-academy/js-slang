@@ -27,6 +27,8 @@ A quick way of identifying whether this AST should be contract right away is mak
 
 These methods can be applied for all types of AST nodes, such as expressions, statements, and program. The details about  `StepperBaseNode` are discussed in [this](#augmenting-functionalities) section.
 
+### Statements
+// TODO
 ### Encountering constant declarations
 // TODO
 ### Functions and mu terms
@@ -48,6 +50,23 @@ export interface StepperBaseNode {
   rename(before: string, after: string): StepperBaseNode
 }
 ```
+Conversion from `es.BaseNode` (AST interface from `ESTree`) to `StepperBaseNode` is handled by function `convert` in `generator.ts`.
+
+```typescript
+// generator.ts
+const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {
+  Literal: (node: es.SimpleLiteral) => StepperLiteral.create(node),
+  UnaryExpression: (node: es.UnaryExpression) => StepperUnaryExpression.create(node),
+  BinaryExpression: (node: es.BinaryExpression) => StepperBinaryExpression.create(node),
+  // ... (omitted)
+}
+
+export function convert(node: es.BaseNode): StepperBaseNode {
+  const converter = nodeConverters[node.type as keyof typeof nodeConverters]
+  return converter ? converter(node as any) : undefinedNode
+  // undefinedNode is a global variable with type StepperLiteral
+}
+```
 
 ### Entry point
 The starting point of our stepper is at `steppers.ts` with the function `getSteps`. This function is responsible for triggering reduction until it cannot be proceed. The result from our evaluation is then stored in array `steps`. Here is the shorten version of `getSteps`.
@@ -60,7 +79,7 @@ export function getSteps(node: StepperBaseNode) {
     if (isOneStepPossible) {
       const oldNode = node
       const newNode = node.oneStep() // entry point
-      {... read global state redex and add them to steps array}
+      // read global state redex and add them to steps array
       return evaluate(newNode) 
     } else {
       return node
@@ -84,3 +103,14 @@ redex.preRedex = [node]
 const ret = someSortOfReduction(node)
 redex.postRedex = [ret]
 ```
+
+### Some important decisions
+There are some design decisions that diverge from the original Source 1 and 2. Here are some changes we have made.
+#### Builtin math functions
+Calling math function with non number arguments is prohibited in stepper.
+```ts
+// Test Incorrect type of argument for math function
+math_sin(true); // error!
+```
+#### Undeclared variables
+This issue has not been properly resolved in this version.

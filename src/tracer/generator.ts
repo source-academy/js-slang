@@ -167,7 +167,7 @@ export function explain(redex: StepperBaseNode): string {
       const func: StepperArrowFunctionExpression = node.callee as StepperArrowFunctionExpression
       if (func.name && isBuiltinFunction(func.name)) {
         return `${func.name} runs`
-        // @ts-expect-error func.body.type can be StepperBlockExpression
+        // @ts-ignore func.body.type can be StepperBlockExpression
       } else if (func.body.type === 'BlockStatement') {
         if (func.params.length === 0) {
           return '() => {...}' + ' runs'
@@ -202,7 +202,7 @@ export function explain(redex: StepperBaseNode): string {
       return '...'
     }
   }
-  //@ts-expect-error gracefully handle default ast node
+  //@ts-ignore gracefully handle default ast node
   const explainer = explainers[redex.type] ?? explainers.Default
   return explainer(redex)
 }
