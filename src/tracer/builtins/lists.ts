@@ -94,7 +94,7 @@ export const listBuiltinFunctions = {
         listBuiltinFunctions.list.definition(args.slice(1))
       ])
     },
-    arity: 0
+    arity: 1
   },
   length: {
     definition: (args: StepperExpression[]): StepperExpression => {
