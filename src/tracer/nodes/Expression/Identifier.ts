@@ -2,6 +2,7 @@ import { Identifier, Comment, SourceLocation } from 'estree'
 import { StepperBaseNode } from '../../interface'
 import { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
+import { isBuiltinFunction } from '../../builtins'
 
 export class StepperIdentifier implements Identifier, StepperBaseNode {
   type: 'Identifier'
@@ -37,11 +38,14 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
   }
 
   isContractible(): boolean {
-    return false
+    // catch undeclared variables
+    if (this.name !== "undefined" && !isBuiltinFunction(this.name)) throw new Error(`Name ${this.name} declared later in current scope but not yet assigned`)
+    return false;
   }
 
   isOneStepPossible(): boolean {
-    return false
+    if (this.name !== "undefined" && !isBuiltinFunction(this.name)) throw new Error(`Name ${this.name} declared later in current scope but not yet assigned`)
+    return false;
   }
 
   contract(): StepperIdentifier {

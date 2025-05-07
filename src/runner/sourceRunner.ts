@@ -8,25 +8,21 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { evaluateProgram as evaluate } from '../interpreter/interpreter'
-import preprocessFileImports from '../modules/preprocessor'
-import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
-import { defaultLinkerOptions } from '../modules/preprocessor/linker'
-import { parse } from '../parser/parser'
-import { AsyncScheduler, PreemptiveScheduler } from '../schedulers'
+import {
+  callee,
+  getEvaluationSteps,
+  getRedex,
+  type IStepperPropContents,
+  redexify
+} from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, type Context, type RecursivePartial, type Scheduler, Variant } from '../types'
-import { validateAndAnnotate } from '../validator/validator'
-import { compileForConcurrent } from '../vm/svml-compiler'
-import { runWithProgram } from '../vm/svml-machine'
-import type { FileGetter } from '../modules/moduleTypes'
-import { mapResult } from '../alt-langs/mapper'
-import { getSteps } from '../tracer/steppers'
+import { Variant } from '../types'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
 import type { Runner } from './types'
 import fullJSRunner from './fullJSRunner'
+import { getSteps } from '../tracer/steppers'
 
 let isPreviousCodeTimeoutError = false
 const runners = {
@@ -36,85 +32,17 @@ const runners = {
     return CSEResultPromise(context, value)
   },
   substitution: (program, context, options) => {
-    const steps = getEvaluationSteps(program, context, options)
+    const steps = getSteps(program, context, options)
     if (context.errors.length > 0) {
       return resolvedErrorPromise
     }
-
-    const redexedSteps = steps.map((step): IStepperPropContents => {
-      const redex = getRedex(step[0], step[1])
-      const redexed = redexify(step[0], step[1])
-      return {
-        code: redexed[0],
-        redex: redexed[1],
-        explanation: step[2],
-        function: callee(redex, context)
-      }
-    })
-
     return Promise.resolve({
       status: 'finished',
       context,
-      value: redexedSteps
+      value: steps
     })
-  } catch (error) {
-    if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
-      context.errors.push(error) // use ExceptionErrors for non Source Errors
-      return resolvedErrorPromise
-    }
-    context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-    return resolvedErrorPromise
-  }
-}
-
-function runSubstitution(
-  program: es.Program,
-  context: Context,
-  options: IOptions
-): Promise<Result> {
-  const steps = getSteps(program, options)
-  return Promise.resolve({
-    status: 'finished',
-    context,
-    value: steps
-  })
-}
-
-function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context)
-  let scheduler: Scheduler
-  if (options.scheduler === 'async') {
-    scheduler = new AsyncScheduler()
-  } else {
-    scheduler = new PreemptiveScheduler(options.steps)
-  }
-  return scheduler.run(it, context)
-}
-
-async function runNative(
-  program: es.Program,
-  context: Context,
-  options: IOptions
-): Promise<Result> {
-  if (!options.isPrelude) {
-    if (context.shouldIncreaseEvaluationTimeout && isPreviousCodeTimeoutError) {
-      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-    } else {
-      context.nativeStorage.maxExecTime = options.originalMaxExecTime
-    }
-  }
-
-  // For whatever reason, the transpiler mutates the state of the AST as it is transpiling and inserts
-  // a bunch of global identifiers to it. Once that happens, the infinite loop detection instrumentation
-  // ends up generating code that has syntax errors. As such, we need to make a deep copy here to preserve
-  // the original AST for future use, such as with the infinite loop detector.
-  const transpiledProgram = _.cloneDeep(program)
-  let transpiled
-  let sourceMapJson: RawSourceMap | undefined
-  try {
-    ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
-    let value = sandboxedEval(transpiled, context.nativeStorage)
-
+  },
+  native: async (program, context, options) => {
     if (!options.isPrelude) {
       if (context.shouldIncreaseEvaluationTimeout && isPreviousCodeTimeoutError) {
         context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
@@ -131,7 +59,7 @@ async function runNative(
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
     try {
-      ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
+      ; ({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
       let value = sandboxedEval(transpiled, context.nativeStorage)
 
       if (!options.isPrelude) {
@@ -158,7 +86,7 @@ async function runNative(
           } else {
             error.infiniteLoopError = detectedInfiniteLoop
             if (error instanceof ExceptionError) {
-              ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
+              ; (error.error as any).infiniteLoopError = detectedInfiniteLoop
             }
           }
         }

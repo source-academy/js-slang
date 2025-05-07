@@ -1,5 +1,7 @@
 import * as es from 'estree'
-import { IOptions } from '..'
+import { Context, IOptions } from '..'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
+import { UndefinedVariable } from '../errors/errors'
 import { StepperBaseNode } from './interface'
 import { explain } from './generator'
 import { StepperProgram } from './nodes/Program'
@@ -7,11 +9,12 @@ import { undefinedNode } from './nodes'
 import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
 import { prelude } from './builtins'
 import { IStepperPropContents, Marker, redex } from '.'
+
 export function getSteps(
   inputNode: es.BaseNode,
+  context: Context,
   { stepLimit }: Pick<IOptions, 'stepLimit'>
 ): IStepperPropContents[] {
-  // check for undefined variables
   const node: StepperBaseNode = prelude(inputNode)
   const steps: IStepperPropContents[] = []
   const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
@@ -92,6 +95,24 @@ export function getSteps(
       }
     ]
   })
+  // check for undefined variables
+  try {
+    checkProgramForUndefinedVariables(inputNode as es.Program, context);
+  } catch (error) {
+    steps.push({
+      ast: node,
+      markers: [
+        {
+          redexType: 'beforeMarker',
+          explanation: error instanceof UndefinedVariable 
+              ? `Line ${error.location.start.line}: Name ${error.name} not declared.` 
+              : String(error)
+        }
+      ]
+    })
+    return steps;
+  }
+
   let result = evaluate(node)
   // If program has not completed within the step limit, halt.
   if (numSteps >= limit) {

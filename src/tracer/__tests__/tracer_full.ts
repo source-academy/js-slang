@@ -7,9 +7,12 @@ import { StepperProgram } from '../nodes/Program'
 import { StepperExpressionStatement } from '../nodes/Statement/ExpressionStatement'
 import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
 import { StepperVariableDeclaration } from '../nodes/Statement/VariableDeclaration'
+import createContext from '../../createContext'
+import { mockContext } from '../../utils/testing/mocks'
 
 function codify(node: StepperBaseNode) {
-  const steps = getSteps(convert(node), { stepLimit: 1000 })
+  const steps = getSteps(convert(node), 
+  createContext(2), { stepLimit: 1000 })
   const stringify = (ast: StepperBaseNode) => {
     if (ast === undefined || ast!.type === undefined) {
       return ''
@@ -136,7 +139,7 @@ describe('Lambda expression', () => {
       const f = x => f;
       f(1);
     `
-    const steps = await getSteps(convert(acornParser(code)), { stepLimit: 1000 })
+    const steps = await getSteps(convert(acornParser(code)), mockContext(), { stepLimit: 1000 })
     expect(steps.length).toBe(6)
     const firstStatement = (steps[0].ast as StepperProgram).body[0]
     // No mu term before substitution
@@ -615,6 +618,7 @@ describe('List operations', () => {
     const code = 'is_null(tail(list(1)));'
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
   })
   test('Append on list of null', async () => {
     const code = 'const a = list(null); append(a, a);'
@@ -622,19 +626,22 @@ describe('List operations', () => {
     expect(steps.join('\n')).toMatchSnapshot()
   })
   test('map on list', async () => {
-    const code = 'map(x => list(x, 1), list(1, 2, 3));'
+    const code = 'equal(map(x => 2 * x, list(1, 2, 3)), list(2, 4, 6))'
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
   })
   test('filter on list', async () => {
-    const code = 'filter(x => x % 2 === 1, list(1, 2, 3));'
+    const code = 'equal(filter(x => x % 2 === 1, list(1, 2, 3)), list(1, 3));'
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
   })
   test('accumulate on list', async () => {
-    const code = 'accumulate((x, y) => x + y, 0, list(1, 2, 3));'
+    const code = 'accumulate((x, y) => x + y, 0, list(1, 2, 3)) === 6;'
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
   })
   test('subsets', async () => {
     const code = `
@@ -646,19 +653,22 @@ describe('List operations', () => {
           return append(rest, map(x => pair(head(s), x), rest));
       }
   }
-   subsets(list(1, 2, 3));
+    equal(subsets(list(1, 2)), list(null, list(2), list(1), list(1, 2)));
     `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
   })
   test('flatmap', async () => {
     const code = `
     const flatMap = (f, xs) => 
     accumulate((acc, init) => append(f(acc), init), null, xs);
-    flatMap(x => list(x, x + 1), list(2, 3, 4));
+    equal(flatMap(x => list(x, x + 1), list(2, 3, 4)), list(2, 3, 3, 4, 4, 5));
+    
 `
     const steps = await codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
   })
 })
 
@@ -1609,4 +1619,48 @@ describe('Test catching errors from built in function', () => {
   })
 })
 
-// Our new stepper does not handle undeclared variables
+describe('Test catching undefined variables', () => {
+
+  test('Undefined variables 1', async () => {
+    const code = `
+    x;
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1].includes('not declared')).toBe(true)
+  })
+
+  test('Name declared later but not yet assigned', async () => {
+    const code = `
+    x;
+    const x = 1;
+    x;
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
+  })
+
+
+  test('Undefined variables 3', async () => {
+    const code = `
+    const f = () => x;
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1].includes('not declared')).toBe(true)
+  })
+
+  test('Undefined variables 4', async () => {
+    const code = `
+    const f = () => x;
+    const x = 1;
+    f(); // should not error
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1].includes('not declared')).toBe(false)
+  })
+})
+
+

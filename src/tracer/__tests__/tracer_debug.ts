@@ -4,6 +4,7 @@ import { getSteps } from '../steppers'
 import { convert } from '../generator'
 import { StepperBaseNode } from '../interface'
 import { IStepperPropContents } from '..'
+import createContext from '../../createContext'
 
 const stringify = (ast: StepperBaseNode) => {
   if (ast === undefined || ast!.type === undefined) {
@@ -96,11 +97,9 @@ test('function calling', () => {
 test('general', () => {
   const code = `
   x;
-  const x = 1;
-  x;
   `
   const program = parse(code, { ecmaVersion: 10, locations: true })!
-  const steps = getSteps(convert(program), { stepLimit: 200 })
+  const steps = getSteps(convert(program), createContext(2), { stepLimit: 200 })
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n\n'))
 })

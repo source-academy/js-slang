@@ -71,7 +71,7 @@ export function getBuiltinFunction(name: string, args: StepperExpression[]): Ste
   }
   
   const calledFunction = builtinFunctions[name as keyof typeof builtinFunctions];
-  if (calledFunction.arity != args.length) {
+  if (calledFunction.arity != args.length && name !== 'list') { // brute force way to fix this issue
     throw new Error(`Expected ${calledFunction.arity} arguments, but got ${args.length}.`)
   }
   return calledFunction.definition(args)

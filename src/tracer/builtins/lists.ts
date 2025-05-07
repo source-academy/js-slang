@@ -94,7 +94,7 @@ export const listBuiltinFunctions = {
         listBuiltinFunctions.list.definition(args.slice(1))
       ])
     },
-    arity: 1
+    arity: 0
   },
   length: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -441,7 +441,7 @@ export const listBuiltinFunctions = {
         new StepperArrowFunctionExpression([new StepperIdentifier('x')], new StepperIdentifier('x'))
       ])
     },
-    arity: 2
+    arity: 3
   },
   $accumulate: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -460,7 +460,7 @@ export const listBuiltinFunctions = {
         args
       )
     },
-    arity: 3
+    arity: 4
   },
   display_list: {
     definition: (args: StepperExpression[]): StepperExpression => {
