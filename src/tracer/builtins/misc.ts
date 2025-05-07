@@ -32,7 +32,7 @@ export const miscBuiltinFunctions = {
           )
         }
       }
-      throw new Error("arity expects a function as argument")
+      throw new Error('arity expects a function as argument')
     },
     arity: 1
   },

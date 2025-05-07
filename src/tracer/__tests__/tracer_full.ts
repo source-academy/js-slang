@@ -11,8 +11,7 @@ import createContext from '../../createContext'
 import { mockContext } from '../../utils/testing/mocks'
 
 function codify(node: StepperBaseNode) {
-  const steps = getSteps(convert(node), 
-  createContext(2), { stepLimit: 1000 })
+  const steps = getSteps(convert(node), createContext(2), { stepLimit: 1000 })
   const stringify = (ast: StepperBaseNode) => {
     if (ast === undefined || ast!.type === undefined) {
       return ''
@@ -1620,7 +1619,6 @@ describe('Test catching errors from built in function', () => {
 })
 
 describe('Test catching undefined variables', () => {
-
   test('Undefined variables 1', async () => {
     const code = `
     x;
@@ -1640,7 +1638,6 @@ describe('Test catching undefined variables', () => {
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
-
 
   test('Undefined variables 3', async () => {
     const code = `
@@ -1662,5 +1659,3 @@ describe('Test catching undefined variables', () => {
     expect(steps[steps.length - 1].includes('not declared')).toBe(false)
   })
 })
-
-

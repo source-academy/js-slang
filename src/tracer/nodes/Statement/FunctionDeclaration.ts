@@ -130,13 +130,10 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     const newNames = getFreshName(repeatedNames, protectedNames)
 
     const currentFunction = newNames.reduce(
-      (current: StepperFunctionDeclaration, name: string, index: number) => 
-        current.rename(
-          repeatedNames[index],
-          name
-        ) as StepperFunctionDeclaration, 
-        this
-    );
+      (current: StepperFunctionDeclaration, name: string, index: number) =>
+        current.rename(repeatedNames[index], name) as StepperFunctionDeclaration,
+      this
+    )
 
     if (currentFunction.scanAllDeclarationNames().includes(id.name)) {
       return currentFunction

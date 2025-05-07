@@ -128,30 +128,30 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       (this.operator as string) === '&&'
         ? left && right
         : op === '||'
-        ? left || right
-        : op === '+' && typeof left === 'number' && typeof right === 'number'
-        ? (left as number) + (right as number)
-        : op === '+' && typeof left === 'string' && typeof right === 'string'
-        ? (left as string) + (right as string)
-        : op === '-'
-        ? (left as number) - (right as number)
-        : op === '*'
-        ? (left as number) * (right as number)
-        : op === '%'
-        ? (left as number) % (right as number)
-        : op === '/'
-        ? (left as number) / (right as number)
-        : op === '==='
-        ? left === right
-        : op === '!=='
-        ? left !== right
-        : op === '<'
-        ? left! < right!
-        : op === '<='
-        ? left! <= right!
-        : op === '>='
-        ? left! >= right!
-        : left! > right!
+          ? left || right
+          : op === '+' && typeof left === 'number' && typeof right === 'number'
+            ? (left as number) + (right as number)
+            : op === '+' && typeof left === 'string' && typeof right === 'string'
+              ? (left as string) + (right as string)
+              : op === '-'
+                ? (left as number) - (right as number)
+                : op === '*'
+                  ? (left as number) * (right as number)
+                  : op === '%'
+                    ? (left as number) % (right as number)
+                    : op === '/'
+                      ? (left as number) / (right as number)
+                      : op === '==='
+                        ? left === right
+                        : op === '!=='
+                          ? left !== right
+                          : op === '<'
+                            ? left! < right!
+                            : op === '<='
+                              ? left! <= right!
+                              : op === '>='
+                                ? left! >= right!
+                                : left! > right!
 
     let ret = new StepperLiteral(
       value,
@@ -169,8 +169,8 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
     return this.isContractible()
       ? this.contract()
       : this.left.isOneStepPossible()
-      ? new StepperBinaryExpression(this.operator, this.left.oneStep(), this.right)
-      : new StepperBinaryExpression(this.operator, this.left, this.right.oneStep())
+        ? new StepperBinaryExpression(this.operator, this.left.oneStep(), this.right)
+        : new StepperBinaryExpression(this.operator, this.left, this.right.oneStep())
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {

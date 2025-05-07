@@ -39,13 +39,15 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
 
   isContractible(): boolean {
     // catch undeclared variables
-    if (this.name !== "undefined" && !isBuiltinFunction(this.name)) throw new Error(`Name ${this.name} declared later in current scope but not yet assigned`)
-    return false;
+    if (this.name !== 'undefined' && !isBuiltinFunction(this.name))
+      throw new Error(`Name ${this.name} declared later in current scope but not yet assigned`)
+    return false
   }
 
   isOneStepPossible(): boolean {
-    if (this.name !== "undefined" && !isBuiltinFunction(this.name)) throw new Error(`Name ${this.name} declared later in current scope but not yet assigned`)
-    return false;
+    if (this.name !== 'undefined' && !isBuiltinFunction(this.name))
+      throw new Error(`Name ${this.name} declared later in current scope but not yet assigned`)
+    return false
   }
 
   contract(): StepperIdentifier {

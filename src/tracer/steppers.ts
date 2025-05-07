@@ -97,20 +97,21 @@ export function getSteps(
   })
   // check for undefined variables
   try {
-    checkProgramForUndefinedVariables(inputNode as es.Program, context);
+    checkProgramForUndefinedVariables(inputNode as es.Program, context)
   } catch (error) {
     steps.push({
       ast: node,
       markers: [
         {
           redexType: 'beforeMarker',
-          explanation: error instanceof UndefinedVariable 
-              ? `Line ${error.location.start.line}: Name ${error.name} not declared.` 
+          explanation:
+            error instanceof UndefinedVariable
+              ? `Line ${error.location.start.line}: Name ${error.name} not declared.`
               : String(error)
         }
       ]
     })
-    return steps;
+    return steps
   }
 
   let result = evaluate(node)

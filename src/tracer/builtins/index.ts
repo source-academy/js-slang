@@ -16,7 +16,7 @@ const builtinFunctions = {
 export function prelude(node: es.BaseNode) {
   node = node.type === 'Program' ? removeDebuggerStatements(node as es.Program) : node
   // check program for undefined variables
-  // checkProgramForUndefinedVariables(node as es.Program, createContext()); 
+  // checkProgramForUndefinedVariables(node as es.Program, createContext());
   let inputNode = convert(node)
   // Substitute math constant
   Object.getOwnPropertyNames(Math)
@@ -29,7 +29,6 @@ export function prelude(node: es.BaseNode) {
     })
   return inputNode
 }
-
 
 function removeDebuggerStatements(program: es.Program): es.Program {
   // recursively detect and remove debugger statements
@@ -52,7 +51,6 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-
 export function getBuiltinFunction(name: string, args: StepperExpression[]): StepperExpression {
   if (name.startsWith('math_')) {
     const mathFnName = name.split('_')[1]
@@ -61,17 +59,18 @@ export function getBuiltinFunction(name: string, args: StepperExpression[]): Ste
       const fn = (Math as any)[mathFnName]
       const argVal = args.map(arg => (arg as StepperLiteral).value)
       argVal.forEach(arg => {
-        if (typeof arg !== "number" || typeof arg !== "bigint") {
-          throw new Error("Math functions must be called with number arguments")
+        if (typeof arg !== 'number' || typeof arg !== 'bigint') {
+          throw new Error('Math functions must be called with number arguments')
         }
       })
       const result = fn(...argVal)
       return new StepperLiteral(result, result)
     }
   }
-  
-  const calledFunction = builtinFunctions[name as keyof typeof builtinFunctions];
-  if (calledFunction.arity != args.length && name !== 'list') { // brute force way to fix this issue
+
+  const calledFunction = builtinFunctions[name as keyof typeof builtinFunctions]
+  if (calledFunction.arity != args.length && name !== 'list') {
+    // brute force way to fix this issue
     throw new Error(`Expected ${calledFunction.arity} arguments, but got ${args.length}.`)
   }
   return calledFunction.definition(args)

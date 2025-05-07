@@ -286,13 +286,10 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     const newNames = getFreshName(repeatedNames, protectedNames)
 
     const currentBlockStatement = newNames.reduce(
-      (current: StepperBlockStatement, name: string, index: number) => 
-        current.rename(
-          repeatedNames[index],
-          name
-        ) as StepperBlockStatement, 
-        this
-    );
+      (current: StepperBlockStatement, name: string, index: number) =>
+        current.rename(repeatedNames[index], name) as StepperBlockStatement,
+      this
+    )
 
     if (currentBlockStatement.scanAllDeclarationNames().includes(id.name)) {
       // DO nothing

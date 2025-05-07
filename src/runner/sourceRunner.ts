@@ -18,11 +18,11 @@ import {
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
 import { Variant } from '../types'
+import { getSteps } from '../tracer/steppers'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
 import type { Runner } from './types'
 import fullJSRunner from './fullJSRunner'
-import { getSteps } from '../tracer/steppers'
 
 let isPreviousCodeTimeoutError = false
 const runners = {
@@ -59,7 +59,7 @@ const runners = {
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
     try {
-      ; ({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
+      ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
       let value = sandboxedEval(transpiled, context.nativeStorage)
 
       if (!options.isPrelude) {
@@ -86,7 +86,7 @@ const runners = {
           } else {
             error.infiniteLoopError = detectedInfiniteLoop
             if (error instanceof ExceptionError) {
-              ; (error.error as any).infiniteLoopError = detectedInfiniteLoop
+              ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
             }
           }
         }

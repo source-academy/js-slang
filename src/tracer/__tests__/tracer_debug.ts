@@ -93,7 +93,6 @@ test('function calling', () => {
 })
 */
 
-
 test('general', () => {
   const code = `
   x;

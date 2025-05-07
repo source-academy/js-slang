@@ -265,13 +265,10 @@ export class StepperBlockExpression implements StepperBaseNode {
     const newNames = getFreshName(repeatedNames, protectedNames)
 
     const currentBlockExpression = newNames.reduce(
-      (current: StepperBlockExpression, name: string, index: number) => 
-        current.rename(
-          repeatedNames[index],
-          name
-        ) as StepperBlockExpression, 
-        this
-    );
+      (current: StepperBlockExpression, name: string, index: number) =>
+        current.rename(repeatedNames[index], name) as StepperBlockExpression,
+      this
+    )
 
     if (currentBlockExpression.scanAllDeclarationNames().includes(id.name)) {
       return currentBlockExpression

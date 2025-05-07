@@ -119,12 +119,9 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     const protectedNames = Array.from(protectedNamesSet)
     const newNames = getFreshName(repeatedNames, protectedNames)
     const currentArrowFunction = newNames.reduce(
-      (current: StepperArrowFunctionExpression, name: string, index: number) => 
-        current.rename(
-          repeatedNames[index],
-          name
-        ) as StepperArrowFunctionExpression, 
-        this
+      (current: StepperArrowFunctionExpression, name: string, index: number) =>
+        current.rename(repeatedNames[index], name) as StepperArrowFunctionExpression,
+      this
     )
     if (currentArrowFunction.scanAllDeclarationNames().includes(id.name)) {
       return currentArrowFunction
