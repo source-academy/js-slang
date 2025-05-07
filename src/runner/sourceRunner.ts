@@ -8,16 +8,10 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import {
-  callee,
-  getEvaluationSteps,
-  getRedex,
-  type IStepperPropContents,
-  redexify
-} from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
 import { Variant } from '../types'
+import { getSteps } from '../tracer/steppers'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
 import type { Runner } from './types'
@@ -31,26 +25,14 @@ const runners = {
     return CSEResultPromise(context, value)
   },
   substitution: (program, context, options) => {
-    const steps = getEvaluationSteps(program, context, options)
+    const steps = getSteps(program, context, options)
     if (context.errors.length > 0) {
       return resolvedErrorPromise
     }
-
-    const redexedSteps = steps.map((step): IStepperPropContents => {
-      const redex = getRedex(step[0], step[1])
-      const redexed = redexify(step[0], step[1])
-      return {
-        code: redexed[0],
-        redex: redexed[1],
-        explanation: step[2],
-        function: callee(redex, context)
-      }
-    })
-
     return Promise.resolve({
       status: 'finished',
       context,
-      value: redexedSteps
+      value: steps
     })
   },
   native: async (program, context, options) => {
