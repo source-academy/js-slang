@@ -1,5 +1,4 @@
 import type { Program } from 'estree'
-import createContext from '../../../createContext'
 import {
   DuplicateImportNameError,
   UndefinedDefaultImportError,
@@ -11,7 +10,7 @@ import { stripIndent } from '../../../utils/formatters'
 import parseProgramsAndConstructImportGraph from '../linker'
 import analyzeImportsAndExports from '../analyzer'
 import { parse } from '../../../parser/parser'
-import { mockContext } from '../../../mocks/context'
+import { mockContext } from '../../../utils/testing/mocks'
 import loadSourceModules from '../../loader'
 import type { SourceFiles as Files } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'
@@ -53,7 +52,7 @@ describe('Test throwing import validation errors', () => {
     allowUndefinedImports: boolean,
     throwOnDuplicateNames: boolean
   ) {
-    const context = createContext(Chapter.FULL_JS)
+    const context = mockContext(Chapter.FULL_JS)
     const importGraphResult = await parseProgramsAndConstructImportGraph(
       p => Promise.resolve(files[p]),
       entrypointFilePath as string,
@@ -651,17 +650,20 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     const [allNoCases, allYesCases] = cases.reduce(
       ([noThrow, yesThrow], c, i) => {
         const context = mockContext(Chapter.LIBRARY_PARSER)
-        const programs = Object.entries(c[1]).reduce((res, [name, file]) => {
-          const parsed = parse(file!, context, { sourceFile: name })
-          if (!parsed) {
-            console.error(context.errors[0])
-            throw new Error('Failed to parse code!')
-          }
-          return {
-            ...res,
-            [name]: parsed
-          }
-        }, {} as Record<string, Program>)
+        const programs = Object.entries(c[1]).reduce(
+          (res, [name, file]) => {
+            const parsed = parse(file!, context, { sourceFile: name })
+            if (!parsed) {
+              console.error(context.errors[0])
+              throw new Error('Failed to parse code!')
+            }
+            return {
+              ...res,
+              [name]: parsed
+            }
+          },
+          {} as Record<string, Program>
+        )
 
         // For each test case, split it into the case where throwOnDuplicateImports is true
         // and when it is false. No errors should ever be thrown when throwOnDuplicateImports is false
@@ -709,7 +711,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       shouldThrow,
       errMsg
     ) => {
-      const context = createContext(Chapter.FULL_JS)
+      const context = mockContext(Chapter.FULL_JS)
       const [entrypointFilePath, ...topoOrder] = objectKeys(programs)
 
       await loadSourceModules(new Set(['one_module', 'another_module']), context, false)

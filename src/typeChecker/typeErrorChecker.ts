@@ -323,8 +323,8 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       const init = node.declarations[0].init
       // Look up declared type if current environment contains name
       const expectedType = env[env.length - 1].typeMap.has(id.name)
-        ? lookupTypeAndRemoveForAllAndPredicateTypes(id.name) ??
-          getTypeAnnotationType(id.typeAnnotation)
+        ? (lookupTypeAndRemoveForAllAndPredicateTypes(id.name) ??
+          getTypeAnnotationType(id.typeAnnotation))
         : getTypeAnnotationType(id.typeAnnotation)
       const initType = typeCheckAndReturnType(init)
       checkForTypeMismatch(node, initType, expectedType)
@@ -393,9 +393,45 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
         }
 
         // Due to the use of generics, pair, list and stream functions are handled separately
-        const pairFunctions = ['pair']
-        const listFunctions = ['list', 'map', 'filter', 'accumulate', 'reverse']
-        const streamFunctions = ['stream_map', 'stream_reverse']
+        const pairFunctions = ['pair', 'is_pair', 'head', 'tail', 'is_null', 'set_head', 'set_tail']
+        const listFunctions = [
+          'list',
+          'equal',
+          'length',
+          'map',
+          'build_list',
+          'for_each',
+          'list_to_string',
+          'append',
+          'member',
+          'remove',
+          'remove_all',
+          'filter',
+          'enum_list',
+          'list_ref',
+          'accumulate',
+          'reverse'
+        ]
+        const streamFunctions = [
+          'stream_tail',
+          'is_stream',
+          'list_to_stream',
+          'stream_to_list',
+          'stream_length',
+          'stream_map',
+          'build_stream',
+          'stream_for_each',
+          'stream_reverse',
+          'stream_append',
+          'stream_member',
+          'stream_remove',
+          'stream_remove_all',
+          'stream_filter',
+          'enum_stream',
+          'integers_from',
+          'eval_stream',
+          'stream_ref'
+        ]
         if (
           pairFunctions.includes(fnName) ||
           listFunctions.includes(fnName) ||

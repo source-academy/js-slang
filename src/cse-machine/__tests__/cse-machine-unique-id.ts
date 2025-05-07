@@ -1,4 +1,4 @@
-import { mockContext } from '../../mocks/context'
+import { mockContext } from '../../utils/testing/mocks'
 import { Chapter, type Context, type Environment } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { runCodeInSource } from '../../runner'

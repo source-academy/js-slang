@@ -1,11 +1,9 @@
-import { ParserOptions } from '@babel/parser'
-import { Options } from 'acorn'
-import { Program } from 'estree'
+import type { Program } from 'estree'
 
-import { Context } from '../types'
+import type { Context, Chapter, Node, SourceError, Variant } from '../types'
 
-export type AcornOptions = Options
-export type BabelOptions = ParserOptions
+export type { Options as AcornOptions } from 'acorn'
+export type { ParserOptions as BabelOptions } from '@babel/parser'
 
 export interface Parser<TOptions> {
   parse(
@@ -15,4 +13,13 @@ export interface Parser<TOptions> {
     throwOnError?: boolean
   ): Program | null
   validate(ast: Program, context: Context, throwOnError?: boolean): boolean
+}
+
+export interface Rule<T extends Node> {
+  name: string
+  disableFromChapter?: Chapter
+  disableForVariants?: Variant[]
+  checkers: {
+    [name: string]: (node: T, ancestors: Node[]) => SourceError[]
+  }
 }

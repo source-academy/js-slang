@@ -1,6 +1,6 @@
-import * as es from 'estree'
+import type es from 'estree'
 
-import { mockContext, mockImportDeclaration } from '../mocks/context'
+import { mockContext, mockImportDeclaration } from '../utils/testing/mocks'
 import { parse } from '../parser/parser'
 import { Chapter, Context, substituterNodes } from '../types'
 import * as builtin from './lib'
@@ -53,20 +53,20 @@ export function nodeToValue(node: substituterNodes): any {
   return node.type === 'Literal'
     ? node.value
     : util.isBuiltinFunction(node)
-    ? builtin[(node as es.Identifier).name]
-    : // tslint:disable-next-line
-      eval(javascriptify(node))
+      ? builtin[(node as es.Identifier).name]
+      : // tslint:disable-next-line
+        eval(javascriptify(node))
 }
 
 export function nodeToValueWithContext(node: substituterNodes, context: Context): any {
   return node.type === 'Literal'
     ? node.value
     : util.isBuiltinFunction(node)
-    ? builtin[(node as es.Identifier).name]
-    : node.type === 'Identifier' && util.isImportedFunction(node, context)
-    ? context.runtime.environments[0].head[node.name]
-    : // tslint:disable-next-line
-      evaluateFunctionObject(node, context)
+      ? builtin[(node as es.Identifier).name]
+      : node.type === 'Identifier' && util.isImportedFunction(node, context)
+        ? context.runtime.environments[0].head[node.name]
+        : // tslint:disable-next-line
+          evaluateFunctionObject(node, context)
 }
 function evaluateFunctionObject(node: substituterNodes, context: Context) {
   const builtinFunctions = context.runtime.environments[0].head

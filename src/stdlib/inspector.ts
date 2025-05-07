@@ -1,27 +1,7 @@
-import { Context, Result } from '..'
-import { Node, Scheduler, Value } from '../types'
-
-export const saveState = (
-  context: Context,
-  it: IterableIterator<Value>,
-  scheduler: Scheduler
-): void => {
-  context.debugger.state.it = it
-  context.debugger.state.scheduler = scheduler
-}
+import type { Context, Node } from '../types'
 
 export const setBreakpointAtLine = (lines: string[]): void => {
   breakpoints = lines
-}
-
-export const manualToggleDebugger = (context: Context): Result => {
-  context.runtime.break = true
-  return {
-    status: 'suspended',
-    scheduler: context.debugger.state.scheduler,
-    it: context.debugger.state.it,
-    context
-  }
 }
 
 let breakpoints: string[] = []

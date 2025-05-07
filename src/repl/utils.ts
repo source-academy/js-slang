@@ -1,10 +1,11 @@
 import { Option } from '@commander-js/extra-typings'
 
 import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
-import { Chapter, type Language, Variant, type Result } from '../types'
+import { Chapter, type Language, Variant, type Result, type LanguageOptions } from '../types'
 import { stringify } from '../utils/stringify'
 import Closure from '../cse-machine/closure'
 import { parseError, type Context } from '..'
+import { objectKeys } from '../utils/misc'
 
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined
@@ -12,7 +13,7 @@ export function chapterParser(str: string): Chapter {
   if (/^-?[0-9]+$/.test(str)) {
     // Chapter is fully numeric
     const value = parseInt(str)
-    foundChapter = Object.keys(Chapter).find(chapterName => Chapter[chapterName] === value)
+    foundChapter = objectKeys(Chapter).find(chapterName => Chapter[chapterName] === value)
 
     if (foundChapter === undefined) {
       throw new Error(`Invalid chapter value: ${str}`)
@@ -36,6 +37,18 @@ export const getChapterOption = <T extends Chapter>(
 
 export const getVariantOption = <T extends Variant>(defaultValue: T, choices: T[]) => {
   return new Option('--variant <variant>').default(defaultValue).choices(choices)
+}
+
+export const getLanguageOption = <T extends LanguageOptions>() => {
+  return new Option('--languageOptions <options>')
+    .default({})
+    .argParser((value: string): LanguageOptions => {
+      const languageOptions = value.split(',').map(lang => {
+        const [key, value] = lang.split('=')
+        return { [key]: value }
+      })
+      return Object.assign({}, ...languageOptions)
+    })
 }
 
 export function validateChapterAndVariantCombo(language: Language) {

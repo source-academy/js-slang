@@ -1,6 +1,6 @@
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { testSuccess } from '../../utils/testing'
+import { expectFinishedResult } from '../../utils/testing'
 import * as list from '../list'
 
 test('display_list is linear runtime', () => {
@@ -12,9 +12,8 @@ test('display_list is linear runtime', () => {
     return list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s)
   }
 
-  return expect(
-    testSuccess(
-      stripIndent`
+  return expectFinishedResult(
+    stripIndent`
       const build_inf = (i, f) => {
         const t = list(f(i));
         let p = t;
@@ -27,7 +26,7 @@ test('display_list is linear runtime', () => {
       const make_complex_list = n => {
         // makes a complex list structure with O(n) pairs
         const cuberootn = math_floor(math_pow(n, 0.33));
-        return build_list(cuberootn, _ => build_inf(cuberootn, _ => build_list(cuberootn, i =>i)));
+        return build_list(_ => build_inf(cuberootn, _ => build_list(i => i, cuberootn)), cuberootn);
       };
       const time_display_list = xs => {
         const starttime = get_time();
@@ -103,15 +102,13 @@ test('display_list is linear runtime', () => {
       const slope = head(line);
       slope;
     `,
-      {
-        chapter: Chapter.SOURCE_3,
-        native: false, // we're measuring a builtin, no need for native
-        testBuiltins: {
-          no_display_list: noDisplayList
-        }
+    {
+      chapter: Chapter.SOURCE_3,
+      testBuiltins: {
+        no_display_list: noDisplayList
       }
-    ).then(testResult => testResult.result)
-  ).resolves.toBeLessThan(1.2)
+    }
+  ).toBeLessThan(1.2)
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?

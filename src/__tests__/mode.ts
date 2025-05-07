@@ -1,5 +1,5 @@
 import * as ace from 'ace-builds'
-import DefaultMode from 'ace-builds/src-noconflict/mode-javascript'
+import { Mode as DefaultMode } from 'ace-builds/src-noconflict/mode-javascript'
 
 import { HighlightRulesSelector, ModeSelector } from '../editors/ace/modes/source'
 import { Chapter, Variant } from '../types'
@@ -14,7 +14,7 @@ const defaultVariant: Variant = Variant.DEFAULT
 const defaultExternal: string = 'NONE'
 
 // define session
-const session = ace.createEditSession('', DefaultMode)
+const session = ace.createEditSession('', new DefaultMode())
 
 // tested token types
 const CATEGORY = {
@@ -37,10 +37,7 @@ const setSession = (chapter: Chapter, variant: Variant, external: string, code: 
   session.setValue(code)
 }
 
-const expectedBool = (
-  token: ace.Ace.Token | null,
-  type: { test: (arg0: string) => any }
-): boolean => {
+const expectedBool = (token: ace.Ace.Token | null, type: RegExp): boolean => {
   return token !== null && type.test(token.type)
 }
 
@@ -137,17 +134,3 @@ test('forbidden JavaScript reserved words', () => {
   const token3 = session.getTokenAt(2, 1)
   expect(expectedBool(token3, CATEGORY.forbidden)).toBe(true)
 })
-
-/*
-test('external library functions are not correctly loaded', () => {
-  const code = `const rune = blank; \nindigo(rune);`
-
-  setSession(1, defaultVariant, 'RUNE', code)
-
-  const token1 = session.getTokenAt(0, 15)
-  expect(expectedBool(token1, CATEGORY.consts)).toBe(true)
-
-  const token2 = session.getTokenAt(1, 1)
-  expect(expectedBool(token2, CATEGORY.functions)).toBe(true)
-})
-*/
