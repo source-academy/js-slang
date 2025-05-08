@@ -20,36 +20,38 @@ __metadata:
   linkType: hard
 
 "acorn-loose@npm:^8.0.0":
-  version: 8.3.0
-  resolution: "acorn-loose@npm:8.3.0"
+  version: 8.5.0
+  resolution: "acorn-loose@npm:8.5.0"
   dependencies:
-    acorn: "npm:^8.5.0"
-  checksum: 10c0/970f790a584a2f1703a04711cdc588f424fd7bc2fb37ad8e0b9d6ceaf9c8c6a77f9ce102ce5250259fc96aedbdf346546ed1b496299bc13ed4d1b6fdb2d92f61
+    acorn: "npm:^8.14.0"
+  checksum: 10c0/221df4224ccad267d46775323d956636dd0e4ef263d18450258daff1a33d99e8e00e6214465bdc658fc961cc77fc60cef2f0f4710ec93543ce179f287da0ea80
   languageName: node
   linkType: hard
 
 "acorn-walk@npm:^8.0.0":
-  version: 8.2.0
-  resolution: "acorn-walk@npm:8.2.0"
-  checksum: 10c0/dbe92f5b2452c93e960c5594e666dd1fae141b965ff2cb4a1e1d0381e3e4db4274c5ce4ffa3d681a86ca2a8d4e29d5efc0670a08e23fd2800051ea387df56ca2
+  version: 8.3.4
+  resolution: "acorn-walk@npm:8.3.4"
+  dependencies:
+    acorn: "npm:^8.11.0"
+  checksum: 10c0/76537ac5fb2c37a64560feaf3342023dadc086c46da57da363e64c6148dc21b57d49ace26f949e225063acb6fb441eabffd89f7a3066de5ad37ab3e328927c62
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.0.3, acorn@npm:^8.5.0":
-  version: 8.8.0
-  resolution: "acorn@npm:8.8.0"
+"acorn@npm:^8.0.3, acorn@npm:^8.11.0, acorn@npm:^8.14.0":
+  version: 8.14.1
+  resolution: "acorn@npm:8.14.1"
   bin:
     acorn: bin/acorn
-  checksum: 10c0/5efce4f59554e0ab766f32932cba34b86cc2ecdf24fcd27463beff41d8a1b1b9575c21f92c1b9f7f82b93374a9d5aed33c91f93e2d0cb1bdf3f1e06ec131e816
+  checksum: 10c0/dbd36c1ed1d2fa3550140000371fcf721578095b18777b85a79df231ca093b08edc6858d75d6e48c73e431c174dcf9214edbd7e6fa5911b93bd8abfa54e47123
   languageName: node
   linkType: hard
 
 "astring@npm:^1.4.3":
-  version: 1.8.3
-  resolution: "astring@npm:1.8.3"
+  version: 1.9.0
+  resolution: "astring@npm:1.9.0"
   bin:
     astring: bin/astring
-  checksum: 10c0/76e8233ad2586d31f19fac4cdaa5b2d82cb7419dd68d60f8b2641f0dd6dfe0302b2160dae910d5a8cc00e4a381eb4928b6553272f80078ac1ba186d270a745d4
+  checksum: 10c0/e7519544d9824494e80ef0e722bb3a0c543a31440d59691c13aeaceb75b14502af536b23f08db50aa6c632dafaade54caa25f0788aa7550b6b2d6e2df89e0830
   languageName: node
   linkType: hard
 
