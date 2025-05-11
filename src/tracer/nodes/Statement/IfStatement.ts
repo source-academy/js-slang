@@ -54,7 +54,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     return this.test instanceof StepperLiteral
   }
 
-  contract(): StepperBlockStatement {
+  contract(): StepperBlockStatement | StepperIfStatement {
     if (!(this.test instanceof StepperLiteral)) {
       throw new Error('Cannot contract non-literal test')
     }
@@ -75,6 +75,9 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
         this.loc,
         this.range
       )
+    } else if (result instanceof StepperIfStatement) {
+      // else if statement
+      return result
     } else {
       throw new Error('Cannot contract to non-block statement')
     }

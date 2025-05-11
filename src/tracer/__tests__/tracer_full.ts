@@ -155,6 +155,51 @@ describe('Lambda expression', () => {
   })
 })
 
+describe('If else statements', () => {
+  test('test if', async () => {
+    const code = `
+      if (1 === 1) {
+        1;
+      } else if (2 === 2) {
+        2; 
+      } else {
+        3; 
+      }
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
+  })
+  test('test else if', async () => {
+    const code = `
+      if (1 !== 1) {
+        1;
+      } else if (2 === 2) {
+        2; 
+      } else {
+        3; 
+      }
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
+  })
+  test('test else', async () => {
+    const code = `
+      if (1 !== 1) {
+        1;
+      } else if (2 !== 2) {
+        2; 
+      } else {
+        3; 
+      }
+    `
+    const steps = await codify(acornParser(code))
+    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps[steps.length - 1]).toEqual('3;\n[noMarker] Evaluation complete\n')
+  })
+})
+
 describe('Alpha renaming', () => {
   test('Basic', async () => {
     const code = `

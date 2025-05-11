@@ -4940,10 +4940,10 @@ if (false) { 1;} else { 2;}
 [afterMarker] AND operation evaluated, left of operator is true, continue evaluating right of operator
 
 if (false) { 1;} else { 2;}
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined; 2;}
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined; 2;}
 [beforeMarker] undefined finished evaluating
@@ -4991,10 +4991,10 @@ if (false) { 1;} else { 2;}
 [afterMarker] Binary expression 3 === 5 evaluated
 
 if (false) { 1;} else { 2;}
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined; 2;}
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined; 2;}
 [beforeMarker] undefined finished evaluating
@@ -5048,10 +5048,10 @@ if (true) { 1;} else { 2;}
 [afterMarker] Binary expression 6 === 6 evaluated
 
 if (true) { 1;} else { 2;}
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition true, proceed to if block
 
 { undefined; 1;}
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition true, proceed to if block
 
 { undefined; 1;}
 [beforeMarker] undefined finished evaluating
@@ -5099,10 +5099,10 @@ if (true) { 1;} else { 2;}
 [afterMarker] Binary expression 3 === 3 evaluated
 
 if (true) { 1;} else { 2;}
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition true, proceed to if block
 
 { undefined; 1;}
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition true, proceed to if block
 
 { undefined; 1;}
 [beforeMarker] undefined finished evaluating
@@ -5132,10 +5132,10 @@ if (true) { 1;} else { 2;}
 [afterMarker] OR operation evaluated, left of operator is true, stop evaluation
 
 if (true) { 1;} else { 2;}
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition true, proceed to if block
 
 { undefined; 1;}
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition true, proceed to if block
 
 { undefined; 1;}
 [beforeMarker] undefined finished evaluating
@@ -5165,10 +5165,10 @@ if (false) { 1;} else { 2;}
 [afterMarker] Binary expression 1 >= 2 evaluated
 
 if (false) { 1;} else { 2;}
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined; 2;}
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined; 2;}
 [beforeMarker] undefined finished evaluating
@@ -5204,10 +5204,10 @@ if (false) { 1;} else { 2;}
 [afterMarker] Binary expression 1 >= 2 evaluated
 
 if (false) { 1;} else { 2;}
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined; 2;}
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined; 2;}
 [beforeMarker] undefined finished evaluating
@@ -5411,10 +5411,10 @@ function f() { const x = 2; if (true) { 5 + x; return 2; } else {}}f();
 [afterMarker] Constant x declared and substituted into the rest of block
 
 { if (true) { 5 + 2; return 2; } else {}};
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition true, proceed to if block
 
 { { undefined; 5 + 2; return 2; }};
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition true, proceed to if block
 
 { { undefined; 5 + 2; return 2; }};
 [beforeMarker] Binary expression 5 + 2 evaluated
@@ -5447,6 +5447,129 @@ function f() { const x = 2; if (true) { 5 + x; return 2; } else {}}f();
 [afterMarker] 2 returned
 
 2;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`If else statements test else 1`] = `
+"if (1 !== 1) { 1;} else if (2 !== 2) { 2;} else { 3;}
+[noMarker] Start of evaluation
+
+if (1 !== 1) { 1;} else if (2 !== 2) { 2;} else { 3;}
+[beforeMarker] Binary expression 1 !== 1 evaluated
+
+if (false) { 1;} else if (2 !== 2) { 2;} else { 3;}
+[afterMarker] Binary expression 1 !== 1 evaluated
+
+if (false) { 1;} else if (2 !== 2) { 2;} else { 3;}
+[beforeMarker] If statement evaluated, condition false, proceed to else block
+
+if (2 !== 2) { 2;} else { 3;}
+[afterMarker] If statement evaluated, condition false, proceed to else block
+
+if (2 !== 2) { 2;} else { 3;}
+[beforeMarker] Binary expression 2 !== 2 evaluated
+
+if (false) { 2;} else { 3;}
+[afterMarker] Binary expression 2 !== 2 evaluated
+
+if (false) { 2;} else { 3;}
+[beforeMarker] If statement evaluated, condition false, proceed to else block
+
+{ undefined; 3;}
+[afterMarker] If statement evaluated, condition false, proceed to else block
+
+{ undefined; 3;}
+[beforeMarker] undefined finished evaluating
+
+{ 3;}
+[afterMarker] undefined finished evaluating
+
+{ 3;}
+[beforeMarker] 3; finished evaluating
+
+3;
+[afterMarker] 3; finished evaluating
+
+3;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`If else statements test else if 1`] = `
+"if (1 !== 1) { 1;} else if (2 === 2) { 2;} else { 3;}
+[noMarker] Start of evaluation
+
+if (1 !== 1) { 1;} else if (2 === 2) { 2;} else { 3;}
+[beforeMarker] Binary expression 1 !== 1 evaluated
+
+if (false) { 1;} else if (2 === 2) { 2;} else { 3;}
+[afterMarker] Binary expression 1 !== 1 evaluated
+
+if (false) { 1;} else if (2 === 2) { 2;} else { 3;}
+[beforeMarker] If statement evaluated, condition false, proceed to else block
+
+if (2 === 2) { 2;} else { 3;}
+[afterMarker] If statement evaluated, condition false, proceed to else block
+
+if (2 === 2) { 2;} else { 3;}
+[beforeMarker] Binary expression 2 === 2 evaluated
+
+if (true) { 2;} else { 3;}
+[afterMarker] Binary expression 2 === 2 evaluated
+
+if (true) { 2;} else { 3;}
+[beforeMarker] If statement evaluated, condition true, proceed to if block
+
+{ undefined; 2;}
+[afterMarker] If statement evaluated, condition true, proceed to if block
+
+{ undefined; 2;}
+[beforeMarker] undefined finished evaluating
+
+{ 2;}
+[afterMarker] undefined finished evaluating
+
+{ 2;}
+[beforeMarker] 2; finished evaluating
+
+2;
+[afterMarker] 2; finished evaluating
+
+2;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`If else statements test if 1`] = `
+"if (1 === 1) { 1;} else if (2 === 2) { 2;} else { 3;}
+[noMarker] Start of evaluation
+
+if (1 === 1) { 1;} else if (2 === 2) { 2;} else { 3;}
+[beforeMarker] Binary expression 1 === 1 evaluated
+
+if (true) { 1;} else if (2 === 2) { 2;} else { 3;}
+[afterMarker] Binary expression 1 === 1 evaluated
+
+if (true) { 1;} else if (2 === 2) { 2;} else { 3;}
+[beforeMarker] If statement evaluated, condition true, proceed to if block
+
+{ undefined; 1;}
+[afterMarker] If statement evaluated, condition true, proceed to if block
+
+{ undefined; 1;}
+[beforeMarker] undefined finished evaluating
+
+{ 1;}
+[afterMarker] undefined finished evaluating
+
+{ 1;}
+[beforeMarker] 1; finished evaluating
+
+1;
+[afterMarker] 1; finished evaluating
+
+1;
 [noMarker] Evaluation complete
 "
 `;
@@ -8996,10 +9119,10 @@ equal({ if (false) { return list(null); } else { const rest = (s => { if (is_nul
 [afterMarker] is_null runs
 
 equal({ if (false) { return list(null); } else { const rest = (s => { if (is_null(s)) { return list(null); } else { const rest = subsets(tail(s)); return append(rest, map(x => pair(head(s), x), rest)); } })(tail([1, [2, null]])); return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 equal({ { undefined; const rest = (s => { if (is_null(s)) { return list(null); } else { const rest = subsets(tail(s)); return append(rest, map(x => pair(head(s), x), rest)); } })(tail([1, [2, null]])); return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 equal({ { undefined; const rest = (s => { if (is_null(s)) { return list(null); } else { const rest = subsets(tail(s)); return append(rest, map(x => pair(head(s), x), rest)); } })(tail([1, [2, null]])); return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
 [beforeMarker] tail runs
@@ -9020,10 +9143,10 @@ equal({ { undefined; const rest = { if (false) { return list(null); } else { con
 [afterMarker] is_null runs
 
 equal({ { undefined; const rest = { if (false) { return list(null); } else { const rest = (s => { if (is_null(s)) { return list(null); } else { const rest = subsets(tail(s)); return append(rest, map(x => pair(head(s), x), rest)); } })(tail([2, null])); return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 equal({ { undefined; const rest = { { undefined; const rest = (s => { if (is_null(s)) { return list(null); } else { const rest = subsets(tail(s)); return append(rest, map(x => pair(head(s), x), rest)); } })(tail([2, null])); return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 equal({ { undefined; const rest = { { undefined; const rest = (s => { if (is_null(s)) { return list(null); } else { const rest = subsets(tail(s)); return append(rest, map(x => pair(head(s), x), rest)); } })(tail([2, null])); return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
 [beforeMarker] tail runs
@@ -9044,10 +9167,10 @@ equal({ { undefined; const rest = { { undefined; const rest = { if (true) { retu
 [afterMarker] is_null runs
 
 equal({ { undefined; const rest = { { undefined; const rest = { if (true) { return list(null); } else { const rest = (s => { if (is_null(s)) { return list(null); } else { const rest = subsets(tail(s)); return append(rest, map(x => pair(head(s), x), rest)); } })(tail(null)); return append(rest, map(x => pair(head(null), x), rest)); } }; return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition true, proceed to if block
 
 equal({ { undefined; const rest = { { undefined; const rest = { { undefined; return list(null); } }; return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition true, proceed to if block
 
 equal({ { undefined; const rest = { { undefined; const rest = { { undefined; return list(null); } }; return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
 [beforeMarker] undefined finished evaluating
@@ -17012,10 +17135,10 @@ function expmod(base, exp, m) { if (exp === 0) { return 1; } else { if ((n => { 
 [afterMarker] Binary expression 3 === 0 evaluated
 
 { if (false) { return 1; } else { if ((n => { return n % 2 === 0; })(3)) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 3 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 3 - 1, 5) % 5; } }};
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 { { undefined; if ((n => { return n % 2 === 0; })(3)) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 3 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 3 - 1, 5) % 5; } }};
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 { { undefined; if ((n => { return n % 2 === 0; })(3)) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 3 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 3 - 1, 5) % 5; } }};
 [beforeMarker] Function is_even takes in 3 as input n
@@ -17036,10 +17159,10 @@ function expmod(base, exp, m) { if (exp === 0) { return 1; } else { if ((n => { 
 [afterMarker] Binary expression 1 === 0 evaluated
 
 { { undefined; if (false) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 3 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 3 - 1, 5) % 5; } }};
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 { { undefined; { undefined; return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 3 - 1, 5) % 5; } }};
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 { { undefined; { undefined; return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 3 - 1, 5) % 5; } }};
 [beforeMarker] undefined finished evaluating
@@ -17168,10 +17291,10 @@ function expmod(base, exp, m) { if (exp === 0) { return 1; } else { if ((n => { 
 [afterMarker] Binary expression 2 === 0 evaluated
 
 4 * { if (false) { return 1; } else { if ((n => { return n % 2 === 0; })(2)) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 2 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 2 - 1, 5) % 5; } }} % 5;
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 4 * { { undefined; if ((n => { return n % 2 === 0; })(2)) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 2 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 2 - 1, 5) % 5; } }} % 5;
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 4 * { { undefined; if ((n => { return n % 2 === 0; })(2)) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 2 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 2 - 1, 5) % 5; } }} % 5;
 [beforeMarker] Function is_even takes in 2 as input n
@@ -17192,10 +17315,10 @@ function expmod(base, exp, m) { if (exp === 0) { return 1; } else { if ((n => { 
 [afterMarker] Binary expression 0 === 0 evaluated
 
 4 * { { undefined; if (true) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 2 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 2 - 1, 5) % 5; } }} % 5;
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition true, proceed to if block
 
 4 * { { undefined; { undefined; const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 2 / 2, 5); return to_half * to_half % 5; } }} % 5;
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition true, proceed to if block
 
 4 * { { undefined; { undefined; const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 2 / 2, 5); return to_half * to_half % 5; } }} % 5;
 [beforeMarker] Binary expression 2 / 2 evaluated
@@ -17216,10 +17339,10 @@ function expmod(base, exp, m) { if (exp === 0) { return 1; } else { if ((n => { 
 [afterMarker] Binary expression 1 === 0 evaluated
 
 4 * { { undefined; { undefined; const to_half = { if (false) { return 1; } else { if ((n => { return n % 2 === 0; })(1)) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 1 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 4 * { { undefined; { undefined; const to_half = { { undefined; if ((n => { return n % 2 === 0; })(1)) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 1 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 4 * { { undefined; { undefined; const to_half = { { undefined; if ((n => { return n % 2 === 0; })(1)) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 1 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
 [beforeMarker] Function is_even takes in 1 as input n
@@ -17240,10 +17363,10 @@ function expmod(base, exp, m) { if (exp === 0) { return 1; } else { if ((n => { 
 [afterMarker] Binary expression 1 === 0 evaluated
 
 4 * { { undefined; { undefined; const to_half = { { undefined; if (false) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 1 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 4 * { { undefined; { undefined; const to_half = { { undefined; { undefined; return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 4 * { { undefined; { undefined; const to_half = { { undefined; { undefined; return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
 [beforeMarker] undefined finished evaluating
@@ -17372,10 +17495,10 @@ function expmod(base, exp, m) { if (exp === 0) { return 1; } else { if ((n => { 
 [afterMarker] Binary expression 0 === 0 evaluated
 
 4 * { { undefined; { undefined; const to_half = 4 * { if (true) { return 1; } else { if ((n => { return n % 2 === 0; })(0)) { const to_half = ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 0 / 2, 5); return to_half * to_half % 5; } else { return 4 * ((base, exp, m) => { if (exp === 0) { return 1; } else { if ((n => { return n % 2 === 0; })(exp)) { const to_half = expmod(base, exp / 2, m); return to_half * to_half % m; } else { return base * expmod(base, exp - 1, m) % m; } } })(4, 0 - 1, 5) % 5; } } } % 5; return to_half * to_half % 5; } }} % 5;
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition true, proceed to if block
 
 4 * { { undefined; { undefined; const to_half = 4 * { { undefined; return 1; } } % 5; return to_half * to_half % 5; } }} % 5;
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition true, proceed to if block
 
 4 * { { undefined; { undefined; const to_half = 4 * { { undefined; return 1; } } % 5; return to_half * to_half % 5; } }} % 5;
 [beforeMarker] undefined finished evaluating
@@ -17618,10 +17741,10 @@ exports[`Statements: Conditionals Conditional-statement-alternative test case 1`
 [noMarker] Start of evaluation
 
 if (false) { 1;} else { 2;}
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined; 2;}
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined; 2;}
 [beforeMarker] undefined finished evaluating
@@ -17657,10 +17780,10 @@ function foo(x) { if (false) { 1; } else { 2; }}foo(0);
 [afterMarker] Function foo takes in 0 as input x
 
 { if (false) { 1; } else { 2; }};
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 { { undefined; 2; }};
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 { { undefined; 2; }};
 [beforeMarker] undefined finished evaluating
@@ -17702,10 +17825,10 @@ function foo(x) { 3; if (false) { 1; } else { 2; }}foo(0);
 [afterMarker] Function foo takes in 0 as input x
 
 { 3; if (false) { 1; } else { 2; }};
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 { 3; { undefined; 2; }};
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 { 3; { undefined; 2; }};
 [beforeMarker] undefined finished evaluating
@@ -17753,10 +17876,10 @@ function foo(x) { if (true) { 1; } else { 2; }}foo(0);
 [afterMarker] Function foo takes in 0 as input x
 
 { if (true) { 1; } else { 2; }};
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition true, proceed to if block
 
 { { undefined; 1; }};
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition true, proceed to if block
 
 { { undefined; 1; }};
 [beforeMarker] undefined finished evaluating
@@ -17798,10 +17921,10 @@ function foo(x) { 3; if (true) { 1; } else { 2; }}foo(0);
 [afterMarker] Function foo takes in 0 as input x
 
 { 3; if (true) { 1; } else { 2; }};
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition true, proceed to if block
 
 { 3; { undefined; 1; }};
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition true, proceed to if block
 
 { 3; { undefined; 1; }};
 [beforeMarker] undefined finished evaluating
@@ -17837,10 +17960,10 @@ exports[`Statements: Conditionals Conditional-statement-consequent test case 1`]
 [noMarker] Start of evaluation
 
 if (true) { 1;} else { 2;}
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition true, proceed to if block
 
 { undefined; 1;}
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition true, proceed to if block
 
 { undefined; 1;}
 [beforeMarker] undefined finished evaluating
@@ -17882,10 +18005,10 @@ if (false) {} else {}
 [afterMarker] Binary expression 6 === 1 evaluated
 
 if (false) {} else {}
-[beforeMarker] ...
+[beforeMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined;}
-[afterMarker] ...
+[afterMarker] If statement evaluated, condition false, proceed to else block
 
 { undefined;}
 [beforeMarker] undefined; finished evaluating

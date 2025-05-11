@@ -198,6 +198,17 @@ export function explain(redex: StepperBaseNode): string {
     ArrowFunctionExpression: (_node: StepperArrowFunctionExpression) => {
       throw new Error('Not implemented.')
     },
+    IfStatement: (node: StepperIfStatement) => {
+      if (node.test instanceof StepperLiteral) {
+        if (node.test.value) {
+          return 'If statement evaluated, condition true, proceed to if block'
+        } else {
+          return 'If statement evaluated, condition false, proceed to else block'
+        }
+      } else {
+        throw new Error('Not implemented')
+      }
+    },
     Default: (_: StepperBaseNode) => {
       return '...'
     }
