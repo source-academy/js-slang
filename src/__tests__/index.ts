@@ -113,7 +113,9 @@ test('Simple arrow function infinite recursion represents CallExpression well', 
 */
 
 test('Simple function infinite recursion represents CallExpression well', () => {
-  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toMatchInlineSnapshot(`"Line 1: RangeError: Maximum call stack size exceeded"`)
+  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toMatchInlineSnapshot(
+    `"Line 1: RangeError: Maximum call stack size exceeded"`
+  )
 }, 30000)
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
