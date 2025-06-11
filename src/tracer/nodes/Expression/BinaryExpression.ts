@@ -155,7 +155,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
 
     let ret = new StepperLiteral(
       value,
-      value !== null ? value.toString() : 'null',
+      typeof value === 'string' ? '"' + value + '"' : value !== null ? value.toString() : 'null',
       undefined,
       undefined,
       this.loc,
