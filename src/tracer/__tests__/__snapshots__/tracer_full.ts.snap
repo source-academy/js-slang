@@ -4604,10 +4604,13 @@ exports[`Builtin math negative numbers as arguments 1`] = `
 [noMarker] Start of evaluation
 
 math_sin(-1);
-[beforeMarker] Math functions must be called with number arguments
+[beforeMarker] math_sin runs
 
-math_sin(-1);
-[noMarker] Evaluation stuck
+-0.8414709848078965;
+[afterMarker] math_sin runs
+
+-0.8414709848078965;
+[noMarker] Evaluation complete
 "
 `;
 
@@ -17600,9 +17603,15 @@ exports[`SOURCE 0 (Tests from previous stepper) math_pow 1`] = `
 [noMarker] Start of evaluation
 
 math_pow(2, 20) || NaN;
-[beforeMarker] Math functions must be called with number arguments
+[beforeMarker] math_pow runs
 
-math_pow(2, 20) || NaN;
+1048576 || NaN;
+[afterMarker] math_pow runs
+
+1048576 || NaN;
+[beforeMarker] Line 2: Expected boolean on left hand side of operation, got number.
+
+1048576 || NaN;
 [noMarker] Evaluation stuck
 "
 `;
@@ -17612,10 +17621,13 @@ exports[`SOURCE 0 (Tests from previous stepper) plus undefined 1`] = `
 [noMarker] Start of evaluation
 
 math_sin(1) + undefined;
-[beforeMarker] Math functions must be called with number arguments
+[beforeMarker] math_sin runs
 
-math_sin(1) + undefined;
-[noMarker] Evaluation stuck
+0.8414709848078965 + undefined;
+[afterMarker] math_sin runs
+
+0.8414709848078965 + undefined;
+[noMarker] Evaluation complete
 "
 `;
 

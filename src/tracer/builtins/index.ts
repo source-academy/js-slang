@@ -59,7 +59,7 @@ export function getBuiltinFunction(name: string, args: StepperExpression[]): Ste
       const fn = (Math as any)[mathFnName]
       const argVal = args.map(arg => (arg as StepperLiteral).value)
       argVal.forEach(arg => {
-        if (typeof arg !== 'number' || typeof arg !== 'bigint') {
+        if (typeof arg !== 'number' && typeof arg !== 'bigint') {
           throw new Error('Math functions must be called with number arguments')
         }
       })
