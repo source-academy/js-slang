@@ -6,8 +6,10 @@ Node {
     Node {
       "declarations": Array [
         Node {
+          "definite": false,
           "end": 56,
           "id": Node {
+            "decorators": Array [],
             "end": 52,
             "loc": SourceLocation {
               "end": Position {
@@ -22,8 +24,10 @@ Node {
               },
             },
             "name": "x",
+            "optional": false,
             "start": 51,
             "type": "Identifier",
+            "typeAnnotation": undefined,
           },
           "init": Node {
             "end": 56,
@@ -60,6 +64,7 @@ Node {
           "type": "VariableDeclarator",
         },
       ],
+      "declare": false,
       "end": 57,
       "kind": "const",
       "loc": SourceLocation {
@@ -79,6 +84,9 @@ Node {
     },
   ],
   "end": 62,
+  "extra": Object {
+    "topLevelAwait": false,
+  },
   "interpreter": null,
   "loc": SourceLocation {
     "end": Position {
@@ -104,8 +112,10 @@ Node {
     Node {
       "declarations": Array [
         Node {
+          "definite": false,
           "end": 29,
           "id": Node {
+            "decorators": Array [],
             "end": 25,
             "loc": SourceLocation {
               "end": Position {
@@ -120,6 +130,7 @@ Node {
               },
             },
             "name": "x1",
+            "optional": false,
             "start": 6,
             "type": "Identifier",
             "typeAnnotation": Node {
@@ -228,6 +239,7 @@ Node {
           "type": "VariableDeclarator",
         },
       ],
+      "declare": false,
       "end": 30,
       "kind": "const",
       "loc": SourceLocation {
@@ -248,8 +260,10 @@ Node {
     Node {
       "declarations": Array [
         Node {
+          "definite": false,
           "end": 68,
           "id": Node {
+            "decorators": Array [],
             "end": 53,
             "loc": SourceLocation {
               "end": Position {
@@ -264,6 +278,7 @@ Node {
               },
             },
             "name": "x2",
+            "optional": false,
             "start": 43,
             "type": "Identifier",
             "typeAnnotation": Node {
@@ -302,6 +317,7 @@ Node {
             },
           },
           "init": Node {
+            "decorators": Array [],
             "end": 58,
             "loc": SourceLocation {
               "end": Position {
@@ -316,8 +332,10 @@ Node {
               },
             },
             "name": "x1",
+            "optional": false,
             "start": 56,
             "type": "Identifier",
+            "typeAnnotation": undefined,
           },
           "loc": SourceLocation {
             "end": Position {
@@ -335,6 +353,7 @@ Node {
           "type": "VariableDeclarator",
         },
       ],
+      "declare": false,
       "end": 69,
       "kind": "const",
       "loc": SourceLocation {
@@ -354,6 +373,9 @@ Node {
     },
   ],
   "end": 74,
+  "extra": Object {
+    "topLevelAwait": false,
+  },
   "interpreter": null,
   "loc": SourceLocation {
     "end": Position {
