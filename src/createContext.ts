@@ -277,7 +277,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
       throw new TypeError('display expects the second argument to be a string')
     }
-    return rawDisplay(stringify(v), s[0]), v
+    return (rawDisplay(stringify(v), s[0]), v)
   }
   const displayList = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
