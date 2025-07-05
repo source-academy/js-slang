@@ -2,6 +2,7 @@ import { parse as babelParse } from '@babel/parser'
 import { Options as AcornOptions } from 'acorn'
 import { Program } from 'estree'
 
+import { SourceParser } from '..'
 import { Context } from '../../..'
 import { DEFAULT_ECMA_VERSION } from '../../../constants'
 import * as TypedES from '../../../typeChecker/tsESTree'
@@ -12,7 +13,6 @@ import {
   defaultBabelOptions,
   positionToSourceLocation
 } from '../../utils'
-import { SourceParser } from '..'
 import TypeParser from './typeParser'
 import { transformBabelASTToESTreeCompliantAST } from './utils'
 
@@ -51,7 +51,7 @@ export class SourceTypedParser extends SourceParser {
       errorRecovery: throwOnError ?? true
     })
 
-    if (ast.errors.length) {
+    if (ast.errors?.length) {
       ast.errors
         .filter(error => error instanceof SyntaxError)
         .forEach(error => {
