@@ -6,8 +6,10 @@ Node {
     Node {
       "declarations": Array [
         Node {
+          "definite": false,
           "end": 72,
           "id": Node {
+            "decorators": Array [],
             "end": 68,
             "loc": SourceLocation {
               "end": Position {
@@ -22,6 +24,7 @@ Node {
               },
             },
             "name": "x",
+            "optional": false,
             "start": 51,
             "type": "Identifier",
             "typeAnnotation": Node {
@@ -57,6 +60,7 @@ Node {
                 "start": 54,
                 "type": "TSTypeReference",
                 "typeName": Node {
+                  "decorators": Array [],
                   "end": 68,
                   "loc": SourceLocation {
                     "end": Position {
@@ -71,8 +75,10 @@ Node {
                     },
                   },
                   "name": "StringOrNumber",
+                  "optional": false,
                   "start": 54,
                   "type": "Identifier",
+                  "typeAnnotation": undefined,
                 },
               },
             },
@@ -112,6 +118,7 @@ Node {
           "type": "VariableDeclarator",
         },
       ],
+      "declare": false,
       "end": 73,
       "kind": "const",
       "loc": SourceLocation {
@@ -131,6 +138,9 @@ Node {
     },
   ],
   "end": 78,
+  "extra": Object {
+    "topLevelAwait": false,
+  },
   "interpreter": null,
   "loc": SourceLocation {
     "end": Position {
