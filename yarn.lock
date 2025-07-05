@@ -2629,11 +2629,11 @@ __metadata:
   linkType: hard
 
 "astring@npm:^1.4.3":
-  version: 1.8.3
-  resolution: "astring@npm:1.8.3"
+  version: 1.9.0
+  resolution: "astring@npm:1.9.0"
   bin:
     astring: bin/astring
-  checksum: 10c0/76e8233ad2586d31f19fac4cdaa5b2d82cb7419dd68d60f8b2641f0dd6dfe0302b2160dae910d5a8cc00e4a381eb4928b6553272f80078ac1ba186d270a745d4
+  checksum: 10c0/e7519544d9824494e80ef0e722bb3a0c543a31440d59691c13aeaceb75b14502af536b23f08db50aa6c632dafaade54caa25f0788aa7550b6b2d6e2df89e0830
   languageName: node
   linkType: hard
 
