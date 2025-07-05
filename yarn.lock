@@ -5893,7 +5893,7 @@ __metadata:
     jsdom: "npm:^19.0.0"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.6.2"
-    source-map: "npm:0.7.3"
+    source-map: "npm:0.7.4"
     ts-jest: "npm:^29.0.0"
     typescript: "npm:^4.0.3"
     typescript-eslint: "npm:^8.8.1"
@@ -7699,10 +7699,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map@npm:0.7.3":
-  version: 0.7.3
-  resolution: "source-map@npm:0.7.3"
-  checksum: 10c0/7d2ddb51f3d2451847692a9ac7808da2b2b3bf7aef92ece33128919040a7e74d9a5edfde7a781f035c974deff876afaf83f2e30484faffffb86484e7408f5d7c
+"source-map@npm:0.7.4":
+  version: 0.7.4
+  resolution: "source-map@npm:0.7.4"
+  checksum: 10c0/dc0cf3768fe23c345ea8760487f8c97ef6fca8a73c83cd7c9bf2fde8bc2c34adb9c0824d6feb14bc4f9e37fb522e18af621543f1289038a66ac7586da29aa7dc
   languageName: node
   linkType: hard
 
