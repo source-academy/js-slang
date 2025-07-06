@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@joeychenofficial/alt-ergo-modified": "^2.4.0",
-    "@types/estree": "0.0.52",
+    "@types/estree": "1.0.8",
     "acorn": "^8.0.3",
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",

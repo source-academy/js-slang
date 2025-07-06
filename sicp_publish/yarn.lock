@@ -12,10 +12,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/estree@npm:0.0.52":
-  version: 0.0.52
-  resolution: "@types/estree@npm:0.0.52"
-  checksum: 10c0/b17e29cd6335c96d915cc4cda8c04e2c87e47bb97d9cd86094cf0465688d6caffa6e45b37fd3ce90f149af56b7ab8ca8a7947981d9749e18caeb3a56ae9be444
+"@types/estree@npm:1.0.8":
+  version: 1.0.8
+  resolution: "@types/estree@npm:1.0.8"
+  checksum: 10c0/39d34d1afaa338ab9763f37ad6066e3f349444f9052b9676a7cc0252ef9485a41c6d81c9c4e0d26e9077993354edf25efc853f3224dd4b447175ef62bdcc86a5
   languageName: node
   linkType: hard
 
@@ -67,7 +67,7 @@ __metadata:
   resolution: "sicp@workspace:."
   dependencies:
     "@joeychenofficial/alt-ergo-modified": "npm:^2.4.0"
-    "@types/estree": "npm:0.0.52"
+    "@types/estree": "npm:1.0.8"
     acorn: "npm:^8.0.3"
     acorn-loose: "npm:^8.0.0"
     acorn-walk: "npm:^8.0.0"
