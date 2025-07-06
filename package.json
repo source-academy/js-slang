@@ -58,7 +58,7 @@
     "build_sicp_package": "yarn build && node ./scripts/build_sicp_package.mjs",
     "publish_sicp_package": "./scripts/publish_sicp_package.sh",
     "benchmark": "node ./scripts/run_jest.mjs --runInBand --testPathPattern='.*benchmark.*' --testPathIgnorePatterns='/dist/'",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
@@ -74,7 +74,7 @@
     "eslint": "^9.0.0",
     "eslint-plugin-import": "^2.29.1",
     "globals": "^15.11.0",
-    "husky": "^8.0.1",
+    "husky": "^9.0.0",
     "jest": "^29.0.0",
     "jest-environment-jsdom": "^29.0.0",
     "jest-html-reporter": "^3.2.0",
