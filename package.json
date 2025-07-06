@@ -92,7 +92,7 @@
       "onFail": "error"
     }
   },
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.9.2",
   "jest": {
     "snapshotFormat": {
       "escapeString": true,
