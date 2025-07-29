@@ -42,7 +42,7 @@
     "commander": "^12.0.0",
     "js-base64": "^3.7.5",
     "lodash": "^4.17.21",
-    "source-map": "0.7.3"
+    "source-map": "0.7.6"
   },
   "scripts": {
     "build": "yarn docs && yarn build:slang",
