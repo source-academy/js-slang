@@ -1,33 +1,34 @@
 import type es from 'estree'
+import { expect, test } from 'vitest'
 
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
 import { Chapter, NodeWithInferredType } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError } from '../../utils/testing'
 import { simple } from '../../utils/walkers'
 import { validateAndAnnotate } from '../validator'
 import { getSourceVariableDeclaration } from '../../utils/ast/helpers'
+import { testFailure } from '../../utils/testing'
 
-export function toValidatedAst(code: string) {
+function toValidatedAst(code: string) {
   const context = mockContext(Chapter.SOURCE_1)
   const ast = parse(code, context)
   expect(ast).not.toBeUndefined()
   return validateAndAnnotate(ast as es.Program, context)
 }
 
-test('for loop variable cannot be reassigned', async () => {
+test('for loop variable cannot be reassigned', () => {
   const code = stripIndent`
     for (let i = 0; i < 10; i = i + 1) {
       i = 10;
     }
   `
-  return expectParsedError(code, { chapter: Chapter.SOURCE_4 }).toMatchInlineSnapshot(
+  return expect(testFailure(code, Chapter.SOURCE_4)).resolves.toMatchInlineSnapshot(
     `"Line 2: Assignment to a for loop variable in the for loop is not allowed."`
   )
 })
 
-test('for loop variable cannot be reassigned in closure', async () => {
+test('for loop variable cannot be reassigned in closure', () => {
   const code = stripIndent`
     for (let i = 0; i < 10; i = i + 1) {
       function f() {
@@ -35,7 +36,7 @@ test('for loop variable cannot be reassigned in closure', async () => {
       }
     }
   `
-  return expectParsedError(code, { chapter: Chapter.SOURCE_4 }).toMatchInlineSnapshot(
+  return expect(testFailure(code, Chapter.SOURCE_4)).resolves.toMatchInlineSnapshot(
     `"Line 3: Assignment to a for loop variable in the for loop is not allowed."`
   )
 })
