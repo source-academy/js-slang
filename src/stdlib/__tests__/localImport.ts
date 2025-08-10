@@ -1,11 +1,12 @@
+import { describe, expect, it } from 'vitest'
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult } from '../../utils/testing'
+import { testSuccess } from '../../utils/testing'
 import { defaultExportLookupName } from '../localImport.prelude'
 
 describe('__access_named_export__', () => {
   it('returns identifier if name exists in list of exported names', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -16,11 +17,11 @@ describe('__access_named_export__', () => {
       square(5);
     `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`25`)
+    )).resolves.toMatchInlineSnapshot(`25`)
   })
 
   it('returns first identifier if name exists multiple times in list of exported names', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -32,11 +33,11 @@ describe('__access_named_export__', () => {
       square(5);
     `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`25`)
+    )).resolves.toMatchInlineSnapshot(`25`)
   })
 
   it('returns undefined if name does not exist in list of exported names', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -46,11 +47,11 @@ describe('__access_named_export__', () => {
       __access_named_export__(importedFile(), "identity");
     `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`undefined`)
+    )).resolves.toMatchInlineSnapshot(`undefined`)
   })
 
   it('returns undefined if list of exported names is empty', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -60,13 +61,13 @@ describe('__access_named_export__', () => {
       __access_named_export__(importedFile(), "identity");
     `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`undefined`)
+    )).resolves.toMatchInlineSnapshot(`undefined`)
   })
 })
 
 describe('__access_export__', () => {
   it('returns named export if it exists', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -77,11 +78,11 @@ describe('__access_export__', () => {
       square(5);
     `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`25`)
+    )).resolves.toMatchInlineSnapshot(`25`)
   })
 
   it('returns default export if it exists', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
       function importedFile() {
         const square = x => x * x;
@@ -94,6 +95,6 @@ describe('__access_export__', () => {
       square(5);
     `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`125`)
+    )).resolves.toMatchInlineSnapshot(`125`)
   })
 })
