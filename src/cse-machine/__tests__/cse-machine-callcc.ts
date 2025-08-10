@@ -1,18 +1,19 @@
+import { expect, test } from 'vitest'
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { testFailure, testSuccess } from '../../utils/testing'
 
 // Continuation tests for Scheme
 const optionECScm = { chapter: Chapter.SCHEME_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('basic call/cc works', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (+ 1 2 (call/cc
               (lambda (k) (k 3)))
             4)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
 SchemeInteger {
   "numberType": 1,
   "value": 10n,
@@ -21,7 +22,7 @@ SchemeInteger {
 })
 
 test('call/cc can be used to escape a computation', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (define test 1)
     (call/cc (lambda (k)
@@ -32,7 +33,7 @@ test('call/cc can be used to escape a computation', () => {
     test
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
 SchemeInteger {
   "numberType": 1,
   "value": 2n,
@@ -41,16 +42,16 @@ SchemeInteger {
 })
 
 test('call/cc throws error given no arguments', () => {
-  return expectParsedError(
+  return expect(testFailure(
     `
     (+ 1 2 (call/cc) 4)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0."`)
+  )).resolves.toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0."`)
 })
 
 test('call/cc throws error given >1 argument', () => {
-  return expectParsedError(
+  return expect(testFailure(
     `
     (+ 1 2 (call/cc
               (lambda (k) (k 3))
@@ -58,7 +59,7 @@ test('call/cc throws error given >1 argument', () => {
             4)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
+  )).resolves.toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
 /*
@@ -66,29 +67,29 @@ for now, continuations have variable arity but are unable to check for the "corr
 number of arguments. we will omit these tests for now
 
 test('cont throws error given no arguments', () => {
-  return expectParsedError(
+  return expect(testFailure(
     `
     (+ 1 2 (call/cc
               (lambda (k) (k)))
             4)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`"Line 3: Expected 1 arguments, but got 0."`)
+  )).resolves.toMatchInlineSnapshot(`"Line 3: Expected 1 arguments, but got 0."`)
 })
 
 test('cont throws error given >1 argument', () => {
-  return expectParsedError(
+  return expect(testFailure(
     `
     (+ 1 2 (call/cc
               (lambda (k) (k 3 'wrongwrongwrong!)))
             4)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`"Line 3: Expected 1 arguments, but got 2."`)
+  )).resolves.toMatchInlineSnapshot(`"Line 3: Expected 1 arguments, but got 2."`)
 })
 */
 test('call/cc can be stored as a value', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     ;; storing a continuation
     (define a #f)
@@ -100,37 +101,37 @@ test('call/cc can be stored as a value', () => {
     (procedure? a)
     `,
     optionECScm
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 // both of the following tests generate infinite loops so they are omitted
 
-// test('call/cc can be stored as a value and called', () => {
-//   return expectResult(
-//     `
-//     ;; storing a continuation and calling it
-//     (define a #f)
+test.skip('call/cc can be stored as a value and called', () => {
+  return expect(testSuccess(
+    `
+    ;; storing a continuation and calling it
+    (define a #f)
 
-//     (+ 1 2 3 (call/cc (lambda (k) (set! a k) 0)) 4 5)
+    (+ 1 2 3 (call/cc (lambda (k) (set! a k) 0)) 4 5)
 
-//     ;; as continuations are represented with dummy
-//     ;; identity functions, we should not expect to see 6
-//     (a 6)
-//     `,
-//     optionECScm
-//   ).toMatchInlineSnapshot(`21`)
-// })
+    ;; as continuations are represented with dummy
+    ;; identity functions, we should not expect to see 6
+    (a 6)
+    `,
+    optionECScm
+  )).resolves.toMatchInlineSnapshot(`21`)
+})
 
-// test('when stored as a value, calling a continuation should alter the execution flow', () => {
-//   return expectResult(
-//     `
-//     ;; storing a continuation and calling it
-//     (define a #f)
-//     (+ 1 2 3 (call/cc (lambda (k) (set! a k) 0)) 4 5)
+test.skip('when stored as a value, calling a continuation should alter the execution flow', () => {
+  return expect(testSuccess(
+    `
+    ;; storing a continuation and calling it
+    (define a #f)
+    (+ 1 2 3 (call/cc (lambda (k) (set! a k) 0)) 4 5)
 
-//     ;; the following addition should be ignored
-//     (+ 7 (a 6))
-//     `,
-//     optionECScm
-//   ).toMatchInlineSnapshot(`21`)
-// })
+    ;; the following addition should be ignored
+    (+ 7 (a 6))
+    `,
+    optionECScm
+  )).resolves.toMatchInlineSnapshot(`21`)
+})

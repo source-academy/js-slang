@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { mockContext } from '../../utils/testing/mocks'
 import { Call_cc, Continuation, isCallWithCurrentContinuation } from '../continuations'
 import { Control, Stash, Transformers } from '../interpreter'
