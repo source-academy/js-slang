@@ -6,7 +6,8 @@ import { parse } from '../../parser/parser'
 import { runCodeInSource } from '../../runner'
 import { Chapter, type RecursivePartial } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { Control, Transformers, Stash, generateCSEMachineStateStream } from '../interpreter'
+import { Control, Stash, generateCSEMachineStateStream } from '../interpreter'
+import { Transformers } from '../transformers'
 
 const getContextFrom = async (code: string, steps?: number) => {
   const context = mockContext(Chapter.SOURCE_4)

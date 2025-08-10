@@ -8,9 +8,11 @@ import { Chapter, type Environment, type Node, type StatementSequence, type Valu
 import * as ast from '../utils/ast/astCreator'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
+import { isIdentifier } from '../utils/ast/typeGuards'
 import Heap from './heap'
 import * as instr from './instrCreator'
-import { Control, Transformers } from './interpreter'
+import { Control } from './interpreter'
+import { Transformers } from './transformers'
 import {
   AppInstr,
   EnvArray,
@@ -53,7 +55,7 @@ export const isInstr = (command: ControlItem): command is Instr => {
   if (isSchemeValue(command)) {
     return false
   }
-  return (command as Instr).instrType !== undefined
+  return 'instrType' in command
 }
 
 /**
@@ -67,17 +69,7 @@ export const isNode = (command: ControlItem): command is Node => {
   if (isSchemeValue(command)) {
     return false
   }
-  return (command as Node).type !== undefined
-}
-
-/**
- * Typeguard for esIdentifier. To verify if a Node is an esIdentifier.
- *
- * @param node a Node
- * @returns true if node is an esIdentifier, false otherwise.
- */
-export const isIdentifier = (node: Node): node is es.Identifier => {
-  return (node as es.Identifier).name !== undefined
+  return 'type' in command
 }
 
 /**
@@ -87,7 +79,7 @@ export const isIdentifier = (node: Node): node is es.Identifier => {
  * @returns true if node is an esReturnStatement, false otherwise.
  */
 export const isReturnStatement = (node: Node): node is es.ReturnStatement => {
-  return (node as es.ReturnStatement).type == 'ReturnStatement'
+  return node.type == 'ReturnStatement'
 }
 
 /**
@@ -97,7 +89,7 @@ export const isReturnStatement = (node: Node): node is es.ReturnStatement => {
  * @returns true if node is an esIfStatement, false otherwise.
  */
 export const isIfStatement = (node: Node): node is es.IfStatement => {
-  return (node as es.IfStatement).type == 'IfStatement'
+  return node.type === 'IfStatement'
 }
 
 /**
@@ -107,7 +99,7 @@ export const isIfStatement = (node: Node): node is es.IfStatement => {
  * @returns true if node is an esBlockStatement, false otherwise.
  */
 export const isBlockStatement = (node: Node): node is es.BlockStatement => {
-  return (node as es.BlockStatement).type == 'BlockStatement'
+  return node.type == 'BlockStatement'
 }
 
 /**
@@ -117,7 +109,7 @@ export const isBlockStatement = (node: Node): node is es.BlockStatement => {
  * @returns true if node is a StatementSequence, false otherwise.
  */
 export const isStatementSequence = (node: ControlItem): node is StatementSequence => {
-  return (node as StatementSequence).type == 'StatementSequence'
+  return isNode(node) && node.type == 'StatementSequence'
 }
 
 /**
@@ -127,7 +119,7 @@ export const isStatementSequence = (node: ControlItem): node is StatementSequenc
  * @returns true if node is an esRestElement, false otherwise.
  */
 export const isRestElement = (node: Node): node is es.RestElement => {
-  return (node as es.RestElement).type == 'RestElement'
+  return node.type === 'RestElement'
 }
 
 /**

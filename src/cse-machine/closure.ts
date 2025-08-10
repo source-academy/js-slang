@@ -11,7 +11,8 @@ import {
 } from '../cse-machine/utils'
 import { Context, Environment, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { Control, Transformers, Stash, generateCSEMachineStateStream } from './interpreter'
+import { Control, Stash, generateCSEMachineStateStream } from './interpreter'
+import { Transformers } from './transformers'
 import { envInstr } from './instrCreator'
 
 const closureToJS = (value: Closure, context: Context) => {

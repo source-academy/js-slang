@@ -18,7 +18,7 @@ import {
   UnOpInstr,
   WhileInstr
 } from './types'
-import { Transformers } from './interpreter'
+import { Transformers } from './transformers'
 
 export const resetInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.RESET,

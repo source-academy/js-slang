@@ -1,7 +1,8 @@
 import { expect, test } from 'vitest'
 import { mockContext } from '../../utils/testing/mocks'
 import { Call_cc, Continuation, isCallWithCurrentContinuation } from '../continuations'
-import { Control, Stash, Transformers } from '../interpreter'
+import { Control, Stash } from '../interpreter'
+import { Transformers } from '../transformers'
 
 test('call/cc is a singleton', () => {
   expect(Call_cc.get()).toBe(Call_cc.get())
