@@ -1,39 +1,34 @@
+import fs from 'fs/promises';
 import * as repl from 'repl'
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { SourceFiles } from '../../modules/moduleTypes'
 import { Chapter } from '../../types'
-import { asMockedFunc } from '../../utils/testing/misc'
 import { getReplCommand } from '../repl'
 import { chapterParser } from '../utils'
 
-const readFileMocker = jest.fn()
+const readFileMocker = vi.spyOn(fs, 'readFile')
 
 function mockReadFiles(files: SourceFiles) {
   readFileMocker.mockImplementation((fileName: string) => {
-    if (fileName in files) return Promise.resolve(files[fileName])
+    if (fileName in files) return Promise.resolve(files[fileName]!)
     return Promise.reject({ code: 'ENOENT' })
   })
 }
 
-jest.mock('fs/promises', () => ({
-  readFile: readFileMocker
-}))
-
-jest.mock('path', () => {
-  const actualPath = jest.requireActual('path')
-  const { resolve } = jest.requireActual('path/posix')
-  const newResolve = (...args: string[]) => resolve('/', ...args)
+vi.mock(import('path'), async importOriginal => {
+  const actualPath = await importOriginal();
+  const newResolve = (...args: string[]) => actualPath.posix.resolve('/', ...args)
   return {
-    ...actualPath,
-    resolve: newResolve
+    default: {
+      ...actualPath,
+      resolve: newResolve
+    }
   }
 })
 
-jest.mock('../../modules/loader/loaders')
+vi.mock(import('../../modules/loader/loaders'))
 
-jest.spyOn(console, 'log')
-const mockedConsoleLog = asMockedFunc(console.log)
-
-jest.spyOn(repl, 'start')
+const mockedConsoleLog = vi.spyOn(console, 'log')
 
 describe('Test chapter parser', () =>
   test.each([
@@ -58,7 +53,7 @@ describe('Test chapter parser', () =>
 
 describe('Test repl command', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   const runCommand = (...args: string[]) => {
@@ -141,7 +136,7 @@ describe('Test repl command', () => {
     function mockReplStart() {
       type MockedReplReturn = (x: string) => Promise<string>
 
-      const mockedReplStart = asMockedFunc(repl.start)
+      const mockedReplStart = vi.spyOn(repl, 'start')
       return new Promise<MockedReplReturn>(resolve => {
         mockedReplStart.mockImplementation((args: repl.ReplOptions) => {
           const runCode = (code: string) =>

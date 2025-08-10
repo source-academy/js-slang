@@ -1,21 +1,17 @@
-import * as fs from 'fs/promises'
+import fs from 'fs/promises'
+import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { asMockedFunc } from '../../utils/testing/misc'
 import { compileToChoices, getSVMCCommand } from '../svmc'
 import * as vm from '../../vm/svml-compiler'
 import { expectWritten, getCommandRunner } from './utils'
 
-jest.mock('fs/promises', () => ({
-  writeFile: jest.fn(),
-  readFile: jest.fn()
-}))
+const mockedWriteFile = vi.spyOn(fs, 'writeFile')
+const mockedReadFile = vi.spyOn(fs, 'readFile')
 
-const mockedReadFile = asMockedFunc(fs.readFile)
-const mockedWriteFile = asMockedFunc(fs.writeFile)
-
-jest.spyOn(vm, 'compileToIns')
+vi.spyOn(vm, 'compileToIns')
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 const { expectError: rawExpectError, expectSuccess: rawExpectSuccess } =
