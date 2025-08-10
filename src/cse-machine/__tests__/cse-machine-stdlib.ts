@@ -1,6 +1,7 @@
+import { expect, test } from 'vitest'
 import { Chapter, Value, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult, snapshotFailure } from '../../utils/testing'
+import { testFailure, testSuccess } from '../../utils/testing'
 
 test.each([
   [
@@ -431,12 +432,12 @@ test.each([
   'Builtins work as expected %#',
   (chapter: Chapter, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {
-      return expectFinishedResult(stripIndent(snippet), {
+      return expect(testSuccess(stripIndent(snippet), {
         chapter,
         variant: Variant.EXPLICIT_CONTROL
-      }).toEqual(returnValue)
+      })).resolves.toEqual(returnValue)
     } else {
-      return snapshotFailure(stripIndent(snippet), { chapter, variant: Variant.EXPLICIT_CONTROL })
+      return expect(testFailure(stripIndent(snippet), { chapter, variant: Variant.EXPLICIT_CONTROL })).resolves.toMatchSnapshot();
     }
   }
 )

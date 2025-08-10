@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { mockContext } from '../../utils/testing/mocks'
 import { Chapter, type Context, type Environment } from '../../types'
 import { stripIndent } from '../../utils/formatters'

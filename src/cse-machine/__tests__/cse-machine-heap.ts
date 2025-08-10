@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { mockClosure, mockContext } from '../../utils/testing/mocks'
 import { runCodeInSource } from '../../runner'
 import { Chapter } from '../../types'

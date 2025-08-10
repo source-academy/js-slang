@@ -1,11 +1,12 @@
+import { expect, test } from 'vitest'
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { testFailure, testSuccess } from '../../utils/testing'
 
 // CSET tests for Scheme Macros
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('definition of a macro', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (define-syntax my-let
       (syntax-rules ()
@@ -13,11 +14,11 @@ test('definition of a macro', () => {
          ((lambda (var ...) body ...) expr ...))))
     `,
     optionECScm
-  ).toMatchInlineSnapshot(`undefined`)
+  )).resolves.toMatchInlineSnapshot(`undefined`)
 })
 
 test('use of a macro', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (define-syntax my-let
       (syntax-rules ()
@@ -27,7 +28,7 @@ test('use of a macro', () => {
       (+ x y))
     `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 3n,
@@ -36,7 +37,7 @@ test('use of a macro', () => {
 })
 
 test('use of a more complex macro (recursive)', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
 (define-syntax define-match
     (syntax-rules ()
@@ -58,7 +59,7 @@ test('use of a more complex macro (recursive)', () => {
   (+ x y z)
     `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 6n,
@@ -67,7 +68,7 @@ test('use of a more complex macro (recursive)', () => {
 })
 
 test('failed usage of a macro (no matching pattern)', () => {
-  return expectParsedError(
+  return expect(testFailure(
     `
     (define-syntax my-let
       (syntax-rules ()
@@ -77,5 +78,5 @@ test('failed usage of a macro (no matching pattern)', () => {
       (+ x y))
     `,
     optionECScm
-  ).toMatchInlineSnapshot(`"Error: No matching transformer found for macro my-let"`)
+  )).resolves.toMatchInlineSnapshot(`"Error: No matching transformer found for macro my-let"`)
 })

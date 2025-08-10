@@ -1,9 +1,10 @@
-import * as es from 'estree'
-import { IOptions } from '../..'
+import type es from 'estree'
+import { expect, test } from 'vitest'
+import type { IOptions } from '../..'
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
 import { runCodeInSource } from '../../runner'
-import { Chapter, RecursivePartial } from '../../types'
+import { Chapter, type RecursivePartial } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { Control, Transformers, Stash, generateCSEMachineStateStream } from '../interpreter'
 

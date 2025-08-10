@@ -1,16 +1,17 @@
+import { expect, test } from 'vitest'
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { testFailure, testSuccess } from '../../utils/testing'
 
 // CSET tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('eval of numbers', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (eval 1)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 1n,
@@ -19,31 +20,31 @@ test('eval of numbers', () => {
 })
 
 test('eval of booleans', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (eval #t)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('eval of strings', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (eval "hello")
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`"hello"`)
+  )).resolves.toMatchInlineSnapshot(`"hello"`)
 })
 
 test('eval of symbols', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (define hello 1)
     (eval 'hello)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 1n,
@@ -52,22 +53,22 @@ test('eval of symbols', () => {
 })
 
 test('eval of empty list', () => {
-  return expectParsedError(
+  return expect(testFailure(
     `
     (eval '())
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`"Error: Cannot evaluate null"`)
+  )).resolves.toMatchInlineSnapshot(`"Error: Cannot evaluate null"`)
 })
 
 test('eval of define', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (eval '(define x 1))
     x
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 1n,
@@ -76,21 +77,21 @@ test('eval of define', () => {
 })
 
 test('eval of lambda', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (eval '(lambda (x) x))
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`[Function]`)
+  )).resolves.toMatchInlineSnapshot(`[Function]`)
 })
 
 test('eval of if', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (eval '(if #t 1 2))
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 1n,
@@ -99,12 +100,12 @@ test('eval of if', () => {
 })
 
 test('eval of begin', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (eval '(begin 1 2 3))
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 3n,
@@ -113,14 +114,14 @@ test('eval of begin', () => {
 })
 
 test('eval of set!', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (define x 2)
     (eval '(set! x 1))
     x
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 1n,
@@ -129,12 +130,12 @@ test('eval of set!', () => {
 })
 
 test('eval of application', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (eval '(+ 1 2))
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 3n,
@@ -143,12 +144,12 @@ test('eval of application', () => {
 })
 
 test('eval of quote', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (eval '(quote (1 2 3)))
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             Array [
               SchemeInteger {
                 "numberType": 1,
