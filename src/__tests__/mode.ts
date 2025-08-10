@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import * as ace from 'ace-builds'
 import { Mode as DefaultMode } from 'ace-builds/src-noconflict/mode-javascript'
 

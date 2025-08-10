@@ -1,4 +1,5 @@
-import { Program } from 'estree'
+import { expect, test } from 'vitest';
+import type { Program } from 'estree'
 
 import { default as createContext } from '../createContext'
 import { getAllOccurrencesInScope } from '../index'
