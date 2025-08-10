@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { mockContext } from '../../../../utils/testing/mocks'
 import { parse } from '../../../../parser/parser'
 import { defaultExportLookupName } from '../../../../stdlib/localImport.prelude'

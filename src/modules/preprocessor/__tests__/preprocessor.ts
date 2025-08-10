@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Program } from 'estree'
 
 import { parseError, type IOptions } from '../../..'
@@ -15,7 +16,7 @@ import type { SourceFiles } from '../../moduleTypes'
 import { UndefinedImportError } from '../../errors'
 import { asMockedFunc } from '../../../utils/testing/misc'
 
-jest.mock('../../loader/loaders')
+vi.mock(import('../../loader/loaders'))
 
 describe('preprocessFileImports', () => {
   const wrapFiles = (files: SourceFiles) => (p: string) => Promise.resolve(files[p])

@@ -1,10 +1,11 @@
+import { beforeEach, expect, it, test, vi } from 'vitest';
 import { memoizedGetModuleManifestAsync } from '../../loader/loaders'
 import resolveFile, { type ImportResolutionOptions, defaultResolutionOptions } from '../resolver'
 
-jest.mock('../../loader/loaders')
+vi.mock(import('../../loader/loaders'))
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 const resolveModule = (

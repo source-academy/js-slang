@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { Program } from 'estree'
 import {
   DuplicateImportNameError,
@@ -15,10 +16,10 @@ import loadSourceModules from '../../loader'
 import type { SourceFiles as Files } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'
 
-jest.mock('../../loader/loaders')
+vi.mock(import('../../loader/loaders'))
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('Test throwing import validation errors', () => {

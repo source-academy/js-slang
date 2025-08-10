@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { mockContext } from '../../../utils/testing/mocks'
 import { MissingSemicolonError } from '../../../parser/errors'
 import { Chapter, type Context } from '../../../types'
@@ -6,12 +7,12 @@ import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
 
 import * as parser from '../../../parser/parser'
-import { asMockedFunc, assertNodeType, assertTrue } from '../../../utils/testing/misc'
+import { assertNodeType, assertTrue } from '../../../utils/testing/misc'
 
-jest.spyOn(parser, 'parse')
+vi.spyOn(parser, 'parse')
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
@@ -37,7 +38,7 @@ async function expectError<T extends SourceFiles>(files: T, entrypointFilePath: 
 }
 
 function checkCallsToParser(yesCalls: string[], noCalls: string[]) {
-  const { calls } = asMockedFunc(parser.parse).mock
+  const { calls } = vi.mocked(parser.parse).mock
   const toPaths = calls.map(([, , options]) => {
     const path = options?.sourceFile
     return path
