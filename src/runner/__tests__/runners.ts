@@ -1,3 +1,4 @@
+import { assert, describe, expect, it, test } from 'vitest'
 import { parseError, runInContext } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../utils/testing/mocks'
@@ -6,12 +7,10 @@ import { Chapter, type SourceError, Variant } from '../../types'
 import { locationDummyNode } from '../../utils/ast/astCreator'
 import { htmlErrorHandlingScript } from '../htmlRunner'
 import {
-  expectParsedError,
-  expectFinishedResult,
   testFailure,
   testSuccess
 } from '../../utils/testing'
-import { assertFinishedResultValue, testWithChapters } from '../../utils/testing/misc'
+import { testWithChapters } from '../../utils/testing/misc'
 
 interface CodeSnippetTestCase {
   name: string
@@ -135,7 +134,8 @@ test('Simulate fullJS REPL', async () => {
   for (const replStatement of replStatements) {
     const [statement, expectedResult] = replStatement
     const result = await runInContext(statement, fullJSContext)
-    assertFinishedResultValue(result, expectedResult)
+    assert(result.status === 'finished')
+    expect(result.value).toEqual(expectedResult);
     expect(fullJSContext.errors).toStrictEqual([])
   }
 })
@@ -144,7 +144,7 @@ describe('Native javascript programs are valid in fullJSRunner', () => {
   it.each(JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS.map(({ name, ...tc }) => [name, tc]))(
     `%s`,
     (_, { snippet, value }) => {
-      return expectFinishedResult(snippet, Chapter.FULL_JS).toEqual(value)
+      return expect(testSuccess(snippet, Chapter.FULL_JS)).resolves.toEqual(value)
     }
   )
 })
@@ -154,7 +154,7 @@ describe('Error locations are handled well in fullJS', () => {
     `%s`,
     (_, { snippet, errors }) => {
       const expected = parseError(errors)
-      return expectParsedError(snippet, Chapter.FULL_JS).toEqual(expected)
+      return expect(testFailure(snippet, Chapter.FULL_JS)).resolves.toEqual(expected)
     }
   )
 })
@@ -188,7 +188,7 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
       Chapter.SOURCE_3,
       Chapter.SOURCE_4
     )(chapter =>
-      expectFinishedResult(sourceNativeSnippet, { chapter, variant: Variant.NATIVE }).toStrictEqual(
+      expect(testSuccess(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })).resolves.toStrictEqual(
         55
       )
     )
@@ -204,7 +204,7 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
       Chapter.SOURCE_3,
       Chapter.SOURCE_4
     )(chapter =>
-      expectFinishedResult(sourceNativeSnippet, { chapter, variant: Variant.NATIVE }).toStrictEqual(
+      expect(testSuccess(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })).resolves.toStrictEqual(
         55
       )
     )
@@ -215,7 +215,7 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
 
 test('Error handling script is injected in HTML code', () => {
   const htmlDocument = '<p>Hello World!</p>'
-  return expectFinishedResult(htmlDocument, Chapter.HTML).toStrictEqual(
+  return expect(testSuccess(htmlDocument, Chapter.HTML)).resolves.toStrictEqual(
     htmlErrorHandlingScript + htmlDocument
   )
 })

@@ -1,40 +1,39 @@
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import runners, { type RunnerTypes } from '../sourceRunner'
 import { Chapter, type ExecutionMethod, Variant } from '../../types'
 import type { Runner } from '../types'
 import { runCodeInSource } from '..'
 import { mockContext } from '../../utils/testing/mocks'
 import { getChapterName, objectKeys, objectValues } from '../../utils/misc'
-import { asMockedFunc } from '../../utils/testing/misc'
 import { parseError } from '../..'
 import * as validator from '../../validator/validator'
 
-jest.spyOn(validator, 'validateAndAnnotate')
+vi.spyOn(validator, 'validateAndAnnotate')
 
 // Required since the Typed variant tries to load modules
-jest.mock('../../modules/loader/loaders')
+vi.mock(import('../../modules/loader/loaders'))
 
-jest.mock('../sourceRunner', () => {
-  const { default: actualRunners } = jest.requireActual('../sourceRunner')
+vi.mock(import('../sourceRunner'), async importOriginal => {
+  const { default: actualRunners } = await importOriginal()
+  const mockedRunners = Object.keys(actualRunners).reduce((res, key) => {
+    const mockRunner: Runner = (_, context) =>
+      Promise.resolve({
+        status: 'finished',
+        value: '',
+        context
+      })
 
-  return {
-    default: Object.keys(actualRunners as typeof runners).reduce((res, key) => {
-      const mockRunner: Runner = (_, context) =>
-        Promise.resolve({
-          status: 'finished',
-          value: '',
-          context
-        })
+    return {
+      ...res,
+      [key]: vi.fn(mockRunner)
+    }
+  }, {} as typeof actualRunners)
 
-      return {
-        ...res,
-        [key]: jest.fn(mockRunner)
-      }
-    }, {})
-  }
+  return { default: mockedRunners }
 })
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 interface TestCase {
@@ -130,7 +129,7 @@ type TestObject = {
 
 function expectCalls(count: number, expected: RunnerTypes) {
   const unexpectedRunner = objectKeys(runners).find(runner => {
-    const { calls } = asMockedFunc(runners[runner]).mock
+    const { calls } = vi.mocked(runners[runner]).mock
     return calls.length > 0
   })
 
@@ -141,10 +140,10 @@ function expectCalls(count: number, expected: RunnerTypes) {
       )
     case expected: {
       expect(runners[expected]).toHaveBeenCalledTimes(count)
-      return asMockedFunc(runners[expected]).mock.calls
+      return vi.mocked(runners[expected]).mock.calls
     }
     default: {
-      const callCount = asMockedFunc(runners[unexpectedRunner]).mock.calls.length
+      const callCount = vi.mocked(runners[unexpectedRunner]).mock.calls.length
       throw new Error(
         `Expected ${expected} to be called ${count} times, but ${unexpectedRunner} was called ${callCount} times`
       )
