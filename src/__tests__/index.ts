@@ -1,15 +1,11 @@
-import { Position } from 'acorn/dist/acorn'
-import { SourceLocation } from 'estree'
+import type { Position } from 'acorn/dist/acorn'
+import type { SourceLocation } from 'estree'
 
-import { findDeclaration, getScope, runInContext } from '../index'
+import { describe, expect, test } from 'vitest'
+import * as jsslang from '../index'
 import { Chapter, Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import {
-  createTestContext,
-  expectParsedError,
-  expectFinishedResult,
-  testSuccess
-} from '../utils/testing'
+import { createTestContext, testFailure, testSuccess } from '../utils/testing'
 import { TestOptions } from '../utils/testing/types'
 import {
   evalWithBuiltins,
@@ -20,36 +16,37 @@ import {
 const toString = (x: Value) => '' + x
 
 test('Empty code returns undefined', () => {
-  return expectFinishedResult('').toBe(undefined)
+  return expect(testSuccess('')).resolves.toBe(undefined)
 })
 
 test('Single string self-evaluates to itself', () => {
-  return expectFinishedResult("'42';").toBe('42')
+  return expect(testSuccess("'42';")).resolves.toBe('42')
 })
 
 test('Multiline string self-evaluates to itself', () => {
-  return expectFinishedResult('`1\n1`;').toBe(`1
+  return expect(testSuccess('`1\n1`;')).resolves.toBe(`1
 1`)
 })
 
 test('Allow display to return value it is displaying', () => {
-  return expectFinishedResult('25*(display(1+1));').toBe(50)
+  return expect(testSuccess('25*(display(1+1));')).resolves.toBe(50)
 })
 
 test('Single number self-evaluates to itself', () => {
-  return expectFinishedResult('42;').toBe(42)
+  return expect(testSuccess('42;')).resolves.toBe(42)
 })
 
 test('Single boolean self-evaluates to itself', () => {
-  return expectFinishedResult('true;').toBe(true)
+  return expect(testSuccess('true;')).resolves.toBe(true)
 })
 
 test('Arrow function definition returns itself', () => {
-  return expectFinishedResult('() => 42;').toMatchInlineSnapshot(`[Function]`)
+  return expect(testSuccess('() => 42;')).resolves.toMatchInlineSnapshot(`[Function]`)
 })
 
 test('Builtins hide their implementation when stringify', () => {
-  return expectFinishedResult('stringify(pair);', { chapter: Chapter.SOURCE_2 })
+  return expect(testSuccess('stringify(pair);', Chapter.SOURCE_2 ))
+    .resolves
     .toMatchInlineSnapshot(`
             "function pair(left, right) {
             	[implementation hidden]
@@ -58,10 +55,10 @@ test('Builtins hide their implementation when stringify', () => {
 })
 
 test('Builtins hide their implementation when toString', () => {
-  return expectFinishedResult('toString(pair);', {
+  return expect(testSuccess('toString(pair);', {
     chapter: Chapter.SOURCE_2,
     testBuiltins: { toString }
-  }).toMatchInlineSnapshot(`
+  })).resolves.toMatchInlineSnapshot(`
             "function pair(left, right) {
             	[implementation hidden]
             }"
@@ -84,42 +81,40 @@ test('functions toString (mostly) matches up with JS', async () => {
 })
 
 test('Factorial arrow function', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
   `
-  ).toBe(120)
+  )).resolves.toBe(120)
 })
 
 test('parseError for missing semicolon', () => {
-  return expectParsedError('42').toMatchInlineSnapshot(
+  return expect(testFailure('42')).resolves.toMatchInlineSnapshot(
     `"Line 1: Missing semicolon at the end of statement"`
   )
 })
 
 test('parseError for template literals with expressions', () => {
-  return expectParsedError('`${1}`;').toMatchInlineSnapshot(
+  return expect(testFailure('`${1}`;')).resolves.toMatchInlineSnapshot(
     `"Line 1: Expressions are not allowed in template literals (\`multiline strings\`)"`
   )
 })
 
-/* Skip the test for now
-test('Simple arrow function infinite recursion represents CallExpression well', () => {
-  return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toMatchInlineSnapshot(
+test.skip('Simple arrow function infinite recursion represents CallExpression well', { timeout: 30000 }, () => {
+  return expect(testFailure('(x => x(x)(x))(x => x(x)(x));')).resolves.toMatchInlineSnapshot(
     `"Line 1: RangeError: Maximum call stack size exceeded"`
   )
-}, 30000)
-*/
+})
 
-test('Simple function infinite recursion represents CallExpression well', () => {
-  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toMatchInlineSnapshot(
+test('Simple function infinite recursion represents CallExpression well', { timeout: 30000 }, () => {
+  return expect(testFailure('function f(x) {return x(x)(x);} f(f);')).resolves.toMatchInlineSnapshot(
     `"RangeError: Maximum call stack size exceeded"`
   )
-}, 30000)
+})
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
-  return expectParsedError(
+  return expect(testFailure(
     stripIndent`
     function test(){
       const constant = 3;
@@ -128,36 +123,35 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
     }
     test();
   `,
-    { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant."`)
+    Chapter.SOURCE_3
+  )).resolves.toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant."`)
 })
 
 test('Assignment has value', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     let a = 1;
     let b = a = 4;
     b === 4 && a === 4;
   `,
-
-    { chapter: Chapter.SOURCE_3 }
-  ).toBe(true)
+    Chapter.SOURCE_3
+  )).resolves.toBe(true)
 })
 
 test('Array assignment has value', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     let arr = [];
     const a = arr[0] = 1;
     const b = arr[1] = arr[2] = 4;
     arr[0] === 1 && arr[1] === 4 && arr[2] === 4;
   `,
-    { chapter: Chapter.SOURCE_3 }
-  ).toBe(true)
+    Chapter.SOURCE_3
+  )).resolves.toBe(true)
 })
 
 test('Can overwrite lets when assignment is allowed', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     function test() {
       let variable = false;
@@ -166,51 +160,51 @@ test('Can overwrite lets when assignment is allowed', () => {
     }
     test();
   `,
-    { chapter: Chapter.SOURCE_3 }
-  ).toBe(true)
+    Chapter.SOURCE_3
+  )).resolves.toBe(true)
 })
 
-test('Arrow function infinite recursion with list args represents CallExpression well', () => {
-  return expectParsedError(
+test('Arrow function infinite recursion with list args represents CallExpression well', { timeout: 30000 }, () => {
+  return expect(testFailure(
     stripIndent`
     const f = xs => append(f(xs), list());
     f(list(1, 2));
   `,
-    { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(
+    Chapter.SOURCE_2
+  )).resolves.toMatchInlineSnapshot(
     `"Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."`
   )
-}, 30000)
+})
 
-test('Function infinite recursion with list args represents CallExpression well', () => {
-  return expectParsedError(
+test('Function infinite recursion with list args represents CallExpression well', { timeout: 30000 }, () => {
+  return expect(testFailure(
     stripIndent`
     function f(xs) { return append(f(xs), list()); }
     f(list(1, 2));
   `
-  ).toMatchInlineSnapshot(`"Line 1: Name append not declared."`)
-}, 30000)
+  )).resolves.toMatchInlineSnapshot(`"Line 1: Name append not declared."`)
+})
 
-test('Arrow function infinite recursion with different args represents CallExpression well', () => {
-  return expectParsedError(stripIndent`
+test('Arrow function infinite recursion with different args represents CallExpression well', {timeout: 30000 }, () => {
+  return expect(testFailure(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
-  `).toMatchInlineSnapshot(
+  `)).resolves.toMatchInlineSnapshot(
     `"Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."`
   )
-}, 30000)
+})
 
-test('Function infinite recursion with different args represents CallExpression well', () => {
-  return expectParsedError(stripIndent`
+test('Function infinite recursion with different args represents CallExpression well', { timeout: 30000 }, () => {
+  return expect(testFailure(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
-  `).toMatchInlineSnapshot(
+  `)).resolves.toMatchInlineSnapshot(
     `"Line 2: The function f has encountered an infinite loop. It has no base case."`
   )
-}, 30000)
+})
 
 test('Functions passed into non-source functions remain equal', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     function t(x, y, z) {
       return x + y + z;
@@ -218,42 +212,42 @@ test('Functions passed into non-source functions remain equal', () => {
     identity(t) === t && t(1, 2, 3) === 6;
   `,
     { chapter: Chapter.SOURCE_3, testBuiltins: { 'identity(x)': (x: any) => x } }
-  ).toBe(true)
+  )).resolves.toBe(true)
 })
 
 test('Accessing array with nonexistent index returns undefined', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     const a = [];
     a[1];
   `,
-    { chapter: Chapter.SOURCE_4 }
-  ).toBe(undefined)
+    Chapter.SOURCE_4,
+  )).resolves.toBe(undefined)
 })
 
 test('Accessing object with nonexistent property returns undefined', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     const o = {};
     o.nonexistent;
   `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toBe(undefined)
+    Chapter.LIBRARY_PARSER
+  )).resolves.toBe(undefined)
 })
 
 test('Simple object assignment and retrieval', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     const o = {};
     o.a = 1;
     o.a;
   `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toBe(1)
+    Chapter.LIBRARY_PARSER
+  )).toBe(1)
 })
 
 test('Deep object assignment and retrieval', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     const o = {};
     o.a = {};
@@ -261,86 +255,86 @@ test('Deep object assignment and retrieval', () => {
     o.a.b.c = "string";
     o.a.b.c;
   `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toBe('string')
+    Chapter.LIBRARY_PARSER
+  )).resolves.toBe('string')
 })
 
 test('Test apply_in_underlying_javascript', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
   `,
-    { chapter: Chapter.SOURCE_4 }
-  ).toBe(60)
+    Chapter.SOURCE_4
+  )).resolves.toBe(60)
 })
 
 test('Test equal for primitives', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toBe(true)
+  )).resolves.toBe(true)
 })
 
 test('Test equal for lists', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toBe(true)
+  )).resolves.toBe(true)
 })
 
 test('Test equal for different lists', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toBe(true)
+  )).resolves.toBe(true)
 })
 
 test('true if with empty if works', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     if (true) {
     } else {
     }
   `
-  ).toBe(undefined)
+  )).resolves.toBe(undefined)
 })
 
 test('true if with nonempty if works', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     if (true) {
       1;
     } else {
     }
   `
-  ).toBe(1)
+  )).resolves.toBe(1)
 })
 
 test('false if with empty else works', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     if (false) {
     } else {
     }
   `
-  ).toBe(undefined)
+  )).resolves.toBe(undefined)
 })
 
 test('false if with nonempty if works', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     if (false) {
     } else {
       2;
     }
   `
-  ).toBe(2)
+  )).resolves.toBe(2)
 })
 
 describe('matchJSTests', () => {
@@ -441,7 +435,7 @@ describe('matchJSTests', () => {
 })
 
 test('Rest parameters work', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     function rest(a, b, ...c) {
       let sum = a + b;
@@ -454,7 +448,7 @@ test('Rest parameters work', () => {
     rest(1, 2, ...[3, 4, 5],  ...[6, 7], ...[]);
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`28`)
+  )).resolves.toMatchInlineSnapshot(`28`)
 })
 
 test('Test context reuse', async () => {
@@ -476,7 +470,7 @@ test('Test context reuse', async () => {
   ]
 
   for (const [code, expected] of snippets) {
-    const result = await runInContext(code, context)
+    const result = await jsslang.runInContext(code, context)
     assertFinishedResultValue(result, expected)
   }
 })
@@ -524,7 +518,7 @@ test('Find variable declaration in global scope', () => {
   i;
   `
   const expected = new SourceLocationTestResult(1, 4, 1, 5)
-  const actual = findDeclaration(code, context, { line: 6, column: 0 })
+  const actual = jsslang.findDeclaration(code, context, { line: 6, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -540,7 +534,7 @@ test('Find variable declaration in global scope from occurrence in function scop
   i;
   `
   const expected = new SourceLocationTestResult(1, 4, 1, 5)
-  const actual = findDeclaration(code, context, { line: 4, column: 9 })
+  const actual = jsslang.findDeclaration(code, context, { line: 4, column: 9 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -556,7 +550,7 @@ test('Find variable declaration in function scope from occurrence in function sc
   i;
   `
   const expected = new SourceLocationTestResult(3, 6, 3, 7)
-  const actual = findDeclaration(code, context, { line: 4, column: 9 })
+  const actual = jsslang.findDeclaration(code, context, { line: 4, column: 9 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -571,7 +565,7 @@ test('Find no declaration from occurrence when there is no declaration (syntax e
   x;
   `
   const expected = null
-  const actual = findDeclaration(code, context, { line: 5, column: 0 })
+  const actual = jsslang.findDeclaration(code, context, { line: 5, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -587,7 +581,7 @@ test('Find no declaration from selection that does not refer to a declaration', 
   i;
   `
   const expected = null
-  const actual = findDeclaration(code, context, { line: 4, column: 3 })
+  const actual = jsslang.findDeclaration(code, context, { line: 4, column: 3 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -603,7 +597,7 @@ test('Find function declaration', () => {
   foo();
   `
   const expected = new SourceLocationTestResult(2, 9, 2, 12)
-  const actual = findDeclaration(code, context, { line: 6, column: 0 })
+  const actual = jsslang.findDeclaration(code, context, { line: 6, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -617,7 +611,7 @@ test('Find function param declaration', () => {
   timesTwo(2);
   `
   const expected = new SourceLocationTestResult(1, 18, 1, 21)
-  const actual = findDeclaration(code, context, { line: 2, column: 9 })
+  const actual = jsslang.findDeclaration(code, context, { line: 2, column: 9 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -632,7 +626,7 @@ test('Find variable declaration with same name as function param declaration', (
   timesTwo(num);
   `
   const expected = new SourceLocationTestResult(4, 6, 4, 9)
-  const actual = findDeclaration(code, context, { line: 5, column: 9 })
+  const actual = jsslang.findDeclaration(code, context, { line: 5, column: 9 })
   expectResultsToMatch(actual, expected)
   // expect(actual).toMatchSnapshot()
 })
@@ -648,7 +642,7 @@ test('Find arrow function declaration', () => {
   foo();
   `
   const expected = new SourceLocationTestResult(2, 6, 2, 9)
-  const actual = findDeclaration(code, context, { line: 6, column: 0 })
+  const actual = jsslang.findDeclaration(code, context, { line: 6, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -662,7 +656,7 @@ test('Find arrow function param declaration', () => {
   timesTwo(2);
   `
   const expected = new SourceLocationTestResult(1, 18, 1, 21)
-  const actual = findDeclaration(code, context, { line: 2, column: 9 })
+  const actual = jsslang.findDeclaration(code, context, { line: 2, column: 9 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -677,7 +671,7 @@ test('Find variable declaration with same name as arrow function param declarati
   timesTwo(num);
   `
   const expected = new SourceLocationTestResult(4, 6, 4, 9)
-  const actual = findDeclaration(code, context, { line: 5, column: 9 })
+  const actual = jsslang.findDeclaration(code, context, { line: 5, column: 9 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -692,7 +686,7 @@ test('Find declaration in init of for loop', () => {
   x;
   `
   const expected = new SourceLocationTestResult(2, 9, 2, 10)
-  const actual = findDeclaration(code, context, { line: 3, column: 10 })
+  const actual = jsslang.findDeclaration(code, context, { line: 3, column: 10 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -708,7 +702,7 @@ test('Find variable declaration with same name as init of for loop', () => {
   i;
   `
   const expected = new SourceLocationTestResult(5, 6, 5, 7)
-  const actual = findDeclaration(code, context, { line: 6, column: 0 })
+  const actual = jsslang.findDeclaration(code, context, { line: 6, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -724,7 +718,7 @@ test('Find variable declaration in block statement', () => {
   x = x + 2;
   `
   const expected = new SourceLocationTestResult(2, 6, 2, 7)
-  const actual = findDeclaration(code, context, { line: 3, column: 2 })
+  const actual = jsslang.findDeclaration(code, context, { line: 3, column: 2 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -739,7 +733,7 @@ test('Find variable declaration of same name as variable declaration in block st
   x = x + 2;
   `
   const expected = new SourceLocationTestResult(5, 4, 5, 5)
-  const actual = findDeclaration(code, context, { line: 6, column: 0 })
+  const actual = jsslang.findDeclaration(code, context, { line: 6, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -753,7 +747,7 @@ test('Find declaration of of variable in update statement of a for loop', () => 
   let x = 5;
   `
   const expected = new SourceLocationTestResult(1, 9, 1, 10)
-  const actual = findDeclaration(code, context, { line: 1, column: 17 })
+  const actual = jsslang.findDeclaration(code, context, { line: 1, column: 17 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -774,7 +768,7 @@ test('Find scope of a variable declaration', () => {
     new SourceLocationTestResult(1, 0, 3, 4),
     new SourceLocationTestResult(8, 5, 10, 3)
   ]
-  const actual = getScope(code, context, { line: 2, column: 10 })
+  const actual = jsslang.getScope(code, context, { line: 2, column: 10 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
@@ -800,7 +794,7 @@ test('Find scope of a nested variable declaration', () => {
     display(x);
   }`
   const expected = [new SourceLocationTestResult(3, 4, 8, 5)]
-  const actual = getScope(code, context, { line: 4, column: 15 })
+  const actual = jsslang.getScope(code, context, { line: 4, column: 15 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
@@ -826,7 +820,7 @@ test('Find scope of a function parameter', () => {
     display(x);
   }`
   const expected = [new SourceLocationTestResult(5, 22, 7, 9)]
-  const actual = getScope(code, context, { line: 5, column: 19 })
+  const actual = jsslang.getScope(code, context, { line: 5, column: 19 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
@@ -852,7 +846,7 @@ test('Find scope of a function declaration', () => {
     display(x);
   }`
   const expected = [new SourceLocationTestResult(3, 4, 8, 5)]
-  const actual = getScope(code, context, { line: 5, column: 17 })
+  const actual = jsslang.getScope(code, context, { line: 5, column: 17 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
@@ -888,7 +882,7 @@ test('Find scope of a variable declaration with more nesting', () => {
     new SourceLocationTestResult(8, 13, 11, 8),
     new SourceLocationTestResult(13, 9, 14, 5)
   ]
-  const actual = getScope(code, context, { line: 4, column: 15 })
+  const actual = jsslang.getScope(code, context, { line: 4, column: 15 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
@@ -925,7 +919,7 @@ test('Find scope of a variable declaration with multiple blocks', () => {
     new SourceLocationTestResult(10, 9, 12, 8),
     new SourceLocationTestResult(14, 9, 15, 5)
   ]
-  const actual = getScope(code, context, { line: 3, column: 15 })
+  const actual = jsslang.getScope(code, context, { line: 3, column: 15 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
