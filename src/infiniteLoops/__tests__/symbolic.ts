@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import * as sym from '../symbolic'
 
 test('make dummy only dummifies concrete values', () => {

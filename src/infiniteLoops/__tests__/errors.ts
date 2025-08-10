@@ -1,4 +1,5 @@
-import * as es from 'estree'
+import { expect, test } from 'vitest'
+import type es from 'estree'
 
 import { ExceptionError } from '../../errors/errors'
 import { RuntimeSourceError } from '../../errors/runtimeSourceError'

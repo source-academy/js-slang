@@ -1,4 +1,5 @@
-import { Program } from 'estree'
+import { expect, test } from 'vitest'
+import type { Program } from 'estree'
 
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
