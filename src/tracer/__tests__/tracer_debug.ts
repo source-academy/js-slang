@@ -1,5 +1,6 @@
 import { parse } from 'acorn'
 import * as astring from 'astring'
+import { test } from 'vitest'
 import { getSteps } from '../steppers'
 import { convert } from '../generator'
 import { StepperBaseNode } from '../interface'
