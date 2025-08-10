@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { createGlobalEnvironment, EnvTree, EnvTreeNode } from '../createContext'
 import { pushEnvironment } from '../cse-machine/utils'
 import { mockContext, mockEnvironment } from '../utils/testing/mocks'
