@@ -1,9 +1,10 @@
+import { expect, test } from 'vitest';
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectDisplayResult, expectParsedError } from '../../utils/testing'
+import { testFailure, testSuccess } from '../../utils/testing';
 
-test('tokenize works for a good program', () => {
-  return expectDisplayResult(
+test('tokenize works for a good program', async () => {
+  const { context } = await testSuccess(
     'display_list(tokenize(' +
       JSON.stringify(stripIndent`
       function f(x) {
@@ -16,8 +17,11 @@ test('tokenize works for a good program', () => {
       f("55");
       `) +
       '));',
-    { chapter: Chapter.SOURCE_4 }
-  ).toMatchInlineSnapshot(`
+    Chapter.SOURCE_4
+  )
+
+  expect(context.displayResult)
+    .toMatchInlineSnapshot(`
 Array [
   "list(\\"function\\",
      \\"f\\",
@@ -68,16 +72,17 @@ Array [
 `)
 })
 
-test('tokenize works even with parse errors', () => {
-  return expectDisplayResult(
+test('tokenize works even with parse errors', async () => {
+  const { context } = await testSuccess(
     'display_list(tokenize(' +
       JSON.stringify(stripIndent`
       function f(x) {
       ;;;;;;;
       `) +
       '));',
-    { chapter: Chapter.SOURCE_4 }
-  ).toMatchInlineSnapshot(`
+    Chapter.SOURCE_4
+  )
+  expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list(\\"function\\", \\"f\\", \\"(\\", \\"x\\", \\")\\", \\"{\\", \\";\\", \\";\\", \\";\\", \\";\\", \\";\\", \\";\\", \\";\\")",
 ]
@@ -85,7 +90,5 @@ Array [
 })
 
 test('tokenize prints suitable error when tokenization fails', () => {
-  return expectParsedError('display_list(tokenize("\\""));', {
-    chapter: Chapter.SOURCE_4
-  }).toMatchInlineSnapshot(`"Line 1: SyntaxError: Unterminated string constant (1:0)"`)
+  return expect(testFailure('display_list(tokenize("\\""));', Chapter.SOURCE_4)).toMatchInlineSnapshot(`"Line 1: SyntaxError: Unterminated string constant (1:0)"`)
 })

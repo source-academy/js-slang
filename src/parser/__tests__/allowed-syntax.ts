@@ -1,12 +1,13 @@
+import { describe, expect, test, vi } from 'vitest';
 import { parseError } from '../..'
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult, testSuccess } from '../../utils/testing'
+import { testSuccess } from '../../utils/testing'
 import { assertFinishedResultValue } from '../../utils/testing/misc'
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../parser'
 
-jest.mock('../../modules/loader/loaders')
+vi.mock(import('../../modules/loader/loaders'))
 
 describe.each([
   [Chapter.SOURCE_1, ''],
@@ -341,12 +342,12 @@ describe.each([
         expect(result).toMatchSnapshot()
       })
 
-      test('Test stdlib parser', () => {
+      test('Test stdlib parser', async () => {
         const parseSnippet = `parse(${JSON.stringify(snippet)});`
-        return expectFinishedResult(
-          parseSnippet,
-          Math.max(Chapter.SOURCE_4, chapter)
-        ).toMatchSnapshot()
+        const result = await testSuccess(parseSnippet, {
+          chapter: Math.max(Chapter.SOURCE_4, chapter)
+        })
+        expect(result).toMatchSnapshot()
       })
     }
 

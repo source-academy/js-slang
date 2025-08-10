@@ -1,66 +1,70 @@
+import { describe, expect } from 'vitest'
 import { parseError } from '../..'
-import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { parse } from '../parser'
 import { PythonParser } from '../python'
+import { contextIt } from '../../utils/testing'
 
-const parserPython1 = new PythonParser(Chapter.PYTHON_1)
-let context = mockContext(Chapter.PYTHON_1)
-
-beforeEach(() => {
-  context = mockContext(Chapter.PYTHON_1)
+const it = contextIt.extend<{
+  parser: PythonParser
+}>({
+  parser:  new PythonParser(Chapter.PYTHON_1)
 })
 
+
 describe('Python parser', () => {
+  it.scoped({ chapter: Chapter.PYTHON_1 })
+
   describe('Overall parser test', () => {
-    it('Generic parse function works', () => {
+    it('Generic parse function works', ({ context, parser }) => {
       const code = 'x = 1'
       parse(code, context)
 
       expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
-      expect(parserPython1.toString()).toEqual(expect.stringContaining('PythonParser'))
+      expect(parser.toString()).toEqual(expect.stringContaining('PythonParser'))
     })
   })
+
   describe('Python 1 tests', () => {
-    it('allows usage of builtins/preludes', () => {
+    it('allows usage of builtins/preludes', ({ context, parser }) => {
       const code = `print("hello from python")`
 
-      const prgm = parserPython1.parse(code, context)
+      const prgm = parser.parse(code, context)
       if (prgm !== null) {
-        expect(parserPython1.validate(prgm, context, false)).toEqual(true)
+        expect(parser.validate(prgm, context, false)).toEqual(true)
       }
       expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
     })
 
-    it('formats errors correctly', () => {
+    it('formats errors correctly', ({ context, parser }) => {
       const code = `?`
 
-      parserPython1.parse(code, context)
+      parser.parse(code, context)
       expect(context.errors.slice(-1)[0]).toMatchObject(
         expect.objectContaining({ message: expect.stringContaining('UnknownTokenError') })
       )
     })
-    it('allows usage of imports/modules', () => {
+    it('allows usage of imports/modules', ({ context, parser }) => {
       const code = `from rune import (show, heart)`
 
-      parserPython1.parse(code, context)
+      parser.parse(code, context)
       expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
     })
 
-    it('throws on error', () => {
+    it('throws on error', ({ parser, context }) => {
       const code = `?`
 
-      expect(() => parserPython1.parse(code, context, undefined, true)).toThrowError(
+      expect(() => parser.parse(code, context, undefined, true)).toThrowError(
         FatalSyntaxError
       )
     })
 
-    it('throws the right error for translator unsupported syntax', () => {
+    it('throws the right error for translator unsupported syntax', ({ parser, context }) => {
       // Note: this test can be removed once we add support in py-slang.
       const code = `1 is not 2`
 
-      expect(() => parserPython1.parse(code, context, undefined, true)).toThrowError(
+      expect(() => parser.parse(code, context, undefined, true)).toThrowError(
         FatalSyntaxError
       )
     })

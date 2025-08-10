@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { DeclarationKind } from '..'
 import { getNames } from '../..'
 import { mockContext } from '../../utils/testing/mocks'
@@ -10,7 +11,7 @@ import {
 import { asMockedFunc } from '../../utils/testing/misc'
 import { ModuleConnectionError } from '../../modules/errors'
 
-jest.mock('../../modules/loader/loaders')
+vi.mock(import('../../modules/loader/loaders'))
 
 type TestCase = [
   description: string,
@@ -21,7 +22,7 @@ type TestCase = [
 ]
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 async function testGetNames(code: string, expectedNames: [string, string][]) {
