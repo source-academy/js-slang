@@ -1,8 +1,21 @@
-import { runInContext } from '../../index'
+import { expect, test } from 'vitest'
+import { parseError, runInContext } from '../../index'
 import { mockContext } from '../../utils/testing/mocks'
 import { Chapter, Finished } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectNativeToTimeoutAndError } from '../../utils/testing'
+
+async function expectNativeToTimeoutAndError(code: string, timeout: number) {
+  const start = Date.now()
+  const context = mockContext(Chapter.SOURCE_4)
+  await runInContext(code, context, {
+    executionMethod: 'native',
+    throwInfiniteLoops: false
+  })
+  const timeTaken = Date.now() - start
+  expect(timeTaken).toBeLessThan(timeout * 5)
+  expect(timeTaken).toBeGreaterThanOrEqual(timeout)
+  return parseError(context.errors)
+}
 
 test('Proper stringify-ing of arguments during potentially infinite iterative function calls', async () => {
   const code = stripIndent`
