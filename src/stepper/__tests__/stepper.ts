@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import type es from 'estree'
 
 import { mockContext } from '../../utils/testing/mocks'
