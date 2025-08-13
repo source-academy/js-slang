@@ -138,7 +138,9 @@ export class State {
     }
     const transitions = this.mixedStack[this.stackPointer].transitions
     for (let i = 0; i < transitions.length; i++) {
-      const transition = transitions[i]
+      // TODO: Something seems to be very wrong with the type definitions here
+      // Shall we just remove the infinite loop detector as per #1516?
+      const transition: any = transitions[i]
       if (transition[0] === name) {
         transition[1] = concrete
         transition[2] = id
@@ -234,6 +236,6 @@ export class State {
    * @returns the name of the last function in the stack.
    */
   public getLastFunctionName() {
-    return this.functionStack[this.functionStack.length - 1][0]
+    return (this.functionStack[this.functionStack.length - 1] as any)[0]
   }
 }

@@ -1,11 +1,10 @@
 import { Option } from '@commander-js/extra-typings'
-
-import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
-import { Chapter, type Language, Variant, type Result, type LanguageOptions } from '../types'
-import { stringify } from '../utils/stringify'
-import Closure from '../cse-machine/closure'
 import { parseError, type Context } from '..'
+import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
+import Closure from '../cse-machine/closure'
+import { Chapter, Variant, type Language, type LanguageOptions, type Result } from '../types'
 import { objectKeys } from '../utils/misc'
+import { stringify } from '../utils/stringify'
 
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined
@@ -23,7 +22,7 @@ export function chapterParser(str: string): Chapter {
   }
 
   if (foundChapter in Chapter) {
-    return Chapter[foundChapter]
+    return Chapter[foundChapter as keyof typeof Chapter]
   }
   throw new Error(`Invalid chapter value: ${str}`)
 }

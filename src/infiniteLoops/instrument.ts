@@ -4,8 +4,9 @@ import type es from 'estree'
 import { transformImportDeclarations } from '../transpiler/transpiler'
 import type { Node } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { recursive, simple, WalkerCallback } from '../utils/walkers'
 import { getIdsFromDeclaration } from '../utils/ast/helpers'
+import { objectValues } from '../utils/misc'
+import { recursive, simple, WalkerCallback } from '../utils/walkers'
 // transforms AST of program
 
 const globalIds = {
@@ -40,8 +41,8 @@ enum FunctionNames {
  * E.g. "function f(f)..." -> "function f_0(f_1)..."
  * @param predefined A table of [key: string, value:string], where variables named 'key' will be renamed to 'value'
  */
-function unshadowVariables(program: Node, predefined = {}) {
-  for (const name of Object.values(globalIds)) {
+function unshadowVariables(program: Node, predefined: { [key: string]: string } = {}) {
+  for (const name of objectValues(globalIds)) {
     predefined[name] = name
   }
   const seenIds = new Set()
@@ -607,7 +608,7 @@ function instrument(
   builtins: Iterable<string>
 ): string {
   const { builtinsId, functionsId, stateId } = globalIds
-  const predefined = {}
+  const predefined: Record<string, string> = {}
   predefined[builtinsId] = builtinsId
   predefined[functionsId] = functionsId
   predefined[stateId] = stateId
@@ -640,7 +641,7 @@ function instrument(
 }
 
 export {
-  instrument,
   FunctionNames as InfiniteLoopRuntimeFunctions,
-  globalIds as InfiniteLoopRuntimeObjectNames
+  globalIds as InfiniteLoopRuntimeObjectNames,
+  instrument
 }

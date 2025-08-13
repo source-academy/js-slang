@@ -1,9 +1,9 @@
 import * as es from 'estree'
 
+import { BuiltInFunctionError } from '../errors/errors'
 import * as misc from '../stdlib/misc'
 import { Context, substituterNodes } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { BuiltInFunctionError } from '../errors/errors'
 import { nodeToValue, nodeToValueWithContext, valueToExpression } from './converter'
 import { codify } from './stepper'
 import { isBuiltinFunction, isNumber } from './util'
@@ -98,7 +98,7 @@ export function parse_int(str: substituterNodes, radix: substituterNodes): es.Ex
 // }
 // evaluateMath(mathFn: string, ...args: substituterNodes): substituterNodes
 export function evaluateMath(mathFn: string, ...args: substituterNodes[]): es.Expression {
-  const fn = Math[mathFn.split('_')[1]]
+  const fn = Math[mathFn.split('_')[1] as keyof typeof Math] as Function
   if (!fn) {
     throw new BuiltInFunctionError(`Math function ${mathFn} not found.`)
   } else if (args.some(arg => !isNumber(arg))) {
