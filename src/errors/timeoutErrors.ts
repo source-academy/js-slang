@@ -1,6 +1,6 @@
 /* tslint:disable:max-classes-per-file */
 import { JSSLANG_PROPERTIES } from '../constants'
-import { ErrorSeverity, ErrorType, Node } from '../types'
+import { ErrorSeverity, ErrorType, type Node } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { stringify } from '../utils/stringify'
 import { RuntimeSourceError } from './runtimeSourceError'

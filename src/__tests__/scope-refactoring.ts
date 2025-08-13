@@ -1,5 +1,4 @@
-import { Program } from 'estree'
-
+import type { Program } from 'estree'
 import { default as createContext } from '../createContext'
 import { getAllOccurrencesInScope } from '../index'
 import { looseParse } from '../parser/utils'
@@ -11,7 +10,7 @@ import {
   getScopeHelper,
   scopeVariables
 } from '../scope-refactoring'
-import { BlockFrame, Chapter } from '../types'
+import { type BlockFrame, Chapter } from '../types'
 /* tslint:disable:max-classes-per-file */
 
 class Target {

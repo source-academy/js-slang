@@ -9,19 +9,19 @@
 import * as es from 'estree'
 import { isArray } from 'lodash'
 
-import { IOptions } from '..'
+import type { IOptions } from '..'
+import { isSchemeLanguage } from '../alt-langs/mapper'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, Value, type StatementSequence } from '../types'
+import type { Context, ContiguousArrayElements, Result, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
-import { isSchemeLanguage } from '../alt-langs/mapper'
 import Closure from './closure'
 import {
   Continuation,
@@ -29,23 +29,26 @@ import {
   makeDummyContCallExpression
 } from './continuations'
 import * as instr from './instrCreator'
+import { flattenList, isList } from './macro-utils'
+import { Transformer } from './patterns'
+import { isApply, isEval, schemeEval } from './scheme-macros'
 import { Stack } from './stack'
 import {
-  AppInstr,
-  ArrLitInstr,
-  AssmtInstr,
-  BinOpInstr,
-  BranchInstr,
+  type AppInstr,
+  type ArrLitInstr,
+  type AssmtInstr,
+  type BinOpInstr,
+  type BranchInstr,
   CSEBreak,
-  ControlItem,
+  type ControlItem,
   CseError,
-  EnvInstr,
-  ForInstr,
-  Instr,
+  type EnvInstr,
+  type ForInstr,
+  type Instr,
   InstrType,
-  UnOpInstr,
-  WhileInstr,
-  SpreadInstr
+  type SpreadInstr,
+  type UnOpInstr,
+  type WhileInstr
 } from './types'
 import {
   checkNumberOfArguments,
@@ -81,9 +84,6 @@ import {
   setVariable,
   valueProducing
 } from './utils'
-import { isApply, isEval, schemeEval } from './scheme-macros'
-import { Transformer } from './patterns'
-import { flattenList, isList } from './macro-utils'
 
 type CmdEvaluator = (
   command: ControlItem,

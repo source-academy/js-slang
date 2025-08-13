@@ -5,14 +5,13 @@
 
 /* tslint:disable:max-classes-per-file */
 
-import { SourceLocation } from 'acorn'
+import type { SourceLocation } from 'acorn'
 import * as es from 'estree'
-
+import { Representation } from './alt-langs/mapper'
 import { EnvTree } from './createContext'
 import Heap from './cse-machine/heap'
 import { Control, Stash, Transformers } from './cse-machine/interpreter'
 import type { ModuleFunctions } from './modules/moduleTypes'
-import { Representation } from './alt-langs/mapper'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -329,13 +328,13 @@ export interface BlockExpression extends es.BaseExpression {
 
 export type substituterNodes = Node | BlockExpression
 
-export {
-  Instruction as SVMInstruction,
-  Program as SVMProgram,
+export type {
   Address as SVMAddress,
   Argument as SVMArgument,
+  SVMFunction,
+  Instruction as SVMInstruction,
   Offset as SVMOffset,
-  SVMFunction
+  Program as SVMProgram
 } from './vm/svml-compiler'
 
 export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>

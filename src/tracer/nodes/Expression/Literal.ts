@@ -10,9 +10,9 @@
  * - contract(): Throws an error as contraction is not implemented.
  * - oneStep(): Throws an error as one-step evaluation is not implemented.
  */
-import { Comment, SimpleLiteral, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../../interface'
-import { StepperExpression, StepperPattern } from '..'
+import type { Comment, SimpleLiteral, SourceLocation } from 'estree'
+import type { StepperExpression, StepperPattern } from '..'
+import type { StepperBaseNode } from '../../interface'
 
 export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   type: 'Literal'

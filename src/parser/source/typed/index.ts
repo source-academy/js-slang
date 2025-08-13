@@ -1,9 +1,8 @@
 import { parse as babelParse } from '@babel/parser'
-import { Options as AcornOptions } from 'acorn'
-import { Program } from 'estree'
-
+import type { Options as AcornOptions } from 'acorn'
+import type { Program } from 'estree'
 import { SourceParser } from '..'
-import { Context } from '../../..'
+import type { Context } from '../../..'
 import { DEFAULT_ECMA_VERSION } from '../../../constants'
 import * as TypedES from '../../../typeChecker/tsESTree'
 import { checkForTypeErrors } from '../../../typeChecker/typeErrorChecker'

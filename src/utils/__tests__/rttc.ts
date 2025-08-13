@@ -1,8 +1,7 @@
-import { BinaryOperator, UnaryOperator } from 'estree'
-
-import { mockClosure, mockRuntimeContext } from '../testing/mocks'
-import { Chapter, Value } from '../../types'
+import type { BinaryOperator, UnaryOperator } from 'estree'
+import { Chapter, type Value } from '../../types'
 import * as rttc from '../rttc'
+import { mockClosure, mockRuntimeContext } from '../testing/mocks'
 
 const num = 0
 const bool = true

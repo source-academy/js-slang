@@ -1,6 +1,5 @@
 import acorn from 'acorn'
 import type es from 'estree'
-
 import { partition } from 'lodash'
 import type { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
@@ -9,6 +8,7 @@ import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from '../m
 import type { ModuleDocsEntry } from '../modules/moduleTypes'
 import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
+import type { Node } from '../types'
 import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
 import { isDeclaration, isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
 
@@ -20,7 +20,6 @@ export enum DeclarationKind {
   KIND_CONST = 'const',
   KIND_KEYWORD = 'keyword'
 }
-import { Node } from '../types'
 
 export interface NameDeclaration {
   name: string

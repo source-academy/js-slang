@@ -1,6 +1,6 @@
 import { parse } from 'acorn'
-import { ArrowFunctionExpression, ExpressionStatement } from 'estree'
-import { StepperExpression } from '../nodes'
+import type { ArrowFunctionExpression, ExpressionStatement } from 'estree'
+import type { StepperExpression } from '../nodes'
 import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
 import { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication'
 

@@ -1,8 +1,8 @@
-import { Program } from 'estree'
+import type { Program } from 'estree'
 import { schemeParse } from '../../alt-langs/scheme/scm-slang/src'
-import { Chapter, Context } from '../../types'
+import { Chapter, type Context } from '../../types'
 import { FatalSyntaxError } from '../errors'
-import { AcornOptions, Parser } from '../types'
+import type { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
 
 export class SchemeParser implements Parser<AcornOptions> {

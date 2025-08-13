@@ -1,9 +1,8 @@
 import { parse } from 'acorn'
-import { Program } from 'estree'
-
-import { Context } from '../..'
+import type { Program } from 'estree'
+import type { Context } from '../..'
 import { FatalSyntaxError } from '../errors'
-import { AcornOptions, Parser } from '../types'
+import type { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
 
 export class FullJSParser implements Parser<AcornOptions> {

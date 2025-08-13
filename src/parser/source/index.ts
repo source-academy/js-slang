@@ -1,11 +1,10 @@
 import { parse as acornParse, type Token, tokenizer } from 'acorn'
 import type es from 'estree'
-
 import { DEFAULT_ECMA_VERSION } from '../../constants'
 import { Chapter, type Context, type Node, type SourceError, Variant } from '../../types'
-import { ancestor, AncestorWalkerFn } from '../../utils/walkers'
+import { ancestor, type AncestorWalkerFn } from '../../utils/walkers'
 import { DisallowedConstructError, FatalSyntaxError } from '../errors'
-import type { AcornOptions, Rule, Parser } from '../types'
+import type { AcornOptions, Parser, Rule } from '../types'
 import { createAcornParserOptions, positionToSourceLocation } from '../utils'
 import defaultRules from './rules'
 import syntaxBlacklist from './syntax'

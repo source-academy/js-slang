@@ -1,4 +1,4 @@
-import {
+import type {
   ArrowFunctionExpression,
   BlockStatement,
   ForStatement,
@@ -8,15 +8,14 @@ import {
   SourceLocation,
   VariableDeclarator
 } from 'estree'
-
-import { Context, Node } from './types'
+import type { Context, Node } from './types'
 import {
   ancestor,
   base,
   findNodeAt,
-  FullWalkerCallback,
+  type FullWalkerCallback,
   recursive,
-  WalkerCallback
+  type WalkerCallback
 } from './utils/walkers'
 
 // Finds the innermost node that matches the given location

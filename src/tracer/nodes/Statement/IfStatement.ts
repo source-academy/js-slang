@@ -1,12 +1,12 @@
-import { Comment, IfStatement, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../../interface'
-import { StepperExpression, StepperPattern, undefinedNode } from '..'
-import { convert } from '../../generator'
+import type { Comment, IfStatement, SourceLocation } from 'estree'
+import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
 import { redex } from '../..'
+import { convert } from '../../generator'
+import type { StepperBaseNode } from '../../interface'
 import { StepperLiteral } from '../Expression/Literal'
 import { StepperBlockStatement } from './BlockStatement'
 import { StepperExpressionStatement } from './ExpressionStatement'
-import { StepperStatement } from '.'
+import type { StepperStatement } from '.'
 
 export class StepperIfStatement implements IfStatement, StepperBaseNode {
   type: 'IfStatement'

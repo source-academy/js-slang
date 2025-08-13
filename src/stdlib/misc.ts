@@ -1,5 +1,5 @@
 import Closure from '../cse-machine/closure'
-import { Context, Value } from '../types'
+import type { Context, Value } from '../types'
 import { stringify } from '../utils/stringify'
 
 /**

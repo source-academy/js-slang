@@ -1,10 +1,9 @@
 /* tslint:disable:max-line-length */
 import * as _ from 'lodash'
-
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectFinishedResult, testFailure } from '../../utils/testing'
-import { TestOptions } from '../../utils/testing/types'
+import { expectFinishedResult, expectParsedError, testFailure } from '../../utils/testing'
+import type { TestOptions } from '../../utils/testing/types'
 
 jest.spyOn(_, 'memoize').mockImplementation(func => func as any)
 

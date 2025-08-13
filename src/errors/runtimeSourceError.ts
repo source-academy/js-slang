@@ -1,7 +1,6 @@
 import * as es from 'estree'
-
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../types'
+import { ErrorSeverity, ErrorType, type Node, type SourceError } from '../types'
 
 export class RuntimeSourceError implements SourceError {
   public type = ErrorType.RUNTIME

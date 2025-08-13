@@ -3,22 +3,21 @@
  */
 
 import * as es from 'estree'
-
-import { Environment, Node } from '../types'
-import {
-  AppInstr,
-  ArrLitInstr,
-  AssmtInstr,
-  BinOpInstr,
-  BranchInstr,
-  EnvInstr,
-  ForInstr,
-  Instr,
-  InstrType,
-  UnOpInstr,
-  WhileInstr
-} from './types'
+import type { Environment, Node } from '../types'
 import { Transformers } from './interpreter'
+import {
+  type AppInstr,
+  type ArrLitInstr,
+  type AssmtInstr,
+  type BinOpInstr,
+  type BranchInstr,
+  type EnvInstr,
+  type ForInstr,
+  type Instr,
+  InstrType,
+  type UnOpInstr,
+  type WhileInstr
+} from './types'
 
 export const resetInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.RESET,

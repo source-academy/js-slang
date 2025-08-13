@@ -1,14 +1,14 @@
 import * as es from 'estree'
-import { Context, IOptions } from '..'
-import { checkProgramForUndefinedVariables } from '../validator/validator'
+import type { Context, IOptions } from '..'
 import { UndefinedVariable } from '../errors/errors'
-import { StepperBaseNode } from './interface'
-import { explain } from './generator'
-import { StepperProgram } from './nodes/Program'
-import { undefinedNode } from './nodes'
-import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
 import { prelude } from './builtins'
-import { IStepperPropContents, Marker, redex } from '.'
+import { explain } from './generator'
+import type { StepperBaseNode } from './interface'
+import { undefinedNode } from './nodes'
+import { StepperProgram } from './nodes/Program'
+import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
+import { type IStepperPropContents, type Marker, redex } from '.'
 
 export function getSteps(
   inputNode: es.BaseNode,

@@ -10,12 +10,12 @@ import { setBreakpointAtLine } from './stdlib/inspector'
 import {
   Chapter,
   type Context,
-  type Error as ResultError,
   type ExecutionMethod,
   type Finished,
   type ModuleContext,
   type RecursivePartial,
   type Result,
+  type Error as ResultError,
   type SourceError,
   type SVMProgram,
   type Variant
@@ -309,4 +309,5 @@ export async function compileFiles(
   }
 }
 
-export { createContext, Context, ModuleContext, Result, setBreakpointAtLine, assemble }
+export { assemble, createContext, setBreakpointAtLine }
+export type { Context, ModuleContext, Result }

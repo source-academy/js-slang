@@ -7,30 +7,30 @@ Every class should have the following properties
 - static create: factory method to parse estree to StepperAST
 */
 
-import * as es from 'estree'
 import { generate } from 'astring'
+import * as es from 'estree'
+import { isBuiltinFunction } from './builtins'
+import type { StepperBaseNode } from './interface'
+import { StepperArrayExpression } from './nodes/Expression/ArrayExpression'
+import { StepperArrowFunctionExpression } from './nodes/Expression/ArrowFunctionExpression'
 import { StepperBinaryExpression } from './nodes/Expression/BinaryExpression'
-import { StepperUnaryExpression } from './nodes/Expression/UnaryExpression'
+import { StepperBlockExpression } from './nodes/Expression/BlockExpression'
+import { StepperConditionalExpression } from './nodes/Expression/ConditionalExpression'
+import { StepperFunctionApplication } from './nodes/Expression/FunctionApplication'
+import { StepperIdentifier } from './nodes/Expression/Identifier'
 import { StepperLiteral } from './nodes/Expression/Literal'
-import { StepperBaseNode } from './interface'
-import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
+import { StepperLogicalExpression } from './nodes/Expression/LogicalExpression'
+import { StepperUnaryExpression } from './nodes/Expression/UnaryExpression'
 import { StepperProgram } from './nodes/Program'
+import { StepperBlockStatement } from './nodes/Statement/BlockStatement'
+import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
+import { StepperFunctionDeclaration } from './nodes/Statement/FunctionDeclaration'
+import { StepperIfStatement } from './nodes/Statement/IfStatement'
+import { StepperReturnStatement } from './nodes/Statement/ReturnStatement'
 import {
   StepperVariableDeclaration,
   StepperVariableDeclarator
 } from './nodes/Statement/VariableDeclaration'
-import { StepperIdentifier } from './nodes/Expression/Identifier'
-import { StepperBlockStatement } from './nodes/Statement/BlockStatement'
-import { StepperIfStatement } from './nodes/Statement/IfStatement'
-import { StepperConditionalExpression } from './nodes/Expression/ConditionalExpression'
-import { StepperArrowFunctionExpression } from './nodes/Expression/ArrowFunctionExpression'
-import { StepperFunctionApplication } from './nodes/Expression/FunctionApplication'
-import { StepperReturnStatement } from './nodes/Statement/ReturnStatement'
-import { StepperFunctionDeclaration } from './nodes/Statement/FunctionDeclaration'
-import { StepperArrayExpression } from './nodes/Expression/ArrayExpression'
-import { StepperLogicalExpression } from './nodes/Expression/LogicalExpression'
-import { StepperBlockExpression } from './nodes/Expression/BlockExpression'
-import { isBuiltinFunction } from './builtins'
 const undefinedNode = new StepperLiteral('undefined')
 
 const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {

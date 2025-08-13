@@ -1,23 +1,23 @@
 import * as es from 'estree'
-import * as errors from '../errors/errors'
-import { List } from '../stdlib/list'
-import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
-import { is_number, SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
-import { Context } from '..'
+import type { Context } from '..'
 import { encode } from '../alt-langs/scheme/scm-slang/src'
+import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { is_number, type SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
+import * as errors from '../errors/errors'
+import type { List } from '../stdlib/list'
+import { popInstr } from './instrCreator'
 import { Control, Stash } from './interpreter'
-import { currentTransformers, getVariable, handleRuntimeError } from './utils'
-import { Transformer, macro_transform, match } from './patterns'
 import {
   arrayToImproperList,
   arrayToList,
   flattenImproperList,
-  isImproperList,
   flattenList,
+  isImproperList,
   isList
 } from './macro-utils'
-import { ControlItem } from './types'
-import { popInstr } from './instrCreator'
+import { Transformer, macro_transform, match } from './patterns'
+import type { ControlItem } from './types'
+import { currentTransformers, getVariable, handleRuntimeError } from './utils'
 
 // this needs to be better but for now it's fine
 export type SchemeControlItems = List | _Symbol | SchemeNumber | boolean | string

@@ -1,9 +1,8 @@
-import { Program } from 'estree'
-
-import { mockContext } from '../../utils/testing/mocks'
+import type { Program } from 'estree'
 import { parse } from '../../parser/parser'
 import { Chapter } from '../../types'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../../utils/operators'
+import { mockContext } from '../../utils/testing/mocks'
 import {
   InfiniteLoopRuntimeFunctions as functionNames,
   InfiniteLoopRuntimeObjectNames,

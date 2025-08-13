@@ -1,5 +1,5 @@
 import { NATIVE_STORAGE_ID } from '../constants'
-import { NativeStorage } from '../types'
+import type { NativeStorage } from '../types'
 
 type Evaler = (code: string, nativeStorage: NativeStorage) => any
 
