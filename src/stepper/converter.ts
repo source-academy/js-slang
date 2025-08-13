@@ -1,8 +1,8 @@
 import type es from 'estree'
 
-import { mockContext, mockImportDeclaration } from '../utils/testing/mocks'
 import { parse } from '../parser/parser'
 import { Chapter, Context, substituterNodes } from '../types'
+import { mockContext, mockImportDeclaration } from '../utils/testing/mocks'
 import * as builtin from './lib'
 import { javascriptify } from './stepper'
 import * as util from './util'
@@ -53,7 +53,7 @@ export function nodeToValue(node: substituterNodes): any {
   return node.type === 'Literal'
     ? node.value
     : util.isBuiltinFunction(node)
-      ? builtin[(node as es.Identifier).name]
+      ? builtin[(node as es.Identifier).name as keyof typeof builtin]
       : // tslint:disable-next-line
         eval(javascriptify(node))
 }
@@ -62,7 +62,7 @@ export function nodeToValueWithContext(node: substituterNodes, context: Context)
   return node.type === 'Literal'
     ? node.value
     : util.isBuiltinFunction(node)
-      ? builtin[(node as es.Identifier).name]
+      ? builtin[(node as es.Identifier).name as keyof typeof builtin]
       : node.type === 'Identifier' && util.isImportedFunction(node, context)
         ? context.runtime.environments[0].head[node.name]
         : // tslint:disable-next-line
@@ -77,11 +77,11 @@ function evaluateFunctionObject(node: substituterNodes, context: Context) {
     }
     visited.add(node)
     if (node.type === 'Identifier' && builtinFunctions[node.name]) {
-      global[node.name] = builtinFunctions[node.name]
+      ;(global as any)[node.name] = builtinFunctions[node.name]
     }
     for (const key in node) {
-      if (node[key] && typeof node[key] === 'object') {
-        lookUpIdentifiers(node[key], visited)
+      if (node[key as keyof typeof node] && typeof node[key as keyof typeof node] === 'object') {
+        lookUpIdentifiers(node[key as keyof typeof node] as unknown as substituterNodes, visited)
       }
     }
   }

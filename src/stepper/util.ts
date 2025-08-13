@@ -1,10 +1,10 @@
 import * as es from 'estree'
 
 import { Context } from '..'
+import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { BlockExpression, Environment, Node, substituterNodes, Value } from '../types'
-import { UNKNOWN_LOCATION } from '../constants'
 import * as builtin from './lib'
 
 export function prettyPrintError(error: RuntimeSourceError): string {
@@ -17,10 +17,11 @@ export function isBuiltinFunction(node: substituterNodes): boolean {
   return (
     node.type === 'Identifier' &&
     // predeclared, except for evaluateMath
-    ((typeof builtin[node.name] === 'function' && node.name !== 'evaluateMath') ||
+    ((typeof builtin[node.name as keyof typeof builtin] === 'function' &&
+      node.name !== 'evaluateMath') ||
       // one of the math functions
       Object.getOwnPropertyNames(Math)
-        .filter(name => typeof Math[name] === 'function')
+        .filter(name => typeof Math[name as keyof typeof Math] === 'function')
         .map(name => 'math_' + name)
         .includes(node.name))
   )

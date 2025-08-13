@@ -3,6 +3,7 @@ import type es from 'estree'
 
 import type { IOptions } from '..'
 import * as errors from '../errors/errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { parse } from '../parser/parser'
 import type {
   BlockExpression,
@@ -25,7 +26,6 @@ import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { nodeToValue, objectToString, valueToExpression } from './converter'
 import * as builtin from './lib'
 import {
@@ -210,7 +210,7 @@ function findMain(
 
   const freeNames: any[] = []
 
-  const finders = {
+  const finders: Partial<Record<any, (target: any) => void>> = {
     Identifier(target: es.Identifier): void {
       seenBefore.set(target, target)
       let bound = false
@@ -418,7 +418,7 @@ function substituteMain(
    *    and push the appropriate access string into the path
    * 3. Return the dummyReplacement
    */
-  const substituters = {
+  const substituters: Partial<Record<substituterNodes['type'], any>> = {
     // if name to be replaced is found,
     // push endMarker into path
     Identifier(
@@ -1325,7 +1325,7 @@ function reduceMain(
 
   // converts body of code to string
   function bodify(target: substituterNodes): string {
-    const bodifiers = {
+    const bodifiers: Partial<Record<substituterNodes['type'], (target: any) => string>> = {
       Literal: (target: es.Literal): string =>
         target.raw !== undefined ? target.raw : String(target.value),
 
@@ -1409,7 +1409,7 @@ function reduceMain(
 
   // generates string to explain current step
   function explain(target: substituterNodes): string {
-    const explainers = {
+    const explainers: Partial<Record<substituterNodes['type'], (target: any) => string>> = {
       BinaryExpression: (target: es.BinaryExpression): string =>
         'Binary expression ' + bodify(target) + ' evaluated',
 
@@ -1496,7 +1496,7 @@ function reduceMain(
     return explainer === undefined ? '...' : explainer(target)
   }
 
-  const reducers = {
+  const reducers: Partial<Record<substituterNodes['type'], any>> = {
     // source 0
     Identifier(
       node: es.Identifier,
@@ -1738,8 +1738,10 @@ function reduceMain(
           paths,
           explain(node)
         ]
+        // @ts-expect-error implicitAnyIndexError
       } else if (typeof builtin[(callee as es.Identifier).name] === 'function') {
         // Source specific built-in function
+        // @ts-expect-error implicitAnyIndexError
         return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
       } else {
         // Common built-in function
@@ -1827,10 +1829,12 @@ function reduceMain(
             )
 
             // Fix path highlighting after preserving first statement
-            path.forEach(pathStep => {
+            path.forEach((pathStep: any[]) => {
               pathStep.forEach((_, i) => {
                 if (i == 0) {
-                  pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
+                  pathStep[i] = pathStep[i].replace(/\d+/g, (match: any) =>
+                    String(Number(match) + 1)
+                  )
                 }
               })
             })
@@ -2055,10 +2059,12 @@ function reduceMain(
             )
 
             // Fix path highlighting after preserving first statement
-            path.forEach(pathStep => {
+            path.forEach((pathStep: any[]) => {
               pathStep.forEach((_, i) => {
                 if (i == 0) {
-                  pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
+                  pathStep[i] = pathStep[i].replace(/\d+/g, (match: any) =>
+                    String(Number(match) + 1)
+                  )
                 }
               })
             })
@@ -2277,10 +2283,12 @@ function reduceMain(
             )
 
             // Fix path highlighting after preserving first statement
-            path.forEach(pathStep => {
+            path.forEach((pathStep: any[]) => {
               pathStep.forEach((_, i) => {
                 if (i == 0) {
-                  pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
+                  pathStep[i] = pathStep[i].replace(/\d+/g, (match: any) =>
+                    String(Number(match) + 1)
+                  )
                 }
               })
             })
@@ -2491,7 +2499,7 @@ function treeifyMain(target: substituterNodes): substituterNodes {
   //   has an identifier: replace with the name
   //   else: replace with an identifer "=>"
   let verboseCount = 0
-  const treeifiers = {
+  const treeifiers: Partial<Record<substituterNodes['type'], (target: any) => any>> = {
     // Identifier: return
     ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
       return ast.expressionStatement(treeify(target.expression) as es.Expression)
@@ -2643,7 +2651,7 @@ function jsTreeifyMain(
   //   visited before recursing to this target: replace with the name
   //   else: replace with a FunctionExpression
   let verboseCount = 0
-  const treeifiers = {
+  const treeifiers: Partial<Record<substituterNodes['type'], (target: any) => substituterNodes>> = {
     Identifier: (target: es.Identifier): es.Identifier => {
       if (readOnly && target.name.startsWith('anonymous_')) {
         return ast.identifier('[Function]')
@@ -2825,7 +2833,7 @@ function pathifyMain(
   let endIndex = path === undefined ? 0 : path.length - 1
   const redexMarker = ast.identifier('@redex') as substituterNodes
   const withBrackets = ast.identifier('(@redex)') as substituterNodes
-  const pathifiers = {
+  const pathifiers: Partial<Record<substituterNodes['type'], any>> = {
     ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
       let exp = jsTreeifyMain(target.expression, visited, true) as es.Expression
       if (path[pathIndex] === 'expression') {
@@ -3269,10 +3277,10 @@ function substPredefinedFns(program: es.Program, context: Context): [es.Program,
 }
 
 function substPredefinedConstants(program: es.Program): es.Program {
-  const constants = [['undefined', undefined]]
+  const constants: any[] = [['undefined', undefined]]
   const mathConstants = Object.getOwnPropertyNames(Math)
-    .filter(name => typeof Math[name] !== 'function')
-    .map(name => ['math_' + name, Math[name]])
+    .filter(name => typeof Math[name as keyof typeof Math] !== 'function')
+    .map(name => ['math_' + name, Math[name as keyof typeof Math]])
   let substed = program
   for (const nameValuePair of constants.concat(mathConstants)) {
     substed = substituteMain(
