@@ -3,12 +3,7 @@
     "module": "commonjs",
     "declaration": true,
     "target": "es2020",
-    "lib": [
-      "es2021.string",
-      "es2018",
-      "es2017.object",
-      "dom"
-    ],
+    "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
     "sourceMap": true,
     "allowJs": false,
     "removeComments": false,
@@ -24,16 +19,14 @@
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "incremental": true,
+    "skipLibCheck": true
   },
   "exclude": [
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",
     "node_modules",
     "dist",
-    "sicp_publish",
+    "sicp_publish"
   ],
-  "types": [
-    "typePatches",
-    "jest"
-  ]
+  "types": ["typePatches", "jest"]
 }
