@@ -1,8 +1,7 @@
 import * as es from 'estree'
-
 import { BuiltInFunctionError } from '../errors/errors'
 import * as misc from '../stdlib/misc'
-import { Context, substituterNodes } from '../types'
+import type { Context, substituterNodes } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { nodeToValue, nodeToValueWithContext, valueToExpression } from './converter'
 import { codify } from './stepper'

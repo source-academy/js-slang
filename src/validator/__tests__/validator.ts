@@ -1,13 +1,13 @@
 import type es from 'estree'
 
-import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
-import { Chapter, NodeWithInferredType } from '../../types'
+import { Chapter, type NodeWithInferredType } from '../../types'
+import { getSourceVariableDeclaration } from '../../utils/ast/helpers'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
+import { mockContext } from '../../utils/testing/mocks'
 import { simple } from '../../utils/walkers'
 import { validateAndAnnotate } from '../validator'
-import { getSourceVariableDeclaration } from '../../utils/ast/helpers'
 
 export function toValidatedAst(code: string) {
   const context = mockContext(Chapter.SOURCE_1)

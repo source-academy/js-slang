@@ -1,29 +1,28 @@
 import * as es from 'estree'
 import { isArray, isFunction } from 'lodash'
-
-import { Context } from '..'
+import type { Context } from '..'
+import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { Chapter, type Environment, type Node, type StatementSequence, type Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
-import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
+import Closure from './closure'
+import { Continuation, isCallWithCurrentContinuation } from './continuations'
 import Heap from './heap'
 import * as instr from './instrCreator'
 import { Control, Transformers } from './interpreter'
-import {
-  AppInstr,
-  EnvArray,
-  ControlItem,
-  Instr,
-  InstrType,
-  BranchInstr,
-  WhileInstr,
-  ForInstr
-} from './types'
-import Closure from './closure'
-import { Continuation, isCallWithCurrentContinuation } from './continuations'
 import { isApply, isEval } from './scheme-macros'
+import {
+  InstrType,
+  type AppInstr,
+  type BranchInstr,
+  type ControlItem,
+  type EnvArray,
+  type ForInstr,
+  type Instr,
+  type WhileInstr
+} from './types'
 
 /**
  * Typeguard for commands to check if they are scheme values.

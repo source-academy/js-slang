@@ -1,13 +1,12 @@
-import { Comment, Program, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../interface'
-import { convert } from '../generator'
-
+import type { Comment, Program, SourceLocation } from 'estree'
 import { redex } from '..'
+import { convert } from '../generator'
+import type { StepperBaseNode } from '../interface'
 import { assignMuTerms } from '../utils'
-import { StepperVariableDeclaration } from './Statement/VariableDeclaration'
-import { StepperStatement } from './Statement'
+import type { StepperStatement } from './Statement'
 import { StepperFunctionDeclaration } from './Statement/FunctionDeclaration'
-import { StepperExpression, StepperPattern, undefinedNode } from '.'
+import { StepperVariableDeclaration } from './Statement/VariableDeclaration'
+import { type StepperExpression, type StepperPattern, undefinedNode } from '.'
 
 export class StepperProgram implements Program, StepperBaseNode {
   type: 'Program'

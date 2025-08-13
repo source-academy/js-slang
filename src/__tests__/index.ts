@@ -1,21 +1,20 @@
-import { Position } from 'acorn/dist/acorn'
-import { SourceLocation } from 'estree'
-
+import type { Position } from 'acorn/dist/acorn'
+import type { SourceLocation } from 'estree'
 import { findDeclaration, getScope, runInContext } from '../index'
-import { Chapter, Value } from '../types'
+import { Chapter, type Value } from '../types'
 import { stripIndent } from '../utils/formatters'
 import {
   createTestContext,
-  expectParsedError,
   expectFinishedResult,
+  expectParsedError,
   testSuccess
 } from '../utils/testing'
-import { TestOptions } from '../utils/testing/types'
 import {
-  evalWithBuiltins,
   assertFinishedResultValue,
+  evalWithBuiltins,
   processTestOptions
 } from '../utils/testing/misc'
+import type { TestOptions } from '../utils/testing/types'
 
 const toString = (x: Value) => '' + x
 

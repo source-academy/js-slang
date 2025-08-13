@@ -1,4 +1,4 @@
-import { Value } from '../types'
+import type { Value } from '../types'
 
 export function is_float(v: Value) {
   return typeof v === 'number'

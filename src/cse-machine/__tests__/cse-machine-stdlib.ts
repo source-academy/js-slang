@@ -1,4 +1,4 @@
-import { Chapter, Value, Variant } from '../../types'
+import { Chapter, type Value, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResult, snapshotFailure } from '../../utils/testing'
 

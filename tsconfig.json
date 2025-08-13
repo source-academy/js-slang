@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "es2022",
     "declaration": true,
     "target": "es2020",
     "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
@@ -19,7 +19,8 @@
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "incremental": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true
   },
   "exclude": [
     "src/stdlib/metacircular-interpreter",

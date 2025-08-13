@@ -1,4 +1,4 @@
-import { StepperBaseNode } from './interface'
+import type { StepperBaseNode } from './interface'
 
 export let redex: { preRedex: StepperBaseNode[]; postRedex: StepperBaseNode[] } = {
   preRedex: [],

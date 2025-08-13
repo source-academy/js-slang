@@ -1,10 +1,9 @@
 import * as es from 'estree'
-
-import { Context } from '..'
+import type { Context } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { BlockExpression, Environment, Node, substituterNodes, Value } from '../types'
+import type { BlockExpression, Environment, Node, substituterNodes, Value } from '../types'
 import * as builtin from './lib'
 
 export function prettyPrintError(error: RuntimeSourceError): string {

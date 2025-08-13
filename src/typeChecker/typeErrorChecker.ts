@@ -1,7 +1,6 @@
 import { parse as babelParse } from '@babel/parser'
 import * as es from 'estree'
 import { cloneDeep, isEqual } from 'lodash'
-
 import {
   ConstNotAssignableTypeError,
   DuplicateTypeAliasError,
@@ -21,19 +20,19 @@ import {
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
 import {
-  BindableType,
+  type BindableType,
   Chapter,
   type Context,
   disallowedTypes,
   type Pair,
-  PrimitiveType,
-  SArray,
-  TSAllowedTypes,
-  TSBasicType,
-  TSDisallowedTypes,
+  type PrimitiveType,
+  type SArray,
+  type TSAllowedTypes,
+  type TSBasicType,
+  type TSDisallowedTypes,
   type Type,
-  TypeEnvironment,
-  Variable
+  type TypeEnvironment,
+  type Variable
 } from '../types'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'

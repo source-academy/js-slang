@@ -1,5 +1,5 @@
 import createContext from '../createContext'
-import { Chapter, Value } from '../types'
+import { Chapter, type Value } from '../types'
 import * as list from './list'
 import * as misc from './misc'
 import * as parser from './parser'

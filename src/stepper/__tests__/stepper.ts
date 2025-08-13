@@ -1,8 +1,7 @@
 import type es from 'estree'
-
-import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
-import { Chapter, Context, substituterNodes } from '../../types'
+import { Chapter, type Context, type substituterNodes } from '../../types'
+import { mockContext } from '../../utils/testing/mocks'
 import { codify, getEvaluationSteps } from '../stepper'
 
 function getLastStepAsString(steps: [substituterNodes, string[][], string][]): string {

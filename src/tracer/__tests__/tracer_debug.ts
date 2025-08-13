@@ -1,10 +1,10 @@
 import { parse } from 'acorn'
 import * as astring from 'astring'
-import { getSteps } from '../steppers'
-import { convert } from '../generator'
-import { StepperBaseNode } from '../interface'
-import { IStepperPropContents } from '..'
+import type { IStepperPropContents } from '..'
 import createContext from '../../createContext'
+import { convert } from '../generator'
+import type { StepperBaseNode } from '../interface'
+import { getSteps } from '../steppers'
 
 const stringify = (ast: StepperBaseNode) => {
   if (ast === undefined || ast!.type === undefined) {

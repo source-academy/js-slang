@@ -1,9 +1,8 @@
 import * as es from 'estree'
-
-import { Environment, Node } from '../types'
+import type { Environment, Node } from '../types'
 import Closure from './closure'
-import { SchemeControlItems } from './scheme-macros'
 import { Transformers } from './interpreter'
+import type { SchemeControlItems } from './scheme-macros'
 
 export enum InstrType {
   RESET = 'Reset',

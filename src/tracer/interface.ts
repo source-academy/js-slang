@@ -1,4 +1,4 @@
-import { StepperExpression, StepperPattern } from './nodes'
+import type { StepperExpression, StepperPattern } from './nodes'
 
 export interface StepperBaseNode {
   type: string

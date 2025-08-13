@@ -3,22 +3,22 @@
 // =======================================
 
 import {
-  AllowedDeclarations,
-  BindableType,
+  type AllowedDeclarations,
+  type BindableType,
   Chapter,
-  ForAll,
-  FunctionType,
-  List,
-  LiteralType,
-  Pair,
-  PredicateType,
-  Primitive,
-  SArray,
-  TSBasicType,
-  Type,
-  TypeEnvironment,
-  UnionType,
-  Variable
+  type ForAll,
+  type FunctionType,
+  type List,
+  type LiteralType,
+  type Pair,
+  type PredicateType,
+  type Primitive,
+  type SArray,
+  type TSBasicType,
+  type Type,
+  type TypeEnvironment,
+  type UnionType,
+  type Variable
 } from '../types'
 import * as tsEs from './tsESTree'
 

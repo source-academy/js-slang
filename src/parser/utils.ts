@@ -1,14 +1,13 @@
 import {
-  type Comment,
-  ecmaVersion,
-  type Node,
   parse as acornParse,
   parseExpressionAt as acornParseAt,
+  type Comment,
+  type ecmaVersion,
+  type Node,
   type Position
 } from 'acorn'
 import { parse as acornLooseParse } from 'acorn-loose'
 import type { Program, SourceLocation } from 'estree'
-
 import type { Context } from '..'
 import { DEFAULT_ECMA_VERSION } from '../constants'
 import type { SourceError } from '../types'

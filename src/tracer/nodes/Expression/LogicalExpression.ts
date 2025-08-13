@@ -1,8 +1,8 @@
-import { LogicalExpression, LogicalOperator, Comment, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../../interface'
+import type { Comment, LogicalExpression, LogicalOperator, SourceLocation } from 'estree'
+import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
-import { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
+import type { StepperBaseNode } from '../../interface'
 import { StepperLiteral } from './Literal'
 
 export class StepperLogicalExpression implements LogicalExpression, StepperBaseNode {

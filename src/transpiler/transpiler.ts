@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
 import type es from 'estree'
 import { type RawSourceMap, SourceMapGenerator } from 'source-map'
-
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
 import { Chapter, type Context, type NativeStorage, type Node, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
@@ -14,7 +12,7 @@ import {
   getIdentifiersInProgram,
   getNativeIds,
   getUniqueId,
-  NativeIds
+  type NativeIds
 } from '../utils/uniqueIds'
 import { simple } from '../utils/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'

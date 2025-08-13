@@ -2,9 +2,8 @@
 /* tslint:disable:max-line-length */
 import { baseGenerator, generate } from 'astring'
 import * as es from 'estree'
-
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError, Value } from '../types'
+import { ErrorSeverity, ErrorType, type Node, type SourceError, type Value } from '../types'
 import { stringify } from '../utils/stringify'
 import { RuntimeSourceError } from './runtimeSourceError'
 

@@ -1,9 +1,8 @@
-import { Program } from 'estree'
-
+import type { Program } from 'estree'
 import { parsePythonToEstreeAst } from '../../py-slang/src'
-import { Chapter, Context } from '../../types'
+import { Chapter, type Context } from '../../types'
 import { FatalSyntaxError } from '../errors'
-import { AcornOptions, Parser } from '../types'
+import type { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
 
 export class PythonParser implements Parser<AcornOptions> {

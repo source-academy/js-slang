@@ -1,7 +1,6 @@
 import type es from 'estree'
-
 import { parse } from '../parser/parser'
-import { Chapter, Context, substituterNodes } from '../types'
+import { Chapter, type Context, type substituterNodes } from '../types'
 import { mockContext, mockImportDeclaration } from '../utils/testing/mocks'
 import * as builtin from './lib'
 import { javascriptify } from './stepper'

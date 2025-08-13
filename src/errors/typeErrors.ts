@@ -1,16 +1,15 @@
 import { generate } from 'astring'
 import * as es from 'estree'
-
 import { UNKNOWN_LOCATION } from '../constants'
 import * as tsEs from '../typeChecker/tsESTree'
 import {
   ErrorSeverity,
   ErrorType,
-  Node,
-  NodeWithInferredType,
-  SArray,
-  SourceError,
-  Type
+  type Node,
+  type NodeWithInferredType,
+  type SArray,
+  type SourceError,
+  type Type
 } from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
