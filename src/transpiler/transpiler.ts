@@ -7,6 +7,7 @@ import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
 import { Chapter, type Context, type NativeStorage, type Node, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { filterImportDeclarations, getImportedName } from '../utils/ast/helpers'
+import { isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -17,7 +18,6 @@ import {
 } from '../utils/uniqueIds'
 import { simple } from '../utils/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'
-import { isNamespaceSpecifier } from '../utils/ast/typeGuards'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.

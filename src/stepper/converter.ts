@@ -79,9 +79,10 @@ function evaluateFunctionObject(node: substituterNodes, context: Context) {
     if (node.type === 'Identifier' && builtinFunctions[node.name]) {
       ;(global as any)[node.name] = builtinFunctions[node.name]
     }
-    for (const key in node) {
-      if (node[key as keyof typeof node] && typeof node[key as keyof typeof node] === 'object') {
-        lookUpIdentifiers(node[key as keyof typeof node] as unknown as substituterNodes, visited)
+    for (const k in node) {
+      const key = k as keyof typeof node
+      if (node[key] && typeof node[key] === 'object') {
+        lookUpIdentifiers(node[key] as unknown as substituterNodes, visited)
       }
     }
   }
