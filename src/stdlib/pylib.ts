@@ -28,7 +28,8 @@ export function __py_adder(x: Value, y: Value) {
     return x + Number(y)
   }
   if (__is_numeric(x) && __is_numeric(y)) {
-    return x + y
+    // TODO: Shouldn't this be `Number(x) + Number(y)`?
+    return (x as any) + (y as any)
   }
   throw new Error(`Invalid types for addition operation: ${typeof x}, ${typeof y}`)
 }

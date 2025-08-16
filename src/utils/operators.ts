@@ -12,8 +12,8 @@ import {
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
 import { Chapter, type NativeStorage } from '../types'
-import { callExpression, locationDummyNode } from './ast/astCreator'
 import * as create from './ast/astCreator'
+import { callExpression, locationDummyNode } from './ast/astCreator'
 import { makeWrapper } from './makeWrapper'
 import * as rttc from './rttc'
 
@@ -249,7 +249,7 @@ export const wrap = (
   const wrapped = (...args: any[]) => callIteratively(f, nativeStorage, ...args)
   makeWrapper(f, wrapped)
   wrapped.transformedFunction = f
-  wrapped[Symbol.toStringTag] = () => stringified
+  ;(wrapped as any)[Symbol.toStringTag] = () => stringified
   wrapped.toString = () => stringified
   return wrapped
 }

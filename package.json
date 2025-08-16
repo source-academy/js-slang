@@ -66,6 +66,7 @@
     "@types/babel__core": "^7",
     "@types/jest": "^29.0.0",
     "@types/lodash": "^4.14.202",
+    "@types/mathjs": "^9.4.2",
     "@types/node": "^20.0.0",
     "@types/offscreencanvas": "^2019.7.0",
     "ace-builds": "~1.17.0",
@@ -82,7 +83,7 @@
     "jsdom": "^19.0.0",
     "prettier": "^3.6.2",
     "ts-jest": "^29.0.0",
-    "typescript": "^4.0.3",
+    "typescript": "^5.9.2",
     "typescript-eslint": "^8.8.1"
   },
   "devEngines": {

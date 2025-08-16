@@ -251,7 +251,7 @@ function prepareBuiltins(oldBuiltins: Map<string, any>) {
   const nonDetFunctions = ['get_time', 'math_random']
   const newBuiltins = new Map<string, any>()
   for (const [name, fun] of oldBuiltins) {
-    const specialCase = builtinSpecialCases[name]
+    const specialCase = builtinSpecialCases[name as keyof typeof builtinSpecialCases]
     if (specialCase !== undefined) {
       newBuiltins.set(name, specialCase)
     } else {
