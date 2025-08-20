@@ -11,7 +11,7 @@ import type { Program, SourceLocation } from 'estree'
 
 import type { Context } from '..'
 import { DEFAULT_ECMA_VERSION } from '../constants'
-import type { SourceError } from '../types'
+import type { SourceError } from '../errors/errorBase'
 import { validateAndAnnotate } from '../validator/validator'
 import { MissingSemicolonError, TrailingCommaError } from './errors'
 import type { AcornOptions, BabelOptions } from './types'

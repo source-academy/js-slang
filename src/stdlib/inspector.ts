@@ -1,4 +1,5 @@
-import type { Context, Node } from '../types'
+import type { Context } from '../types'
+import type { Node } from '../utils/ast/node'
 
 export const setBreakpointAtLine = (lines: string[]): void => {
   breakpoints = lines

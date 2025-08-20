@@ -12,9 +12,12 @@ import { isArray } from 'lodash'
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import * as runtimeErrors from '../errors/runtimeErrors'
+import { RuntimeSourceError } from '../errors/errorBase'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, Value, type StatementSequence } from '../types'
+import { Context, Result, Value } from '../types'
+import { ContiguousArrayElements } from '../utils/ast/node'
+import { type StatementSequence } from '../utils/ast/node'
 import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations, getSourceVariableDeclaration } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
@@ -966,7 +969,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const func: Closure | Function = stash.pop()
 
     if (!(func instanceof Closure || func instanceof Function)) {
-      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
+      handleRuntimeError(context, new runtimeErrors.CallingNonFunctionValue(func, command.srcNode))
     }
 
     if (isApply(func)) {

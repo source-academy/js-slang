@@ -1,6 +1,6 @@
 import type es from 'estree'
 
-import type { Node } from '../../types'
+import type { Node } from './node'
 
 export const isImportDeclaration = (
   node: es.Program['body'][number]

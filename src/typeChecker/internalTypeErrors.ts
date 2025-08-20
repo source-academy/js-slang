@@ -1,5 +1,9 @@
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, Node, NodeWithInferredType, SourceError, Type } from '../types'
+import { NodeWithInferredType, Type } from '../types'
+import { Node } from '../utils/ast/node'
+import { SourceError } from '../errors/errorBase'
+import { ErrorSeverity } from '../errors/errorBase'
+import { ErrorType } from '../errors/errorBase'
 import { typeToString } from '../utils/stringify'
 import * as tsEs from './tsESTree'
 

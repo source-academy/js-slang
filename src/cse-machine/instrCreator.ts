@@ -4,7 +4,8 @@
 
 import * as es from 'estree'
 
-import { Environment, Node } from '../types'
+import { Environment } from '../types'
+import { Node } from '../utils/ast/node'
 import {
   AppInstr,
   ArrLitInstr,

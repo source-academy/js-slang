@@ -2,7 +2,7 @@ import { type NullableMappedPosition, type RawSourceMap, SourceMapConsumer } fro
 
 import { UNKNOWN_LOCATION } from '../constants'
 import { ConstAssignment, ExceptionError, UndefinedVariable } from '../errors/errors'
-import type { SourceError } from '../types'
+import type { SourceError } from '../errors/errorBase'
 import { locationDummyNode } from '../utils/ast/astCreator'
 
 enum BrowserType {

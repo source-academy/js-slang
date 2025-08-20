@@ -4,25 +4,10 @@ import { baseGenerator, generate } from 'astring'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError, Value } from '../types'
+import { Value } from '../types'
+import { Node } from '../utils/ast/node'
 import { stringify } from '../utils/stringify'
-import { RuntimeSourceError } from './runtimeSourceError'
-
-//Wrap build-in function error in SourceError
-export class BuiltInFunctionError extends RuntimeSourceError {
-  constructor(private explanation: string) {
-    super(undefined)
-    this.explanation = explanation
-  }
-
-  public explain() {
-    return `${this.explanation}`
-  }
-
-  public elaborate() {
-    return this.explain()
-  }
-}
+import { SourceError, ErrorSeverity, ErrorType, RuntimeSourceError } from './errorBase'
 
 export class InterruptedError extends RuntimeSourceError {
   constructor(node: Node) {
@@ -89,38 +74,6 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
 
   public elaborate() {
     return 'TODO'
-  }
-}
-
-export class CallingNonFunctionValue extends RuntimeSourceError {
-  constructor(
-    private callee: Value,
-    private node: Node
-  ) {
-    super(node)
-  }
-
-  public explain() {
-    return `Calling non-function value ${stringify(this.callee)}.`
-  }
-
-  public elaborate() {
-    const calleeVal = this.callee
-    const calleeStr = stringify(calleeVal)
-    let argStr = ''
-
-    const callArgs = (this.node as es.CallExpression).arguments
-
-    argStr = callArgs.map(generate).join(', ')
-
-    const elabStr = `Because ${calleeStr} is not a function, you cannot run ${calleeStr}(${argStr}).`
-    const multStr = `If you were planning to perform multiplication by ${calleeStr}, you need to use the * operator.`
-
-    if (Number.isFinite(calleeVal)) {
-      return `${elabStr} ${multStr}`
-    } else {
-      return elabStr
-    }
   }
 }
 

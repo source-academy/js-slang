@@ -1,4 +1,4 @@
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { RuntimeSourceError } from '../errors/errorBase'
 import { Chapter } from '../types'
 
 export class PromiseTimeoutError extends RuntimeSourceError {}

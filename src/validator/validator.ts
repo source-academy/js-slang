@@ -1,9 +1,9 @@
 import type es from 'estree'
 
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { NoAssignmentToForVariable } from '../errors/validityErrors'
 import { parse } from '../parser/parser'
-import type { Context, Node, NodeWithInferredType } from '../types'
+import type { Context, NodeWithInferredType } from '../types'
+import type { Node } from '../utils/ast/node'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -13,6 +13,7 @@ import {
 } from '../utils/uniqueIds'
 import { ancestor, base, type FullWalkerCallback } from '../utils/walkers'
 import { getSourceVariableDeclaration } from '../utils/ast/helpers'
+import { NoAssignmentToForVariable } from './validityErrors'
 
 class Declaration {
   public accessedBeforeDeclaration: boolean = false

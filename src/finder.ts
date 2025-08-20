@@ -9,7 +9,8 @@ import {
   VariableDeclarator
 } from 'estree'
 
-import { Context, Node } from './types'
+import { Context } from './types'
+import { Node } from './utils/ast/node';
 import {
   ancestor,
   base,

@@ -11,7 +11,8 @@ import {
   getScopeHelper,
   scopeVariables
 } from '../scope-refactoring'
-import { BlockFrame, Chapter } from '../types'
+import { Chapter } from '../types'
+import { BlockFrame } from '../scope-refactoring'
 /* tslint:disable:max-classes-per-file */
 
 class Target {

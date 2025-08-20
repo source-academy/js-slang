@@ -1,9 +1,3 @@
-import * as es from 'estree'
-
-import { isInLoc } from './finder'
-import { BlockFrame, DefinitionNode, Node } from './types'
-import { simple } from './utils/walkers'
-
 /**
  * This file parses the original AST Tree into another tree with a similar structure
  * This new scope tree is far simplified and contains only two types of nodes
@@ -13,6 +7,29 @@ import { simple } from './utils/walkers'
  * For example, for the arguments in the function definition, it will be part of the function's BlockFrame and not the parents.
  * BlockFrames can be seen as a rough approximation of scope and is largely based of estree's BlockStatement.
  */
+
+import type es from 'estree'
+import { isInLoc } from './finder'
+import type { Node } from './utils/ast/node'
+import { simple } from './utils/walkers'
+
+
+export interface BlockFrame {
+  type: string
+  // loc refers to the block defined by every pair of curly braces
+  loc?: es.SourceLocation | null
+  // For certain type of BlockFrames, we also want to take into account
+  // the code directly outside the curly braces as there
+  // may be variables declared there as well, such as in function definitions or for loops
+  enclosingLoc?: es.SourceLocation | null
+  children: (DefinitionNode | BlockFrame)[]
+}
+
+export interface DefinitionNode {
+  name: string
+  type: string
+  loc?: es.SourceLocation | null
+}
 
 /**
  * scopeVariables help to transform the AST tree from acorn into the scope tree.
@@ -518,3 +535,5 @@ function areLocsEqual(loc1: es.SourceLocation, loc2: es.SourceLocation): boolean
     loc1.end.column === loc2.end.column
   )
 }
+
+

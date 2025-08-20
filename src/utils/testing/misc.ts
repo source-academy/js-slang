@@ -1,6 +1,7 @@
 import type { MockedFunction } from 'jest-mock'
 import type { Result } from '../..'
-import type { Finished, Value, Node, NodeTypeToNode, Chapter } from '../../types'
+import type { Finished, Value, NodeTypeToNode, Chapter } from '../../types'
+import type { Node } from '../ast/node'
 import { getChapterName } from '../misc'
 import type { TestBuiltins, TestOptions } from './types'
 

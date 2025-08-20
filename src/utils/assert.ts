@@ -4,7 +4,7 @@
  * Plus, we can customize our own assert messages and handling
  */
 
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { RuntimeSourceError } from '../errors/errorBase'
 
 export class AssertionError extends RuntimeSourceError {
   constructor(public readonly message: string) {

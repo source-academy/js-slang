@@ -3,7 +3,6 @@
 // =======================================
 
 import {
-  AllowedDeclarations,
   BindableType,
   Chapter,
   ForAll,
@@ -20,6 +19,7 @@ import {
   UnionType,
   Variable
 } from '../types'
+import { AllowedDeclarations } from '../utils/ast/node'
 import * as tsEs from './tsESTree'
 
 // Name of Unary negative builtin operator

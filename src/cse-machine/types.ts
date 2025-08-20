@@ -1,6 +1,7 @@
 import type es from 'estree'
 
-import type { Environment, Node } from '../types'
+import type { Environment } from '../types'
+import type { Node } from '../utils/ast/node'
 import type Closure from './closure'
 import type { SchemeControlItems } from './scheme-macros'
 import type { Transformers } from './interpreter'

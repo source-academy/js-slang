@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import { Context } from '..'
 import { ExceptionError } from '../errors/errors'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { RuntimeSourceError } from '../errors/errorBase'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { getOriginalName } from './instrument'
 

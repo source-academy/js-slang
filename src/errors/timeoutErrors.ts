@@ -1,9 +1,9 @@
 /* tslint:disable:max-classes-per-file */
 import { JSSLANG_PROPERTIES } from '../constants'
-import { ErrorSeverity, ErrorType, Node } from '../types'
+import { Node } from '../utils/ast/node'
 import { stripIndent } from '../utils/formatters'
 import { stringify } from '../utils/stringify'
-import { RuntimeSourceError } from './runtimeSourceError'
+import { ErrorSeverity , ErrorType , RuntimeSourceError } from './errorBase'
 
 function getWarningMessage(maxExecTime: number) {
   const from = maxExecTime / 1000

@@ -1,12 +1,12 @@
 import type { BinaryOperator, UnaryOperator } from 'estree'
 
 import {
-  CallingNonFunctionValue,
   ExceptionError,
   GetInheritedPropertyError,
   InvalidNumberOfArguments
 } from '../errors/errors'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { CallingNonFunctionValue } from '../errors/runtimeErrors'
+import { RuntimeSourceError } from '../errors/errorBase'
 import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError

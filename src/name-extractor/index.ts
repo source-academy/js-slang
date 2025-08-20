@@ -20,7 +20,7 @@ export enum DeclarationKind {
   KIND_CONST = 'const',
   KIND_KEYWORD = 'keyword'
 }
-import { Node } from '../types'
+import { Node } from '../utils/ast/node'
 
 export interface NameDeclaration {
   name: string

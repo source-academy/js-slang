@@ -1,6 +1,7 @@
 import * as es from 'estree'
 
-import { Node, StatementSequence } from '../types'
+import { StatementSequence } from './ast/node'
+import { Node } from './ast/node'
 import * as ast from './ast/astCreator'
 function hasDeclarations(node: es.BlockStatement | es.Program): boolean {
   for (const statement of node.body) {

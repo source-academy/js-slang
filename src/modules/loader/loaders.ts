@@ -1,4 +1,5 @@
-import type { Context, Node } from '../../types'
+import type { Context } from '../../types'
+import type { Node } from '../../utils/ast/node'
 import { timeoutPromise } from '../../utils/misc'
 import { ModuleConnectionError, ModuleInternalError } from '../errors'
 import type {

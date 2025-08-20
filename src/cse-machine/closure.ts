@@ -9,7 +9,8 @@ import {
   isStatementSequence,
   uniqueId
 } from '../cse-machine/utils'
-import { Context, Environment, StatementSequence, Value } from '../types'
+import { Context, Environment, Value } from '../types'
+import { StatementSequence } from '../utils/ast/node'
 import * as ast from '../utils/ast/astCreator'
 import { Control, Transformers, Stash, generateCSEMachineStateStream } from './interpreter'
 import { envInstr } from './instrCreator'

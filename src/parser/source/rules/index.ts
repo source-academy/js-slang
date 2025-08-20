@@ -1,4 +1,4 @@
-import { Node } from '../../../types'
+import { Node } from '../../../utils/ast/node'
 import { Rule } from '../../types'
 import bracesAroundFor from './bracesAroundFor'
 import bracesAroundIfElse from './bracesAroundIfElse'

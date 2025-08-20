@@ -1,7 +1,10 @@
 import type { SourceLocation } from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, type Node, type SourceError } from '../types'
+import { type Node } from '../utils/ast/node'
+import { type SourceError } from '../errors/errorBase'
+import { ErrorSeverity } from '../errors/errorBase'
+import { ErrorType } from '../errors/errorBase'
 import { stripIndent } from '../utils/formatters'
 
 export class MissingSemicolonError implements SourceError {

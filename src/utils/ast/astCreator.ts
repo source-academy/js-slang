@@ -1,12 +1,5 @@
 import type es from 'estree'
-
-import {
-  AllowedDeclarations,
-  type BlockExpression,
-  type FunctionDeclarationExpression,
-  type Node,
-  type StatementSequence
-} from '../../types'
+import type { AllowedDeclarations, Node, StatementSequence } from './node'
 
 export const locationDummyNode = (line: number, column: number, source: string | null) =>
   literal('Dummy', { start: { line, column }, end: { line, column }, source })
@@ -323,19 +316,6 @@ export const primitive = (value: any): es.Expression => {
   return value === undefined ? identifier('undefined') : literal(value)
 }
 
-export const functionDeclarationExpression = (
-  id: es.Identifier,
-  params: es.Pattern[],
-  body: es.BlockStatement,
-  loc?: es.SourceLocation | null
-): FunctionDeclarationExpression => ({
-  type: 'FunctionExpression',
-  id,
-  params,
-  body,
-  loc
-})
-
 export const functionDeclaration = (
   id: es.Identifier,
   params: es.Pattern[],
@@ -345,15 +325,6 @@ export const functionDeclaration = (
   type: 'FunctionDeclaration',
   id,
   params,
-  body,
-  loc
-})
-
-export const blockExpression = (
-  body: es.Statement[],
-  loc?: es.SourceLocation | null
-): BlockExpression => ({
-  type: 'BlockExpression',
   body,
   loc
 })

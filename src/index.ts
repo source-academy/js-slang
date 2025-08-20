@@ -16,10 +16,10 @@ import {
   type ModuleContext,
   type RecursivePartial,
   type Result,
-  type SourceError,
   type SVMProgram,
   type Variant
 } from './types'
+import { type SourceError } from './errors/errorBase'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
