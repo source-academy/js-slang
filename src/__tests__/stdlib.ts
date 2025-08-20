@@ -1,8 +1,8 @@
-import { expect, test} from 'vitest'
+import { expect, test } from 'vitest'
 import { Chapter } from '../langs'
 import type { Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { testFailure, testSuccess } from '../utils/testing'
+import { testFailure, testForValue } from '../utils/testing'
 
 test.each([
   [
@@ -616,7 +616,7 @@ test.each([
   'Builtins work as expected %#',
   (chapter: Chapter, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {
-      return expect(testSuccess(stripIndent(snippet), { chapter })).resolves.toEqual(returnValue)
+      return expect(testForValue(stripIndent(snippet), { chapter })).resolves.toEqual(returnValue)
     } else {
       return expect(testFailure(stripIndent(snippet), { chapter })).resolves.toMatchSnapshot()
     }

@@ -3,9 +3,9 @@
  * Please reference Issue #124 (https://github.com/source-academy/js-slang/issues/124)
  */
 
-import { expect, test } from 'vitest';
+import { expect, test } from 'vitest'
 import { Chapter } from '../langs'
-import { testFailure, testSuccess } from '../utils/testing';
+import { testFailure, testForValue } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('Calling unreachable results in error', () => {
@@ -25,7 +25,7 @@ test('Calling unreachable results in error', () => {
 
 // This is bad practice. Don't do this!
 test('Bare early returns work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -43,7 +43,7 @@ test('Bare early returns work', () => {
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -64,7 +64,7 @@ test('Recursive call early returns work', () => {
 
 // This is bad practice. Don't do this!
 test('Tail call early returns work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -85,7 +85,7 @@ test('Tail call early returns work', () => {
 
 // This is bad practice. Don't do this!
 test('Bare early returns in if statements work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -106,7 +106,7 @@ test('Bare early returns in if statements work', () => {
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in if statements work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -130,7 +130,7 @@ test('Recursive call early returns in if statements work', () => {
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in if statements work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -154,7 +154,7 @@ test('Tail call early returns in if statements work', () => {
 
 // This is bad practice. Don't do this!
 test('Bare early returns in while loops work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -176,7 +176,7 @@ test('Bare early returns in while loops work', () => {
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in while loops work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -201,7 +201,7 @@ test('Recursive call early returns in while loops work', () => {
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in while loops work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -226,7 +226,7 @@ test('Tail call early returns in while loops work', () => {
 
 // This is bad practice. Don't do this!
 test('Bare early returns in for loops work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -248,7 +248,7 @@ test('Bare early returns in for loops work', () => {
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in for loops work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error
@@ -270,7 +270,7 @@ test('Recursive call early returns in for loops work', () => {
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in for loops work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     function unreachable() {
       return 1 < true; // Will cause an error

@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { stripIndent } from '../utils/formatters'
-import { testFailure, testSuccess } from '../utils/testing'
+import { testFailure, testForValue } from '../utils/testing'
 
 test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
   return expect(testFailure(stripIndent`
@@ -16,7 +16,7 @@ test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
 })
 
 test('Simple tail call returns work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y) {
       if (x <= 0) {
@@ -31,7 +31,7 @@ test('Simple tail call returns work', () => {
 })
 
 test('Tail call in conditional expressions work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y) {
       return x <= 0 ? y : f(x-1, y+1);
@@ -42,7 +42,7 @@ test('Tail call in conditional expressions work', () => {
 })
 
 test('Tail call in boolean operators work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y) {
       if (x <= 0) {
@@ -57,7 +57,7 @@ test('Tail call in boolean operators work', () => {
 })
 
 test('Tail call in nested mix of conditional expressions boolean operators work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y) {
       return x <= 0 ? y : false || x > 0 ? f(x-1, y+1) : 'unreachable';
@@ -68,7 +68,7 @@ test('Tail call in nested mix of conditional expressions boolean operators work'
 })
 
 test('Tail calls in arrow functions work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
     f(5000, 5000);
@@ -77,7 +77,7 @@ test('Tail calls in arrow functions work', () => {
 })
 
 test('Tail calls in arrow block functions work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const f = (x, y) => {
       if (x <= 0) {
@@ -92,7 +92,7 @@ test('Tail calls in arrow block functions work', () => {
 })
 
 test('Tail calls in mutual recursion work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y) {
       if (x <= 0) {
@@ -114,7 +114,7 @@ test('Tail calls in mutual recursion work', () => {
 })
 
 test('Tail calls in mutual recursion with arrow functions work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
     const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
@@ -124,7 +124,7 @@ test('Tail calls in mutual recursion with arrow functions work', () => {
 })
 
 test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y, z) {
       if (x <= 0) {

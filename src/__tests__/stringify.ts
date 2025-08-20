@@ -7,10 +7,10 @@ import {
   stringify,
   valueToStringDag
 } from '../utils/stringify'
-import { testSuccess } from '../utils/testing'
+import { testForValue } from '../utils/testing'
 
 test('String representation of numbers are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify(0);
   `
@@ -18,7 +18,7 @@ test('String representation of numbers are nice', () => {
 })
 
 test('String representation of strings are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify('a string');
   `
@@ -26,7 +26,7 @@ test('String representation of strings are nice', () => {
 })
 
 test('String representation of booleans are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify('true');
   `
@@ -34,7 +34,7 @@ test('String representation of booleans are nice', () => {
 })
 
 test('String representation of functions are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   function f(x, y) {
     return x;
@@ -49,7 +49,7 @@ test('String representation of functions are nice', () => {
 })
 
 test('String representation of arrow functions are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   const f = (x, y) => x;
   stringify(f);
@@ -58,7 +58,7 @@ test('String representation of arrow functions are nice', () => {
 })
 
 test('String representation of arrays are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   const xs = [1, 'true', true, () => 1];
   stringify(xs);
@@ -68,7 +68,7 @@ test('String representation of arrays are nice', () => {
 })
 
 test('String representation of multidimensional arrays are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   const xs = [1, 'true', [true, () => 1, [[]]]];
   stringify(xs);
@@ -78,7 +78,7 @@ test('String representation of multidimensional arrays are nice', () => {
 })
 
 test('String representation of empty arrays are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   const xs = [];
   stringify(xs);
@@ -88,7 +88,7 @@ test('String representation of empty arrays are nice', () => {
 })
 
 test('String representation of lists are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify(enum_list(1, 10));
   `,
@@ -97,7 +97,7 @@ test('String representation of lists are nice', () => {
 })
 
 test('Correctly handles circular structures with multiple entry points', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   const x = enum_list(1, 3);
   set_tail(tail(tail(x)), x);
@@ -113,7 +113,7 @@ test('Correctly handles circular structures with multiple entry points', () => {
 // The interpreter runs into a MaximumStackLimitExceeded error on 1000, so reduced it to 100.
 // tslint:disable:max-line-length
 test('String representation of huge lists are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify(enum_list(1, 100));
   `,
@@ -213,7 +213,7 @@ test('String representation of huge lists are nice', () => {
 // tslint:enable:max-line-length
 
 test('String representation of huge arrays are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   const arr = [];
   for (let i = 0; i < 100; i = i + 1) {
@@ -327,7 +327,7 @@ test('String representation of huge arrays are nice', () => {
 })
 
 test('String representation of objects are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   const o = { a: 1, b: true, c: () => 1 };
   stringify(o);
@@ -337,7 +337,7 @@ test('String representation of objects are nice', () => {
 })
 
 test('String representation of objects with toReplString member calls toReplString', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   const o = { toReplString: () => '<RUNE>' };
   stringify(o);
@@ -347,7 +347,7 @@ test('String representation of objects with toReplString member calls toReplStri
 })
 
 test('String representation of nested objects are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 } };
   stringify(o);
@@ -359,7 +359,7 @@ test('String representation of nested objects are nice', () => {
 })
 
 test('String representation of big objects are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
   stringify(o);
@@ -382,7 +382,7 @@ test('String representation of big objects are nice', () => {
 })
 
 test('String representation of nested objects are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   let o = {};
   o.o = o;
@@ -424,7 +424,7 @@ test('String representation of instances is nice', () => {
 })
 
 test('String representation of builtins are nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify(pair);
   `,
@@ -437,7 +437,7 @@ test('String representation of builtins are nice', () => {
 })
 
 test('String representation of null is nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify(null);
   `,
@@ -446,7 +446,7 @@ test('String representation of null is nice', () => {
 })
 
 test('String representation of undefined is nice', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify(undefined);
   `
@@ -455,7 +455,7 @@ test('String representation of undefined is nice', () => {
 
 // tslint:disable:max-line-length
 test('String representation with no indent', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify(parse('x=>x;'), 0);
   `,
@@ -468,7 +468,7 @@ test('String representation with no indent', () => {
 })
 
 test('String representation with 1 space indent', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify(parse('x=>x;'), 1);
   `,
@@ -481,7 +481,7 @@ test('String representation with 1 space indent', () => {
 })
 
 test('String representation with default (2 space) indent', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify(parse('x=>x;'));
   `,
@@ -494,7 +494,7 @@ test('String representation with default (2 space) indent', () => {
 })
 
 test('String representation with more than 10 space indent should trim to 10 space indent', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   stringify(parse('x=>x;'), 100);
   `,

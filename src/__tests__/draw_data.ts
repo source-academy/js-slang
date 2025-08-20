@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { Chapter } from '../langs'
-import { testSuccess, testFailure } from '../utils/testing'
+import { testFailure, testSuccess } from '../utils/testing'
 
 test('draw_data returns first argument if more than one argument', async () => {
   const { context } = await testSuccess(`draw_data(1, 2);`, Chapter.SOURCE_3)

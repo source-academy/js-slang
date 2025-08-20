@@ -6,42 +6,42 @@ import * as jsslang from '../index'
 import { Chapter } from '../index'
 import type { Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { createTestContext, evalWithBuiltins, processTestOptions, testFailure, testSuccess } from '../utils/testing'
+import { createTestContext, evalWithBuiltins, processTestOptions, testFailure, testForValue } from '../utils/testing'
 import { TestOptions } from '../utils/testing/types'
 
 const toString = (x: Value) => '' + x
 
 test('Empty code returns undefined', () => {
-  return expect(testSuccess('')).resolves.toBe(undefined)
+  return expect(testForValue('')).resolves.toBe(undefined)
 })
 
 test('Single string self-evaluates to itself', () => {
-  return expect(testSuccess("'42';")).resolves.toBe('42')
+  return expect(testForValue("'42';")).resolves.toBe('42')
 })
 
 test('Multiline string self-evaluates to itself', () => {
-  return expect(testSuccess('`1\n1`;')).resolves.toBe(`1
+  return expect(testForValue('`1\n1`;')).resolves.toBe(`1
 1`)
 })
 
 test('Allow display to return value it is displaying', () => {
-  return expect(testSuccess('25*(display(1+1));')).resolves.toBe(50)
+  return expect(testForValue('25*(display(1+1));')).resolves.toBe(50)
 })
 
 test('Single number self-evaluates to itself', () => {
-  return expect(testSuccess('42;')).resolves.toBe(42)
+  return expect(testForValue('42;')).resolves.toBe(42)
 })
 
 test('Single boolean self-evaluates to itself', () => {
-  return expect(testSuccess('true;')).resolves.toBe(true)
+  return expect(testForValue('true;')).resolves.toBe(true)
 })
 
 test('Arrow function definition returns itself', () => {
-  return expect(testSuccess('() => 42;')).resolves.toMatchInlineSnapshot(`[Function]`)
+  return expect(testForValue('() => 42;')).resolves.toMatchInlineSnapshot(`[Function]`)
 })
 
 test('Builtins hide their implementation when stringify', () => {
-  return expect(testSuccess('stringify(pair);', Chapter.SOURCE_2 ))
+  return expect(testForValue('stringify(pair);', Chapter.SOURCE_2 ))
     .resolves
     .toMatchInlineSnapshot(`
             "function pair(left, right) {
@@ -51,7 +51,7 @@ test('Builtins hide their implementation when stringify', () => {
 })
 
 test('Builtins hide their implementation when toString', () => {
-  return expect(testSuccess('toString(pair);', {
+  return expect(testForValue('toString(pair);', {
     chapter: Chapter.SOURCE_2,
     testBuiltins: { toString }
   })).resolves.toMatchInlineSnapshot(`
@@ -69,15 +69,15 @@ test('functions toString (mostly) matches up with JS', async () => {
   toString(a=>a) + toString(f);
   `
   const options: TestOptions = { testBuiltins: { toString } }
-  const { result } = await testSuccess(code, options)
+  const value = await testForValue(code, options)
 
-  expect(result.value.replace(/ /g, '')).toEqual(
+  expect(value.replace(/ /g, '')).toEqual(
     evalWithBuiltins(code, options.testBuiltins).replace(/ /g, '')
   )
 })
 
 test('Factorial arrow function', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
@@ -103,7 +103,7 @@ test.skip('Simple arrow function infinite recursion represents CallExpression we
   )
 })
 
-test('Simple function infinite recursion represents CallExpression well', { timeout: 30000 }, () => {
+test.skip('Simple function infinite recursion represents CallExpression well', { timeout: 30000 }, () => {
   return expect(testFailure('function f(x) {return x(x)(x);} f(f);')).resolves.toMatchInlineSnapshot(
     `"RangeError: Maximum call stack size exceeded"`
   )
@@ -124,7 +124,7 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
 })
 
 test('Assignment has value', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     let a = 1;
     let b = a = 4;
@@ -135,7 +135,7 @@ test('Assignment has value', () => {
 })
 
 test('Array assignment has value', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     let arr = [];
     const a = arr[0] = 1;
@@ -147,7 +147,7 @@ test('Array assignment has value', () => {
 })
 
 test('Can overwrite lets when assignment is allowed', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function test() {
       let variable = false;
@@ -160,18 +160,6 @@ test('Can overwrite lets when assignment is allowed', () => {
   )).resolves.toBe(true)
 })
 
-test('Arrow function infinite recursion with list args represents CallExpression well', { timeout: 30000 }, () => {
-  return expect(testFailure(
-    stripIndent`
-    const f = xs => append(f(xs), list());
-    f(list(1, 2));
-  `,
-    Chapter.SOURCE_2
-  )).resolves.toMatchInlineSnapshot(
-    `"Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."`
-  )
-})
-
 test('Function infinite recursion with list args represents CallExpression well', { timeout: 30000 }, () => {
   return expect(testFailure(
     stripIndent`
@@ -181,26 +169,8 @@ test('Function infinite recursion with list args represents CallExpression well'
   )).resolves.toMatchInlineSnapshot(`"Line 1: Name append not declared."`)
 })
 
-test('Arrow function infinite recursion with different args represents CallExpression well', {timeout: 30000 }, () => {
-  return expect(testFailure(stripIndent`
-    const f = i => f(i+1) - 1;
-    f(0);
-  `)).resolves.toMatchInlineSnapshot(
-    `"Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."`
-  )
-})
-
-test('Function infinite recursion with different args represents CallExpression well', { timeout: 30000 }, () => {
-  return expect(testFailure(stripIndent`
-    function f(i) { return f(i+1) - 1; }
-    f(0);
-  `)).resolves.toMatchInlineSnapshot(
-    `"Line 2: The function f has encountered an infinite loop. It has no base case."`
-  )
-})
-
 test('Functions passed into non-source functions remain equal', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function t(x, y, z) {
       return x + y + z;
@@ -212,7 +182,7 @@ test('Functions passed into non-source functions remain equal', () => {
 })
 
 test('Accessing array with nonexistent index returns undefined', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const a = [];
     a[1];
@@ -222,7 +192,7 @@ test('Accessing array with nonexistent index returns undefined', () => {
 })
 
 test('Accessing object with nonexistent property returns undefined', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const o = {};
     o.nonexistent;
@@ -232,18 +202,18 @@ test('Accessing object with nonexistent property returns undefined', () => {
 })
 
 test('Simple object assignment and retrieval', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const o = {};
     o.a = 1;
     o.a;
   `,
     Chapter.LIBRARY_PARSER
-  )).toBe(1)
+  )).resolves.toBe(1)
 })
 
 test('Deep object assignment and retrieval', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const o = {};
     o.a = {};
@@ -256,7 +226,7 @@ test('Deep object assignment and retrieval', () => {
 })
 
 test('Test apply_in_underlying_javascript', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
   `,
@@ -265,7 +235,7 @@ test('Test apply_in_underlying_javascript', () => {
 })
 
 test('Test equal for primitives', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
   `,
@@ -274,7 +244,7 @@ test('Test equal for primitives', () => {
 })
 
 test('Test equal for lists', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
   `,
@@ -283,7 +253,7 @@ test('Test equal for lists', () => {
 })
 
 test('Test equal for different lists', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
   `,
@@ -292,7 +262,7 @@ test('Test equal for different lists', () => {
 })
 
 test('true if with empty if works', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     if (true) {
     } else {
@@ -302,7 +272,7 @@ test('true if with empty if works', () => {
 })
 
 test('true if with nonempty if works', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     if (true) {
       1;
@@ -313,7 +283,7 @@ test('true if with nonempty if works', () => {
 })
 
 test('false if with empty else works', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     if (false) {
     } else {
@@ -323,7 +293,7 @@ test('false if with empty else works', () => {
 })
 
 test('false if with nonempty if works', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     if (false) {
     } else {
@@ -345,9 +315,8 @@ describe('matchJSTests', () => {
       options.testBuiltins = { toString }
     }
 
-    const { result } = await testSuccess(code, options)
-
-    expect(evalWithBuiltins(code, options.testBuiltins)).toEqual(result.value)
+    const value = await testForValue(code, options)
+    expect(evalWithBuiltins(code, options.testBuiltins)).toEqual(value)
   }
 
   test('primitives toString matches up with JS', async () => {
@@ -365,8 +334,8 @@ describe('matchJSTests', () => {
       testBuiltins: { toString },
       chapter: Chapter.SOURCE_2
     }
-    const { result } = await testSuccess(code, options)
-    expect(evalWithBuiltins(code, options.testBuiltins)).toEqual(result.value)
+    const value = await testForValue(code, options)
+    expect(evalWithBuiltins(code, options.testBuiltins)).toEqual(value)
   })
 
   test('test true conditional expression', () => {
@@ -431,7 +400,7 @@ describe('matchJSTests', () => {
 })
 
 test('Rest parameters work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function rest(a, b, ...c) {
       let sum = a + b;

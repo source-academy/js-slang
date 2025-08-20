@@ -59,13 +59,13 @@ test.each(testCases)('%s', async (_, code, expectedDisplay, chapter = undefined)
 })
 
 test('display with no arguments throws an error', () => {
-  return expect(testFailure(`display();`, Chapter.LIBRARY_PARSER)).toMatchInlineSnapshot(
+  return expect(testFailure(`display();`, Chapter.LIBRARY_PARSER)).resolves.toMatchInlineSnapshot(
     `"Line 1: Expected 1 or more arguments, but got 0."`
   )
 })
 
 test('display throw error if second argument is non-string when used', () => {
-  return expect(testFailure(`display(31072020, 0xDEADC0DE);`)).toMatchInlineSnapshot(
+  return expect(testFailure(`display(31072020, 0xDEADC0DE);`)).resolves.toMatchInlineSnapshot(
     `"Line 1: TypeError: display expects the second argument to be a string"`
   )
 })
