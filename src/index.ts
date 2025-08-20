@@ -10,15 +10,15 @@ import { setBreakpointAtLine } from './stdlib/inspector'
 import {
   Chapter,
   type Context,
-  type Error as ResultError,
   type ExecutionMethod,
-  type Finished,
   type ModuleContext,
   type RecursivePartial,
-  type Result,
   type SVMProgram,
   type Variant
 } from './types'
+import { type Result } from './runner/types'
+import { type Finished } from './runner/types'
+import { type Error as ResultError } from './runner/types'
 import { type SourceError } from './errors/errorBase'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'

@@ -53,12 +53,13 @@ export interface DeclAssmtInstr extends BaseInstr<InstrType.ASSIGNMENT, es.Varia
   declaration: true
 }
 
-export interface RegularAssmtInstr extends BaseInstr<InstrType.ASSIGNMENT, es.AssignmentExpression> {
+export interface RegularAssmtInstr
+  extends BaseInstr<InstrType.ASSIGNMENT, es.AssignmentExpression> {
   declaration: false
   symbol: string
 }
 
-export type AssmtInstr = DeclAssmtInstr | RegularAssmtInstr;
+export type AssmtInstr = DeclAssmtInstr | RegularAssmtInstr
 
 export interface UnOpInstr extends BaseInstr<InstrType.UNARY_OP, es.UnaryExpression> {
   symbol: es.UnaryOperator

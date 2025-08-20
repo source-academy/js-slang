@@ -1,4 +1,4 @@
-import type es from 'estree';
+import type es from 'estree'
 
 /**
  * StatementSequence : A sequence of statements not surrounded by braces.
@@ -15,11 +15,12 @@ export interface StatementSequence extends es.BaseStatement {
 /**
  * js-slang's custom Node type - this should be used wherever es.Node is used.
  */
-export type Node = { isEnvDependent?: boolean} & (
-  es.Node |
-  StatementSequence |
-  es.MaybeNamedClassDeclaration |
-  es.MaybeNamedFunctionDeclaration)
+export type Node = { isEnvDependent?: boolean } & (
+  | es.Node
+  | StatementSequence
+  | es.MaybeNamedClassDeclaration
+  | es.MaybeNamedFunctionDeclaration
+)
 
 export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>
 export type ContiguousArrayElements = ContiguousArrayElementExpression[]
@@ -28,4 +29,3 @@ export type ContiguousArrayElements = ContiguousArrayElementExpression[]
  * Represents the types of {@link es.VariableDeclaration|Variable Declarations} that are allowed.
  */
 export type AllowedDeclarations = 'const' | 'let'
-

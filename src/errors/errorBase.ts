@@ -1,6 +1,6 @@
-import type es from 'estree';
-import { UNKNOWN_LOCATION } from '../constants';
-import type { Node } from '../utils/ast/node';
+import type es from 'estree'
+import { UNKNOWN_LOCATION } from '../constants'
+import type { Node } from '../utils/ast/node'
 
 export enum ErrorType {
   IMPORT = 'Import',
@@ -24,8 +24,8 @@ export interface SourceError {
 }
 
 export class RuntimeSourceError implements SourceError {
-  public type = ErrorType.RUNTIME;
-  public severity = ErrorSeverity.ERROR;
+  public type = ErrorType.RUNTIME
+  public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
   constructor(node?: Node) {
@@ -40,4 +40,3 @@ export class RuntimeSourceError implements SourceError {
     return this.explain()
   }
 }
-

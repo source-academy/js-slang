@@ -10,7 +10,7 @@ import {
 } from 'estree'
 
 import { Context } from './types'
-import { Node } from './utils/ast/node';
+import { Node } from './utils/ast/node'
 import {
   ancestor,
   base,

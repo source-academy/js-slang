@@ -13,7 +13,6 @@ import { isInLoc } from './finder'
 import type { Node } from './utils/ast/node'
 import { simple } from './utils/walkers'
 
-
 export interface BlockFrame {
   type: string
   // loc refers to the block defined by every pair of curly braces
@@ -535,5 +534,3 @@ function areLocsEqual(loc1: es.SourceLocation, loc2: es.SourceLocation): boolean
     loc1.end.column === loc2.end.column
   )
 }
-
-

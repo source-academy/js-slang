@@ -2,24 +2,24 @@
 // Helper functions/constants for type checker and type error checker
 // =======================================
 
-import {
-  BindableType,
-  Chapter,
-  ForAll,
-  FunctionType,
-  List,
-  LiteralType,
-  Pair,
-  PredicateType,
-  Primitive,
-  SArray,
-  TSBasicType,
-  Type,
+import { Chapter } from '../types'
+import type { AllowedDeclarations } from '../utils/ast/node'
+import type {
   TypeEnvironment,
+  BindableType,
+  PredicateType,
+  ForAll,
+  LiteralType,
   UnionType,
-  Variable
-} from '../types'
-import { AllowedDeclarations } from '../utils/ast/node'
+  SArray,
+  Pair,
+  List,
+  FunctionType,
+  Variable,
+  Primitive,
+  Type,
+  TSBasicType
+} from './types'
 import * as tsEs from './tsESTree'
 
 // Name of Unary negative builtin operator

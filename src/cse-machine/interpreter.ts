@@ -15,7 +15,8 @@ import * as errors from '../errors/errors'
 import * as runtimeErrors from '../errors/runtimeErrors'
 import { RuntimeSourceError } from '../errors/errorBase'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, Result, Value } from '../types'
+import { Context, Value } from '../types'
+import { Result } from '../runner/types'
 import { ContiguousArrayElements } from '../utils/ast/node'
 import { type StatementSequence } from '../utils/ast/node'
 import * as ast from '../utils/ast/astCreator'
@@ -47,7 +48,7 @@ import {
   Instr,
   InstrType,
   UnOpInstr,
-  WhileInstr,
+  WhileInstr
 } from './types'
 import {
   checkNumberOfArguments,
@@ -580,7 +581,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Loop control variable present
     // Refer to Source §3 specifications https://docs.sourceacademy.org/source_3.pdf
     if (init.type === 'VariableDeclaration' && init.kind === 'let') {
-      const { id } = getSourceVariableDeclaration(init);
+      const { id } = getSourceVariableDeclaration(init)
       control.push(
         ast.blockStatement(
           [
@@ -896,13 +897,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash: Stash
   ) {
     if (command.declaration) {
-      defineVariable(
-        context,
-        command.symbol,
-        stash.peek(),
-        command.constant,
-        command.srcNode
-      )
+      defineVariable(context, command.symbol, stash.peek(), command.constant, command.srcNode)
     } else {
       setVariable(context, command.symbol, stash.peek(), command.srcNode)
     }
@@ -1301,12 +1296,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   [InstrType.BREAK_MARKER]: function () {},
 
-  [InstrType.SPREAD]: function (
-    command: Instr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
+  [InstrType.SPREAD]: function (command: Instr, context: Context, control: Control, stash: Stash) {
     const array = stash.pop()
 
     // Check if right-hand side is array

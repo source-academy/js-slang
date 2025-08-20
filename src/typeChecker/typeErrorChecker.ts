@@ -20,21 +20,7 @@ import {
   TypeParameterNameNotAllowedError,
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
-import {
-  BindableType,
-  Chapter,
-  type Context,
-  disallowedTypes,
-  type Pair,
-  PrimitiveType,
-  SArray,
-  TSAllowedTypes,
-  TSBasicType,
-  TSDisallowedTypes,
-  type Type,
-  TypeEnvironment,
-  Variable
-} from '../types'
+import { Chapter, type Context } from '../types'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import * as tsEs from './tsESTree'
@@ -68,6 +54,19 @@ import {
   tVoid,
   typeAnnotationKeywordToBasicTypeMap
 } from './utils'
+import {
+  type TypeEnvironment,
+  type Type,
+  type PrimitiveType,
+  type Variable,
+  type TSBasicType,
+  type BindableType,
+  type SArray,
+  disallowedTypes,
+  type TSDisallowedTypes,
+  type TSAllowedTypes,
+  type Pair
+} from './types'
 // import { ModuleNotFoundError } from '../modules/errors'
 
 // Context and type environment are saved as global variables so that they are not passed between functions excessively

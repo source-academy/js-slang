@@ -1,5 +1,6 @@
 import { UNKNOWN_LOCATION } from '../constants'
-import { NodeWithInferredType, Type } from '../types'
+import { Type } from './types'
+import { NodeWithInferredType } from './types'
 import { Node } from '../utils/ast/node'
 import { SourceError } from '../errors/errorBase'
 import { ErrorSeverity } from '../errors/errorBase'

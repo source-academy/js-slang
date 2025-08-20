@@ -1,5 +1,6 @@
 import { mockContext } from "../../utils/testing/mocks";
-import { Chapter, Finished } from "../../types";
+import { Chapter } from "../../types";
+import { Finished } from '../../runner/types';
 import { mapResult } from "../mapper";
 
 test("given source, mapper should do nothing (no mapping needed)", () => {

@@ -2,7 +2,8 @@ import type es from 'estree'
 
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { parse } from '../parser/parser'
-import type { Context, NodeWithInferredType } from '../types'
+import type { Context } from '../types'
+import type { NodeWithInferredType } from '../typeChecker/types'
 import type { Node } from '../utils/ast/node'
 import {
   getFunctionDeclarationNamesInProgram,

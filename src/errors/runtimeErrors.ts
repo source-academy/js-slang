@@ -1,9 +1,9 @@
-import { generate } from 'astring';
-import type es from 'estree';
-import type { Value } from '../types';
-import type { Node } from '../utils/ast/node';
-import { stringify } from '../utils/stringify';
-import { RuntimeSourceError } from './errorBase';
+import { generate } from 'astring'
+import type es from 'estree'
+import type { Value } from '../types'
+import type { Node } from '../utils/ast/node'
+import { stringify } from '../utils/stringify'
+import { RuntimeSourceError } from './errorBase'
 
 export class CallingNonFunctionValue extends RuntimeSourceError {
   constructor(
