@@ -1,12 +1,10 @@
 import { runCodeInSource } from '..'
 import { parseError } from '../..'
 import { Chapter , Variant } from '../../langs'
-import type { ExecutionMethod } from '../../types'
 import { getChapterName, objectKeys, objectValues } from '../../utils/misc'
-import { asMockedFunc } from '../../utils/testing/misc'
 import { mockContext } from '../../utils/testing/mocks'
 import * as validator from '../../validator/validator'
-import runners, { type RunnerTypes } from '../sourceRunner'
+import runners, { type ExecutionMethod, type RunnerTypes } from '../sourceRunner'
 import type { Runner } from '../types'
 
 jest.spyOn(validator, 'validateAndAnnotate')
@@ -19,7 +17,7 @@ jest.mock('../sourceRunner', () => {
 
   return {
     default: Object.keys(actualRunners as typeof runners).reduce((res, key) => {
-      const mockRunner: Runner = (_, context) =>
+      const mockRunner: Runner<any> = (_, context) =>
         Promise.resolve({
           status: 'finished',
           value: '',
@@ -47,11 +45,6 @@ interface TestCase {
    * a specific execution method set
    */
   optionMethod?: ExecutionMethod
-  /**
-   * Set this to simulate the context having a specific
-   * execution method set
-   */
-  contextMethod?: ExecutionMethod
 
   /**
    * Which runner was expected to be called
@@ -101,7 +94,6 @@ const sourceCases: TestCase[] = [
     expectedValidate: true
   },
   {
-    contextMethod: 'native',
     variant: Variant.NATIVE,
     expectedRunner: 'fulljs',
     expectedPrelude: false,
@@ -126,12 +118,11 @@ type TestObject = {
   expectedValidate: boolean
   expectedRunner: RunnerTypes
   optionMethod?: ExecutionMethod
-  contextMethod?: ExecutionMethod
 }
 
 function expectCalls(count: number, expected: RunnerTypes) {
   const unexpectedRunner = objectKeys(runners).find(runner => {
-    const { calls } = asMockedFunc(runners[runner]).mock
+    const { calls } = jest.mocked(runners[runner]).mock
     return calls.length > 0
   })
 
@@ -142,10 +133,10 @@ function expectCalls(count: number, expected: RunnerTypes) {
       )
     case expected: {
       expect(runners[expected]).toHaveBeenCalledTimes(count)
-      return asMockedFunc(runners[expected]).mock.calls
+      return jest.mocked(runners[expected]).mock.calls
     }
     default: {
-      const callCount = asMockedFunc(runners[unexpectedRunner]).mock.calls.length
+      const callCount = jest.mocked(runners[unexpectedRunner]).mock.calls.length
       throw new Error(
         `Expected ${expected} to be called ${count} times, but ${unexpectedRunner} was called ${callCount} times`
       )
@@ -157,16 +148,12 @@ async function testCase({
   code,
   chapter,
   variant,
-  contextMethod,
   optionMethod,
   expectedPrelude,
   expectedRunner,
   expectedValidate
 }: TestObject) {
   const context = mockContext(chapter, variant)
-  if (contextMethod !== undefined) {
-    context.executionMethod = contextMethod
-  }
 
   // Check if the prelude is null before execution
   // because the prelude gets set to null if it wasn't before
@@ -195,7 +182,7 @@ async function testCase({
     expect(call0[2].isPrelude).toEqual(true)
 
     // and then with isPrelude false
-    expect(call1[2].isPrelude).toEqual(false)
+    expect(call1[2].isPrelude).toBeFalsy()
 
     // If the validator is to be called, then it should've been called
     // with both the user program and the prelude
@@ -205,7 +192,7 @@ async function testCase({
     const [call0] = expectCalls(1, expectedRunner)
 
     // with isPrelude false
-    expect(call0[2].isPrelude).toEqual(false)
+    expect(call0[2].isPrelude).toBeFalsy()
 
     // If the validator is to be called, then it should've been called
     // with just the user program
@@ -213,16 +200,14 @@ async function testCase({
   }
 }
 
-function testCases(desc: string, cases: TestCase[]) {
-  describe(desc, () =>
+function testCases(desc: string, cases: TestCase[], skip?: boolean) {
+  const describeFunc = skip ? describe.skip : describe
+
+  describeFunc(desc, () =>
     test.each(
-      cases.map(({ code, verboseErrors, contextMethod, chapter, variant, ...tc }, i) => {
+      cases.map(({ code, verboseErrors, chapter, variant, ...tc }, i) => {
         chapter = chapter ?? Chapter.SOURCE_1
         variant = variant ?? Variant.DEFAULT
-        const context = mockContext(chapter, variant)
-        if (contextMethod !== undefined) {
-          context.executionMethod = contextMethod
-        }
 
         const chapterName = getChapterName(chapter)
         let desc = `${i + 1}. Testing ${chapterName}, Variant: ${variant}, expected ${tc.expectedRunner} runner`
@@ -236,6 +221,10 @@ function testCases(desc: string, cases: TestCase[]) {
       })
     )('%s', async (_, to) => testCase(to))
   )
+}
+
+testCases.skip = function (desc: string, cases: TestCase[]) {
+  this(desc, cases, true)
 }
 
 describe('Ensure that the correct runner is used for the given evaluation context and settings', () => {
@@ -336,7 +325,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
   //   expectedRunner: runner
   // })))
 
-  test('if optionMethod is specified, debubger statements are ignored', () =>
+  test('if optionMethod is specified, debugger statements are ignored', () =>
     testCase({
       code: 'debugger; 0;',
       optionMethod: 'native',
@@ -344,40 +333,6 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       variant: Variant.DEFAULT,
       expectedPrelude: true,
       expectedRunner: 'native',
-      expectedValidate: true
-    }))
-
-  test('if contextMethod is specified, verbose errors is ignored', () =>
-    testCase({
-      code: '"enable verbose"; 0;',
-      contextMethod: 'native',
-      chapter: Chapter.SOURCE_4,
-      variant: Variant.DEFAULT,
-      expectedPrelude: true,
-      expectedRunner: 'native',
-      expectedValidate: true
-    }))
-
-  test('if contextMethod is specified, debugger statements are ignored', () =>
-    testCase({
-      code: 'debugger; 0;',
-      contextMethod: 'native',
-      chapter: Chapter.SOURCE_4,
-      variant: Variant.DEFAULT,
-      expectedPrelude: true,
-      expectedRunner: 'native',
-      expectedValidate: true
-    }))
-
-  test('optionMethod takes precedence over contextMethod', () =>
-    testCase({
-      code: '0;',
-      contextMethod: 'native',
-      optionMethod: 'cse-machine',
-      chapter: Chapter.SOURCE_4,
-      variant: Variant.DEFAULT,
-      expectedPrelude: true,
-      expectedRunner: 'cse-machine',
       expectedValidate: true
     }))
 

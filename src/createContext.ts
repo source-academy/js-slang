@@ -161,7 +161,6 @@ export const createEmptyContext = <T>(
     prelude: null,
     debugger: createEmptyDebugger(),
     nativeStorage: createNativeStorage(),
-    executionMethod: 'auto',
     variant,
     languageOptions,
     moduleContexts: {},

@@ -1,6 +1,5 @@
 import type { Result } from '..'
-import type { IOptions } from '../types'
-import type { Context, RecursivePartial } from '../types'
+import type { Context } from '../types'
 
 const HTML_ERROR_HANDLING_SCRIPT_TEMPLATE = `<script>
   window.onerror = (msg, url, lineNum) => {
@@ -17,7 +16,6 @@ export const htmlErrorHandlingScript = HTML_ERROR_HANDLING_SCRIPT_TEMPLATE.repla
 export async function htmlRunner(
   code: string,
   context: Context,
-  _options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   return Promise.resolve({
     status: 'finished',

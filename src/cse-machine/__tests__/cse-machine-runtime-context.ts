@@ -1,8 +1,7 @@
 import * as es from 'estree'
-import { IOptions } from '../../types'
 import { Chapter } from '../../langs'
 import { parse } from '../../parser/parser'
-import { runCodeInSource } from '../../runner'
+import { runCodeInSource, type SourceExecutionOptions } from '../../runner'
 import { RecursivePartial } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { mockContext } from '../../utils/testing/mocks'
@@ -11,17 +10,18 @@ import { Control , Stash , Transformers } from '../types'
 
 const getContextFrom = async (code: string, steps?: number) => {
   const context = mockContext(Chapter.SOURCE_4)
-  const options: RecursivePartial<IOptions> = { executionMethod: 'cse-machine' }
-  if (steps !== undefined) {
-    options.envSteps = steps
+  const options: RecursivePartial<SourceExecutionOptions> = {
+    executionMethod: 'cse-machine',
+    envSteps: steps
   }
+
   await runCodeInSource(code, context, options)
   return context
 }
 
 const evaluateCode = (code: string) => {
   const context = mockContext(Chapter.SOURCE_4)
-  const options: RecursivePartial<IOptions> = { executionMethod: 'cse-machine' }
+  const options: RecursivePartial<SourceExecutionOptions> = { executionMethod: 'cse-machine' }
   const program = parse(code, context)
   context.runtime.isRunning = true
   context.runtime.control = new Control(program as es.Program)

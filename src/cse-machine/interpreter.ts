@@ -14,7 +14,7 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { RuntimeSourceError } from '../errors/errorBase'
 import * as errors from '../errors/errors'
 import * as runtimeErrors from '../errors/runtimeErrors'
-import type { Result, RunnerOptions } from '../runner/types'
+import type { BaseRunnerOptions, Result, Runner } from '../runner/types'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
@@ -93,6 +93,11 @@ type CmdEvaluator = (
   isPrelude: boolean
 ) => void
 
+export interface CSERunnerOptions extends BaseRunnerOptions {
+  envSteps: number
+  stepLimit: number
+}
+
 /**
  * Function to be called when a program is to be interpreted using
  * the explicit control evaluator.
@@ -101,12 +106,12 @@ type CmdEvaluator = (
  * @param context The context to evaluate the program in.
  * @returns The result of running the CSE machine.
  */
-export function evaluate(program: es.Program, context: Context, options: RunnerOptions): Value {
+export const evaluate: Runner<CSERunnerOptions> = (program, context, options) => {
   try {
     checkProgramForUndefinedVariables(program, context)
   } catch (error) {
     context.errors.push(error)
-    return new CseError(error)
+    return Promise.resolve({ status: 'error' })
   }
   seq.transform(program)
 
@@ -119,16 +124,18 @@ export function evaluate(program: es.Program, context: Context, options: RunnerO
       ? context.runtime.transformers
       : new Transformers()
 
-    return runCSEMachine(
+    const value = runCSEMachine(
       context,
       context.runtime.control,
       context.runtime.stash,
-      options.envSteps,
-      options.stepLimit,
+      options.envSteps ?? -1,
+      options.stepLimit ?? -1,
       options.isPrelude
     )
-  } catch (error) {
-    return new CseError(error)
+    
+    return CSEResultPromise(context, value)
+  } catch {
+    return Promise.resolve({ status: 'error' })
   } finally {
     context.runtime.isRunning = false
   }

@@ -8,8 +8,8 @@ import { createProgramEnvironment } from '../utils'
 const getContextFrom = async (code: string, envSteps?: number) => {
   const context = mockContext(Chapter.SOURCE_4)
   await runCodeInSource(code, context, {
-    envSteps,
-    executionMethod: 'cse-machine'
+    executionMethod: 'cse-machine',
+    envSteps
   })
   return context
 }

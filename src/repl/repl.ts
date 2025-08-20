@@ -4,11 +4,10 @@ import { start } from 'repl'
 import { Command } from '@commander-js/extra-typings'
 
 import { createContext } from '..'
-import { type IOptions } from '../types'
 import { Chapter, Variant, isValidChapterVariant } from '../langs'
 import { setModulesStaticURL } from '../modules/loader'
 import type { FileGetter } from '../modules/moduleTypes'
-import { runCodeInSource, sourceFilesRunner } from '../runner'
+import { runCodeInSource, sourceFilesRunner, type SourceExecutionOptions } from '../runner'
 import type { RecursivePartial } from '../types'
 import { objectValues } from '../utils/misc'
 import {
@@ -43,7 +42,7 @@ export const getReplCommand = () =>
         setModulesStaticURL(modulesBackend)
       }
 
-      let options: RecursivePartial<IOptions> = {}
+      let options: RecursivePartial<SourceExecutionOptions> = {}
       if (optionsFile !== undefined) {
         const rawText = await fs.readFile(optionsFile, 'utf-8')
         options = JSON.parse(rawText)

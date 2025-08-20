@@ -1,7 +1,8 @@
-import * as es from 'estree'
-import { Context } from '..'
-import { IOptions } from '../types'
+import type es from 'estree'
+import type { Context } from '..'
 import { UndefinedVariable } from '../errors/errors'
+import type { BaseRunnerOptions, Runner } from '../runner/types'
+import { resolvedErrorPromise } from '../runner/utils'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
 import { prelude } from './builtins'
 import { explain } from './generator'
@@ -9,12 +10,16 @@ import { StepperBaseNode } from './interface'
 import { undefinedNode } from './nodes'
 import { StepperProgram } from './nodes/Program'
 import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
-import { IStepperPropContents, Marker, redex } from '.'
+import { redex, type IStepperPropContents, type Marker } from '.'
+
+export interface StepperRunnerOptions extends BaseRunnerOptions {
+  stepLimit: number
+}
 
 export function getSteps(
   inputNode: es.BaseNode,
   context: Context,
-  { stepLimit }: Pick<IOptions, 'stepLimit'>
+  { stepLimit }: Partial<StepperRunnerOptions> = {}
 ): IStepperPropContents[] {
   const node: StepperBaseNode = prelude(inputNode)
   const steps: IStepperPropContents[] = []
@@ -152,4 +157,18 @@ export function getSteps(
     })
   }
   return steps
+}
+
+
+
+export const stepperRunner: Runner<StepperRunnerOptions> = (program, context, options) => {
+  const steps = getSteps(program, context, options)
+  if (context.errors.length > 0) {
+    return resolvedErrorPromise
+  }
+  return Promise.resolve({
+    status: 'finished',
+    context,
+    value: steps
+  })
 }

@@ -2,14 +2,25 @@ import type es from 'estree'
 // import * as TypedES from '../../typeChecker/tsESTree'
 
 import type { Context } from '../..'
-import type { IOptions } from '../../types'
 import { Variant } from '../../langs'
 import { RecursivePartial } from '../../types'
 import loadSourceModules, { loadSourceModuleTypes } from '../loader'
-import type { FileGetter } from '../moduleTypes'
+import type { FileGetter, ImportOptions } from '../moduleTypes'
 import analyzeImportsAndExports from './analyzer'
 import defaultBundler, { type Bundler } from './bundler'
 import parseProgramsAndConstructImportGraph from './linker'
+
+/**
+ * Options for the modules preprocessor
+ */
+export interface PreprocessorOptions {
+  /**
+   * Set this to `true` if file name information should be attached to the files
+   * when they are parsed.
+   */
+  shouldAddFileName: boolean
+  importOptions: ImportOptions
+}
 
 export type PreprocessResult =
   | {
@@ -44,7 +55,7 @@ const preprocessFileImports = async (
   files: FileGetter,
   entrypointFilePath: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {},
+  options: RecursivePartial<PreprocessorOptions> = {},
   bundler: Bundler = defaultBundler
 ): Promise<PreprocessResult> => {
   if (context.variant === Variant.TYPED) {

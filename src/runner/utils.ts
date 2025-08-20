@@ -2,40 +2,44 @@ import type { Program } from 'estree'
 
 import type { Result } from '..'
 import { areBreakpointsSet } from '../stdlib/inspector'
-import type {Context, IOptions  } from '../types'
 import { simple } from '../utils/walkers'
-import type { RunnerTypes } from './sourceRunner'
+import type { ExecutionMethod, RunnerTypes } from './sourceRunner'
 
 // Context Utils
 
 export function determineExecutionMethod(
-  theOptions: IOptions,
-  context: Context,
+  runner: ExecutionMethod,
   program: Program,
   verboseErrors: boolean
 ): RunnerTypes {
-  if (theOptions.executionMethod !== 'auto') {
-    return theOptions.executionMethod
+  if (runner !== undefined && runner !== 'auto') {
+    // console.log('Runner was specified to be', runner)
+    return runner
   }
 
-  if (context.executionMethod !== 'auto') {
-    return context.executionMethod
-  }
-
-  let isNativeRunnable
-  if (verboseErrors || areBreakpointsSet()) {
+  if (verboseErrors) {
+    // console.log('verbose errors are enabled')
     return 'cse-machine'
-  } else {
-    let hasDebuggerStatement = false
-    simple(program, {
-      DebuggerStatement() {
-        hasDebuggerStatement = true
-      }
-    })
-    isNativeRunnable = !hasDebuggerStatement
   }
 
-  return isNativeRunnable ? 'native' : 'cse-machine'
+  if (areBreakpointsSet()) {
+    // console.log('breakpoints are set')
+    return 'cse-machine'
+  }
+
+  let hasDebuggerStatement = false
+  simple(program, {
+    DebuggerStatement() {
+      hasDebuggerStatement = true
+    }
+  })
+
+  if (hasDebuggerStatement) {
+    // console.log('there are debugger statements')
+    return 'cse-machine'
+  }
+
+  return  'native'
 }
 
 // AST Utils

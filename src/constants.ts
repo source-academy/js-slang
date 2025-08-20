@@ -1,6 +1,5 @@
-import type es from 'estree'
-
-import { AcornOptions } from './parser/types'
+import type { SourceLocation } from 'estree'
+import type { AcornOptions } from './parser/types'
 
 export const DEFAULT_ECMA_VERSION = 6
 export const ACORN_PARSE_OPTIONS: AcornOptions = { ecmaVersion: DEFAULT_ECMA_VERSION }
@@ -11,7 +10,7 @@ export const TRY_AGAIN = 'retry' // command for Source 4.3
 export const GLOBAL = typeof window === 'undefined' ? global : window
 export const NATIVE_STORAGE_ID = 'nativeStorage'
 export const MAX_LIST_DISPLAY_LENGTH = 100
-export const UNKNOWN_LOCATION: es.SourceLocation = {
+export const UNKNOWN_LOCATION: SourceLocation = {
   start: {
     line: -1,
     column: -1

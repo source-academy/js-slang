@@ -1,7 +1,7 @@
 import type { Program } from 'estree'
 
 import type { SourceError } from '../errors/errorBase'
-import type {Chapter, Variant  } from '../langs'
+import type { Chapter, Variant } from '../langs'
 import type { Context } from '../types'
 import type { Node } from '../utils/ast/node'
 

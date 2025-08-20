@@ -16,7 +16,7 @@ import type { Context, NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
-import type { Runner } from './types'
+import type { BaseRunnerOptions, Runner } from './types'
 import { resolvedErrorPromise } from './utils'
 
 function fullJSEval(code: string, nativeStorage: NativeStorage): any {
@@ -45,7 +45,7 @@ function containsPrevEval(context: Context): boolean {
   return context.nativeStorage.evaller != null
 }
 
-const fullJSRunner: Runner = async (program, context) => {
+const fullJSRunner: Runner<BaseRunnerOptions> = async (program, context) => {
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
   const prelude = preparePrelude(context)

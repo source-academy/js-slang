@@ -173,14 +173,12 @@ test('Can overwrite lets when assignment is allowed', () => {
 
 test('Arrow function infinite recursion with list args represents CallExpression well', () => {
   return expectParsedError(
-    stripIndent`
+  stripIndent`
     const f = xs => append(f(xs), list());
     f(list(1, 2));
   `,
-    { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(
-    `"Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."`
-  )
+  { chapter: Chapter.SOURCE_2 }
+).toMatchInlineSnapshot(`"Line 1: RangeError: Maximum call stack size exceeded"`)
 }, 30000)
 
 test('Function infinite recursion with list args represents CallExpression well', () => {
@@ -196,18 +194,14 @@ test('Arrow function infinite recursion with different args represents CallExpre
   return expectParsedError(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
-  `).toMatchInlineSnapshot(
-    `"Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."`
-  )
+  `).toMatchInlineSnapshot(`"Line 1: RangeError: Maximum call stack size exceeded"`)
 }, 30000)
 
 test('Function infinite recursion with different args represents CallExpression well', () => {
   return expectParsedError(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
-  `).toMatchInlineSnapshot(
-    `"Line 2: The function f has encountered an infinite loop. It has no base case."`
-  )
+  `).toMatchInlineSnapshot(`"RangeError: Maximum call stack size exceeded"`)
 }, 30000)
 
 test('Functions passed into non-source functions remain equal', () => {

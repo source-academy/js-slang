@@ -14,12 +14,13 @@ import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
 import { looseParse, parseWithComments } from './parser/utils'
-import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
+import { htmlRunner, resolvedErrorPromise, sourceFilesRunner, type SourceExecutionOptions } from './runner'
 import type { Error as ResultError, Finished, Result } from './runner/types'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import type {
-  Context, IOptions, ModuleContext,
+  Context,
+  ModuleContext,
   RecursivePartial,
   SVMProgram
 } from './types'
@@ -171,7 +172,7 @@ export async function getNames(
 export async function runInContext(
   code: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<SourceExecutionOptions> = {}
 ): Promise<Result> {
   const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
@@ -186,7 +187,7 @@ export async function runFilesInContext(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<SourceExecutionOptions> = {}
 ): Promise<Result> {
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
@@ -203,7 +204,7 @@ export async function runFilesInContext(
       context.errors.push(new ModuleNotFoundError(entrypointFilePath))
       return resolvedErrorPromise
     }
-    result = await htmlRunner(code, context, options)
+    result = await htmlRunner(code, context)
   } else {
     // FIXME: Clean up state management so that the `parseError` function is pure.
     //        This is not a huge priority, but it would be good not to make use of
@@ -281,4 +282,13 @@ export async function compileFiles(
   }
 }
 
-export { createContext, Context, ModuleContext, Result, setBreakpointAtLine, assemble }
+export { 
+  createContext,
+  type Context,
+  type ModuleContext,
+  type Result,
+  type SourceExecutionOptions,
+  setBreakpointAtLine,
+  assemble
+}
+export * from './langs'

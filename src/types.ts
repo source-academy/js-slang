@@ -12,27 +12,9 @@ import Heap from './cse-machine/heap'
 import type { Control, Stash, Transformers } from './cse-machine/types'
 import type { SourceError } from './errors/errorBase'
 import type { Chapter, LanguageOptions, Variant } from './langs'
-import type { ImportOptions, ModuleFunctions } from './modules/moduleTypes'
-import type { RunnerTypes } from './runner/sourceRunner'
-import type { RunnerOptions } from './runner/types'
+import type { ModuleFunctions } from './modules/moduleTypes'
 import type { TypeEnvironment } from './typeChecker/types'
 import type { Node } from './utils/ast/node'
-
-export interface IOptions extends RunnerOptions {
-  variant: Variant
-
-  executionMethod: RunnerTypes | 'auto'
-
-  importOptions: ImportOptions
-
-  /**
-   * Set this to true if source file information should be
-   * added when parsing programs into ASTs
-   *
-   * Set to null to let js-slang decide automatically
-   */
-  shouldAddFileName: boolean | null
-}
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -45,8 +27,6 @@ export interface CustomBuiltIns {
   /* Used for list visualisation. See #12 */
   visualiseList: (list: any, externalContext: any) => void
 }
-
-export type ExecutionMethod = 'native' | 'auto' | 'cse-machine'
 
 export interface NativeStorage {
   builtins: Map<string, Value>
@@ -114,11 +94,6 @@ export interface Context<T = any> {
    * Used for storing the native context and other values
    */
   nativeStorage: NativeStorage
-
-  /**
-   * Describes the language processor to be used for evaluation
-   */
-  executionMethod: ExecutionMethod
 
   /**
    * Describes the strategy / paradigm to be used for evaluation

@@ -128,7 +128,6 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   const context = mockContext(Chapter.SOURCE_4)
   await runInContext(code, context, {
     executionMethod: 'native',
-    throwInfiniteLoops: false
   })
   const timeTaken = Date.now() - start
   expect(timeTaken).toBeLessThan(timeout * 5)

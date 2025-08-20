@@ -1,8 +1,7 @@
 import type { Program } from 'estree'
 
-import preprocessFileImports from '..'
+import preprocessFileImports, { type PreprocessorOptions } from '..'
 import { parseError } from '../../..'
-import { type IOptions } from '../../../types'
 import { Chapter } from '../../../langs'
 import { parse } from '../../../parser/parser'
 import {
@@ -33,7 +32,7 @@ describe('preprocessFileImports', () => {
   async function expectSuccess(
     files: SourceFiles,
     entrypointFilePath: string,
-    options?: RecursivePartial<IOptions>
+    options?: RecursivePartial<PreprocessorOptions>
   ) {
     const preprocResult = await preprocessFileImports(
       p => Promise.resolve(files[p]),
