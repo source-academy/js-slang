@@ -16,7 +16,9 @@ import {
   Instr,
   InstrType,
   UnOpInstr,
-  WhileInstr
+  WhileInstr,
+  type DeclAssmtInstr,
+  type RegularAssmtInstr
 } from './types'
 import { Transformers } from './interpreter'
 
@@ -37,7 +39,7 @@ export const forInstr = (
   test: es.Expression,
   update: es.Expression,
   body: es.Statement,
-  srcNode: Node
+  srcNode: es.ForStatement
 ): ForInstr => ({
   instrType: InstrType.FOR,
   init,
@@ -47,20 +49,30 @@ export const forInstr = (
   srcNode
 })
 
-export const assmtInstr = (
-  symbol: string,
-  constant: boolean,
-  declaration: boolean,
-  srcNode: Node
-): AssmtInstr => ({
-  instrType: InstrType.ASSIGNMENT,
-  symbol,
-  constant,
-  declaration,
-  srcNode
-})
+export function assmtInstr(symbol: string, srcNode: es.VariableDeclaration): DeclAssmtInstr
+export function assmtInstr(symbol: string, srcNode: es.AssignmentExpression): RegularAssmtInstr
+export function assmtInstr(symbol: string, srcNode: es.VariableDeclaration | es.AssignmentExpression): AssmtInstr {
+  if (srcNode.type === 'VariableDeclaration') {
+    return {
+      instrType: InstrType.ASSIGNMENT,
+      symbol,
+      constant: srcNode.kind === 'const',
+      declaration: true,
+      srcNode
+    }
+  }
 
-export const unOpInstr = (symbol: es.UnaryOperator, srcNode: Node): UnOpInstr => ({
+
+  return {
+    instrType: InstrType.ASSIGNMENT,
+    symbol,
+    declaration: false,
+    srcNode
+  }
+}
+
+
+export const unOpInstr = (symbol: es.UnaryOperator, srcNode: es.UnaryExpression): UnOpInstr => ({
   instrType: InstrType.UNARY_OP,
   symbol,
   srcNode

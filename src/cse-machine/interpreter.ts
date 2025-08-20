@@ -16,7 +16,7 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value, type StatementSequence } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { filterImportDeclarations } from '../utils/ast/helpers'
+import { filterImportDeclarations, getSourceVariableDeclaration } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
@@ -45,7 +45,6 @@ import {
   InstrType,
   UnOpInstr,
   WhileInstr,
-  SpreadInstr
 } from './types'
 import {
   checkNumberOfArguments,
@@ -469,7 +468,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    */
 
   Program: function (
-    command: es.BlockStatement,
+    command: es.Program,
     context: Context,
     control: Control,
     stash: Stash,
@@ -479,9 +478,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // This can cause issues (for example, during execution of consecutive REPL programs)
     // This piece of code will reset the current environment to either a global one, a program one or a prelude one.
     while (
-      currentEnvironment(context).name != 'global' &&
-      currentEnvironment(context).name != 'programEnvironment' &&
-      currentEnvironment(context).name != 'prelude'
+      currentEnvironment(context).name !== 'global' &&
+      currentEnvironment(context).name !== 'programEnvironment' &&
+      currentEnvironment(context).name !== 'prelude'
     ) {
       popEnvironment(context)
     }
@@ -490,26 +489,26 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // - Create the program environment (if none exists yet), and
     // - Declare the functions and variables in the program environment.
     if (hasDeclarations(command) || hasImportDeclarations(command)) {
-      if (currentEnvironment(context).name != 'programEnvironment') {
+      if (currentEnvironment(context).name !== 'programEnvironment') {
         const programEnv = createProgramEnvironment(context, isPrelude)
         pushEnvironment(context, programEnv)
       }
       const environment = currentEnvironment(context)
-      evaluateImports(command as unknown as es.Program, context)
+      evaluateImports(command, context)
       declareFunctionsAndVariables(context, command, environment)
     }
 
-    if (command.body.length == 1) {
+    if (command.body.length === 1) {
       // If program only consists of one statement, unwrap outer block
       control.push(...handleSequence(command.body))
     } else {
       // Push block body as statement sequence
-      const seq: StatementSequence = ast.statementSequence(command.body, command.loc)
+      const seq = ast.statementSequence(command.body as es.Statement[], command.loc)
       control.push(seq)
     }
   },
 
-  BlockStatement: function (command: es.BlockStatement, context: Context, control: Control) {
+  BlockStatement: function (command: es.BlockStatement, context, control) {
     // To restore environment after block ends
     // If there is an env instruction on top of the stack, or if there are no declarations
     // we do not need to push another one
@@ -538,7 +537,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     pushEnvironment(context, environment)
 
     // Push block body as statement sequence
-    const seq: StatementSequence = ast.statementSequence(command.body, command.loc)
+    const seq = ast.statementSequence(command.body, command.loc)
     control.push(seq)
   },
 
@@ -578,7 +577,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Loop control variable present
     // Refer to Source §3 specifications https://docs.sourceacademy.org/source_3.pdf
     if (init.type === 'VariableDeclaration' && init.kind === 'let') {
-      const id = init.declarations[0].id as es.Identifier
+      const { id } = getSourceVariableDeclaration(init);
       control.push(
         ast.blockStatement(
           [
@@ -663,14 +662,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     context: Context,
     control: Control
   ) {
-    const declaration: es.VariableDeclarator = command.declarations[0]
-    const id = declaration.id as es.Identifier
-
-    // Parser enforces initialisation during variable declaration
-    const init = declaration.init!
-
+    const { init, id } = getSourceVariableDeclaration(command)
     control.push(instr.popInstr(command))
-    control.push(instr.assmtInstr(id.name, command.kind === 'const', true, command))
+    control.push(instr.assmtInstr(id.name, command))
     control.push(init)
   },
 
@@ -680,12 +674,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control: Control
   ) {
     // Function declaration desugared into constant declaration.
-    const lambdaExpression: es.ArrowFunctionExpression = ast.blockArrowFunction(
+    const lambdaExpression = ast.blockArrowFunction(
       command.params as es.Identifier[],
       command.body,
       command.loc
     )
-    const lambdaDeclaration: es.VariableDeclaration = ast.constantDeclaration(
+    const lambdaDeclaration = ast.constantDeclaration(
       command.id!.name,
       lambdaExpression,
       command.loc
@@ -736,7 +730,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       control.push(command.left.object)
     } else if (command.left.type === 'Identifier') {
       const id = command.left
-      control.push(instr.assmtInstr(id.name, false, false, command))
+      control.push(instr.assmtInstr(id.name, command))
       control.push(command.right)
     }
   },
@@ -904,10 +898,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         command.symbol,
         stash.peek(),
         command.constant,
-        command.srcNode as es.VariableDeclaration
+        command.srcNode
       )
     } else {
-      setVariable(context, command.symbol, stash.peek(), command.srcNode as es.AssignmentExpression)
+      setVariable(context, command.symbol, stash.peek(), command.srcNode)
     }
   },
 
@@ -920,14 +914,14 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const argument = stash.pop()
     const error = rttc.checkUnaryExpression(
       command.srcNode,
-      command.symbol as es.UnaryOperator,
+      command.symbol,
       argument,
       context.chapter
     )
     if (error) {
       handleRuntimeError(context, error)
     }
-    stash.push(evaluateUnaryExpression(command.symbol as es.UnaryOperator, argument))
+    stash.push(evaluateUnaryExpression(command.symbol, argument))
   },
 
   [InstrType.BINARY_OP]: function (
@@ -940,7 +934,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const left = stash.pop()
     const error = rttc.checkBinaryExpression(
       command.srcNode,
-      command.symbol as es.BinaryOperator,
+      command.symbol,
       context.chapter,
       left,
       right
@@ -948,7 +942,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (error) {
       handleRuntimeError(context, error)
     }
-    stash.push(evaluateBinaryExpression(command.symbol as es.BinaryOperator, left, right))
+    stash.push(evaluateBinaryExpression(command.symbol, left, right))
   },
 
   [InstrType.POP]: function (command: Instr, context: Context, control: Control, stash: Stash) {
@@ -1305,7 +1299,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   [InstrType.BREAK_MARKER]: function () {},
 
   [InstrType.SPREAD]: function (
-    command: SpreadInstr,
+    command: Instr,
     context: Context,
     control: Control,
     stash: Stash
