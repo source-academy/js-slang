@@ -7,9 +7,9 @@ import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import { RuntimeSourceError } from '../errors/errorBase'
 import * as errors from '../errors/errors'
 import { Chapter } from '../langs'
-import { type Environment, type Value } from '../types'
+import type { Environment, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { type Node, type StatementSequence } from '../utils/ast/node'
+import type { Node, StatementSequence } from '../utils/ast/node'
 import { isDeclaration, isIdentifier, isImportDeclaration } from '../utils/ast/typeGuards'
 import Closure from './closure'
 import { Continuation, isCallWithCurrentContinuation } from './continuations'
@@ -384,7 +384,7 @@ export function declareIdentifier(
   environment: Environment,
   constant: boolean = false
 ) {
-  if (environment.head.hasOwnProperty(name)) {
+  if (Object.hasOwnProperty.call(environment.head, name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
 
     return handleRuntimeError(
@@ -474,7 +474,7 @@ export function defineVariable(
 export const getVariable = (context: Context, name: string, node: es.Identifier) => {
   let environment: Environment | null = currentEnvironment(context)
   while (environment) {
-    if (environment.head.hasOwnProperty(name)) {
+    if (Object.hasOwnProperty.call(environment.head, name)) {
       if (
         environment.head[name] === UNASSIGNED_CONST ||
         environment.head[name] === UNASSIGNED_LET
@@ -498,7 +498,7 @@ export const setVariable = (
 ) => {
   let environment: Environment | null = currentEnvironment(context)
   while (environment) {
-    if (environment.head.hasOwnProperty(name)) {
+    if (Object.hasOwnProperty.call(environment.head, name)) {
       if (
         environment.head[name] === UNASSIGNED_CONST ||
         environment.head[name] === UNASSIGNED_LET

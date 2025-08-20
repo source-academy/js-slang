@@ -35,7 +35,7 @@ export const transformBabelASTToESTreeCompliantAST = (program: es.Program): void
  */
 const renameFilenameAttributeToSource = (node: Record<string, any>): void => {
   // Rename all 'filename' attributes to 'source'.
-  if (node.hasOwnProperty('filename')) {
+  if (Object.hasOwnProperty.call(node, 'filename')) {
     node.source = node.filename
     delete node.filename
   }

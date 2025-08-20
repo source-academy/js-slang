@@ -65,7 +65,7 @@ export function is_NaN(x: Value) {
 }
 
 export function has_own_property(obj: Value, p: Value) {
-  return obj.hasOwnProperty(p)
+  return Object.hasOwnProperty.call(obj, p)
 }
 
 export function is_array(a: Value) {

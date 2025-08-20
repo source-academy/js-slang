@@ -1,8 +1,8 @@
 import type { ImportSpecifier } from 'estree'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
+import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
-import { RuleError } from '../../errors'
 
 export class NoImportSpecifierWithDefaultError extends RuleError<ImportSpecifier> {
   public explain() {

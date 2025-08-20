@@ -1,9 +1,9 @@
-import { mockContext } from '../../utils/testing/mocks'
-import { parse } from '../../parser/parser'
 import { Chapter } from '../../langs'
+import { parse } from '../../parser/parser'
 import * as ast from '../../utils/ast/astCreator'
-import { sanitizeAST } from '../../utils/testing/sanitizer'
 import { stripIndent } from '../../utils/formatters'
+import { mockContext } from '../../utils/testing/mocks'
+import { sanitizeAST } from '../../utils/testing/sanitizer'
 import { transformImportDeclarations, transpile } from '../transpiler'
 
 /*  DO NOT HAVE 'native[<digit>]' AS A SUBSTRING IN CODE STRINGS ANYWHERE IN THIS FILE!

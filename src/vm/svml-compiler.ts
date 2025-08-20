@@ -5,15 +5,14 @@ import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { parse } from '../parser/parser'
 import {
   CONSTANT_PRIMITIVES,
-  generatePrimitiveFunctionCode,
   INTERNAL_FUNCTIONS,
   PRIMITIVE_FUNCTION_NAMES,
+  generatePrimitiveFunctionCode,
   vmPrelude
 } from '../stdlib/vm.prelude'
 import type { Context } from '../types'
-import type { ContiguousArrayElements } from '../utils/ast/node'
-import type { Node } from '../utils/ast/node'
 import * as create from '../utils/ast/astCreator'
+import type { ContiguousArrayElements ,Node } from '../utils/ast/node'
 import { recursive, simple } from '../utils/walkers'
 import OpCodes from './opcodes'
 

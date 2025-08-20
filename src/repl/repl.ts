@@ -8,7 +8,7 @@ import { Chapter, Variant, isValidChapterVariant } from '../langs'
 import { setModulesStaticURL } from '../modules/loader'
 import type { FileGetter } from '../modules/moduleTypes'
 import { runCodeInSource, sourceFilesRunner } from '../runner'
-import { type RecursivePartial } from '../types'
+import type { RecursivePartial } from '../types'
 import { objectValues } from '../utils/misc'
 import {
   chapterParser,

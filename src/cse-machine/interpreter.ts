@@ -239,6 +239,7 @@ function runCSEMachine(
   // Done intentionally as the state is not needed
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   for (const _ of eceState) {
+    // empty
   }
 
   return stash.peek()

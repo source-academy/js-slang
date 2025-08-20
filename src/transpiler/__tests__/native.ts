@@ -1,9 +1,9 @@
 import { runInContext } from '../../index'
-import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../langs'
 import { Finished } from '../../runner/types'
 import { stripIndent } from '../../utils/formatters'
 import { expectNativeToTimeoutAndError } from '../../utils/testing'
+import { mockContext } from '../../utils/testing/mocks'
 
 test('Proper stringify-ing of arguments during potentially infinite iterative function calls', async () => {
   const code = stripIndent`

@@ -43,7 +43,7 @@ export function hybridizeNamed(name: string, value: any): Hybrid {
 }
 
 export function isHybrid(value: any): value is Hybrid {
-  return typeof value === 'object' && value !== null && value.hasOwnProperty('symbolic')
+  return typeof value === 'object' && value !== null && Object.hasOwnProperty.call(value, 'symbolic')
 }
 
 function isConcreteValue(value: any) {

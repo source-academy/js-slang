@@ -2,11 +2,11 @@ import { generate } from 'astring'
 import type es from 'estree'
 
 import { transformImportDeclarations } from '../transpiler/transpiler'
-import type { Node } from '../utils/ast/node'
 import * as create from '../utils/ast/astCreator'
 import { getIdsFromDeclaration } from '../utils/ast/helpers'
+import type { Node } from '../utils/ast/node'
 import { objectValues } from '../utils/misc'
-import { recursive, simple, WalkerCallback } from '../utils/walkers'
+import { WalkerCallback, recursive, simple } from '../utils/walkers'
 // transforms AST of program
 
 const globalIds = {

@@ -1,14 +1,14 @@
 import { DeclarationKind } from '..'
 import { getNames } from '../..'
-import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../langs'
 
+import { ModuleConnectionError } from '../../modules/errors'
 import {
   memoizedGetModuleDocsAsync,
   memoizedGetModuleManifestAsync
 } from '../../modules/loader/loaders'
 import { asMockedFunc } from '../../utils/testing/misc'
-import { ModuleConnectionError } from '../../modules/errors'
+import { mockContext } from '../../utils/testing/mocks'
 
 jest.mock('../../modules/loader/loaders')
 

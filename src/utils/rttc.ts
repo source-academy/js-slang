@@ -1,8 +1,8 @@
 import type es from 'estree'
 
-import { RuntimeSourceError, ErrorSeverity, ErrorType } from '../errors/errorBase'
-import { Value } from '../types'
+import { ErrorSeverity, ErrorType, RuntimeSourceError } from '../errors/errorBase'
 import { Chapter } from '../langs'
+import { Value } from '../types'
 import type { Node } from './ast/node'
 
 const LHS = ' on left hand side of operation'

@@ -1,5 +1,5 @@
 import { Chapter } from '../../langs'
-import { getChapterName, PromiseTimeoutError, timeoutPromise } from '../misc'
+import { PromiseTimeoutError, getChapterName, timeoutPromise } from '../misc'
 
 describe('test timeoutPromise', () => {
   const timedResolvedPromise = (duration: number) =>

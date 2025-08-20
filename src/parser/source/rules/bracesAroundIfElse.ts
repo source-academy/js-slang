@@ -1,8 +1,8 @@
 import { generate } from 'astring'
 import type { IfStatement } from 'estree'
-import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class BracesAroundIfElseError extends RuleError<IfStatement> {
   constructor(

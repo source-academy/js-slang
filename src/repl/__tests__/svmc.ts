@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises'
 import { asMockedFunc } from '../../utils/testing/misc'
-import { compileToChoices, getSVMCCommand } from '../svmc'
 import * as vm from '../../vm/svml-compiler'
+import { compileToChoices, getSVMCCommand } from '../svmc'
 import { expectWritten, getCommandRunner } from './utils'
 
 jest.mock('fs/promises', () => ({

@@ -1,19 +1,18 @@
 import { parseError, runInContext } from '../..'
+import type { SourceError } from '../../errors/errorBase'
 import { UndefinedVariable } from '../../errors/errors'
-import { mockContext } from '../../utils/testing/mocks'
+import { Chapter, Variant  } from '../../langs'
 import { FatalSyntaxError } from '../../parser/errors'
-import { Variant } from '../../langs'
-import { Chapter } from '../../langs'
-import { type SourceError } from '../../errors/errorBase'
 import { locationDummyNode } from '../../utils/ast/astCreator'
-import { htmlErrorHandlingScript } from '../htmlRunner'
 import {
-  expectParsedError,
   expectFinishedResult,
+  expectParsedError,
   testFailure,
   testSuccess
 } from '../../utils/testing'
 import { assertFinishedResultValue, testWithChapters } from '../../utils/testing/misc'
+import { mockContext } from '../../utils/testing/mocks'
+import { htmlErrorHandlingScript } from '../htmlRunner'
 
 interface CodeSnippetTestCase {
   name: string

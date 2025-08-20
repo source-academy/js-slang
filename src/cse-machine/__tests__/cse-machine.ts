@@ -1,5 +1,4 @@
-import { Variant } from '../../langs'
-import { Chapter } from '../../langs'
+import { Chapter, Variant  } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResult } from '../../utils/testing'
 

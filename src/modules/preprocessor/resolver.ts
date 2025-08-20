@@ -1,7 +1,7 @@
 import { posix as posixPath } from 'path'
 import { memoizedGetModuleManifestAsync } from '../loader'
-import { isSourceModule } from '../utils'
 import type { FileGetter } from '../moduleTypes'
+import { isSourceModule } from '../utils'
 
 /**
  * Options for resolving modules given a path

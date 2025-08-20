@@ -1,8 +1,7 @@
 import { parseError } from '../..'
-import { mockContext } from '../../utils/testing/mocks'
+import { Chapter, Variant  } from '../../langs'
 import { parse } from '../../parser/parser'
-import { Variant } from '../../langs'
-import { Chapter } from '../../langs'
+import { mockContext } from '../../utils/testing/mocks'
 
 let context = mockContext(Chapter.SOURCE_4, Variant.TYPED)
 

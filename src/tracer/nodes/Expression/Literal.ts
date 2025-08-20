@@ -11,8 +11,8 @@
  * - oneStep(): Throws an error as one-step evaluation is not implemented.
  */
 import { Comment, SimpleLiteral, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../../interface'
 import { StepperExpression, StepperPattern } from '..'
+import { StepperBaseNode } from '../../interface'
 
 export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   type: 'Literal'

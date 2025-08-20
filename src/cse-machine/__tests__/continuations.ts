@@ -1,8 +1,6 @@
 import { mockContext } from '../../utils/testing/mocks'
 import { Call_cc, Continuation, isCallWithCurrentContinuation } from '../continuations'
-import { Control } from '../types'
-import { Stash } from '../types'
-import { Transformers } from '../types'
+import { Control , Stash , Transformers } from '../types'
 
 test('call/cc is a singleton', () => {
   expect(Call_cc.get()).toBe(Call_cc.get())

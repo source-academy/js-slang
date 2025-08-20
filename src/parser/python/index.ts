@@ -1,8 +1,8 @@
 import { Program } from 'estree'
 
+import { Chapter } from '../../langs'
 import { parsePythonToEstreeAst } from '../../py-slang/src'
 import { Context } from '../../types'
-import { Chapter } from '../../langs'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'

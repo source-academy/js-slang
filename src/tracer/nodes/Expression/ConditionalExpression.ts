@@ -1,8 +1,8 @@
-import { ConditionalExpression, Comment, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../../interface'
-import { redex } from '../..'
+import { Comment, ConditionalExpression, SourceLocation } from 'estree'
 import { StepperExpression, StepperPattern } from '..'
+import { redex } from '../..'
 import { convert } from '../../generator'
+import { StepperBaseNode } from '../../interface'
 
 export class StepperConditionalExpression implements ConditionalExpression, StepperBaseNode {
   type: 'ConditionalExpression'

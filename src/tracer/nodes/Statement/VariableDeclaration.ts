@@ -1,8 +1,8 @@
 import { Comment, SourceLocation, VariableDeclaration, VariableDeclarator } from 'estree'
-import { StepperBaseNode } from '../../interface'
-import { convert } from '../../generator'
 import { StepperExpression, StepperPattern, undefinedNode } from '..'
 import { redex } from '../..'
+import { convert } from '../../generator'
+import { StepperBaseNode } from '../../interface'
 
 export class StepperVariableDeclarator implements VariableDeclarator, StepperBaseNode {
   type: 'VariableDeclarator'

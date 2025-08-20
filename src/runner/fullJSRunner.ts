@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { generate } from 'astring'
 import type es from 'estree'
 import { RawSourceMap } from 'source-map'
@@ -16,8 +16,8 @@ import type { Context, NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
-import { resolvedErrorPromise } from './utils'
 import type { Runner } from './types'
+import { resolvedErrorPromise } from './utils'
 
 function fullJSEval(code: string, nativeStorage: NativeStorage): any {
   if (nativeStorage.evaller) {

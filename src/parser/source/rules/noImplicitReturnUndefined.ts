@@ -1,7 +1,7 @@
 import type { ReturnStatement } from 'estree'
-import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class NoImplicitReturnUndefinedError extends RuleError<ReturnStatement> {
   public explain() {

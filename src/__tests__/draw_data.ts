@@ -1,5 +1,5 @@
 import { Chapter } from '../langs'
-import { expectParsedError, expectFinishedResult } from '../utils/testing'
+import { expectFinishedResult, expectParsedError } from '../utils/testing'
 
 test('draw_data returns first argument if more than one argument', () => {
   return expectFinishedResult(`draw_data(1, 2);`, {

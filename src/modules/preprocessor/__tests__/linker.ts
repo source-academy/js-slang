@@ -1,13 +1,13 @@
-import { mockContext } from '../../../utils/testing/mocks'
-import { MissingSemicolonError } from '../../../parser/errors'
-import { type Context } from '../../../types'
 import { Chapter } from '../../../langs'
+import { MissingSemicolonError } from '../../../parser/errors'
+import * as parser from '../../../parser/parser'
+import type { Context } from '../../../types'
+import { asMockedFunc, assertNodeType, assertTrue } from '../../../utils/testing/misc'
+import { mockContext } from '../../../utils/testing/mocks'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
 
-import * as parser from '../../../parser/parser'
-import { asMockedFunc, assertNodeType, assertTrue } from '../../../utils/testing/misc'
 
 jest.spyOn(parser, 'parse')
 

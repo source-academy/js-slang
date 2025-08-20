@@ -1,8 +1,8 @@
-import { type NullableMappedPosition, type RawSourceMap, SourceMapConsumer } from 'source-map'
+import { SourceMapConsumer, type NullableMappedPosition, type RawSourceMap } from 'source-map'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import { ConstAssignment, ExceptionError, UndefinedVariable } from '../errors/errors'
 import type { SourceError } from '../errors/errorBase'
+import { ConstAssignment, ExceptionError, UndefinedVariable } from '../errors/errors'
 import { locationDummyNode } from '../utils/ast/astCreator'
 
 enum BrowserType {

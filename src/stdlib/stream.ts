@@ -1,7 +1,7 @@
 // we need this file for now, because the lazy variants
 // of Source cannot handle ... yet
 
-import { head, is_null, List, list, Pair, pair, tail } from './list'
+import { List, Pair, head, is_null, list, pair, tail } from './list'
 
 type Stream = null | Pair<any, () => Stream>
 

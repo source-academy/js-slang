@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Source Theme for Ace Editor
  * (Modified from cobalt theme in default brace package)

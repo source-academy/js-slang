@@ -1,25 +1,22 @@
 import * as es from 'estree'
-import * as errors from '../errors/errors'
-import { List } from '../stdlib/list'
-import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
-import { is_number, SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import { Context } from '..'
 import { encode } from '../alt-langs/scheme/scm-slang/src'
-import { Control } from './types'
-import { Stash } from './types'
-import { currentTransformers, getVariable, handleRuntimeError } from './utils'
-import { macro_transform, match } from './patterns'
-import { Transformer } from './types'
+import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { SchemeNumber, is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
+import * as errors from '../errors/errors'
+import { List } from '../stdlib/list'
+import { popInstr } from './instrCreator'
 import {
   arrayToImproperList,
   arrayToList,
   flattenImproperList,
-  isImproperList,
   flattenList,
+  isImproperList,
   isList
 } from './macro-utils'
-import { ControlItem } from './types'
-import { popInstr } from './instrCreator'
+import { macro_transform, match } from './patterns'
+import { Control , ControlItem, Stash , Transformer  } from './types'
+import { currentTransformers, getVariable, handleRuntimeError } from './utils'
 
 // this needs to be better but for now it's fine
 export type SchemeControlItems = List | _Symbol | SchemeNumber | boolean | string
@@ -140,7 +137,7 @@ export function schemeEval(
               control.push(transformedMacro as ControlItem)
               return
             }
-          } catch (e) {
+          } catch {
             return handleRuntimeError(
               context,
               new errors.ExceptionError(
@@ -169,7 +166,7 @@ export function schemeEval(
       // however, for more advanced stuff like quotes or definitions,
       // the logic will be handled here.
       switch (parsedList[0].sym) {
-        case 'lambda':
+        case 'lambda': {
           if (parsedList.length < 3) {
             return handleRuntimeError(
               context,
@@ -258,8 +255,8 @@ export function schemeEval(
 
           control.push(lambda as es.ArrowFunctionExpression)
           return
-
-        case 'define':
+        }
+        case 'define': {
           if (parsedList.length < 3) {
             return handleRuntimeError(
               context,
@@ -331,7 +328,8 @@ export function schemeEval(
 
           control.push(definition as es.VariableDeclaration)
           return
-        case 'set!':
+        }
+        case 'set!': {
           if (parsedList.length !== 3) {
             return handleRuntimeError(
               context,
@@ -366,7 +364,8 @@ export function schemeEval(
 
           control.push(assignment as es.AssignmentExpression)
           return
-        case 'if':
+        }
+        case 'if': {
           if (parsedList.length < 3) {
             return handleRuntimeError(
               context,
@@ -397,7 +396,8 @@ export function schemeEval(
 
           control.push(conditional as es.ConditionalExpression)
           return
-        case 'begin':
+        }
+        case 'begin': {
           // begin is a sequence of expressions
           // that are evaluated in order.
           // push the expressions to the control in reverse
@@ -415,7 +415,8 @@ export function schemeEval(
             control.push(parsedList[i])
           }
           return
-        case 'quote':
+        }
+        case 'quote': {
           // quote is a special form that returns the expression
           // as is, without evaluating it.
           // we can just push the expression to the stash.
@@ -427,8 +428,9 @@ export function schemeEval(
           }
           stash.push(parsedList[1])
           return
+        }
         // case 'quasiquote': quasiquote is implemented as a macro.
-        case 'define-syntax':
+        case 'define-syntax': {
           if (parsedList.length !== 3) {
             return handleRuntimeError(
               context,
@@ -521,6 +523,7 @@ export function schemeEval(
           // for consistency with scheme expecting undefined return values, push undefined to the stash.
           stash.push(undefined)
           return
+        }
         case 'syntax-rules':
           // syntax-rules is a special form that is used to define
           // a set of transformers.

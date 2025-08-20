@@ -1,20 +1,20 @@
 import type { Program } from 'estree'
 
-import { parseError, type IOptions } from '../../..'
-import { mockContext } from '../../../utils/testing/mocks'
-import { type RecursivePartial } from '../../../types'
-import { Chapter } from '../../../langs'
-import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
 import preprocessFileImports from '..'
-import { sanitizeAST } from '../../../utils/testing/sanitizer'
+import { parseError, type IOptions } from '../../..'
+import { Chapter } from '../../../langs'
 import { parse } from '../../../parser/parser'
 import {
   accessExportFunctionName,
   defaultExportLookupName
 } from '../../../stdlib/localImport.prelude'
-import type { SourceFiles } from '../../moduleTypes'
-import { UndefinedImportError } from '../../errors'
+import type { RecursivePartial } from '../../../types'
 import { asMockedFunc } from '../../../utils/testing/misc'
+import { mockContext } from '../../../utils/testing/mocks'
+import { sanitizeAST } from '../../../utils/testing/sanitizer'
+import { UndefinedImportError } from '../../errors'
+import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
+import type { SourceFiles } from '../../moduleTypes'
 
 jest.mock('../../loader/loaders')
 

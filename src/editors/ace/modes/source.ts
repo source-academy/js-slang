@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Variant } from '../../../langs'
 import { SourceDocumentation } from '../docTooltip'
 

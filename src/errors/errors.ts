@@ -7,7 +7,7 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { Value } from '../types'
 import { Node } from '../utils/ast/node'
 import { stringify } from '../utils/stringify'
-import { SourceError, ErrorSeverity, ErrorType, RuntimeSourceError } from './errorBase'
+import { ErrorSeverity, ErrorType, RuntimeSourceError, SourceError } from './errorBase'
 
 export class InterruptedError extends RuntimeSourceError {
   constructor(node: Node) {

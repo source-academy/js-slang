@@ -2,7 +2,7 @@ import { Option } from '@commander-js/extra-typings'
 import { parseError, type Context } from '..'
 import Closure from '../cse-machine/closure'
 import { Chapter, Variant, type LanguageOptions } from '../langs'
-import { type Result } from '../runner/types'
+import type { Result } from '../runner/types'
 import { objectKeys } from '../utils/misc'
 import { stringify } from '../utils/stringify'
 

@@ -10,13 +10,11 @@ import {
   uniqueId
 } from '../cse-machine/utils'
 import { Context, Environment, Value } from '../types'
-import { StatementSequence } from '../utils/ast/node'
 import * as ast from '../utils/ast/astCreator'
-import { generateCSEMachineStateStream } from './interpreter'
-import { Control } from './types'
-import { Stash } from './types'
-import { Transformers } from './types'
+import { StatementSequence } from '../utils/ast/node'
 import { envInstr } from './instrCreator'
+import { generateCSEMachineStateStream } from './interpreter'
+import { Control , Stash , Transformers } from './types'
 
 const closureToJS = (value: Closure, context: Context) => {
   function DummyClass(this: Closure) {
@@ -56,8 +54,8 @@ const closureToJS = (value: Closure, context: Context) => {
       -1
     )
     // Run the new CSE Machine fully to obtain the result in the stash
-    for (const _ of gen) {
-    }
+    for (const _ of gen) { /* empty */ }
+
     // Also don't forget to update object count in original context
     context.runtime.objectCount = newContext.runtime.objectCount
     return newContext.runtime.stash.peek()

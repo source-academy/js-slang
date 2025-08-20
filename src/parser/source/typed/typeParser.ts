@@ -1,6 +1,6 @@
 // Code taken from https://github.com/patternfly/patternfly-org/blob/main/packages/ast-helpers/acorn-typescript.js
 // Some cases such as arrow function expressions are not properly handled
-import { getLineInfo, Parser, tokTypes } from 'acorn'
+import { Parser, getLineInfo, tokTypes } from 'acorn'
 
 // Taken from https://github.com/acornjs/acorn/blob/6770c2ecbf8e01470f6c9a2f59c786f014045baf/acorn/src/whitespace.js#L4C1-L5C1
 const lineBreak = /\r\n?|\n|\u2028|\u2029/
@@ -409,7 +409,7 @@ const tsPlugin = (BaseParser: any) => {
         case tokTypes._new:
           node = this.parseTSConstructorType()
           break
-        case tokTypes.parenL:
+        case tokTypes.parenL: {
           const recover = this.tsPreparePreview()
           const isStartOfTSFunctionType = this._isStartOfTSFunctionType()
           recover()
@@ -417,6 +417,7 @@ const tsPlugin = (BaseParser: any) => {
             ? this.parseTSFunctionType()
             : this.parseTSParenthesizedType()
           break
+        }
         case tokTypes.relational:
           node = this._isStartOfTypeParameters() ? this.parseTSFunctionType() : this.unexpected()
           break
@@ -493,7 +494,8 @@ const tsPlugin = (BaseParser: any) => {
           this.expect(tokTypes.comma)
         }
         switch (this.type) {
-          case tokTypes.name:
+          case tokTypes.name: {
+
             const elem = this.parseTSTypeReference()
             if (this.type === tokTypes.question) {
               elementTypes.push(this.parseTSOptionalType(elem))
@@ -501,6 +503,7 @@ const tsPlugin = (BaseParser: any) => {
               elementTypes.push(elem)
             }
             break
+          }
           case tokTypes.ellipsis:
             elementTypes.push(this.parseTSRestType())
             break
@@ -883,7 +886,8 @@ const tsPlugin = (BaseParser: any) => {
       const list = []
       while (!this.eat(tokTypes.braceR)) {
         switch (this.type) {
-          case tokTypes.name:
+          case tokTypes.name: {
+
             const key = this.parseIdent()
             switch (this.type) {
               case tokTypes.parenL:
@@ -905,7 +909,9 @@ const tsPlugin = (BaseParser: any) => {
                 this.unexpected()
             }
             break
-          case tokTypes.bracketL:
+          }
+          case tokTypes.bracketL: {
+
             const recover = this.tsPreparePreview()
             this.nextToken()
             if (this.type === tokTypes.name) {
@@ -933,6 +939,7 @@ const tsPlugin = (BaseParser: any) => {
               list.push(this.parseTSPropertySignature(null, true))
             }
             break
+          }
           case tokTypes._new:
             list.push(this.parseTSConstructSignatureDeclaration())
             break

@@ -2,17 +2,16 @@ import { Program } from 'estree'
 
 import { default as createContext } from '../createContext'
 import { getAllOccurrencesInScope } from '../index'
+import { Chapter } from '../langs'
 import { looseParse } from '../parser/utils'
-import {
+import { BlockFrame,
   getAllIdentifiers,
   getBlockFramesInCurrentBlockFrame,
   getBlockFromLoc,
   getNodeLocsInCurrentBlockFrame,
   getScopeHelper,
   scopeVariables
-} from '../scope-refactoring'
-import { Chapter } from '../langs'
-import { BlockFrame } from '../scope-refactoring'
+ } from '../scope-refactoring'
 /* tslint:disable:max-classes-per-file */
 
 class Target {

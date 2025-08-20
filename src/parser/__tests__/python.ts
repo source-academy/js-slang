@@ -1,6 +1,6 @@
 import { parseError } from '../..'
-import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../langs'
+import { mockContext } from '../../utils/testing/mocks'
 import { FatalSyntaxError } from '../errors'
 import { parse } from '../parser'
 import { PythonParser } from '../python'

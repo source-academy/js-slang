@@ -1,9 +1,9 @@
 import { BinaryOperator, UnaryOperator } from 'estree'
 
-import { mockClosure, mockRuntimeContext } from '../testing/mocks'
-import { Value } from '../../types'
 import { Chapter } from '../../langs'
+import { Value } from '../../types'
 import * as rttc from '../rttc'
+import { mockClosure, mockRuntimeContext } from '../testing/mocks'
 
 const num = 0
 const bool = true

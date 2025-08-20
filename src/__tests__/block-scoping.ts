@@ -1,6 +1,6 @@
 import { Chapter } from '../langs'
 import { stripIndent } from '../utils/formatters'
-import { expectParsedError, expectFinishedResult } from '../utils/testing'
+import { expectFinishedResult, expectParsedError } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {

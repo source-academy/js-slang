@@ -1,5 +1,5 @@
-import { match } from '../patterns'
 import { _Symbol } from '../../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { match } from '../patterns'
 
 function makeList(...args: any[]) {
   return args.reduceRight((acc, x) => {

@@ -3,13 +3,11 @@ import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import * as tsEs from '../typeChecker/tsESTree'
-import { SArray } from '../typeChecker/types'
-import { Type } from '../typeChecker/types'
-import { NodeWithInferredType } from '../typeChecker/types'
+import { NodeWithInferredType, SArray , Type  } from '../typeChecker/types'
 import { Node } from '../utils/ast/node'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
-import { SourceError, ErrorSeverity, ErrorType } from './errorBase'
+import { ErrorSeverity, ErrorType, SourceError } from './errorBase'
 
 // tslint:disable:max-classes-per-file
 

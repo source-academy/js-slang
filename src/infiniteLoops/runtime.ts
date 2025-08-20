@@ -1,11 +1,10 @@
 import type es from 'estree'
 
 import createContext from '../createContext'
+import { Chapter, Variant  } from '../langs'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
-import { type NativeStorage } from '../types'
-import { Variant } from '../langs'
-import { Chapter } from '../langs'
+import type { NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { checkForInfiniteLoop } from './detect'
 import { InfiniteLoopError } from './errors'

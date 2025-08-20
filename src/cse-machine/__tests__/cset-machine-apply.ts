@@ -1,6 +1,5 @@
-import { Variant } from '../../langs'
-import { Chapter } from '../../langs'
-import { expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { Chapter, Variant  } from '../../langs'
+import { expectFinishedResult, expectParsedError } from '../../utils/testing'
 
 // apply tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }

@@ -1,6 +1,6 @@
 import * as repl from 'repl'
-import type { SourceFiles } from '../../modules/moduleTypes'
 import { Chapter } from '../../langs'
+import type { SourceFiles } from '../../modules/moduleTypes'
 import { asMockedFunc } from '../../utils/testing/misc'
 import { getReplCommand } from '../repl'
 import { chapterParser } from '../utils'

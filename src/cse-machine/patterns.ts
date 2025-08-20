@@ -3,17 +3,17 @@
 // it consists of a set of literals used as additional syntax,
 // a pattern (for a list to match against)
 // and a final template (for the list to be transformed into).
-import { List, Pair } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { atomic_equals, is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
+import { List, Pair } from '../stdlib/list'
 import {
   arrayToImproperList,
   arrayToList,
   flattenList,
   improperListLength,
   isImproperList,
-  isPair,
-  isList
+  isList,
+  isPair
 } from './macro-utils'
 import type { Transformer } from './types'
 

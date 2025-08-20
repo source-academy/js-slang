@@ -10,6 +10,7 @@ import type { ModuleDocsEntry } from '../modules/moduleTypes'
 import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
 import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
+import { Node } from '../utils/ast/node'
 import { isDeclaration, isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
 
 export enum DeclarationKind {
@@ -20,7 +21,6 @@ export enum DeclarationKind {
   KIND_CONST = 'const',
   KIND_KEYWORD = 'keyword'
 }
-import { Node } from '../utils/ast/node'
 
 export interface NameDeclaration {
   name: string
@@ -242,12 +242,13 @@ function getNodeChildren(node: Node): es.Node[] {
       return [node.init, node.test, node.update, node.body].filter(isNotNullOrUndefined)
     case 'ExpressionStatement':
       return [node.expression]
-    case 'IfStatement':
+    case 'IfStatement': {
       const children = [node.test, node.consequent]
       if (isNotNullOrUndefined(node.alternate)) {
         children.push(node.alternate)
       }
       return children
+    }
     case 'ReturnStatement':
       return node.argument ? [node.argument] : []
     case 'FunctionDeclaration':
@@ -347,7 +348,7 @@ function docsToHtml(
  */
 async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<NameDeclaration[]> {
   switch (node.type) {
-    case 'ImportDeclaration':
+    case 'ImportDeclaration': {
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
       const moduleName = getModuleDeclarationSource(node)
 
@@ -422,7 +423,7 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
             }
           })
         )
-      } catch (err) {
+      } catch {
         // Failed to load docs for whatever reason
         return specs.map(spec => ({
           name: spec.local.name,
@@ -430,7 +431,9 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
           docHTML: `Unable to retrieve documentation for '${moduleName}'`
         }))
       }
-    case 'VariableDeclaration':
+    }
+    case 'VariableDeclaration': {
+
       const declarations: NameDeclaration[] = []
       for (const decl of node.declarations) {
         const id = decl.id
@@ -451,6 +454,7 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
         }
       }
       return declarations
+    }
     case 'FunctionDeclaration':
       return node.id && !isDummyName(node.id.name)
         ? [{ name: node.id.name, meta: DeclarationKind.KIND_FUNCTION }]

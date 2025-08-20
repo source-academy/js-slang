@@ -1,12 +1,12 @@
 import { BlockStatement, Comment, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../../interface'
 import { StepperExpression, StepperPattern, undefinedNode } from '..'
-import { convert } from '../../generator'
 import { redex } from '../..'
+import { convert } from '../../generator'
+import { StepperBaseNode } from '../../interface'
 import { assignMuTerms, getFreshName } from '../../utils'
-import { StepperVariableDeclaration } from './VariableDeclaration'
 import { StepperFunctionDeclaration } from './FunctionDeclaration'
 import { StepperReturnStatement } from './ReturnStatement'
+import { StepperVariableDeclaration } from './VariableDeclaration'
 import { StepperStatement } from '.'
 
 export class StepperBlockStatement implements BlockStatement, StepperBaseNode {

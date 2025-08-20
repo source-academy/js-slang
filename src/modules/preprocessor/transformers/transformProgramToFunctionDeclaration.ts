@@ -4,7 +4,7 @@ import type es from 'estree'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
 import assert from '../../../utils/assert'
 import * as create from '../../../utils/ast/astCreator'
-import { getModuleDeclarationSource } from '../../../utils/ast/helpers'
+import { getModuleDeclarationSource, getSourceVariableDeclaration } from '../../../utils/ast/helpers'
 import {
   isDeclaration,
   isDirective,
@@ -92,14 +92,10 @@ const getIdentifier = (node: es.Declaration): es.Identifier | null => {
         'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
       )
       return node.id
-    case 'VariableDeclaration':
-      const id = node.declarations[0].id
-      // In Source, variable names are Identifiers.
-      assert(
-        id.type === 'Identifier',
-        `Expected variable name to be an Identifier, but was ${id.type} instead.`
-      )
+    case 'VariableDeclaration': {
+      const { id } = getSourceVariableDeclaration(node)
       return id
+    }
     case 'ClassDeclaration':
       throw new Error('Exporting of class is not supported.')
   }

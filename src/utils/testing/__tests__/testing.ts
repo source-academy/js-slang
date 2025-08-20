@@ -5,11 +5,10 @@ import {
   testFailure,
   testSuccess
 } from '..'
-import { Variant } from '../../../langs'
-import { Chapter } from '../../../langs'
+import * as main from '../../..'
+import { Chapter, Variant  } from '../../../langs'
 import { asMockedFunc, processTestOptions } from '../misc'
 import type { TestOptions } from '../types'
-import * as main from '../../..'
 
 jest.spyOn(main, 'runInContext')
 

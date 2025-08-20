@@ -3,10 +3,10 @@ import { ArrowFunctionExpression, ExpressionStatement } from 'estree'
 import { StepperExpression } from '../nodes'
 import { StepperArrayExpression } from '../nodes/Expression/ArrayExpression'
 import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
+import { StepperBinaryExpression } from '../nodes/Expression/BinaryExpression'
 import { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication'
 import { StepperIdentifier } from '../nodes/Expression/Identifier'
 import { StepperLiteral } from '../nodes/Expression/Literal'
-import { StepperBinaryExpression } from '../nodes/Expression/BinaryExpression'
 
 export const listBuiltinFunctions = {
   pair: {

@@ -1,8 +1,7 @@
-import { mockContext } from '../../utils/testing/mocks'
-import { Variant } from '../../langs'
-import { Chapter } from '../../langs'
-import { parse } from '../../parser/parser'
 import { parseError } from '../../index'
+import { Chapter, Variant  } from '../../langs'
+import { parse } from '../../parser/parser'
+import { mockContext } from '../../utils/testing/mocks'
 
 function getContext() {
   const context = mockContext(Chapter.SOURCE_4, Variant.TYPED)

@@ -1,8 +1,8 @@
-import { mockContext } from '../../utils/testing/mocks'
-import { type Context, type Environment } from '../../types'
 import { Chapter } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
 import { runCodeInSource } from '../../runner'
+import type { Context, Environment } from '../../types'
+import { stripIndent } from '../../utils/formatters'
+import { mockContext } from '../../utils/testing/mocks'
 import { createProgramEnvironment } from '../utils'
 
 const getContextFrom = async (code: string, envSteps?: number) => {

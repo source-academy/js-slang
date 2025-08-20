@@ -1,8 +1,8 @@
-import { Identifier, Comment, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../../interface'
+import { Comment, Identifier, SourceLocation } from 'estree'
 import { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { isBuiltinFunction } from '../../builtins'
+import { StepperBaseNode } from '../../interface'
 
 export class StepperIdentifier implements Identifier, StepperBaseNode {
   type: 'Identifier'

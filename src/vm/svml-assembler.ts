@@ -1,5 +1,5 @@
 import Buffer from '../utils/buffer'
-import OpCodes, { getInstructionSize, OPCODE_MAX } from './opcodes'
+import OpCodes, { OPCODE_MAX, getInstructionSize } from './opcodes'
 import { Instruction, Program, SVMFunction } from './svml-compiler'
 
 const SVM_MAGIC = 0x5005acad
@@ -125,10 +125,11 @@ function serialiseFunction(f: SVMFunction): ImFunction {
         break
       case OpCodes.BRF:
       case OpCodes.BRT:
-      case OpCodes.BR:
+      case OpCodes.BR: {
         const offset = instrOffsets[index + (instr[1] as number)] - instrOffsets[index + 1]
         b.putI(32, offset)
         break
+      }
       case OpCodes.JMP:
         throw new Error('JMP assembling not implemented')
     }

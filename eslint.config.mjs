@@ -1,16 +1,22 @@
 // @ts-check
 
+import js from '@eslint/js';
+import stylePlugin from '@stylistic/eslint-plugin';
 import tseslint from 'typescript-eslint'
 import globals from 'globals'
 import * as importPlugin from 'eslint-plugin-import'
+import jestPlugin from 'eslint-plugin-jest';
 
 export default tseslint.config(
   {
     // global ignores
     ignores: ['dist', 'src/alt-langs', 'src/py-slang', 'src/__tests__/sicp', '**/*.snap']
   },
-  ...tseslint.configs.recommended,
   {
+    extends: [
+      ...tseslint.configs.recommended,
+      js.configs.recommended
+    ],
     files: ['**/*.ts*', 'scripts/*.mjs'],
     languageOptions: {
       globals: {
@@ -25,7 +31,8 @@ export default tseslint.config(
     },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
-      import: importPlugin
+      import: importPlugin,
+      '@stylistic': stylePlugin,
     },
     rules: {
       'import/no-duplicates': ['warn', { 'prefer-inline': true }],
@@ -43,21 +50,38 @@ export default tseslint.config(
           },
         }
       ],
-      '@typescript-eslint/no-base-to-string': 'off', // TODO: Remove
       'prefer-const': 'off', // TODO: Remove
       'no-constant-condition': ['warn', { checkLoops: false }],
+      'no-empty': ['error', { allowEmptyCatch: true }],
+      'no-ex-assign': 'off',
+      'no-fallthrough': 'off',
+      'no-useless-escape': 'off',
       'no-var': 'off', // TODO: Remove
-      '@typescript-eslint/ban-ts-comment': 'warn',
+
+      'prefer-rest-params': 'off',
+      '@stylistic/brace-style': ['warn', '1tbs', { allowSingleLine: true }],
+      '@stylistic/semi': ['warn', 'never'],
+    }
+  },
+  {
+    files: ['**/*.ts'],
+    rules: {
+      'no-redeclare': 'off',
+      'no-unused-vars': 'off',
+
+      '@typescript-eslint/ban-ts-comment': 'off', // TODO: Remove
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/camelcase': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/interface-name-prefix': 'off',
+      '@typescript-eslint/no-base-to-string': 'off', // TODO: Remove
       '@typescript-eslint/no-duplicate-type-constituents': 'off',
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-implied-eval': 'off',
+      '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/no-inferrable-types': 'off',
       '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
@@ -76,8 +100,20 @@ export default tseslint.config(
       '@typescript-eslint/restrict-plus-operands': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/unbound-method': 'off',
-      'prefer-rest-params': 'off'
     }
+  },
+  {
+    files: [
+      '**/__mocks__/**/*.ts', 
+      '**/__tests__/**/*.ts', 
+      'src/utils/testing/**/*.ts'
+    ],
+    plugins: {
+      jest: jestPlugin
+    },
+    languageOptions: {
+      globals: globals.jest
+    },
   },
   {
     files: ['**/*.js', 'src/repl/*.ts'],

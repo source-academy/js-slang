@@ -1,14 +1,13 @@
-import runners, { type RunnerTypes } from '../sourceRunner'
-import { type ExecutionMethod } from '../../types'
-import { Variant } from '../../langs'
-import { Chapter } from '../../langs'
-import type { Runner } from '../types'
 import { runCodeInSource } from '..'
-import { mockContext } from '../../utils/testing/mocks'
+import { parseError } from '../..'
+import { Chapter , Variant } from '../../langs'
+import type { ExecutionMethod } from '../../types'
 import { getChapterName, objectKeys, objectValues } from '../../utils/misc'
 import { asMockedFunc } from '../../utils/testing/misc'
-import { parseError } from '../..'
+import { mockContext } from '../../utils/testing/mocks'
 import * as validator from '../../validator/validator'
+import runners, { type RunnerTypes } from '../sourceRunner'
+import type { Runner } from '../types'
 
 jest.spyOn(validator, 'validateAndAnnotate')
 

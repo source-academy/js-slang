@@ -4,23 +4,23 @@
 
 import { Chapter } from '../langs'
 import type { AllowedDeclarations } from '../utils/ast/node'
-import type {
-  TypeEnvironment,
-  BindableType,
-  PredicateType,
-  ForAll,
-  LiteralType,
-  UnionType,
-  SArray,
-  Pair,
-  List,
-  FunctionType,
-  Variable,
-  Primitive,
-  Type,
-  TSBasicType
-} from './types'
 import * as tsEs from './tsESTree'
+import type {
+  BindableType,
+  ForAll,
+  FunctionType,
+  List,
+  LiteralType,
+  Pair,
+  PredicateType,
+  Primitive,
+  SArray,
+  TSBasicType,
+  Type,
+  TypeEnvironment,
+  UnionType,
+  Variable
+} from './types'
 
 // Name of Unary negative builtin operator
 export const NEGATIVE_OP = '-_1'
@@ -93,16 +93,19 @@ export function pushEnv(env: TypeEnvironment): void {
 // Helper functions for formatting types
 export function formatTypeString(type: Type, formatAsLiteral?: boolean): string {
   switch (type.kind) {
-    case 'function':
+    case 'function': {
+
       const paramTypes = type.parameterTypes
       const paramTypeString = paramTypes
         .map(type => formatTypeString(type, formatAsLiteral))
         .join(', ')
       return `(${paramTypeString}) => ${formatTypeString(type.returnType, formatAsLiteral)}`
-    case 'union':
+    }
+    case 'union': {
       // Remove duplicates
       const typeSet = new Set(type.types.map(type => formatTypeString(type, formatAsLiteral)))
       return Array.from(typeSet).join(' | ')
+    }
     case 'literal':
       if (typeof type.value === 'string') {
         return `"${type.value.toString()}"`
@@ -123,11 +126,13 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
       )}>`
     case 'list':
       return `List<${formatTypeString(type.elementType, formatAsLiteral)}>`
-    case 'array':
+    case 'array': {
+
       const elementTypeString = formatTypeString(type.elementType, formatAsLiteral)
       return elementTypeString.includes('|') || elementTypeString.includes('=>')
         ? `(${elementTypeString})[]`
         : `${elementTypeString}[]`
+    }
     case 'variable':
       if (type.typeArgs !== undefined && type.typeArgs.length > 0) {
         return `${type.name}<${type.typeArgs

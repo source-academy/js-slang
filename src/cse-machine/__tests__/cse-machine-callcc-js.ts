@@ -1,7 +1,6 @@
-import { Variant } from '../../langs'
-import { Chapter } from '../../langs'
-import { expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { Chapter, Variant  } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
+import { expectFinishedResult, expectParsedError } from '../../utils/testing'
 // Continuation tests for Source
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 

@@ -1,23 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
 import type es from 'estree'
-import { type RawSourceMap, SourceMapGenerator } from 'source-map'
+import { SourceMapGenerator, type RawSourceMap } from 'source-map'
 
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
-import { type Context, type NativeStorage } from '../types'
-import { Variant } from '../langs'
-import { Chapter } from '../langs'
-import { type Node } from '../utils/ast/node'
+import { Chapter, Variant  } from '../langs'
+import type { Context, NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { filterImportDeclarations, getImportedName } from '../utils/ast/helpers'
+import type { Node } from '../utils/ast/node'
 import { isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import {
+  NativeIds,
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getNativeIds,
-  getUniqueId,
-  NativeIds
+  getUniqueId
 } from '../utils/uniqueIds'
 import { simple } from '../utils/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'
@@ -193,8 +192,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
           transformLogicalExpression(expression.alternate),
           expression.loc
         )
-      case 'CallExpression':
-        expression = expression as es.CallExpression
+      case 'CallExpression': {
         const { line, column } = (expression.loc ?? UNKNOWN_LOCATION).start
         const source = expression.loc?.source ?? null
         const functionName =
@@ -211,6 +209,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
           create.property('column', create.literal(column)),
           create.property('source', create.literal(source))
         ])
+      }
       default:
         return create.objectExpression([
           create.property('isTail', create.literal(false)),

@@ -1,10 +1,9 @@
-import { mockContext } from '../../../utils/testing/mocks'
-import { Variant } from '../../../langs'
-import { Chapter } from '../../../langs'
-import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
-import * as moduleLoader from '../loaders'
-import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
+import { Chapter, Variant  } from '../../../langs'
 import { asMockedFunc } from '../../../utils/testing/misc'
+import { mockContext } from '../../../utils/testing/mocks'
+import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
+import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
+import * as moduleLoader from '../loaders'
 
 const moduleMocker = jest.fn()
 global.fetch = jest.fn()

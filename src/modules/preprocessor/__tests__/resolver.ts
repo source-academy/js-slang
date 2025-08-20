@@ -1,5 +1,5 @@
 import { memoizedGetModuleManifestAsync } from '../../loader/loaders'
-import resolveFile, { type ImportResolutionOptions, defaultResolutionOptions } from '../resolver'
+import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } from '../resolver'
 
 jest.mock('../../loader/loaders')
 

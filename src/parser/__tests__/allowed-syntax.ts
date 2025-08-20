@@ -1,6 +1,5 @@
 import { parseError } from '../..'
-import { Variant } from '../../langs'
-import { Chapter } from '../../langs'
+import { Chapter, Variant  } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResult, testSuccess } from '../../utils/testing'
 import { assertFinishedResultValue } from '../../utils/testing/misc'

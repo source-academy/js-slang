@@ -2,11 +2,10 @@ import type es from 'estree'
 
 import { runInContext } from '../..'
 import createContext from '../../createContext'
-import { mockContext } from '../../utils/testing/mocks'
+import { Chapter, Variant  } from '../../langs'
 import { parse } from '../../parser/parser'
-import { Variant } from '../../langs'
-import { Chapter } from '../../langs'
-import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
+import { mockContext } from '../../utils/testing/mocks'
+import { InfiniteLoopError, InfiniteLoopErrorType, getInfiniteLoopData } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
 
 test('works in runInContext when throwInfiniteLoops is true', async () => {

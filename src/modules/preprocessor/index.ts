@@ -2,13 +2,13 @@ import type es from 'estree'
 // import * as TypedES from '../../typeChecker/tsESTree'
 
 import type { Context, IOptions } from '../..'
-import { RecursivePartial } from '../../types'
 import { Variant } from '../../langs'
+import { RecursivePartial } from '../../types'
 import loadSourceModules, { loadSourceModuleTypes } from '../loader'
 import type { FileGetter } from '../moduleTypes'
 import analyzeImportsAndExports from './analyzer'
-import parseProgramsAndConstructImportGraph from './linker'
 import defaultBundler, { type Bundler } from './bundler'
+import parseProgramsAndConstructImportGraph from './linker'
 
 export type PreprocessResult =
   | {

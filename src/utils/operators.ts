@@ -1,18 +1,18 @@
 import type { BinaryOperator, UnaryOperator } from 'estree'
 
+import { RuntimeSourceError } from '../errors/errorBase'
 import {
   ExceptionError,
   GetInheritedPropertyError,
   InvalidNumberOfArguments
 } from '../errors/errors'
 import { CallingNonFunctionValue } from '../errors/runtimeErrors'
-import { RuntimeSourceError } from '../errors/errorBase'
 import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import { type NativeStorage } from '../types'
 import { Chapter } from '../langs'
+import type { NativeStorage } from '../types'
 import * as create from './ast/astCreator'
 import { callExpression, locationDummyNode } from './ast/astCreator'
 import { makeWrapper } from './makeWrapper'
@@ -282,7 +282,7 @@ export const getProp = (
   const dummy = locationDummyNode(line, column, source)
   const error = rttc.checkMemberAccess(dummy, obj, prop)
   if (error === undefined) {
-    if (obj[prop] !== undefined && !obj.hasOwnProperty(prop)) {
+    if (obj[prop] !== undefined && !Object.hasOwnProperty.call(obj, prop)) {
       throw new GetInheritedPropertyError(dummy, obj, prop)
     } else {
       return obj[prop]

@@ -1,5 +1,5 @@
-import { mockContext } from '../../../utils/testing/mocks'
 import { Chapter } from '../../../langs'
+import { mockContext } from '../../../utils/testing/mocks'
 import { getRequireProvider } from '../requireProvider'
 
 jest.mock('../../../stdlib', () => ({

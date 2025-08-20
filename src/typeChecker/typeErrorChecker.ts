@@ -1,5 +1,5 @@
 import { parse as babelParse } from '@babel/parser'
-import * as es from 'estree'
+import type es from 'estree'
 import { cloneDeep, isEqual } from 'lodash'
 
 import {
@@ -11,28 +11,41 @@ import {
   InvalidNumberOfArgumentsTypeError,
   InvalidNumberOfTypeArgumentsForGenericTypeError,
   TypeAliasNameNotAllowedError,
-  TypecastError,
   TypeMismatchError,
   TypeNotAllowedError,
   TypeNotCallableError,
   TypeNotFoundError,
   TypeNotGenericError,
   TypeParameterNameNotAllowedError,
+  TypecastError,
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
-import { type Context } from '../types'
 import { Chapter } from '../langs'
+import type { Context } from '../types'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import * as tsEs from './tsESTree'
 import {
+  disallowedTypes,
+  type BindableType,
+  type Pair,
+  type PrimitiveType,
+  type SArray,
+  type TSAllowedTypes,
+  type TSBasicType,
+  type TSDisallowedTypes,
+  type Type,
+  type TypeEnvironment,
+  type Variable
+} from './types'
+import {
+  RETURN_TYPE_IDENTIFIER,
   formatTypeString,
   getTypeOverrides,
   lookupDeclKind,
   lookupType,
   lookupTypeAlias,
   pushEnv,
-  RETURN_TYPE_IDENTIFIER,
   setDeclKind,
   setType,
   setTypeAlias,
@@ -55,19 +68,6 @@ import {
   tVoid,
   typeAnnotationKeywordToBasicTypeMap
 } from './utils'
-import {
-  type TypeEnvironment,
-  type Type,
-  type PrimitiveType,
-  type Variable,
-  type TSBasicType,
-  type BindableType,
-  type SArray,
-  disallowedTypes,
-  type TSDisallowedTypes,
-  type TSAllowedTypes,
-  type Pair
-} from './types'
 // import { ModuleNotFoundError } from '../modules/errors'
 
 // Context and type environment are saved as global variables so that they are not passed between functions excessively
@@ -247,7 +247,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
     case 'ArrowFunctionExpression': {
       return typeCheckAndReturnArrowFunctionType(node)
     }
-    case 'FunctionDeclaration':
+    case 'FunctionDeclaration': {
       if (node.id === null) {
         // Block should not be reached since node.id is only null when function declaration
         // is part of `export default function`, which is not used in Source
@@ -303,6 +303,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       // Save function type in type env
       setType(fnName, fnType, env)
       return tUndef
+    }
     case 'VariableDeclaration': {
       if (node.kind === 'var') {
         throw new TypecheckError(node, 'Variable declaration using "var" is not allowed')
@@ -510,7 +511,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       }
       return returnType
     }
-    case 'AssignmentExpression':
+    case 'AssignmentExpression': {
       const expectedType = typeCheckAndReturnType(node.left)
       const actualType = typeCheckAndReturnType(node.right)
 
@@ -519,7 +520,8 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       }
       checkForTypeMismatch(node, actualType, expectedType)
       return actualType
-    case 'ArrayExpression':
+    }
+    case 'ArrayExpression': {
       // Casting is safe here as Source disallows use of spread elements and holes in arrays
       const elements = node.elements.filter(
         (elem): elem is Exclude<tsEs.ArrayExpression['elements'][0], tsEs.SpreadElement | null> =>
@@ -533,7 +535,8 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       }
       const elementTypes = elements.map(elem => typeCheckAndReturnType(elem))
       return tArray(mergeTypes(node, ...elementTypes))
-    case 'MemberExpression':
+    }
+    case 'MemberExpression': {
       const indexType = typeCheckAndReturnType(node.property)
       const objectType = typeCheckAndReturnType(node.object)
       // Typecheck index against number
@@ -546,6 +549,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
         return tAny
       }
       return objectType.elementType
+    }
     case 'ReturnStatement': {
       if (!node.argument) {
         // Skip typecheck as unspecified literals will be handled by the noImplicitReturnUndefined rule,
@@ -593,7 +597,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
     case 'TSTypeAliasDeclaration':
       // No typechecking needed, type has already been added to environment
       return tUndef
-    case 'TSAsExpression':
+    case 'TSAsExpression': {
       const originalType = typeCheckAndReturnType(node.expression)
       const typeToCastTo = getTypeAnnotationType(node)
       const formatAsLiteral =
@@ -609,6 +613,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
         )
       }
       return typeToCastTo
+    }
     case 'TSInterfaceDeclaration':
       throw new TypecheckError(node, 'Interface declarations are not allowed')
     case 'ExportNamedDeclaration':
@@ -696,7 +701,7 @@ function handleImportDeclarations(node: tsEs.Program) {
 function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStatement) {
   node.body.forEach(bodyNode => {
     switch (bodyNode.type) {
-      case 'FunctionDeclaration':
+      case 'FunctionDeclaration': {
         if (bodyNode.id === null) {
           throw new Error(
             'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
@@ -729,7 +734,8 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         // Save function type in type env
         setType(fnName, fnType, env)
         break
-      case 'VariableDeclaration':
+      }
+      case 'VariableDeclaration': {
         if (bodyNode.kind === 'var') {
           throw new TypecheckError(bodyNode, 'Variable declaration using "var" is not allowed')
         }
@@ -749,7 +755,8 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         setType(id.name, expectedType, env)
         setDeclKind(id.name, bodyNode.kind, env)
         break
-      case 'ClassDeclaration':
+      }
+      case 'ClassDeclaration': {
         const className: string = bodyNode.id.name
         const classType: Variable = {
           kind: 'variable',
@@ -759,7 +766,8 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         setType(className, classType, env)
         setTypeAlias(className, classType, env)
         break
-      case 'TSTypeAliasDeclaration':
+      }
+      case 'TSTypeAliasDeclaration': {
         if (node.type === 'BlockStatement') {
           throw new TypecheckError(
             bodyNode,
@@ -801,6 +809,7 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         }
         setTypeAlias(alias, type, env)
         break
+      }
       default:
         break
     }
@@ -1092,7 +1101,7 @@ function hasTypeMismatchErrors(
     )
   }
   switch (expectedType.kind) {
-    case 'variable':
+    case 'variable': {
       if (actualType.kind === 'variable') {
         // If both are variable types, types match if both name and type arguments match
         if (expectedType.name === actualType.name) {
@@ -1140,6 +1149,7 @@ function hasTypeMismatchErrors(
         visitedTypeAliasesForExpectedType,
         skipTypeAliasExpansion
       )
+    }
     case 'primitive':
       if (actualType.kind === 'literal') {
         return expectedType.value === undefined
@@ -1150,7 +1160,7 @@ function hasTypeMismatchErrors(
         return true
       }
       return actualType.name !== expectedType.name
-    case 'function':
+    case 'function': {
       if (actualType.kind !== 'function') {
         return true
       }
@@ -1186,6 +1196,7 @@ function hasTypeMismatchErrors(
         visitedTypeAliasesForExpectedType,
         skipTypeAliasExpansion
       )
+    }
     case 'union':
       // If actual type is not union type, check if actual type matches one of the expected types
       if (actualType.kind !== 'union') {
@@ -1365,7 +1376,7 @@ function getTypeAnnotationType(
  */
 function getAnnotatedType(typeNode: tsEs.TSType): Type {
   switch (typeNode.type) {
-    case 'TSFunctionType':
+    case 'TSFunctionType': {
       const params = typeNode.parameters
       // If the function has variable number of arguments, set function type as any
       // TODO: Add support for variable number of function arguments
@@ -1377,20 +1388,23 @@ function getAnnotatedType(typeNode: tsEs.TSType): Type {
       // Return type will always be last item in types array
       fnTypes.push(getTypeAnnotationType(typeNode.typeAnnotation))
       return tFunc(...fnTypes)
-    case 'TSLiteralType':
+    }
+    case 'TSLiteralType': {
       const value = typeNode.literal.value
       if (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean') {
         throw new TypecheckError(typeNode, 'Unknown literal type')
       }
       return tLiteral(value)
+    }
     case 'TSArrayType':
       return tArray(getAnnotatedType(typeNode.elementType))
-    case 'TSUnionType':
+    case 'TSUnionType': {
       const unionTypes = typeNode.types.map(node => getAnnotatedType(node))
       return mergeTypes(typeNode, ...unionTypes)
+    }
     case 'TSIntersectionType':
       throw new TypecheckError(typeNode, 'Intersection types are not allowed')
-    case 'TSTypeReference':
+    case 'TSTypeReference': {
       const name = typeNode.typeName.name
       // Save name and type arguments in variable type
       if (typeNode.typeParameters) {
@@ -1404,6 +1418,7 @@ function getAnnotatedType(typeNode: tsEs.TSType): Type {
         return tVar(name, typesToSub)
       }
       return tVar(name)
+    }
     case 'TSParenthesizedType':
       return getAnnotatedType(typeNode.typeAnnotation)
     default:
@@ -1572,12 +1587,13 @@ function substituteVariableTypes(type: Type, typeVar: Variable, typeToSub: Type)
         }
       }
       return type
-    case 'function':
+    case 'function': {
       const types = type.parameterTypes.map(param =>
         substituteVariableTypes(param, typeVar, typeToSub)
       )
       types.push(substituteVariableTypes(type.returnType, typeVar, typeToSub))
       return tFunc(...types)
+    }
     case 'union':
       return tUnion(...type.types.map(type => substituteVariableTypes(type, typeVar, typeToSub)))
     case 'pair':

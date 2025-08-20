@@ -1,7 +1,7 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../cse-machine/closure'
-import { Value } from '../types'
 import { Type } from '../typeChecker/types'
+import { Value } from '../types'
 
 export interface ArrayLike {
   replPrefix: string
@@ -57,7 +57,8 @@ function niceTypeToString(type: Type, nameMap = { _next: 0 }): string {
       return `List<${curriedTypeToString(type.elementType)}>`
     case 'array':
       return `Array<${curriedTypeToString(type.elementType)}>`
-    case 'pair':
+    case 'pair': {
+
       const headType = curriedTypeToString(type.headType)
       // convert [T1 , List<T1>] back to List<T1>
       if (
@@ -66,12 +67,14 @@ function niceTypeToString(type: Type, nameMap = { _next: 0 }): string {
       )
         return `List<${headType}>`
       return `[${curriedTypeToString(type.headType)}, ${curriedTypeToString(type.tailType)}]`
-    case 'function':
+    }
+    case 'function': {
       let parametersString = type.parameterTypes.map(curriedTypeToString).join(', ')
       if (type.parameterTypes.length !== 1 || type.parameterTypes[0].kind === 'function') {
         parametersString = `(${parametersString})`
       }
       return `${parametersString} -> ${curriedTypeToString(type.returnType)}`
+    }
     default:
       return 'Unable to infer type'
   }

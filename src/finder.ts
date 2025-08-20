@@ -12,12 +12,12 @@ import {
 import { Context } from './types'
 import { Node } from './utils/ast/node'
 import {
+  FullWalkerCallback,
+  WalkerCallback,
   ancestor,
   base,
   findNodeAt,
-  FullWalkerCallback,
-  recursive,
-  WalkerCallback
+  recursive
 } from './utils/walkers'
 
 // Finds the innermost node that matches the given location

@@ -1,6 +1,6 @@
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { expectDisplayResult, expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { expectDisplayResult, expectFinishedResult, expectParsedError } from '../../utils/testing'
 
 test('list creates list', () => {
   return expectFinishedResult(

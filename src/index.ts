@@ -2,35 +2,32 @@ import type es from 'estree'
 import { SourceMapConsumer } from 'source-map'
 
 import createContext from './createContext'
+import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
+import type { SourceError } from './errors/errorBase'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { looseParse, parseWithComments } from './parser/utils'
-import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
-import { setBreakpointAtLine } from './stdlib/inspector'
-import {
-  type Context,
-  type ExecutionMethod,
-  type ModuleContext,
-  type RecursivePartial,
-  type SVMProgram
-} from './types'
-import { type Variant } from './langs'
-import { Chapter } from './langs'
-import { type Result } from './runner/types'
-import { type Finished } from './runner/types'
-import { type Error as ResultError } from './runner/types'
-import { type SourceError } from './errors/errorBase'
-import { assemble } from './vm/svml-assembler'
-import { compileToIns } from './vm/svml-compiler'
+import type { Chapter, Variant  } from './langs'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 
-import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { ModuleNotFoundError } from './modules/errors'
 import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
+import { looseParse, parseWithComments } from './parser/utils'
 import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
+import type { Result , type Error as ResultError, type Finished  } from './runner/types'
+import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
+import { setBreakpointAtLine } from './stdlib/inspector'
+import type {
+  Context,
+  ExecutionMethod,
+  ModuleContext,
+  RecursivePartial,
+  SVMProgram
+} from './types'
+import { assemble } from './vm/svml-assembler'
+import { compileToIns } from './vm/svml-compiler'
 
 export interface IOptions {
   steps: number

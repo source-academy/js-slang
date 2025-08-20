@@ -1,6 +1,5 @@
+import { Chapter, Variant  } from '../../langs'
 import { Value } from '../../types'
-import { Variant } from '../../langs'
-import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResult, snapshotFailure } from '../../utils/testing'
 

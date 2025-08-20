@@ -1,6 +1,6 @@
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { expectFinishedResult, expectParsedError } from '../../utils/testing'
 
 describe('primitive stream functions', () => {
   test('empty stream is null', () => {

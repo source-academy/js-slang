@@ -1,8 +1,8 @@
 import * as es from 'estree'
 
 import { Context } from '..'
-import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/errorBase'
+import { ExceptionError } from '../errors/errors'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { getOriginalName } from './instrument'
 
@@ -16,8 +16,8 @@ export enum StackOverflowMessages {
 /**
  * Checks if the error is a TimeoutError or Stack Overflow.
  *
- * @returns {true} if the error is a TimeoutError or Stack Overflow.
- * @returns {false} otherwise.
+ * @returns if the error is a TimeoutError or Stack Overflow.
+ * @returns otherwise.
  */
 export function isPotentialInfiniteLoop(error: any) {
   if (error instanceof TimeoutError) {
@@ -87,7 +87,7 @@ export function getInfiniteLoopData(
   let infiniteLoopError
   if (latestError instanceof InfiniteLoopError) {
     infiniteLoopError = latestError
-  } else if (latestError.hasOwnProperty('infiniteLoopError')) {
+  } else if (Object.hasOwnProperty.call(latestError, 'infiniteLoopError')) {
     infiniteLoopError = latestError.infiniteLoopError as InfiniteLoopError
   }
   if (infiniteLoopError) {

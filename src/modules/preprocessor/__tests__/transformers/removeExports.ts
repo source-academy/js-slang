@@ -1,9 +1,9 @@
-import { mockContext } from '../../../../utils/testing/mocks'
-import { parse } from '../../../../parser/parser'
-import { type Context } from '../../../../types'
 import { Chapter } from '../../../../langs'
-import removeExports from '../../transformers/removeExports'
+import { parse } from '../../../../parser/parser'
+import type { Context } from '../../../../types'
+import { mockContext } from '../../../../utils/testing/mocks'
 import { sanitizeAST } from '../../../../utils/testing/sanitizer'
+import removeExports from '../../transformers/removeExports'
 
 type TestCase = [description: string, inputCode: string, expectedCode: string]
 

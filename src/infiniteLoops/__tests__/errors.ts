@@ -1,16 +1,16 @@
 import * as es from 'estree'
 
-import { ExceptionError } from '../../errors/errors'
 import { RuntimeSourceError } from '../../errors/errorBase'
+import { ExceptionError } from '../../errors/errors'
 import { TimeoutError } from '../../errors/timeoutErrors'
-import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../langs'
+import { mockContext } from '../../utils/testing/mocks'
 import {
-  getInfiniteLoopData,
   InfiniteLoopError,
   InfiniteLoopErrorType,
-  isPotentialInfiniteLoop,
-  StackOverflowMessages
+  StackOverflowMessages,
+  getInfiniteLoopData,
+  isPotentialInfiniteLoop
 } from '../errors'
 
 const noBaseCaseError = new InfiniteLoopError('f', false, 'test', InfiniteLoopErrorType.NoBaseCase)
