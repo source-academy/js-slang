@@ -1,4 +1,5 @@
-import { Chapter, Variant } from '../../types'
+import { Variant } from '../../langs'
+import { Chapter } from '../../langs'
 import { expectParsedError } from '../../utils/testing'
 
 // CSET tests for Scheme (mostly error testing for

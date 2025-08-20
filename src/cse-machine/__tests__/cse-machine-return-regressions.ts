@@ -3,7 +3,8 @@
  * Please reference Issue #124 (https://github.com/source-academy/js-slang/issues/124)
  */
 
-import { Chapter, Variant } from '../../types'
+import { Variant } from '../../langs'
+import { Chapter } from '../../langs'
 import { expectParsedError, expectFinishedResult } from '../../utils/testing'
 
 const optionEC = { variant: Variant.EXPLICIT_CONTROL }

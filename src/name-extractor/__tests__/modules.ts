@@ -1,7 +1,7 @@
 import { DeclarationKind } from '..'
 import { getNames } from '../..'
 import { mockContext } from '../../utils/testing/mocks'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 
 import {
   memoizedGetModuleDocsAsync,

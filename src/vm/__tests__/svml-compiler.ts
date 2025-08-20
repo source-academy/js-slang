@@ -1,5 +1,5 @@
 import { compile, createContext } from '../..'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 
 test('handles if without else', async () => {
   const context = createContext(Chapter.SOURCE_3)

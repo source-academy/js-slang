@@ -12,7 +12,10 @@ import {
 import { Context, Environment, Value } from '../types'
 import { StatementSequence } from '../utils/ast/node'
 import * as ast from '../utils/ast/astCreator'
-import { Control, Transformers, Stash, generateCSEMachineStateStream } from './interpreter'
+import { generateCSEMachineStateStream } from './interpreter'
+import { Control } from './types'
+import { Stash } from './types'
+import { Transformers } from './types'
 import { envInstr } from './instrCreator'
 
 const closureToJS = (value: Closure, context: Context) => {

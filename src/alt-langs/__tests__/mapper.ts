@@ -1,5 +1,5 @@
 import { mockContext } from "../../utils/testing/mocks";
-import { Chapter } from "../../types";
+import { Chapter } from '../../langs';
 import { Finished } from '../../runner/types';
 import { mapResult } from "../mapper";
 

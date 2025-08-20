@@ -5,9 +5,11 @@ import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { is_number, SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import { Context } from '..'
 import { encode } from '../alt-langs/scheme/scm-slang/src'
-import { Control, Stash } from './interpreter'
+import { Control } from './types'
+import { Stash } from './types'
 import { currentTransformers, getVariable, handleRuntimeError } from './utils'
-import { Transformer, macro_transform, match } from './patterns'
+import { macro_transform, match } from './patterns'
+import { Transformer } from './types'
 import {
   arrayToImproperList,
   arrayToList,

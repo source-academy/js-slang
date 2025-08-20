@@ -20,7 +20,8 @@ import {
   TypeParameterNameNotAllowedError,
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
-import { Chapter, type Context } from '../types'
+import { type Context } from '../types'
+import { Chapter } from '../langs'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import * as tsEs from './tsESTree'

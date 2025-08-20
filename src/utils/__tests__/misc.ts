@@ -1,4 +1,4 @@
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { getChapterName, PromiseTimeoutError, timeoutPromise } from '../misc'
 
 describe('test timeoutPromise', () => {

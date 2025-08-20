@@ -1,4 +1,5 @@
-import { Chapter, Variant } from '../../types'
+import { Variant } from '../../langs'
+import { Chapter } from '../../langs'
 import { expectParsedError, expectFinishedResult } from '../../utils/testing'
 import { stripIndent } from '../../utils/formatters'
 // Continuation tests for Source

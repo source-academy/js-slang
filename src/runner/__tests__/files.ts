@@ -1,6 +1,6 @@
 import { compileFiles, parseError, runFilesInContext } from '../../index'
 import { mockContext } from '../../utils/testing/mocks'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 
 describe('runFilesInContext', () => {
   let context = mockContext(Chapter.SOURCE_4)

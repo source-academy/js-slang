@@ -1,6 +1,7 @@
 import { mockContext } from '../../../utils/testing/mocks'
 import { MissingSemicolonError } from '../../../parser/errors'
-import { Chapter, type Context } from '../../../types'
+import { type Context } from '../../../types'
+import { Chapter } from '../../../langs'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'

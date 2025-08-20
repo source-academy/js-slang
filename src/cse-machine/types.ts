@@ -1,10 +1,13 @@
 import type es from 'estree'
 
-import type { Environment } from '../types'
-import type { Node } from '../utils/ast/node'
+import type { List } from '../stdlib/list'
+import type { Environment, Value } from '../types'
+import * as ast from '../utils/ast/astCreator'
+import type { Node, StatementSequence } from '../utils/ast/node'
 import type Closure from './closure'
 import type { SchemeControlItems } from './scheme-macros'
-import type { Transformers } from './interpreter'
+import { Stack } from './stack'
+import { hasDeclarations, isBlockStatement, isEnvDependent, isNode } from './utils'
 
 export enum InstrType {
   RESET = 'Reset',
@@ -120,4 +123,152 @@ export class CSEBreak {}
 // as an indicator of an error from running the CSE machine
 export class CseError {
   constructor(public readonly error: any) {}
+}
+
+/**
+ * The T component is a dictionary of mappings from syntax names to
+ * their corresponding syntax rule transformers (patterns).
+ *
+ * Similar to the E component, there is a matching
+ * "T" environment tree that is used to store the transformers.
+ * as such, we need to track the transformers and update them with the environment.
+ */
+
+// a single pattern stored within the patterns component
+// may have several transformers attributed to it.
+export class Transformer {
+  literals: string[]
+  pattern: List
+  template: List
+
+  constructor(literals: string[], pattern: List, template: List) {
+    this.literals = literals
+    this.pattern = pattern
+    this.template = template
+  }
+}
+
+export class Transformers {
+  private parent: Transformers | null
+  private items: Map<string, Transformer[]>
+  public constructor(parent?: Transformers) {
+    this.parent = parent || null
+    this.items = new Map<string, Transformer[]>()
+  }
+
+  // only call this if you are sure that the pattern exists.
+  public getPattern(name: string): Transformer[] {
+    // check if the pattern exists in the current transformer
+    if (this.items.has(name)) {
+      return this.items.get(name) as Transformer[]
+    }
+    // else check if the pattern exists in the parent transformer
+    if (this.parent) {
+      return this.parent.getPattern(name)
+    }
+    // should not get here. use this properly.
+    throw new Error(`Pattern ${name} not found in transformers`)
+  }
+
+  public hasPattern(name: string): boolean {
+    // check if the pattern exists in the current transformer
+    if (this.items.has(name)) {
+      return true
+    }
+    // else check if the pattern exists in the parent transformer
+    if (this.parent) {
+      return this.parent.hasPattern(name)
+    }
+    return false
+  }
+
+  public addPattern(name: string, item: Transformer[]): void {
+    this.items.set(name, item)
+  }
+}
+/**
+ * The stash is a list of values that stores intermediate results.
+ */
+
+export class Stash extends Stack<Value> {
+  public constructor() {
+    super()
+  }
+
+  public copy(): Stash {
+    const newStash = new Stash()
+    const stackCopy = super.getStack()
+    newStash.push(...stackCopy)
+    return newStash
+  }
+}
+
+/**
+ * The control is a list of commands that still needs to be executed by the machine.
+ * It contains syntax tree nodes or instructions.
+ */
+
+export class Control extends Stack<ControlItem> {
+  private numEnvDependentItems: number
+  public constructor(program?: es.Program | StatementSequence) {
+    super()
+    this.numEnvDependentItems = 0
+    // Load program into control stack
+    if (program) this.push(program)
+  }
+
+  public canAvoidEnvInstr(): boolean {
+    return this.numEnvDependentItems === 0
+  }
+
+  // For testing purposes
+  public getNumEnvDependentItems(): number {
+    return this.numEnvDependentItems
+  }
+
+  public pop(): ControlItem | undefined {
+    const item = super.pop()
+    if (item !== undefined && isEnvDependent(item)) {
+      this.numEnvDependentItems--
+    }
+    return item
+  }
+
+  public push(...items: ControlItem[]): void {
+    const itemsNew: ControlItem[] = Control.simplifyBlocksWithoutDeclarations(...items)
+    itemsNew.forEach((item: ControlItem) => {
+      if (isEnvDependent(item)) {
+        this.numEnvDependentItems++
+      }
+    })
+    super.push(...itemsNew)
+  }
+
+  /**
+   * Before pushing block statements on the control stack, we check if the block statement has any declarations.
+   * If not, the block is converted to a StatementSequence.
+   * @param items The items being pushed on the control.
+   * @returns The same set of control items, but with block statements without declarations converted to StatementSequences.
+   * NOTE: this function handles any case where StatementSequence has to be converted back into BlockStatement due to type issues
+   */
+  private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
+    const itemsNew: ControlItem[] = []
+    items.forEach(item => {
+      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
+        // Push block body as statement sequence
+        const seq = ast.statementSequence(item.body, item.loc)
+        itemsNew.push(seq)
+      } else {
+        itemsNew.push(item)
+      }
+    })
+    return itemsNew
+  }
+
+  public copy(): Control {
+    const newControl = new Control()
+    const stackCopy = super.getStack()
+    newControl.push(...stackCopy)
+    return newControl
+  }
 }

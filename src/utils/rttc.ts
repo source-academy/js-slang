@@ -1,10 +1,9 @@
-import * as es from 'estree'
+import type es from 'estree'
 
-import { RuntimeSourceError } from '../errors/errorBase'
-import { Chapter, Value } from '../types'
-import { Node } from './ast/node'
-import { ErrorSeverity } from '../errors/errorBase'
-import { ErrorType } from '../errors/errorBase'
+import { RuntimeSourceError, ErrorSeverity, ErrorType } from '../errors/errorBase'
+import { Value } from '../types'
+import { Chapter } from '../langs'
+import type { Node } from './ast/node'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'
@@ -141,10 +140,6 @@ export const checkMemberAccess = (node: Node, obj: Value, prop: Value) => {
   } else {
     return new TypeError(node, '', 'object or array', typeOf(obj))
   }
-}
-
-export const isIdentifier = (node: any): node is es.Identifier => {
-  return (node as es.Identifier).name !== undefined
 }
 
 export const checkArray = (node: Node, maybeArray: Value, chapter: Chapter = Chapter.SOURCE_4) => {

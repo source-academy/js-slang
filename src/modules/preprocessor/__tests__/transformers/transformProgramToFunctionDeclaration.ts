@@ -1,7 +1,7 @@
 import { mockContext } from '../../../../utils/testing/mocks'
 import { parse } from '../../../../parser/parser'
 import { defaultExportLookupName } from '../../../../stdlib/localImport.prelude'
-import { Chapter } from '../../../../types'
+import { Chapter } from '../../../../langs'
 import { transformProgramToFunctionDeclaration } from '../../transformers/transformProgramToFunctionDeclaration'
 import { sanitizeAST } from '../../../../utils/testing/sanitizer'
 

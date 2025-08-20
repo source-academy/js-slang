@@ -2,7 +2,7 @@ import type es from 'estree'
 
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { NodeWithInferredType } from '../../typeChecker/types'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'

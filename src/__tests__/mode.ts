@@ -2,7 +2,8 @@ import * as ace from 'ace-builds'
 import { Mode as DefaultMode } from 'ace-builds/src-noconflict/mode-javascript'
 
 import { HighlightRulesSelector, ModeSelector } from '../editors/ace/modes/source'
-import { Chapter, Variant } from '../types'
+import { Variant } from '../langs'
+import { Chapter } from '../langs'
 
 // suppress all console warning
 console.warn = () => {

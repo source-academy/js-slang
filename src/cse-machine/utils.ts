@@ -2,31 +2,32 @@ import type es from 'estree'
 import { isArray, isFunction } from 'lodash'
 
 import { Context } from '..'
-import * as errors from '../errors/errors'
-import { RuntimeSourceError } from '../errors/errorBase'
-import { Chapter, type Environment, type Value } from '../types'
-import { type StatementSequence } from '../utils/ast/node'
-import { type Node } from '../utils/ast/node'
-import * as ast from '../utils/ast/astCreator'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
+import { RuntimeSourceError } from '../errors/errorBase'
+import * as errors from '../errors/errors'
+import { Chapter } from '../langs'
+import { type Environment, type Value } from '../types'
+import * as ast from '../utils/ast/astCreator'
+import { type Node, type StatementSequence } from '../utils/ast/node'
 import { isDeclaration, isIdentifier, isImportDeclaration } from '../utils/ast/typeGuards'
-import Heap from './heap'
-import * as instr from './instrCreator'
-import { Control, Transformers } from './interpreter'
-import {
-  AppInstr,
-  EnvArray,
-  ControlItem,
-  Instr,
-  InstrType,
-  BranchInstr,
-  WhileInstr,
-  ForInstr
-} from './types'
 import Closure from './closure'
 import { Continuation, isCallWithCurrentContinuation } from './continuations'
+import Heap from './heap'
+import * as instr from './instrCreator'
 import { isApply, isEval } from './scheme-macros'
+import {
+  AppInstr,
+  BranchInstr,
+  Control,
+  ControlItem,
+  EnvArray,
+  ForInstr,
+  Instr,
+  InstrType,
+  Transformers,
+  WhileInstr
+} from './types'
 
 /**
  * Typeguard for commands to check if they are scheme values.

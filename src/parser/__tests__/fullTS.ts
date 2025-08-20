@@ -1,6 +1,6 @@
 import { parseError } from '../..'
 import { mockContext } from '../../utils/testing/mocks'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { FullTSParser } from '../fullTS'
 
 const parser = new FullTSParser()

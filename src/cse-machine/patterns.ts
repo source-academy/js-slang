@@ -15,20 +15,7 @@ import {
   isPair,
   isList
 } from './macro-utils'
-
-// a single pattern stored within the patterns component
-// may have several transformers attributed to it.
-export class Transformer {
-  literals: string[]
-  pattern: List
-  template: List
-
-  constructor(literals: string[], pattern: List, template: List) {
-    this.literals = literals
-    this.pattern = pattern
-    this.template = template
-  }
-}
+import type { Transformer } from './types'
 
 // given a matching transformer,
 // the macro_transform() function will transform a list

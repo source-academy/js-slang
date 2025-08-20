@@ -2,7 +2,7 @@
 // Helper functions/constants for type checker and type error checker
 // =======================================
 
-import { Chapter } from '../types'
+import { Chapter } from '../langs'
 import type { AllowedDeclarations } from '../utils/ast/node'
 import type {
   TypeEnvironment,

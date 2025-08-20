@@ -1,4 +1,4 @@
-import { Chapter } from '../types'
+import { Chapter } from '../langs'
 import { expectDisplayResult, expectParsedError } from '../utils/testing'
 
 type TestCase =

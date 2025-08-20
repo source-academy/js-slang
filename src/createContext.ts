@@ -5,7 +5,7 @@ import * as scheme_libs from './alt-langs/scheme/scm-slang/src/stdlib/source-sch
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
 import Heap from './cse-machine/heap'
-import { Transformers } from './cse-machine/interpreter'
+import { Transformers } from './cse-machine/types'
 import { cset_apply, cset_eval } from './cse-machine/scheme-macros'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
@@ -25,15 +25,15 @@ import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils'
 import {
-  Chapter,
   type Context,
   type CustomBuiltIns,
   type Environment,
-  type LanguageOptions,
   type NativeStorage,
-  type Value,
-  Variant
+  type Value
 } from './types'
+import { type LanguageOptions } from './langs'
+import { Variant } from './langs'
+import { Chapter } from './langs'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 

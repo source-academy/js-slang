@@ -10,22 +10,21 @@ import * as es from 'estree'
 import { isArray } from 'lodash'
 
 import { IOptions } from '..'
+import { isSchemeLanguage } from '../alt-langs/mapper'
 import { UNKNOWN_LOCATION } from '../constants'
+import { RuntimeSourceError } from '../errors/errorBase'
 import * as errors from '../errors/errors'
 import * as runtimeErrors from '../errors/runtimeErrors'
-import { RuntimeSourceError } from '../errors/errorBase'
+import { Result } from '../runner/types'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Value } from '../types'
-import { Result } from '../runner/types'
-import { ContiguousArrayElements } from '../utils/ast/node'
-import { type StatementSequence } from '../utils/ast/node'
 import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations, getSourceVariableDeclaration } from '../utils/ast/helpers'
+import type { ContiguousArrayElements, StatementSequence } from '../utils/ast/node'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
-import { isSchemeLanguage } from '../alt-langs/mapper'
 import Closure from './closure'
 import {
   Continuation,
@@ -33,22 +32,26 @@ import {
   makeDummyContCallExpression
 } from './continuations'
 import * as instr from './instrCreator'
-import { Stack } from './stack'
+import { flattenList, isList } from './macro-utils'
+import { isApply, isEval, schemeEval } from './scheme-macros'
 import {
-  AppInstr,
-  ArrLitInstr,
-  AssmtInstr,
-  BinOpInstr,
-  BranchInstr,
   CSEBreak,
-  ControlItem,
+  Control,
   CseError,
-  EnvInstr,
-  ForInstr,
-  Instr,
   InstrType,
-  UnOpInstr,
-  WhileInstr
+  Stash,
+  Transformers,
+  type AppInstr,
+  type ArrLitInstr,
+  type AssmtInstr,
+  type BinOpInstr,
+  type BranchInstr,
+  type ControlItem,
+  type EnvInstr,
+  type ForInstr,
+  type Instr,
+  type UnOpInstr,
+  type WhileInstr
 } from './types'
 import {
   checkNumberOfArguments,
@@ -70,9 +73,7 @@ import {
   hasContinueStatement,
   hasDeclarations,
   hasImportDeclarations,
-  isBlockStatement,
   isEnvArray,
-  isEnvDependent,
   isInstr,
   isNode,
   isSimpleFunction,
@@ -84,9 +85,6 @@ import {
   setVariable,
   valueProducing
 } from './utils'
-import { isApply, isEval, schemeEval } from './scheme-macros'
-import { Transformer } from './patterns'
-import { flattenList, isList } from './macro-utils'
 
 type CmdEvaluator = (
   command: ControlItem,
@@ -95,138 +93,6 @@ type CmdEvaluator = (
   stash: Stash,
   isPrelude: boolean
 ) => void
-
-/**
- * The control is a list of commands that still needs to be executed by the machine.
- * It contains syntax tree nodes or instructions.
- */
-export class Control extends Stack<ControlItem> {
-  private numEnvDependentItems: number
-  public constructor(program?: es.Program | StatementSequence) {
-    super()
-    this.numEnvDependentItems = 0
-    // Load program into control stack
-    if (program) this.push(program)
-  }
-
-  public canAvoidEnvInstr(): boolean {
-    return this.numEnvDependentItems === 0
-  }
-
-  // For testing purposes
-  public getNumEnvDependentItems(): number {
-    return this.numEnvDependentItems
-  }
-
-  public pop(): ControlItem | undefined {
-    const item = super.pop()
-    if (item !== undefined && isEnvDependent(item)) {
-      this.numEnvDependentItems--
-    }
-    return item
-  }
-
-  public push(...items: ControlItem[]): void {
-    const itemsNew: ControlItem[] = Control.simplifyBlocksWithoutDeclarations(...items)
-    itemsNew.forEach((item: ControlItem) => {
-      if (isEnvDependent(item)) {
-        this.numEnvDependentItems++
-      }
-    })
-    super.push(...itemsNew)
-  }
-
-  /**
-   * Before pushing block statements on the control stack, we check if the block statement has any declarations.
-   * If not, the block is converted to a StatementSequence.
-   * @param items The items being pushed on the control.
-   * @returns The same set of control items, but with block statements without declarations converted to StatementSequences.
-   * NOTE: this function handles any case where StatementSequence has to be converted back into BlockStatement due to type issues
-   */
-  private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
-    const itemsNew: ControlItem[] = []
-    items.forEach(item => {
-      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
-        // Push block body as statement sequence
-        const seq: StatementSequence = ast.statementSequence(item.body, item.loc)
-        itemsNew.push(seq)
-      } else {
-        itemsNew.push(item)
-      }
-    })
-    return itemsNew
-  }
-
-  public copy(): Control {
-    const newControl = new Control()
-    const stackCopy = super.getStack()
-    newControl.push(...stackCopy)
-    return newControl
-  }
-}
-
-/**
- * The stash is a list of values that stores intermediate results.
- */
-export class Stash extends Stack<Value> {
-  public constructor() {
-    super()
-  }
-
-  public copy(): Stash {
-    const newStash = new Stash()
-    const stackCopy = super.getStack()
-    newStash.push(...stackCopy)
-    return newStash
-  }
-}
-
-/**
- * The T component is a dictionary of mappings from syntax names to
- * their corresponding syntax rule transformers (patterns).
- *
- * Similar to the E component, there is a matching
- * "T" environment tree that is used to store the transformers.
- * as such, we need to track the transformers and update them with the environment.
- */
-export class Transformers {
-  private parent: Transformers | null
-  private items: Map<string, Transformer[]>
-  public constructor(parent?: Transformers) {
-    this.parent = parent || null
-    this.items = new Map<string, Transformer[]>()
-  }
-
-  // only call this if you are sure that the pattern exists.
-  public getPattern(name: string): Transformer[] {
-    // check if the pattern exists in the current transformer
-    if (this.items.has(name)) {
-      return this.items.get(name) as Transformer[]
-    }
-    // else check if the pattern exists in the parent transformer
-    if (this.parent) {
-      return this.parent.getPattern(name)
-    }
-    // should not get here. use this properly.
-    throw new Error(`Pattern ${name} not found in transformers`)
-  }
-
-  public hasPattern(name: string): boolean {
-    // check if the pattern exists in the current transformer
-    if (this.items.has(name)) {
-      return true
-    }
-    // else check if the pattern exists in the parent transformer
-    if (this.parent) {
-      return this.parent.hasPattern(name)
-    }
-    return false
-  }
-
-  public addPattern(name: string, item: Transformer[]): void {
-    this.items.set(name, item)
-  }
-}
 
 /**
  * Function to be called when a program is to be interpreted using

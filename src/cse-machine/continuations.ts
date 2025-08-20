@@ -1,7 +1,9 @@
 import * as es from 'estree'
 
 import { Context, Environment } from '../types'
-import { Control, Stash, Transformers } from './interpreter'
+import { Control } from './types'
+import { Stash } from './types'
+import { Transformers } from './types'
 import { uniqueId } from './utils'
 
 /**

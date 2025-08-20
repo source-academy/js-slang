@@ -1,5 +1,6 @@
 import { mockContext } from '../../../utils/testing/mocks'
-import { Chapter, Variant } from '../../../types'
+import { Variant } from '../../../langs'
+import { Chapter } from '../../../langs'
 import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
 import * as moduleLoader from '../loaders'
 import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'

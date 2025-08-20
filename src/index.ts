@@ -8,14 +8,14 @@ import { looseParse, parseWithComments } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
-  Chapter,
   type Context,
   type ExecutionMethod,
   type ModuleContext,
   type RecursivePartial,
-  type SVMProgram,
-  type Variant
+  type SVMProgram
 } from './types'
+import { type Variant } from './langs'
+import { Chapter } from './langs'
 import { type Result } from './runner/types'
 import { type Finished } from './runner/types'
 import { type Error as ResultError } from './runner/types'

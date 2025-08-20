@@ -29,7 +29,20 @@ export default tseslint.config(
     },
     rules: {
       'import/no-duplicates': ['warn', { 'prefer-inline': true }],
-      'import/order': 'warn',
+      'import/order': [
+        'warn',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          named: {
+            import: true,
+            types: 'types-last'
+          },
+          alphabetize: {
+            order: 'asc',
+            orderImportKind: 'asc'
+          },
+        }
+      ],
       '@typescript-eslint/no-base-to-string': 'off', // TODO: Remove
       'prefer-const': 'off', // TODO: Remove
       'no-constant-condition': ['warn', { checkLoops: false }],

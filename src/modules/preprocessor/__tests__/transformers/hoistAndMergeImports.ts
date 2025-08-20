@@ -1,6 +1,6 @@
 import { mockContext } from '../../../../utils/testing/mocks'
 import { parse } from '../../../../parser/parser'
-import { Chapter } from '../../../../types'
+import { Chapter } from '../../../../langs'
 import hoistAndMergeImports from '../../transformers/hoistAndMergeImports'
 import { sanitizeAST } from '../../../../utils/testing/sanitizer'
 

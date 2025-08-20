@@ -1,5 +1,6 @@
 import { mockContext } from '../../utils/testing/mocks'
-import { Chapter, Variant } from '../../types'
+import { Variant } from '../../langs'
+import { Chapter } from '../../langs'
 import { parse } from '../../parser/parser'
 import { parseError } from '../../index'
 

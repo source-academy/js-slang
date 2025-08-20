@@ -1,4 +1,4 @@
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectDisplayResult, expectParsedError } from '../../utils/testing'
 

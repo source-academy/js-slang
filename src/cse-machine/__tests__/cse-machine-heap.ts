@@ -1,6 +1,6 @@
 import { mockClosure, mockContext } from '../../utils/testing/mocks'
 import { runCodeInSource } from '../../runner'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import Heap from '../heap'
 import type { EnvArray } from '../types'

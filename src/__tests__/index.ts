@@ -2,7 +2,8 @@ import { Position } from 'acorn/dist/acorn'
 import { SourceLocation } from 'estree'
 
 import { findDeclaration, getScope, runInContext } from '../index'
-import { Chapter, Value } from '../types'
+import { Value } from '../types'
+import { Chapter } from '../langs'
 import { stripIndent } from '../utils/formatters'
 import {
   createTestContext,

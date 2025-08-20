@@ -1,4 +1,4 @@
-import { Chapter } from '../types'
+import { Chapter } from '../langs'
 import { expectParsedError, expectFinishedResult } from '../utils/testing'
 
 test('draw_data returns first argument if more than one argument', () => {

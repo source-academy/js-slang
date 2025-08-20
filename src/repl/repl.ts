@@ -4,18 +4,18 @@ import { start } from 'repl'
 import { Command } from '@commander-js/extra-typings'
 
 import { createContext, type IOptions } from '..'
+import { Chapter, Variant, isValidChapterVariant } from '../langs'
 import { setModulesStaticURL } from '../modules/loader'
-import { Chapter, type RecursivePartial, Variant } from '../types'
-import { objectValues } from '../utils/misc'
-import { runCodeInSource, sourceFilesRunner } from '../runner'
 import type { FileGetter } from '../modules/moduleTypes'
+import { runCodeInSource, sourceFilesRunner } from '../runner'
+import { type RecursivePartial } from '../types'
+import { objectValues } from '../utils/misc'
 import {
   chapterParser,
   getChapterOption,
   getLanguageOption,
   getVariantOption,
-  handleResult,
-  validChapterVariant
+  handleResult
 } from './utils'
 
 export const getReplCommand = () =>
@@ -29,7 +29,7 @@ export const getReplCommand = () =>
     .option('--optionsFile <file>', 'Specify a JSON file to read options from')
     .argument('[filename]')
     .action(async (filename, { modulesBackend, optionsFile, repl, verbose, ...lang }) => {
-      if (!validChapterVariant(lang)) {
+      if (!isValidChapterVariant(lang)) {
         console.log('Invalid language combination!')
         return
       }

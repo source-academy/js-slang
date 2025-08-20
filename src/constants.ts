@@ -1,7 +1,6 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { AcornOptions } from './parser/types'
-import { Chapter, Language, Variant } from './types'
 
 export const DEFAULT_ECMA_VERSION = 6
 export const ACORN_PARSE_OPTIONS: AcornOptions = { ecmaVersion: DEFAULT_ECMA_VERSION }
@@ -26,26 +25,3 @@ export const JSSLANG_PROPERTIES = {
   maxExecTime: 1000,
   factorToIncreaseBy: 10
 }
-
-export const sourceLanguages: Language[] = [
-  { chapter: Chapter.SOURCE_1, variant: Variant.DEFAULT },
-  { chapter: Chapter.SOURCE_1, variant: Variant.TYPED },
-  { chapter: Chapter.SOURCE_1, variant: Variant.WASM },
-  { chapter: Chapter.SOURCE_2, variant: Variant.DEFAULT },
-  { chapter: Chapter.SOURCE_2, variant: Variant.TYPED },
-  { chapter: Chapter.SOURCE_3, variant: Variant.DEFAULT },
-  { chapter: Chapter.SOURCE_3, variant: Variant.TYPED },
-  { chapter: Chapter.SOURCE_4, variant: Variant.DEFAULT },
-  { chapter: Chapter.SOURCE_4, variant: Variant.TYPED },
-  { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
-]
-
-export const scmLanguages: Language[] = [
-  { chapter: Chapter.SCHEME_1, variant: Variant.EXPLICIT_CONTROL },
-  { chapter: Chapter.SCHEME_2, variant: Variant.EXPLICIT_CONTROL },
-  { chapter: Chapter.SCHEME_3, variant: Variant.EXPLICIT_CONTROL },
-  { chapter: Chapter.SCHEME_4, variant: Variant.EXPLICIT_CONTROL },
-  { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
-]
-
-export const pyLanguages: Language[] = [{ chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT }]

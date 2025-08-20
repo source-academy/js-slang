@@ -1,7 +1,8 @@
 /* tslint:disable:max-line-length */
 import * as _ from 'lodash'
 
-import { Chapter, Variant } from '../../types'
+import { Variant } from '../../langs'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError, expectFinishedResult, testFailure } from '../../utils/testing'
 import { TestOptions } from '../../utils/testing/types'

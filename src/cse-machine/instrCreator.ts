@@ -21,7 +21,7 @@ import {
   type DeclAssmtInstr,
   type RegularAssmtInstr
 } from './types'
-import { Transformers } from './interpreter'
+import { Transformers } from './types'
 
 export const resetInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.RESET,

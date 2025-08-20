@@ -1,5 +1,7 @@
 import runners, { type RunnerTypes } from '../sourceRunner'
-import { Chapter, type ExecutionMethod, Variant } from '../../types'
+import { type ExecutionMethod } from '../../types'
+import { Variant } from '../../langs'
+import { Chapter } from '../../langs'
 import type { Runner } from '../types'
 import { runCodeInSource } from '..'
 import { mockContext } from '../../utils/testing/mocks'

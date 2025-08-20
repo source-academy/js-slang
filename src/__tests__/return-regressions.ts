@@ -3,7 +3,7 @@
  * Please reference Issue #124 (https://github.com/source-academy/js-slang/issues/124)
  */
 
-import { Chapter } from '../types'
+import { Chapter } from '../langs'
 import { expectParsedError, expectFinishedResult } from '../utils/testing'
 
 // This is bad practice. Don't do this!

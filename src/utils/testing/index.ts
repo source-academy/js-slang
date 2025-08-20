@@ -1,4 +1,5 @@
-import { Chapter, type CustomBuiltIns } from '../../types'
+import { type CustomBuiltIns } from '../../types'
+import { Chapter } from '../../langs'
 import { parseError, runInContext } from '../..'
 import createContext, { defineBuiltin } from '../../createContext'
 import { assertIsFinished, processTestOptions } from './misc'

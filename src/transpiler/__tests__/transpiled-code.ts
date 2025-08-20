@@ -1,6 +1,6 @@
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import * as ast from '../../utils/ast/astCreator'
 import { sanitizeAST } from '../../utils/testing/sanitizer'
 import { stripIndent } from '../../utils/formatters'

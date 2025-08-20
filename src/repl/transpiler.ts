@@ -5,17 +5,11 @@ import { Command } from '@commander-js/extra-typings'
 import { generate } from 'astring'
 
 import { createContext, parseError } from '../index'
+import { Chapter, Variant, isSourceLanguage } from '../langs'
 import defaultBundler from '../modules/preprocessor/bundler'
 import parseProgramsAndConstructImportGraph from '../modules/preprocessor/linker'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, Variant } from '../types'
-import {
-  chapterParser,
-  getChapterOption,
-  getLanguageOption,
-  getVariantOption,
-  validateChapterAndVariantCombo
-} from './utils'
+import { chapterParser, getChapterOption, getLanguageOption, getVariantOption } from './utils'
 
 export const getTranspilerCommand = () =>
   new Command('transpiler')
@@ -28,14 +22,14 @@ export const getTranspilerCommand = () =>
     )
     .option('-o, --out <outFile>', 'Specify a file to write to')
     .argument('<filename>')
-    .action(async (fileName, opts) => {
-      if (!validateChapterAndVariantCombo(opts)) {
+    .action(async (fileName, { pretranspile, out, ...lang }) => {
+      if (!isSourceLanguage(lang)) {
         console.log('Invalid language combination!')
         return
       }
 
       const fs: typeof fslib = require('fs/promises')
-      const context = createContext(opts.chapter, opts.variant, opts.languageOptions)
+      const context = createContext(lang.chapter, lang.variant, lang.languageOptions)
       const entrypointFilePath = resolve(fileName)
 
       const linkerResult = await parseProgramsAndConstructImportGraph(
@@ -63,13 +57,13 @@ export const getTranspilerCommand = () =>
       const bundledProgram = defaultBundler(programs, entrypointFilePath, topoOrder, context)
 
       try {
-        const transpiled = opts.pretranspile
+        const transpiled = pretranspile
           ? generate(bundledProgram)
           : transpile(bundledProgram, context).transpiled
 
-        if (opts.out) {
-          await fs.writeFile(opts.out, transpiled)
-          console.log(`Code written to ${opts.out}`)
+        if (out) {
+          await fs.writeFile(out, transpiled)
+          console.log(`Code written to ${out}`)
         } else {
           process.stdout.write(transpiled)
         }

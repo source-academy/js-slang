@@ -2,7 +2,7 @@ import { Program } from 'estree'
 
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../../utils/operators'
 import {
   InfiniteLoopRuntimeFunctions as functionNames,

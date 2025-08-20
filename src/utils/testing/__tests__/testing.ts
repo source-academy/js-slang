@@ -5,7 +5,8 @@ import {
   testFailure,
   testSuccess
 } from '..'
-import { Chapter, Variant } from '../../../types'
+import { Variant } from '../../../langs'
+import { Chapter } from '../../../langs'
 import { asMockedFunc, processTestOptions } from '../misc'
 import type { TestOptions } from '../types'
 import * as main from '../../..'
