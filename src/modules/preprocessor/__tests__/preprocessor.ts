@@ -1,7 +1,8 @@
 import type { Program } from 'estree'
 
 import preprocessFileImports from '..'
-import { parseError, type IOptions } from '../../..'
+import { parseError } from '../../..'
+import { type IOptions } from '../../../types'
 import { Chapter } from '../../../langs'
 import { parse } from '../../../parser/parser'
 import {

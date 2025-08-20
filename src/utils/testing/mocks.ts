@@ -4,7 +4,7 @@ import createContext, { EnvTree } from '../../createContext'
 import Closure from '../../cse-machine/closure'
 import { Transformers } from '../../cse-machine/types'
 import { createBlockEnvironment } from '../../cse-machine/utils'
-import type { Chapter, LanguageOptions , Variant  } from '../../langs'
+import { Chapter, Variant, type LanguageOptions } from '../../langs'
 import type { Context, Environment } from '../../types'
 
 export function mockContext(

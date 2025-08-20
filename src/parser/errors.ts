@@ -1,7 +1,7 @@
 import type { SourceLocation } from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import type { ErrorSeverity , ErrorType, SourceError } from '../errors/errorBase'
+import { ErrorSeverity, ErrorType, type SourceError } from '../errors/errorBase'
 import type { Node } from '../utils/ast/node'
 import { stripIndent } from '../utils/formatters'
 

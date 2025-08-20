@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { IOptions } from '../..'
+import { IOptions } from '../../types'
 import { Chapter } from '../../langs'
 import { parse } from '../../parser/parser'
 import { runCodeInSource } from '../../runner'

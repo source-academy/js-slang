@@ -1,4 +1,5 @@
-import type { IOptions, Result } from '..'
+import type { Result } from '..'
+import type { IOptions } from '../types'
 import type { Context, RecursivePartial } from '../types'
 
 const HTML_ERROR_HANDLING_SCRIPT_TEMPLATE = `<script>

@@ -1,7 +1,8 @@
 import type es from 'estree'
 // import * as TypedES from '../../typeChecker/tsESTree'
 
-import type { Context, IOptions } from '../..'
+import type { Context } from '../..'
+import type { IOptions } from '../../types'
 import { Variant } from '../../langs'
 import { RecursivePartial } from '../../types'
 import loadSourceModules, { loadSourceModuleTypes } from '../loader'

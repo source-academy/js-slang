@@ -1,6 +1,6 @@
 import type { Program } from 'estree'
 import * as _ from 'lodash'
-import type { Context, IOptions, Result } from '..'
+import type { Context } from '..'
 import { mapResult } from '../alt-langs/mapper'
 import { Chapter, Variant  } from '../langs'
 import type { FileGetter } from '../modules/moduleTypes'
@@ -8,11 +8,11 @@ import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
-import type { RecursivePartial } from '../types'
-import assert from '../utils/assert'
+import type { IOptions, RecursivePartial } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
 import runners from './sourceRunner'
-import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
+import type { Result } from './types'
+import { determineExecutionMethod, resolvedErrorPromise } from './utils'
 
 let previousCode: {
   files: Partial<Record<string, string>>
@@ -23,11 +23,10 @@ export const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   steps: 1000,
   stepLimit: -1,
   executionMethod: 'auto',
-  variant: Variant.DEFAULT,
   originalMaxExecTime: 1000,
-  useSubst: false,
   isPrelude: false,
   throwInfiniteLoops: true,
+  variant: Variant.DEFAULT,
   envSteps: -1,
   importOptions: {
     ...defaultAnalysisOptions,
@@ -46,7 +45,7 @@ async function sourceRunner(
   // It is necessary to make a copy of the DEFAULT_SOURCE_OPTIONS object because merge()
   // will modify it rather than create a new object
   const theOptions = _.merge({ ...DEFAULT_SOURCE_OPTIONS }, options)
-  context.variant = determineVariant(context, options)
+  context.variant = context.variant ?? options.variant
 
   if (
     context.chapter === Chapter.FULL_JS ||
@@ -61,14 +60,14 @@ async function sourceRunner(
     return resolvedErrorPromise
   }
 
-  if (theOptions.useSubst) {
+  const execMethod = determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
+
+  if (execMethod === 'substitution') {
     return runners.substitution(program, context, theOptions)
   }
 
-  determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
-
   // native, don't evaluate prelude
-  if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
+  if (execMethod === 'native' && context.variant === Variant.NATIVE) {
     return runners.fulljs(program, context, theOptions)
   }
 
@@ -82,7 +81,7 @@ async function sourceRunner(
     await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true })
   }
 
-  if (context.variant === Variant.EXPLICIT_CONTROL || context.executionMethod === 'cse-machine') {
+  if (context.variant === Variant.EXPLICIT_CONTROL || execMethod === 'cse-machine') {
     if (options.isPrelude) {
       const preludeContext = { ...context, runtime: { ...context.runtime, debuggerOn: false } }
       const result = await runners['cse-machine'](program, preludeContext, theOptions)
@@ -93,10 +92,6 @@ async function sourceRunner(
     return runners['cse-machine'](program, context, theOptions)
   }
 
-  assert(
-    context.executionMethod !== 'auto',
-    'Execution method should have been properly determined!'
-  )
   return runners.native(program, context, theOptions)
 }
 
@@ -129,7 +124,6 @@ export async function sourceFilesRunner(
 
   const { files, verboseErrors, program: preprocessedProgram } = preprocessResult
 
-  context.variant = determineVariant(context, options)
   // FIXME: The type checker does not support the typing of multiple files, so
   //        we only push the code in the entrypoint file. Ideally, all files
   //        involved in the program evaluation should be type-checked. Either way,

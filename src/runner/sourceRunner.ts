@@ -6,9 +6,6 @@ import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpr
 import { RuntimeSourceError } from '../errors/errorBase'
 import { ExceptionError } from '../errors/errors'
 import { TimeoutError } from '../errors/timeoutErrors'
-import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
-import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { Variant } from '../langs'
 import { getSteps } from '../tracer/steppers'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
@@ -65,25 +62,6 @@ const runners = {
         value
       }
     } catch (error) {
-      const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
-      if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-        const detectedInfiniteLoop = testForInfiniteLoop(
-          program,
-          context.previousPrograms.slice(1),
-          context.nativeStorage.loadedModules
-        )
-        if (detectedInfiniteLoop !== undefined) {
-          if (options.throwInfiniteLoops) {
-            context.errors.push(detectedInfiniteLoop)
-            return resolvedErrorPromise
-          } else {
-            error.infiniteLoopError = detectedInfiniteLoop
-            if (error instanceof ExceptionError) {
-              ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
-            }
-          }
-        }
-      }
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
         if (error instanceof TimeoutError) {

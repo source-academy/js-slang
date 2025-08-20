@@ -6,50 +6,25 @@ import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import type { SourceError } from './errors/errorBase'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import type { Chapter, Variant  } from './langs'
+import { Chapter } from './langs'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 
 import { ModuleNotFoundError } from './modules/errors'
-import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
 import { looseParse, parseWithComments } from './parser/utils'
 import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
-import type { Result , type Error as ResultError, type Finished  } from './runner/types'
+import type { Error as ResultError, Finished, Result } from './runner/types'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import type {
-  Context,
-  ExecutionMethod,
-  ModuleContext,
+  Context, IOptions, ModuleContext,
   RecursivePartial,
   SVMProgram
 } from './types'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
-
-export interface IOptions {
-  steps: number
-  stepLimit: number
-  executionMethod: ExecutionMethod
-  variant: Variant
-  originalMaxExecTime: number
-  useSubst: boolean
-  isPrelude: boolean
-  throwInfiniteLoops: boolean
-  envSteps: number
-
-  importOptions: ImportOptions
-
-  /**
-   * Set this to true if source file information should be
-   * added when parsing programs into ASTs
-   *
-   * Set to null to let js-slang decide automatically
-   */
-  shouldAddFileName: boolean | null
-}
 
 // needed to work on browsers
 if (typeof window !== 'undefined') {

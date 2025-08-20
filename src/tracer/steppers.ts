@@ -1,5 +1,6 @@
 import * as es from 'estree'
-import { Context, IOptions } from '..'
+import { Context } from '..'
+import { IOptions } from '../types'
 import { UndefinedVariable } from '../errors/errors'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
 import { prelude } from './builtins'

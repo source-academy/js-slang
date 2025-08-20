@@ -12,9 +12,27 @@ import Heap from './cse-machine/heap'
 import type { Control, Stash, Transformers } from './cse-machine/types'
 import type { SourceError } from './errors/errorBase'
 import type { Chapter, LanguageOptions, Variant } from './langs'
-import type { ModuleFunctions } from './modules/moduleTypes'
+import type { ImportOptions, ModuleFunctions } from './modules/moduleTypes'
+import type { RunnerTypes } from './runner/sourceRunner'
+import type { RunnerOptions } from './runner/types'
 import type { TypeEnvironment } from './typeChecker/types'
 import type { Node } from './utils/ast/node'
+
+export interface IOptions extends RunnerOptions {
+  variant: Variant
+
+  executionMethod: RunnerTypes | 'auto'
+
+  importOptions: ImportOptions
+
+  /**
+   * Set this to true if source file information should be
+   * added when parsing programs into ASTs
+   *
+   * Set to null to let js-slang decide automatically
+   */
+  shouldAddFileName: boolean | null
+}
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -156,6 +174,8 @@ export interface Environment {
   heap: Heap
   thisContext?: Value
 }
+
+
 
 export {
   Instruction as SVMInstruction,

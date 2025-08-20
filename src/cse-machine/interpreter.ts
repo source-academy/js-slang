@@ -9,13 +9,12 @@
 import * as es from 'estree'
 import { isArray } from 'lodash'
 
-import { IOptions } from '..'
 import { isSchemeLanguage } from '../alt-langs/mapper'
 import { UNKNOWN_LOCATION } from '../constants'
 import { RuntimeSourceError } from '../errors/errorBase'
 import * as errors from '../errors/errors'
 import * as runtimeErrors from '../errors/runtimeErrors'
-import { Result } from '../runner/types'
+import type { Result, RunnerOptions } from '../runner/types'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
@@ -102,7 +101,7 @@ type CmdEvaluator = (
  * @param context The context to evaluate the program in.
  * @returns The result of running the CSE machine.
  */
-export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
+export function evaluate(program: es.Program, context: Context, options: RunnerOptions): Value {
   try {
     checkProgramForUndefinedVariables(program, context)
   } catch (error) {
