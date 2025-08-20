@@ -1,28 +1,25 @@
-import * as fs from 'fs/promises'
-import type pathlib from 'path'
-import { asMockedFunc } from '../../utils/testing/misc'
+import fs from 'fs/promises'
+import { beforeEach, expect, test, vi } from 'vitest'
 import { getTranspilerCommand } from '../transpiler'
 import { expectWritten, getCommandRunner } from './utils'
 
-jest.mock('fs/promises', () => ({
-  readFile: jest.fn(),
-  writeFile: jest.fn()
-}))
 
-jest.mock('path', () => {
-  const actualPath: typeof pathlib = jest.requireActual('path/posix')
+vi.mock(import('path'), async importOriginal => {
+  const actualPath = await importOriginal();
   return {
-    ...actualPath,
-    resolve: (...args: string[]) => actualPath.resolve('/', ...args)
+    default: {
+      ...actualPath.default,
+      resolve: (...args: string[]) => actualPath.resolve('/', ...args)
+    }
   }
 })
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
-const mockedWriteFile = asMockedFunc(fs.writeFile)
-const mockedReadFile = asMockedFunc(fs.readFile)
+const mockedWriteFile = vi.spyOn(fs, 'writeFile');
+const mockedReadFile = vi.spyOn(fs, 'readFile');
 const { expectError, expectSuccess } = getCommandRunner(getTranspilerCommand)
 
 test('Nothing should be written if the program has parser errors', async () => {

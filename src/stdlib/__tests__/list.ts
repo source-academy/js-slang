@@ -1,15 +1,16 @@
+import { describe, expect, it, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { expectDisplayResult, expectFinishedResult, expectParsedError } from '../../utils/testing'
+import { testFailure, testSuccess } from '../../utils/testing'
 
 test('list creates list', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     function f() { return 1; }
     list(1, 'a string ""', () => f, f, true, 3.14);
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             Array [
               1,
               Array [
@@ -33,12 +34,12 @@ test('list creates list', () => {
 })
 
 test('pair creates pair', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     pair(1, 'a string ""');
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             Array [
               1,
               "a string \\"\\"",
@@ -47,52 +48,52 @@ test('pair creates pair', () => {
 })
 
 test('head works', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     head(pair(1, 'a string ""'));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`1`)
+  )).resolves.toMatchInlineSnapshot(`1`)
 })
 
 test('tail works', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     tail(pair(1, 'a string ""'));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`"a string \\"\\""`)
+  )).resolves.toMatchInlineSnapshot(`"a string \\"\\""`)
 })
 
 test('tail of a 1 element list is null', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     tail(list(1));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`null`)
+  )).resolves.toMatchInlineSnapshot(`null`)
 })
 
 test('empty list is null', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     list();
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot('null')
+  )).resolves.toMatchInlineSnapshot('null')
 })
 
 test('equal', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   !equal(1, x => x) && !equal(x => x, 1);
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('for_each', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     let sum = 0;
     for_each(x => {
@@ -101,81 +102,81 @@ test('for_each', () => {
     sum;
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`6`)
+  )).resolves.toMatchInlineSnapshot(`6`)
 })
 
 test('map', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('filter', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('build_list', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('reverse', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(reverse(list("string", "null", "undefined", "null", 123)), list(123, "null", "undefined", "null", "string"));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('append', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('member', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(
       member(4, list(1, 2, 3, 4, 123, 456, 789)),
       list(4, 123, 456, 789));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('remove', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     remove(1, list(1));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`null`)
+  )).resolves.toMatchInlineSnapshot(`null`)
 })
 
 test('remove not found', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     remove(2, list(1));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             Array [
               1,
               null,
@@ -184,130 +185,130 @@ test('remove not found', () => {
 })
 
 test('remove_all', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(remove_all(1, list(1, 2, 3, 4, 1, 1, 1, 5, 1, 1, 6)), list(2, 3, 4, 5, 6));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('remove_all not found', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('enum_list', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(enum_list(1, 5), list(1, 2, 3, 4, 5));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('enum_list with floats', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('list_ref', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     list_ref(list(1, 2, 3, "4", 4), 4);
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`4`)
+  )).resolves.toMatchInlineSnapshot(`4`)
 })
 
 test('accumulate', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`10`)
+  )).resolves.toMatchInlineSnapshot(`10`)
 })
 
 test('list_to_string', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     list_to_string(list(1, 2, 3));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`"[1,[2,[3,null]]]"`)
+  )).resolves.toMatchInlineSnapshot(`"[1,[2,[3,null]]]"`)
 })
 
 describe('accumulate', () => {
   test('works properly', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
       accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
     `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`10`)
+    )).resolves.toMatchInlineSnapshot(`10`)
   })
 
   it('works from right to left', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
       accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));`,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot('"4321"')
+    )).resolves.toMatchInlineSnapshot('"4321"')
   })
 })
 
 describe('length', () => {
   test('works with populated lists', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
       const xs = list(1,2,3,4);
       length(xs);
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot('4')
+    )).resolves.toMatchInlineSnapshot('4')
   })
 
   test('works with empty lists', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
       const xs = list();
       length(xs);
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot('0')
+    )).resolves.toMatchInlineSnapshot('0')
   })
 })
 
 // assoc removed from Source
 test.skip('assoc', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(assoc(3, list(pair(1, 2), pair(3, 4))), pair(3, 4));
   `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test.skip('assoc not found', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(assoc(2, list(pair(1, 2), pair(3, 4))), false);
   `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('set_head', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     let p = pair(1, 2);
     const q = p;
@@ -315,11 +316,11 @@ test('set_head', () => {
     p === q && equal(p, pair(3, 2));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('set_tail', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     let p = pair(1, 2);
     const q = p;
@@ -327,330 +328,335 @@ test('set_tail', () => {
     p === q && equal(p, pair(1, 3));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('non-list error head', () => {
-  return expectParsedError(
+  return expect(testFailure(
     stripIndent`
     head([1, 2, 3]);
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(
+  )).resolves.toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
 })
 
 test('non-list error tail', () => {
-  return expectParsedError(
+  return expect(testFailure(
     stripIndent`
     tail([1, 2, 3]);
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(
+  )).resolves.toMatchInlineSnapshot(
     `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
 })
 
 describe('These tests are reporting weird line numbers, as list functions are now implemented in Source.', () => {
   test('non-list error length', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     length([1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 33: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   test('non-list error map', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     map(x=>x, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 47: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   test('non-list error for_each', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     for_each(x=>x, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 76: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   test('non-list error reverse', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     reverse([1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 106: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   test('non-list error append', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     append([1, 2, 3], list(1, 2, 3));
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 121: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   test('non-list error member', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     member(1, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 136: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   test('non-list error remove', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     remove(1, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 151: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   test('non-list error remove_all', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     remove_all(1, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 169: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   test('non-list error assoc', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     assoc(1, [1, 2, 3]);
   `,
       { chapter: Chapter.LIBRARY_PARSER }
-    ).toMatchInlineSnapshot(`"Line 1: Name assoc not declared."`)
+    )).resolves.toMatchInlineSnapshot(`"Line 1: Name assoc not declared."`)
   })
 
   test('non-list error filter', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     filter(x => true, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 185: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   test('non-list error accumulate', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`"Line 1: Expected 3 arguments, but got 2."`)
+    )).resolves.toMatchInlineSnapshot(`"Line 1: Expected 3 arguments, but got 2."`)
   })
 
   test('non-list error accumulate', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`"Line 1: Expected 3 arguments, but got 2."`)
+    )).resolves.toMatchInlineSnapshot(`"Line 1: Expected 3 arguments, but got 2."`)
   })
 
   test('non-list error set_head', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     set_head([1, 2, 3], 4);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   test('non-list error set_tail', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     set_tail([1, 2, 3], 4);
   `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
   // skipped as implementation does not check types, causing infinite recursion.
   test.skip('bad number error build_list', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     build_list(x => x, -1);
   `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1"`
     )
   })
 
   // skipped as implementation does not check types, causing infinite recursion.
   test.skip('bad number error build_list', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     build_list(x => x, 1.5);
   `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered 1.5"`
     )
   })
 
   test('bad number error build_list', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     build_list(x => x, '1');
   `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 63: Expected number on left hand side of operation, got string."`
     )
   })
 
   test('bad number error enum_list', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     enum_list('1', '5');
   `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 203: Expected string on right hand side of operation, got number."`
     )
   })
 
   test('bad number error enum_list', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     enum_list('1', 5);
   `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 201: Expected string on right hand side of operation, got number."`
     )
   })
 
   test('bad number error enum_list', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     enum_list(1, '5');
   `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 201: Expected number on right hand side of operation, got string."`
     )
   })
 
   test('bad index error list_ref', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     list_ref(list(1, 2, 3), 3);
   `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 216: Error: head(xs) expects a pair as argument xs, but encountered null"`
     )
   })
 
   test('bad index error list_ref', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     list_ref(list(1, 2, 3), -1);
   `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null"`
     )
   })
 
   test('bad index error list_ref', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     list_ref(list(1, 2, 3), 1.5);
   `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null"`
     )
   })
 
   test('bad index error list_ref', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     list_ref(list(1, 2, 3), '1');
   `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 215: Expected string on right hand side of operation, got number."`
     )
   })
 })
 
 describe('display_list', () => {
-  test('standard acyclic', () => {
-    return expectDisplayResult(
+  test('standard acyclic', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         display_list(build_list(i => i, 5));
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`
+    )
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list(0, 1, 2, 3, 4)",
 ]
 `)
   })
 
-  test('standard acyclic 2', () => {
-    return expectDisplayResult(
+  test('standard acyclic 2', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         display_list(build_list(i => build_list(j => j, i), 5));
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`
+    )
+    
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list(null, list(0), list(0, 1), list(0, 1, 2), list(0, 1, 2, 3))",
 ]
 `)
   })
 
-  test('standard acyclic with pairs', () => {
-    return expectDisplayResult(
+  test('standard acyclic with pairs', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         display_list(build_list(i => build_list(j => pair(j, j), i), 5));
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`
+    )
+    
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list(null,
      list([0, 0]),
@@ -661,14 +667,16 @@ Array [
 `)
   })
 
-  test('standard acyclic with pairs 2', () => {
-    return expectDisplayResult(
+  test('standard acyclic with pairs 2', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         display_list(build_list(i => build_list(j => pair(build_list(k => k, j), j), i), 5));
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`
+    )
+    
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list(null,
      list([null, 0]),
@@ -680,18 +688,18 @@ Array [
   })
 
   test('returns argument', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
         const xs = build_list(i => i, 5);
         xs === display_list(xs);
         // Note reference equality
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`true`)
+    )).resolves.toMatchInlineSnapshot(`true`)
   })
 
   test('returns cyclic argument', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
         const build_inf = (i, f) => {
           const t = list(f(i));
@@ -707,17 +715,19 @@ Array [
         // Note reference equality
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`true`)
+    )).resolves.toMatchInlineSnapshot(`true`)
   })
 
-  test('supports prepend string', () => {
-    return expectDisplayResult(
+  test('supports prepend string', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         display_list(build_list(i => i, 5), "build_list:");
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`
+    )
+    
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "build_list: list(0, 1, 2, 3, 4)",
 ]
@@ -725,13 +735,13 @@ Array [
   })
 
   test('checks prepend type', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
         display_list(build_list(i => i, 5), true);
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 1: TypeError: display_list expects the second argument to be a string"`
     )
   })
@@ -740,14 +750,16 @@ Array [
    * FUZZ TESTS *
    **************/
 
-  test('MCE fuzz test', () => {
-    return expectDisplayResult(
+  test('MCE fuzz test', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         display_list(parse('const twice = f => x => {const result = f(f(x)); return two;};'));
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_4 }
-    ).toMatchInlineSnapshot(`
+    )
+    
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list(\\"constant_declaration\\",
      list(\\"name\\", \\"twice\\"),
@@ -768,14 +780,16 @@ Array [
 `)
   })
 
-  test('standard acyclic multiline', () => {
-    return expectDisplayResult(
+  test('standard acyclic multiline', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         display_list(build_list(i => build_list(j => j, i), 20));
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`
+    )
+    
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list(null,
      list(0),
@@ -801,8 +815,8 @@ Array [
 `)
   })
 
-  test('infinite list', () => {
-    return expectDisplayResult(
+  test('infinite list', async () => {
+    const { context }  = await testSuccess(
       stripIndent`
         const p = list(1);
         set_tail(p, p);
@@ -810,15 +824,17 @@ Array [
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`
+    )
+    
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "[1, ...<circular>]",
 ]
 `)
   })
 
-  test('infinite list 2', () => {
-    return expectDisplayResult(
+  test('infinite list 2', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         const p = list(1, 2, 3);
         set_tail(tail(tail(p)), p);
@@ -826,15 +842,17 @@ Array [
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`
+    )
+    
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "[1, [2, [3, ...<circular>]]]",
 ]
 `)
   })
 
-  test('reusing lists', () => {
-    return expectDisplayResult(
+  test('reusing lists', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         const p = list(1);
         const p2 = pair(p, p);
@@ -843,15 +861,16 @@ Array [
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`
+    )
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list(list(1), list(list(1), 1))",
 ]
 `)
   })
 
-  test('reusing lists 2', () => {
-    return expectDisplayResult(
+  test('reusing lists 2', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         const p1 = pair(1, null);
         const p2 = pair(2, p1);
@@ -860,14 +879,16 @@ Array [
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`
+    )
+    
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list(list(1), list(2, 1))",
 ]
 `)
   })
-  test('list of infinite list', () => {
-    return expectDisplayResult(
+  test('list of infinite list', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         const build_inf = i => {
           const t = list(i);
@@ -882,7 +903,8 @@ Array [
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`
+    )
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list([0, ...<circular>],
      [0, [1, ...<circular>]],
@@ -893,8 +915,8 @@ Array [
 `)
   })
 
-  test('list of infinite list of list', () => {
-    return expectDisplayResult(
+  test('list of infinite list of list', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         const build_inf = (i, f) => {
           const t = list(f(i));
@@ -909,7 +931,8 @@ Array [
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`
+    )
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list([null, ...<circular>],
      [null, [list(0), ...<circular>]],
@@ -918,8 +941,8 @@ Array [
 `)
   })
 
-  test('infinite list of list of infinite list', () => {
-    return expectDisplayResult(
+  test('infinite list of list of infinite list', async () => {
+    const { context } = await testSuccess(
       stripIndent`
         const build_inf = (i, f) => {
           const t = list(f(i));
@@ -934,7 +957,9 @@ Array [
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`
+    )
+    
+    expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "[ null,
 [ list([0, ...<circular>]),

@@ -1,9 +1,10 @@
-import { Chapter, Variant  } from '../../langs'
+import { describe, expect, test, vi } from 'vitest'
+import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { getChapterName } from '../../utils/misc'
-import { expectFinishedResult } from '../../utils/testing'
+import { testSuccess } from '../../utils/testing'
 
-jest.mock('../../modules/loader/loaders')
+vi.mock(import('../../modules/loader/loaders'))
 
 type DescribeCase = [string, Chapter[], Variant[], string]
 const describeCases: DescribeCase[] = [
@@ -61,8 +62,8 @@ describe.each(describeCases)(
       return [`Testing ${chapterName}`, chapterVal, variant] as [string, Chapter, Variant]
     })
 
-    test.each(chapterCases)('%s', async (_, chapter, variant) => {
-      return expectFinishedResult(code, { chapter, variant }).toEqual('foo')
+    test.each(chapterCases)('%s', (_, chapter, variant) => {
+      return expect(testSuccess(code, { chapter, variant })).resolves.toEqual('foo')
     })
   }
 )

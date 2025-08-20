@@ -1,6 +1,7 @@
+import { expect, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { oneLine } from '../../utils/formatters'
-import { expectFinishedResult } from '../../utils/testing'
+import { testSuccess } from '../../utils/testing'
 
 const testCases: [string, string, Chapter][] = [
   ['empty program', 'stringify(parse(""), undefined, 2);', Chapter.SOURCE_4],
@@ -134,5 +135,5 @@ const testCases: [string, string, Chapter][] = [
 ]
 
 test.each(testCases)('Parses %s', (name, snippet, chapter) => {
-  return expectFinishedResult(snippet, chapter).toMatchSnapshot(name)
+  return expect(testSuccess(snippet, chapter)).resolves.toMatchSnapshot(name)
 })

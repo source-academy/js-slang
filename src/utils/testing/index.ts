@@ -1,10 +1,31 @@
+import { assert, expect, it, test } from 'vitest'
 import { parseError, runInContext } from '../..'
 import createContext, { defineBuiltin } from '../../createContext'
-import { Chapter } from '../../langs'
-import type { CustomBuiltIns } from '../../types'
-import { assertIsFinished, processTestOptions } from './misc'
+import { Chapter, Variant } from '../../langs'
+import type { Context, CustomBuiltIns } from '../../types'
+import { getChapterName } from '../misc'
 import { mockContext } from './mocks'
-import type { TestContext, TestOptions, TestResults } from './types'
+import type { TestBuiltins, TestContext, TestOptions, TestResults } from './types'
+
+export const contextIt = it.extend<{
+  chapter: Chapter
+  variant: Variant
+  context: Context
+}>({
+  chapter: Chapter.SOURCE_1,
+  variant: Variant.DEFAULT,
+  context: ({ chapter, variant }, use) => use(mockContext(chapter, variant))
+})
+
+export const contextTest = test.extend<{
+  chapter: Chapter
+  variant: Variant
+  context: Context
+}>({
+  chapter: Chapter.SOURCE_1,
+  variant: Variant.DEFAULT,
+  context: ({ chapter, variant }, use) => use(mockContext(chapter, variant))
+})
 
 export function createTestContext(rawOptions: TestOptions = {}): TestContext {
   const { chapter, variant, testBuiltins, languageOptions }: Exclude<TestOptions, Chapter> =
@@ -56,6 +77,29 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
   }
 }
 
+/**
+ * Convert the options provided by the user for each test into the full options
+ * used by the testing system
+ */
+export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions, Chapter> {
+  return typeof rawOptions === 'number'
+    ? {
+        chapter: rawOptions
+      }
+    : rawOptions
+}
+
+/**
+ * Convenience wrapper for testing a case with multiple chapters
+ */
+export function testWithChapters(...chapters: Chapter[]) {
+  return (func: (chapter: Chapter) => any) =>
+    test.each(chapters.map(chapter => [getChapterName(chapter), chapter]))(
+      'Testing %s',
+      (_, chapter) => func(chapter)
+    )
+}
+
 async function testInContext(code: string, rawOptions: TestOptions) {
   const options = processTestOptions(rawOptions)
   const context = createTestContext(options)
@@ -76,7 +120,7 @@ export async function testSuccess(code: string, options: TestOptions = {}) {
     console.log(context.errors)
   }
 
-  assertIsFinished(result)
+  assert(result.status === 'finished')
   return {
     context,
     result
@@ -94,74 +138,13 @@ export async function testFailure(code: string, options: TestOptions = {}) {
 }
 
 /**
- * Run the given code and expect it to finish without errors. Use
- * as if using `expect()`
+ * Calls `eval` on the provided code with the provided builtins
  */
-export function expectFinishedResult(code: string, options: TestOptions = {}) {
-  return expect(
-    testInContext(code, options).then(({ result, context }) => {
-      if (result.status === 'error') {
-        const errStr = parseError(context.errors)
-        console.log(errStr)
-      }
-      assertIsFinished(result)
-      return result.value
-    })
-  ).resolves
-}
+export function evalWithBuiltins(code: string, testBuiltins: TestBuiltins = {}) {
+  // Ugly, but if you know how to `eval` code with some builtins attached, please change this.
+  const builtins = Object.keys(testBuiltins).map(key => `const ${key} = testBuiltins.${key};`)
+  const evalstring = builtins.join('\n') + code
 
-/**
- * Expect the code to error, then test the parsed error value. Use as if using
- * `expect`
- */
-export function expectParsedError(code: string, options: TestOptions = {}, verbose?: boolean) {
-  return expect(
-    testInContext(code, options).then(({ result, context }) => {
-      expect(result.status).toEqual('error')
-      return parseError(context.errors, verbose)
-    })
-  ).resolves
-}
-
-export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
-  const start = Date.now()
-  const context = mockContext(Chapter.SOURCE_4)
-  await runInContext(code, context, {
-    executionMethod: 'native',
-  })
-  const timeTaken = Date.now() - start
-  expect(timeTaken).toBeLessThan(timeout * 5)
-  expect(timeTaken).toBeGreaterThanOrEqual(timeout)
-  return parseError(context.errors)
-}
-
-/**
- * Run the given code, expect it to finish without errors and also match a snapshot
- */
-export async function snapshotSuccess(code: string, options: TestOptions = {}, name?: string) {
-  const results = await testSuccess(code, options)
-  if (name === undefined) {
-    expect(results).toMatchSnapshot()
-  } else {
-    expect(results).toMatchSnapshot(name)
-  }
-  return results
-}
-
-/**
- * Run the given code, expect it to finish with errors and that those errors match a snapshot
- */
-export async function snapshotFailure(code: string, options: TestOptions = {}, name?: string) {
-  const results = await testFailure(code, options)
-  if (name === undefined) {
-    expect(results).toMatchSnapshot()
-  } else {
-    expect(results).toMatchSnapshot(name)
-  }
-  return results
-}
-
-export function expectDisplayResult(code: string, options: TestOptions = {}) {
-  return expect(testSuccess(code, options).then(({ context: { displayResult } }) => displayResult))
-    .resolves
+  // tslint:disable-next-line:no-eval
+  return eval(evalstring + code)
 }

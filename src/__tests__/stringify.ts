@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { Chapter } from '../langs'
 import { stripIndent } from '../utils/formatters'
 import {
@@ -6,41 +7,41 @@ import {
   stringify,
   valueToStringDag
 } from '../utils/stringify'
-import { expectFinishedResult } from '../utils/testing'
+import { testSuccess } from '../utils/testing'
 
 test('String representation of numbers are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify(0);
   `
-  ).toMatchInlineSnapshot(`"0"`)
+  )).resolves.toMatchInlineSnapshot(`"0"`)
 })
 
 test('String representation of strings are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify('a string');
   `
-  ).toMatchInlineSnapshot(`"\\"a string\\""`)
+  )).resolves.toMatchInlineSnapshot(`"\\"a string\\""`)
 })
 
 test('String representation of booleans are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify('true');
   `
-  ).toMatchInlineSnapshot(`"\\"true\\""`)
+  )).resolves.toMatchInlineSnapshot(`"\\"true\\""`)
 })
 
 test('String representation of functions are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   function f(x, y) {
     return x;
   }
   stringify(f);
   `
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             "function f(x, y) {
               return x;
             }"
@@ -48,62 +49,62 @@ test('String representation of functions are nice', () => {
 })
 
 test('String representation of arrow functions are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   const f = (x, y) => x;
   stringify(f);
   `
-  ).toMatchInlineSnapshot(`"(x, y) => x"`)
+  )).resolves.toMatchInlineSnapshot(`"(x, y) => x"`)
 })
 
 test('String representation of arrays are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   const xs = [1, 'true', true, () => 1];
   stringify(xs);
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`"[1, \\"true\\", true, () => 1]"`)
+  )).resolves.toMatchInlineSnapshot(`"[1, \\"true\\", true, () => 1]"`)
 })
 
 test('String representation of multidimensional arrays are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   const xs = [1, 'true', [true, () => 1, [[]]]];
   stringify(xs);
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`"[1, \\"true\\", [true, () => 1, [[]]]]"`)
+  )).resolves.toMatchInlineSnapshot(`"[1, \\"true\\", [true, () => 1, [[]]]]"`)
 })
 
 test('String representation of empty arrays are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   const xs = [];
   stringify(xs);
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`"[]"`)
+  )).resolves.toMatchInlineSnapshot(`"[]"`)
 })
 
 test('String representation of lists are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify(enum_list(1, 10));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`"[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]"`)
+  )).resolves.toMatchInlineSnapshot(`"[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]"`)
 })
 
 test('Correctly handles circular structures with multiple entry points', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   const x = enum_list(1, 3);
   set_tail(tail(tail(x)), x);
   stringify(list(x, tail(x), tail(tail(x))));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             "[ [1, [2, [3, ...<circular>]]],
             [[2, [3, [1, ...<circular>]]], [[3, [1, [2, ...<circular>]]], null]]]"
           `)
@@ -112,12 +113,12 @@ test('Correctly handles circular structures with multiple entry points', () => {
 // The interpreter runs into a MaximumStackLimitExceeded error on 1000, so reduced it to 100.
 // tslint:disable:max-line-length
 test('String representation of huge lists are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify(enum_list(1, 100));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             "[ 1,
             [ 2,
             [ 3,
@@ -212,7 +213,7 @@ test('String representation of huge lists are nice', () => {
 // tslint:enable:max-line-length
 
 test('String representation of huge arrays are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   const arr = [];
   for (let i = 0; i < 100; i = i + 1) {
@@ -221,7 +222,7 @@ test('String representation of huge arrays are nice', () => {
   stringify(arr);
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             "[ 0,
               1,
               2,
@@ -326,45 +327,45 @@ test('String representation of huge arrays are nice', () => {
 })
 
 test('String representation of objects are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   const o = { a: 1, b: true, c: () => 1 };
   stringify(o);
   `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1}"`)
+  )).resolves.toMatchInlineSnapshot(`"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1}"`)
 })
 
 test('String representation of objects with toReplString member calls toReplString', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   const o = { toReplString: () => '<RUNE>' };
   stringify(o);
   `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"<RUNE>"`)
+  )).resolves.toMatchInlineSnapshot(`"<RUNE>"`)
 })
 
 test('String representation of nested objects are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 } };
   stringify(o);
   `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(
+  )).resolves.toMatchInlineSnapshot(
     `"{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}"`
   )
 })
 
 test('String representation of big objects are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
   stringify(o);
   `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             "{ \\"a\\": 1,
               \\"b\\": true,
               \\"c\\": () => 1,
@@ -381,14 +382,14 @@ test('String representation of big objects are nice', () => {
 })
 
 test('String representation of nested objects are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   let o = {};
   o.o = o;
   stringify(o);
   `,
     { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"{\\"o\\": ...<circular>}"`)
+  )).resolves.toMatchInlineSnapshot(`"{\\"o\\": ...<circular>}"`)
 })
 
 test('String representation of non literal objects is nice', () => {
@@ -423,12 +424,12 @@ test('String representation of instances is nice', () => {
 })
 
 test('String representation of builtins are nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify(pair);
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             "function pair(left, right) {
             	[implementation hidden]
             }"
@@ -436,30 +437,30 @@ test('String representation of builtins are nice', () => {
 })
 
 test('String representation of null is nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify(null);
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`"null"`)
+  )).resolves.toMatchInlineSnapshot(`"null"`)
 })
 
 test('String representation of undefined is nice', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify(undefined);
   `
-  ).toMatchInlineSnapshot(`"undefined"`)
+  )).resolves.toMatchInlineSnapshot(`"undefined"`)
 })
 
 // tslint:disable:max-line-length
 test('String representation with no indent', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify(parse('x=>x;'), 0);
   `,
     { chapter: Chapter.SOURCE_4 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             "[\\"lambda_expression\\",
             [[[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
@@ -467,12 +468,12 @@ test('String representation with no indent', () => {
 })
 
 test('String representation with 1 space indent', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify(parse('x=>x;'), 1);
   `,
     { chapter: Chapter.SOURCE_4 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             "[\\"lambda_expression\\",
             [[[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
@@ -480,12 +481,12 @@ test('String representation with 1 space indent', () => {
 })
 
 test('String representation with default (2 space) indent', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify(parse('x=>x;'));
   `,
     { chapter: Chapter.SOURCE_4 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             "[ \\"lambda_expression\\",
             [ [[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
@@ -493,12 +494,12 @@ test('String representation with default (2 space) indent', () => {
 })
 
 test('String representation with more than 10 space indent should trim to 10 space indent', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
   stringify(parse('x=>x;'), 100);
   `,
     { chapter: Chapter.SOURCE_4 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             "[         \\"lambda_expression\\",
             [         [[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"

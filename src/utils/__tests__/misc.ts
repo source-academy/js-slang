@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { PromiseTimeoutError, getChapterName, timeoutPromise } from '../misc'
 
@@ -7,7 +8,7 @@ describe('test timeoutPromise', () => {
   const timedRejectedPromise = (duration: number) =>
     new Promise<void>((_, reject) => setTimeout(() => reject(-1), duration))
 
-  test('Regular timeouts', async () => {
+  test('Regular timeouts', () => {
     const promise = timeoutPromise(timedResolvedPromise(100), 200)
     return expect(promise).resolves.toBeUndefined()
   })

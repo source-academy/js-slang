@@ -1,25 +1,26 @@
+import { describe, expect, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult, expectParsedError } from '../../utils/testing'
+import { testFailure, testSuccess } from '../../utils/testing'
 
 describe('primitive stream functions', () => {
   test('empty stream is null', () => {
-    return expectFinishedResult('stream();', { chapter: Chapter.SOURCE_3 }).toBe(null)
+    return expect(testSuccess('stream();', Chapter.SOURCE_3)).resolves.toBe(null)
   })
 
   test('stream_tail works', () => {
-    return expectFinishedResult(`head(stream_tail(stream(1, 2)));`, {
+    return expect(testSuccess(`head(stream_tail(stream(1, 2)));`, {
       chapter: Chapter.SOURCE_3
-    }).toBe(2)
+    })).resolves.toBe(2)
   })
 
   test('stream_tail is lazy', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent(`
     stream_tail(integers_from(0));
     `),
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`
+    )).resolves.toMatchInlineSnapshot(`
               Array [
                 1,
                 [Function],
@@ -28,18 +29,18 @@ describe('primitive stream functions', () => {
   })
 
   test('infinite stream is infinite', () => {
-    return expectParsedError(
+    return expect(testFailure(
       stripIndent`
     stream_length(integers_from(0));
     `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
+    )).resolves.toMatchInlineSnapshot(
       `"Line 1: The error may have arisen from forcing the infinite stream: function integers_from."`
     )
   }, 15000)
 
   test('stream is properly created', () => {
-    return expectFinishedResult(
+    return expect(testSuccess(
       stripIndent`
     const s = stream(true, false, undefined, 1, x=>x, null, -123, head);
     const result = [];
@@ -47,19 +48,19 @@ describe('primitive stream functions', () => {
     stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;
     `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`false`)
+    )).resolves.toMatchInlineSnapshot(`false`)
   })
 
   test('stream_to_list works for null', () => {
-    return expectFinishedResult(`stream_to_list(null);`, {
+    return expect(testSuccess(`stream_to_list(null);`, {
       chapter: Chapter.SOURCE_3
-    }).toMatchInlineSnapshot(`null`)
+    })).resolves.toMatchInlineSnapshot(`null`)
   })
 
   test('stream_to_list works', () => {
-    return expectFinishedResult(`stream_to_list(stream(1, true, 3, 4.4, [1, 2]));`, {
+    return expect(testSuccess(`stream_to_list(stream(1, true, 3, 4.4, [1, 2]));`, {
       chapter: Chapter.SOURCE_3
-    }).toMatchInlineSnapshot(`
+    })).resolves.toMatchInlineSnapshot(`
               Array [
                 1,
                 Array [
@@ -84,7 +85,7 @@ describe('primitive stream functions', () => {
 })
 
 test('for_each', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     let sum = 0;
     stream_for_each(x => {
@@ -93,20 +94,20 @@ test('for_each', () => {
     sum;
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`6`)
+  )).resolves.toMatchInlineSnapshot(`6`)
 })
 
 test('map', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(stream_to_list(stream_map(x => 2 * x, stream(12, 11, 3))), list(24, 22, 6));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('filter', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(
       stream_to_list(
@@ -115,20 +116,20 @@ test('filter', () => {
     , list(2, 1, 3, 4, 2));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('build_list', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(stream_to_list(build_stream(x => x * x, 5)), list(0, 1, 4, 9, 16));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('reverse', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(stream_to_list(
       stream_reverse(
@@ -136,46 +137,46 @@ test('reverse', () => {
     list(123, null, undefined, null, "string"));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('append', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(stream_to_list(stream_append(stream("string", 123), stream(456, null, undefined)))
       , list("string", 123, 456, null, undefined));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('member', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(
       stream_to_list(stream_member("string", stream(1, 2, 3, "string", 123, 456, null, undefined))),
       list("string", 123, 456, null, undefined));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('remove', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     stream_remove(1, stream(1));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`null`)
+  )).resolves.toMatchInlineSnapshot(`null`)
 })
 
 test('remove not found', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     stream_to_list(stream_remove(2, stream(1)));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             Array [
               1,
               null,
@@ -184,47 +185,47 @@ test('remove not found', () => {
 })
 
 test('remove_all', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(stream_to_list(stream_remove_all(1, stream(1, 2, 3, 4, 1, 1, "1", 5, 1, 1, 6))),
       list(2, 3, 4, "1", 5, 6));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('remove_all not found', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(stream_to_list(stream_remove_all(1, stream(2, 3, "1"))), list(2, 3, "1"));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('enum_list', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(stream_to_list(enum_stream(1, 5)), list(1, 2, 3, 4, 5));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('enum_list with floats', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     equal(stream_to_list(enum_stream(1.5, 5)), list(1.5, 2.5, 3.5, 4.5));
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+  )).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('list_ref', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
     stream_ref(stream(1, 2, 3, "4", 4), 4);
   `,
     { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`4`)
+  )).resolves.toMatchInlineSnapshot(`4`)
 })

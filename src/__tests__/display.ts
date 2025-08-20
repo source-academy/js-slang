@@ -1,5 +1,6 @@
+import { expect, test } from 'vitest'
 import { Chapter } from '../langs'
-import { expectDisplayResult, expectParsedError } from '../utils/testing'
+import { testFailure, testSuccess } from '../utils/testing'
 
 type TestCase =
   | [desc: string, code: string, expectedDisplay: string[], chapter: Chapter]
@@ -52,18 +53,19 @@ const testCases: TestCase[] = [
   ]
 ]
 
-test.each(testCases)('%s', (_, code, expectedDisplay, chapter = undefined) =>
-  expectDisplayResult(code, chapter).toMatchObject(expectedDisplay)
-)
+test.each(testCases)('%s', async (_, code, expectedDisplay, chapter = undefined) => {
+  const { context } = await testSuccess(code, chapter)
+  expect(context.displayResult).toMatchObject(expectedDisplay)
+})
 
 test('display with no arguments throws an error', () => {
-  return expectParsedError(`display();`, Chapter.LIBRARY_PARSER).toMatchInlineSnapshot(
+  return expect(testFailure(`display();`, Chapter.LIBRARY_PARSER)).toMatchInlineSnapshot(
     `"Line 1: Expected 1 or more arguments, but got 0."`
   )
 })
 
 test('display throw error if second argument is non-string when used', () => {
-  return expectParsedError(`display(31072020, 0xDEADC0DE);`).toMatchInlineSnapshot(
+  return expect(testFailure(`display(31072020, 0xDEADC0DE);`)).toMatchInlineSnapshot(
     `"Line 1: TypeError: display expects the second argument to be a string"`
   )
 })

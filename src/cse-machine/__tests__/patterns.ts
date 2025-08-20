@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { _Symbol } from '../../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { match } from '../patterns'
 

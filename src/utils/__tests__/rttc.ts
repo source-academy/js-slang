@@ -1,7 +1,7 @@
-import { BinaryOperator, UnaryOperator } from 'estree'
-
+import type { BinaryOperator, UnaryOperator } from 'estree'
+import { describe, expect, test } from 'vitest'
 import { Chapter } from '../../langs'
-import { Value } from '../../types'
+import type { Value } from '../../types'
 import * as rttc from '../rttc'
 import { mockClosure, mockRuntimeContext } from '../testing/mocks'
 

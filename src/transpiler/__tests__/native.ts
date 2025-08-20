@@ -1,9 +1,19 @@
-import { runInContext } from '../../index'
-import { Chapter } from '../../langs'
-import { Finished } from '../../runner/types'
+import { assert, expect, test } from 'vitest'
+import { Chapter, parseError, runInContext } from '../../index'
 import { stripIndent } from '../../utils/formatters'
-import { expectNativeToTimeoutAndError } from '../../utils/testing'
 import { mockContext } from '../../utils/testing/mocks'
+
+async function expectNativeToTimeoutAndError(code: string, timeout: number) {
+  const start = Date.now()
+  const context = mockContext(Chapter.SOURCE_4)
+  await runInContext(code, context, {
+    executionMethod: 'native',
+  })
+  const timeTaken = Date.now() - start
+  expect(timeTaken).toBeLessThan(timeout * 5)
+  expect(timeTaken).toBeGreaterThanOrEqual(timeout)
+  return parseError(context.errors)
+}
 
 test('Proper stringify-ing of arguments during potentially infinite iterative function calls', async () => {
   const code = stripIndent`
@@ -79,8 +89,8 @@ test('test proper setting of variables in an outer scope', async () => {
     context
   )
   const result = await runInContext('a = "new"; f();', context)
-  expect(result.status).toBe('finished')
-  expect((result as Finished).value).toBe('new')
+  assert(result.status === 'finished')
+  expect(result.value).toBe('new')
 })
 
 test('using internal names still work', async () => {
@@ -96,11 +106,12 @@ test('using internal names still work', async () => {
   `,
     context
   )
-  expect(result.status).toBe('finished')
-  expect((result as Finished).value).toBe(1)
+  assert(result.status === 'finished')
+  expect(result.value).toBe(1)
   result = await runInContext('program;', context)
-  expect(result.status).toBe('finished')
-  expect((result as Finished).value).toBe(2)
+
+  assert(result.status === 'finished')
+  expect(result.value).toBe(2)
 })
 
 test('assigning a = b where b was from a previous program call works', async () => {
@@ -113,6 +124,6 @@ test('assigning a = b where b was from a previous program call works', async () 
   `,
     context
   )
-  expect(result.status).toBe('finished')
-  expect((result as Finished).value).toBe(1)
+  assert(result.status === 'finished')
+  expect(result.value).toBe(1)
 })

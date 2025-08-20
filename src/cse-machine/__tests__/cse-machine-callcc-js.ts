@@ -1,20 +1,21 @@
+import { expect, test } from 'vitest'
 import { Chapter, Variant  } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult, expectParsedError } from '../../utils/testing'
+import { testFailure, testSuccess  } from '../../utils/testing'
 // Continuation tests for Source
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('call_cc works with normal functions', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
       1 + 2 + call_cc((cont) => 3) + 4;
     `,
     optionEC4
-  ).toMatchInlineSnapshot(`10`)
+  )).resolves.toMatchInlineSnapshot(`10`)
 })
 
 test('call_cc can be used to return early', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
         let x = 1;
         call_cc((cont) => {
@@ -25,30 +26,30 @@ test('call_cc can be used to return early', () => {
         x;
         `,
     optionEC4
-  ).toMatchInlineSnapshot(`2`)
+  )).resolves.toMatchInlineSnapshot(`2`)
 })
 
 test('call_cc throws error when given no arguments', () => {
-  return expectParsedError(
+  return expect(testFailure(
     stripIndent`
         1 + 2 + call_cc() + 4;
         `,
     optionEC4
-  ).toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 0."`)
+  )).resolves.toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 0."`)
 })
 
 test('call_cc throws error when given > 1 arguments', () => {
-  return expectParsedError(
+  return expect(testFailure(
     stripIndent`
         const f = (cont) => cont;
         1 + 2 + call_cc(f,f) + 4;
         `,
     optionEC4
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
+  )).resolves.toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
 test('continuations can be stored as a value', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
         let a = 0;
         call_cc((cont) => {
@@ -57,5 +58,5 @@ test('continuations can be stored as a value', () => {
         a;
         `,
     optionEC4
-  ).toMatchInlineSnapshot(`[Function]`)
+  )).resolves.toMatchInlineSnapshot(`[Function]`)
 })

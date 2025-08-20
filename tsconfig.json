@@ -26,7 +26,8 @@
     "src/stdlib/**/*.js",
     "node_modules",
     "dist",
-    "sicp_publish"
+    "sicp_publish",
+    "vitest.config.ts"
   ],
   "types": ["typePatches", "jest"]
 }

@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { DeclarationKind } from '..'
 import { getNames } from '../..'
 import { Chapter } from '../../langs'
@@ -7,10 +8,9 @@ import {
   memoizedGetModuleDocsAsync,
   memoizedGetModuleManifestAsync
 } from '../../modules/loader/loaders'
-import { asMockedFunc } from '../../utils/testing/misc'
 import { mockContext } from '../../utils/testing/mocks'
 
-jest.mock('../../modules/loader/loaders')
+vi.mock(import('../../modules/loader/loaders'))
 
 type TestCase = [
   description: string,
@@ -21,7 +21,7 @@ type TestCase = [
 ]
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 async function testGetNames(code: string, expectedNames: [string, string][]) {
@@ -168,7 +168,7 @@ describe('test name extractor functionality on imports', () => {
   })
 
   test('Handles errors from memoizedGetModuleManifest gracefully', async () => {
-    const mockedManifest = asMockedFunc(memoizedGetModuleManifestAsync)
+    const mockedManifest = vi.mocked(memoizedGetModuleManifestAsync)
     mockedManifest.mockRejectedValueOnce(new ModuleConnectionError())
     await testGetNames("import { foo } from 'one_module';", [
       ['foo', "Unable to retrieve documentation for 'one_module'"]
@@ -178,7 +178,7 @@ describe('test name extractor functionality on imports', () => {
   })
 
   test('Handles errors from memoizedGetModuleDocs gracefully', async () => {
-    const mockedDocs = asMockedFunc(memoizedGetModuleDocsAsync)
+    const mockedDocs = vi.mocked(memoizedGetModuleDocsAsync)
     mockedDocs.mockRejectedValueOnce(new ModuleConnectionError())
 
     await testGetNames(`import { foo } from 'one_module'; import { bar } from 'another_module';`, [

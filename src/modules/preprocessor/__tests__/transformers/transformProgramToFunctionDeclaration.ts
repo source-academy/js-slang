@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest'
 import { Chapter } from '../../../../langs'
 import { parse } from '../../../../parser/parser'
 import { defaultExportLookupName } from '../../../../stdlib/localImport.prelude'

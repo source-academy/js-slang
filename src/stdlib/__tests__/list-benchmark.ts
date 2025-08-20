@@ -1,9 +1,11 @@
+// TODO: Conver to actual benchmark?
+import { expect, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult } from '../../utils/testing'
+import { testSuccess } from '../../utils/testing'
 import * as list from '../list'
 
-test('display_list is linear runtime', () => {
+test('display_list is linear runtime', { timeout: 1_000_000 }, () => {
   const placeholder = Symbol('placeholder')
   const noDisplayList = (v: any, s: any = placeholder) => {
     if (s !== placeholder && typeof s !== 'string') {
@@ -12,7 +14,7 @@ test('display_list is linear runtime', () => {
     return list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s)
   }
 
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
       const build_inf = (i, f) => {
         const t = list(f(i));
@@ -108,8 +110,8 @@ test('display_list is linear runtime', () => {
         no_display_list: noDisplayList
       }
     }
-  ).toBeLessThan(1.2)
+  )).resolves.toBeLessThan(1.2)
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?
-}, 1000000)
+})

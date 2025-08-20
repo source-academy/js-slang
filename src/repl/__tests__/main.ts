@@ -1,11 +1,12 @@
+import { describe, expect, test, vi } from 'vitest'
 import type { Command } from 'commander'
 import { getMainCommand } from '../main'
 
-jest.spyOn(process, 'exit').mockImplementation(code => {
+vi.spyOn(process, 'exit').mockImplementation(code => {
   throw new Error(`process.exit called with ${code}`)
 })
 
-jest.spyOn(process.stdout, 'write').mockImplementation(() => true)
+vi.spyOn(process.stdout, 'write').mockImplementation(() => true)
 
 describe('Make sure each subcommand can be run', () => {
   const mainCommand = getMainCommand()

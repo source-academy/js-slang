@@ -1,4 +1,5 @@
-import { Node } from 'estree'
+import { describe, expect, it } from 'vitest'
+import type { Node } from 'estree'
 
 import { UnassignedVariable } from '../../../errors/errors'
 import { decode, encode } from '../scm-slang/src'

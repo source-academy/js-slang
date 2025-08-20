@@ -1,11 +1,13 @@
+// TODO: Migrate to using actual benchmarks
+import { expect, test } from 'vitest'
 import { Chapter } from '../langs'
 import * as list from '../stdlib/list'
 import { stripIndent } from '../utils/formatters'
 import { stringify } from '../utils/stringify'
-import { expectFinishedResult } from '../utils/testing'
+import { testSuccess } from '../utils/testing'
 
 test('stringify is fast', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
       function make_k_list(k, d) {
           const degree = k;
@@ -31,12 +33,12 @@ test('stringify is fast', () => {
       end - start;
       `,
     Chapter.SOURCE_3
-  ).toBeLessThan(2000)
+  )).resolves.toBeLessThan(2000)
   // This benchmark takes 100ms on my machine,
   // but less than 2 seconds should be good enough on the test servers.
 })
 
-test('display_list with stringify is linear runtime', () => {
+test('display_list with stringify is linear runtime', { timeout: 1_000_000 }, () => {
   const placeholder = Symbol('placeholder')
   const noDisplayList = (v: any, s: any = placeholder) => {
     if (s !== placeholder && typeof s !== 'string') {
@@ -45,7 +47,7 @@ test('display_list with stringify is linear runtime', () => {
     return stringify(list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s))
   }
 
-  return expectFinishedResult(
+  return expect(testSuccess(
     stripIndent`
       const build_inf = (i, f) => {
         const t = list(f(i));
@@ -141,8 +143,8 @@ test('display_list with stringify is linear runtime', () => {
         no_display_list: noDisplayList
       }
     }
-  ).toBeLessThan(1.2)
+  )).resolves.toBeLessThan(1.2)
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?
-}, 1000000)
+})

@@ -1,4 +1,5 @@
 import type { Program } from 'estree'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import preprocessFileImports, { type PreprocessorOptions } from '..'
 import { parseError } from '../../..'
@@ -9,14 +10,13 @@ import {
   defaultExportLookupName
 } from '../../../stdlib/localImport.prelude'
 import type { RecursivePartial } from '../../../types'
-import { asMockedFunc } from '../../../utils/testing/misc'
 import { mockContext } from '../../../utils/testing/mocks'
 import { sanitizeAST } from '../../../utils/testing/sanitizer'
 import { UndefinedImportError } from '../../errors'
 import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
 import type { SourceFiles } from '../../moduleTypes'
 
-jest.mock('../../loader/loaders')
+vi.mock(import('../../loader/loaders'))
 
 describe('preprocessFileImports', () => {
   const wrapFiles = (files: SourceFiles) => (p: string) => Promise.resolve(files[p])
@@ -141,7 +141,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program', async () => {
-    const docsMocked = asMockedFunc(memoizedGetModuleDocsAsync)
+    const docsMocked = vi.mocked(memoizedGetModuleDocsAsync)
     docsMocked.mockResolvedValueOnce({
       default: {} as any,
       a: {} as any,
@@ -194,7 +194,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('collates Source module imports at the start of the top-level environment of the preprocessed program', async () => {
-    const docsMocked = asMockedFunc(memoizedGetModuleDocsAsync)
+    const docsMocked = vi.mocked(memoizedGetModuleDocsAsync)
 
     docsMocked.mockResolvedValue({
       f: {} as any,

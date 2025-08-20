@@ -1,21 +1,16 @@
-import * as fs from 'fs/promises'
-import { asMockedFunc } from '../../utils/testing/misc'
+import fs from 'fs/promises'
+import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import * as vm from '../../vm/svml-compiler'
 import { compileToChoices, getSVMCCommand } from '../svmc'
 import { expectWritten, getCommandRunner } from './utils'
 
-jest.mock('fs/promises', () => ({
-  writeFile: jest.fn(),
-  readFile: jest.fn()
-}))
+const mockedWriteFile = vi.spyOn(fs, 'writeFile')
+const mockedReadFile = vi.spyOn(fs, 'readFile')
 
-const mockedReadFile = asMockedFunc(fs.readFile)
-const mockedWriteFile = asMockedFunc(fs.writeFile)
-
-jest.spyOn(vm, 'compileToIns')
+vi.spyOn(vm, 'compileToIns')
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 const { expectError: rawExpectError, expectSuccess: rawExpectSuccess } =
@@ -58,7 +53,7 @@ describe('--internals option', () => {
   test('with valid values', async () => {
     await expectSuccess('1+1;', 'test.js', '--internals', '["func1", "func2"]')
     expect(vm.compileToIns).toHaveBeenCalledTimes(1)
-    const [[, , internals]] = asMockedFunc(vm.compileToIns).mock.calls
+    const [[, , internals]] = vi.mocked(vm.compileToIns).mock.calls
 
     expect(internals).toEqual(['func1', 'func2'])
   })

@@ -1,13 +1,14 @@
+import { expect, test, vi } from 'vitest'
 import { Chapter } from '../../../langs'
 import { mockContext } from '../../../utils/testing/mocks'
 import { getRequireProvider } from '../requireProvider'
 
-jest.mock('../../../stdlib', () => ({
-  bar: jest.fn().mockReturnValue('bar'),
+vi.mock(import('../../../stdlib'), () => ({
+  bar: vi.fn().mockReturnValue('bar'),
   list: {
-    foo: jest.fn().mockReturnValue('foo')
+    foo: vi.fn().mockReturnValue('foo')
   }
-}))
+} as any))
 
 const context = mockContext(Chapter.SOURCE_4)
 const provider = getRequireProvider(context)

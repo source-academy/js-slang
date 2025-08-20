@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { runCodeInSource } from '../../runner'
 import { stripIndent } from '../../utils/formatters'
@@ -56,11 +57,11 @@ const expectEnvTreeFrom = (code: string, hasPrelude = true) => {
 }
 
 test('Pre-defined functions are correctly added to prelude heap', () => {
-  expectEnvTreeFrom('0;').toMatchSnapshot()
+  return expectEnvTreeFrom('0;').toMatchSnapshot()
 })
 
 test('Arrays and closures are correctly added to their respective heaps', () => {
-  expectEnvTreeFrom(
+  return expectEnvTreeFrom(
     stripIndent`
     function f(x) {
       return [10, 11, 12];
@@ -76,7 +77,7 @@ test('Arrays and closures are correctly added to their respective heaps', () => 
 })
 
 test('Arrays created from built-in functions are correctly added to their respective heaps', () => {
-  expectEnvTreeFrom(
+  return expectEnvTreeFrom(
     stripIndent`
     pair(1, 2);
     {
@@ -87,7 +88,7 @@ test('Arrays created from built-in functions are correctly added to their respec
 })
 
 test('Variadic closures correctly add argument array to the function environment heap', () => {
-  expectEnvTreeFrom(
+  return expectEnvTreeFrom(
     stripIndent`
     const f = (...x) => x;
     f(1, 2, 3);
@@ -97,7 +98,7 @@ test('Variadic closures correctly add argument array to the function environment
 })
 
 test('apply_in_underlying_javascript works correctly and adds objects to heaps', () => {
-  expectEnvTreeFrom(
+  return expectEnvTreeFrom(
     stripIndent`
     let a = 0;
     function f(x) {

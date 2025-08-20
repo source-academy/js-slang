@@ -1,6 +1,7 @@
 import { parse } from 'acorn'
 import * as astring from 'astring'
-import { IStepperPropContents } from '..'
+import { test } from 'vitest'
+import type { IStepperPropContents } from '..'
 import createContext from '../../createContext'
 import { convert } from '../generator'
 import { StepperBaseNode } from '../interface'

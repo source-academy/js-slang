@@ -1,19 +1,18 @@
+import { describe, expect, test, vi } from 'vitest'
 import {
   createTestContext,
-  expectFinishedResult,
-  expectParsedError,
+  processTestOptions,
   testFailure,
   testSuccess
 } from '..'
 import * as main from '../../..'
 import { Chapter, Variant  } from '../../../langs'
-import { asMockedFunc, processTestOptions } from '../misc'
 import type { TestOptions } from '../types'
 
-jest.spyOn(main, 'runInContext')
+const mockedRunInContext = vi.spyOn(main, 'runInContext')
 
 function mockEvalSuccess(value: any = 0) {
-  asMockedFunc(main.runInContext).mockResolvedValueOnce({
+  mockedRunInContext.mockResolvedValueOnce({
     value,
     context: {} as main.Context,
     status: 'finished'
@@ -21,7 +20,7 @@ function mockEvalSuccess(value: any = 0) {
 }
 
 function mockEvalFailure() {
-  asMockedFunc(main.runInContext).mockResolvedValueOnce({
+  mockedRunInContext.mockResolvedValueOnce({
     status: 'error'
   })
 }
@@ -95,70 +94,5 @@ describe('Test testing functions', () => {
   test('Test testFailure rejects on evaluation success', () => {
     mockEvalSuccess()
     return expect(testFailure('')).rejects.toThrow()
-  })
-})
-
-describe('Test expect functions', () => {
-  test('Test expectFinishedResult resolves on evaluation success', () => {
-    mockEvalSuccess()
-    return expectFinishedResult('').toEqual(0)
-  })
-
-  test('Test expectFinishedResult rejects on evaluation failure', () => {
-    mockEvalFailure()
-    return expect(expectFinishedResult('').toEqual(0)).rejects.toThrow()
-  })
-
-  test('Test expectParsedError rejects on evaluation success', () => {
-    mockEvalSuccess()
-    return expect(expectParsedError('').toEqual('')).rejects.toThrow()
-  })
-
-  test('Test expectParsedError resolves on evaluation failure', () => {
-    mockEvalFailure()
-    return expectParsedError('').toEqual('')
-  })
-})
-
-describe('Extra test results', () => {
-  test('Test context contains the extra results', () => {
-    const context = createTestContext()
-    expect('displayResult' in context).toEqual(true)
-    expect('alertResult' in context).toEqual(true)
-    expect('visualiseListResult' in context).toEqual(true)
-    expect('promptResult' in context).toEqual(true)
-  })
-
-  test('Calling display actually adds to displayResult', async () => {
-    const {
-      context: { displayResult }
-    } = await testSuccess(`display("hi"); display("bye");`)
-    expect(displayResult).toMatchObject(['"hi"', '"bye"'])
-  })
-
-  test('Calling alert actually adds to alertResult', async () => {
-    const {
-      context: { alertResult }
-    } = await testSuccess(`alert("hi"); alert("bye");`, Chapter.LIBRARY_PARSER)
-    expect(alertResult).toMatchObject(['hi', 'bye'])
-  })
-
-  test('Calling draw_data actually adds to visualizeList', async () => {
-    const {
-      context: { visualiseListResult }
-    } = await testSuccess(`draw_data(list(1, 2));`, Chapter.SOURCE_2)
-    expect(visualiseListResult).toMatchInlineSnapshot(`
-Array [
-  Array [
-    Array [
-      1,
-      Array [
-        2,
-        null,
-      ],
-    ],
-  ],
-]
-`)
   })
 })

@@ -61,16 +61,13 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.10",
-    "@babel/preset-env": "^7.23.2",
     "@eslint/js": "^9.33.0",
     "@stylistic/eslint-plugin": "^5.2.3",
-    "@types/babel__core": "^7",
-    "@types/jest": "^29.0.0",
     "@types/lodash": "^4.14.202",
     "@types/mathjs": "^9.4.2",
     "@types/node": "^20.0.0",
     "@types/offscreencanvas": "^2019.7.0",
+    "@vitest/ui": "3.2.4",
     "ace-builds": "~1.17.0",
     "coveralls": "^3.1.0",
     "escodegen": "^2.0.0",
@@ -79,15 +76,12 @@
     "eslint-plugin-jest": "^29.0.1",
     "globals": "^16.0.0",
     "husky": "^9.0.0",
-    "jest": "^29.0.0",
-    "jest-environment-jsdom": "^29.0.0",
-    "jest-html-reporter": "^3.2.0",
     "jsdoc": "3.6.11",
     "jsdom": "^19.0.0",
     "prettier": "^3.6.2",
-    "ts-jest": "^29.0.0",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.40.0"
+    "typescript-eslint": "^8.40.0",
+    "vitest": "^3.2.4"
   },
   "devEngines": {
     "packageManager": {

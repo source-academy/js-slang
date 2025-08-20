@@ -1,16 +1,11 @@
+import { describe, expect } from 'vitest'
 import { parseError } from '../..'
-import { Chapter, Variant  } from '../../langs'
 import { parse } from '../../parser/parser'
-import { mockContext } from '../../utils/testing/mocks'
+import { it } from './typed.utils'
 
-let context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
-beforeEach(() => {
-  context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-})
-
+describe("source 1 typed tests", () => {
 describe('basic types', () => {
-  it('does not throw errors for allowed basic types', () => {
+  it('does not throw errors for allowed basic types', ({ context }) => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -22,7 +17,7 @@ describe('basic types', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 
-  it('throws errors for disallowed basic types', () => {
+  it('throws errors for disallowed basic types', ({ context }) => {
     const code = `const x1: unknown = 1;
       const x2: never = 1;
       const x3: bigint = 1;
@@ -40,7 +35,7 @@ describe('basic types', () => {
     `)
   })
 
-  it('throws error for non-callable types', () => {
+  it('throws error for non-callable types', ({ context }) => {
     const code = `const x1: number = 1;
       x1();
     `
@@ -51,7 +46,7 @@ describe('basic types', () => {
     )
   })
 
-  it('throws error for null type', () => {
+  it('throws error for null type', ({ context }) => {
     const code = 'const x1: null = null;'
 
     parse(code, context)
@@ -63,7 +58,7 @@ describe('basic types', () => {
 })
 
 describe('union types', () => {
-  it('handles type mismatches correctly', () => {
+  it('handles type mismatches correctly', ({ context }) => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -83,7 +78,7 @@ describe('union types', () => {
     )
   })
 
-  it('merges duplicate types', () => {
+  it('merges duplicate types', ({ context }) => {
     const code = `const x1: number | string | number = 1;
       const x2: string | number | string = '1';
       const x3: number | number = 1;
@@ -105,7 +100,7 @@ describe('union types', () => {
 })
 
 describe('literal types', () => {
-  it('handles type mismatches correctly', () => {
+  it('handles type mismatches correctly', ({ context }) => {
     const code = `const x1: 1 = 1; // no error
       const x2: 2 = 1; // error
       const x3: '1' = '1'; // no error
@@ -122,7 +117,7 @@ describe('literal types', () => {
     `)
   })
 
-  it('matches with correct primitive type', () => {
+  it('matches with correct primitive type', ({ context }) => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -138,7 +133,7 @@ describe('literal types', () => {
     `)
   })
 
-  it('works with union types and merges with primitive types', () => {
+  it('works with union types and merges with primitive types', ({ context }) => {
     const code = `const x1: number | 1 = '1'; // error should show type as 'number'
       const x2: string | '1' | 'test' = false; // error should show type as 'string'
       const x3: boolean | false = 1; // error should show type as 'boolean'
@@ -158,7 +153,7 @@ describe('literal types', () => {
 })
 
 describe('function types', () => {
-  it('handles type mismatches correctly', () => {
+  it('handles type mismatches correctly', ({ context }) => {
     const code = `const f1: (a: number, b: number) => number = (a, b) => a + b; // no error
       const f2: (a: string, b: string) => string = (c, d) => c + d; // no error even if argument names are different
       const f3: (a: number, b: number) => number = (a: number, b) => a + b; // no error
@@ -187,7 +182,7 @@ describe('function types', () => {
     `)
   })
 
-  it('handles type mismatches correctly with union types', () => {
+  it('handles type mismatches correctly with union types', ({ context }) => {
     const code = `const f1: (a: number | string, b: number | string) => number | string // no error
         = (c: string | number, d: string | number): string | number => c + d; 
       const f2: (a: number | string, b: number | string) => number | string // error
@@ -200,7 +195,7 @@ describe('function types', () => {
     )
   })
 
-  it('checks argument types correctly', () => {
+  it('checks argument types correctly', ({ context }) => {
     const code = `const sum: (a: number, b: number) => number = (a, b) => a + b;
       sum(1, 2); // no error
       sum(1, '2'); // error
@@ -221,7 +216,7 @@ describe('function types', () => {
     `)
   })
 
-  it('gets types of higher order functions correct', () => {
+  it('gets types of higher order functions correct', ({ context }) => {
     const code = `const make_adder: (x: number) => (y: number) => number = x => y => x + y;
       const x1 = make_adder(1)(2); // no error
       const x2 = make_adder('1')(2); // error
@@ -239,7 +234,7 @@ describe('function types', () => {
 })
 
 describe('function declarations', () => {
-  it('checks argument types correctly', () => {
+  it('checks argument types correctly', ({ context }) => {
     const code = `function sum(a: number, b: number): number {
         return a + b;
       }
@@ -262,7 +257,7 @@ describe('function declarations', () => {
     `)
   })
 
-  it('checks return type correctly', () => {
+  it('checks return type correctly', ({ context }) => {
     const code = `function f1(n: number): number {
         return n; // no error
       }
@@ -297,7 +292,7 @@ describe('function declarations', () => {
     `)
   })
 
-  it('handles recursive functions correctly', () => {
+  it('handles recursive functions correctly', ({ context }) => {
     const code = `function f1(n: number): number {
         return n === 1
           ? n
@@ -319,7 +314,7 @@ describe('function declarations', () => {
     `)
   })
 
-  it('handles higher order functions', () => {
+  it('handles higher order functions', ({ context }) => {
     const code = `function make_adder(x: number): (y: number) => number {
         function sum(y: number): number {
           return x + y;
@@ -342,7 +337,7 @@ describe('function declarations', () => {
 })
 
 describe('arrow functions', () => {
-  it('checks argument types correctly', () => {
+  it('checks argument types correctly', ({ context }) => {
     const code = `((a: number, b: number): number => a + b)(1, 2); // no error
       ((a: number, b: number): number => a + b)(1, '2'); // error
       ((a: number, b: number): number => a + b)(true, 2); // error
@@ -362,7 +357,7 @@ describe('arrow functions', () => {
     `)
   })
 
-  it('checks return type correctly', () => {
+  it('checks return type correctly', ({ context }) => {
     const code = `(n: number): number => n; // no error
       (n: number): string => n; // error
       (n: number): void => n; // error
@@ -382,7 +377,7 @@ describe('arrow functions', () => {
     `)
   })
 
-  it('gets return type correct both with and without braces', () => {
+  it('gets return type correct both with and without braces', ({ context }) => {
     const code = `((a: number, b: number): number => a + b)(1, 2); // no error
       ((a: number, b: number): string => a + b)(1, 2); // error
       ((a: string, b: string): number => {
@@ -400,7 +395,7 @@ describe('arrow functions', () => {
     `)
   })
 
-  it('gets types of higher order functions correct', () => {
+  it('gets types of higher order functions correct', ({ context }) => {
     const code = `const x1 = ((x: number): (y: number) => number => y => x + y)(1)(2); // no error
       const x2 = ((x: number): (y: number) => number => y => x + y)('1')(2); // error
       const x3 = ((x: number): (y: number) => number => y => x + y)(1)('2'); // error
@@ -417,7 +412,7 @@ describe('arrow functions', () => {
 })
 
 describe('type aliases', () => {
-  it('TSTypeAliasDeclaration nodes should be removed from program at end of typechecking', () => {
+  it('TSTypeAliasDeclaration nodes should be removed from program at end of typechecking', ({ context }) => {
     const code = `type StringOrNumber = string | number;
       const x = 1;
     `
@@ -426,7 +421,7 @@ describe('type aliases', () => {
     expect(program).toMatchSnapshot() // Should not contain TSTypeAliasDeclaration node
   })
 
-  it('should only be used at top level', () => {
+  it('should only be used at top level', ({ context }) => {
     const code = `type x = string;
       {
         type y = number;
@@ -439,7 +434,7 @@ describe('type aliases', () => {
     )
   })
 
-  it('should not be used as variables', () => {
+  it('should not be used as variables', ({ context }) => {
     const code = `type x = string | number;
       x;
     `
@@ -448,7 +443,7 @@ describe('type aliases', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 2: Name x not declared."`)
   })
 
-  it('should throw errors for type mismatch', () => {
+  it('should throw errors for type mismatch', ({ context }) => {
     const code = `type StringOrNumber = string | number;
       const x: StringOrNumber = true;
     `
@@ -459,7 +454,7 @@ describe('type aliases', () => {
     )
   })
 
-  it('type alias can be referenced before initialization', () => {
+  it('type alias can be referenced before initialization', ({ context }) => {
     const code = `const x: TestType = true;
       type StringOrNumber = string | number;
       type TestType = StringOrNumber;
@@ -471,14 +466,14 @@ describe('type aliases', () => {
     )
   })
 
-  it('should throw errors for undeclared types', () => {
+  it('should throw errors for undeclared types', ({ context }) => {
     const code = `const x: x = 1;`
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 1: Type 'x' not declared."`)
   })
 
-  it('should throw errors for duplicates', () => {
+  it('should throw errors for duplicates', ({ context }) => {
     const code = `type x = string;
       type x = number;
     `
@@ -489,7 +484,7 @@ describe('type aliases', () => {
     )
   })
 
-  it('should coexist with variables of the same name', () => {
+  it('should coexist with variables of the same name', ({ context }) => {
     const code = `type x = string | number;
       const x: x = 1;
     `
@@ -498,7 +493,7 @@ describe('type aliases', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 
-  it('type alias name cannot be reserved type', () => {
+  it('type alias name cannot be reserved type', ({ context }) => {
     const code = `type string = number;
       type number = string;
       type boolean = number;
@@ -514,7 +509,7 @@ describe('type aliases', () => {
     `)
   })
 
-  it('should not throw errors for types that are not introduced yet', () => {
+  it('should not throw errors for types that are not introduced yet', ({ context }) => {
     const code = `type Pair = number;
       type List = string;
       type Stream = boolean;
@@ -526,7 +521,7 @@ describe('type aliases', () => {
 })
 
 describe('generic types', () => {
-  it('non-generic types should not have type parameters', () => {
+  it('non-generic types should not have type parameters', ({ context }) => {
     const code = `type NotGeneric = string;
       const x: NotGeneric<string> = '1';
     `
@@ -537,7 +532,7 @@ describe('generic types', () => {
     )
   })
 
-  it('should throw errors for incorrect number of type arguments', () => {
+  it('should throw errors for incorrect number of type arguments', ({ context }) => {
     const code = `type Union<T, U> = T | U;
       const x1: Union<string> = '1';
       const x2: Union<string, number, boolean> = true;
@@ -550,7 +545,7 @@ describe('generic types', () => {
     `)
   })
 
-  it('type parameters cannot be reserved types', () => {
+  it('type parameters cannot be reserved types', ({ context }) => {
     const code = `type Union<string, number, boolean, undefined> = string | number | boolean | undefined;`
 
     parse(code, context)
@@ -562,7 +557,7 @@ describe('generic types', () => {
     `)
   })
 
-  it('should throw errors for type mismatch', () => {
+  it('should throw errors for type mismatch', ({ context }) => {
     const code = `type Union<T, U> = T | U;
       const x1: Union<string, number> = true;
       const x2: Union<string, boolean> = 1;
@@ -577,7 +572,7 @@ describe('generic types', () => {
     `)
   })
 
-  it('generic type aliases can be referenced before initialization', () => {
+  it('generic type aliases can be referenced before initialization', ({ context }) => {
     const code = `const x: Union<string, number> = true;
       type Union<T, U> = T | U;
     `
@@ -590,7 +585,7 @@ describe('generic types', () => {
 })
 
 describe('typecasting', () => {
-  it('TSAsExpression nodes should be removed from program at end of typechecking', () => {
+  it('TSAsExpression nodes should be removed from program at end of typechecking', ({ context }) => {
     const code = `const x1: string | number = 1;
       const x2: string = x1 as string;
     `
@@ -599,7 +594,7 @@ describe('typecasting', () => {
     expect(program).toMatchSnapshot() // Should not contain TSAsExpression node
   })
 
-  it('type to cast to must have non-empty intersection with original type', () => {
+  it('type to cast to must have non-empty intersection with original type', ({ context }) => {
     const code = `const x1: string | number = 1;
       const x2: string | number = x1 as string | number; // no error
       const x3: string = x1 as string; // no error
@@ -620,7 +615,7 @@ describe('typecasting', () => {
 })
 
 describe('variable declarations', () => {
-  it('identifies type mismatch errors for literals correctly', () => {
+  it('identifies type mismatch errors for literals correctly', ({ context }) => {
     const code = `const x1: number = '1';
       const x2: string = true;
       const x3: boolean = undefined;
@@ -636,7 +631,7 @@ describe('variable declarations', () => {
     `)
   })
 
-  it('identifies type mismatch errors for identifiers correctly', () => {
+  it('identifies type mismatch errors for identifiers correctly', ({ context }) => {
     const code = `const x1: number = 1;
       const x2: string = x1;
       const x3: boolean = x2;
@@ -656,7 +651,7 @@ describe('variable declarations', () => {
 })
 
 describe('unary operations', () => {
-  it('! is allowed for boolean type, and returns boolean type', () => {
+  it('! is allowed for boolean type, and returns boolean type', ({ context }) => {
     const code = `const x1: boolean = true;
       const x2: string = 'false';
       const x3: any = true;
@@ -675,7 +670,7 @@ describe('unary operations', () => {
     `)
   })
 
-  it('- is allowed for number type, and returns number type', () => {
+  it('- is allowed for number type, and returns number type', ({ context }) => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: any = 1;
@@ -694,7 +689,7 @@ describe('unary operations', () => {
     `)
   })
 
-  it('typeof is allowed for any type, and returns string type', () => {
+  it('typeof is allowed for any type, and returns string type', ({ context }) => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: any = 1;
@@ -714,7 +709,7 @@ describe('unary operations', () => {
 })
 
 describe('binary operations', () => {
-  it('-*/% are allowed for number type, and returns number type', () => {
+  it('-*/% are allowed for number type, and returns number type', ({ context }) => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: any = true;
@@ -737,7 +732,7 @@ describe('binary operations', () => {
     `)
   })
 
-  it('+ is allowed for number or string type, and returns appropriate type', () => {
+  it('+ is allowed for number or string type, and returns appropriate type', ({ context }) => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -768,7 +763,7 @@ describe('binary operations', () => {
     `)
   })
 
-  it('inequality operators are allowed for number or string type, and returns boolean type', () => {
+  it('inequality operators are allowed for number or string type, and returns boolean type', ({ context }) => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -802,7 +797,7 @@ describe('binary operations', () => {
 })
 
 describe('logical expressions', () => {
-  it('left type must be success type of boolean', () => {
+  it('left type must be success type of boolean', ({ context }) => {
     const code = `const x1: boolean = true;
       const x2: string = 'false';
       const x3: any = true;
@@ -822,7 +817,7 @@ describe('logical expressions', () => {
     `)
   })
 
-  it('return type is union of boolean and right type', () => {
+  it('return type is union of boolean and right type', ({ context }) => {
     const code = `const x1: boolean = true;
       const x2: string = 'false';
       const x3: number | string = 1;
@@ -844,7 +839,7 @@ describe('logical expressions', () => {
 })
 
 describe('conditional expressions', () => {
-  it('predicate type must be success type of boolean', () => {
+  it('predicate type must be success type of boolean', ({ context }) => {
     const code = `const x1: boolean = true;
       const x2: string = 'false';
       const x3: any = 1;
@@ -875,7 +870,7 @@ describe('conditional expressions', () => {
     `)
   })
 
-  it('return type is union of cons and alt type', () => {
+  it('return type is union of cons and alt type', ({ context }) => {
     const code = `const x: string | number = 1;
       function f1(): number {
         return true ? 1 : 2; // no error
@@ -899,7 +894,7 @@ describe('conditional expressions', () => {
 })
 
 describe('if-else statements', () => {
-  it('predicate type must be success type of boolean', () => {
+  it('predicate type must be success type of boolean', ({ context }) => {
     const code = `const x1: boolean = true;
       const x2: string = 'false';
       const x3: any = 1;
@@ -954,7 +949,7 @@ describe('if-else statements', () => {
     `)
   })
 
-  it('return type is checked one by one', () => {
+  it('return type is checked one by one', ({ context }) => {
     const code = `const x: string | number = 1;
       function f1(): number {
         if (true) { // no error
@@ -994,7 +989,7 @@ describe('if-else statements', () => {
 })
 
 describe('import statements', () => {
-  it('identifies imports even if accessed before import statement', () => {
+  it('identifies imports even if accessed before import statement', ({ context }) => {
     const code = `show(heart);
       import { show, heart } from 'rune';
     `
@@ -1003,7 +998,7 @@ describe('import statements', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 
-  it('should only be used at top level', () => {
+  it('should only be used at top level', ({ context }) => {
     const code = `import { show } from 'rune';
       {
         import { heart } from 'rune';
@@ -1016,7 +1011,7 @@ describe('import statements', () => {
     )
   })
 
-  it('defaults to any for all imports', () => {
+  it('defaults to any for all imports', ({ context }) => {
     const code = `import { show, heart } from 'rune';
       show(heart);
       heart(show);
@@ -1030,7 +1025,7 @@ describe('import statements', () => {
 })
 
 describe('scoping', () => {
-  it('gets types correct even if accessed before initialization', () => {
+  it('gets types correct even if accessed before initialization', ({ context }) => {
     const code = `const x: number = f(); // error
     function f(): string {
       return g(); // error
@@ -1050,7 +1045,7 @@ describe('scoping', () => {
     `)
   })
 
-  it('gets types correct for nested constants and functions', () => {
+  it('gets types correct for nested constants and functions', ({ context }) => {
     const code = `function f(n: string): string {
       return n;
     }
@@ -1073,4 +1068,5 @@ describe('scoping', () => {
       Line 14: Type 'string' is not assignable to type 'number'."
     `)
   })
+})
 })

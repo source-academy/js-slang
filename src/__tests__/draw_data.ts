@@ -1,20 +1,21 @@
+import { expect, test } from 'vitest'
 import { Chapter } from '../langs'
-import { expectFinishedResult, expectParsedError } from '../utils/testing'
+import { testSuccess, testFailure } from '../utils/testing'
 
-test('draw_data returns first argument if more than one argument', () => {
-  return expectFinishedResult(`draw_data(1, 2);`, {
-    chapter: Chapter.SOURCE_3
-  }).toMatchInlineSnapshot(`1`)
+test('draw_data returns first argument if more than one argument', async () => {
+  const { context } = await testSuccess(`draw_data(1, 2);`, Chapter.SOURCE_3)
+  expect(context.displayResult).toMatchInlineSnapshot(`1`)
 })
 
-test('draw_data returns first argument if exactly one argument', () => {
-  return expectFinishedResult(`draw_data(1);`, { chapter: Chapter.SOURCE_3 }).toMatchInlineSnapshot(
+test('draw_data returns first argument if exactly one argument', async () => {
+  const { context } = await testSuccess(`draw_data(1);`, Chapter.SOURCE_3)
+  expect(context.displayResult).toMatchInlineSnapshot(
     `1`
   )
 })
 
 test('draw_data with no arguments throws error', () => {
-  return expectParsedError(`draw_data();`, { chapter: Chapter.SOURCE_3 }).toMatchInlineSnapshot(
+  return expect(testFailure(`draw_data();`, Chapter.SOURCE_3)).resolves.toMatchInlineSnapshot(
     `"Line 1: Expected 1 or more arguments, but got 0."`
   )
 })

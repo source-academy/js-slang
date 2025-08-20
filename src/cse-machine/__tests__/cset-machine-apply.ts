@@ -1,17 +1,18 @@
+import { expect, test } from 'vitest'
 import { Chapter, Variant  } from '../../langs'
-import { expectFinishedResult, expectParsedError } from '../../utils/testing'
+import { testFailure, testSuccess } from '../../utils/testing'
 
 // apply tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('two-operand apply', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (define args '(1 2))
     (apply + args)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 3n,
@@ -20,13 +21,13 @@ test('two-operand apply', () => {
 })
 
 test('multi-operand apply', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (define args '(1 2 3 4 5))
     (apply + 6 7 8 9 10 args)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 55n,
@@ -35,28 +36,28 @@ test('multi-operand apply', () => {
 })
 
 test('eval of strings', () => {
-  return expectFinishedResult(
+  return expect(testSuccess(
     `
     (eval "hello")
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`"hello"`)
+  )).resolves.toMatchInlineSnapshot(`"hello"`)
 })
 
 test('incorrect use of apply throws error (insufficient arguments)', () => {
-  return expectParsedError(
+  return expect(testFailure(
     `
     (apply)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`"Expected 2 arguments, but got 0."`)
+  )).resolves.toMatchInlineSnapshot(`"Expected 2 arguments, but got 0."`)
 })
 
 test('incorrect use of apply throws error (last argument not a list)', () => {
-  return expectParsedError(
+  return expect(testFailure(
     `
     (apply + 1 2 3)
   `,
     optionECScm
-  ).toMatchInlineSnapshot(`"Error: Last argument of apply must be a list"`)
+  )).resolves.toMatchInlineSnapshot(`"Error: Last argument of apply must be a list"`)
 })

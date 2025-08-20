@@ -1,8 +1,11 @@
-import { compile, createContext } from '../..'
+import { expect } from 'vitest'
+import { compile } from '../..'
 import { Chapter } from '../../langs'
+import { contextTest as test } from '../../utils/testing'
 
-test('handles if without else', async () => {
-  const context = createContext(Chapter.SOURCE_3)
+test.scoped({ chapter: Chapter.SOURCE_3 })
+
+test('handles if without else', async ({ context }) => {
   const compiled = await compile(`if (true) { 1 + 1; }`, context)
   expect(compiled).toMatchInlineSnapshot(`
     Array [

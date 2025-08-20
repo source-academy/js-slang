@@ -1,10 +1,11 @@
+import { expect, test, vi } from 'vitest';
 import { pick } from 'lodash'
 import { createContext } from '../..'
 import { getNames } from '../../index'
 import { Chapter } from '../../langs'
 import { DeclarationKind, type NameDeclaration } from '../index'
 
-jest.mock('../../modules/loader/loaders')
+vi.mock(import('../../modules/loader/loaders'))
 
 function matchExpectedNames(
   extractedNames: NameDeclaration[],

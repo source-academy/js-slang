@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { runCodeInSource } from '../../runner'
 import type { Context, Environment } from '../../types'

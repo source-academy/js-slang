@@ -1,12 +1,12 @@
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Chapter, Variant  } from '../../../langs'
-import { asMockedFunc } from '../../../utils/testing/misc'
 import { mockContext } from '../../../utils/testing/mocks'
 import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
 import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
 import * as moduleLoader from '../loaders'
 
-const moduleMocker = jest.fn()
-global.fetch = jest.fn()
+const moduleMocker = vi.hoisted(() => vi.fn())
+const mockedFetch = vi.spyOn(global, 'fetch')
 
 // Using virtual modules, we can pretend the modules with the given
 // import path actually exist
@@ -36,14 +36,10 @@ jest.mock(
   { virtual: true }
 )
 
-jest.spyOn(moduleLoader, 'docsImporter')
+const mockedDocsImporter = vi.spyOn(moduleLoader, 'docsImporter')
 
 beforeEach(() => {
-  jest.clearAllMocks()
-})
-
-afterEach(() => {
-  jest.resetModules()
+  vi.clearAllMocks()
 })
 
 describe('bundle loading', () => {
@@ -68,7 +64,7 @@ describe('bundle loading', () => {
 
 describe('tab loading', () => {
   test("Load a module's tabs", async () => {
-    asMockedFunc(fetch).mockResolvedValueOnce({
+    mockedFetch.mockResolvedValueOnce({
       json: () =>
         Promise.resolve({
           one_module: { tabs: ['tab1', 'tab2'] }
@@ -84,8 +80,6 @@ describe('tab loading', () => {
 })
 
 describe('docs loading', () => {
-  const mockedDocsImporter = asMockedFunc(moduleLoader.docsImporter)
-
   beforeEach(() => {
     mockedDocsImporter.mockClear()
   })

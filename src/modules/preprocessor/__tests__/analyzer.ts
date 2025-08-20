@@ -1,4 +1,5 @@
 import type { Program } from 'estree'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Chapter } from '../../../langs'
 import { parse } from '../../../parser/parser'
 import { stripIndent } from '../../../utils/formatters'
@@ -15,10 +16,10 @@ import type { SourceFiles as Files } from '../../moduleTypes'
 import analyzeImportsAndExports from '../analyzer'
 import parseProgramsAndConstructImportGraph from '../linker'
 
-jest.mock('../../loader/loaders')
+vi.mock(import('../../loader/loaders'))
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('Test throwing import validation errors', () => {

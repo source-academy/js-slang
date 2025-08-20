@@ -1,18 +1,18 @@
+import { assert, beforeEach, describe, expect, test, vi } from 'vitest'
 import { Chapter } from '../../../langs'
 import { MissingSemicolonError } from '../../../parser/errors'
 import * as parser from '../../../parser/parser'
 import type { Context } from '../../../types'
-import { asMockedFunc, assertNodeType, assertTrue } from '../../../utils/testing/misc'
+import { isImportDeclaration } from '../../../utils/ast/typeGuards'
 import { mockContext } from '../../../utils/testing/mocks'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
 
-
-jest.spyOn(parser, 'parse')
+vi.spyOn(parser, 'parse')
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
@@ -38,7 +38,7 @@ async function expectError<T extends SourceFiles>(files: T, entrypointFilePath: 
 }
 
 function checkCallsToParser(yesCalls: string[], noCalls: string[]) {
-  const { calls } = asMockedFunc(parser.parse).mock
+  const { calls } = vi.mocked(parser.parse).mock
   const toPaths = calls.map(([, , options]) => {
     const path = options?.sourceFile
     return path
@@ -115,7 +115,7 @@ test('Linker does tree-shaking', async () => {
   )
 
   expect(errors.length).toEqual(0)
-  assertTrue(result.ok)
+  assert(!!result.ok)
   // /a.js doesn't import /b.js, so it should not be parsed
   checkCallsToParser(['/a.js'], ['/b.js'])
   expect(Object.keys(result.programs)).not.toContain('/b.js')
@@ -133,13 +133,13 @@ test('Linker updates the source paths of Import Declaration nodes', async () => 
     '/dir1/c.js'
   )
 
-  assertTrue(result.ok)
+  assert(result.ok)
   const [bNode] = result.programs['/b.js'].body
-  assertNodeType('ImportDeclaration', bNode)
+  assert(isImportDeclaration(bNode))
   expect(bNode.source.value).toEqual('/dir0/a.js')
 
   const [cNode] = result.programs['/dir1/c.js'].body
-  assertNodeType('ImportDeclaration', cNode)
+  assert(isImportDeclaration(cNode))
   expect(cNode.source.value).toEqual('/b.js')
 })
 
@@ -152,8 +152,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(result.ok)
-    assertTrue(!result.verboseErrors)
+    expect(result.ok).toBeTruthy()
+    expect(result.verboseErrors).toBeFalsy()
   })
 
   test('Verbose errors enables normally', async () => {
@@ -164,8 +164,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(result.ok)
-    assertTrue(result.verboseErrors)
+    expect(result.ok).toBeTruthy()
+    expect(result.verboseErrors).toBeFalsy()
   })
 
   test('Verbose errors does not enable when it is not the entrypoint', async () => {
@@ -180,8 +180,8 @@ describe('Test determining verbose errors', () => {
       '/b.js'
     )
 
-    assertTrue(result.ok)
-    assertTrue(!result.verboseErrors)
+    expect(result.ok).toBeTruthy()
+    expect(result.verboseErrors).toBeFalsy()
   })
 
   test('Verbose errors does not enable when it is not the first statement', async () => {
@@ -195,8 +195,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(result.ok)
-    assertTrue(!result.verboseErrors)
+    expect(result.ok).toBeTruthy()
+    expect(result.verboseErrors).toBeFalsy()
   })
 
   test('Verbose errors does not enable when it is an unknown entrypoint', async () => {
@@ -210,8 +210,8 @@ describe('Test determining verbose errors', () => {
       '/d.js' as any
     )
 
-    assertTrue(!result.ok)
-    assertTrue(!result.verboseErrors)
+    expect(result.ok).toBeFalsy()
+    expect(result.verboseErrors).toBeFalsy()
   })
 
   test('Verbose errors enables even if other files have parse errors', async () => {
@@ -226,8 +226,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(!result.ok)
-    assertTrue(result.verboseErrors)
+    expect(!result.ok).toBeFalsy()
+    expect(result.verboseErrors).toBeTruthy()
     expect(errors.length).toEqual(1)
     expect(errors[0]).toBeInstanceOf(MissingSemicolonError)
   })
@@ -243,8 +243,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(!result.ok)
-    assertTrue(result.verboseErrors)
+    expect(result.ok).toBeFalsy()
+    expect(result.verboseErrors).toBeTruthy()
     expect(errors.length).toEqual(1)
     expect(errors[0]).toBeInstanceOf(MissingSemicolonError)
   })
@@ -264,8 +264,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(!result.ok)
-    assertTrue(result.verboseErrors)
+    expect(result.ok).toBeFalsy()
+    expect(result.verboseErrors).toBeTruthy()
     expect(errors.length).toEqual(1)
     expect(errors[0]).toBeInstanceOf(ModuleNotFoundError)
   })
