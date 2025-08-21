@@ -102,6 +102,9 @@ export type Instr =
   | UnOpInstr
   | WhileInstr
 
+export type InstrTypeToInstr<T extends InstrType> =
+  Extract<Instr, { instrType: T }> extends never ? BaseInstr : Extract<Instr, { instrType: T }>
+
 export type ControlItem = (Node | Instr | SchemeControlItems) & {
   isEnvDependent?: boolean
 }

@@ -6,7 +6,7 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-import * as es from 'estree'
+import type es from 'estree'
 import { isArray } from 'lodash'
 
 import { isSchemeLanguage } from '../alt-langs/mapper'
@@ -16,10 +16,10 @@ import * as errors from '../errors/errors'
 import * as runtimeErrors from '../errors/runtimeErrors'
 import type { BaseRunnerOptions, Result, Runner } from '../runner/types'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, Value } from '../types'
+import { Context, Value, type NodeTypeToNode } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations, getSourceVariableDeclaration } from '../utils/ast/helpers'
-import type { ContiguousArrayElements, StatementSequence } from '../utils/ast/node'
+import type { ContiguousArrayElements, Node } from '../utils/ast/node'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
@@ -41,16 +41,8 @@ import {
   Stash,
   Transformers,
   type AppInstr,
-  type ArrLitInstr,
-  type AssmtInstr,
-  type BinOpInstr,
-  type BranchInstr,
   type ControlItem,
-  type EnvInstr,
-  type ForInstr,
-  type Instr,
-  type UnOpInstr,
-  type WhileInstr
+  type InstrTypeToInstr
 } from './types'
 import {
   checkNumberOfArguments,
@@ -84,14 +76,6 @@ import {
   setVariable,
   valueProducing
 } from './utils'
-
-type CmdEvaluator = (
-  command: ControlItem,
-  context: Context,
-  control: Control,
-  stash: Stash,
-  isPrelude: boolean
-) => void
 
 export interface CSERunnerOptions extends BaseRunnerOptions {
   envSteps: number
@@ -304,7 +288,7 @@ export function* generateCSEMachineStateStream(
       context.runtime.nodes.shift()
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
-      cmdEvaluators[command.type](command, context, control, stash, isPrelude)
+      callEvaluator(command, context, control, stash, isPrelude)
       if (context.runtime.break && context.runtime.debuggerOn) {
         // We can put this under isNode since context.runtime.break
         // will only be updated after a debugger statement and so we will
@@ -314,7 +298,7 @@ export function* generateCSEMachineStateStream(
       }
     } else if (isInstr(command)) {
       // Command is an instruction
-      cmdEvaluators[command.instrType](command, context, control, stash, isPrelude)
+      callEvaluator(command, context, control, stash, isPrelude)
     } else {
       // this is a scheme value
       schemeEval(command, context, control, stash, isPrelude)
@@ -335,22 +319,51 @@ export function* generateCSEMachineStateStream(
   }
 }
 
+type CommandEvaluator<T extends ControlItem> = (arg: {
+  command: T
+  context: Context
+  control: Control
+  stash: Stash
+  isPrelude: boolean
+}) => void
+
+type CommandEvaluators = {
+  [K in Node['type']]?: CommandEvaluator<NodeTypeToNode<K>>
+} & {
+  [K in InstrType]?: CommandEvaluator<InstrTypeToInstr<K>>
+}
+
+function callEvaluator(
+  command: ControlItem,
+  context: Context,
+  control: Control,
+  stash: Stash,
+  isPrelude: boolean
+) {
+  let evaluator: any
+  if (isNode(command)) {
+    evaluator = cmdEvaluators[command.type]
+  } else if (isInstr(command)) {
+    evaluator = cmdEvaluators[command.instrType]
+  }
+
+  if (!evaluator) {
+    throw new Error(`Could not find evaluator for control item ${command}`)
+  }
+
+  evaluator({ command, context, control, stash, isPrelude })
+}
+
 /**
  * Dictionary of functions which handle the logic for the response of the three registers of
  * the CSE machine to each ControlItem.
  */
-const cmdEvaluators: { [type: string]: CmdEvaluator } = {
+const cmdEvaluators: CommandEvaluators = {
   /**
    * Statements
    */
 
-  Program: function (
-    command: es.Program,
-    context: Context,
-    control: Control,
-    stash: Stash,
-    isPrelude: boolean
-  ) {
+  Program({ command, context, control, isPrelude }) {
     // After execution of a program, the current environment might be a local one.
     // This can cause issues (for example, during execution of consecutive REPL programs)
     // This piece of code will reset the current environment to either a global one, a program one or a prelude one.
@@ -385,7 +398,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  BlockStatement: function (command: es.BlockStatement, context, control) {
+  BlockStatement({ command, context, control }) {
     // To restore environment after block ends
     // If there is an env instruction on top of the stack, or if there are no declarations
     // we do not need to push another one
@@ -418,17 +431,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control.push(seq)
   },
 
-  StatementSequence: function (
-    command: StatementSequence,
-    context: Context,
-    control: Control,
-    stash: Stash,
-    isPrelude: boolean
-  ) {
+  StatementSequence({ command, context, control, stash, isPrelude }) {
     if (command.body.length == 1) {
       // If sequence only consists of one statement, evaluate it immediately
       const next = command.body[0]
-      cmdEvaluators[next.type](next, context, control, stash, isPrelude)
+      callEvaluator(next, context, control, stash, isPrelude)
     } else {
       // unpack and push individual nodes in body
       control.push(...handleSequence(command.body))
@@ -436,7 +443,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     return
   },
 
-  WhileStatement: function (command: es.WhileStatement, context: Context, control: Control) {
+  WhileStatement({ command, control }) {
     if (hasBreakStatement(command.body as es.BlockStatement)) {
       control.push(instr.breakMarkerInstr(command))
     }
@@ -445,7 +452,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control.push(ast.identifier('undefined', command.loc)) // Return undefined if there is no loop execution
   },
 
-  ForStatement: function (command: es.ForStatement, context: Context, control: Control) {
+  ForStatement({ command, control }) {
     // All 3 parts will be defined due to parser rules
     const init = command.init!
     const test = command.test!
@@ -514,42 +521,28 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  IfStatement: function (command: es.IfStatement, context: Context, control: Control) {
+  IfStatement({ command, control }) {
     control.push(...reduceConditional(command))
   },
 
-  ExpressionStatement: function (
-    command: es.ExpressionStatement,
-    context: Context,
-    control: Control,
-    stash: Stash,
-    isPrelude: boolean
-  ) {
+  ExpressionStatement({ command, context, control, stash, isPrelude }) {
     // Fast forward to the expression
     // If not the next step will look like it's only removing ';'
-    cmdEvaluators[command.expression.type](command.expression, context, control, stash, isPrelude)
+    callEvaluator(command.expression, context, control, stash, isPrelude)
   },
 
-  DebuggerStatement: function (command: es.DebuggerStatement, context: Context) {
+  DebuggerStatement({ context }) {
     context.runtime.break = true
   },
 
-  VariableDeclaration: function (
-    command: es.VariableDeclaration,
-    context: Context,
-    control: Control
-  ) {
+  VariableDeclaration({ command, control }) {
     const { init, id } = getSourceVariableDeclaration(command)
     control.push(instr.popInstr(command))
     control.push(instr.assmtInstr(id.name, command))
     control.push(init)
   },
 
-  FunctionDeclaration: function (
-    command: es.FunctionDeclaration,
-    context: Context,
-    control: Control
-  ) {
+  FunctionDeclaration({ command, control }) {
     // Function declaration desugared into constant declaration.
     const lambdaExpression = ast.blockArrowFunction(
       command.params as es.Identifier[],
@@ -564,7 +557,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control.push(lambdaDeclaration)
   },
 
-  ReturnStatement: function (command: es.ReturnStatement, context: Context, control: Control) {
+  ReturnStatement({ command, control }) {
     // Push return argument onto control as well as Reset Instruction to clear to ignore all statements after the return.
     const next = control.peek()
     if (next && isInstr(next) && next.instrType === InstrType.MARKER) {
@@ -577,29 +570,25 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  ContinueStatement: function (command: es.ContinueStatement, context: Context, control: Control) {
+  ContinueStatement({ command, control }) {
     control.push(instr.contInstr(command))
   },
 
-  BreakStatement: function (command: es.BreakStatement, context: Context, control: Control) {
+  BreakStatement({ command, control }) {
     control.push(instr.breakInstr(command))
   },
 
-  ImportDeclaration: function () {},
+  ImportDeclaration() {},
 
   /**
    * Expressions
    */
 
-  Literal: function (command: es.Literal, context: Context, control: Control, stash: Stash) {
+  Literal({ command, stash }) {
     stash.push(command.value)
   },
 
-  AssignmentExpression: function (
-    command: es.AssignmentExpression,
-    context: Context,
-    control: Control
-  ) {
+  AssignmentExpression({ command, control }) {
     if (command.left.type === 'MemberExpression') {
       control.push(instr.arrAssmtInstr(command))
       control.push(command.right)
@@ -612,13 +601,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  SpreadElement: function (command: es.SpreadElement, context: Context, control: Control) {
+  SpreadElement({ command, control }) {
     const arr = command.argument as es.ArrayExpression
     control.push(instr.spreadInstr(arr))
     control.push(arr)
   },
 
-  ArrayExpression: function (command: es.ArrayExpression, context: Context, control: Control) {
+  ArrayExpression({ command, control }) {
     const elems = command.elements as ContiguousArrayElements
     const len = elems.length
 
@@ -628,36 +617,32 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  MemberExpression: function (command: es.MemberExpression, context: Context, control: Control) {
+  MemberExpression({ command, control }) {
     control.push(instr.arrAccInstr(command))
     control.push(command.property)
     control.push(command.object)
   },
 
-  ConditionalExpression: function (
-    command: es.ConditionalExpression,
-    context: Context,
-    control: Control
-  ) {
+  ConditionalExpression({ command, control }) {
     control.push(...reduceConditional(command))
   },
 
-  Identifier: function (command: es.Identifier, context: Context, control: Control, stash: Stash) {
+  Identifier({ command, context, stash }) {
     stash.push(getVariable(context, command.name, command))
   },
 
-  UnaryExpression: function (command: es.UnaryExpression, context: Context, control: Control) {
+  UnaryExpression({ command, control }) {
     control.push(instr.unOpInstr(command.operator, command))
     control.push(command.argument)
   },
 
-  BinaryExpression: function (command: es.BinaryExpression, context: Context, control: Control) {
+  BinaryExpression({ command, control }) {
     control.push(instr.binOpInstr(command.operator, command))
     control.push(command.right)
     control.push(command.left)
   },
 
-  LogicalExpression: function (command: es.LogicalExpression, context: Context, control: Control) {
+  LogicalExpression({ command, control }) {
     if (command.operator === '&&') {
       control.push(
         ast.conditionalExpression(command.left, command.right, ast.literal(false), command.loc)
@@ -669,14 +654,8 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  ArrowFunctionExpression: function (
-    command: es.ArrowFunctionExpression,
-    context: Context,
-    control: Control,
-    stash: Stash,
-    isPrelude: boolean
-  ) {
-    const closure: Closure = Closure.makeFromArrowFunction(
+  ArrowFunctionExpression({ command, context, stash, isPrelude }) {
+    const closure = Closure.makeFromArrowFunction(
       command,
       currentEnvironment(context),
       currentTransformers(context),
@@ -687,7 +666,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash.push(closure)
   },
 
-  CallExpression: function (command: es.CallExpression, context: Context, control: Control) {
+  CallExpression({ command, control }) {
     // Push application instruction, function arguments and function onto control.
     control.push(instr.appInstr(command.arguments.length, command))
     for (let index = command.arguments.length - 1; index >= 0; index--) {
@@ -700,7 +679,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    * Instructions
    */
 
-  [InstrType.RESET]: function (command: Instr, context: Context, control: Control) {
+  [InstrType.RESET]({ command, control }) {
     // Keep pushing reset instructions until marker is found.
     const cmdNext: ControlItem | undefined = control.pop()
     if (cmdNext && (!isInstr(cmdNext) || cmdNext.instrType !== InstrType.MARKER)) {
@@ -708,12 +687,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.WHILE]: function (
-    command: WhileInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
+  [InstrType.WHILE]({ command, context, control, stash }) {
     const test = stash.pop()
 
     // Check if test condition is a boolean
@@ -737,7 +711,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.FOR]: function (command: ForInstr, context: Context, control: Control, stash: Stash) {
+  [InstrType.FOR]({ command, context, control, stash }) {
     const test = stash.pop()
 
     // Check if test condition is a boolean
@@ -763,12 +737,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.ASSIGNMENT]: function (
-    command: AssmtInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
+  [InstrType.ASSIGNMENT]({ command, context, stash }) {
     if (command.declaration) {
       defineVariable(context, command.symbol, stash.peek(), command.constant, command.srcNode)
     } else {
@@ -776,12 +745,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.UNARY_OP]: function (
-    command: UnOpInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
+  [InstrType.UNARY_OP]({ command, context, stash }) {
     const argument = stash.pop()
     const error = rttc.checkUnaryExpression(
       command.srcNode,
@@ -795,12 +759,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash.push(evaluateUnaryExpression(command.symbol, argument))
   },
 
-  [InstrType.BINARY_OP]: function (
-    command: BinOpInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
+  [InstrType.BINARY_OP]({ command, context, stash }) {
     const right = stash.pop()
     const left = stash.pop()
     const error = rttc.checkBinaryExpression(
@@ -816,16 +775,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash.push(evaluateBinaryExpression(command.symbol, left, right))
   },
 
-  [InstrType.POP]: function (command: Instr, context: Context, control: Control, stash: Stash) {
+  [InstrType.POP]({ stash }) {
     stash.pop()
   },
 
-  [InstrType.APPLICATION]: function (
-    command: AppInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
+  [InstrType.APPLICATION]({ command, context, control, stash }) {
     checkStackOverFlow(context, control)
     // Get function arguments from the stash
     const args: Value[] = []
@@ -1044,12 +998,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.BRANCH]: function (
-    command: BranchInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
+  [InstrType.BRANCH]({ command, context, control, stash }) {
     const test = stash.pop()
 
     // Check if test condition is a boolean
@@ -1073,7 +1022,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.ENVIRONMENT]: function (command: EnvInstr, context: Context) {
+  [InstrType.ENVIRONMENT]({ command, context }) {
     // Restore environment
     while (currentEnvironment(context).id !== command.env.id) {
       popEnvironment(context)
@@ -1082,12 +1031,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     setTransformers(context, command.transformers)
   },
 
-  [InstrType.ARRAY_LITERAL]: function (
-    command: ArrLitInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
+  [InstrType.ARRAY_LITERAL]({ command, context, stash }) {
     const arity = command.arity
     const array = []
     for (let i = 0; i < arity; ++i) {
@@ -1097,12 +1041,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash.push(array)
   },
 
-  [InstrType.ARRAY_ACCESS]: function (
-    command: Instr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
+  [InstrType.ARRAY_ACCESS]({ command, context, stash }) {
     const index = stash.pop()
     const array = stash.pop()
 
@@ -1126,12 +1065,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.ARRAY_ASSIGNMENT]: function (
-    command: Instr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
+  [InstrType.ARRAY_ASSIGNMENT]({ stash }) {
     const value = stash.pop()
     const index = stash.pop()
     const array = stash.pop()
@@ -1139,7 +1073,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash.push(value)
   },
 
-  [InstrType.CONTINUE]: function (command: Instr, context: Context, control: Control) {
+  [InstrType.CONTINUE]({ command, control }) {
     const next = control.pop() as ControlItem
     if (isInstr(next) && next.instrType == InstrType.CONTINUE_MARKER) {
       // Encountered continue mark, stop popping
@@ -1152,9 +1086,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.CONTINUE_MARKER]: function () {},
+  [InstrType.CONTINUE_MARKER]() {},
 
-  [InstrType.BREAK]: function (command: Instr, context: Context, control: Control) {
+  [InstrType.BREAK]({ command, control }) {
     const next = control.pop() as ControlItem
     if (isInstr(next) && next.instrType == InstrType.BREAK_MARKER) {
       // Encountered break mark, stop popping
@@ -1167,9 +1101,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.BREAK_MARKER]: function () {},
+  [InstrType.BREAK_MARKER]() {},
 
-  [InstrType.SPREAD]: function (command: Instr, context: Context, control: Control, stash: Stash) {
+  [InstrType.SPREAD]({ command, context, control, stash }) {
     const array = stash.pop()
 
     // Check if right-hand side is array

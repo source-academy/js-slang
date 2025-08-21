@@ -14,7 +14,7 @@ test('String representation of numbers are nice', () => {
 })
 
 test('String representation of strings are nice', () => {
-  return expect(testForValue(`stringify('a string');`)).resolves.toEqual('a string')
+  return expect(testForValue(`stringify('a string');`)).resolves.toEqual('"a string"')
 })
 
 test('String representation of booleans are nice', () => {

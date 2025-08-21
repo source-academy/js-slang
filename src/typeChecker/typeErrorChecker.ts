@@ -2,6 +2,11 @@ import { parse as babelParse } from '@babel/parser'
 import type es from 'estree'
 import { cloneDeep, isEqual } from 'lodash'
 
+import { Chapter } from '../langs'
+import type { Context } from '../types'
+import { TypecheckError } from './internalTypeErrors'
+import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
+import type * as tsEs from './tsESTree'
 import {
   ConstNotAssignableTypeError,
   DuplicateTypeAliasError,
@@ -19,12 +24,7 @@ import {
   TypeParameterNameNotAllowedError,
   TypecastError,
   UndefinedVariableTypeError
-} from '../errors/typeErrors'
-import { Chapter } from '../langs'
-import type { Context } from '../types'
-import { TypecheckError } from './internalTypeErrors'
-import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
-import * as tsEs from './tsESTree'
+} from './typeErrors'
 import {
   disallowedTypes,
   type BindableType,

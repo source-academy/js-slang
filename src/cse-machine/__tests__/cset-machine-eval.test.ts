@@ -14,11 +14,12 @@ test('eval of numbers', () => {
       optionECScm
     )
   ).resolves.toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 1n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 1n,
+    }
+  `)
 })
 
 test('eval of booleans', () => {
@@ -53,11 +54,12 @@ test('eval of symbols', () => {
       optionECScm
     )
   ).resolves.toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 1n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 1n,
+    }
+  `)
 })
 
 test('eval of empty list', () => {
@@ -81,11 +83,12 @@ test('eval of define', () => {
       optionECScm
     )
   ).resolves.toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 1n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 1n,
+    }
+  `)
 })
 
 test('eval of lambda', () => {
@@ -108,11 +111,12 @@ test('eval of if', () => {
       optionECScm
     )
   ).resolves.toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 1n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 1n,
+    }
+  `)
 })
 
 test('eval of begin', () => {
@@ -124,11 +128,12 @@ test('eval of begin', () => {
       optionECScm
     )
   ).resolves.toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 3n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 3n,
+    }
+  `)
 })
 
 test('eval of set!', () => {
@@ -142,11 +147,12 @@ test('eval of set!', () => {
       optionECScm
     )
   ).resolves.toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 1n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 1n,
+    }
+  `)
 })
 
 test('eval of application', () => {
