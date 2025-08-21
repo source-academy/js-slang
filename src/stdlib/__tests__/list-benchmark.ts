@@ -2,7 +2,7 @@
 import { expect, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { testSuccess } from '../../utils/testing'
+import { testForValue } from '../../utils/testing'
 import * as list from '../list'
 
 test('display_list is linear runtime', { timeout: 1_000_000 }, () => {
@@ -14,7 +14,7 @@ test('display_list is linear runtime', { timeout: 1_000_000 }, () => {
     return list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s)
   }
 
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
       const build_inf = (i, f) => {
         const t = list(f(i));

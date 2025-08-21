@@ -1,10 +1,10 @@
 import { describe, expect, it, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { testFailure, testSuccess } from '../../utils/testing'
+import { testFailure, testForValue, testSuccess } from '../../utils/testing'
 
 test('list creates list', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f() { return 1; }
     list(1, 'a string ""', () => f, f, true, 3.14);
@@ -34,7 +34,7 @@ test('list creates list', () => {
 })
 
 test('pair creates pair', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     pair(1, 'a string ""');
   `,
@@ -48,7 +48,7 @@ test('pair creates pair', () => {
 })
 
 test('head works', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     head(pair(1, 'a string ""'));
   `,
@@ -57,7 +57,7 @@ test('head works', () => {
 })
 
 test('tail works', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     tail(pair(1, 'a string ""'));
   `,
@@ -66,7 +66,7 @@ test('tail works', () => {
 })
 
 test('tail of a 1 element list is null', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     tail(list(1));
   `,
@@ -75,7 +75,7 @@ test('tail of a 1 element list is null', () => {
 })
 
 test('empty list is null', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     list();
   `,
@@ -84,7 +84,7 @@ test('empty list is null', () => {
 })
 
 test('equal', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
   !equal(1, x => x) && !equal(x => x, 1);
   `,
@@ -93,7 +93,7 @@ test('equal', () => {
 })
 
 test('for_each', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     let sum = 0;
     for_each(x => {
@@ -106,7 +106,7 @@ test('for_each', () => {
 })
 
 test('map', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));
   `,
@@ -115,7 +115,7 @@ test('map', () => {
 })
 
 test('filter', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));
   `,
@@ -124,7 +124,7 @@ test('filter', () => {
 })
 
 test('build_list', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));
   `,
@@ -133,7 +133,7 @@ test('build_list', () => {
 })
 
 test('reverse', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(reverse(list("string", "null", "undefined", "null", 123)), list(123, "null", "undefined", "null", "string"));
   `,
@@ -142,7 +142,7 @@ test('reverse', () => {
 })
 
 test('append', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));
   `,
@@ -151,7 +151,7 @@ test('append', () => {
 })
 
 test('member', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(
       member(4, list(1, 2, 3, 4, 123, 456, 789)),
@@ -162,7 +162,7 @@ test('member', () => {
 })
 
 test('remove', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     remove(1, list(1));
   `,
@@ -171,7 +171,7 @@ test('remove', () => {
 })
 
 test('remove not found', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     remove(2, list(1));
   `,
@@ -185,7 +185,7 @@ test('remove not found', () => {
 })
 
 test('remove_all', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(remove_all(1, list(1, 2, 3, 4, 1, 1, 1, 5, 1, 1, 6)), list(2, 3, 4, 5, 6));
   `,
@@ -194,7 +194,7 @@ test('remove_all', () => {
 })
 
 test('remove_all not found', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));
   `,
@@ -203,7 +203,7 @@ test('remove_all not found', () => {
 })
 
 test('enum_list', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(enum_list(1, 5), list(1, 2, 3, 4, 5));
   `,
@@ -212,7 +212,7 @@ test('enum_list', () => {
 })
 
 test('enum_list with floats', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));
   `,
@@ -221,7 +221,7 @@ test('enum_list with floats', () => {
 })
 
 test('list_ref', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     list_ref(list(1, 2, 3, "4", 4), 4);
   `,
@@ -230,7 +230,7 @@ test('list_ref', () => {
 })
 
 test('accumulate', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
   `,
@@ -239,7 +239,7 @@ test('accumulate', () => {
 })
 
 test('list_to_string', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     list_to_string(list(1, 2, 3));
   `,
@@ -249,7 +249,7 @@ test('list_to_string', () => {
 
 describe('accumulate', () => {
   test('works properly', () => {
-    return expect(testSuccess(
+    return expect(testForValue(
       stripIndent`
       accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
     `,
@@ -258,7 +258,7 @@ describe('accumulate', () => {
   })
 
   it('works from right to left', () => {
-    return expect(testSuccess(
+    return expect(testForValue(
       stripIndent`
       accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));`,
       { chapter: Chapter.SOURCE_2 }
@@ -268,7 +268,7 @@ describe('accumulate', () => {
 
 describe('length', () => {
   test('works with populated lists', () => {
-    return expect(testSuccess(
+    return expect(testForValue(
       stripIndent`
       const xs = list(1,2,3,4);
       length(xs);
@@ -278,7 +278,7 @@ describe('length', () => {
   })
 
   test('works with empty lists', () => {
-    return expect(testSuccess(
+    return expect(testForValue(
       stripIndent`
       const xs = list();
       length(xs);
@@ -290,7 +290,7 @@ describe('length', () => {
 
 // assoc removed from Source
 test.skip('assoc', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(assoc(3, list(pair(1, 2), pair(3, 4))), pair(3, 4));
   `,
@@ -299,7 +299,7 @@ test.skip('assoc', () => {
 })
 
 test.skip('assoc not found', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     equal(assoc(2, list(pair(1, 2), pair(3, 4))), false);
   `,
@@ -308,7 +308,7 @@ test.skip('assoc not found', () => {
 })
 
 test('set_head', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     let p = pair(1, 2);
     const q = p;
@@ -320,7 +320,7 @@ test('set_head', () => {
 })
 
 test('set_tail', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     let p = pair(1, 2);
     const q = p;
@@ -688,7 +688,7 @@ Array [
   })
 
   test('returns argument', () => {
-    return expect(testSuccess(
+    return expect(testForValue(
       stripIndent`
         const xs = build_list(i => i, 5);
         xs === display_list(xs);
@@ -699,7 +699,7 @@ Array [
   })
 
   test('returns cyclic argument', () => {
-    return expect(testSuccess(
+    return expect(testForValue(
       stripIndent`
         const build_inf = (i, f) => {
           const t = list(f(i));

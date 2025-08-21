@@ -1,10 +1,10 @@
 import { expect, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { testFailure, testSuccess, } from '../../utils/testing'
+import { testFailure, testForValue } from '../../utils/testing'
 
 test('adding two integers is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1 + 2
   `,
@@ -13,7 +13,7 @@ test('adding two integers is ok', () => {
 })
 
 test('adding two floats is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1.0 + 2.0
   `,
@@ -22,7 +22,7 @@ test('adding two floats is ok', () => {
 })
 
 test('adding an integer and a float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1.0 + 2
   `,
@@ -31,7 +31,7 @@ test('adding an integer and a float is ok', () => {
 })
 
 test('adding a string and an integer is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     "a" + 1
   `,
@@ -40,7 +40,7 @@ test('adding a string and an integer is ok', () => {
 })
 
 test('minusing two integers is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1 - 2
   `,
@@ -49,7 +49,7 @@ test('minusing two integers is ok', () => {
 })
 
 test('minusing two floats is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1.0 - 2.0
   `,
@@ -58,7 +58,7 @@ test('minusing two floats is ok', () => {
 })
 
 test('minusing an integer from a float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1.0 - 2
   `,
@@ -67,7 +67,7 @@ test('minusing an integer from a float is ok', () => {
 })
 
 test('multiplying integer and float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1.0 * 2
   `,
@@ -76,7 +76,7 @@ test('multiplying integer and float is ok', () => {
 })
 
 test('multiplying integer and integer is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1 * 2
   `,
@@ -85,7 +85,7 @@ test('multiplying integer and integer is ok', () => {
 })
 
 test('multiplying float and float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1.0 * 2.0
   `,
@@ -103,7 +103,7 @@ test('cannot multiply non-number values', () => {
 })
 
 test('dividing integer and float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     2 / 1.0
   `,
@@ -112,7 +112,7 @@ test('dividing integer and float is ok', () => {
 })
 
 test('dividing integer and integer is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1 / 2
   `,
@@ -121,7 +121,7 @@ test('dividing integer and integer is ok', () => {
 })
 
 test('dividing float and float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1.0 / 2.0
   `,
@@ -141,7 +141,7 @@ test('cannot divide non-number values', () => {
 })
 
 test('modding integer and float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     2 % 1.0
   `,
@@ -150,7 +150,7 @@ test('modding integer and float is ok', () => {
 })
 
 test('modding integer and integer is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     2 % 1
   `,
@@ -159,7 +159,7 @@ test('modding integer and integer is ok', () => {
 })
 
 test('modding float and float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1.0 % 2.0
   `,
@@ -179,7 +179,7 @@ test('cannot mod non-number values', () => {
 })
 
 test('powering integer and float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     2 ** 1.0
   `,
@@ -188,7 +188,7 @@ test('powering integer and float is ok', () => {
 })
 
 test('powering integer and integer is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     2 ** 1
   `,
@@ -197,7 +197,7 @@ test('powering integer and integer is ok', () => {
 })
 
 test('powering float and float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1.0 ** 2.0
   `,
@@ -217,7 +217,7 @@ test('cannot power non-number values', () => {
 })
 
 test('flooring integer and float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     2 // 1.0
   `,
@@ -226,7 +226,7 @@ test('flooring integer and float is ok', () => {
 })
 
 test('flooring integer and integer is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     2 // 1
   `,
@@ -235,7 +235,7 @@ test('flooring integer and integer is ok', () => {
 })
 
 test('flooring float and float is ok', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     1.0 // 2.0
   `,
