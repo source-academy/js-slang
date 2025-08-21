@@ -40,7 +40,7 @@ test('eval of strings', () => {
   `,
       optionECScm
     )
-  ).resolves.toEqual("hello")
+  ).resolves.toEqual('hello')
 })
 
 test('eval of symbols', () => {

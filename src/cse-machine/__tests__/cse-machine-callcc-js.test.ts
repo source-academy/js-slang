@@ -27,7 +27,9 @@ test('call_cc can be used to return early', () => {
 })
 
 test('call_cc throws error when given no arguments', () => {
-  return expect(testFailure(`1 + 2 + call_cc() + 4;`, optionEC4)).resolves.toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 0."`)
+  return expect(testFailure(`1 + 2 + call_cc() + 4;`, optionEC4)).resolves.toMatchInlineSnapshot(
+    `"Line 1: Expected 1 arguments, but got 0."`
+  )
 })
 
 test('call_cc throws error when given > 1 arguments', () => {

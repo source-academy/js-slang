@@ -750,7 +750,7 @@ test('No error when calling stringify function in with variable arguments', () =
   `,
       optionEC2
     )
-  ).resolves.toEqual("1")
+  ).resolves.toEqual('1')
 })
 
 test('No error when calling math_max function in with variable arguments', () => {
