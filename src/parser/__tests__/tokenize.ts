@@ -1,9 +1,9 @@
-import { expect, test } from 'vitest'
+import { test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { testFailure, testSuccess } from '../../utils/testing'
 
-test('tokenize works for a good program', async () => {
+test.concurrent('tokenize works for a good program', async ({ expect }) => {
   const { context } = await testSuccess(
     'display_list(tokenize(' +
       JSON.stringify(stripIndent`
@@ -72,7 +72,7 @@ Array [
 `)
 })
 
-test('tokenize works even with parse errors', async () => {
+test.concurrent('tokenize works even with parse errors', async ({ expect }) => {
   const { context } = await testSuccess(
     'display_list(tokenize(' +
       JSON.stringify(stripIndent`
@@ -89,6 +89,7 @@ Array [
 `)
 })
 
-test('tokenize prints suitable error when tokenization fails', () => {
-  return expect(testFailure('display_list(tokenize("\\""));', Chapter.SOURCE_4)).toMatchInlineSnapshot(`"Line 1: SyntaxError: Unterminated string constant (1:0)"`)
+test.concurrent('tokenize prints suitable error when tokenization fails', ({ expect }) => {
+  return expect(testFailure('display_list(tokenize("\\""));', Chapter.SOURCE_4))
+    .resolves.toMatchInlineSnapshot(`"Line 1: SyntaxError: Unterminated string constant (1:0)"`)
 })

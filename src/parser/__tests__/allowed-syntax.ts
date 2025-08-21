@@ -1,4 +1,4 @@
-import { assert, describe, expect, test, vi } from 'vitest'
+import { assert, describe, test, vi } from 'vitest'
 import { parseError } from '../..'
 import { Chapter, Variant  } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
@@ -8,7 +8,7 @@ import { parse } from '../parser'
 
 vi.mock(import('../../modules/loader/loaders'))
 
-describe.each([
+describe.concurrent.each([
   [Chapter.SOURCE_1, ''],
 
   [
@@ -334,14 +334,14 @@ describe.each([
     snippet = stripIndent(snippet)
 
     if (!skipSuccessTests) {
-      test('Test regular parser', () => {
+      test.concurrent('Test regular parser', ({ expect }) => {
         const context = mockContext(chapter)
         const result = parse(snippet, context)
         expect(result).not.toBeNull()
         expect(result).toMatchSnapshot()
       })
 
-      test('Test stdlib parser', async () => {
+      test.concurrent('Test stdlib parser', async ({ expect }) => {
         const parseSnippet = `parse(${JSON.stringify(snippet)});`
         const result = await testSuccess(parseSnippet, {
           chapter: Math.max(Chapter.SOURCE_4, chapter)
@@ -351,7 +351,7 @@ describe.each([
     }
 
     if (chapter > 1) {
-      test('Test 1 chapter below', () => {
+      test.concurrent('Test 1 chapter below', ({ expect }) => {
         const context = mockContext(chapter - 1)
         const result = parse(snippet, context)
         expect(result).toBeNull()
@@ -361,7 +361,7 @@ describe.each([
   }
 )
 
-test('typeof operator is allowed in typed variant', async () => {
+test('typeof operator is allowed in typed variant', async ({ expect }) => {
   const { result } = await testSuccess(`typeof "0";`, { variant: Variant.TYPED })
   assert(result.status === 'finished')
   expect(result.value).toEqual('string')
