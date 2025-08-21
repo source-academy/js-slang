@@ -102,6 +102,10 @@ export type Instr =
   | UnOpInstr
   | WhileInstr
 
+/**
+ * Utility type for extracting the correspodning instruction type given its
+ * InstrType
+ */
 export type InstrTypeToInstr<T extends InstrType> =
   Extract<Instr, { instrType: T }> extends never ? BaseInstr : Extract<Instr, { instrType: T }>
 
