@@ -8,24 +8,25 @@ export default defineConfig({
       escapeString: true,
       printBasicPrototype: true
     },
-    include: ['src/**/__tests__/**/*.ts'],
+    include: ['src/**/__tests__/**/*.test.ts'],
     exclude: [
       ...defaultExclude,
       "src/alt-langs/scheme/scm-slang",
       ".*benchmark.*",
-      "**/__tests__/**/(.*/)?utils\\.ts"
     ],
     coverage: {
       exclude: [
         ...coverageConfigDefaults.exclude,
-        "src/typings/",
+        '**/__mocks__/**',
+        "src/typings",
         "src/utils/testing",
         "src/alt-langs/scheme/scm-slang",
-        "src/py-slang/"
+        "src/py-slang"
       ],
       reporter: 'lcov'
     },
     reporters: ['html', 'default'],
+    silent: 'passed-only'
     // setupFiles: ['src/utils/testing/setup.ts']
   }
 })

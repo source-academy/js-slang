@@ -4,7 +4,7 @@ import * as vm from '../../vm/svml-compiler'
 import { compileToChoices, getSVMCCommand } from '../svmc'
 import { expectWritten, getCommandRunner } from './utils'
 
-const mockedWriteFile = vi.spyOn(fs, 'writeFile')
+const mockedWriteFile = vi.spyOn(fs, 'writeFile').mockResolvedValue()
 const mockedReadFile = vi.spyOn(fs, 'readFile')
 
 vi.spyOn(vm, 'compileToIns')
