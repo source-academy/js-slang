@@ -15,6 +15,7 @@ export default defineConfig({
       ".*benchmark.*",
     ],
     coverage: {
+      include: ['src'],
       exclude: [
         ...coverageConfigDefaults.exclude,
         '**/__mocks__/**',
@@ -23,10 +24,12 @@ export default defineConfig({
         "src/alt-langs/scheme/scm-slang",
         "src/py-slang"
       ],
-      reporter: 'lcov'
+      reporter: ['text', 'html', 'lcov']
     },
-    reporters: ['html', 'default'],
-    silent: 'passed-only'
-    // setupFiles: ['src/utils/testing/setup.ts']
+    reporters: [
+      ['html', { outputFile: './test-report/index.html' }],
+      'default'
+    ],
+    silent: 'passed-only',
   }
 })

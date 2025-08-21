@@ -10,6 +10,7 @@ docs/source
 dist/
 .idea/
 coverage/
+test-report/
 
 # emacs backup files
 *~

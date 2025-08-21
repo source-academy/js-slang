@@ -5,7 +5,7 @@ import stylePlugin from '@stylistic/eslint-plugin';
 import tseslint from 'typescript-eslint'
 import globals from 'globals'
 import * as importPlugin from 'eslint-plugin-import'
-import jestPlugin from 'eslint-plugin-jest';
+import vitestPlugin from '@vitest/eslint-plugin'
 
 export default tseslint.config(
   {
@@ -108,14 +108,31 @@ export default tseslint.config(
       '**/__tests__/**/*.ts', 
       'src/utils/testing/**/*.ts'
     ],
-    plugins: {
-      jest: jestPlugin
-    },
     languageOptions: {
-      globals: globals.jest
+      globals: globals.vitest
     },
     rules: {
-      'no-empty-pattern': 'off'
+      'no-empty-pattern': 'off',
+    }
+  },
+  {
+    extends: [vitestPlugin.configs.recommended],
+    files: ['**/__tests__/**/*.test.ts'],
+    plugins: {
+      vitest: vitestPlugin
+    },
+    rules: {
+      'vitest/expect-expect': 'off',
+      'vitest/no-alias-methods': 'off',
+      'vitest/no-conditional-expect': 'off',
+      'vitest/no-export': 'off',
+      'vitest/no-focused-tests': ['warn', { fixable: false }],
+      'vitest/require-top-level-describe': 'off',
+      'vitest/valid-describe-callback': 'off',
+      'vitest/valid-expect-in-promise': 'error',
+      'vitest/valid-title': ['warn', {
+        ignoreTypeOfDescribeName: true
+      }]
     }
   },
   {
