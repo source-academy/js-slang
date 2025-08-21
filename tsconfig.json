@@ -22,7 +22,7 @@
   },
   "exclude": [
     "src/alt-langs/scheme/scm-slang/**/__tests__",
-    "src/py-slang/tests",
+    "src/py-slang/src/tests",
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",
     "node_modules",
