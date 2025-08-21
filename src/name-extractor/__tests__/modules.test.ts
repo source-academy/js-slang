@@ -4,10 +4,7 @@ import { getNames } from '../..'
 import { Chapter } from '../../langs'
 
 import { ModuleConnectionError } from '../../modules/errors'
-import {
-  memoizedGetModuleDocsAsync,
-  memoizedGetModuleManifestAsync
-} from '../../modules/loader/loaders'
+import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from '../../modules/loader/loaders'
 import { mockContext } from '../../utils/testing/mocks'
 
 vi.mock(import('../../modules/loader/loaders'))

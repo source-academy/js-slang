@@ -43,6 +43,11 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
     const filePath = error.location?.source ? `[${error.location.source}] ` : ''
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
+    if (!error.explain) {
+      console.error(error)
+      throw error
+    }
+
     const explanation = error.explain()
 
     if (verbose) {
