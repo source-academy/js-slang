@@ -639,8 +639,6 @@ export const hasReturnStatementIf = (statement: es.IfStatement): boolean => {
   return hasReturn
 }
 
-
-
 /**
  * Checks whether a block returns in every possible branch.
  * @param body The block to be checked
