@@ -100,7 +100,7 @@ export function testWithChapters(...chapters: Chapter[]) {
     )
 }
 
-async function testInContext(code: string, rawOptions: TestOptions) {
+export async function testInContext(code: string, rawOptions: TestOptions) {
   const options = processTestOptions(rawOptions)
   const context = createTestContext(options)
   const result = await runInContext(code, context)
@@ -125,6 +125,11 @@ export async function testSuccess(code: string, options: TestOptions = {}) {
     context,
     result
   }
+}
+
+export async function testForValue(code: string, options: TestOptions = {}) {
+  const { result } = await testSuccess(code, options)
+  return result.value
 }
 
 /**

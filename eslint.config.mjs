@@ -114,6 +114,9 @@ export default tseslint.config(
     languageOptions: {
       globals: globals.jest
     },
+    rules: {
+      'no-empty-pattern': 'off'
+    }
   },
   {
     files: ['**/*.js', 'src/repl/*.ts'],
