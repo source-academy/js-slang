@@ -56,7 +56,7 @@ describe('runFilesInContext', () => {
 
   it('returns ModuleNotFoundError if entrypoint file does not exist', async ({ context }) => {
     const files: Record<string, string> = {}
-    await await runFilesInContext(files, '/a.js', context)
+    await runFilesInContext(files, '/a.js', context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`"Module '/a.js' not found."`)
   })
 

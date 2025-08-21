@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { getChapterName } from '../../utils/misc'
-import { testSuccess } from '../../utils/testing'
+import { testForValue } from '../../utils/testing'
 
 vi.mock(import('../../modules/loader/loaders'))
 
@@ -63,7 +63,7 @@ describe.each(describeCases)(
     })
 
     test.each(chapterCases)('%s', (_, chapter, variant) => {
-      return expect(testSuccess(code, { chapter, variant })).resolves.toEqual('foo')
+      return expect(testForValue(code, { chapter, variant })).resolves.toEqual('foo')
     })
   }
 )

@@ -5,7 +5,7 @@ import { UndefinedVariable } from '../../errors/errors'
 import { Chapter, Variant  } from '../../langs'
 import { FatalSyntaxError } from '../../parser/errors'
 import { locationDummyNode } from '../../utils/ast/astCreator'
-import { testFailure, testSuccess, testWithChapters } from '../../utils/testing'
+import { testFailure, testForValue, testWithChapters } from '../../utils/testing'
 import { mockContext } from '../../utils/testing/mocks'
 import { htmlErrorHandlingScript } from '../htmlRunner'
 
@@ -116,7 +116,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
 
 test('Source builtins are accessible in fullJS program', async () => {
   const fullJSProgram: string = `parse('head(list(1,2,3));');`
-  await testSuccess(fullJSProgram, Chapter.FULL_JS)
+  await testForValue(fullJSProgram, Chapter.FULL_JS)
 })
 
 test('Simulate fullJS REPL', async () => {
@@ -141,7 +141,7 @@ describe('Native javascript programs are valid in fullJSRunner', () => {
   it.each(JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS.map(({ name, ...tc }) => [name, tc]))(
     `%s`,
     (_, { snippet, value }) => {
-      return expect(testSuccess(snippet, Chapter.FULL_JS)).resolves.toEqual(value)
+      return expect(testForValue(snippet, Chapter.FULL_JS)).resolves.toEqual(value)
     }
   )
 })
@@ -185,7 +185,7 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
       Chapter.SOURCE_3,
       Chapter.SOURCE_4
     )(chapter =>
-      expect(testSuccess(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })).resolves.toStrictEqual(
+      expect(testForValue(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })).resolves.toStrictEqual(
         55
       )
     )
@@ -201,7 +201,7 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
       Chapter.SOURCE_3,
       Chapter.SOURCE_4
     )(chapter =>
-      expect(testSuccess(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })).resolves.toStrictEqual(
+      expect(testForValue(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })).resolves.toStrictEqual(
         55
       )
     )
@@ -212,7 +212,7 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
 
 test('Error handling script is injected in HTML code', () => {
   const htmlDocument = '<p>Hello World!</p>'
-  return expect(testSuccess(htmlDocument, Chapter.HTML)).resolves.toStrictEqual(
+  return expect(testForValue(htmlDocument, Chapter.HTML)).resolves.toStrictEqual(
     htmlErrorHandlingScript + htmlDocument
   )
 })
