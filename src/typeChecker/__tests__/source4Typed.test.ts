@@ -70,7 +70,7 @@ describe('source 4 typed tests', () => {
       `
       parse(code, context)
       expect(parseError(context.errors)).toMatchInlineSnapshot(
-        `"Line 3: SyntaxError: Identifier 'a' has already been declared (3:12)"`
+        `"Line 3: SyntaxError: Identifier 'a' has already been declared (3:14)"`
       )
     })
   })

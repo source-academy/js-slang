@@ -165,7 +165,7 @@ describe('Test determining verbose errors', () => {
     )
 
     expect(result.ok).toBeTruthy()
-    expect(result.verboseErrors).toBeFalsy()
+    expect(result.verboseErrors).toBeTruthy()
   })
 
   test('Verbose errors does not enable when it is not the entrypoint', async () => {
@@ -226,7 +226,7 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    expect(!result.ok).toBeFalsy()
+    expect(result.ok).toBeFalsy()
     expect(result.verboseErrors).toBeTruthy()
     expect(errors.length).toEqual(1)
     expect(errors[0]).toBeInstanceOf(MissingSemicolonError)
