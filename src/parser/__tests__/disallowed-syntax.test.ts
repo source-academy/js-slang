@@ -442,7 +442,7 @@ test('No var statements - verbose', () => {
           `)
 })
 
-test('Cannot use update statements', () => {
+test('Cannot use update statements (+=)', () => {
   return expect(
     testFailure(
       stripIndent`
@@ -457,7 +457,7 @@ test('Cannot use update statements', () => {
   )
 })
 
-test('Cannot use update statements - verbose', () => {
+test('Cannot use update statements (+=) - verbose', () => {
   return expect(
     testFailure(
       stripIndent`
@@ -482,7 +482,7 @@ test('No default exports', () => {
   ).resolves.toMatchInlineSnapshot(`"Line 1: Export default declarations are not allowed."`)
 })
 
-test('Cannot use update statements', () => {
+test('Cannot use update statements (<<=)', () => {
   return expect(
     testFailure(
       stripIndent`
@@ -497,7 +497,7 @@ test('Cannot use update statements', () => {
   )
 })
 
-test('Cannot use update statements - verbose', () => {
+test('Cannot use update statements (<<=) - verbose', () => {
   return expect(
     testFailure(
       stripIndent`
@@ -533,35 +533,6 @@ test('Cannot use function expressions - verbose', () => {
       stripIndent`
     "enable verbose";
     (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
-    `,
-      // @ts-expect-error Intentional type error
-      { chapter: 5 }
-    )
-  ).resolves.toMatchInlineSnapshot(`
-            "Line 2, Column 1: Function expressions are not allowed
-            You are trying to use Function expressions, which is not allowed (yet).
-            "
-          `)
-})
-
-test('Cannot use function expressions', () => {
-  return expect(
-    testFailure(
-      stripIndent`
-    (function(x) { return x + 1; })(4);
-    `,
-      // @ts-expect-error Intentional type error
-      { chapter: 5 }
-    )
-  ).resolves.toMatchInlineSnapshot(`"Line 1: Function expressions are not allowed"`)
-})
-
-test('Cannot use function expressions - verbose', () => {
-  return expect(
-    testFailure(
-      stripIndent`
-    "enable verbose";
-    (function(x) { return x + 1; })(4);
     `,
       // @ts-expect-error Intentional type error
       { chapter: 5 }
@@ -1379,7 +1350,7 @@ test('No holes in arrays', () => {
   ).resolves.toMatchInlineSnapshot(`"Line 1: No holes are allowed in array literals."`)
 })
 
-test('No assigning to reserved keywords - verbose', () => {
+test('No holes in arrays - verbose', () => {
   return expect(
     testFailure(
       stripIndent`

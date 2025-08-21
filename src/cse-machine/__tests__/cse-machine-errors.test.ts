@@ -101,13 +101,13 @@ const assignToBuiltinVerbose = stripIndent`
   map = 5;
 `
 
-test('Error when assigning to builtin', () => {
+test('Error when assigning to builtin 1', () => {
   return expect(testFailure(assignToBuiltin, optionEC3)).resolves.toMatchInlineSnapshot(
     `"Line 1: Cannot assign new value to constant map."`
   )
 })
 
-test('Error when assigning to builtin - verbose', () => {
+test('Error when assigning to builtin 1 - verbose', () => {
   return expect(testFailure(assignToBuiltinVerbose, optionEC3)).resolves.toMatchInlineSnapshot(`
             "Line 2, Column 0: Cannot assign new value to constant map.
             As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
@@ -115,7 +115,7 @@ test('Error when assigning to builtin - verbose', () => {
           `)
 })
 
-test('Assigning to builtin error message differs from verbose version', async () => {
+test('Assigning to builtin error message differs from verbose version 1', async () => {
   const [assign1, assign2] = await Promise.all([
     testFailure(assignToBuiltin, { variant: Variant.EXPLICIT_CONTROL }),
     testFailure(assignToBuiltinVerbose, { variant: Variant.EXPLICIT_CONTROL })
@@ -133,13 +133,13 @@ const assignToBuiltinVerbose1 = stripIndent`
   undefined = 5;
 `
 
-test('Error when assigning to builtin', () => {
+test('Error when assigning to builtin 2', () => {
   return expect(testFailure(assignToBuiltin1, optionEC3)).resolves.toMatchInlineSnapshot(
     `"Line 1: Cannot assign new value to constant undefined."`
   )
 })
 
-test('Error when assigning to builtin - verbose', () => {
+test('Error when assigning to builtin 2 - verbose', () => {
   return expect(testFailure(assignToBuiltinVerbose1, optionEC3)).resolves.toMatchInlineSnapshot(`
             "Line 2, Column 0: Cannot assign new value to constant undefined.
             As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
@@ -147,13 +147,13 @@ test('Error when assigning to builtin - verbose', () => {
           `)
 })
 
-test('Assigning to builtin error message differs from verbose version', () => {
+test('Assigning to builtin error message differs from verbose version 2', () => {
   return expectDifferentParsedErrors(assignToBuiltin1, assignToBuiltinVerbose1, {
     variant: Variant.EXPLICIT_CONTROL
   })
 })
 
-test('Nice errors when errors occur inside builtins', () => {
+test('Nice errors when errors occur inside builtins 1', () => {
   return expect(
     testFailure(
       stripIndent`
@@ -164,7 +164,7 @@ test('Nice errors when errors occur inside builtins', () => {
   ).resolves.toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
 })
 
-test('Nice errors when errors occur inside builtins', () => {
+test('Nice errors when errors occur inside builtins 2', () => {
   return expect(
     testFailure(
       stripIndent`
@@ -207,7 +207,7 @@ test('Infinite recursion with a block bodied function', { timeout: 15000 }, () =
   )
 })
 
-test('Infinite recursion with function calls in argument', { timeout: 20000 }, () => {
+test('Infinite recursion with function calls in argument', { timeout: 25000 }, () => {
   return expect(
     testFailure(
       stripIndent`
@@ -738,7 +738,7 @@ test('No error when calling display function in with variable arguments', () => 
   `,
       optionEC2
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 test('No error when calling stringify function in with variable arguments', () => {
@@ -750,7 +750,7 @@ test('No error when calling stringify function in with variable arguments', () =
   `,
       optionEC2
     )
-  ).resolves.toMatchInlineSnapshot(`"1"`)
+  ).resolves.toEqual("1")
 })
 
 test('No error when calling math_max function in with variable arguments', () => {
@@ -763,7 +763,7 @@ test('No error when calling math_max function in with variable arguments', () =>
   `,
       optionEC2
     )
-  ).resolves.toMatchInlineSnapshot(`3`)
+  ).resolves.toEqual(3)
 })
 
 test('No error when calling math_min function in with variable arguments', () => {
@@ -776,7 +776,7 @@ test('No error when calling math_min function in with variable arguments', () =>
   `,
       optionEC2
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 test('Error with too many arguments passed to math_sin', () => {

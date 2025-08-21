@@ -1,8 +1,9 @@
 import { parse } from 'acorn'
 import * as astring from 'astring'
-import { test } from 'vitest'
 import type { IStepperPropContents } from '..'
+import type { Context } from '../..'
 import createContext from '../../createContext'
+import { contextTest as test } from '../../utils/testing'
 import { convert } from '../generator'
 import { StepperBaseNode } from '../interface'
 import { getSteps } from '../steppers'
@@ -29,8 +30,7 @@ const stringifyWithExplanation = (step: IStepperPropContents) => {
   }
 }
 
-/*
-test('recursion', () => {
+test.skip('recursion', ({ context }) => {
   const code = `
   const f = x => x <= 1 ? 1 : f(x - 1) + g(x - 1);
   const g = y => y <= 1 ? 1 : g(y - 1) + h(y - 1);
@@ -38,31 +38,28 @@ test('recursion', () => {
   f(2);
     `
   const program = parse(code, { ecmaVersion: 10 })!
-  const steps = getSteps(convert(program), {stepLimit: 1000})
+  const steps = getSteps(convert(program), context, { stepLimit: 1000 })
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
 
-
-test('fact', () => {
+test.skip('fact', ({ context }) => {
   const code = `
   const fact = n => n === 1 ? 1 : fact(n - 1) * n;
   fact(5); 
   `
   const program = parse(code, { ecmaVersion: 10 })!
 
-
-  const steps = getSteps(convert(program), {stepLimit: 1000})
+  const steps = getSteps(convert(program), context, { stepLimit: 1000 })
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
 
-
-test('substitution-block', () => {
+test.skip('substitution-block', ({ context }) => {
   const code = `
   const x = 3;
   const y = 5;
@@ -74,25 +71,24 @@ test('substitution-block', () => {
     `
   const program = parse(code, { ecmaVersion: 10 })!
 
-  const steps = getSteps(convert(program), {stepLimit: 1000})
+  const steps = getSteps(convert(program), context, { stepLimit: 1000 })
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
 
-test('function calling', () => {
+test.skip('function calling', () => {
   const code = `
     const getFirst = xs => head(xs);
     getFirst(list(1, 3, 5));
   `
   const program = parse(code, { ecmaVersion: 10 })!
 
-  const steps = getSteps(convert(program), {stepLimit: 1000})
+  const steps = getSteps(convert(program), {} as Context, { stepLimit: 1000 })
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
-*/
 
 test('general', () => {
   const code = `

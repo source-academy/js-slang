@@ -18,7 +18,7 @@ test('standalone block statements', () => {
     test();
   `
     )
-  ).resolves.toMatchInlineSnapshot(`true`)
+  ).resolves.toEqual(true)
 })
 
 // This is bad practice. Don't do this!
@@ -38,7 +38,7 @@ test('const uses block scoping instead of function scoping', () => {
     test();
   `
     )
-  ).resolves.toMatchInlineSnapshot(`true`)
+  ).resolves.toEqual(true)
 })
 
 // This is bad practice. Don't do this!
@@ -59,7 +59,7 @@ test('let uses block scoping instead of function scoping', () => {
   `,
       { chapter: Chapter.SOURCE_3 }
     )
-  ).resolves.toMatchInlineSnapshot(`true`)
+  ).resolves.toEqual(true)
 })
 
 // This is bad practice. Don't do this!
@@ -77,7 +77,7 @@ test('for loops use block scoping instead of function scoping', () => {
   `,
       { chapter: Chapter.SOURCE_3 }
     )
-  ).resolves.toMatchInlineSnapshot(`true`)
+  ).resolves.toEqual(true)
 })
 
 // This is bad practice. Don't do this!
@@ -97,7 +97,7 @@ test('while loops use block scoping instead of function scoping', () => {
   `,
       { chapter: Chapter.SOURCE_4 }
     )
-  ).resolves.toMatchInlineSnapshot(`true`)
+  ).resolves.toEqual(true)
 })
 
 // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
@@ -117,7 +117,7 @@ test('for loop `let` variables are copied into the block scope', () => {
   `,
       { chapter: Chapter.SOURCE_4 }
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 test('Cannot overwrite loop variables within a block', () => {

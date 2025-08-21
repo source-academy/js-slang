@@ -41,7 +41,7 @@ test(
   }
 )
 
-test('test increasing time limit for functions', { timeout: 50_000 }, async ({ expect }) => {
+test('increasing time limit for functions', { timeout: 50_000 }, async ({ expect }) => {
   const code = stripIndent`
     function f(a, b) {
       return f(a + 1, b + 1);
@@ -56,7 +56,7 @@ test('test increasing time limit for functions', { timeout: 50_000 }, async ({ e
   expect(secondError).toMatch(/f\(\d+, \d+\) \.\.\. f\(\d+, \d+\) \.\.\. f\(\d+, \d+\)/)
 })
 
-test('test increasing time limit for mutual recursion', { timeout: 50_000 }, async ({ expect }) => {
+test('increasing time limit for mutual recursion', { timeout: 50_000 }, async ({ expect }) => {
   const code = stripIndent`
     function f(a, b) {
       return g(a + 1, b + 1);
@@ -74,7 +74,7 @@ test('test increasing time limit for mutual recursion', { timeout: 50_000 }, asy
   expect(secondError).toMatch(/f\(\d+, \d+\) \.\.\. g\(\d+, \d+\)/)
 })
 
-test('test increasing time limit for while loops', { timeout: 50_000 }, async ({ expect }) => {
+test('increasing time limit for while loops', { timeout: 50_000 }, async ({ expect }) => {
   const code = stripIndent`
     while (true) {
     }
@@ -85,7 +85,7 @@ test('test increasing time limit for while loops', { timeout: 50_000 }, async ({
   expect(secondError).toMatch('Line 1: Potential infinite loop detected')
 })
 
-test('test proper setting of variables in an outer scope', async ({ expect }) => {
+test('proper setting of variables in an outer scope', async ({ expect }) => {
   const context = mockContext(Chapter.SOURCE_3)
   await runInContext(
     stripIndent`

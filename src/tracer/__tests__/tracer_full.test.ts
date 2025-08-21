@@ -80,7 +80,7 @@ describe('Expressions', () => {
   })
 })
 
-test('Test two statements', () => {
+test('two statements', () => {
   const code = `
     (1 + 2) * (3 + 4);
     3 * 5;
@@ -89,7 +89,7 @@ test('Test two statements', () => {
   expect(steps.join('\n')).toMatchSnapshot()
 })
 
-test('Test constant declaration substitution', () => {
+test('constant declaration substitution', () => {
   const code = `
     const x = -1;
     x;
@@ -157,7 +157,7 @@ describe('Lambda expression', () => {
 })
 
 describe('If else statements', () => {
-  test('test if', () => {
+  test('if', () => {
     const code = `
       if (1 === 1) {
         1;
@@ -171,7 +171,7 @@ describe('If else statements', () => {
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n')
   })
-  test('test else if', () => {
+  test('else if', () => {
     const code = `
       if (1 !== 1) {
         1;
@@ -185,7 +185,7 @@ describe('If else statements', () => {
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1]).toEqual('2;\n[noMarker] Evaluation complete\n')
   })
-  test('test else', () => {
+  test('else', () => {
     const code = `
       if (1 !== 1) {
         1;
@@ -1599,8 +1599,7 @@ describe('Error handling on calling functions', () => {
 })
 
 describe('Test runtime errors', () => {
-  /*
-  test('Variable used before assigning in program', () => {
+  test.skip('Variable used before assigning in program', () => {
     const code = `
     unassigned_variable;
     const unassigned_variable = "assigned";
@@ -1610,7 +1609,7 @@ describe('Test runtime errors', () => {
     expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
 
-  test('Variable used before assigning in functions', () => {
+  test.skip('Variable used before assigning in functions', () => {
     const code = `
     function foo() {
       unassigned_variable;
@@ -1622,7 +1621,6 @@ describe('Test runtime errors', () => {
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
-  */
   test('Incompatible types operation', () => {
     const code = `
     "1" + 2 * 3;

@@ -10722,6 +10722,129 @@ function f() { const x = 2; if (true) { 5 + x; return 2; } else {}}f();
 "
 `;
 
+exports[`If else statements > else 1`] = `
+"if (1 !== 1) { 1;} else if (2 !== 2) { 2;} else { 3;}
+[noMarker] Start of evaluation
+
+if (1 !== 1) { 1;} else if (2 !== 2) { 2;} else { 3;}
+[beforeMarker] Binary expression 1 !== 1 evaluated
+
+if (false) { 1;} else if (2 !== 2) { 2;} else { 3;}
+[afterMarker] Binary expression 1 !== 1 evaluated
+
+if (false) { 1;} else if (2 !== 2) { 2;} else { 3;}
+[beforeMarker] If statement evaluated, condition false, proceed to else block
+
+if (2 !== 2) { 2;} else { 3;}
+[afterMarker] If statement evaluated, condition false, proceed to else block
+
+if (2 !== 2) { 2;} else { 3;}
+[beforeMarker] Binary expression 2 !== 2 evaluated
+
+if (false) { 2;} else { 3;}
+[afterMarker] Binary expression 2 !== 2 evaluated
+
+if (false) { 2;} else { 3;}
+[beforeMarker] If statement evaluated, condition false, proceed to else block
+
+{ undefined; 3;}
+[afterMarker] If statement evaluated, condition false, proceed to else block
+
+{ undefined; 3;}
+[beforeMarker] undefined finished evaluating
+
+{ 3;}
+[afterMarker] undefined finished evaluating
+
+{ 3;}
+[beforeMarker] 3; finished evaluating
+
+3;
+[afterMarker] 3; finished evaluating
+
+3;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`If else statements > else if 1`] = `
+"if (1 !== 1) { 1;} else if (2 === 2) { 2;} else { 3;}
+[noMarker] Start of evaluation
+
+if (1 !== 1) { 1;} else if (2 === 2) { 2;} else { 3;}
+[beforeMarker] Binary expression 1 !== 1 evaluated
+
+if (false) { 1;} else if (2 === 2) { 2;} else { 3;}
+[afterMarker] Binary expression 1 !== 1 evaluated
+
+if (false) { 1;} else if (2 === 2) { 2;} else { 3;}
+[beforeMarker] If statement evaluated, condition false, proceed to else block
+
+if (2 === 2) { 2;} else { 3;}
+[afterMarker] If statement evaluated, condition false, proceed to else block
+
+if (2 === 2) { 2;} else { 3;}
+[beforeMarker] Binary expression 2 === 2 evaluated
+
+if (true) { 2;} else { 3;}
+[afterMarker] Binary expression 2 === 2 evaluated
+
+if (true) { 2;} else { 3;}
+[beforeMarker] If statement evaluated, condition true, proceed to if block
+
+{ undefined; 2;}
+[afterMarker] If statement evaluated, condition true, proceed to if block
+
+{ undefined; 2;}
+[beforeMarker] undefined finished evaluating
+
+{ 2;}
+[afterMarker] undefined finished evaluating
+
+{ 2;}
+[beforeMarker] 2; finished evaluating
+
+2;
+[afterMarker] 2; finished evaluating
+
+2;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`If else statements > if 1`] = `
+"if (1 === 1) { 1;} else if (2 === 2) { 2;} else { 3;}
+[noMarker] Start of evaluation
+
+if (1 === 1) { 1;} else if (2 === 2) { 2;} else { 3;}
+[beforeMarker] Binary expression 1 === 1 evaluated
+
+if (true) { 1;} else if (2 === 2) { 2;} else { 3;}
+[afterMarker] Binary expression 1 === 1 evaluated
+
+if (true) { 1;} else if (2 === 2) { 2;} else { 3;}
+[beforeMarker] If statement evaluated, condition true, proceed to if block
+
+{ undefined; 1;}
+[afterMarker] If statement evaluated, condition true, proceed to if block
+
+{ undefined; 1;}
+[beforeMarker] undefined finished evaluating
+
+{ 1;}
+[afterMarker] undefined finished evaluating
+
+{ 1;}
+[beforeMarker] 1; finished evaluating
+
+1;
+[afterMarker] 1; finished evaluating
+
+1;
+[noMarker] Evaluation complete
+"
+`;
+
 exports[`If else statements > test else 1`] = `
 "if (1 !== 1) { 1;} else if (2 !== 2) { 2;} else { 3;}
 [noMarker] Start of evaluation
@@ -36915,6 +37038,33 @@ function f(g) { const z = 3; return (y => z + z)(z);}f(undefined);
 "
 `;
 
+exports[`constant declaration substitution 1`] = `
+"const x = -1;x;const y = 2;y;
+[noMarker] Start of evaluation
+
+const x = -1;x;const y = 2;y;
+[beforeMarker] Constant x declared and substituted into the rest of block
+
+-1;const y = 2;y;
+[afterMarker] Constant x declared and substituted into the rest of block
+
+-1;const y = 2;y;
+[beforeMarker] Constant y declared and substituted into the rest of block
+
+-1;2;
+[afterMarker] Constant y declared and substituted into the rest of block
+
+-1;2;
+[beforeMarker] -1 finished evaluating
+
+2;
+[afterMarker] -1 finished evaluating
+
+2;
+[noMarker] Evaluation complete
+"
+`;
+
 exports[`constant declarations in blocks are protected 1`] = `
 "const z = 1;function f(g) { const z = 3; return g(z);}f(y => y + z);
 [noMarker] Start of evaluation
@@ -38402,6 +38552,45 @@ function g() { return (() => { return g(); })();}(() => { return g();}) === (() 
 }) finished evaluating
 
 (() => { return (() => { return (() => { return g(); })(); })();}) === (() => { return (() => { return g(); })();});
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`two statements 1`] = `
+"(1 + 2) * (3 + 4);3 * 5;
+[noMarker] Start of evaluation
+
+(1 + 2) * (3 + 4);3 * 5;
+[beforeMarker] Binary expression 1 + 2 evaluated
+
+3 * (3 + 4);3 * 5;
+[afterMarker] Binary expression 1 + 2 evaluated
+
+3 * (3 + 4);3 * 5;
+[beforeMarker] Binary expression 3 + 4 evaluated
+
+3 * 7;3 * 5;
+[afterMarker] Binary expression 3 + 4 evaluated
+
+3 * 7;3 * 5;
+[beforeMarker] Binary expression 3 * 7 evaluated
+
+21;3 * 5;
+[afterMarker] Binary expression 3 * 7 evaluated
+
+21;3 * 5;
+[beforeMarker] Binary expression 3 * 5 evaluated
+
+21;15;
+[afterMarker] Binary expression 3 * 5 evaluated
+
+21;15;
+[beforeMarker] 21 finished evaluating
+
+15;
+[afterMarker] 21 finished evaluating
+
+15;
 [noMarker] Evaluation complete
 "
 `;

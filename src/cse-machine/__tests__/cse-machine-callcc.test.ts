@@ -70,32 +70,35 @@ test('call/cc throws error given >1 argument', () => {
   ).resolves.toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
-/*
-for now, continuations have variable arity but are unable to check for the "correct"
-number of arguments. we will omit these tests for now
+// for now, continuations have variable arity but are unable to check for the "correct"
+// number of arguments. we will omit these tests for now
 
-test('cont throws error given no arguments', () => {
-  return expect(testFailure(
-    `
+test.skip('cont throws error given no arguments', () => {
+  return expect(
+    testFailure(
+      `
     (+ 1 2 (call/cc
               (lambda (k) (k)))
             4)
   `,
-    optionECScm
-  )).resolves.toMatchInlineSnapshot(`"Line 3: Expected 1 arguments, but got 0."`)
+      optionECScm
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 3: Expected 1 arguments, but got 0."`)
 })
 
-test('cont throws error given >1 argument', () => {
-  return expect(testFailure(
-    `
+test.skip('cont throws error given >1 argument', () => {
+  return expect(
+    testFailure(
+      `
     (+ 1 2 (call/cc
               (lambda (k) (k 3 'wrongwrongwrong!)))
             4)
   `,
-    optionECScm
-  )).resolves.toMatchInlineSnapshot(`"Line 3: Expected 1 arguments, but got 2."`)
+      optionECScm
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 3: Expected 1 arguments, but got 2."`)
 })
-*/
+
 test('call/cc can be stored as a value', () => {
   return expect(
     testForValue(
@@ -111,7 +114,7 @@ test('call/cc can be stored as a value', () => {
     `,
       optionECScm
     )
-  ).resolves.toMatchInlineSnapshot(`true`)
+  ).resolves.toEqual(true)
 })
 
 // both of the following tests generate infinite loops so they are omitted
@@ -131,7 +134,7 @@ test.skip('call/cc can be stored as a value and called', () => {
     `,
       optionECScm
     )
-  ).resolves.toMatchInlineSnapshot(`21`)
+  ).resolves.toEqual(21)
 })
 
 test.skip('when stored as a value, calling a continuation should alter the execution flow', () => {
@@ -147,5 +150,5 @@ test.skip('when stored as a value, calling a continuation should alter the execu
     `,
       optionECScm
     )
-  ).resolves.toMatchInlineSnapshot(`21`)
+  ).resolves.toEqual(21)
 })

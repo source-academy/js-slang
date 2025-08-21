@@ -33,7 +33,7 @@ function testCases(suiteDesc: string, testCases: TestCase[]) {
   )
 }
 
-describe('removeExports', () => {
+describe(removeExports, () => {
   testCases('removes ExportNamedDeclaration nodes', [
     [
       'when exporting variable declarations',

@@ -117,7 +117,7 @@ test('Avoid unnescessary environment instruction', () => {
   }
 })
 
-test('Avoid unnescessary environment instruction', () => {
+test('Avoid unnescessary environment instruction 1', () => {
   const CSEState = evaluateCode(
     stripIndent(
       `
@@ -136,7 +136,7 @@ test('Avoid unnescessary environment instruction', () => {
   }
 })
 
-test('Avoid unnescessary environment instruction', () => {
+test('Avoid unnescessary environment instruction 2', () => {
   const CSEState = evaluateCode(
     stripIndent(
       `
@@ -157,7 +157,7 @@ test('Avoid unnescessary environment instruction', () => {
   }
 })
 
-test('Avoid unnescessary environment instruction', () => {
+test('Avoid unnescessary environment instruction 3', () => {
   const CSEState = evaluateCode(
     stripIndent(
       `
@@ -179,7 +179,7 @@ test('Avoid unnescessary environment instruction', () => {
   }
 })
 
-test('Avoid unnescessary environment instruction', () => {
+test('Avoid unnescessary environment instruction 4', () => {
   const CSEState = evaluateCode(
     stripIndent(
       `

@@ -265,7 +265,7 @@ test('Deep object assignment and retrieval', () => {
   ).resolves.toBe('string')
 })
 
-test('Test apply_in_underlying_javascript', () => {
+test('apply_in_underlying_javascript', () => {
   return expect(
     testForValue(
       stripIndent`
@@ -276,7 +276,7 @@ test('Test apply_in_underlying_javascript', () => {
   ).resolves.toBe(60)
 })
 
-test('Test equal for primitives', () => {
+test('equal for primitives', () => {
   return expect(
     testForValue(
       stripIndent`
@@ -287,7 +287,7 @@ test('Test equal for primitives', () => {
   ).resolves.toBe(true)
 })
 
-test('Test equal for lists', () => {
+test('equal for lists', () => {
   return expect(
     testForValue(
       stripIndent`
@@ -298,7 +298,7 @@ test('Test equal for lists', () => {
   ).resolves.toBe(true)
 })
 
-test('Test equal for different lists', () => {
+test('equal for different lists', () => {
   return expect(
     testForValue(
       stripIndent`
@@ -394,51 +394,51 @@ describe('matchJSTests', () => {
     expect(evalWithBuiltins(code, options.testBuiltins)).toEqual(value)
   })
 
-  test('test true conditional expression', () => {
+  test('true conditional expression', () => {
     return expectToMatchJS('true ? true : false;')
   })
 
-  test('test false conditional expression', () => {
+  test('false conditional expression', () => {
     return expectToMatchJS('false ? true : false;')
   })
 
-  test('test false && true', () => {
+  test('false && true', () => {
     return expectToMatchJS('false && true;')
   })
 
-  test('test false && false', () => {
+  test('false && false', () => {
     return expectToMatchJS('false && false;')
   })
 
-  test('test true && false', () => {
+  test('true && false', () => {
     return expectToMatchJS('true && false;')
   })
 
-  test('test true && true', () => {
+  test('true && true', () => {
     return expectToMatchJS('true && true;')
   })
 
-  test('test && shortcircuiting', () => {
+  test('&& shortcircuiting', () => {
     return expectToMatchJS('false && 1();')
   })
 
-  test('test false || true', () => {
+  test('false || true', () => {
     return expectToMatchJS('false || true;')
   })
 
-  test('test false || false', () => {
+  test('false || false', () => {
     return expectToMatchJS('false || false;')
   })
 
-  test('test true || false', () => {
+  test('true || false', () => {
     return expectToMatchJS('true || false;')
   })
 
-  test('test true || true', () => {
+  test('true || true', () => {
     return expectToMatchJS('true || true;')
   })
 
-  test('test || shortcircuiting', () => {
+  test('|| shortcircuiting', () => {
     return expectToMatchJS('true || 1();')
   })
 
@@ -474,7 +474,7 @@ test('Rest parameters work', () => {
   ).resolves.toMatchInlineSnapshot(`28`)
 })
 
-test('Test context reuse', async () => {
+test('context reuse', async () => {
   const context = createTestContext({ chapter: Chapter.SOURCE_4 })
   const init = stripIndent`
   let i = 0;

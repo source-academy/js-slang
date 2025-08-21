@@ -93,10 +93,10 @@ export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions
  * Convenience wrapper for testing a case with multiple chapters
  */
 export function testWithChapters(...chapters: Chapter[]) {
-  return (func: (chapter: Chapter) => any) =>
+  return (expecter: (chapter: Chapter) => any) =>
     test.each(chapters.map(chapter => [getChapterName(chapter), chapter]))(
       'Testing %s',
-      (_, chapter) => func(chapter)
+      (_, chapter) => expecter(chapter)
     )
 }
 

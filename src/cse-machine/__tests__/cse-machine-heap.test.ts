@@ -55,6 +55,7 @@ const expectEnvTreeFrom = (code: string, hasPrelude = true) => {
     runCodeInSource(code, context, { executionMethod: 'cse-machine' }).then(
       () => context.runtime.environmentTree
     )
+    // eslint-disable-next-line vitest/valid-expect
   ).resolves
 }
 

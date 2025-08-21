@@ -29,7 +29,7 @@ test('eval of booleans', () => {
   `,
       optionECScm
     )
-  ).resolves.toMatchInlineSnapshot(`true`)
+  ).resolves.toEqual(true)
 })
 
 test('eval of strings', () => {
@@ -40,7 +40,7 @@ test('eval of strings', () => {
   `,
       optionECScm
     )
-  ).resolves.toMatchInlineSnapshot(`"hello"`)
+  ).resolves.toEqual("hello")
 })
 
 test('eval of symbols', () => {

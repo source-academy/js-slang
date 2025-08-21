@@ -10,33 +10,15 @@ import {
 import { testForValue } from '../utils/testing'
 
 test('String representation of numbers are nice', () => {
-  return expect(
-    testForValue(
-      stripIndent`
-  stringify(0);
-  `
-    )
-  ).resolves.toMatchInlineSnapshot(`"0"`)
+  return expect(testForValue(`stringify(0);`)).resolves.toEqual("0")
 })
 
 test('String representation of strings are nice', () => {
-  return expect(
-    testForValue(
-      stripIndent`
-  stringify('a string');
-  `
-    )
-  ).resolves.toMatchInlineSnapshot(`"\\"a string\\""`)
+  return expect(testForValue(`stringify('a string');`)).resolves.toEqual("a string")
 })
 
 test('String representation of booleans are nice', () => {
-  return expect(
-    testForValue(
-      stripIndent`
-  stringify('true');
-  `
-    )
-  ).resolves.toMatchInlineSnapshot(`"\\"true\\""`)
+  return expect(testForValue(`stringify(true);`)).resolves.toEqual("true")
 })
 
 test('String representation of functions are nice', () => {
@@ -50,10 +32,10 @@ test('String representation of functions are nice', () => {
   `
     )
   ).resolves.toMatchInlineSnapshot(`
-            "function f(x, y) {
-              return x;
-            }"
-          `)
+    "function f(x, y) {
+      return x;
+    }"
+  `)
 })
 
 test('String representation of arrow functions are nice', () => {
@@ -413,7 +395,7 @@ test('String representation of big objects are nice', () => {
           `)
 })
 
-test('String representation of nested objects are nice', () => {
+test('String representation of circular objects are nice', () => {
   return expect(
     testForValue(
       stripIndent`

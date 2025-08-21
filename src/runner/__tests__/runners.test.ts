@@ -5,7 +5,7 @@ import { UndefinedVariable } from '../../errors/errors'
 import { Chapter, Variant } from '../../langs'
 import { FatalSyntaxError } from '../../parser/errors'
 import { locationDummyNode } from '../../utils/ast/astCreator'
-import { testFailure, testForValue, testWithChapters } from '../../utils/testing'
+import { testFailure, testForValue, testSuccess, testWithChapters } from '../../utils/testing'
 import { mockContext } from '../../utils/testing/mocks'
 import { htmlErrorHandlingScript } from '../htmlRunner'
 
@@ -116,7 +116,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
 
 test('Source builtins are accessible in fullJS program', async () => {
   const fullJSProgram: string = `parse('head(list(1,2,3));');`
-  await testForValue(fullJSProgram, Chapter.FULL_JS)
+  await testSuccess(fullJSProgram, Chapter.FULL_JS)
 })
 
 test('Simulate fullJS REPL', async () => {

@@ -103,7 +103,7 @@ describe('docs loading', () => {
 
       mockedDocsImporter.mockRejectedValueOnce(mockError)
       const result = loaders.memoizedGetModuleManifestAsync()
-      expect(result).rejects.toBe(mockError)
+      await expect(result).rejects.toBe(mockError)
 
       const mockManifest: ModuleManifest = {
         one_module: {
@@ -164,7 +164,7 @@ describe('docs loading', () => {
       const mockError = new ModuleNotFoundError('another_module')
       mockedDocsImporter.mockRejectedValueOnce(mockError)
       const docs3 = loaders.memoizedGetModuleDocsAsync('another_module', true)
-      expect(docs3).rejects.toBe(mockError)
+      await expect(docs3).rejects.toBe(mockError)
 
       mockedDocsImporter.mockResolvedValueOnce({ default: mockDocs })
       const docs4 = await loaders.memoizedGetModuleDocsAsync('another_module')

@@ -5,7 +5,7 @@ import assert from '../../utils/assert'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
 import { isSourceModule } from '../utils'
-import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
+import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors.test'
 import {
   transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName

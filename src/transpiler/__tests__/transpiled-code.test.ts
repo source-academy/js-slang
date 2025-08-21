@@ -56,7 +56,7 @@ describe('test transformImportDeclarations', () => {
     ]
   ]
 
-  test.each(testCases)('', (actual, expected) => {
+  test.each(testCases)('%#', (actual, expected) => {
     const expectedContext = mockContext(Chapter.LIBRARY_PARSER)
     const expectedProgram = parse(expected, expectedContext)
     if (!expectedProgram || expectedContext.errors.length > 0) {

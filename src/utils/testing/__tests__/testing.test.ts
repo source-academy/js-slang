@@ -71,22 +71,22 @@ describe('Testing createTestContext', () => {
 })
 
 describe('Test testing functions', () => {
-  test('Test testSuccess resolves on evaluation success', () => {
+  test('testSuccess resolves on evaluation success', () => {
     mockEvalSuccess()
     return expect(testSuccess('').then(({ result: { value } }) => value)).resolves.toEqual(0)
   })
 
-  test('Test testSuccess rejects on evaluation failure', () => {
+  test('testSuccess rejects on evaluation failure', () => {
     mockEvalFailure()
     return expect(testSuccess('')).rejects.toThrow()
   })
 
-  test('Test testFailure resolves on evaluation failure', () => {
+  test('testFailure resolves on evaluation failure', () => {
     mockEvalFailure()
     return expect(testFailure('')).resolves.toEqual('')
   })
 
-  test('Test testFailure rejects on evaluation success', () => {
+  test('testFailure rejects on evaluation success', () => {
     mockEvalSuccess()
     return expect(testFailure('')).rejects.toThrow()
   })

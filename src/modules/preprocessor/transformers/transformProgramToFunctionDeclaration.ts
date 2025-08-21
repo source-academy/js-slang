@@ -20,7 +20,7 @@ import {
   createImportedNameDeclaration,
   createListCallExpression,
   createPairCallExpression
-} from '../constructors/contextSpecificConstructors'
+} from '../constructors/contextSpecificConstructors.test'
 import {
   transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName

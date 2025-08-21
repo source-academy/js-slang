@@ -42,7 +42,7 @@ test('Bare early returns work', () => {
     f();
   `
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -65,7 +65,7 @@ test('Recursive call early returns work', () => {
     f();
   `
     )
-  ).resolves.toMatchInlineSnapshot(`3`)
+  ).resolves.toEqual(3)
 })
 
 // This is bad practice. Don't do this!
@@ -88,7 +88,7 @@ test('Tail call early returns work', () => {
     f();
   `
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -111,7 +111,7 @@ test('Bare early returns in if statements work', () => {
     f();
   `
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -137,7 +137,7 @@ test('Recursive call early returns in if statements work', () => {
     f();
   `
     )
-  ).resolves.toMatchInlineSnapshot(`3`)
+  ).resolves.toEqual(3)
 })
 
 // This is bad practice. Don't do this!
@@ -163,7 +163,7 @@ test('Tail call early returns in if statements work', () => {
     f();
   `
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -187,7 +187,7 @@ test('Bare early returns in while loops work', () => {
   `,
       Chapter.SOURCE_3
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -214,7 +214,7 @@ test('Recursive call early returns in while loops work', () => {
   `,
       Chapter.SOURCE_3
     )
-  ).resolves.toMatchInlineSnapshot(`3`)
+  ).resolves.toEqual(3)
 })
 
 // This is bad practice. Don't do this!
@@ -241,7 +241,7 @@ test('Tail call early returns in while loops work', () => {
   `,
       { chapter: Chapter.SOURCE_3 }
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -265,7 +265,7 @@ test('Bare early returns in for loops work', () => {
   `,
       { chapter: Chapter.SOURCE_3 }
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -289,7 +289,7 @@ test('Recursive call early returns in for loops work', () => {
   `,
       { chapter: Chapter.SOURCE_3 }
     )
-  ).resolves.toMatchInlineSnapshot(`3`)
+  ).resolves.toEqual(3)
 })
 
 // This is bad practice. Don't do this!
@@ -316,5 +316,5 @@ test('Tail call early returns in for loops work', () => {
   `,
       { chapter: Chapter.SOURCE_3 }
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })

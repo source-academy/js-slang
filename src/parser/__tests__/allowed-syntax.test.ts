@@ -334,14 +334,14 @@ describe.concurrent.each([
     snippet = stripIndent(snippet)
 
     if (!skipSuccessTests) {
-      test.concurrent('Test regular parser', ({ expect }) => {
+      test.concurrent('regular parser', ({ expect }) => {
         const context = mockContext(chapter)
         const result = parse(snippet, context)
         expect(result).not.toBeNull()
         expect(result).toMatchSnapshot()
       })
 
-      test.concurrent('Test stdlib parser', async ({ expect }) => {
+      test.concurrent('stdlib parser', async ({ expect }) => {
         const parseSnippet = `parse(${JSON.stringify(snippet)});`
         const result = await testSuccess(parseSnippet, {
           chapter: Math.max(Chapter.SOURCE_4, chapter)
@@ -351,7 +351,7 @@ describe.concurrent.each([
     }
 
     if (chapter > 1) {
-      test.concurrent('Test 1 chapter below', ({ expect }) => {
+      test.concurrent('1 chapter below', ({ expect }) => {
         const context = mockContext(chapter - 1)
         const result = parse(snippet, context)
         expect(result).toBeNull()

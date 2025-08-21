@@ -17,7 +17,7 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
-const mockedWriteFile = vi.spyOn(fs, 'writeFile')
+const mockedWriteFile = vi.spyOn(fs, 'writeFile').mockResolvedValue()
 const mockedReadFile = vi.spyOn(fs, 'readFile')
 const { expectError, expectSuccess } = getCommandRunner(getTranspilerCommand)
 

@@ -24,7 +24,7 @@ test('Simple tail call returns work', () => {
   `,
       optionEC
     )
-  ).resolves.toMatchInlineSnapshot(`10000`)
+  ).resolves.toEqual(10000)
 })
 
 test('Tail call in conditional expressions work', () => {
@@ -38,7 +38,7 @@ test('Tail call in conditional expressions work', () => {
   `,
       optionEC
     )
-  ).resolves.toMatchInlineSnapshot(`10000`)
+  ).resolves.toEqual(10000)
 })
 
 test('Tail call in boolean operators work', () => {
@@ -56,7 +56,7 @@ test('Tail call in boolean operators work', () => {
   `,
       optionEC
     )
-  ).resolves.toMatchInlineSnapshot(`10000`)
+  ).resolves.toEqual(10000)
 })
 
 test('Tail call in nested mix of conditional expressions boolean operators work', () => {
@@ -70,7 +70,7 @@ test('Tail call in nested mix of conditional expressions boolean operators work'
   `,
       optionEC
     )
-  ).resolves.toMatchInlineSnapshot(`10000`)
+  ).resolves.toEqual(10000)
 })
 
 test('Tail calls in arrow functions work', () => {
@@ -82,7 +82,7 @@ test('Tail calls in arrow functions work', () => {
   `,
       optionEC
     )
-  ).resolves.toMatchInlineSnapshot(`10000`)
+  ).resolves.toEqual(10000)
 })
 
 test('Tail calls in arrow block functions work', () => {
@@ -100,7 +100,7 @@ test('Tail calls in arrow block functions work', () => {
   `,
       optionEC
     )
-  ).resolves.toMatchInlineSnapshot(`10000`)
+  ).resolves.toEqual(10000)
 })
 
 test('Tail calls in mutual recursion work', () => {
@@ -125,7 +125,7 @@ test('Tail calls in mutual recursion work', () => {
   `,
       optionEC
     )
-  ).resolves.toMatchInlineSnapshot(`10000`)
+  ).resolves.toEqual(10000)
 })
 
 test('Tail calls in mutual recursion with arrow functions work', () => {
@@ -138,7 +138,7 @@ test('Tail calls in mutual recursion with arrow functions work', () => {
   `,
       optionEC
     )
-  ).resolves.toMatchInlineSnapshot(`10000`)
+  ).resolves.toEqual(10000)
 })
 
 test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
@@ -156,7 +156,7 @@ test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
   `,
       optionEC
     )
-  ).resolves.toMatchInlineSnapshot(`15000`)
+  ).resolves.toEqual(15000)
 })
 
 // This is bad practice. Don't do this!
@@ -298,7 +298,7 @@ test('for loop `let` variables are copied into the block scope', () => {
     `,
       optionEC4
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 test('streams and its pre-defined/pre-built functions are working as intended', () => {
@@ -320,7 +320,7 @@ test('streams and its pre-defined/pre-built functions are working as intended', 
     `,
       optionEC4
     )
-  ).resolves.toMatchInlineSnapshot(`9`)
+  ).resolves.toEqual(9)
 })
 
 test('streams can be created and functions with no return statements are still evaluated properly', () => {
@@ -363,7 +363,7 @@ test('Conditional statements are value producing always', () => {
     `,
       optionEC3
     )
-  ).resolves.toMatchInlineSnapshot(`120`)
+  ).resolves.toEqual(120)
 })
 
 test('Nullary functions properly restore environment 1', () => {
@@ -381,7 +381,7 @@ test('Nullary functions properly restore environment 1', () => {
     `,
       optionEC3
     )
-  ).resolves.toMatchInlineSnapshot(`0`)
+  ).resolves.toEqual(0)
 })
 
 test('Nullary functions properly restore environment 2', () => {
@@ -397,7 +397,7 @@ test('Nullary functions properly restore environment 2', () => {
     `,
       optionEC3
     )
-  ).resolves.toMatchInlineSnapshot(`1`)
+  ).resolves.toEqual(1)
 })
 
 test('Array literals work as expected', () => {
@@ -428,7 +428,7 @@ test('Array literals are unpacked in the correct order', () => {
     `,
       optionEC3
     )
-  ).resolves.toMatchInlineSnapshot(`123`)
+  ).resolves.toEqual(123)
 })
 
 test('Breaks, continues and returns are detected properly inside loops', () => {
@@ -459,7 +459,7 @@ test('Breaks, continues and returns are detected properly inside loops', () => {
     `,
       optionEC3
     )
-  ).resolves.toMatchInlineSnapshot(`3`)
+  ).resolves.toEqual(3)
 })
 
 test('Environment reset is inserted when only instructions are in control stack', () => {
@@ -497,7 +497,7 @@ test('breaks, continues are properly detected in child blocks 1', () => {
     `,
       optionEC3
     )
-  ).resolves.toMatchInlineSnapshot(`2`)
+  ).resolves.toEqual(2)
 })
 
 test('breaks, continues are properly detected in child blocks 2', () => {
@@ -526,5 +526,5 @@ test('breaks, continues are properly detected in child blocks 2', () => {
     `,
       optionEC3
     )
-  ).resolves.toMatchInlineSnapshot(`2`)
+  ).resolves.toEqual(2)
 })

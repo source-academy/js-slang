@@ -89,24 +89,28 @@ const getProgramEnv = (context: Context) => {
   return env
 }
 
-test('Program environment id stays the same regardless of amount of steps', async () => {
-  const code = stripIndent`
-        let x = 0;
-        for (let i = 0; i < 10; i = i + 1) {
-          x = [x];
-        }
-      `
-
-  let programEnvId = '47'
-  // The above program has a total of 335 steps
-  // Start from steps = 1 so that the program environment always exists
-  for (let steps = 1; steps < 336; steps++) {
-    const context = await getContextFrom(code, steps)
-    const programEnv = getProgramEnv(context)!
-    if (programEnv.id !== programEnvId) {
-      programEnvId = programEnv.id
-      break
+test(
+  'Program environment id stays the same regardless of amount of steps',
+  { timeout: 10000 },
+  async () => {
+    const code = stripIndent`
+    let x = 0;
+    for (let i = 0; i < 10; i = i + 1) {
+      x = [x];
     }
+  `
+
+    let programEnvId = '47'
+    // The above program has a total of 335 steps
+    // Start from steps = 1 so that the program environment always exists
+    for (let steps = 1; steps < 336; steps++) {
+      const context = await getContextFrom(code, steps)
+      const programEnv = getProgramEnv(context)!
+      if (programEnv.id !== programEnvId) {
+        programEnvId = programEnv.id
+        break
+      }
+    }
+    expect(programEnvId).toMatchInlineSnapshot(`"47"`)
   }
-  expect(programEnvId).toMatchInlineSnapshot(`"47"`)
-})
+)

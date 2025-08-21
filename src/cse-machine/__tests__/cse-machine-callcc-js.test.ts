@@ -6,14 +6,7 @@ import { testFailure, testForValue } from '../../utils/testing'
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('call_cc works with normal functions', () => {
-  return expect(
-    testForValue(
-      stripIndent`
-      1 + 2 + call_cc((cont) => 3) + 4;
-    `,
-      optionEC4
-    )
-  ).resolves.toMatchInlineSnapshot(`10`)
+  return expect(testForValue(`1 + 2 + call_cc((cont) => 3) + 4; `, optionEC4)).resolves.toEqual(10)
 })
 
 test('call_cc can be used to return early', () => {
@@ -30,18 +23,11 @@ test('call_cc can be used to return early', () => {
         `,
       optionEC4
     )
-  ).resolves.toMatchInlineSnapshot(`2`)
+  ).resolves.toEqual(2)
 })
 
 test('call_cc throws error when given no arguments', () => {
-  return expect(
-    testFailure(
-      stripIndent`
-        1 + 2 + call_cc() + 4;
-        `,
-      optionEC4
-    )
-  ).resolves.toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 0."`)
+  return expect(testFailure(`1 + 2 + call_cc() + 4;`, optionEC4)).resolves.toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 0."`)
 })
 
 test('call_cc throws error when given > 1 arguments', () => {
