@@ -1,12 +1,12 @@
 import { expect, test } from 'vitest'
-import { Chapter, Variant  } from '../../langs'
-import { testFailure, testSuccess } from '../../utils/testing'
+import { Chapter, Variant } from '../../langs'
+import { testFailure, testForValue } from '../../utils/testing'
 
 // CSET tests for Scheme Macros
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('definition of a macro', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (define-syntax my-let
       (syntax-rules ()
@@ -18,7 +18,7 @@ test('definition of a macro', () => {
 })
 
 test('use of a macro', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (define-syntax my-let
       (syntax-rules ()
@@ -37,7 +37,7 @@ test('use of a macro', () => {
 })
 
 test('use of a more complex macro (recursive)', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
 (define-syntax define-match
     (syntax-rules ()

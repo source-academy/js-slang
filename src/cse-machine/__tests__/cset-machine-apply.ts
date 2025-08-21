@@ -1,12 +1,12 @@
 import { expect, test } from 'vitest'
-import { Chapter, Variant  } from '../../langs'
-import { testFailure, testSuccess } from '../../utils/testing'
+import { Chapter, Variant } from '../../langs'
+import { testFailure, testForValue } from '../../utils/testing'
 
 // apply tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('two-operand apply', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (define args '(1 2))
     (apply + args)
@@ -21,7 +21,7 @@ test('two-operand apply', () => {
 })
 
 test('multi-operand apply', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (define args '(1 2 3 4 5))
     (apply + 6 7 8 9 10 args)
@@ -36,7 +36,7 @@ test('multi-operand apply', () => {
 })
 
 test('eval of strings', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (eval "hello")
   `,

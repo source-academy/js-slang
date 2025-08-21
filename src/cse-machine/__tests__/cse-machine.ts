@@ -1,12 +1,7 @@
 import { expect, test, vi } from 'vitest'
 import { Chapter, Variant  } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { testSuccess } from '../../utils/testing'
-
-// jest.mock('lodash', () => ({
-//   ...jest.requireActual('lodash'),
-//   memoize: jest.fn(func => func)
-// }))
+import { testForValue } from '../../utils/testing'
 
 vi.mock(import('../../modules/loader/loaders'))
 
@@ -15,7 +10,7 @@ const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('Simple tail call returns work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y) {
       if (x <= 0) {
@@ -31,7 +26,7 @@ test('Simple tail call returns work', () => {
 })
 
 test('Tail call in conditional expressions work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y) {
       return x <= 0 ? y : f(x-1, y+1);
@@ -43,7 +38,7 @@ test('Tail call in conditional expressions work', () => {
 })
 
 test('Tail call in boolean operators work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y) {
       if (x <= 0) {
@@ -59,7 +54,7 @@ test('Tail call in boolean operators work', () => {
 })
 
 test('Tail call in nested mix of conditional expressions boolean operators work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y) {
       return x <= 0 ? y : false || x > 0 ? f(x-1, y+1) : 'unreachable';
@@ -71,7 +66,7 @@ test('Tail call in nested mix of conditional expressions boolean operators work'
 })
 
 test('Tail calls in arrow functions work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
     f(5000, 5000);
@@ -81,7 +76,7 @@ test('Tail calls in arrow functions work', () => {
 })
 
 test('Tail calls in arrow block functions work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const f = (x, y) => {
       if (x <= 0) {
@@ -97,7 +92,7 @@ test('Tail calls in arrow block functions work', () => {
 })
 
 test('Tail calls in mutual recursion work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y) {
       if (x <= 0) {
@@ -120,7 +115,7 @@ test('Tail calls in mutual recursion work', () => {
 })
 
 test('Tail calls in mutual recursion with arrow functions work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
     const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
@@ -131,7 +126,7 @@ test('Tail calls in mutual recursion with arrow functions work', () => {
 })
 
 test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f(x, y, z) {
       if (x <= 0) {
@@ -148,7 +143,7 @@ test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function test(){
       const x = true;
@@ -165,7 +160,7 @@ test('standalone block statements', () => {
 
 // This is bad practice. Don't do this!
 test('const uses block scoping instead of function scoping', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function test(){
       const x = true;
@@ -184,7 +179,7 @@ test('const uses block scoping instead of function scoping', () => {
 
 // This is bad practice. Don't do this!
 test('let uses block scoping instead of function scoping', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function test(){
       let x = true;
@@ -202,7 +197,7 @@ test('let uses block scoping instead of function scoping', () => {
 })
 
 test('for loops use block scoping instead of function scoping', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function test(){
       let x = true;
@@ -217,7 +212,7 @@ test('for loops use block scoping instead of function scoping', () => {
 })
 
 test('while loops use block scoping instead of function scoping', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function test(){
       let x = true;
@@ -234,7 +229,7 @@ test('while loops use block scoping instead of function scoping', () => {
 })
 
 test('continue in while loops are working as intended', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function test(){
       let i = 0;
@@ -259,7 +254,7 @@ test('continue in while loops are working as intended', () => {
 // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
 // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
 test('for loop `let` variables are copied into the block scope', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function test(){
       let z = [];
@@ -275,7 +270,7 @@ test('for loop `let` variables are copied into the block scope', () => {
 })
 
 test('streams and its pre-defined/pre-built functions are working as intended', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function make_alternating_stream(stream) {
       return pair(head(stream), () => make_alternating_stream(
@@ -295,7 +290,7 @@ test('streams and its pre-defined/pre-built functions are working as intended', 
 })
 
 test('streams can be created and functions with no return statements are still evaluated properly', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const s = stream(true, false, undefined, 1, x=>x, null, -123, head);
     const result = [];
@@ -307,7 +302,7 @@ test('streams can be created and functions with no return statements are still e
 })
 
 test('Conditional statements are value producing always', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function fact(n) {
       if (n === 0) {
@@ -334,7 +329,7 @@ test('Conditional statements are value producing always', () => {
 })
 
 test('Nullary functions properly restore environment 1', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f() {
       function g(t) {
@@ -350,7 +345,7 @@ test('Nullary functions properly restore environment 1', () => {
 })
 
 test('Nullary functions properly restore environment 2', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f() {
       const a = 1;
@@ -364,7 +359,7 @@ test('Nullary functions properly restore environment 2', () => {
 })
 
 test('Array literals work as expected', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     let c = [1, 2, 3];
     c;
@@ -380,7 +375,7 @@ test('Array literals work as expected', () => {
 })
 
 test('Array literals are unpacked in the correct order', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     let d = 0;
     let c = [ d = d * 10 + 1, d = d * 10 + 2, d = d * 10 + 3];
@@ -391,7 +386,7 @@ test('Array literals are unpacked in the correct order', () => {
 })
 
 test('Breaks, continues and returns are detected properly inside loops', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     function f() {
       let i = 0;
@@ -420,7 +415,7 @@ test('Breaks, continues and returns are detected properly inside loops', () => {
 })
 
 test('Environment reset is inserted when only instructions are in control stack', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     const a = (v => v)(0);
     `,
@@ -429,7 +424,7 @@ test('Environment reset is inserted when only instructions are in control stack'
 })
 
 test('breaks, continues are properly detected in child blocks 1', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     let i = 0;
     for (i = 1; i < 5; i = i + 1) {
@@ -454,7 +449,7 @@ test('breaks, continues are properly detected in child blocks 1', () => {
 })
 
 test('breaks, continues are properly detected in child blocks 2', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     let a = 0;
     for (let i = 1; i < 5; i = i + 1) {

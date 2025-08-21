@@ -1,12 +1,12 @@
 import { expect, test } from 'vitest'
 import { Chapter, Variant  } from '../../langs'
-import { testFailure, testSuccess } from '../../utils/testing'
+import { testFailure, testForValue } from '../../utils/testing'
 
 // Continuation tests for Scheme
 const optionECScm = { chapter: Chapter.SCHEME_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('basic call/cc works', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (+ 1 2 (call/cc
               (lambda (k) (k 3)))
@@ -22,7 +22,7 @@ SchemeInteger {
 })
 
 test('call/cc can be used to escape a computation', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (define test 1)
     (call/cc (lambda (k)
@@ -89,7 +89,7 @@ test('cont throws error given >1 argument', () => {
 })
 */
 test('call/cc can be stored as a value', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     ;; storing a continuation
     (define a #f)
@@ -107,7 +107,7 @@ test('call/cc can be stored as a value', () => {
 // both of the following tests generate infinite loops so they are omitted
 
 test.skip('call/cc can be stored as a value and called', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     ;; storing a continuation and calling it
     (define a #f)
@@ -123,7 +123,7 @@ test.skip('call/cc can be stored as a value and called', () => {
 })
 
 test.skip('when stored as a value, calling a continuation should alter the execution flow', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     ;; storing a continuation and calling it
     (define a #f)

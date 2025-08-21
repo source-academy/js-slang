@@ -1,12 +1,12 @@
 import { expect, test } from 'vitest'
-import { Chapter, Variant  } from '../../langs'
+import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { testFailure, testSuccess  } from '../../utils/testing'
+import { testFailure, testForValue } from '../../utils/testing'
 // Continuation tests for Source
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('call_cc works with normal functions', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
       1 + 2 + call_cc((cont) => 3) + 4;
     `,
@@ -15,7 +15,7 @@ test('call_cc works with normal functions', () => {
 })
 
 test('call_cc can be used to return early', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
         let x = 1;
         call_cc((cont) => {
@@ -49,7 +49,7 @@ test('call_cc throws error when given > 1 arguments', () => {
 })
 
 test('continuations can be stored as a value', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
         let a = 0;
         call_cc((cont) => {

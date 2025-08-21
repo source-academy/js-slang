@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { Chapter, Variant  } from '../../langs'
+import { Chapter, Variant } from '../../langs'
 import { testFailure } from '../../utils/testing'
 
 // CSET tests for Scheme (mostly error testing for

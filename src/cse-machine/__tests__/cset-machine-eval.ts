@@ -1,12 +1,12 @@
 import { expect, test } from 'vitest'
-import { Chapter, Variant  } from '../../langs'
-import { testFailure, testSuccess } from '../../utils/testing'
+import { Chapter, Variant } from '../../langs'
+import { testFailure, testForValue } from '../../utils/testing'
 
 // CSET tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('eval of numbers', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (eval 1)
   `,
@@ -20,7 +20,7 @@ test('eval of numbers', () => {
 })
 
 test('eval of booleans', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (eval #t)
   `,
@@ -29,7 +29,7 @@ test('eval of booleans', () => {
 })
 
 test('eval of strings', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (eval "hello")
   `,
@@ -38,7 +38,7 @@ test('eval of strings', () => {
 })
 
 test('eval of symbols', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (define hello 1)
     (eval 'hello)
@@ -62,7 +62,7 @@ test('eval of empty list', () => {
 })
 
 test('eval of define', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (eval '(define x 1))
     x
@@ -77,7 +77,7 @@ test('eval of define', () => {
 })
 
 test('eval of lambda', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (eval '(lambda (x) x))
   `,
@@ -86,7 +86,7 @@ test('eval of lambda', () => {
 })
 
 test('eval of if', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (eval '(if #t 1 2))
   `,
@@ -100,7 +100,7 @@ test('eval of if', () => {
 })
 
 test('eval of begin', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (eval '(begin 1 2 3))
   `,
@@ -114,7 +114,7 @@ test('eval of begin', () => {
 })
 
 test('eval of set!', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (define x 2)
     (eval '(set! x 1))
@@ -130,7 +130,7 @@ test('eval of set!', () => {
 })
 
 test('eval of application', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (eval '(+ 1 2))
   `,
@@ -144,7 +144,7 @@ test('eval of application', () => {
 })
 
 test('eval of quote', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     `
     (eval '(quote (1 2 3)))
   `,

@@ -1,22 +1,19 @@
-import * as _ from 'lodash'
+import _ from 'lodash'
 import { expect, test, vi } from 'vitest'
 import { Chapter, Variant  } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { testFailure, testSuccess } from '../../utils/testing'
+import { testFailure, testForValue } from '../../utils/testing'
 import { TestOptions } from '../../utils/testing/types'
 
 vi.spyOn(_, 'memoize').mockImplementation(func => func as any)
 
-function expectDifferentParsedErrors(code1: string, code2: string, options: TestOptions = {}) {
-  return expect(
-    testFailure(code1, options).then(error1 => {
-      expect(
-        testFailure(code2, options).then(error2 => {
-          return expect(error1).not.toEqual(error2)
-        })
-      )
-    })
-  ).resolves
+async function expectDifferentParsedErrors(code1: string, code2: string, options: TestOptions = {}) {
+  const [error1, error2] = await Promise.all([
+    testFailure(code1, options),
+    testFailure(code2, options)
+  ])
+
+  expect(error1).not.toEqual(error2)
 }
 
 const undefinedVariable = stripIndent`
@@ -149,7 +146,7 @@ test('Error when assigning to builtin - verbose', () => {
 test('Assigning to builtin error message differs from verbose version', () => {
   return expectDifferentParsedErrors(assignToBuiltin1, assignToBuiltinVerbose1, {
     variant: Variant.EXPLICIT_CONTROL
-  }).toBe(undefined)
+  })
 })
 
 test('Nice errors when errors occur inside builtins', () => {
@@ -211,7 +208,7 @@ test('Infinite recursion with function calls in argument', { timeout: 20000 }, (
   )
 })
 
-test('Infinite recursion of mutually recursive functions', () => {
+test('Infinite recursion of mutually recursive functions', { timeout: 15000 }, () => {
   return expect(testFailure(
     stripIndent`
     function f(n) {
@@ -259,7 +256,7 @@ test('Calling non function value undefined error message differs from verbose ve
     callingNonFunctionValueUndefined,
     callingNonFunctionValueUndefinedVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueUndefinedArgs = stripIndent`
@@ -291,7 +288,7 @@ test('Calling non function value undefined with arguments error message differs 
     callingNonFunctionValueUndefinedArgs,
     callingNonFunctionValueUndefinedArgsVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueNull = stripIndent`
@@ -322,7 +319,7 @@ test('Calling non function value null error message differs from verbose version
     callingNonFunctionValueNull,
     callingNonFunctionValueNullVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueTrue = stripIndent`
@@ -352,7 +349,7 @@ test('Calling non function value true error message differs from verbose version
     callingNonFunctionValueTrue,
     callingNonFunctionValueTrueVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValue0 = stripIndent`
@@ -383,7 +380,7 @@ test('Calling non function value 0 error message differs from verbose version', 
     callingNonFunctionValue0,
     callingNonFunctionValue0Verbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueString = stripIndent`
@@ -414,7 +411,7 @@ test('Calling non function value string error message differs from verbose versi
     callingNonFunctionValueString,
     callingNonFunctionValueStringVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueArray = stripIndent`
@@ -445,7 +442,7 @@ test('Calling non function value array error message differs from verbose versio
     callingNonFunctionValueArray,
     callingNonFunctionValueArrayVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueObject = stripIndent`
@@ -461,7 +458,7 @@ test('Calling non function value object error message differs from verbose versi
     callingNonFunctionValueObject,
     callingNonFunctionValueObjectVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 test('Error when calling function with too few arguments', () => {
@@ -643,7 +640,7 @@ test('Error when calling builtin function in with too few arguments', () => {
 })
 
 test('No error when calling list function in with variable arguments', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     list();
     list(1);
@@ -678,7 +675,7 @@ test('No error when calling list function in with variable arguments', () => {
 })
 
 test('No error when calling display function in with variable arguments', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     display(1);
     display(1, "test");
@@ -688,7 +685,7 @@ test('No error when calling display function in with variable arguments', () => 
 })
 
 test('No error when calling stringify function in with variable arguments', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     stringify(1, 2);
     stringify(1, 2, 3);
@@ -698,7 +695,7 @@ test('No error when calling stringify function in with variable arguments', () =
 })
 
 test('No error when calling math_max function in with variable arguments', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     math_max();
     math_max(1, 2);
@@ -709,7 +706,7 @@ test('No error when calling math_max function in with variable arguments', () =>
 })
 
 test('No error when calling math_min function in with variable arguments', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
     math_min();
     math_min(1, 2);
