@@ -1,4 +1,3 @@
- 
 import { generate } from 'astring'
 import type es from 'estree'
 import { RawSourceMap } from 'source-map'

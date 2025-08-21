@@ -4,7 +4,7 @@ import type es from 'estree'
 import { SourceMapGenerator, type RawSourceMap } from 'source-map'
 
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
-import { Chapter, Variant  } from '../langs'
+import { Chapter, Variant } from '../langs'
 import type { Context, NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { filterImportDeclarations, getImportedName } from '../utils/ast/helpers'

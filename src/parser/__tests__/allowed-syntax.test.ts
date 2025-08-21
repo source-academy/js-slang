@@ -1,6 +1,6 @@
 import { assert, describe, test, vi } from 'vitest'
 import { parseError } from '../..'
-import { Chapter, Variant  } from '../../langs'
+import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { testSuccess } from '../../utils/testing'
 import { mockContext } from '../../utils/testing/mocks'

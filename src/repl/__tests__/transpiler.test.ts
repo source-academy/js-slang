@@ -3,7 +3,6 @@ import { beforeEach, expect, test, vi } from 'vitest'
 import { getTranspilerCommand } from '../transpiler'
 import { expectWritten, getCommandRunner } from './utils'
 
-
 vi.mock(import('path'), async importOriginal => {
   const actualPath = await importOriginal()
   return {

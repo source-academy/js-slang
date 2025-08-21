@@ -3,11 +3,15 @@ import { Chapter, parseError, runInContext } from '../../index'
 import { stripIndent } from '../../utils/formatters'
 import { mockContext } from '../../utils/testing/mocks'
 
-async function expectNativeToTimeoutAndError(code: string, timeout: number, expectFunc: typeof expect) {
+async function expectNativeToTimeoutAndError(
+  code: string,
+  timeout: number,
+  expectFunc: typeof expect
+) {
   const start = Date.now()
   const context = mockContext(Chapter.SOURCE_4)
   await runInContext(code, context, {
-    executionMethod: 'native',
+    executionMethod: 'native'
   })
   const timeTaken = Date.now() - start
   expectFunc(timeTaken).toBeLessThan(timeout * 5)
@@ -15,23 +19,27 @@ async function expectNativeToTimeoutAndError(code: string, timeout: number, expe
   return parseError(context.errors)
 }
 
-test('Proper stringify-ing of arguments during potentially infinite iterative function calls', { timeout: 10000 }, async ({ expect }) => {
-  const code = stripIndent`
+test(
+  'Proper stringify-ing of arguments during potentially infinite iterative function calls',
+  { timeout: 10000 },
+  async ({ expect }) => {
+    const code = stripIndent`
     function f(x) {
       return f(x);
     }
     const array = [1, 2, 3];
     f(list(1, 2, f, () => 1, array));
   `
-  const error = await expectNativeToTimeoutAndError(code, 1000, expect)
-  expect(error).toMatch(stripIndent`
+    const error = await expectNativeToTimeoutAndError(code, 1000, expect)
+    expect(error).toMatch(stripIndent`
   Line 2: Potential infinite recursion detected: f([ 1,
   [ 2,
   [ function f(x) {
       return f(x);
     },
   [() => 1, [[1, 2, 3], null]]]]]) ...`)
-})
+  }
+)
 
 test('test increasing time limit for functions', { timeout: 50_000 }, async ({ expect }) => {
   const code = stripIndent`

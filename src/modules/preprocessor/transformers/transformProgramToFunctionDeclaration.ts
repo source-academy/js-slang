@@ -4,7 +4,10 @@ import type es from 'estree'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
 import assert from '../../../utils/assert'
 import * as create from '../../../utils/ast/astCreator'
-import { getModuleDeclarationSource, getSourceVariableDeclaration } from '../../../utils/ast/helpers'
+import {
+  getModuleDeclarationSource,
+  getSourceVariableDeclaration
+} from '../../../utils/ast/helpers'
 import {
   isDeclaration,
   isDirective,

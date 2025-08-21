@@ -1,5 +1,5 @@
 import { expect, test, vi } from 'vitest'
-import { Chapter, Variant  } from '../../langs'
+import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { testForValue } from '../../utils/testing'
 
@@ -10,8 +10,9 @@ const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('Simple tail call returns work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y) {
       if (x <= 0) {
         return y;
@@ -21,25 +22,29 @@ test('Simple tail call returns work', () => {
     }
     f(5000, 5000);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`10000`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail call in conditional expressions work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y) {
       return x <= 0 ? y : f(x-1, y+1);
     }
     f(5000, 5000);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`10000`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail call in boolean operators work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y) {
       if (x <= 0) {
         return y;
@@ -49,35 +54,41 @@ test('Tail call in boolean operators work', () => {
     }
     f(5000, 5000);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`10000`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail call in nested mix of conditional expressions boolean operators work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y) {
       return x <= 0 ? y : false || x > 0 ? f(x-1, y+1) : 'unreachable';
     }
     f(5000, 5000);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`10000`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail calls in arrow functions work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
     f(5000, 5000);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`10000`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail calls in arrow block functions work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const f = (x, y) => {
       if (x <= 0) {
         return y;
@@ -87,13 +98,15 @@ test('Tail calls in arrow block functions work', () => {
     };
     f(5000, 5000);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`10000`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail calls in mutual recursion work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y) {
       if (x <= 0) {
         return y;
@@ -110,24 +123,28 @@ test('Tail calls in mutual recursion work', () => {
     }
     f(5000, 5000);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`10000`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail calls in mutual recursion with arrow functions work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
     const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
     f(5000, 5000);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`10000`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y, z) {
       if (x <= 0) {
         return y;
@@ -137,14 +154,16 @@ test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
     }
     f(5000, 5000, 2);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`15000`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`15000`)
 })
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function test(){
       const x = true;
       {
@@ -154,14 +173,16 @@ test('standalone block statements', () => {
     }
     test();
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`true`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`true`)
 })
 
 // This is bad practice. Don't do this!
 test('const uses block scoping instead of function scoping', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function test(){
       const x = true;
       if(true) {
@@ -173,14 +194,16 @@ test('const uses block scoping instead of function scoping', () => {
     }
     test();
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`true`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`true`)
 })
 
 // This is bad practice. Don't do this!
 test('let uses block scoping instead of function scoping', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function test(){
       let x = true;
       if(true) {
@@ -192,13 +215,15 @@ test('let uses block scoping instead of function scoping', () => {
     }
     test();
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`true`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('for loops use block scoping instead of function scoping', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function test(){
       let x = true;
       for (let x = 1; x > 0; x = x - 1) {
@@ -207,13 +232,15 @@ test('for loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`true`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('while loops use block scoping instead of function scoping', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function test(){
       let x = true;
       while (true) {
@@ -224,13 +251,15 @@ test('while loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    optionEC4
-  )).resolves.toMatchInlineSnapshot(`true`)
+      optionEC4
+    )
+  ).resolves.toMatchInlineSnapshot(`true`)
 })
 
 test('continue in while loops are working as intended', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function test(){
       let i = 0;
       let j = false;
@@ -247,15 +276,17 @@ test('continue in while loops are working as intended', () => {
     }
     test();
   `,
-    optionEC4
-  )).resolves.toMatchInlineSnapshot(`true`)
+      optionEC4
+    )
+  ).resolves.toMatchInlineSnapshot(`true`)
 })
 
 // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
 // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
 test('for loop `let` variables are copied into the block scope', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function test(){
       let z = [];
       for (let x = 0; x < 10; x = x + 1) {
@@ -265,13 +296,15 @@ test('for loop `let` variables are copied into the block scope', () => {
     }
     test();
     `,
-    optionEC4
-  )).resolves.toMatchInlineSnapshot(`1`)
+      optionEC4
+    )
+  ).resolves.toMatchInlineSnapshot(`1`)
 })
 
 test('streams and its pre-defined/pre-built functions are working as intended', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function make_alternating_stream(stream) {
       return pair(head(stream), () => make_alternating_stream(
                                         negate_whole_stream(
@@ -285,25 +318,29 @@ test('streams and its pre-defined/pre-built functions are working as intended', 
     const ones = pair(1, () => ones);
     list_ref(eval_stream(make_alternating_stream(enum_stream(1, 9)), 9), 8);
     `,
-    optionEC4
-  )).resolves.toMatchInlineSnapshot(`9`)
+      optionEC4
+    )
+  ).resolves.toMatchInlineSnapshot(`9`)
 })
 
 test('streams can be created and functions with no return statements are still evaluated properly', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const s = stream(true, false, undefined, 1, x=>x, null, -123, head);
     const result = [];
     stream_for_each(item => {result[array_length(result)] = item;}, s);
     stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;
     `,
-    optionEC4
-  )).resolves.toMatchInlineSnapshot(`false`)
+      optionEC4
+    )
+  ).resolves.toMatchInlineSnapshot(`false`)
 })
 
 test('Conditional statements are value producing always', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function fact(n) {
       if (n === 0) {
           2;
@@ -324,13 +361,15 @@ test('Conditional statements are value producing always', () => {
       }
     fact(5);
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`120`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`120`)
 })
 
 test('Nullary functions properly restore environment 1', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f() {
       function g(t) {
           return 0;
@@ -340,13 +379,15 @@ test('Nullary functions properly restore environment 1', () => {
     const h = f();
     h(100);
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`0`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`0`)
 })
 
 test('Nullary functions properly restore environment 2', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f() {
       const a = 1;
       return a;
@@ -354,18 +395,21 @@ test('Nullary functions properly restore environment 2', () => {
     const a = f();
     a;
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`1`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`1`)
 })
 
 test('Array literals work as expected', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     let c = [1, 2, 3];
     c;
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`
     Array [
       1,
       2,
@@ -375,19 +419,22 @@ test('Array literals work as expected', () => {
 })
 
 test('Array literals are unpacked in the correct order', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     let d = 0;
     let c = [ d = d * 10 + 1, d = d * 10 + 2, d = d * 10 + 3];
     d;
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`123`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`123`)
 })
 
 test('Breaks, continues and returns are detected properly inside loops', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f() {
       let i = 0;
       while(i < 10) {
@@ -410,22 +457,26 @@ test('Breaks, continues and returns are detected properly inside loops', () => {
     }
     f();
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`3`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`3`)
 })
 
 test('Environment reset is inserted when only instructions are in control stack', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const a = (v => v)(0);
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`undefined`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`undefined`)
 })
 
 test('breaks, continues are properly detected in child blocks 1', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     let i = 0;
     for (i = 1; i < 5; i = i + 1) {
         {
@@ -444,13 +495,15 @@ test('breaks, continues are properly detected in child blocks 1', () => {
     }
     i;
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`2`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`2`)
 })
 
 test('breaks, continues are properly detected in child blocks 2', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     let a = 0;
     for (let i = 1; i < 5; i = i + 1) {
         {
@@ -471,6 +524,7 @@ test('breaks, continues are properly detected in child blocks 2', () => {
     }
     a;
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`2`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`2`)
 })

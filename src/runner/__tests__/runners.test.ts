@@ -2,7 +2,7 @@ import { assert, describe, expect, it, test } from 'vitest'
 import { parseError, runInContext } from '../..'
 import type { SourceError } from '../../errors/errorBase'
 import { UndefinedVariable } from '../../errors/errors'
-import { Chapter, Variant  } from '../../langs'
+import { Chapter, Variant } from '../../langs'
 import { FatalSyntaxError } from '../../parser/errors'
 import { locationDummyNode } from '../../utils/ast/astCreator'
 import { testFailure, testForValue, testWithChapters } from '../../utils/testing'
@@ -185,9 +185,9 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
       Chapter.SOURCE_3,
       Chapter.SOURCE_4
     )(chapter =>
-      expect(testForValue(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })).resolves.toStrictEqual(
-        55
-      )
+      expect(
+        testForValue(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })
+      ).resolves.toStrictEqual(55)
     )
   })
 
@@ -201,9 +201,9 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
       Chapter.SOURCE_3,
       Chapter.SOURCE_4
     )(chapter =>
-      expect(testForValue(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })).resolves.toStrictEqual(
-        55
-      )
+      expect(
+        testForValue(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })
+      ).resolves.toStrictEqual(55)
     )
   })
 })

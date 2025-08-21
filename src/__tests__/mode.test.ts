@@ -3,7 +3,7 @@ import { Mode as DefaultMode } from 'ace-builds/src-noconflict/mode-javascript'
 import { expect, test } from 'vitest'
 
 import { HighlightRulesSelector, ModeSelector } from '../editors/ace/modes/source'
-import { Chapter, Variant  } from '../langs'
+import { Chapter, Variant } from '../langs'
 
 // suppress all console warning
 console.warn = () => {

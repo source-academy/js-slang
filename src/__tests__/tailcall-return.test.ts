@@ -3,7 +3,8 @@ import { stripIndent } from '../utils/formatters'
 import { testFailure, testForValue } from '../utils/testing'
 
 test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
-  return expect(testFailure(stripIndent`
+  return expect(
+    testFailure(stripIndent`
     function f(x) {
       if (x <= 0) {
         return 0;
@@ -12,12 +13,14 @@ test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
       }
     }
     f(10000);
-  `)).resolves.toMatchInlineSnapshot(`"Line 5: RangeError: Maximum call stack size exceeded"`)
+  `)
+  ).resolves.toMatchInlineSnapshot(`"Line 5: RangeError: Maximum call stack size exceeded"`)
 })
 
 test('Simple tail call returns work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y) {
       if (x <= 0) {
         return y;
@@ -27,23 +30,27 @@ test('Simple tail call returns work', () => {
     }
     f(5000, 5000);
   `
-  )).resolves.toMatchInlineSnapshot(`10000`)
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail call in conditional expressions work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y) {
       return x <= 0 ? y : f(x-1, y+1);
     }
     f(5000, 5000);
   `
-  )).resolves.toMatchInlineSnapshot(`10000`)
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail call in boolean operators work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y) {
       if (x <= 0) {
         return y;
@@ -53,32 +60,38 @@ test('Tail call in boolean operators work', () => {
     }
     f(5000, 5000);
   `
-  )).resolves.toMatchInlineSnapshot(`10000`)
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail call in nested mix of conditional expressions boolean operators work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y) {
       return x <= 0 ? y : false || x > 0 ? f(x-1, y+1) : 'unreachable';
     }
     f(5000, 5000);
   `
-  )).resolves.toMatchInlineSnapshot(`10000`)
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail calls in arrow functions work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
     f(5000, 5000);
   `
-  )).resolves.toMatchInlineSnapshot(`10000`)
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail calls in arrow block functions work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const f = (x, y) => {
       if (x <= 0) {
         return y;
@@ -88,12 +101,14 @@ test('Tail calls in arrow block functions work', () => {
     };
     f(5000, 5000);
   `
-  )).resolves.toMatchInlineSnapshot(`10000`)
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail calls in mutual recursion work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y) {
       if (x <= 0) {
         return y;
@@ -110,22 +125,26 @@ test('Tail calls in mutual recursion work', () => {
     }
     f(5000, 5000);
   `
-  )).resolves.toMatchInlineSnapshot(`10000`)
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail calls in mutual recursion with arrow functions work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
     const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
     f(5000, 5000);
   `
-  )).resolves.toMatchInlineSnapshot(`10000`)
+    )
+  ).resolves.toMatchInlineSnapshot(`10000`)
 })
 
 test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function f(x, y, z) {
       if (x <= 0) {
         return y;
@@ -135,5 +154,6 @@ test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
     }
     f(5000, 5000, 2);
   `
-  )).resolves.toMatchInlineSnapshot(`15000`)
+    )
+  ).resolves.toMatchInlineSnapshot(`15000`)
 })

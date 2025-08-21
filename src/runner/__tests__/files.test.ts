@@ -6,7 +6,9 @@ import { contextIt as it } from '../../utils/testing'
 describe('runFilesInContext', () => {
   it.scoped({ chapter: Chapter.SOURCE_4 })
 
-  it('returns IllegalCharInFilePathError if any file path contains invalid characters', async ({ context }) => {
+  it('returns IllegalCharInFilePathError if any file path contains invalid characters', async ({
+    context
+  }) => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
       '/+-.js': '"hello world";'
@@ -17,7 +19,9 @@ describe('runFilesInContext', () => {
     )
   })
 
-  it('returns IllegalCharInFilePathError if any file path contains invalid characters - verbose', async ({ context }) => {
+  it('returns IllegalCharInFilePathError if any file path contains invalid characters - verbose', async ({
+    context
+  }) => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
       '/+-.js': '"hello world";'
@@ -30,7 +34,9 @@ describe('runFilesInContext', () => {
     `)
   })
 
-  it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters', async ({ context }) => {
+  it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters', async ({
+    context
+  }) => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
       '/dir//dir2/b.js': '"hello world";'
@@ -41,7 +47,9 @@ describe('runFilesInContext', () => {
     )
   })
 
-  it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters - verbose', async ({ context }) => {
+  it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters - verbose', async ({
+    context
+  }) => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
       '/dir//dir2/b.js': '"hello world";'
@@ -60,7 +68,9 @@ describe('runFilesInContext', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`"Module '/a.js' not found."`)
   })
 
-  it('returns ModuleNotFoundError if entrypoint file does not exist - verbose', async ({ context }) => {
+  it('returns ModuleNotFoundError if entrypoint file does not exist - verbose', async ({
+    context
+  }) => {
     const files: Record<string, string> = {}
     await runFilesInContext(files, '/a.js', context)
     expect(parseError(context.errors, true)).toMatchInlineSnapshot(`
@@ -74,7 +84,9 @@ describe('runFilesInContext', () => {
 describe('compileFiles', () => {
   it.scoped({ chapter: Chapter.SOURCE_4 })
 
-  it('returns IllegalCharInFilePathError if any file path contains invalid characters', async ({ context }) => {
+  it('returns IllegalCharInFilePathError if any file path contains invalid characters', async ({
+    context
+  }) => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
       '/+-.js': '"hello world";'
@@ -85,7 +97,9 @@ describe('compileFiles', () => {
     )
   })
 
-  it('returns IllegalCharInFilePathError if any file path contains invalid characters - verbose', async ({ context }) => {
+  it('returns IllegalCharInFilePathError if any file path contains invalid characters - verbose', async ({
+    context
+  }) => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
       '/+-.js': '"hello world";'
@@ -98,7 +112,9 @@ describe('compileFiles', () => {
     `)
   })
 
-  it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters', async ({ context }) => {
+  it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters', async ({
+    context
+  }) => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
       '/dir//dir2/b.js': '"hello world";'
@@ -109,7 +125,9 @@ describe('compileFiles', () => {
     )
   })
 
-  it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters - verbose', async ({ context }) => {
+  it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters - verbose', async ({
+    context
+  }) => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
       '/dir//dir2/b.js': '"hello world";'
@@ -128,7 +146,9 @@ describe('compileFiles', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`"Module '/a.js' not found."`)
   })
 
-  it('returns ModuleNotFoundError if entrypoint file does not exist - verbose', async ({ context }) => {
+  it('returns ModuleNotFoundError if entrypoint file does not exist - verbose', async ({
+    context
+  }) => {
     const files: Record<string, string> = {}
     await compileFiles(files, '/a.js', context)
     expect(parseError(context.errors, true)).toMatchInlineSnapshot(`

@@ -5,7 +5,10 @@ import { partition } from 'lodash'
 import type { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
 import { findAncestors, findIdentifierNode } from '../finder'
-import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from '../modules/loader/loaders'
+import {
+  memoizedGetModuleDocsAsync,
+  memoizedGetModuleManifestAsync
+} from '../modules/loader/loaders'
 import type { ModuleDocsEntry } from '../modules/moduleTypes'
 import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
@@ -433,7 +436,6 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
       }
     }
     case 'VariableDeclaration': {
-
       const declarations: NameDeclaration[] = []
       for (const decl of node.declarations) {
         const id = decl.id

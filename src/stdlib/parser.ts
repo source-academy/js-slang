@@ -4,7 +4,7 @@ import { parse as sourceParse } from '../parser/parser'
 import { SourceParser } from '../parser/source'
 import { libraryParserLanguage } from '../parser/source/syntax'
 import { Context, Value } from '../types'
-import { ContiguousArrayElements , Node, StatementSequence  } from '../utils/ast/node'
+import { ContiguousArrayElements, Node, StatementSequence } from '../utils/ast/node'
 import { oneLine } from '../utils/formatters'
 import { vector_to_list } from './list'
 

@@ -1,7 +1,7 @@
 import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, RuntimeSourceError , SourceError   } from '../errors/errorBase'
+import { ErrorSeverity, ErrorType, RuntimeSourceError, SourceError } from '../errors/errorBase'
 import { Node } from '../utils/ast/node'
 import { nonAlphanumericCharEncoding } from './preprocessor/filePaths'
 

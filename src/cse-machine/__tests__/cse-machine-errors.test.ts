@@ -1,13 +1,17 @@
 import _ from 'lodash'
 import { expect, test, vi } from 'vitest'
-import { Chapter, Variant  } from '../../langs'
+import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { testFailure, testForValue } from '../../utils/testing'
 import { TestOptions } from '../../utils/testing/types'
 
 vi.spyOn(_, 'memoize').mockImplementation(func => func as any)
 
-async function expectDifferentParsedErrors(code1: string, code2: string, options: TestOptions = {}) {
+async function expectDifferentParsedErrors(
+  code1: string,
+  code2: string,
+  options: TestOptions = {}
+) {
   const [error1, error2] = await Promise.all([
     testFailure(code1, options),
     testFailure(code2, options)
@@ -114,7 +118,7 @@ test('Error when assigning to builtin - verbose', () => {
 test('Assigning to builtin error message differs from verbose version', async () => {
   const [assign1, assign2] = await Promise.all([
     testFailure(assignToBuiltin, { variant: Variant.EXPLICIT_CONTROL }),
-    testFailure(assignToBuiltinVerbose, { variant: Variant.EXPLICIT_CONTROL }),
+    testFailure(assignToBuiltinVerbose, { variant: Variant.EXPLICIT_CONTROL })
   ])
 
   expect(assign1).not.toEqual(assign2)
@@ -150,50 +154,63 @@ test('Assigning to builtin error message differs from verbose version', () => {
 })
 
 test('Nice errors when errors occur inside builtins', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     parse_int("10");
   `,
-    optionEC4
-  )).resolves.toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
+      optionEC4
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
 })
 
 test('Nice errors when errors occur inside builtins', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     parse("'");
   `,
-    optionEC4
-  )).resolves.toMatchInlineSnapshot(`"Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)"`)
+      optionEC4
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)"`
+  )
 })
 
 test("Builtins don't create additional errors when it's not their fault", () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function f(x) {
       return a;
     }
     map(f, list(1, 2));
   `,
-    optionEC4
-  )).resolves.toMatchInlineSnapshot(`"Line 2: Name a not declared."`)
+      optionEC4
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 2: Name a not declared."`)
 })
 
 test('Infinite recursion with a block bodied function', { timeout: 15000 }, () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function i(n) {
       return n === 0 ? 0 : 1 + i(n-1);
     }
     i(300000);
   `,
-    optionEC4
-  )).resolves.toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
+      optionEC4
+    )
+  ).resolves.toEqual(
+    expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/)
+  )
 })
 
 test('Infinite recursion with function calls in argument', { timeout: 20000 }, () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function i(n, redundant) {
       return n === 0 ? 0 : 1 + i(n-1, r());
     }
@@ -202,15 +219,17 @@ test('Infinite recursion with function calls in argument', { timeout: 20000 }, (
     }
     i(300000, 1);
   `,
-    optionEC4
-  )).resolves.toEqual(
+      optionEC4
+    )
+  ).resolves.toEqual(
     expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
   )
 })
 
 test('Infinite recursion of mutually recursive functions', { timeout: 15000 }, () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function f(n) {
       return n === 0 ? 0 : 1 + g(n - 1);
     }
@@ -219,8 +238,9 @@ test('Infinite recursion of mutually recursive functions', { timeout: 15000 }, (
     }
     f(200000);
   `,
-    optionEC4
-  )).resolves.toEqual(
+      optionEC4
+    )
+  ).resolves.toEqual(
     expect.stringMatching(
       /Maximum call stack size exceeded\n([^f]*f[^g]*g[^f]*f|[^g]*g[^f]*f[^g]*g)/
     )
@@ -237,14 +257,14 @@ const callingNonFunctionValueUndefinedVerbose = stripIndent`
 `
 // should not be different when error passing is fixed
 test('Error when calling non function value undefined', () => {
-  return expect(testFailure(callingNonFunctionValueUndefined, optionEC)).resolves.toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value undefined."`
-  )
+  return expect(
+    testFailure(callingNonFunctionValueUndefined, optionEC)
+  ).resolves.toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined."`)
 })
 
 test('Error when calling non function value undefined - verbose', () => {
-  return expect(testFailure(callingNonFunctionValueUndefinedVerbose, optionEC)
-    ).resolves.toMatchInlineSnapshot(`
+  return expect(testFailure(callingNonFunctionValueUndefinedVerbose, optionEC)).resolves
+    .toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value undefined.
             Because undefined is not a function, you cannot run undefined().
             "
@@ -269,14 +289,14 @@ const callingNonFunctionValueUndefinedArgsVerbose = stripIndent`
 `
 // should not be different when error passing is fixed
 test('Error when calling non function value undefined with arguments', () => {
-  return expect(testFailure(callingNonFunctionValueUndefinedArgs, optionEC)).resolves.toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value undefined."`
-  )
+  return expect(
+    testFailure(callingNonFunctionValueUndefinedArgs, optionEC)
+  ).resolves.toMatchInlineSnapshot(`"Line 1: Calling non-function value undefined."`)
 })
 
 test('Error when calling non function value undefined with arguments - verbose', () => {
-  return expect(testFailure(callingNonFunctionValueUndefinedArgsVerbose, optionEC)
-    ).resolves.toMatchInlineSnapshot(`
+  return expect(testFailure(callingNonFunctionValueUndefinedArgsVerbose, optionEC)).resolves
+    .toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value undefined.
             Because undefined is not a function, you cannot run undefined(1, true).
             "
@@ -307,7 +327,8 @@ test('Error when calling non function value null', () => {
 })
 
 test('Error when calling non function value null - verbose', () => {
-  return expect(testFailure(callingNonFunctionValueNullVerbose, optionEC)).resolves.toMatchInlineSnapshot(`
+  return expect(testFailure(callingNonFunctionValueNullVerbose, optionEC)).resolves
+    .toMatchInlineSnapshot(`
             "Line 2, Column 2: null literals are not allowed.
             They're not part of the Source §1 specs.
             "
@@ -337,7 +358,8 @@ test('Error when calling non function value true', () => {
 })
 
 test('Error when calling non function value true - verbose', () => {
-  return expect(testFailure(callingNonFunctionValueTrueVerbose, optionEC)).resolves.toMatchInlineSnapshot(`
+  return expect(testFailure(callingNonFunctionValueTrueVerbose, optionEC)).resolves
+    .toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value true.
             Because true is not a function, you cannot run true().
             "
@@ -368,7 +390,8 @@ test('Error when calling non function value 0', () => {
 })
 
 test('Error when calling non function value 0 - verbose', () => {
-  return expect(testFailure(callingNonFunctionValue0Verbose, optionEC)).resolves.toMatchInlineSnapshot(`
+  return expect(testFailure(callingNonFunctionValue0Verbose, optionEC)).resolves
+    .toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value 0.
             Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
             "
@@ -393,13 +416,14 @@ const callingNonFunctionValueStringVerbose = stripIndent`
 `
 
 test('Error when calling non function value "string"', () => {
-  return expect(testFailure(callingNonFunctionValueString, optionEC)).resolves.toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value \\"string\\"."`
-  )
+  return expect(
+    testFailure(callingNonFunctionValueString, optionEC)
+  ).resolves.toMatchInlineSnapshot(`"Line 1: Calling non-function value \\"string\\"."`)
 })
 
 test('Error when calling non function value "string" - verbose', () => {
-  return expect(testFailure(callingNonFunctionValueStringVerbose, optionEC)).resolves.toMatchInlineSnapshot(`
+  return expect(testFailure(callingNonFunctionValueStringVerbose, optionEC)).resolves
+    .toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value \\"string\\".
             Because \\"string\\" is not a function, you cannot run \\"string\\"().
             "
@@ -424,13 +448,14 @@ const callingNonFunctionValueArrayVerbose = stripIndent`
 `
 
 test('Error when calling non function value array', () => {
-  return expect(testFailure(callingNonFunctionValueArray, optionEC3)).resolves.toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value [1]."`
-  )
+  return expect(
+    testFailure(callingNonFunctionValueArray, optionEC3)
+  ).resolves.toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]."`)
 })
 
 test('Error when calling non function value array - verbose', () => {
-  return expect(testFailure(callingNonFunctionValueArrayVerbose, optionEC3)).resolves.toMatchInlineSnapshot(`
+  return expect(testFailure(callingNonFunctionValueArrayVerbose, optionEC3)).resolves
+    .toMatchInlineSnapshot(`
             "Line 2, Column 0: Calling non-function value [1].
             Because [1] is not a function, you cannot run [1]().
             "
@@ -462,28 +487,32 @@ test('Calling non function value object error message differs from verbose versi
 })
 
 test('Error when calling function with too few arguments', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function f(x) {
       return x;
     }
     f();
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0."`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0."`)
 })
 
 test('Error when calling function with too few arguments - verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     "enable verbose";
       function f(x) {
         return x;
       }
       f();
     `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 5, Column 2: Expected 1 arguments, but got 0.
             Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
@@ -491,28 +520,32 @@ test('Error when calling function with too few arguments - verbose', () => {
 })
 
 test('Error when calling function with too many arguments', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function f(x) {
       return x;
     }
     f(1, 2);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2."`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2."`)
 })
 
 test('Error when calling function with too many arguments - verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     "enable verbose";
       function f(x) {
         return x;
       }
       f(1, 2);
     `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 5, Column 2: Expected 1 arguments, but got 2.
             Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
@@ -520,24 +553,28 @@ test('Error when calling function with too many arguments - verbose', () => {
 })
 
 test('Error when calling arrow function with too few arguments', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     const f = x => x;
     f();
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0."`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0."`)
 })
 
 test('Error when calling arrow function with too few arguments - verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
   "enable verbose";
     const f = x => x;
     f();
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected 1 arguments, but got 0.
             Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
@@ -545,24 +582,28 @@ test('Error when calling arrow function with too few arguments - verbose', () =>
 })
 
 test('Error when calling arrow function with too many arguments', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     const f = x => x;
     f(1, 2);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
 test('Error when calling arrow function with too many arguments - verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     "enable verbose";
       const f = x => x;
       f(1, 2);
     `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected 1 arguments, but got 2.
             Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
@@ -570,24 +611,28 @@ test('Error when calling arrow function with too many arguments - verbose', () =
 })
 
 test('Error when calling function from member expression with too many arguments', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     const f = [x => x];
     f[0](1, 2);
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
 test('Error when calling function from member expression with too many arguments - verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     "enable verbose";
       const f = [x => x];
       f[0](1, 2);
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected 1 arguments, but got 2.
             Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
@@ -595,15 +640,17 @@ test('Error when calling function from member expression with too many arguments
 })
 
 test('Error when calling arrow function in tail call with too many arguments - verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     "enable verbose";
     const g = () => 1;
     const f = x => g(x);
     f(1);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 3, Column 15: Expected 0 arguments, but got 1.
             Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
             "
@@ -611,44 +658,52 @@ test('Error when calling arrow function in tail call with too many arguments - v
 })
 
 test('Error when calling arrow function in tail call with too many arguments', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     const g = () => 1;
     const f = x => g(x);
     f(1);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1."`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1."`)
 })
 
 test('Error when calling builtin function in with too many arguments', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     is_number(1, 2, 3);
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 3."`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 3."`)
 })
 
 test('Error when calling builtin function in with too few arguments', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     parse_int("");
   `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
 })
 
 test('No error when calling list function in with variable arguments', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     list();
     list(1);
     list(1, 2, 3);
     list(1, 2, 3, 4, 5, 6, 6);
   `,
-    optionEC2
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC2
+    )
+  ).resolves.toMatchInlineSnapshot(`
             Array [
               1,
               Array [
@@ -675,125 +730,159 @@ test('No error when calling list function in with variable arguments', () => {
 })
 
 test('No error when calling display function in with variable arguments', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     display(1);
     display(1, "test");
   `,
-    optionEC2
-  )).resolves.toMatchInlineSnapshot(`1`)
+      optionEC2
+    )
+  ).resolves.toMatchInlineSnapshot(`1`)
 })
 
 test('No error when calling stringify function in with variable arguments', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     stringify(1, 2);
     stringify(1, 2, 3);
   `,
-    optionEC2
-  )).resolves.toMatchInlineSnapshot(`"1"`)
+      optionEC2
+    )
+  ).resolves.toMatchInlineSnapshot(`"1"`)
 })
 
 test('No error when calling math_max function in with variable arguments', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     math_max();
     math_max(1, 2);
     math_max(1, 2, 3);
   `,
-    optionEC2
-  )).resolves.toMatchInlineSnapshot(`3`)
+      optionEC2
+    )
+  ).resolves.toMatchInlineSnapshot(`3`)
 })
 
 test('No error when calling math_min function in with variable arguments', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     math_min();
     math_min(1, 2);
     math_min(1, 2, 3);
   `,
-    optionEC2
-  )).resolves.toMatchInlineSnapshot(`1`)
+      optionEC2
+    )
+  ).resolves.toMatchInlineSnapshot(`1`)
 })
 
 test('Error with too many arguments passed to math_sin', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     math_sin(7,8);
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 2."`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 2."`)
 })
 
 test('Error with too few arguments passed to rest parameters', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function rest(a, b, ...c) {}
     rest(1);
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: Expected 2 or more arguments, but got 1."`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 2: Expected 2 or more arguments, but got 1."`)
 })
 
 test('Error when redeclaring constant', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     const f = x => x;
     const f = x => x;
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`
+  )
 })
 
 test('Error when redeclaring constant as variable', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     const f = x => x;
     let f = x => x;
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`
+  )
 })
 
 test('Error when redeclaring variable as constant', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     let f = x => x;
     const f = x => x;
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`
+  )
 })
 
 test('Error when redeclaring variable', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     let f = x => x;
     let f = x => x;
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`
+  )
 })
 
 test('Error when redeclaring function after let', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     let f = x => x;
     function f() {}
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`
+  )
 })
 
 test('Error when redeclaring function after let --verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     "enable verbose";
     let f = x => x;
     function f() {}
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
             There is a syntax error in your program
             "
@@ -801,24 +890,30 @@ test('Error when redeclaring function after let --verbose', () => {
 })
 
 test('Error when redeclaring function after function', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function f() {}
     function f() {}
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`
+  )
 })
 
 test('Error when redeclaring function after function --verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     "enable verbose";
     function f() {}
     function f() {}
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
             There is a syntax error in your program
             "
@@ -826,24 +921,30 @@ test('Error when redeclaring function after function --verbose', () => {
 })
 
 test('Error when redeclaring function after const', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     const f = x => x;
     function f() {}
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`
+  )
 })
 
 test('Error when redeclaring function after const --verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     "enable verbose";
     const f = x => x;
     function f() {}
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
             There is a syntax error in your program
             "
@@ -851,24 +952,30 @@ test('Error when redeclaring function after const --verbose', () => {
 })
 
 test('Error when redeclaring const after function', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function f() {}
     const f = x => x;
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`
+  )
 })
 
 test('Error when redeclaring const after function --verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     "enable verbose";
     function f() {}
     const f = x => x;
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 3, Column 6: SyntaxError: Identifier 'f' has already been declared (3:6)
             There is a syntax error in your program
             "
@@ -876,24 +983,30 @@ test('Error when redeclaring const after function --verbose', () => {
 })
 
 test('Error when redeclaring let after function', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function f() {}
     let f = x => x;
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`
+  )
 })
 
 test('Error when redeclaring let after function --verbose', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     "enable verbose";
     function f() {}
     let f = x => x;
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`
             "Line 3, Column 4: SyntaxError: Identifier 'f' has already been declared (3:4)
             There is a syntax error in your program
             "
@@ -901,32 +1014,39 @@ test('Error when redeclaring let after function --verbose', () => {
 })
 
 test('Type error with non boolean in if statement, error line at if statement, not at 1', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     if (
     1
     ) {
       2;
     } else {}
     `,
-    optionEC1
-  )).resolves.toMatchInlineSnapshot(`"Line 1: Expected boolean as condition, got number."`)
+      optionEC1
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 1: Expected boolean as condition, got number."`)
 })
 
 test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnumber>', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     12
     *
     'string';
     `,
-    optionEC1
-  )).resolves.toMatchInlineSnapshot(`"Line 1: Expected number on right hand side of operation, got string."`)
+      optionEC1
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 1: Expected number on right hand side of operation, got string."`
+  )
 })
 
 test.skip('Cascading js errors work properly 1', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function make_alternating_stream(stream) {
       return pair(head(stream), () => make_alternating_stream(
                                         negate_whole_stream(
@@ -940,30 +1060,34 @@ test.skip('Cascading js errors work properly 1', () => {
     const ones = pair(1, () => ones);
     eval_stream(make_alternating_stream(enum_stream(1, 9)), 10);
     `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
     `"Line 8: Error: head(xs) expects a pair as argument xs, but encountered null"`
   )
 })
 
 test('Cascading js errors work properly', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function h(p) {
       return head(p);
     }
 
     h(null);
     `,
-    optionEC2
-  )).resolves.toMatchInlineSnapshot(
+      optionEC2
+    )
+  ).resolves.toMatchInlineSnapshot(
     `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null"`
   )
 })
 
 test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function f(x) {
       if (x <= 0) {
         return 0;
@@ -973,13 +1097,15 @@ test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
     }
     f(300000);
   `,
-    optionEC
-  )).resolves.toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
+      optionEC
+    )
+  ).resolves.toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
 })
 
 test('Cannot overwrite loop variables within a block', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
   function test(){
       let z = [];
       for (let x = 0; x < 2; x = x + 1) {
@@ -989,28 +1115,34 @@ test('Cannot overwrite loop variables within a block', () => {
   }
   test();
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(
     `"Line 4: Assignment to a for loop variable in the for loop is not allowed."`
   )
 })
 
 test('No hoisting of functions. Only the name is hoisted like let and const', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
       const v = f();
       function f() {
         return 1;
       }
       v;
     `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`"Line 1: Name f declared later in current scope but not yet assigned"`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 1: Name f declared later in current scope but not yet assigned"`
+  )
 }, 30000)
 
 test('Error when accessing temporal dead zone', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     const a = 1;
     function f() {
       display(a);
@@ -1018,27 +1150,35 @@ test('Error when accessing temporal dead zone', () => {
     }
     f();
     `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`"Line 3: Name a declared later in current scope but not yet assigned"`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 3: Name a declared later in current scope but not yet assigned"`
+  )
 }, 30000)
 
 // tslint:disable-next-line:max-line-length
 test('In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
       const a = 1;
       {
         a + a;
         const a = 10;
       }
     `,
-    optionEC
-  )).resolves.toMatchInlineSnapshot(`"Line 3: Name a declared later in current scope but not yet assigned"`)
+      optionEC
+    )
+  ).resolves.toMatchInlineSnapshot(
+    `"Line 3: Name a declared later in current scope but not yet assigned"`
+  )
 }, 30000)
 
 test('Shadowed variables may not be assigned to until declared in the current scope', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
   let variable = 1;
   function test(){
     variable = 100;
@@ -1047,6 +1187,7 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   }
   test();
   `,
-    optionEC3
-  )).resolves.toMatchInlineSnapshot(`"Line 3: Name variable not declared."`)
+      optionEC3
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 3: Name variable not declared."`)
 })

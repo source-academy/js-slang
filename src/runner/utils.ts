@@ -39,7 +39,7 @@ export function determineExecutionMethod(
     return 'cse-machine'
   }
 
-  return  'native'
+  return 'native'
 }
 
 // AST Utils

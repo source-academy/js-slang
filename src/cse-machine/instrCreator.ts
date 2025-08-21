@@ -15,12 +15,13 @@ import {
   EnvInstr,
   ForInstr,
   Instr,
-  InstrType, Transformers,
+  InstrType,
+  Transformers,
   UnOpInstr,
   WhileInstr,
   type DeclAssmtInstr,
   type RegularAssmtInstr
- } from './types'
+} from './types'
 
 export const resetInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.RESET,

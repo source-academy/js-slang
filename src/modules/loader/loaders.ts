@@ -15,7 +15,7 @@ function getManifestImporter() {
       return manifest
     }
 
-    ; ({ default: manifest } = await docsImporter(`${MODULES_STATIC_URL}/modules.json`))
+    ;({ default: manifest } = await docsImporter(`${MODULES_STATIC_URL}/modules.json`))
 
     return manifest!
   }
@@ -62,7 +62,7 @@ export async function loadModuleTabsAsync(moduleName: string) {
   const moduleInfo = manifest[moduleName]
 
   return Promise.all(
-    moduleInfo.tabs.map(async (tabName) => {
+    moduleInfo.tabs.map(async tabName => {
       const { default: result } = await bundleAndTabImporter(
         `${MODULES_STATIC_URL}/tabs/${tabName}.js`
       )
@@ -96,4 +96,3 @@ export async function loadModuleBundleAsync(
     throw new ModuleInternalError(moduleName, error, node)
   }
 }
-

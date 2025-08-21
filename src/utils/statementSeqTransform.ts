@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import * as ast from './ast/astCreator'
-import { Node, StatementSequence  } from './ast/node'
+import { Node, StatementSequence } from './ast/node'
 function hasDeclarations(node: es.BlockStatement | es.Program): boolean {
   for (const statement of node.body) {
     if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {

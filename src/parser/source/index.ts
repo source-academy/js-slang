@@ -3,7 +3,7 @@ import type es from 'estree'
 
 import { DEFAULT_ECMA_VERSION } from '../../constants'
 import type { SourceError } from '../../errors/errorBase'
-import { Chapter, Variant  } from '../../langs'
+import { Chapter, Variant } from '../../langs'
 import type { Context } from '../../types'
 import type { Node } from '../../utils/ast/node'
 import { AncestorWalkerFn, ancestor } from '../../utils/walkers'

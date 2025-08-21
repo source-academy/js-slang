@@ -39,10 +39,11 @@ interface Fixtures {
 }
 
 const testRepl = test.extend<Fixtures>({
-  runCommand: ({}, use) => use((...args) => {
-    const promise = getReplCommand().parseAsync(args, { from: 'user' })
-    return expect(promise).resolves.not.toThrow()
-  }),
+  runCommand: ({}, use) =>
+    use((...args) => {
+      const promise = getReplCommand().parseAsync(args, { from: 'user' })
+      return expect(promise).resolves.not.toThrow()
+    }),
   runRepl: ({ runCommand }, use) => {
     function mockReplStart() {
       type MockedReplReturn = (x: string) => Promise<string>
@@ -189,7 +190,8 @@ describe('Test repl command', () => {
           ['const x = 1 + 1;', 'undefined'],
           ['x;', '2']
         ]
-      ))
+      )
+    )
 
     testRepl('REPL is able to recover from errors', ({ runRepl }) =>
       runRepl(
@@ -202,34 +204,38 @@ describe('Test repl command', () => {
           ['const var0 = 0;', 'undefined'],
           ['var0;', '0']
         ]
-      ))
+      )
+    )
 
-    testRepl('Running with a file name evaluates code and then enters the REPL', async ({ runRepl }) => {
-      mockReadFiles({
-        '/a.js': `
+    testRepl(
+      'Running with a file name evaluates code and then enters the REPL',
+      async ({ runRepl }) => {
+        mockReadFiles({
+          '/a.js': `
           import { b } from './b.js';
           function a() { return "a"; }
           const c = "c";
         `,
-        '/b.js': `
+          '/b.js': `
           export function b() { return "b"; }
         `
-      })
+        })
 
-      await runRepl(
-        ['a.js', '-r'],
-        [
-          ['const x = 1 + 1;', 'undefined'],
-          ['x;', '2'],
-          ['const y = a();', 'undefined'],
-          ['y;', '"a"'],
-          ['b();', '"b"'],
-          ['c;', '"c"'],
-          ['const c = 0;', 'undefined'],
-          ['c;', '0']
-        ]
-      )
-    })
+        await runRepl(
+          ['a.js', '-r'],
+          [
+            ['const x = 1 + 1;', 'undefined'],
+            ['x;', '2'],
+            ['const y = a();', 'undefined'],
+            ['y;', '"a"'],
+            ['b();', '"b"'],
+            ['c;', '"c"'],
+            ['const c = 0;', 'undefined'],
+            ['c;', '0']
+          ]
+        )
+      }
+    )
 
     testRepl('REPL handles Source import statements ok', ({ runRepl }) =>
       runRepl(
@@ -240,7 +246,8 @@ describe('Test repl command', () => {
           ['import { foo } from "one_module";', 'undefined'],
           ['foo();', '"foo"']
         ]
-      ))
+      )
+    )
 
     testRepl('REPL handles local import statements ok', async ({ runRepl }) => {
       mockReadFiles({

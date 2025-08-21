@@ -89,11 +89,13 @@ export type RunnerTypes = keyof typeof runners
 /**
  * Represents the options required by different runners
  */
-export type RunnerOptions = {
-  [K in RunnerTypes]: (typeof runners)[K] extends Runner<infer U>
-    ? U & { executionMethod: K }
-    : never
-}[RunnerTypes] | UnknownRunner
+export type RunnerOptions =
+  | {
+      [K in RunnerTypes]: (typeof runners)[K] extends Runner<infer U>
+        ? U & { executionMethod: K }
+        : never
+    }[RunnerTypes]
+  | UnknownRunner
 
 /**
  * Names of the available runners, including the `auto` option.

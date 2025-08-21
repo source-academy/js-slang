@@ -1,18 +1,19 @@
-import { expect, test } from 'vitest';
 import type { Program } from 'estree'
+import { expect, test } from 'vitest'
 
 import { default as createContext } from '../createContext'
 import { getAllOccurrencesInScope } from '../index'
 import { Chapter } from '../langs'
 import { looseParse } from '../parser/utils'
-import { BlockFrame,
+import {
+  BlockFrame,
   getAllIdentifiers,
   getBlockFramesInCurrentBlockFrame,
   getBlockFromLoc,
   getNodeLocsInCurrentBlockFrame,
   getScopeHelper,
   scopeVariables
- } from '../scope-refactoring'
+} from '../scope-refactoring'
 /* tslint:disable:max-classes-per-file */
 
 class Target {

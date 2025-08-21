@@ -52,7 +52,9 @@ const expectEnvTreeFrom = (code: string, hasPrelude = true) => {
   if (!hasPrelude) context.prelude = null
 
   return expect(
-    runCodeInSource(code, context, { executionMethod: 'cse-machine' }).then(() => context.runtime.environmentTree)
+    runCodeInSource(code, context, { executionMethod: 'cse-machine' }).then(
+      () => context.runtime.environmentTree
+    )
   ).resolves
 }
 

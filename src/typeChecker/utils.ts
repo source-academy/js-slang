@@ -94,7 +94,6 @@ export function pushEnv(env: TypeEnvironment): void {
 export function formatTypeString(type: Type, formatAsLiteral?: boolean): string {
   switch (type.kind) {
     case 'function': {
-
       const paramTypes = type.parameterTypes
       const paramTypeString = paramTypes
         .map(type => formatTypeString(type, formatAsLiteral))
@@ -127,7 +126,6 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
     case 'list':
       return `List<${formatTypeString(type.elementType, formatAsLiteral)}>`
     case 'array': {
-
       const elementTypeString = formatTypeString(type.elementType, formatAsLiteral)
       return elementTypeString.includes('|') || elementTypeString.includes('=>')
         ? `(${elementTypeString})[]`

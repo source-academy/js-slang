@@ -7,8 +7,9 @@ import { stringify } from '../utils/stringify'
 import { testForValue } from '../utils/testing'
 
 test('stringify is fast', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
       function make_k_list(k, d) {
           const degree = k;
           const depth = d;
@@ -32,8 +33,9 @@ test('stringify is fast', () => {
       const end = get_time();
       end - start;
       `,
-    Chapter.SOURCE_3
-  )).resolves.toBeLessThan(2000)
+      Chapter.SOURCE_3
+    )
+  ).resolves.toBeLessThan(2000)
   // This benchmark takes 100ms on my machine,
   // but less than 2 seconds should be good enough on the test servers.
 })
@@ -47,8 +49,9 @@ test('display_list with stringify is linear runtime', { timeout: 1_000_000 }, ()
     return stringify(list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s))
   }
 
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
       const build_inf = (i, f) => {
         const t = list(f(i));
         let p = t;
@@ -137,13 +140,14 @@ test('display_list with stringify is linear runtime', { timeout: 1_000_000 }, ()
       const slope = head(line);
       slope;
     `,
-    {
-      chapter: Chapter.SOURCE_3,
-      testBuiltins: {
-        no_display_list: noDisplayList
+      {
+        chapter: Chapter.SOURCE_3,
+        testBuiltins: {
+          no_display_list: noDisplayList
+        }
       }
-    }
-  )).resolves.toBeLessThan(1.2)
+    )
+  ).resolves.toBeLessThan(1.2)
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?

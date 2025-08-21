@@ -6,20 +6,23 @@ import { testFailure, testForValue } from '../../utils/testing'
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('definition of a macro', () => {
-  return expect(testForValue(
-    `
+  return expect(
+    testForValue(
+      `
     (define-syntax my-let
       (syntax-rules ()
         ((_ ((var expr) ...) body ...)
          ((lambda (var ...) body ...) expr ...))))
     `,
-    optionECScm
-  )).resolves.toMatchInlineSnapshot(`undefined`)
+      optionECScm
+    )
+  ).resolves.toMatchInlineSnapshot(`undefined`)
 })
 
 test('use of a macro', () => {
-  return expect(testForValue(
-    `
+  return expect(
+    testForValue(
+      `
     (define-syntax my-let
       (syntax-rules ()
         ((_ ((var expr) ...) body ...)
@@ -27,8 +30,9 @@ test('use of a macro', () => {
     (my-let ((x 1) (y 2))
       (+ x y))
     `,
-    optionECScm
-  )).resolves.toMatchInlineSnapshot(`
+      optionECScm
+    )
+  ).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 3n,
@@ -37,8 +41,9 @@ test('use of a macro', () => {
 })
 
 test('use of a more complex macro (recursive)', () => {
-  return expect(testForValue(
-    `
+  return expect(
+    testForValue(
+      `
 (define-syntax define-match
     (syntax-rules ()
         ; vars is a pair
@@ -58,8 +63,9 @@ test('use of a more complex macro (recursive)', () => {
   (define-match ((x y) z) '((1 2) 3))
   (+ x y z)
     `,
-    optionECScm
-  )).resolves.toMatchInlineSnapshot(`
+      optionECScm
+    )
+  ).resolves.toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 6n,
@@ -68,8 +74,9 @@ test('use of a more complex macro (recursive)', () => {
 })
 
 test('failed usage of a macro (no matching pattern)', () => {
-  return expect(testFailure(
-    `
+  return expect(
+    testFailure(
+      `
     (define-syntax my-let
       (syntax-rules ()
         ((_ ((var expr) ...) body ...)
@@ -77,6 +84,7 @@ test('failed usage of a macro (no matching pattern)', () => {
     (my-let ((x 1) y)
       (+ x y))
     `,
-    optionECScm
-  )).resolves.toMatchInlineSnapshot(`"Error: No matching transformer found for macro my-let"`)
+      optionECScm
+    )
+  ).resolves.toMatchInlineSnapshot(`"Error: No matching transformer found for macro my-let"`)
 })

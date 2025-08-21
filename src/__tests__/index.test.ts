@@ -6,7 +6,13 @@ import * as jsslang from '../index'
 import { Chapter } from '../index'
 import type { Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { createTestContext, evalWithBuiltins, processTestOptions, testFailure, testForValue } from '../utils/testing'
+import {
+  createTestContext,
+  evalWithBuiltins,
+  processTestOptions,
+  testFailure,
+  testForValue
+} from '../utils/testing'
 import { TestOptions } from '../utils/testing/types'
 
 const toString = (x: Value) => '' + x
@@ -41,9 +47,7 @@ test('Arrow function definition returns itself', () => {
 })
 
 test('Builtins hide their implementation when stringify', () => {
-  return expect(testForValue('stringify(pair);', Chapter.SOURCE_2 ))
-    .resolves
-    .toMatchInlineSnapshot(`
+  return expect(testForValue('stringify(pair);', Chapter.SOURCE_2)).resolves.toMatchInlineSnapshot(`
             "function pair(left, right) {
             	[implementation hidden]
             }"
@@ -51,10 +55,12 @@ test('Builtins hide their implementation when stringify', () => {
 })
 
 test('Builtins hide their implementation when toString', () => {
-  return expect(testForValue('toString(pair);', {
-    chapter: Chapter.SOURCE_2,
-    testBuiltins: { toString }
-  })).resolves.toMatchInlineSnapshot(`
+  return expect(
+    testForValue('toString(pair);', {
+      chapter: Chapter.SOURCE_2,
+      testBuiltins: { toString }
+    })
+  ).resolves.toMatchInlineSnapshot(`
             "function pair(left, right) {
             	[implementation hidden]
             }"
@@ -77,12 +83,14 @@ test('functions toString (mostly) matches up with JS', async () => {
 })
 
 test('Factorial arrow function', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
   `
-  )).resolves.toBe(120)
+    )
+  ).resolves.toBe(120)
 })
 
 test('parseError for missing semicolon', () => {
@@ -97,21 +105,30 @@ test('parseError for template literals with expressions', () => {
   )
 })
 
-test.skip('Simple arrow function infinite recursion represents CallExpression well', { timeout: 30000 }, () => {
-  return expect(testFailure('(x => x(x)(x))(x => x(x)(x));')).resolves.toMatchInlineSnapshot(
-    `"Line 1: RangeError: Maximum call stack size exceeded"`
-  )
-})
+test.skip(
+  'Simple arrow function infinite recursion represents CallExpression well',
+  { timeout: 30000 },
+  () => {
+    return expect(testFailure('(x => x(x)(x))(x => x(x)(x));')).resolves.toMatchInlineSnapshot(
+      `"Line 1: RangeError: Maximum call stack size exceeded"`
+    )
+  }
+)
 
-test.skip('Simple function infinite recursion represents CallExpression well', { timeout: 30000 }, () => {
-  return expect(testFailure('function f(x) {return x(x)(x);} f(f);')).resolves.toMatchInlineSnapshot(
-    `"RangeError: Maximum call stack size exceeded"`
-  )
-})
+test.skip(
+  'Simple function infinite recursion represents CallExpression well',
+  { timeout: 30000 },
+  () => {
+    return expect(
+      testFailure('function f(x) {return x(x)(x);} f(f);')
+    ).resolves.toMatchInlineSnapshot(`"RangeError: Maximum call stack size exceeded"`)
+  }
+)
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
-  return expect(testFailure(
-    stripIndent`
+  return expect(
+    testFailure(
+      stripIndent`
     function test(){
       const constant = 3;
       constant = 4;
@@ -119,36 +136,42 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
     }
     test();
   `,
-    Chapter.SOURCE_3
-  )).resolves.toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant."`)
+      Chapter.SOURCE_3
+    )
+  ).resolves.toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant."`)
 })
 
 test('Assignment has value', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     let a = 1;
     let b = a = 4;
     b === 4 && a === 4;
   `,
-    Chapter.SOURCE_3
-  )).resolves.toBe(true)
+      Chapter.SOURCE_3
+    )
+  ).resolves.toBe(true)
 })
 
 test('Array assignment has value', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     let arr = [];
     const a = arr[0] = 1;
     const b = arr[1] = arr[2] = 4;
     arr[0] === 1 && arr[1] === 4 && arr[2] === 4;
   `,
-    Chapter.SOURCE_3
-  )).resolves.toBe(true)
+      Chapter.SOURCE_3
+    )
+  ).resolves.toBe(true)
 })
 
 test('Can overwrite lets when assignment is allowed', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function test() {
       let variable = false;
       variable = true;
@@ -156,151 +179,184 @@ test('Can overwrite lets when assignment is allowed', () => {
     }
     test();
   `,
-    Chapter.SOURCE_3
-  )).resolves.toBe(true)
+      Chapter.SOURCE_3
+    )
+  ).resolves.toBe(true)
 })
 
-test('Function infinite recursion with list args represents CallExpression well', { timeout: 30000 }, () => {
-  return expect(testFailure(
-    stripIndent`
+test(
+  'Function infinite recursion with list args represents CallExpression well',
+  { timeout: 30000 },
+  () => {
+    return expect(
+      testFailure(
+        stripIndent`
     function f(xs) { return append(f(xs), list()); }
     f(list(1, 2));
   `
-  )).resolves.toMatchInlineSnapshot(`"Line 1: Name append not declared."`)
-})
+      )
+    ).resolves.toMatchInlineSnapshot(`"Line 1: Name append not declared."`)
+  }
+)
 
 test('Functions passed into non-source functions remain equal', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function t(x, y, z) {
       return x + y + z;
     }
     identity(t) === t && t(1, 2, 3) === 6;
   `,
-    { chapter: Chapter.SOURCE_3, testBuiltins: { 'identity(x)': (x: any) => x } }
-  )).resolves.toBe(true)
+      { chapter: Chapter.SOURCE_3, testBuiltins: { 'identity(x)': (x: any) => x } }
+    )
+  ).resolves.toBe(true)
 })
 
 test('Accessing array with nonexistent index returns undefined', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const a = [];
     a[1];
   `,
-    Chapter.SOURCE_4,
-  )).resolves.toBe(undefined)
+      Chapter.SOURCE_4
+    )
+  ).resolves.toBe(undefined)
 })
 
 test('Accessing object with nonexistent property returns undefined', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const o = {};
     o.nonexistent;
   `,
-    Chapter.LIBRARY_PARSER
-  )).resolves.toBe(undefined)
+      Chapter.LIBRARY_PARSER
+    )
+  ).resolves.toBe(undefined)
 })
 
 test('Simple object assignment and retrieval', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const o = {};
     o.a = 1;
     o.a;
   `,
-    Chapter.LIBRARY_PARSER
-  )).resolves.toBe(1)
+      Chapter.LIBRARY_PARSER
+    )
+  ).resolves.toBe(1)
 })
 
 test('Deep object assignment and retrieval', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     const o = {};
     o.a = {};
     o.a.b = {};
     o.a.b.c = "string";
     o.a.b.c;
   `,
-    Chapter.LIBRARY_PARSER
-  )).resolves.toBe('string')
+      Chapter.LIBRARY_PARSER
+    )
+  ).resolves.toBe('string')
 })
 
 test('Test apply_in_underlying_javascript', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
   `,
-    Chapter.SOURCE_4
-  )).resolves.toBe(60)
+      Chapter.SOURCE_4
+    )
+  ).resolves.toBe(60)
 })
 
 test('Test equal for primitives', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
   `,
-    { chapter: Chapter.SOURCE_2 }
-  )).resolves.toBe(true)
+      { chapter: Chapter.SOURCE_2 }
+    )
+  ).resolves.toBe(true)
 })
 
 test('Test equal for lists', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
   `,
-    { chapter: Chapter.SOURCE_2 }
-  )).resolves.toBe(true)
+      { chapter: Chapter.SOURCE_2 }
+    )
+  ).resolves.toBe(true)
 })
 
 test('Test equal for different lists', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
   `,
-    { chapter: Chapter.SOURCE_2 }
-  )).resolves.toBe(true)
+      { chapter: Chapter.SOURCE_2 }
+    )
+  ).resolves.toBe(true)
 })
 
 test('true if with empty if works', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     if (true) {
     } else {
     }
   `
-  )).resolves.toBe(undefined)
+    )
+  ).resolves.toBe(undefined)
 })
 
 test('true if with nonempty if works', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     if (true) {
       1;
     } else {
     }
   `
-  )).resolves.toBe(1)
+    )
+  ).resolves.toBe(1)
 })
 
 test('false if with empty else works', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     if (false) {
     } else {
     }
   `
-  )).resolves.toBe(undefined)
+    )
+  ).resolves.toBe(undefined)
 })
 
 test('false if with nonempty if works', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     if (false) {
     } else {
       2;
     }
   `
-  )).resolves.toBe(2)
+    )
+  ).resolves.toBe(2)
 })
 
 describe('matchJSTests', () => {
@@ -400,8 +456,9 @@ describe('matchJSTests', () => {
 })
 
 test('Rest parameters work', () => {
-  return expect(testForValue(
-    stripIndent`
+  return expect(
+    testForValue(
+      stripIndent`
     function rest(a, b, ...c) {
       let sum = a + b;
       for (let i = 0; i < array_length(c); i = i + 1) {
@@ -412,8 +469,9 @@ test('Rest parameters work', () => {
     rest(1, 2); // no error
     rest(1, 2, ...[3, 4, 5],  ...[6, 7], ...[]);
   `,
-    { chapter: Chapter.SOURCE_3 }
-  )).resolves.toMatchInlineSnapshot(`28`)
+      { chapter: Chapter.SOURCE_3 }
+    )
+  ).resolves.toMatchInlineSnapshot(`28`)
 })
 
 test('Test context reuse', async () => {

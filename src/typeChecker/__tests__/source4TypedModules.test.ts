@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { parseError } from '../../index'
-import { Chapter, Variant  } from '../../langs'
+import { Chapter, Variant } from '../../langs'
 import { parse } from '../../parser/parser'
 import { mockContext } from '../../utils/testing/mocks'
 

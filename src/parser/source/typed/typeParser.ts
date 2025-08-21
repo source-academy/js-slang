@@ -495,7 +495,6 @@ const tsPlugin = (BaseParser: any) => {
         }
         switch (this.type) {
           case tokTypes.name: {
-
             const elem = this.parseTSTypeReference()
             if (this.type === tokTypes.question) {
               elementTypes.push(this.parseTSOptionalType(elem))
@@ -887,7 +886,6 @@ const tsPlugin = (BaseParser: any) => {
       while (!this.eat(tokTypes.braceR)) {
         switch (this.type) {
           case tokTypes.name: {
-
             const key = this.parseIdent()
             switch (this.type) {
               case tokTypes.parenL:
@@ -911,7 +909,6 @@ const tsPlugin = (BaseParser: any) => {
             break
           }
           case tokTypes.bracketL: {
-
             const recover = this.tsPreparePreview()
             this.nextToken()
             if (this.type === tokTypes.name) {

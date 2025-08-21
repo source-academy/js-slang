@@ -1,12 +1,7 @@
 import { describe, expect, test, vi } from 'vitest'
-import {
-  createTestContext,
-  processTestOptions,
-  testFailure,
-  testSuccess
-} from '..'
+import { createTestContext, processTestOptions, testFailure, testSuccess } from '..'
 import * as main from '../../..'
-import { Chapter, Variant  } from '../../../langs'
+import { Chapter, Variant } from '../../../langs'
 import type { TestOptions } from '../types'
 
 const mockedRunInContext = vi.spyOn(main, 'runInContext')

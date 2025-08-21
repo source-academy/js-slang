@@ -14,16 +14,16 @@ import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
 import { looseParse, parseWithComments } from './parser/utils'
-import { htmlRunner, resolvedErrorPromise, sourceFilesRunner, type SourceExecutionOptions } from './runner'
+import {
+  htmlRunner,
+  resolvedErrorPromise,
+  sourceFilesRunner,
+  type SourceExecutionOptions
+} from './runner'
 import type { Error as ResultError, Finished, Result } from './runner/types'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
-import type {
-  Context,
-  ModuleContext,
-  RecursivePartial,
-  SVMProgram
-} from './types'
+import type { Context, ModuleContext, RecursivePartial, SVMProgram } from './types'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 
@@ -287,7 +287,7 @@ export async function compileFiles(
   }
 }
 
-export { 
+export {
   createContext,
   type Context,
   type ModuleContext,

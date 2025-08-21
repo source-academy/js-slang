@@ -12,7 +12,6 @@ const it = contextIt.extend<{
   parser: new PythonParser(Chapter.PYTHON_1)
 })
 
-
 describe('Python parser', () => {
   it.scoped({ chapter: Chapter.PYTHON_1 })
 
@@ -55,18 +54,14 @@ describe('Python parser', () => {
     it('throws on error', ({ parser, context }) => {
       const code = `?`
 
-      expect(() => parser.parse(code, context, undefined, true)).toThrowError(
-        FatalSyntaxError
-      )
+      expect(() => parser.parse(code, context, undefined, true)).toThrowError(FatalSyntaxError)
     })
 
     it('throws the right error for translator unsupported syntax', ({ parser, context }) => {
       // Note: this test can be removed once we add support in py-slang.
       const code = `1 is not 2`
 
-      expect(() => parser.parse(code, context, undefined, true)).toThrowError(
-        FatalSyntaxError
-      )
+      expect(() => parser.parse(code, context, undefined, true)).toThrowError(FatalSyntaxError)
     })
   })
 })

@@ -433,12 +433,16 @@ test.each([
   'Builtins work as expected %#',
   (chapter: Chapter, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {
-      return expect(testForValue(stripIndent(snippet), {
-        chapter,
-        variant: Variant.EXPLICIT_CONTROL
-      })).resolves.toEqual(returnValue)
+      return expect(
+        testForValue(stripIndent(snippet), {
+          chapter,
+          variant: Variant.EXPLICIT_CONTROL
+        })
+      ).resolves.toEqual(returnValue)
     } else {
-      return expect(testFailure(stripIndent(snippet), { chapter, variant: Variant.EXPLICIT_CONTROL })).resolves.toMatchSnapshot()
+      return expect(
+        testFailure(stripIndent(snippet), { chapter, variant: Variant.EXPLICIT_CONTROL })
+      ).resolves.toMatchSnapshot()
     }
   }
 )

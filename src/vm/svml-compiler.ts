@@ -12,7 +12,7 @@ import {
 } from '../stdlib/vm.prelude'
 import type { Context } from '../types'
 import * as create from '../utils/ast/astCreator'
-import type { ContiguousArrayElements ,Node } from '../utils/ast/node'
+import type { ContiguousArrayElements, Node } from '../utils/ast/node'
 import { recursive, simple } from '../utils/walkers'
 import OpCodes from './opcodes'
 

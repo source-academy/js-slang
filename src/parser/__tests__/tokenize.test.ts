@@ -20,8 +20,7 @@ test.concurrent('tokenize works for a good program', async ({ expect }) => {
     Chapter.SOURCE_4
   )
 
-  expect(context.displayResult)
-    .toMatchInlineSnapshot(`
+  expect(context.displayResult).toMatchInlineSnapshot(`
 Array [
   "list(\\"function\\",
      \\"f\\",
@@ -90,6 +89,7 @@ Array [
 })
 
 test.concurrent('tokenize prints suitable error when tokenization fails', ({ expect }) => {
-  return expect(testFailure('display_list(tokenize("\\""));', Chapter.SOURCE_4))
-    .resolves.toMatchInlineSnapshot(`"Line 1: SyntaxError: Unterminated string constant (1:0)"`)
+  return expect(
+    testFailure('display_list(tokenize("\\""));', Chapter.SOURCE_4)
+  ).resolves.toMatchInlineSnapshot(`"Line 1: SyntaxError: Unterminated string constant (1:0)"`)
 })

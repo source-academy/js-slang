@@ -13,10 +13,7 @@ export const htmlErrorHandlingScript = HTML_ERROR_HANDLING_SCRIPT_TEMPLATE.repla
   errorScriptLines.toString()
 )
 
-export async function htmlRunner(
-  code: string,
-  context: Context,
-): Promise<Result> {
+export async function htmlRunner(code: string, context: Context): Promise<Result> {
   return Promise.resolve({
     status: 'finished',
     context,

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { runCodeInSource } from '..'
 import { parseError } from '../..'
-import { Chapter , Variant } from '../../langs'
+import { Chapter, Variant } from '../../langs'
 import { getChapterName, objectKeys, objectValues } from '../../utils/misc'
 import { mockContext } from '../../utils/testing/mocks'
 import * as validator from '../../validator/validator'
@@ -15,19 +15,22 @@ vi.mock(import('../../modules/loader/loaders'))
 
 vi.mock(import('../sourceRunner'), async importOriginal => {
   const { default: actualRunners } = await importOriginal()
-  const mockedRunners = Object.keys(actualRunners).reduce((res, key) => {
-    const mockRunner: Runner<any> = (_, context) =>
-      Promise.resolve({
-        status: 'finished',
-        value: '',
-        context
-      })
+  const mockedRunners = Object.keys(actualRunners).reduce(
+    (res, key) => {
+      const mockRunner: Runner<any> = (_, context) =>
+        Promise.resolve({
+          status: 'finished',
+          value: '',
+          context
+        })
 
-    return {
-      ...res,
-      [key]: vi.fn(mockRunner)
-    }
-  }, {} as typeof actualRunners)
+      return {
+        ...res,
+        [key]: vi.fn(mockRunner)
+      }
+    },
+    {} as typeof actualRunners
+  )
 
   return { default: mockedRunners }
 })

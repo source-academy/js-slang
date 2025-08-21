@@ -6,7 +6,7 @@ import { mockContext } from '../../utils/testing/mocks'
 /**
  * A version of the `it` function used for testing the typed variants
  */
-export const it = baseIt.extend<{ 
+export const it = baseIt.extend<{
   context: Context
   chapter: Chapter
 }>({

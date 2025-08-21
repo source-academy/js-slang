@@ -10,7 +10,11 @@ export interface UnknownRunner extends BaseRunnerOptions {
   executionMethod?: 'auto'
 }
 
-export type Runner<T extends BaseRunnerOptions> = (program: Program, context: Context, options: Partial<T>) => Promise<Result>
+export type Runner<T extends BaseRunnerOptions> = (
+  program: Program,
+  context: Context,
+  options: Partial<T>
+) => Promise<Result>
 
 export interface Error {
   status: 'error'

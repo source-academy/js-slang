@@ -15,7 +15,7 @@ import {
   isList
 } from './macro-utils'
 import { macro_transform, match } from './patterns'
-import { Control , ControlItem, Stash , Transformer  } from './types'
+import { Control, ControlItem, Stash, Transformer } from './types'
 import { currentTransformers, getVariable, handleRuntimeError } from './utils'
 
 // this needs to be better but for now it's fine

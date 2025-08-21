@@ -132,7 +132,7 @@ export const evaluate: Runner<CSERunnerOptions> = (program, context, options) =>
       options.stepLimit ?? -1,
       options.isPrelude
     )
-    
+
     return CSEResultPromise(context, value)
   } catch {
     return Promise.resolve({ status: 'error' })

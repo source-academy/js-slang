@@ -1,6 +1,6 @@
 import { timeoutPromise } from '../../utils/misc'
 import { ModuleConnectionError } from '../errors'
-import type { ModuleBundle} from '../moduleTypes'
+import type { ModuleBundle } from '../moduleTypes'
 
 /** Default modules static url. Exported for testing. */
 export let MODULES_STATIC_URL = 'https://source-academy.github.io/modules'
@@ -31,7 +31,6 @@ function wrapImporter<T>(func: (p: string) => Promise<T>) {
         // Thrown specifically by vitest
         (process.env.NODE_ENV === 'test' && error.code === 'ERR_UNSUPPORTED_ESM_URL_SCHEME')
       ) {
-
         throw new ModuleConnectionError()
       }
       throw error
@@ -55,8 +54,9 @@ export const docsImporter = wrapImporter<{ default: any }>(async p => {
 
 function getBundleAndTabsImporter(): (p: string) => Promise<any> {
   if (process.env.NODE_ENV === 'test') return p => import(p)
-  if (typeof window !== 'undefined') return new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any
-  
+  if (typeof window !== 'undefined')
+    return new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any
+
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   return p => Promise.resolve(require(p))
 }
@@ -68,4 +68,6 @@ function getBundleAndTabsImporter(): (p: string) => Promise<any> {
   For the browser, we use the function constructor to hide the import calls from
   webpack so that webpack doesn't try to compile them away.
 */
-export const bundleAndTabImporter = wrapImporter<{ default: ModuleBundle }>(getBundleAndTabsImporter())
+export const bundleAndTabImporter = wrapImporter<{ default: ModuleBundle }>(
+  getBundleAndTabsImporter()
+)

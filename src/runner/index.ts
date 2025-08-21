@@ -2,7 +2,7 @@ import type { Program } from 'estree'
 import * as _ from 'lodash'
 import type { Context } from '..'
 import { mapResult } from '../alt-langs/mapper'
-import { Chapter, Variant  } from '../langs'
+import { Chapter, Variant } from '../langs'
 import type { FileGetter } from '../modules/moduleTypes'
 import preprocessFileImports, { type PreprocessorOptions } from '../modules/preprocessor'
 import { parse } from '../parser/parser'
@@ -40,7 +40,11 @@ async function sourceRunner(
     return resolvedErrorPromise
   }
 
-  const execMethod = determineExecutionMethod(options.executionMethod, program, isVerboseErrorsEnabled)
+  const execMethod = determineExecutionMethod(
+    options.executionMethod,
+    program,
+    isVerboseErrorsEnabled
+  )
   // console.log('determined execMethod to be', execMethod)
 
   if (execMethod === 'substitution') {
@@ -61,7 +65,7 @@ async function sourceRunner(
     const preludeOptions = {
       ...options,
       executionMethod: execMethod,
-      isPrelude: true 
+      isPrelude: true
     }
 
     await sourceRunner(prelude, context, isVerboseErrorsEnabled, preludeOptions as any)

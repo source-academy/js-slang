@@ -150,8 +150,6 @@ export interface Environment {
   thisContext?: Value
 }
 
-
-
 export {
   Instruction as SVMInstruction,
   Program as SVMProgram,

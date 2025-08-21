@@ -159,8 +159,6 @@ export function getSteps(
   return steps
 }
 
-
-
 export const stepperRunner: Runner<StepperRunnerOptions> = (program, context, options) => {
   const steps = getSteps(program, context, options)
   if (context.errors.length > 0) {
