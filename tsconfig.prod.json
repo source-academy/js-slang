@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "rootDir": "src",
     "outDir": "./dist",
     "noEmit": false,
     "skipLibCheck": true
@@ -13,8 +14,10 @@
     "node_modules",
     "dist",
     "sicp_publish",
+    "src/py-slang/src/tests",
     "src/**/__tests__/**",
     "src/**/__mocks__/**",
-    "src/utils/testing"
+    "src/utils/testing",
+    "vitest.config.ts"
   ]
 }

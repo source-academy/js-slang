@@ -1,8 +1,8 @@
 // @ts-check
 
 import { execFile, fork, spawn } from 'child_process'
-import pathlib from 'path'
 import fs from 'fs/promises'
+import pathlib from 'path'
 import process from 'process'
 import { Command } from '@commander-js/extra-typings'
 import autocomplete from './autocomplete.mjs'

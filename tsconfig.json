@@ -9,7 +9,6 @@
     "removeComments": false,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
-    "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "noImplicitReturns": true,
@@ -26,8 +25,7 @@
     "src/stdlib/**/*.js",
     "node_modules",
     "dist",
-    "sicp_publish",
-    "vitest.config.ts"
+    "sicp_publish"
   ],
   "types": ["typePatches", "jest"]
 }

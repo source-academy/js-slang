@@ -1,29 +1,33 @@
 // @ts-check
 
-import { promises as fsPromises, createWriteStream } from 'fs'
-import { join, extname } from 'path'
+import { createWriteStream, promises as fsPromises } from 'fs'
+import { extname, join } from 'path'
 import { parse } from 'acorn'
-import createContext from '../dist/createContext.js'
 import { ACORN_PARSE_OPTIONS } from '../dist/constants.js'
-import { Chapter } from '../dist/types.js'
+import createContext from '../dist/createContext.js'
+import { Chapter } from '../dist/langs.js'
 
 const SICP_DIR = 'sicp_publish/dist'
 
+/**
+ * Copies Javascript files from the given source directory to the given destination
+ * directory, maintaining the same directory structure.
+ * @param {string} srcPath 
+ * @param {string} dstPath 
+ */
 async function recursiveDirCopy(srcPath, dstPath) {
   // Copy and keep only necessary files
-  const files = await fsPromises.readdir(srcPath)
+  const files = await fsPromises.readdir(srcPath, { withFileTypes: true })
 
-  return Promise.all(files.map(async fileName => {
-    const fullSrcPath = join(srcPath, fileName)
-    const fullDstPath = join(dstPath, fileName)
+  return Promise.all(files.map(async each => {
+    const fullSrcPath = join(srcPath, each.name)
+    const fullDstPath = join(dstPath, each.name)
     
-    const stats = await fsPromises.stat(fullSrcPath)
-
-    if (stats.isFile()) {
-      const extension = extname(fileName)
-      if (extension !== '.js') return;
+    if (each.isFile()) {
+      const extension = extname(each.name)
+      if (extension !== '.js') return
       await fsPromises.copyFile(fullSrcPath, fullDstPath)
-    } else if (stats.isDirectory()) {
+    } else if (each.isDirectory()) {
       await fsPromises.mkdir(fullDstPath)
       await recursiveDirCopy(fullSrcPath, fullDstPath)
     }
@@ -38,7 +42,7 @@ async function prepare() {
   // Remove unnecessary dependencies
   await Promise.all([
     'finder.js', 'index.js', 'scope-refactoring.js'
-  ].map(fileName => fsPromises.rm(`${SICP_DIR}/${fileName}`)))
+  ].map(fileName => fsPromises.rm(join(SICP_DIR, fileName))))
 }
 
 function main() {
@@ -74,7 +78,7 @@ function main() {
         throw new Error(`Expected FunctionDeclarations, got '${func.type}' instead`)
       }
 
-      const funcName = func.id.name;
+      const funcName = func.id.name
       writeStream.write(`exports.${funcName} = ${funcName};\n`)
     }
   }
