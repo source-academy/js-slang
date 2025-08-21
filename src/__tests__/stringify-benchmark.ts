@@ -4,10 +4,10 @@ import { Chapter } from '../langs'
 import * as list from '../stdlib/list'
 import { stripIndent } from '../utils/formatters'
 import { stringify } from '../utils/stringify'
-import { testSuccess } from '../utils/testing'
+import { testForValue } from '../utils/testing'
 
 test('stringify is fast', () => {
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
       function make_k_list(k, d) {
           const degree = k;
@@ -47,7 +47,7 @@ test('display_list with stringify is linear runtime', { timeout: 1_000_000 }, ()
     return stringify(list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s))
   }
 
-  return expect(testSuccess(
+  return expect(testForValue(
     stripIndent`
       const build_inf = (i, f) => {
         const t = list(f(i));
