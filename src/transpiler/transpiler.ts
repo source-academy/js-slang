@@ -11,12 +11,12 @@ import { filterImportDeclarations, getImportedName } from '../utils/ast/helpers'
 import type { Node } from '../utils/ast/node'
 import { isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import {
-  NativeIds,
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getNativeIds,
-  getUniqueId
+  getUniqueId,
+  type NativeIds
 } from '../utils/uniqueIds'
 import { simple } from '../utils/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'

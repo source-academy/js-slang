@@ -1,31 +1,33 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "target": "es2020",
-    "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
-    "sourceMap": true,
     "allowJs": false,
-    "removeComments": false,
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
+    "declaration": true,
     "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
+    "module": "commonjs",
+    "moduleResolution": "node",
     "noEmit": true,
+    "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
     "noUnusedLocals": true,
-    "incremental": true,
-    "skipLibCheck": true
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "target": "es2020"
   },
   "exclude": [
+    "src/alt-langs/scheme/scm-slang",
+    "src/py-slang",
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",
     "node_modules",
     "dist",
     "sicp_publish"
   ],
-  "types": ["typePatches", "jest"]
+  "types": ["typePatches", "vitest/globals"]
 }

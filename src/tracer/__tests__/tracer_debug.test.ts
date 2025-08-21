@@ -5,7 +5,7 @@ import type { Context } from '../..'
 import createContext from '../../createContext'
 import { contextTest as test } from '../../utils/testing'
 import { convert } from '../generator'
-import { StepperBaseNode } from '../interface'
+import type { StepperBaseNode } from '../interface'
 import { getSteps } from '../steppers'
 
 const stringify = (ast: StepperBaseNode) => {

@@ -3,7 +3,7 @@ import { expect, test } from 'vitest'
 
 import { Chapter } from '../../langs'
 import { parse } from '../../parser/parser'
-import { NodeWithInferredType } from '../../typeChecker/types'
+import type { NodeWithInferredType } from '../../typeChecker/types'
 import { getSourceVariableDeclaration } from '../../utils/ast/helpers'
 import { stripIndent } from '../../utils/formatters'
 import { testFailure } from '../../utils/testing'

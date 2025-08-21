@@ -3,7 +3,7 @@ import { expect, test, vi } from 'vitest'
 import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { testFailure, testForValue } from '../../utils/testing'
-import { TestOptions } from '../../utils/testing/types'
+import type { TestOptions } from '../../utils/testing/types'
 
 vi.spyOn(_, 'memoize').mockImplementation(func => func as any)
 

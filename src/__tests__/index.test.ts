@@ -2,8 +2,8 @@ import type { Position } from 'acorn/dist/acorn'
 import type { SourceLocation } from 'estree'
 
 import { assert, describe, expect, test } from 'vitest'
-import * as jsslang from '../index'
-import { Chapter } from '../index'
+import { findDeclaration, getScope, runInContext } from '../index'
+import { Chapter } from '../langs'
 import type { Value } from '../types'
 import { stripIndent } from '../utils/formatters'
 import {
@@ -493,7 +493,7 @@ test('context reuse', async () => {
   ]
 
   for (const [code, expected] of snippets) {
-    const result = await jsslang.runInContext(code, context)
+    const result = await runInContext(code, context)
     assert(result.status === 'finished')
     expect(result.value).toEqual(expected)
   }
@@ -542,7 +542,7 @@ test('Find variable declaration in global scope', () => {
   i;
   `
   const expected = new SourceLocationTestResult(1, 4, 1, 5)
-  const actual = jsslang.findDeclaration(code, context, { line: 6, column: 0 })
+  const actual = findDeclaration(code, context, { line: 6, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -558,7 +558,7 @@ test('Find variable declaration in global scope from occurrence in function scop
   i;
   `
   const expected = new SourceLocationTestResult(1, 4, 1, 5)
-  const actual = jsslang.findDeclaration(code, context, { line: 4, column: 9 })
+  const actual = findDeclaration(code, context, { line: 4, column: 9 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -574,7 +574,7 @@ test('Find variable declaration in function scope from occurrence in function sc
   i;
   `
   const expected = new SourceLocationTestResult(3, 6, 3, 7)
-  const actual = jsslang.findDeclaration(code, context, { line: 4, column: 9 })
+  const actual = findDeclaration(code, context, { line: 4, column: 9 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -589,7 +589,7 @@ test('Find no declaration from occurrence when there is no declaration (syntax e
   x;
   `
   const expected = null
-  const actual = jsslang.findDeclaration(code, context, { line: 5, column: 0 })
+  const actual = findDeclaration(code, context, { line: 5, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -605,7 +605,7 @@ test('Find no declaration from selection that does not refer to a declaration', 
   i;
   `
   const expected = null
-  const actual = jsslang.findDeclaration(code, context, { line: 4, column: 3 })
+  const actual = findDeclaration(code, context, { line: 4, column: 3 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -621,7 +621,7 @@ test('Find function declaration', () => {
   foo();
   `
   const expected = new SourceLocationTestResult(2, 9, 2, 12)
-  const actual = jsslang.findDeclaration(code, context, { line: 6, column: 0 })
+  const actual = findDeclaration(code, context, { line: 6, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -635,7 +635,7 @@ test('Find function param declaration', () => {
   timesTwo(2);
   `
   const expected = new SourceLocationTestResult(1, 18, 1, 21)
-  const actual = jsslang.findDeclaration(code, context, { line: 2, column: 9 })
+  const actual = findDeclaration(code, context, { line: 2, column: 9 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -650,7 +650,7 @@ test('Find variable declaration with same name as function param declaration', (
   timesTwo(num);
   `
   const expected = new SourceLocationTestResult(4, 6, 4, 9)
-  const actual = jsslang.findDeclaration(code, context, { line: 5, column: 9 })
+  const actual = findDeclaration(code, context, { line: 5, column: 9 })
   expectResultsToMatch(actual, expected)
   // expect(actual).toMatchSnapshot()
 })
@@ -666,7 +666,7 @@ test('Find arrow function declaration', () => {
   foo();
   `
   const expected = new SourceLocationTestResult(2, 6, 2, 9)
-  const actual = jsslang.findDeclaration(code, context, { line: 6, column: 0 })
+  const actual = findDeclaration(code, context, { line: 6, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -680,7 +680,7 @@ test('Find arrow function param declaration', () => {
   timesTwo(2);
   `
   const expected = new SourceLocationTestResult(1, 18, 1, 21)
-  const actual = jsslang.findDeclaration(code, context, { line: 2, column: 9 })
+  const actual = findDeclaration(code, context, { line: 2, column: 9 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -695,7 +695,7 @@ test('Find variable declaration with same name as arrow function param declarati
   timesTwo(num);
   `
   const expected = new SourceLocationTestResult(4, 6, 4, 9)
-  const actual = jsslang.findDeclaration(code, context, { line: 5, column: 9 })
+  const actual = findDeclaration(code, context, { line: 5, column: 9 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -710,7 +710,7 @@ test('Find declaration in init of for loop', () => {
   x;
   `
   const expected = new SourceLocationTestResult(2, 9, 2, 10)
-  const actual = jsslang.findDeclaration(code, context, { line: 3, column: 10 })
+  const actual = findDeclaration(code, context, { line: 3, column: 10 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -726,7 +726,7 @@ test('Find variable declaration with same name as init of for loop', () => {
   i;
   `
   const expected = new SourceLocationTestResult(5, 6, 5, 7)
-  const actual = jsslang.findDeclaration(code, context, { line: 6, column: 0 })
+  const actual = findDeclaration(code, context, { line: 6, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -742,7 +742,7 @@ test('Find variable declaration in block statement', () => {
   x = x + 2;
   `
   const expected = new SourceLocationTestResult(2, 6, 2, 7)
-  const actual = jsslang.findDeclaration(code, context, { line: 3, column: 2 })
+  const actual = findDeclaration(code, context, { line: 3, column: 2 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -757,7 +757,7 @@ test('Find variable declaration of same name as variable declaration in block st
   x = x + 2;
   `
   const expected = new SourceLocationTestResult(5, 4, 5, 5)
-  const actual = jsslang.findDeclaration(code, context, { line: 6, column: 0 })
+  const actual = findDeclaration(code, context, { line: 6, column: 0 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -771,7 +771,7 @@ test('Find declaration of of variable in update statement of a for loop', () => 
   let x = 5;
   `
   const expected = new SourceLocationTestResult(1, 9, 1, 10)
-  const actual = jsslang.findDeclaration(code, context, { line: 1, column: 17 })
+  const actual = findDeclaration(code, context, { line: 1, column: 17 })
   expectResultsToMatch(actual, expected)
   expect(actual).toMatchSnapshot()
 })
@@ -792,7 +792,7 @@ test('Find scope of a variable declaration', () => {
     new SourceLocationTestResult(1, 0, 3, 4),
     new SourceLocationTestResult(8, 5, 10, 3)
   ]
-  const actual = jsslang.getScope(code, context, { line: 2, column: 10 })
+  const actual = getScope(code, context, { line: 2, column: 10 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
@@ -818,7 +818,7 @@ test('Find scope of a nested variable declaration', () => {
     display(x);
   }`
   const expected = [new SourceLocationTestResult(3, 4, 8, 5)]
-  const actual = jsslang.getScope(code, context, { line: 4, column: 15 })
+  const actual = getScope(code, context, { line: 4, column: 15 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
@@ -844,7 +844,7 @@ test('Find scope of a function parameter', () => {
     display(x);
   }`
   const expected = [new SourceLocationTestResult(5, 22, 7, 9)]
-  const actual = jsslang.getScope(code, context, { line: 5, column: 19 })
+  const actual = getScope(code, context, { line: 5, column: 19 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
@@ -870,7 +870,7 @@ test('Find scope of a function declaration', () => {
     display(x);
   }`
   const expected = [new SourceLocationTestResult(3, 4, 8, 5)]
-  const actual = jsslang.getScope(code, context, { line: 5, column: 17 })
+  const actual = getScope(code, context, { line: 5, column: 17 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
@@ -906,7 +906,7 @@ test('Find scope of a variable declaration with more nesting', () => {
     new SourceLocationTestResult(8, 13, 11, 8),
     new SourceLocationTestResult(13, 9, 14, 5)
   ]
-  const actual = jsslang.getScope(code, context, { line: 4, column: 15 })
+  const actual = getScope(code, context, { line: 4, column: 15 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
@@ -943,7 +943,7 @@ test('Find scope of a variable declaration with multiple blocks', () => {
     new SourceLocationTestResult(10, 9, 12, 8),
     new SourceLocationTestResult(14, 9, 15, 5)
   ]
-  const actual = jsslang.getScope(code, context, { line: 3, column: 15 })
+  const actual = getScope(code, context, { line: 3, column: 15 })
   expected.forEach((expectedRange, index) => {
     const actualRange = new SourceLocationTestResult(
       actual[index].start.line,
