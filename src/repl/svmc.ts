@@ -1,4 +1,4 @@
-import type fslib from 'fs/promises'
+import fs from 'fs/promises'
 import type pathlib from 'path'
 
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings'
@@ -59,7 +59,6 @@ strings containing the names of the VM-internal functions.`
         .default([] as string[])
     )
     .action(async (inputFile, opts) => {
-      const fs: typeof fslib = require('fs/promises')
       const vmInternalFunctions = opts.internals || []
 
       const source = await fs.readFile(inputFile, 'utf-8')

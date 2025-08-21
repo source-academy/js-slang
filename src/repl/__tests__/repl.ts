@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-import * as repl from 'repl'
+import repl from 'repl'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Chapter } from '../../langs'
 import type { SourceFiles } from '../../modules/moduleTypes'
@@ -7,6 +7,7 @@ import { getReplCommand } from '../repl'
 import { chapterParser } from '../utils'
 
 const readFileMocker = vi.spyOn(fs, 'readFile')
+vi.spyOn(fs, 'writeFile').mockResolvedValue()
 
 function mockReadFiles(files: SourceFiles) {
   readFileMocker.mockImplementation((fileName: string) => {
@@ -26,9 +27,57 @@ vi.mock(import('path'), async importOriginal => {
   }
 })
 
+vi.mock(import('repl'), { spy: true })
+
 vi.mock(import('../../modules/loader/loaders'))
 
 const mockedConsoleLog = vi.spyOn(console, 'log')
+
+interface Fixtures {
+  runCommand: (...args: string[]) => Promise<void>
+  runRepl: (args: string[], expected: [string, string][]) => Promise<void>
+}
+
+const testRepl = test.extend<Fixtures>({
+  runCommand: ({}, use) => use((...args) => {
+    const promise = getReplCommand().parseAsync(args, { from: 'user' })
+    return expect(promise).resolves.not.toThrow()
+  }),
+  runRepl: ({ runCommand }, use) => {
+    function mockReplStart() {
+      type MockedReplReturn = (x: string) => Promise<string>
+
+      return new Promise<MockedReplReturn>(resolve => {
+        vi.mocked(repl.start).mockImplementation((args: repl.ReplOptions) => {
+          const runCode = (code: string) =>
+            new Promise<any>(resolve => {
+              args.eval!.call({}, code, {} as any, '', (err: Error | null, result: any) => {
+                if (err) resolve(err)
+                resolve(result)
+              })
+            })
+
+          resolve(async code => {
+            const output = await runCode(code)
+            return args.writer!.call({}, output)
+          })
+          return {} as any
+        })
+      })
+    }
+
+    return use(async (args: string[], expected: [string, string][]) => {
+      const replPromise = mockReplStart()
+      await runCommand(...args)
+      const func = await replPromise
+      expect(repl.start).toHaveBeenCalledTimes(1)
+
+      for (const [input, output] of expected) {
+        await expect(func(input)).resolves.toEqual(output)
+      }
+    })
+  }
+})
 
 describe('Test chapter parser', () =>
   test.each([
@@ -133,41 +182,7 @@ describe('Test repl command', () => {
   })
 
   describe('Test running with REPL', () => {
-    function mockReplStart() {
-      type MockedReplReturn = (x: string) => Promise<string>
-
-      const mockedReplStart = vi.spyOn(repl, 'start')
-      return new Promise<MockedReplReturn>(resolve => {
-        mockedReplStart.mockImplementation((args: repl.ReplOptions) => {
-          const runCode = (code: string) =>
-            new Promise<any>(resolve => {
-              args.eval!.call({}, code, {} as any, '', (err: Error | null, result: any) => {
-                if (err) resolve(err)
-                resolve(result)
-              })
-            })
-
-          resolve(async code => {
-            const output = await runCode(code)
-            return args.writer!.call({}, output)
-          })
-          return {} as any
-        })
-      })
-    }
-
-    const runRepl = async (args: string[], expected: [string, string][]) => {
-      const replPromise = mockReplStart()
-      await runCommand(...args)
-      const func = await replPromise
-      expect(repl.start).toHaveBeenCalledTimes(1)
-
-      for (const [input, output] of expected) {
-        await expect(func(input)).resolves.toEqual(output)
-      }
-    }
-
-    test('Running without file name', () =>
+    testRepl('Running without file name', ({ runRepl }) =>
       runRepl(
         [],
         [
@@ -176,7 +191,7 @@ describe('Test repl command', () => {
         ]
       ))
 
-    test('REPL is able to recover from errors', () =>
+    testRepl('REPL is able to recover from errors', ({ runRepl }) =>
       runRepl(
         [],
         [
@@ -189,7 +204,7 @@ describe('Test repl command', () => {
         ]
       ))
 
-    test('Running with a file name evaluates code and then enters the REPL', async () => {
+    testRepl('Running with a file name evaluates code and then enters the REPL', async ({ runRepl }) => {
       mockReadFiles({
         '/a.js': `
           import { b } from './b.js';
@@ -216,7 +231,7 @@ describe('Test repl command', () => {
       )
     })
 
-    test('REPL handles Source import statements ok', () =>
+    testRepl('REPL handles Source import statements ok', ({ runRepl }) =>
       runRepl(
         [],
         [
@@ -227,7 +242,7 @@ describe('Test repl command', () => {
         ]
       ))
 
-    test('REPL handles local import statements ok', async () => {
+    testRepl('REPL handles local import statements ok', async ({ runRepl }) => {
       mockReadFiles({
         '/a.js': `
           export function a() { return "a"; }

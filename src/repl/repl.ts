@@ -1,4 +1,4 @@
-import type fslib from 'fs/promises'
+import fs from 'fs/promises'
 import { resolve } from 'path'
 import { start } from 'repl'
 import { Command } from '@commander-js/extra-typings'
@@ -33,8 +33,6 @@ export const getReplCommand = () =>
         console.log('Invalid language combination!')
         return
       }
-
-      const fs: typeof fslib = require('fs/promises')
 
       const context = createContext(lang.chapter, lang.variant, lang.languageOptions)
 

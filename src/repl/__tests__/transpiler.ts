@@ -5,7 +5,7 @@ import { expectWritten, getCommandRunner } from './utils'
 
 
 vi.mock(import('path'), async importOriginal => {
-  const actualPath = await importOriginal();
+  const actualPath = await importOriginal()
   return {
     default: {
       ...actualPath.default,
@@ -18,8 +18,8 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
-const mockedWriteFile = vi.spyOn(fs, 'writeFile');
-const mockedReadFile = vi.spyOn(fs, 'readFile');
+const mockedWriteFile = vi.spyOn(fs, 'writeFile')
+const mockedReadFile = vi.spyOn(fs, 'readFile')
 const { expectError, expectSuccess } = getCommandRunner(getTranspilerCommand)
 
 test('Nothing should be written if the program has parser errors', async () => {
