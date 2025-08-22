@@ -114,12 +114,12 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
 
 // FullJS Unit Tests
 
-test('Source builtins are accessible in fullJS program', async () => {
+test('Source builtins are accessible in fullJS program', async ({ signal }) => {
   const fullJSProgram: string = `parse('head(list(1,2,3));');`
-  await testSuccess(fullJSProgram, Chapter.FULL_JS)
+  await testSuccess(fullJSProgram, { chapter: Chapter.FULL_JS, signal })
 })
 
-test('Simulate fullJS REPL', async () => {
+test('Simulate fullJS REPL', async ({ signal }) => {
   const fullJSContext = mockContext(Chapter.FULL_JS, Variant.DEFAULT)
   const replStatements: [string, any][] = [
     ['const x = 1;', undefined],
@@ -130,7 +130,7 @@ test('Simulate fullJS REPL', async () => {
 
   for (const replStatement of replStatements) {
     const [statement, expectedResult] = replStatement
-    const result = await runInContext(statement, fullJSContext)
+    const result = await runInContext(statement, fullJSContext, { signal })
     assert(result.status === 'finished')
     expect(result.value).toEqual(expectedResult)
     expect(fullJSContext.errors).toStrictEqual([])
@@ -168,7 +168,7 @@ describe('Additional JavaScript features are not available in Source Native', ()
         Chapter.SOURCE_2,
         Chapter.SOURCE_3,
         Chapter.SOURCE_4
-      )(chapter => testFailure(snippet, { chapter, variant: Variant.NATIVE }))
+      )((chapter, { signal }) => testFailure(snippet, { chapter, variant: Variant.NATIVE, signal }))
     }
   )
 })
@@ -184,9 +184,9 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
       Chapter.SOURCE_2,
       Chapter.SOURCE_3,
       Chapter.SOURCE_4
-    )(chapter =>
+    )((chapter, { signal }) =>
       expect(
-        testForValue(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })
+        testForValue(sourceNativeSnippet, { chapter, variant: Variant.NATIVE, signal })
       ).resolves.toStrictEqual(55)
     )
   })
@@ -200,9 +200,9 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
     testWithChapters(
       Chapter.SOURCE_3,
       Chapter.SOURCE_4
-    )(chapter =>
+    )((chapter, { signal }) =>
       expect(
-        testForValue(sourceNativeSnippet, { chapter, variant: Variant.NATIVE })
+        testForValue(sourceNativeSnippet, { chapter, variant: Variant.NATIVE, signal })
       ).resolves.toStrictEqual(55)
     )
   })

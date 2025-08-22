@@ -85,7 +85,7 @@ async function sourceRunner(
   return runners.native(program, context, options)
 }
 
-export type SourceExecutionOptions = RunnerOptions & PreprocessorOptions
+export type IOptions = RecursivePartial<RunnerOptions> & PreprocessorOptions
 
 /**
  * Returns both the Result of the evaluated program, as well as
@@ -95,7 +95,7 @@ export async function sourceFilesRunner(
   filesInput: FileGetter,
   entrypointFilePath: string,
   context: Context,
-  options: RecursivePartial<SourceExecutionOptions> = {}
+  options: IOptions = {}
 ): Promise<{
   result: Result
   verboseErrors: boolean
@@ -150,7 +150,7 @@ export async function sourceFilesRunner(
 export function runCodeInSource(
   code: string,
   context: Context,
-  options: RecursivePartial<SourceExecutionOptions> = {},
+  options: IOptions = {},
   defaultFilePath: string = '/default.js',
   fileGetter?: FileGetter
 ) {
@@ -158,7 +158,7 @@ export function runCodeInSource(
     path => {
       if (path === defaultFilePath) return Promise.resolve(code)
       if (!fileGetter) return Promise.resolve(undefined)
-      return fileGetter(path)
+      return fileGetter(path, options.signal)
     },
     defaultFilePath,
     context,

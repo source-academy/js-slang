@@ -1,4 +1,4 @@
-import { assert, expect, it, test } from 'vitest'
+import { assert, expect, it, test, type TestContext as VitestTestContext } from 'vitest'
 import { parseError, runInContext } from '../..'
 import createContext, { defineBuiltin } from '../../createContext'
 import { Chapter, Variant } from '../../langs'
@@ -29,11 +29,7 @@ export const contextTest = test.extend<{
 
 export function createTestContext(rawOptions: TestOptions = {}): TestContext {
   const { chapter, variant, testBuiltins, languageOptions }: Exclude<TestOptions, Chapter> =
-    typeof rawOptions === 'number'
-      ? {
-          chapter: rawOptions
-        }
-      : rawOptions
+    typeof rawOptions === 'number' ? { chapter: rawOptions } : rawOptions
 
   const otherTestResults: TestResults = {
     displayResult: [],
@@ -82,28 +78,23 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
  * used by the testing system
  */
 export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions, Chapter> {
-  return typeof rawOptions === 'number'
-    ? {
-        chapter: rawOptions
-      }
-    : rawOptions
+  return typeof rawOptions === 'number' ? { chapter: rawOptions } : rawOptions
 }
 
 /**
  * Convenience wrapper for testing a case with multiple chapters
  */
 export function testWithChapters(...chapters: Chapter[]) {
-  return (expecter: (chapter: Chapter) => any) =>
-    test.each(chapters.map(chapter => [getChapterName(chapter), chapter]))(
-      'Testing %s',
-      (_, chapter) => expecter(chapter)
-    )
+  return (expecter: (chapter: Chapter, context: VitestTestContext) => any) =>
+    test.for(
+      chapters.map(chapter => [getChapterName(chapter), chapter] as [keyof typeof Chapter, Chapter])
+    )('Testing %s', ([_, chapter], context) => expecter(chapter, context))
 }
 
 export async function testInContext(code: string, rawOptions: TestOptions) {
   const options = processTestOptions(rawOptions)
   const context = createTestContext(options)
-  const result = await runInContext(code, context)
+  const result = await runInContext(code, context, { signal: options.signal })
   return {
     context,
     result

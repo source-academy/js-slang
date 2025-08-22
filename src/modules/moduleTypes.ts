@@ -45,4 +45,4 @@ export type ImportOptions = {
   LinkerOptions
 
 export type SourceFiles = Partial<Record<string, string>>
-export type FileGetter = (p: string) => Promise<string | undefined>
+export type FileGetter = (p: string, signal?: AbortSignal) => Promise<string | undefined>

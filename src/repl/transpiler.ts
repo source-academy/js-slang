@@ -32,9 +32,9 @@ export const getTranspilerCommand = () =>
       const entrypointFilePath = resolve(fileName)
 
       const linkerResult = await parseProgramsAndConstructImportGraph(
-        async p => {
+        async (p, signal) => {
           try {
-            const text = await fs.readFile(p, 'utf-8')
+            const text = await fs.readFile(p, { encoding: 'utf-8', signal })
             return text
           } catch (error) {
             if (error.code === 'ENOENT') return undefined

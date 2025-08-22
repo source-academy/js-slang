@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
-import { runCodeInSource } from '..'
+import { runCodeInSource, type IOptions } from '..'
 import { parseError } from '../..'
 import { Chapter, Variant } from '../../langs'
 import { getChapterName, objectKeys, objectValues } from '../../utils/misc'
@@ -147,26 +147,27 @@ function expectCalls(count: number, expected: RunnerTypes) {
   }
 }
 
-async function testCase({
-  code,
-  chapter,
-  variant,
-  optionMethod,
-  expectedPrelude,
-  expectedRunner,
-  expectedValidate
-}: TestObject) {
+async function testCase(
+  {
+    code,
+    chapter,
+    variant,
+    optionMethod,
+    expectedPrelude,
+    expectedRunner,
+    expectedValidate
+  }: TestObject,
+  signal: AbortSignal
+) {
   const context = mockContext(chapter, variant)
 
   // Check if the prelude is null before execution
   // because the prelude gets set to null if it wasn't before
   const shouldPrelude = expectedPrelude && context.prelude !== null
-  const options =
-    optionMethod === undefined
-      ? undefined
-      : {
-          executionMethod: optionMethod
-        }
+  const options: IOptions = {
+    signal,
+    executionMethod: optionMethod
+  }
 
   await runCodeInSource(code, context, options)
 
@@ -207,7 +208,7 @@ function testCases(desc: string, cases: TestCase[], skip?: boolean) {
   const describeFunc = skip ? describe.skip : describe
 
   describeFunc(desc, () =>
-    test.each(
+    test.for(
       cases.map(({ code, verboseErrors, chapter, variant, ...tc }, i) => {
         chapter = chapter ?? Chapter.SOURCE_1
         variant = variant ?? Variant.DEFAULT
@@ -220,9 +221,9 @@ function testCases(desc: string, cases: TestCase[], skip?: boolean) {
           desc += ' (verbose errors)'
         }
 
-        return [desc, { code, chapter, variant, ...tc }]
+        return [desc, { code, chapter, variant, ...tc }] as [string, TestObject]
       })
-    )('%s', async (_, to) => testCase(to))
+    )('%s', async ([, to], { signal }) => testCase(to, signal))
   )
 }
 
@@ -308,44 +309,44 @@ describe('Ensure that the correct runner is used for the given evaluation contex
     )
   )
 
-  test('if optionMethod is specified, verbose errors is ignored', () =>
-    testCase({
-      code: '"enable verbose"; 0;',
-      optionMethod: 'native',
-      chapter: Chapter.SOURCE_4,
-      variant: Variant.DEFAULT,
-      expectedPrelude: true,
-      expectedRunner: 'native',
-      expectedValidate: true
-    }))
+  test('if optionMethod is specified, verbose errors is ignored', ({ signal }) =>
+    testCase(
+      {
+        code: '"enable verbose"; 0;',
+        optionMethod: 'native',
+        chapter: Chapter.SOURCE_4,
+        variant: Variant.DEFAULT,
+        expectedPrelude: true,
+        expectedRunner: 'native',
+        expectedValidate: true
+      },
+      signal
+    ))
 
-  // testCases('runner correctly respects optionMethod', objectKeys(runners).map(runner => ({
-  //   code: '"enable verbose"; 0;',
-  //   optionMethod: runner,
-  //   chapter: Chapter.SOURCE_4,
-  //   variant: Variant.DEFAULT,
-  //   expectedPrelude: true,
-  //   expectedRunner: runner
-  // })))
+  test('if optionMethod is specified, debugger statements are ignored', ({ signal }) =>
+    testCase(
+      {
+        code: 'debugger; 0;',
+        optionMethod: 'native',
+        chapter: Chapter.SOURCE_4,
+        variant: Variant.DEFAULT,
+        expectedPrelude: true,
+        expectedRunner: 'native',
+        expectedValidate: true
+      },
+      signal
+    ))
 
-  test('if optionMethod is specified, debugger statements are ignored', () =>
-    testCase({
-      code: 'debugger; 0;',
-      optionMethod: 'native',
-      chapter: Chapter.SOURCE_4,
-      variant: Variant.DEFAULT,
-      expectedPrelude: true,
-      expectedRunner: 'native',
-      expectedValidate: true
-    }))
-
-  test('debugger statements require cse-machine', () =>
-    testCase({
-      code: 'debugger; 0;',
-      chapter: Chapter.SOURCE_4,
-      variant: Variant.DEFAULT,
-      expectedPrelude: true,
-      expectedRunner: 'cse-machine',
-      expectedValidate: true
-    }))
+  test('debugger statements require cse-machine', ({ signal }) =>
+    testCase(
+      {
+        code: 'debugger; 0;',
+        chapter: Chapter.SOURCE_4,
+        variant: Variant.DEFAULT,
+        expectedPrelude: true,
+        expectedRunner: 'cse-machine',
+        expectedValidate: true
+      },
+      signal
+    ))
 })

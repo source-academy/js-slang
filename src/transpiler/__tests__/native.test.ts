@@ -6,12 +6,14 @@ import { mockContext } from '../../utils/testing/mocks'
 async function expectNativeToTimeoutAndError(
   code: string,
   timeout: number,
-  expectFunc: typeof expect
+  expectFunc: typeof expect,
+  signal: AbortSignal
 ) {
   const start = Date.now()
   const context = mockContext(Chapter.SOURCE_4)
   await runInContext(code, context, {
-    executionMethod: 'native'
+    executionMethod: 'native',
+    signal
   })
   const timeTaken = Date.now() - start
   expectFunc(timeTaken).toBeLessThan(timeout * 5)
@@ -22,7 +24,7 @@ async function expectNativeToTimeoutAndError(
 test(
   'Proper stringify-ing of arguments during potentially infinite iterative function calls',
   { timeout: 10000 },
-  async ({ expect }) => {
+  async ({ expect, signal }) => {
     const code = stripIndent`
     function f(x) {
       return f(x);
@@ -30,7 +32,7 @@ test(
     const array = [1, 2, 3];
     f(list(1, 2, f, () => 1, array));
   `
-    const error = await expectNativeToTimeoutAndError(code, 1000, expect)
+    const error = await expectNativeToTimeoutAndError(code, 1000, expect, signal)
     expect(error).toMatch(stripIndent`
   Line 2: Potential infinite recursion detected: f([ 1,
   [ 2,
@@ -41,23 +43,26 @@ test(
   }
 )
 
-test('increasing time limit for functions', { timeout: 50_000 }, async ({ expect }) => {
+test('increasing time limit for functions', { timeout: 50_000 }, async ({ expect, signal }) => {
   const code = stripIndent`
     function f(a, b) {
       return f(a + 1, b + 1);
     }
     f(1, 2);
   `
-  const firstError = await expectNativeToTimeoutAndError(code, 1000, expect)
+  const firstError = await expectNativeToTimeoutAndError(code, 1000, expect, signal)
   expect(firstError).toMatch('Line 2: Potential infinite recursion detected')
   expect(firstError).toMatch(/f\(\d+, \d+\) \.\.\. f\(\d+, \d+\) \.\.\. f\(\d+, \d+\)/)
-  const secondError = await expectNativeToTimeoutAndError(code, 10000, expect)
+  const secondError = await expectNativeToTimeoutAndError(code, 10000, expect, signal)
   expect(secondError).toMatch('Line 2: Potential infinite recursion detected')
   expect(secondError).toMatch(/f\(\d+, \d+\) \.\.\. f\(\d+, \d+\) \.\.\. f\(\d+, \d+\)/)
 })
 
-test('increasing time limit for mutual recursion', { timeout: 50_000 }, async ({ expect }) => {
-  const code = stripIndent`
+test(
+  'increasing time limit for mutual recursion',
+  { timeout: 50_000 },
+  async ({ expect, signal }) => {
+    const code = stripIndent`
     function f(a, b) {
       return g(a + 1, b + 1);
     }
@@ -66,26 +71,27 @@ test('increasing time limit for mutual recursion', { timeout: 50_000 }, async ({
     }
     f(1, 2);
   `
-  const firstError = await expectNativeToTimeoutAndError(code, 1000, expect)
-  expect(firstError).toMatch(/Line [52]: Potential infinite recursion detected/)
-  expect(firstError).toMatch(/f\(\d+, \d+\) \.\.\. g\(\d+, \d+\)/)
-  const secondError = await expectNativeToTimeoutAndError(code, 10000, expect)
-  expect(secondError).toMatch(/Line [52]: Potential infinite recursion detected/)
-  expect(secondError).toMatch(/f\(\d+, \d+\) \.\.\. g\(\d+, \d+\)/)
-})
+    const firstError = await expectNativeToTimeoutAndError(code, 1000, expect, signal)
+    expect(firstError).toMatch(/Line [52]: Potential infinite recursion detected/)
+    expect(firstError).toMatch(/f\(\d+, \d+\) \.\.\. g\(\d+, \d+\)/)
+    const secondError = await expectNativeToTimeoutAndError(code, 10000, expect, signal)
+    expect(secondError).toMatch(/Line [52]: Potential infinite recursion detected/)
+    expect(secondError).toMatch(/f\(\d+, \d+\) \.\.\. g\(\d+, \d+\)/)
+  }
+)
 
-test('increasing time limit for while loops', { timeout: 50_000 }, async ({ expect }) => {
+test('increasing time limit for while loops', { timeout: 50_000 }, async ({ expect, signal }) => {
   const code = stripIndent`
     while (true) {
     }
   `
-  const firstError = await expectNativeToTimeoutAndError(code, 1000, expect)
+  const firstError = await expectNativeToTimeoutAndError(code, 1000, expect, signal)
   expect(firstError).toMatch('Line 1: Potential infinite loop detected')
-  const secondError = await expectNativeToTimeoutAndError(code, 10000, expect)
+  const secondError = await expectNativeToTimeoutAndError(code, 10000, expect, signal)
   expect(secondError).toMatch('Line 1: Potential infinite loop detected')
 })
 
-test('proper setting of variables in an outer scope', async ({ expect }) => {
+test('proper setting of variables in an outer scope', async ({ expect, signal }) => {
   const context = mockContext(Chapter.SOURCE_3)
   await runInContext(
     stripIndent`
@@ -94,14 +100,15 @@ test('proper setting of variables in an outer scope', async ({ expect }) => {
       return a;
     }
   `,
-    context
+    context,
+    { signal }
   )
   const result = await runInContext('a = "new"; f();', context)
   assert(result.status === 'finished')
   expect(result.value).toBe('new')
 })
 
-test('using internal names still work', async ({ expect }) => {
+test('using internal names still work', async ({ expect, signal }) => {
   const context = mockContext(Chapter.SOURCE_3)
   let result = await runInContext(
     stripIndent`
@@ -112,7 +119,8 @@ test('using internal names still work', async ({ expect }) => {
     }
     wrap();
   `,
-    context
+    context,
+    { signal }
   )
   assert(result.status === 'finished')
   expect(result.value).toBe(1)
@@ -122,7 +130,10 @@ test('using internal names still work', async ({ expect }) => {
   expect(result.value).toBe(2)
 })
 
-test('assigning a = b where b was from a previous program call works', async ({ expect }) => {
+test('assigning a = b where b was from a previous program call works', async ({
+  expect,
+  signal
+}) => {
   const context = mockContext(Chapter.SOURCE_3)
   const result = await runInContext(
     stripIndent`
@@ -130,7 +141,8 @@ test('assigning a = b where b was from a previous program call works', async ({ 
     b = pair;
     b = 1;
   `,
-    context
+    context,
+    { signal }
   )
   assert(result.status === 'finished')
   expect(result.value).toBe(1)

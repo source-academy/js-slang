@@ -4,6 +4,7 @@ import type { Context, Value } from '../types'
 
 export interface BaseRunnerOptions {
   isPrelude?: boolean | undefined
+  signal?: AbortSignal
 }
 
 export interface UnknownRunner extends BaseRunnerOptions {

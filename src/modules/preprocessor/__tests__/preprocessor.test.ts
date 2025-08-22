@@ -9,7 +9,6 @@ import {
   accessExportFunctionName,
   defaultExportLookupName
 } from '../../../stdlib/localImport.prelude'
-import type { RecursivePartial } from '../../../types'
 import { mockContext } from '../../../utils/testing/mocks'
 import { sanitizeAST } from '../../../utils/testing/sanitizer'
 import { UndefinedImportError } from '../../errors'
@@ -32,7 +31,7 @@ describe('preprocessFileImports', () => {
   async function expectSuccess(
     files: SourceFiles,
     entrypointFilePath: string,
-    options?: RecursivePartial<PreprocessorOptions>
+    options?: PreprocessorOptions
   ) {
     const preprocResult = await preprocessFileImports(
       p => Promise.resolve(files[p]),

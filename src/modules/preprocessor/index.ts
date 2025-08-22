@@ -14,12 +14,14 @@ import parseProgramsAndConstructImportGraph from './linker'
  * Options for the modules preprocessor
  */
 export interface PreprocessorOptions {
+  importOptions?: RecursivePartial<ImportOptions>
+
   /**
    * Set this to `true` if file name information should be attached to the files
    * when they are parsed.
    */
-  shouldAddFileName: boolean
-  importOptions: ImportOptions
+  shouldAddFileName?: boolean
+  signal?: AbortSignal
 }
 
 export type PreprocessResult =
@@ -55,7 +57,7 @@ const preprocessFileImports = async (
   files: FileGetter,
   entrypointFilePath: string,
   context: Context,
-  options: RecursivePartial<PreprocessorOptions> = {},
+  options: PreprocessorOptions = {},
   bundler: Bundler = defaultBundler
 ): Promise<PreprocessResult> => {
   if (context.variant === Variant.TYPED) {
@@ -78,8 +80,10 @@ const preprocessFileImports = async (
     entrypointFilePath,
     context,
     options?.importOptions,
-    !!options?.shouldAddFileName
+    !!options?.shouldAddFileName,
+    options.signal
   )
+
   // Return 'undefined' if there are errors while parsing.
   if (!linkerResult.ok) {
     return linkerResult
@@ -88,15 +92,13 @@ const preprocessFileImports = async (
   const { programs, topoOrder, sourceModulesToImport } = linkerResult
 
   try {
-    await loadSourceModules(sourceModulesToImport, context, options.importOptions?.loadTabs ?? true)
-    // Run type checking on the programs after loading the source modules and their types.
-    const linkerResult = await parseProgramsAndConstructImportGraph(
-      files,
-      entrypointFilePath,
+    await loadSourceModules(
+      sourceModulesToImport,
       context,
-      options?.importOptions,
-      !!options?.shouldAddFileName
+      options.importOptions?.loadTabs ?? true,
+      options.signal
     )
+
     // Return 'undefined' if there are errors while parsing.
     if (!linkerResult.ok) {
       return linkerResult

@@ -7,8 +7,7 @@ import { createContext } from '..'
 import { Chapter, Variant, isValidChapterVariant } from '../langs'
 import { setModulesStaticURL } from '../modules/loader'
 import type { FileGetter } from '../modules/moduleTypes'
-import { runCodeInSource, sourceFilesRunner, type SourceExecutionOptions } from '../runner'
-import type { RecursivePartial } from '../types'
+import { runCodeInSource, sourceFilesRunner, type IOptions } from '../runner'
 import { objectValues } from '../utils/misc'
 import {
   chapterParser,
@@ -40,15 +39,15 @@ export const getReplCommand = () =>
         setModulesStaticURL(modulesBackend)
       }
 
-      let options: RecursivePartial<SourceExecutionOptions> = {}
+      let options: IOptions = {}
       if (optionsFile !== undefined) {
         const rawText = await fs.readFile(optionsFile, 'utf-8')
         options = JSON.parse(rawText)
       }
 
-      const fileGetter: FileGetter = async p => {
+      const fileGetter: FileGetter = async (p, signal) => {
         try {
-          const text = await fs.readFile(p, 'utf-8')
+          const text = await fs.readFile(p, { encoding: 'utf-8', signal })
           return text
         } catch (error) {
           if (error.code === 'ENOENT') return undefined

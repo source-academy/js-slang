@@ -125,7 +125,7 @@ describe('Test throwing import validation errors', () => {
   }
 
   type FullTestCase = [string, Files, `/${string}`, ErrorInfo | boolean]
-  function testCases<T extends Files>(desc: string, cases: ImportTestCase<T>[]) {
+  function testCases<T extends Files>(desc: string, cases: ImportTestCase<T>[], skip?: boolean) {
     const [allNoCases, allYesCases] = cases.reduce(
       ([noThrow, yesThrow], [desc, files, entry, errorInfo], i) => {
         return [
@@ -165,10 +165,18 @@ describe('Test throwing import validation errors', () => {
       }
     }
 
-    describe(`${desc} with allowUndefinedimports true`, () =>
-      test.each(allNoCases)('%s', caseTester))
-    describe(`${desc} with allowUndefinedimports false`, () =>
-      test.each(allYesCases)('%s', caseTester))
+    const describeFunc = skip ? describe.skip : describe
+
+    describeFunc(`${desc} with allowUndefinedimports true`, () =>
+      test.each(allNoCases)('%s', caseTester)
+    )
+    describeFunc(`${desc} with allowUndefinedimports false`, () =>
+      test.each(allYesCases)('%s', caseTester)
+    )
+  }
+
+  testCases.skip = function (desc: string, cases: ImportTestCase<any>[]) {
+    this(desc, cases, true)
   }
 
   describe('Test regular imports', () => {

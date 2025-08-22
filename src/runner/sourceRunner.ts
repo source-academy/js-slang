@@ -32,11 +32,30 @@ const nativeRunner: Runner<NativeRunnerOptions> = async (program, context, optio
   // ends up generating code that has syntax errors. As such, we need to make a deep copy here to preserve
   // the original AST for future use, such as with the infinite loop detector.
   const transpiledProgram = _.cloneDeep(program)
-  let transpiled
+  let transpiled: string
   let sourceMapJson: RawSourceMap | undefined
   try {
     ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
-    let value = sandboxedEval(transpiled, context.nativeStorage)
+
+    const value = await new Promise<any>((resolve, reject) => {
+      const onAbort = () => {
+        reject(new Error('Evaluation aborted via AbortSignal!'))
+      }
+
+      if (options.signal) {
+        options.signal.addEventListener('abort', onAbort)
+      }
+
+      try {
+        resolve(sandboxedEval(transpiled, context.nativeStorage))
+      } catch (error) {
+        reject(error)
+      } finally {
+        if (options.signal) {
+          options.signal.removeEventListener('abort', onAbort)
+        }
+      }
+    })
 
     if (!options.isPrelude) {
       isPreviousCodeTimeoutError = false

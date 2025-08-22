@@ -1,6 +1,6 @@
 import { timeoutPromise } from '../../utils/misc'
 import { ModuleConnectionError } from '../errors'
-import type { ModuleBundle } from '../moduleTypes'
+import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from './loaders'
 
 /** Default modules static url. Exported for testing. */
 export let MODULES_STATIC_URL = 'https://source-academy.github.io/modules'
@@ -8,15 +8,15 @@ export let MODULES_STATIC_URL = 'https://source-academy.github.io/modules'
 export function setModulesStaticURL(url: string) {
   MODULES_STATIC_URL = url
 
-  // // Changing the module backend should clear these
-  // memoizedGetModuleDocsAsync.cache.clear()
-  // memoizedGetModuleManifestAsync.reset()
+  // Changing the module backend should clear these
+  memoizedGetModuleDocsAsync.cache.clear()
+  memoizedGetModuleManifestAsync.reset()
 }
 
-function wrapImporter<T>(func: (p: string) => Promise<T>) {
-  return async (p: string): Promise<T> => {
+function wrapImporter<T extends (p: string, signal?: AbortSignal) => Promise<any>>(func: T) {
+  return async (p: string, signal?: AbortSignal): Promise<Awaited<ReturnType<T>>> => {
     try {
-      const result = await timeoutPromise(func(p), 10000)
+      const result = await timeoutPromise(func(p, signal), 10000)
       return result
     } catch (error) {
       console.error('The error is', error)
@@ -39,11 +39,11 @@ function wrapImporter<T>(func: (p: string) => Promise<T>) {
 }
 
 // Exported for testing
-export const docsImporter = wrapImporter<{ default: any }>(async p => {
+export const docsImporter = wrapImporter(async (p, signal) => {
   // TODO: Use import attributes when they become supported
   // Import Assertions and Attributes are not widely supported by all
   // browsers yet, so we use fetch in the meantime
-  const resp = await fetch(p)
+  const resp = await fetch(p, { signal })
   if (resp.status !== 200 && resp.status !== 304) {
     throw new ModuleConnectionError()
   }
@@ -68,6 +68,4 @@ function getBundleAndTabsImporter(): (p: string) => Promise<any> {
   For the browser, we use the function constructor to hide the import calls from
   webpack so that webpack doesn't try to compile them away.
 */
-export const bundleAndTabImporter = wrapImporter<{ default: ModuleBundle }>(
-  getBundleAndTabsImporter()
-)
+export const bundleAndTabImporter = wrapImporter(getBundleAndTabsImporter())

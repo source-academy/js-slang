@@ -1,5 +1,5 @@
 import { RuntimeSourceError } from '../errors/errorBase'
-import { Chapter } from '../langs'
+import { Chapter, Variant } from '../langs'
 
 export class PromiseTimeoutError extends RuntimeSourceError {}
 
@@ -49,4 +49,8 @@ export function objectValues<T>(obj: Record<any, T>) {
  */
 export function getChapterName(chapter: Chapter) {
   return objectKeys(Chapter).find(name => Chapter[name] === chapter)!
+}
+
+export function getVariantName(variant: Variant) {
+  return objectKeys(Variant).find(name => Variant[name] === variant)!
 }

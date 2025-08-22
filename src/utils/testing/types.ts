@@ -8,6 +8,7 @@ export type TestOptions =
       variant?: Variant
       testBuiltins?: TestBuiltins
       languageOptions?: LanguageOptions
+      signal?: AbortSignal
     }
   | Chapter
 

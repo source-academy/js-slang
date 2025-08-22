@@ -5,15 +5,20 @@ import { loadModuleBundleAsync, loadModuleTabsAsync } from './loaders'
 /**
  * Initialize module contexts and add UI tabs needed for modules to program context
  */
-async function initModuleContextAsync(moduleName: string, context: Context, loadTabs: boolean) {
+async function initModuleContextAsync(
+  moduleName: string,
+  context: Context,
+  loadTabs: boolean,
+  signal?: AbortSignal
+) {
   // Load the module's tabs
   if (!(moduleName in context.moduleContexts)) {
     context.moduleContexts[moduleName] = {
       state: null,
-      tabs: loadTabs ? await loadModuleTabsAsync(moduleName) : null
+      tabs: loadTabs ? await loadModuleTabsAsync(moduleName, signal) : null
     }
   } else if (context.moduleContexts[moduleName].tabs === null && loadTabs) {
-    context.moduleContexts[moduleName].tabs = await loadModuleTabsAsync(moduleName)
+    context.moduleContexts[moduleName].tabs = await loadModuleTabsAsync(moduleName, signal)
   }
 }
 
@@ -25,12 +30,13 @@ async function initModuleContextAsync(moduleName: string, context: Context, load
 export default async function loadSourceModules(
   sourceModulesToImport: Set<string>,
   context: Context,
-  loadTabs: boolean
+  loadTabs: boolean,
+  signal?: AbortSignal
 ) {
   const loadedModules = await Promise.all(
     [...sourceModulesToImport].map(async moduleName => {
-      await initModuleContextAsync(moduleName, context, loadTabs)
-      const bundle = await loadModuleBundleAsync(moduleName, context)
+      await initModuleContextAsync(moduleName, context, loadTabs, signal)
+      const bundle = await loadModuleBundleAsync(moduleName, context, signal)
       return [moduleName, bundle] as [string, ModuleFunctions]
     })
   )

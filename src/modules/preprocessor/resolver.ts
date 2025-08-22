@@ -40,7 +40,8 @@ export default async function resolveFile(
   fromPath: string,
   toPath: string,
   fileGetter: FileGetter,
-  options: Partial<ImportResolutionOptions> = defaultResolutionOptions
+  options: Partial<ImportResolutionOptions> = defaultResolutionOptions,
+  signal?: AbortSignal
 ): Promise<ResolverResult | undefined> {
   if (isSourceModule(toPath)) {
     const manifest = await memoizedGetModuleManifestAsync()
@@ -48,7 +49,7 @@ export default async function resolveFile(
   }
 
   const absPath = posixPath.resolve(fromPath, '..', toPath)
-  let contents: string | undefined = await fileGetter(absPath)
+  let contents: string | undefined = await fileGetter(absPath, signal)
 
   if (contents !== undefined) {
     return {
@@ -61,7 +62,7 @@ export default async function resolveFile(
   if (options.extensions) {
     for (const ext of options.extensions) {
       const extPath = `${absPath}.${ext}`
-      contents = await fileGetter(extPath)
+      contents = await fileGetter(extPath, signal)
 
       if (contents !== undefined) {
         return {

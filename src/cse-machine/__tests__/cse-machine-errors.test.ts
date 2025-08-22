@@ -1,11 +1,8 @@
-import _ from 'lodash'
-import { expect, test, vi } from 'vitest'
+import { expect, test } from 'vitest'
 import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { testFailure, testForValue } from '../../utils/testing'
 import type { TestOptions } from '../../utils/testing/types'
-
-vi.spyOn(_, 'memoize').mockImplementation(func => func as any)
 
 async function expectDifferentParsedErrors(
   code1: string,

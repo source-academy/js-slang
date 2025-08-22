@@ -55,7 +55,8 @@ export default async function parseProgramsAndConstructImportGraph(
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<LinkerOptions> = defaultLinkerOptions,
-  shouldAddFileName: boolean
+  shouldAddFileName: boolean,
+  signal?: AbortSignal
 ): Promise<LinkerResult> {
   const importGraph = new DirectedGraph()
   const programs: Record<string, es.Program> = {}
@@ -66,7 +67,13 @@ export default async function parseProgramsAndConstructImportGraph(
   async function resolveDependency(fromPath: string, node: ModuleDeclarationWithSource) {
     const toPath = getModuleDeclarationSource(node)
 
-    const resolveResult = await resolveFile(fromPath, toPath, fileGetter, options.resolverOptions)
+    const resolveResult = await resolveFile(
+      fromPath,
+      toPath,
+      fileGetter,
+      options.resolverOptions,
+      signal
+    )
 
     if (!resolveResult) {
       throw new ModuleNotFoundError(toPath, node)
@@ -97,11 +104,7 @@ export default async function parseProgramsAndConstructImportGraph(
   }
 
   async function parseAndEnumerateModuleDeclarations(fromModule: string, fileText: string) {
-    const parseOptions = shouldAddFileName
-      ? {
-          sourceFile: fromModule
-        }
-      : {}
+    const parseOptions = shouldAddFileName ? { sourceFile: fromModule } : {}
 
     const program = parse(fileText, context, parseOptions)
     if (!program) {
