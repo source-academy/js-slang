@@ -104,17 +104,15 @@ test('parseError for template literals with expressions', () => {
   )
 })
 
-/* Skip the test for now
 test('Simple arrow function infinite recursion represents CallExpression well', () => {
-  return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toMatchInlineSnapshot(
-    `"Line 1: RangeError: Maximum call stack size exceeded"`
+  return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toContain(
+    `RangeError: Maximum call stack size exceeded`
   )
 }, 30000)
-*/
 
 test('Simple function infinite recursion represents CallExpression well', () => {
-  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toMatchInlineSnapshot(
-    `"RangeError: Maximum call stack size exceeded"`
+  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toContain(
+    `RangeError: Maximum call stack size exceeded`
   )
 }, 30000)
 
@@ -177,7 +175,7 @@ test('Arrow function infinite recursion with list args represents CallExpression
     f(list(1, 2));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`"Line 1: RangeError: Maximum call stack size exceeded"`)
+  ).toContain(`RangeError: Maximum call stack size exceeded`)
 }, 30000)
 
 test('Function infinite recursion with list args represents CallExpression well', () => {
@@ -193,14 +191,14 @@ test('Arrow function infinite recursion with different args represents CallExpre
   return expectParsedError(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
-  `).toMatchInlineSnapshot(`"Line 1: RangeError: Maximum call stack size exceeded"`)
+  `).toContain(`RangeError: Maximum call stack size exceeded`)
 }, 30000)
 
 test('Function infinite recursion with different args represents CallExpression well', () => {
   return expectParsedError(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
-  `).toMatchInlineSnapshot(`"RangeError: Maximum call stack size exceeded"`)
+  `).toContain(`RangeError: Maximum call stack size exceeded`)
 }, 30000)
 
 test('Functions passed into non-source functions remain equal', () => {

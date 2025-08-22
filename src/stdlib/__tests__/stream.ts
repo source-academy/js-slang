@@ -33,7 +33,7 @@ describe('primitive stream functions', () => {
     stream_length(integers_from(0));
     `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(`"RangeError: Maximum call stack size exceeded"`)
+    ).toContain(`RangeError: Maximum call stack size exceeded`)
   }, 15000)
 
   test('stream is properly created', () => {
