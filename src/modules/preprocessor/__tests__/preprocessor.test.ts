@@ -14,7 +14,6 @@ import {
 } from '../../../stdlib/localImport.prelude'
 import type { SourceFiles } from '../../moduleTypes'
 import { UndefinedImportError } from '../../errors'
-import { asMockedFunc } from '../../../utils/testing/misc'
 
 vi.mock(import('../../loader/loaders'))
 
@@ -141,7 +140,7 @@ describe(preprocessFileImports, () => {
   })
 
   it('ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program', async () => {
-    const docsMocked = asMockedFunc(memoizedGetModuleDocsAsync)
+    const docsMocked = vi.mocked(memoizedGetModuleDocsAsync)
     docsMocked.mockResolvedValueOnce({
       default: {} as any,
       a: {} as any,
@@ -194,7 +193,7 @@ describe(preprocessFileImports, () => {
   })
 
   it('collates Source module imports at the start of the top-level environment of the preprocessed program', async () => {
-    const docsMocked = asMockedFunc(memoizedGetModuleDocsAsync)
+    const docsMocked = vi.mocked(memoizedGetModuleDocsAsync)
 
     docsMocked.mockResolvedValue({
       f: {} as any,

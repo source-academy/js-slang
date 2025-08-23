@@ -172,7 +172,9 @@ describe('Additional JavaScript features are not available in Source Native', ()
         Chapter.SOURCE_2,
         Chapter.SOURCE_3,
         Chapter.SOURCE_4
-      )(chapter => testFailure(snippet, { chapter, variant: Variant.NATIVE }))
+      )(async chapter => {
+        await testFailure(snippet, { chapter, variant: Variant.NATIVE })
+      })
     }
   )
 })

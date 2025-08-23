@@ -1,49 +1,43 @@
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { mockContext } from '../../../utils/testing/mocks'
 import { Chapter, Variant } from '../../../types'
 import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
 import * as moduleLoader from '../loaders'
 import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
-import { asMockedFunc } from '../../../utils/testing/misc'
 
-const moduleMocker = jest.fn()
-global.fetch = jest.fn()
+const moduleMocker = vi.hoisted(() => vi.fn())
+const mockedFetch = vi.spyOn(global, 'fetch')
 
 // Using virtual modules, we can pretend the modules with the given
 // import path actually exist
 // When testing the import loader we can generally rely on the mocked versions
 // under __mocks__ instead.
-jest.mock(
-  `${jest.requireActual('..').MODULES_STATIC_URL}/bundles/one_module.js`,
+vi.mock(`${moduleLoader.MODULES_STATIC_URL}/bundles/one_module.js`,
   () => ({
     default: moduleMocker
   }),
-  { virtual: true }
 )
 
-jest.mock(
-  `${jest.requireActual('..').MODULES_STATIC_URL}/tabs/tab1.js`,
+vi.mock(`${moduleLoader.MODULES_STATIC_URL}/tabs/tab1.js`,
   () => ({
     default: () => 'tab1'
   }),
-  { virtual: true }
 )
 
-jest.mock(
-  `${jest.requireActual('..').MODULES_STATIC_URL}/tabs/tab2.js`,
+vi.mock(`${moduleLoader.MODULES_STATIC_URL}/tabs/tab2.js`,
   () => ({
     default: () => 'tab2'
   }),
-  { virtual: true }
 )
 
-jest.spyOn(moduleLoader, 'docsImporter')
+const mockedDocsImporter = vi.spyOn(moduleLoader, 'docsImporter')
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 afterEach(() => {
-  jest.resetModules()
+  vi.resetModules()
 })
 
 describe('bundle loading', () => {
@@ -68,7 +62,7 @@ describe('bundle loading', () => {
 
 describe('tab loading', () => {
   test("Load a module's tabs", async () => {
-    asMockedFunc(fetch).mockResolvedValueOnce({
+    mockedFetch.mockResolvedValueOnce({
       json: () =>
         Promise.resolve({
           one_module: { tabs: ['tab1', 'tab2'] }
@@ -84,7 +78,6 @@ describe('tab loading', () => {
 })
 
 describe('docs loading', () => {
-  const mockedDocsImporter = asMockedFunc(moduleLoader.docsImporter)
 
   beforeEach(() => {
     mockedDocsImporter.mockClear()
@@ -120,7 +113,7 @@ describe('docs loading', () => {
 
       mockedDocsImporter.mockRejectedValueOnce(mockError)
       const result = moduleLoader.memoizedGetModuleManifestAsync()
-      expect(result).rejects.toBe(mockError)
+      await expect(result).rejects.toBe(mockError)
 
       const mockManifest: ModuleManifest = {
         one_module: {
@@ -181,7 +174,7 @@ describe('docs loading', () => {
       const mockError = new ModuleNotFoundError('another_module')
       mockedDocsImporter.mockRejectedValueOnce(mockError)
       const docs3 = moduleLoader.memoizedGetModuleDocsAsync('another_module', true)
-      expect(docs3).rejects.toBe(mockError)
+      await expect(docs3).rejects.toBe(mockError)
 
       mockedDocsImporter.mockResolvedValueOnce({ default: mockDocs })
       const docs4 = await moduleLoader.memoizedGetModuleDocsAsync('another_module')

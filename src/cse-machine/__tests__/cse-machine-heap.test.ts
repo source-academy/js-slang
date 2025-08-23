@@ -47,7 +47,7 @@ test('Heap works correctly', () => {
   `)
 })
 
-const expectEnvTreeFrom = (code: string, hasPrelude = true) => {
+const expectEnvTreeFrom = (code: string, expectFunc: typeof expect, hasPrelude = true) => {
   const context = mockContext(Chapter.SOURCE_4)
   if (!hasPrelude) context.prelude = null
 
@@ -55,15 +55,15 @@ const expectEnvTreeFrom = (code: string, hasPrelude = true) => {
     runCodeInSource(code, context, {
       executionMethod: 'cse-machine'
     }).then(() => context.runtime.environmentTree)
-  ).resolves
+  ).resolves.toMatchSnapshot()
 }
 
-test('Pre-defined functions are correctly added to prelude heap', () => {
-  expectEnvTreeFrom('0;').toMatchSnapshot()
+test('Pre-defined functions are correctly added to prelude heap', ({ expect }) => {
+  return expectEnvTreeFrom('0;', expect)
 })
 
-test('Arrays and closures are correctly added to their respective heaps', () => {
-  expectEnvTreeFrom(
+test('Arrays and closures are correctly added to their respective heaps', ({ expect }) => {
+  return expectEnvTreeFrom(
     stripIndent`
     function f(x) {
       return [10, 11, 12];
@@ -74,33 +74,36 @@ test('Arrays and closures are correctly added to their respective heaps', () => 
     const b = [4, 5, 6];
     f([7, 8, 9]);
     `,
+    expect,
     false
-  ).toMatchSnapshot()
+  )
 })
 
-test('Arrays created from built-in functions are correctly added to their respective heaps', () => {
-  expectEnvTreeFrom(
+test('Arrays created from built-in functions are correctly added to their respective heaps', ({ expect }) => {
+  return expectEnvTreeFrom(
     stripIndent`
     pair(1, 2);
     {
       list(1, 2, 3);
     }
-    `
-  ).toMatchSnapshot()
+    `,
+    expect
+  )
 })
 
-test('Variadic closures correctly add argument array to the function environment heap', () => {
-  expectEnvTreeFrom(
+test('Variadic closures correctly add argument array to the function environment heap', ({ expect }) => {
+  return expectEnvTreeFrom(
     stripIndent`
     const f = (...x) => x;
     f(1, 2, 3);
     `,
+    expect,
     false
-  ).toMatchSnapshot()
+  )
 })
 
-test('apply_in_underlying_javascript works correctly and adds objects to heaps', () => {
-  expectEnvTreeFrom(
+test('apply_in_underlying_javascript works correctly and adds objects to heaps', ({ expect }) => {
+  return expectEnvTreeFrom(
     stripIndent`
     let a = 0;
     function f(x) {
@@ -108,6 +111,7 @@ test('apply_in_underlying_javascript works correctly and adds objects to heaps',
       return x => x;
     }
     apply_in_underlying_javascript(f, list(0));
-    `
-  ).toMatchSnapshot()
+    `,
+    expect
+  )
 })

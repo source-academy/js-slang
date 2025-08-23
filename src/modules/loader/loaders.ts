@@ -34,8 +34,8 @@ function wrapImporter<T>(func: (p: string) => Promise<T>) {
         (typeof window !== 'undefined' && error instanceof TypeError) ||
         // In Node a different error is thrown with the given code instead
         error.code === 'MODULE_NOT_FOUND' ||
-        // Thrown specifically by jest
-        error.code === 'ENOENT'
+        // Thrown specifically by Vitest
+        (process.env.NODE_ENV === 'test' && error.code === 'ENOENT')
       ) {
         throw new ModuleConnectionError()
       }
@@ -110,6 +110,19 @@ function getMemoizedDocsImporter() {
 export const memoizedGetModuleManifestAsync = getManifestImporter()
 export const memoizedGetModuleDocsAsync = getMemoizedDocsImporter()
 
+function getBundleAndTabImporter(): (p: string) => Promise<{ default: ModuleBundle }> {
+  if (process.env.NODE_ENV === 'test') {
+    return p => import(p)
+  }
+
+  if (typeof window !== 'undefined') {
+    return (new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  return p => Promise.resolve(require(p))
+}
+
 /*
   Browsers natively support esm's import() but Jest and Node do not. So we need
   to change which import function we use based on the environment.
@@ -117,12 +130,7 @@ export const memoizedGetModuleDocsAsync = getMemoizedDocsImporter()
   For the browser, we use the function constructor to hide the import calls from
   webpack so that webpack doesn't try to compile them away.
 */
-const bundleAndTabImporter = wrapImporter<{ default: ModuleBundle }>(
-  typeof window !== 'undefined' && process.env.NODE_ENV !== 'test'
-    ? (new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any)
-    : // eslint-disable-next-line @typescript-eslint/no-require-imports
-      p => Promise.resolve(require(p))
-)
+const bundleAndTabImporter = wrapImporter(getBundleAndTabImporter())
 
 export async function loadModuleBundleAsync(
   moduleName: string,

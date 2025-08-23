@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import type fslib from 'fs/promises'
+import fs from 'fs/promises'
 import { resolve } from 'path'
 import { Command } from '@commander-js/extra-typings'
 import { generate } from 'astring'
@@ -34,7 +34,6 @@ export const getTranspilerCommand = () =>
         return
       }
 
-      const fs: typeof fslib = require('fs/promises')
       const context = createContext(opts.chapter, opts.variant, opts.languageOptions)
       const entrypointFilePath = resolve(fileName)
 

@@ -16,8 +16,8 @@ describe('__access_named_export__', () => {
       const square = __access_named_export__(importedFile(), "square");
       square(5);
     `,
-      { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`25`)
+      Chapter.SOURCE_2
+    ).toEqual(25)
   })
 
   it('returns first identifier if name exists multiple times in list of exported names', () => {
@@ -32,8 +32,8 @@ describe('__access_named_export__', () => {
       const square = __access_named_export__(importedFile(), "square");
       square(5);
     `,
-      { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`25`)
+      Chapter.SOURCE_2
+    ).toEqual(25)
   })
 
   it('returns undefined if name does not exist in list of exported names', () => {
@@ -46,8 +46,8 @@ describe('__access_named_export__', () => {
       }
       __access_named_export__(importedFile(), "identity");
     `,
-      { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`undefined`)
+      Chapter.SOURCE_2
+    ).toEqual(undefined)
   })
 
   it('returns undefined if list of exported names is empty', () => {
@@ -60,8 +60,8 @@ describe('__access_named_export__', () => {
       }
       __access_named_export__(importedFile(), "identity");
     `,
-      { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`undefined`)
+      Chapter.SOURCE_2
+    ).toEqual(undefined)
   })
 })
 
@@ -77,8 +77,8 @@ describe('__access_export__', () => {
       const square = __access_export__(importedFile(), "square");
       square(5);
     `,
-      { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`25`)
+      Chapter.SOURCE_2
+    ).toEqual(25)
   })
 
   it('returns default export if it exists', () => {
@@ -94,7 +94,7 @@ describe('__access_export__', () => {
       const square = __access_export__(importedFile(), "${defaultExportLookupName}");
       square(5);
     `,
-      { chapter: Chapter.SOURCE_2 }
-    ).toMatchInlineSnapshot(`125`)
+      Chapter.SOURCE_2
+    ).toEqual(125)
   })
 })

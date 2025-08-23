@@ -1,7 +1,7 @@
 import { test, vi } from 'vitest'
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult } from '../../utils/testing'
+import { expectFinishedResult, testSuccess } from '../../utils/testing'
 
 vi.mock(import('../../modules/loader/loaders'))
 
@@ -22,7 +22,7 @@ test('Simple tail call returns work', () => {
     f(5000, 5000);
   `,
     optionEC
-  ).toMatchInlineSnapshot(`10000`)
+  ).toEqual(10000)
 })
 
 test('Tail call in conditional expressions work', () => {
@@ -34,7 +34,7 @@ test('Tail call in conditional expressions work', () => {
     f(5000, 5000);
   `,
     optionEC
-  ).toMatchInlineSnapshot(`10000`)
+  ).toEqual(10000)
 })
 
 test('Tail call in boolean operators work', () => {
@@ -50,7 +50,7 @@ test('Tail call in boolean operators work', () => {
     f(5000, 5000);
   `,
     optionEC
-  ).toMatchInlineSnapshot(`10000`)
+  ).toEqual(10000)
 })
 
 test('Tail call in nested mix of conditional expressions boolean operators work', () => {
@@ -62,7 +62,7 @@ test('Tail call in nested mix of conditional expressions boolean operators work'
     f(5000, 5000);
   `,
     optionEC
-  ).toMatchInlineSnapshot(`10000`)
+  ).toEqual(10000)
 })
 
 test('Tail calls in arrow functions work', () => {
@@ -72,7 +72,7 @@ test('Tail calls in arrow functions work', () => {
     f(5000, 5000);
   `,
     optionEC
-  ).toMatchInlineSnapshot(`10000`)
+  ).toEqual(10000)
 })
 
 test('Tail calls in arrow block functions work', () => {
@@ -88,7 +88,7 @@ test('Tail calls in arrow block functions work', () => {
     f(5000, 5000);
   `,
     optionEC
-  ).toMatchInlineSnapshot(`10000`)
+  ).toEqual(10000)
 })
 
 test('Tail calls in mutual recursion work', () => {
@@ -111,7 +111,7 @@ test('Tail calls in mutual recursion work', () => {
     f(5000, 5000);
   `,
     optionEC
-  ).toMatchInlineSnapshot(`10000`)
+  ).toEqual(10000)
 })
 
 test('Tail calls in mutual recursion with arrow functions work', () => {
@@ -122,7 +122,7 @@ test('Tail calls in mutual recursion with arrow functions work', () => {
     f(5000, 5000);
   `,
     optionEC
-  ).toMatchInlineSnapshot(`10000`)
+  ).toEqual(10000)
 })
 
 test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
@@ -138,7 +138,7 @@ test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
     f(5000, 5000, 2);
   `,
     optionEC
-  ).toMatchInlineSnapshot(`15000`)
+  ).toEqual(15000)
 })
 
 // This is bad practice. Don't do this!
@@ -155,7 +155,7 @@ test('standalone block statements', () => {
     test();
   `,
     optionEC
-  ).toMatchInlineSnapshot(`true`)
+  ).toEqual(true)
 })
 
 // This is bad practice. Don't do this!
@@ -174,7 +174,7 @@ test('const uses block scoping instead of function scoping', () => {
     test();
   `,
     optionEC
-  ).toMatchInlineSnapshot(`true`)
+  ).toEqual(true)
 })
 
 // This is bad practice. Don't do this!
@@ -193,7 +193,7 @@ test('let uses block scoping instead of function scoping', () => {
     test();
   `,
     optionEC3
-  ).toMatchInlineSnapshot(`true`)
+  ).toEqual(true)
 })
 
 test('for loops use block scoping instead of function scoping', () => {
@@ -208,7 +208,7 @@ test('for loops use block scoping instead of function scoping', () => {
     test();
   `,
     optionEC3
-  ).toMatchInlineSnapshot(`true`)
+  ).toEqual(true)
 })
 
 test('while loops use block scoping instead of function scoping', () => {
@@ -225,7 +225,7 @@ test('while loops use block scoping instead of function scoping', () => {
     test();
   `,
     optionEC4
-  ).toMatchInlineSnapshot(`true`)
+  ).toEqual(true)
 })
 
 test('continue in while loops are working as intended', () => {
@@ -248,7 +248,7 @@ test('continue in while loops are working as intended', () => {
     test();
   `,
     optionEC4
-  ).toMatchInlineSnapshot(`true`)
+  ).toEqual(true)
 })
 
 // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
@@ -266,7 +266,7 @@ test('for loop `let` variables are copied into the block scope', () => {
     test();
     `,
     optionEC4
-  ).toMatchInlineSnapshot(`1`)
+  ).toEqual(1)
 })
 
 test('streams and its pre-defined/pre-built functions are working as intended', () => {
@@ -286,7 +286,7 @@ test('streams and its pre-defined/pre-built functions are working as intended', 
     list_ref(eval_stream(make_alternating_stream(enum_stream(1, 9)), 9), 8);
     `,
     optionEC4
-  ).toMatchInlineSnapshot(`9`)
+  ).toEqual(9)
 })
 
 test('streams can be created and functions with no return statements are still evaluated properly', () => {
@@ -298,7 +298,7 @@ test('streams can be created and functions with no return statements are still e
     stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;
     `,
     optionEC4
-  ).toMatchInlineSnapshot(`false`)
+  ).toEqual(false)
 })
 
 test('Conditional statements are value producing always', () => {
@@ -325,7 +325,7 @@ test('Conditional statements are value producing always', () => {
     fact(5);
     `,
     optionEC3
-  ).toMatchInlineSnapshot(`120`)
+  ).toEqual(120)
 })
 
 test('Nullary functions properly restore environment 1', () => {
@@ -341,7 +341,7 @@ test('Nullary functions properly restore environment 1', () => {
     h(100);
     `,
     optionEC3
-  ).toMatchInlineSnapshot(`0`)
+  ).toEqual(0)
 })
 
 test('Nullary functions properly restore environment 2', () => {
@@ -355,17 +355,18 @@ test('Nullary functions properly restore environment 2', () => {
     a;
     `,
     optionEC3
-  ).toMatchInlineSnapshot(`1`)
+  ).toEqual(1)
 })
 
-test('Array literals work as expected', () => {
-  return expectFinishedResult(
+test('Array literals work as expected', async ({ expect }) => {
+  const { result: { value } } = await testSuccess(
     stripIndent`
     let c = [1, 2, 3];
     c;
     `,
     optionEC3
-  ).toMatchInlineSnapshot(`
+  )
+  expect(value).toMatchInlineSnapshot(`
     Array [
       1,
       2,
@@ -382,7 +383,7 @@ test('Array literals are unpacked in the correct order', () => {
     d;
     `,
     optionEC3
-  ).toMatchInlineSnapshot(`123`)
+  ).toEqual(123)
 })
 
 test('Breaks, continues and returns are detected properly inside loops', () => {
@@ -411,7 +412,7 @@ test('Breaks, continues and returns are detected properly inside loops', () => {
     f();
     `,
     optionEC3
-  ).toMatchInlineSnapshot(`3`)
+  ).toEqual(3)
 })
 
 test('Environment reset is inserted when only instructions are in control stack', () => {
@@ -420,7 +421,7 @@ test('Environment reset is inserted when only instructions are in control stack'
     const a = (v => v)(0);
     `,
     optionEC3
-  ).toMatchInlineSnapshot(`undefined`)
+  ).toEqual(undefined)
 })
 
 test('breaks, continues are properly detected in child blocks 1', () => {
@@ -445,7 +446,7 @@ test('breaks, continues are properly detected in child blocks 1', () => {
     i;
     `,
     optionEC3
-  ).toMatchInlineSnapshot(`2`)
+  ).toEqual(2)
 })
 
 test('breaks, continues are properly detected in child blocks 2', () => {
@@ -472,5 +473,5 @@ test('breaks, continues are properly detected in child blocks 2', () => {
     a;
     `,
     optionEC3
-  ).toMatchInlineSnapshot(`2`)
+  ).toEqual(2)
 })

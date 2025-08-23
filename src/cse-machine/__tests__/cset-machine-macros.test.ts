@@ -1,6 +1,6 @@
 import { test } from 'vitest'
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
 
 // CSET tests for Scheme Macros
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
@@ -14,11 +14,11 @@ test('definition of a macro', () => {
          ((lambda (var ...) body ...) expr ...))))
     `,
     optionECScm
-  ).toMatchInlineSnapshot(`undefined`)
+  ).toEqual(undefined)
 })
 
-test('use of a macro', () => {
-  return expectFinishedResult(
+test('use of a macro', async ({ expect }) => {
+  const { result: { value } } = await testSuccess(
     `
     (define-syntax my-let
       (syntax-rules ()
@@ -28,16 +28,18 @@ test('use of a macro', () => {
       (+ x y))
     `,
     optionECScm
-  ).toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 3n,
-            }
-          `)
+  )
+  
+  expect(value).toMatchInlineSnapshot(`
+    SchemeInteger {
+      "numberType": 1,
+      "value": 3n,
+    }
+  `)
 })
 
-test('use of a more complex macro (recursive)', () => {
-  return expectFinishedResult(
+test('use of a more complex macro (recursive)', async ({ expect }) => {
+  const { result: { value } } = await testSuccess(
     `
 (define-syntax define-match
     (syntax-rules ()
@@ -59,7 +61,9 @@ test('use of a more complex macro (recursive)', () => {
   (+ x y z)
     `,
     optionECScm
-  ).toMatchInlineSnapshot(`
+  )
+  
+  expect(value).toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
               "value": 6n,
@@ -78,5 +82,5 @@ test('failed usage of a macro (no matching pattern)', () => {
       (+ x y))
     `,
     optionECScm
-  ).toMatchInlineSnapshot(`"Error: No matching transformer found for macro my-let"`)
+  ).toEqual("Error: No matching transformer found for macro my-let")
 })

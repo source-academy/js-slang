@@ -1,9 +1,15 @@
+import { expect } from 'vitest'
 import { Chapter, type CustomBuiltIns } from '../../types'
 import { parseError, runInContext } from '../..'
 import createContext, { defineBuiltin } from '../../createContext'
 import { assertIsFinished, processTestOptions } from './misc'
 import { mockContext } from './mocks'
 import type { TestContext, TestOptions, TestResults } from './types'
+
+type RemoveMatcher<T extends object> = Omit<T, 'toMatchInlineSnapshot'>
+function removeMatcher<T extends object>(obj: T): RemoveMatcher<T> {
+  return obj
+}
 
 export function createTestContext(rawOptions: TestOptions = {}): TestContext {
   const { chapter, variant, testBuiltins, languageOptions }: Exclude<TestOptions, Chapter> =
@@ -97,7 +103,7 @@ export async function testFailure(code: string, options: TestOptions = {}) {
  * as if using `expect()`
  */
 export function expectFinishedResult(code: string, options: TestOptions = {}) {
-  return expect(
+  return removeMatcher(expect(
     testInContext(code, options).then(({ result, context }) => {
       if (result.status === 'error') {
         const errStr = parseError(context.errors)
@@ -106,7 +112,7 @@ export function expectFinishedResult(code: string, options: TestOptions = {}) {
       assertIsFinished(result)
       return result.value
     })
-  ).resolves
+  ).resolves)
 }
 
 /**
@@ -114,12 +120,12 @@ export function expectFinishedResult(code: string, options: TestOptions = {}) {
  * `expect`
  */
 export function expectParsedError(code: string, options: TestOptions = {}, verbose?: boolean) {
-  return expect(
+  return removeMatcher(expect(
     testInContext(code, options).then(({ result, context }) => {
       expect(result.status).toEqual('error')
       return parseError(context.errors, verbose)
     })
-  ).resolves
+  ).resolves)
 }
 
 export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
@@ -162,6 +168,6 @@ export async function snapshotFailure(code: string, options: TestOptions = {}, n
 }
 
 export function expectDisplayResult(code: string, options: TestOptions = {}) {
-  return expect(testSuccess(code, options).then(({ context: { displayResult } }) => displayResult))
-    .resolves
+  return removeMatcher(expect(testSuccess(code, options).then(({ context: { displayResult } }) => displayResult))
+    .resolves)
 }

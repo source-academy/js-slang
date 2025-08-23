@@ -16,7 +16,7 @@ test('standalone block statements', () => {
     }
     test();
   `
-  ).toMatchInlineSnapshot(`true`)
+  ).toEqual(true)
 })
 
 // This is bad practice. Don't do this!
@@ -34,7 +34,7 @@ test('const uses block scoping instead of function scoping', () => {
     }
     test();
   `
-  ).toMatchInlineSnapshot(`true`)
+  ).toEqual(true)
 })
 
 // This is bad practice. Don't do this!
@@ -52,8 +52,8 @@ test('let uses block scoping instead of function scoping', () => {
     }
     test();
   `,
-    { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+    Chapter.SOURCE_3
+  ).toEqual(true)
 })
 
 // This is bad practice. Don't do this!
@@ -68,8 +68,8 @@ test('for loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`true`)
+    Chapter.SOURCE_3
+  ).toEqual(true)
 })
 
 // This is bad practice. Don't do this!
@@ -86,8 +86,8 @@ test('while loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    { chapter: Chapter.SOURCE_4 }
-  ).toMatchInlineSnapshot(`true`)
+    Chapter.SOURCE_4
+  ).toEqual(true)
 })
 
 // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
@@ -104,8 +104,8 @@ test('for loop `let` variables are copied into the block scope', () => {
   }
   test();
   `,
-    { chapter: Chapter.SOURCE_4 }
-  ).toMatchInlineSnapshot(`1`)
+    Chapter.SOURCE_4
+  ).toEqual(1)
 })
 
 test('Cannot overwrite loop variables within a block', () => {
@@ -120,10 +120,8 @@ test('Cannot overwrite loop variables within a block', () => {
   }
   test();
   `,
-    { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(
-    `"Line 4: Assignment to a for loop variable in the for loop is not allowed."`
-  )
+    Chapter.SOURCE_3
+  ).toEqual("Line 4: Assignment to a for loop variable in the for loop is not allowed.")
 })
 
 test('No hoisting of functions. Only the name is hoisted like let and const', () => {
@@ -133,7 +131,7 @@ test('No hoisting of functions. Only the name is hoisted like let and const', ()
         return 1;
       }
       v;
-    `).toMatchInlineSnapshot(`"Line 1: ReferenceError: Cannot access 'f' before initialization"`)
+    `).toEqual("Line 1: ReferenceError: Cannot access 'f' before initialization")
 }, 30000)
 
 test('Error when accessing temporal dead zone', () => {
@@ -144,7 +142,7 @@ test('Error when accessing temporal dead zone', () => {
       const a = 5;
     }
     f();
-    `).toMatchInlineSnapshot(`"Line 3: ReferenceError: Cannot access 'a' before initialization"`)
+    `).toEqual("Line 3: ReferenceError: Cannot access 'a' before initialization")
 }, 30000)
 
 // tslint:disable-next-line:max-line-length
@@ -155,7 +153,7 @@ test('In a block, every going-to-be-defined variable in the block cannot be acce
         a + a;
         const a = 10;
       }
-    `).toMatchInlineSnapshot(`"Line 3: ReferenceError: Cannot access 'a' before initialization"`)
+    `).toEqual("Line 3: ReferenceError: Cannot access 'a' before initialization")
 }, 30000)
 
 test('Shadowed variables may not be assigned to until declared in the current scope', () => {
@@ -169,8 +167,8 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   }
   test();
   `,
-    { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(
-    `"Line 3: ReferenceError: Cannot access 'variable' before initialization"`
+    Chapter.SOURCE_3
+  ).toEqual(
+    "Line 3: ReferenceError: Cannot access 'variable' before initialization"
   )
 })

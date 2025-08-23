@@ -1,6 +1,6 @@
 import { test } from 'vitest'
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
 import { stripIndent } from '../../utils/formatters'
 // Continuation tests for Source
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
@@ -11,7 +11,7 @@ test('call_cc works with normal functions', () => {
       1 + 2 + call_cc((cont) => 3) + 4;
     `,
     optionEC4
-  ).toMatchInlineSnapshot(`10`)
+  ).toEqual(10)
 })
 
 test('call_cc can be used to return early', () => {
@@ -26,7 +26,7 @@ test('call_cc can be used to return early', () => {
         x;
         `,
     optionEC4
-  ).toMatchInlineSnapshot(`2`)
+  ).toEqual(2)
 })
 
 test('call_cc throws error when given no arguments', () => {
@@ -35,7 +35,7 @@ test('call_cc throws error when given no arguments', () => {
         1 + 2 + call_cc() + 4;
         `,
     optionEC4
-  ).toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 0."`)
+  ).toEqual("Line 1: Expected 1 arguments, but got 0.")
 })
 
 test('call_cc throws error when given > 1 arguments', () => {
@@ -45,11 +45,11 @@ test('call_cc throws error when given > 1 arguments', () => {
         1 + 2 + call_cc(f,f) + 4;
         `,
     optionEC4
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
+  ).toEqual("Line 2: Expected 1 arguments, but got 2.")
 })
 
-test('continuations can be stored as a value', () => {
-  return expectFinishedResult(
+test('continuations can be stored as a value', async ({ expect }) => {
+  const { result: { value } } = await testSuccess(
     stripIndent`
         let a = 0;
         call_cc((cont) => {
@@ -58,5 +58,6 @@ test('continuations can be stored as a value', () => {
         a;
         `,
     optionEC4
-  ).toMatchInlineSnapshot(`[Function]`)
+  )
+  expect(value).toMatchInlineSnapshot('[Function]')
 })

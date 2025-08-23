@@ -613,13 +613,13 @@ test.each([
   ]
 ] as [Chapter, string, boolean, Value][])(
   'Builtins work as expected %#',
-  (chapter: Chapter, snippet: string, passing: boolean, returnValue: Value) => {
+  async (chapter, snippet, passing, returnValue) => {
     if (passing) {
-      return expectFinishedResult(stripIndent(snippet), {
+      await expectFinishedResult(stripIndent(snippet), {
         chapter
       }).toEqual(returnValue)
     } else {
-      return snapshotFailure(stripIndent(snippet), { chapter })
+      await snapshotFailure(stripIndent(snippet), { chapter })
     }
   }
 )

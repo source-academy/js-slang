@@ -1,5 +1,6 @@
 // @ts-check
 
+import vitestPlugin from '@vitest/eslint-plugin'
 import tseslint from 'typescript-eslint'
 import globals from 'globals'
 import * as importPlugin from 'eslint-plugin-import'
@@ -64,6 +65,27 @@ export default tseslint.config(
       '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/unbound-method': 'off',
       'prefer-rest-params': 'off'
+    }
+  },
+  {
+    extends: [vitestPlugin.configs.recommended],
+    files: ['**/__tests__/**/*.test.ts'],
+    plugins: {
+      vitest: vitestPlugin
+    },
+    rules: {
+      'no-empty-pattern': 'off',
+      'vitest/expect-expect': ['error', {
+        assertFunctionNames: [
+          'assert*',
+          'caseTester',
+          'expect*',
+          'testFailure',
+          'testSuccess'
+        ],
+      }],
+      'vitest/valid-describe-callback': 'off',
+      'vitest/valid-title': 'off',
     }
   },
   {

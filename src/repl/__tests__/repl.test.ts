@@ -10,7 +10,7 @@ const readFileMocker = vi.spyOn(fs, 'readFile')
 
 function mockReadFiles(files: SourceFiles) {
   readFileMocker.mockImplementation((fileName: string) => {
-    if (fileName in files) return Promise.resolve(files[fileName])
+    if (fileName in files) return Promise.resolve(files[fileName]!)
     return Promise.reject({ code: 'ENOENT' })
   })
 }
@@ -156,7 +156,7 @@ describe('Test repl command', () => {
       })
     }
 
-    const runRepl = async (args: string[], expected: [string, string][]) => {
+    const expectRepl = async (args: string[], expected: [string, string][]) => {
       const replPromise = mockReplStart()
       await runCommand(...args)
       const func = await replPromise
@@ -168,7 +168,7 @@ describe('Test repl command', () => {
     }
 
     test('Running without file name', () =>
-      runRepl(
+      expectRepl(
         [],
         [
           ['const x = 1 + 1;', 'undefined'],
@@ -177,7 +177,7 @@ describe('Test repl command', () => {
       ))
 
     test('REPL is able to recover from errors', () =>
-      runRepl(
+      expectRepl(
         [],
         [
           ['const x = 1 + 1;', 'undefined'],
@@ -201,7 +201,7 @@ describe('Test repl command', () => {
         `
       })
 
-      await runRepl(
+      await expectRepl(
         ['a.js', '-r'],
         [
           ['const x = 1 + 1;', 'undefined'],
@@ -217,7 +217,7 @@ describe('Test repl command', () => {
     })
 
     test('REPL handles Source import statements ok', () =>
-      runRepl(
+      expectRepl(
         [],
         [
           ['const foo = () => "bar";', 'undefined'],
@@ -234,7 +234,7 @@ describe('Test repl command', () => {
         `
       })
 
-      await runRepl(
+      await expectRepl(
         [],
         [
           ['import { a } from "./a.js";', 'undefined'],

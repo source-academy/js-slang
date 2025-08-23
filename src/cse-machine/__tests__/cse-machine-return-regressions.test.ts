@@ -24,7 +24,7 @@ test('Calling unreachable results in error', () => {
     f();
   `,
     optionEC
-  ).toMatchInlineSnapshot(`"Line 3: Expected number on right hand side of operation, got boolean."`)
+  ).toEqual("Line 3: Expected number on right hand side of operation, got boolean.")
 })
 
 // This is bad practice. Don't do this!
@@ -43,7 +43,7 @@ test('Bare early returns work', () => {
     f();
   `,
     optionEC
-  ).toMatchInlineSnapshot(`1`)
+  ).toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -65,7 +65,7 @@ test('Recursive call early returns work', () => {
     f();
   `,
     optionEC
-  ).toMatchInlineSnapshot(`3`)
+  ).toEqual(3)
 })
 
 // This is bad practice. Don't do this!
@@ -87,7 +87,7 @@ test('Tail call early returns work', () => {
     f();
   `,
     optionEC
-  ).toMatchInlineSnapshot(`1`)
+  ).toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -109,7 +109,7 @@ test('Bare early returns in if statements work', () => {
     f();
   `,
     optionEC
-  ).toMatchInlineSnapshot(`1`)
+  ).toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -134,7 +134,7 @@ test('Recursive call early returns in if statements work', () => {
     f();
   `,
     optionEC
-  ).toMatchInlineSnapshot(`3`)
+  ).toEqual(3)
 })
 
 // This is bad practice. Don't do this!
@@ -159,7 +159,7 @@ test('Tail call early returns in if statements work', () => {
     f();
   `,
     optionEC
-  ).toMatchInlineSnapshot(`1`)
+  ).toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -181,7 +181,7 @@ test('Bare early returns in while loops work', () => {
     f();
   `,
     optionEC3
-  ).toMatchInlineSnapshot(`1`)
+  ).toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -206,7 +206,7 @@ test('Recursive call early returns in while loops work', () => {
     f();
   `,
     optionEC3
-  ).toMatchInlineSnapshot(`3`)
+  ).toEqual(3)
 })
 
 // This is bad practice. Don't do this!
@@ -231,7 +231,7 @@ test('Tail call early returns in while loops work', () => {
     f();
   `,
     optionEC3
-  ).toMatchInlineSnapshot(`1`)
+  ).toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -253,7 +253,7 @@ test('Bare early returns in for loops work', () => {
     f();
   `,
     optionEC3
-  ).toMatchInlineSnapshot(`1`)
+  ).toEqual(1)
 })
 
 // This is bad practice. Don't do this!
@@ -275,7 +275,7 @@ test('Recursive call early returns in for loops work', () => {
     f();
   `,
     optionEC3
-  ).toMatchInlineSnapshot(`3`)
+  ).toEqual(3)
 })
 
 // This is bad practice. Don't do this!
@@ -300,5 +300,5 @@ test('Tail call early returns in for loops work', () => {
     f();
   `,
     optionEC3
-  ).toMatchInlineSnapshot(`1`)
+  ).toEqual(1)
 })

@@ -45,28 +45,21 @@ test('Single boolean self-evaluates to itself', () => {
   return expectFinishedResult('true;').toBe(true)
 })
 
-test('Arrow function definition returns itself', () => {
-  return expectFinishedResult('() => 42;').toMatchInlineSnapshot(`[Function]`)
+test('Arrow function definition returns itself', async () => {
+  const { result: { value } } = await testSuccess('() => 42;')
+  return expect(value).toMatchInlineSnapshot(`[Function]`)
 })
-
-test('Builtins hide their implementation when stringify', () => {
-  return expectFinishedResult('stringify(pair);', { chapter: Chapter.SOURCE_2 })
-    .toMatchInlineSnapshot(`
-            "function pair(left, right) {
-            	[implementation hidden]
-            }"
-          `)
-})
-
-test('Builtins hide their implementation when toString', () => {
-  return expectFinishedResult('toString(pair);', {
+test('Builtins hide their implementation when toString', async () => {
+  const { result: { value } } = await testSuccess('toString(pair);', {
     chapter: Chapter.SOURCE_2,
     testBuiltins: { toString }
-  }).toMatchInlineSnapshot(`
-            "function pair(left, right) {
-            	[implementation hidden]
-            }"
-          `)
+  })
+  
+  expect(value).toMatchInlineSnapshot(`
+    "function pair(left, right) {
+      [implementation hidden]
+    }"
+  `)
 })
 
 test('functions toString (mostly) matches up with JS', async () => {
@@ -94,30 +87,27 @@ test('Factorial arrow function', () => {
 })
 
 test('parseError for missing semicolon', () => {
-  return expectParsedError('42').toMatchInlineSnapshot(
-    `"Line 1: Missing semicolon at the end of statement"`
-  )
+  return expectParsedError('42').toEqual("Line 1: Missing semicolon at the end of statement")
 })
 
 test('parseError for template literals with expressions', () => {
-  return expectParsedError('`${1}`;').toMatchInlineSnapshot(
-    `"Line 1: Expressions are not allowed in template literals (\`multiline strings\`)"`
+  return expectParsedError('`${1}`;').toEqual(
+    "Line 1: Expressions are not allowed in template literals (\`multiline strings\`)"
   )
 })
 
-/* Skip the test for now
-test('Simple arrow function infinite recursion represents CallExpression well', () => {
-  return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toMatchInlineSnapshot(
-    `"Line 1: RangeError: Maximum call stack size exceeded"`
+// Skip the test for now
+test.skip('Simple arrow function infinite recursion represents CallExpression well', () => {
+  return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toEqual(
+    "Line 1: RangeError: Maximum call stack size exceeded"
   )
 }, 30000)
-*/
 
-test('Simple function infinite recursion represents CallExpression well', () => {
-  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toMatchInlineSnapshot(
-    `"RangeError: Maximum call stack size exceeded"`
+test('Simple function infinite recursion represents CallExpression well', { timeout: 30_000 },  () => {
+  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toEqual(
+    "RangeError: Maximum call stack size exceeded"
   )
-}, 30000)
+})
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
   return expectParsedError(
@@ -129,8 +119,8 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
     }
     test();
   `,
-    { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant."`)
+    Chapter.SOURCE_3
+  ).toEqual("Line 3: Cannot assign new value to constant constant.")
 })
 
 test('Assignment has value', () => {
@@ -141,7 +131,7 @@ test('Assignment has value', () => {
     b === 4 && a === 4;
   `,
 
-    { chapter: Chapter.SOURCE_3 }
+    Chapter.SOURCE_3
   ).toBe(true)
 })
 
@@ -153,7 +143,7 @@ test('Array assignment has value', () => {
     const b = arr[1] = arr[2] = 4;
     arr[0] === 1 && arr[1] === 4 && arr[2] === 4;
   `,
-    { chapter: Chapter.SOURCE_3 }
+    Chapter.SOURCE_3
   ).toBe(true)
 })
 
@@ -167,48 +157,48 @@ test('Can overwrite lets when assignment is allowed', () => {
     }
     test();
   `,
-    { chapter: Chapter.SOURCE_3 }
+    Chapter.SOURCE_3
   ).toBe(true)
 })
 
-test('Arrow function infinite recursion with list args represents CallExpression well', () => {
+test('Arrow function infinite recursion with list args represents CallExpression well', { timeout: 30_000 }, () => {
   return expectParsedError(
     stripIndent`
     const f = xs => append(f(xs), list());
     f(list(1, 2));
   `,
-    { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(
-    `"Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."`
+    Chapter.SOURCE_2
+  ).toEqual(
+    "Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."
   )
-}, 30000)
+} )
 
-test('Function infinite recursion with list args represents CallExpression well', () => {
+test('Function infinite recursion with list args represents CallExpression well', { timeout: 30_000 }, () => {
   return expectParsedError(
     stripIndent`
     function f(xs) { return append(f(xs), list()); }
     f(list(1, 2));
   `
-  ).toMatchInlineSnapshot(`"Line 1: Name append not declared."`)
-}, 30000)
+  ).toEqual("Line 1: Name append not declared.")
+})
 
-test('Arrow function infinite recursion with different args represents CallExpression well', () => {
+test('Arrow function infinite recursion with different args represents CallExpression well', { timeout: 30_000 }, () => {
   return expectParsedError(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
-  `).toMatchInlineSnapshot(
-    `"Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."`
+  `).toEqual(
+    "Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."
   )
-}, 30000)
+})
 
-test('Function infinite recursion with different args represents CallExpression well', () => {
+test('Function infinite recursion with different args represents CallExpression well', { timeout: 30_000 }, () => {
   return expectParsedError(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
-  `).toMatchInlineSnapshot(
-    `"Line 2: The function f has encountered an infinite loop. It has no base case."`
+  `).toEqual(
+    "Line 2: The function f has encountered an infinite loop. It has no base case."
   )
-}, 30000)
+})
 
 test('Functions passed into non-source functions remain equal', () => {
   return expectFinishedResult(
@@ -228,7 +218,7 @@ test('Accessing array with nonexistent index returns undefined', () => {
     const a = [];
     a[1];
   `,
-    { chapter: Chapter.SOURCE_4 }
+    Chapter.SOURCE_4
   ).toBe(undefined)
 })
 
@@ -238,7 +228,7 @@ test('Accessing object with nonexistent property returns undefined', () => {
     const o = {};
     o.nonexistent;
   `,
-    { chapter: Chapter.LIBRARY_PARSER }
+    Chapter.LIBRARY_PARSER
   ).toBe(undefined)
 })
 
@@ -249,7 +239,7 @@ test('Simple object assignment and retrieval', () => {
     o.a = 1;
     o.a;
   `,
-    { chapter: Chapter.LIBRARY_PARSER }
+    Chapter.LIBRARY_PARSER
   ).toBe(1)
 })
 
@@ -262,7 +252,7 @@ test('Deep object assignment and retrieval', () => {
     o.a.b.c = "string";
     o.a.b.c;
   `,
-    { chapter: Chapter.LIBRARY_PARSER }
+    Chapter.LIBRARY_PARSER
   ).toBe('string')
 })
 
@@ -271,7 +261,7 @@ test('Test apply_in_underlying_javascript', () => {
     stripIndent`
     apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
   `,
-    { chapter: Chapter.SOURCE_4 }
+    Chapter.SOURCE_4
   ).toBe(60)
 })
 
@@ -280,7 +270,7 @@ test('Test equal for primitives', () => {
     stripIndent`
     equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
   `,
-    { chapter: Chapter.SOURCE_2 }
+    Chapter.SOURCE_2
   ).toBe(true)
 })
 
@@ -289,7 +279,7 @@ test('Test equal for lists', () => {
     stripIndent`
     equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
   `,
-    { chapter: Chapter.SOURCE_2 }
+    Chapter.SOURCE_2
   ).toBe(true)
 })
 
@@ -298,7 +288,7 @@ test('Test equal for different lists', () => {
     stripIndent`
     !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
   `,
-    { chapter: Chapter.SOURCE_2 }
+    Chapter.SOURCE_2
   ).toBe(true)
 })
 
@@ -454,12 +444,12 @@ test('Rest parameters work', () => {
     rest(1, 2); // no error
     rest(1, 2, ...[3, 4, 5],  ...[6, 7], ...[]);
   `,
-    { chapter: Chapter.SOURCE_3 }
-  ).toMatchInlineSnapshot(`28`)
+    Chapter.SOURCE_3
+  ).toEqual(28)
 })
 
 test('Test context reuse', async () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const init = stripIndent`
   let i = 0;
   function f() {
@@ -515,7 +505,7 @@ function expectResultsToMatch(
 }
 
 test('Find variable declaration in global scope', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   let i = 0;
   function f() {
@@ -531,7 +521,7 @@ test('Find variable declaration in global scope', () => {
 })
 
 test('Find variable declaration in global scope from occurrence in function scope', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   let i = 0;
   function f() {
@@ -547,7 +537,7 @@ test('Find variable declaration in global scope from occurrence in function scop
 })
 
 test('Find variable declaration in function scope from occurrence in function scope', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   let i = 0;
   function f() {
@@ -563,7 +553,7 @@ test('Find variable declaration in function scope from occurrence in function sc
 })
 
 test('Find no declaration from occurrence when there is no declaration (syntax error)', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   function f() {
     let i = 2;
@@ -578,7 +568,7 @@ test('Find no declaration from occurrence when there is no declaration (syntax e
 })
 
 test('Find no declaration from selection that does not refer to a declaration', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   let i = 0;
   function f() {
@@ -594,7 +584,7 @@ test('Find no declaration from selection that does not refer to a declaration', 
 })
 
 test('Find function declaration', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   let i = 0;
   function foo() {
@@ -610,7 +600,7 @@ test('Find function declaration', () => {
 })
 
 test('Find function param declaration', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   function timesTwo(num) {
     return num * 2;
@@ -624,7 +614,7 @@ test('Find function param declaration', () => {
 })
 
 test('Find variable declaration with same name as function param declaration', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   function timesTwo(num) {
     return num * 2;
@@ -639,7 +629,7 @@ test('Find variable declaration with same name as function param declaration', (
 })
 
 test('Find arrow function declaration', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   let i = 0;
   const foo = () => {
@@ -655,7 +645,7 @@ test('Find arrow function declaration', () => {
 })
 
 test('Find arrow function param declaration', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   const timesTwo = (num) => {
     return num * 2;
@@ -669,7 +659,7 @@ test('Find arrow function param declaration', () => {
 })
 
 test('Find variable declaration with same name as arrow function param declaration', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   const timesTwo = (num) => {
     return num * 2;
@@ -684,7 +674,7 @@ test('Find variable declaration with same name as arrow function param declarati
 })
 
 test('Find declaration in init of for loop', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   let x = 1;
   for (let i = 1; i <= 2; i++) {
@@ -699,7 +689,7 @@ test('Find declaration in init of for loop', () => {
 })
 
 test('Find variable declaration with same name as init of for loop', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   let x = 1;
   for (let i = 1; i <= 2; i++) {
@@ -715,7 +705,7 @@ test('Find variable declaration with same name as init of for loop', () => {
 })
 
 test('Find variable declaration in block statement', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   {
     let x = 1;
@@ -730,7 +720,7 @@ test('Find variable declaration in block statement', () => {
   expect(actual).toMatchSnapshot()
 })
 test('Find variable declaration of same name as variable declaration in block statement', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   {
     let x = 1;
@@ -746,7 +736,7 @@ test('Find variable declaration of same name as variable declaration in block st
 })
 
 test('Find declaration of of variable in update statement of a for loop', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = stripIndent`
   for (let x = 10; x < 12; ++x) {
       display(x);
@@ -760,7 +750,7 @@ test('Find declaration of of variable in update statement of a for loop', () => 
 })
 
 test('Find scope of a variable declaration', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = `{
     const x = 1;
     {
@@ -789,7 +779,7 @@ test('Find scope of a variable declaration', () => {
 })
 
 test('Find scope of a nested variable declaration', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = `{
     const x = 1;
     {
@@ -815,7 +805,7 @@ test('Find scope of a nested variable declaration', () => {
 })
 
 test('Find scope of a function parameter', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = `{
     const x = 1;
     {
@@ -841,7 +831,7 @@ test('Find scope of a function parameter', () => {
 })
 
 test('Find scope of a function declaration', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = `{
     const x = 1;
     {
@@ -867,7 +857,7 @@ test('Find scope of a function declaration', () => {
 })
 
 test('Find scope of a variable declaration with more nesting', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = `{
     const x = 1;
     {
@@ -903,7 +893,7 @@ test('Find scope of a variable declaration with more nesting', () => {
 })
 
 test('Find scope of a variable declaration with multiple blocks', () => {
-  const context = createTestContext({ chapter: Chapter.SOURCE_4 })
+  const context = createTestContext(Chapter.SOURCE_4)
   const code = `const x = 1;
     {
         const x = 2;

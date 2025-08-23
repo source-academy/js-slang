@@ -5,7 +5,6 @@ import type { Runner } from '../types'
 import { runCodeInSource } from '..'
 import { mockContext } from '../../utils/testing/mocks'
 import { getChapterName, objectKeys, objectValues } from '../../utils/misc'
-import { asMockedFunc } from '../../utils/testing/misc'
 import { parseError } from '../..'
 import * as validator from '../../validator/validator'
 
@@ -131,7 +130,7 @@ type TestObject = {
 
 function expectCalls(count: number, expected: RunnerTypes) {
   const unexpectedRunner = objectKeys(runners).find(runner => {
-    const { calls } = asMockedFunc(runners[runner]).mock
+    const { calls } = vi.mocked(runners[runner]).mock
     return calls.length > 0
   })
 
@@ -142,10 +141,10 @@ function expectCalls(count: number, expected: RunnerTypes) {
       )
     case expected: {
       expect(runners[expected]).toHaveBeenCalledTimes(count)
-      return asMockedFunc(runners[expected]).mock.calls
+      return vi.mocked(runners[expected]).mock.calls
     }
     default: {
-      const callCount = asMockedFunc(runners[unexpectedRunner]).mock.calls.length
+      const callCount = vi.mocked(runners[unexpectedRunner]).mock.calls.length
       throw new Error(
         `Expected ${expected} to be called ${count} times, but ${unexpectedRunner} was called ${callCount} times`
       )
@@ -153,7 +152,7 @@ function expectCalls(count: number, expected: RunnerTypes) {
   }
 }
 
-async function testCase({
+async function caseTester({
   code,
   chapter,
   variant,
@@ -234,7 +233,7 @@ function testCases(desc: string, cases: TestCase[]) {
 
         return [desc, { code, chapter, variant, ...tc }]
       })
-    )('%s', async (_, to) => testCase(to))
+    )('%s', async (_, to) => caseTester(to))
   )
 }
 
@@ -317,7 +316,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
   )
 
   test('if optionMethod is specified, verbose errors is ignored', () =>
-    testCase({
+    caseTester({
       code: '"enable verbose"; 0;',
       optionMethod: 'native',
       chapter: Chapter.SOURCE_4,
@@ -337,7 +336,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
   // })))
 
   test('if optionMethod is specified, debubger statements are ignored', () =>
-    testCase({
+    caseTester({
       code: 'debugger; 0;',
       optionMethod: 'native',
       chapter: Chapter.SOURCE_4,
@@ -348,7 +347,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
     }))
 
   test('if contextMethod is specified, verbose errors is ignored', () =>
-    testCase({
+    caseTester({
       code: '"enable verbose"; 0;',
       contextMethod: 'native',
       chapter: Chapter.SOURCE_4,
@@ -359,7 +358,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
     }))
 
   test('if contextMethod is specified, debugger statements are ignored', () =>
-    testCase({
+    caseTester({
       code: 'debugger; 0;',
       contextMethod: 'native',
       chapter: Chapter.SOURCE_4,
@@ -370,7 +369,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
     }))
 
   test('optionMethod takes precedence over contextMethod', () =>
-    testCase({
+    caseTester({
       code: '0;',
       contextMethod: 'native',
       optionMethod: 'cse-machine',
@@ -382,7 +381,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
     }))
 
   test('debugger statements require cse-machine', () =>
-    testCase({
+    caseTester({
       code: 'debugger; 0;',
       chapter: Chapter.SOURCE_4,
       variant: Variant.DEFAULT,
