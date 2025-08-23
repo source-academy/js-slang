@@ -8,7 +8,7 @@ import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
 
 import * as parser from '../../../parser/parser'
-import { assertNodeType, assertTrue } from '../../../utils/testing/misc'
+import { assertNodeType, assertTruthy } from '../../../utils/testing/misc'
 
 vi.spyOn(parser, 'parse')
 
@@ -116,7 +116,7 @@ test('Linker does tree-shaking', async () => {
   )
 
   expect(errors.length).toEqual(0)
-  assertTrue(result.ok)
+  assertTruthy(result.ok)
   // /a.js doesn't import /b.js, so it should not be parsed
   checkCallsToParser(['/a.js'], ['/b.js'])
   expect(Object.keys(result.programs)).not.toContain('/b.js')
@@ -134,7 +134,7 @@ test('Linker updates the source paths of Import Declaration nodes', async () => 
     '/dir1/c.js'
   )
 
-  assertTrue(result.ok)
+  assertTruthy(result.ok)
   const [bNode] = result.programs['/b.js'].body
   assertNodeType('ImportDeclaration', bNode)
   expect(bNode.source.value).toEqual('/dir0/a.js')
@@ -153,8 +153,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(result.ok)
-    assertTrue(!result.verboseErrors)
+    assertTruthy(result.ok)
+    assertTruthy(!result.verboseErrors)
   })
 
   test('Verbose errors enables normally', async () => {
@@ -165,8 +165,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(result.ok)
-    assertTrue(result.verboseErrors)
+    assertTruthy(result.ok)
+    assertTruthy(result.verboseErrors)
   })
 
   test('Verbose errors does not enable when it is not the entrypoint', async () => {
@@ -181,8 +181,8 @@ describe('Test determining verbose errors', () => {
       '/b.js'
     )
 
-    assertTrue(result.ok)
-    assertTrue(!result.verboseErrors)
+    assertTruthy(result.ok)
+    assertTruthy(!result.verboseErrors)
   })
 
   test('Verbose errors does not enable when it is not the first statement', async () => {
@@ -196,8 +196,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(result.ok)
-    assertTrue(!result.verboseErrors)
+    assertTruthy(result.ok)
+    assertTruthy(!result.verboseErrors)
   })
 
   test('Verbose errors does not enable when it is an unknown entrypoint', async () => {
@@ -211,8 +211,8 @@ describe('Test determining verbose errors', () => {
       '/d.js' as any
     )
 
-    assertTrue(!result.ok)
-    assertTrue(!result.verboseErrors)
+    assertTruthy(!result.ok)
+    assertTruthy(!result.verboseErrors)
   })
 
   test('Verbose errors enables even if other files have parse errors', async () => {
@@ -227,8 +227,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(!result.ok)
-    assertTrue(result.verboseErrors)
+    assertTruthy(!result.ok)
+    assertTruthy(result.verboseErrors)
     expect(errors.length).toEqual(1)
     expect(errors[0]).toBeInstanceOf(MissingSemicolonError)
   })
@@ -244,8 +244,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(!result.ok)
-    assertTrue(result.verboseErrors)
+    assertTruthy(!result.ok)
+    assertTruthy(result.verboseErrors)
     expect(errors.length).toEqual(1)
     expect(errors[0]).toBeInstanceOf(MissingSemicolonError)
   })
@@ -265,8 +265,8 @@ describe('Test determining verbose errors', () => {
       '/a.js'
     )
 
-    assertTrue(!result.ok)
-    assertTrue(result.verboseErrors)
+    assertTruthy(!result.ok)
+    assertTruthy(result.verboseErrors)
     expect(errors.length).toEqual(1)
     expect(errors[0]).toBeInstanceOf(ModuleNotFoundError)
   })
