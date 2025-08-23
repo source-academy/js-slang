@@ -2,7 +2,7 @@ import { expect, test } from 'vitest'
 import { createGlobalEnvironment, EnvTree, EnvTreeNode } from '../createContext'
 import { pushEnvironment } from '../cse-machine/utils'
 import { mockContext, mockEnvironment } from '../utils/testing/mocks'
-import { Chapter } from '../types'
+import { Chapter } from '../langs'
 
 test('EnvTree root should be null upon instantiation', () => {
   const envTree = new EnvTree()

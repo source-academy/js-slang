@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import runners, { type RunnerTypes } from '../sourceRunner'
-import { Chapter, type ExecutionMethod, Variant } from '../../types'
+import type { ExecutionMethod } from '../../types'
+import { Chapter, Variant } from '../../langs'
 import type { Runner } from '../types'
 import { runCodeInSource } from '..'
 import { mockContext } from '../../utils/testing/mocks'
@@ -17,19 +18,22 @@ vi.mock(import('../sourceRunner'), async importOriginal => {
   const { default: actualRunners } = await importOriginal()
 
   return {
-    default: Object.keys(actualRunners).reduce((res, key) => {
-      const mockRunner: Runner = (_, context) =>
-        Promise.resolve({
-          status: 'finished',
-          value: '',
-          context
-        })
+    default: Object.keys(actualRunners).reduce(
+      (res, key) => {
+        const mockRunner: Runner = (_, context) =>
+          Promise.resolve({
+            status: 'finished',
+            value: '',
+            context
+          })
 
-      return {
-        ...res,
-        [key]: vi.fn(mockRunner)
-      }
-    }, {} as typeof runners)
+        return {
+          ...res,
+          [key]: vi.fn(mockRunner)
+        }
+      },
+      {} as typeof runners
+    )
   }
 })
 

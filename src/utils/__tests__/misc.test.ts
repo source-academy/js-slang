@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { getChapterName, PromiseTimeoutError, timeoutPromise } from '../misc'
 
 describe(timeoutPromise, () => {
@@ -37,4 +37,5 @@ describe(getChapterName, () =>
     ['SOURCE_4', Chapter.SOURCE_4],
     ['PYTHON_1', Chapter.PYTHON_1],
     ['FULL_JS', Chapter.FULL_JS]
-  ])('%s', (expected, input) => expect(getChapterName(input)).toEqual(expected)))
+  ])('%s', (expected, input) => expect(getChapterName(input)).toEqual(expected))
+)

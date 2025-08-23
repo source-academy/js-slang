@@ -1,11 +1,12 @@
 import fs from 'fs/promises'
 import { resolve } from 'path'
-import { start } from 'repl'
+import replLib from 'repl'
 import { Command } from '@commander-js/extra-typings'
 
 import { createContext, type IOptions } from '..'
 import { setModulesStaticURL } from '../modules/loader'
-import { Chapter, type RecursivePartial, Variant } from '../types'
+import type { RecursivePartial } from '../types'
+import { Chapter, isSupportedLanguageCombo, Variant } from '../langs'
 import { objectValues } from '../utils/misc'
 import { runCodeInSource, sourceFilesRunner } from '../runner'
 import type { FileGetter } from '../modules/moduleTypes'
@@ -14,8 +15,7 @@ import {
   getChapterOption,
   getLanguageOption,
   getVariantOption,
-  handleResult,
-  validChapterVariant
+  handleResult
 } from './utils'
 
 export const getReplCommand = () =>
@@ -29,7 +29,7 @@ export const getReplCommand = () =>
     .option('--optionsFile <file>', 'Specify a JSON file to read options from')
     .argument('[filename]')
     .action(async (filename, { modulesBackend, optionsFile, repl, verbose, ...lang }) => {
-      if (!validChapterVariant(lang)) {
+      if (!isSupportedLanguageCombo(lang)) {
         console.log('Invalid language combination!')
         return
       }
@@ -74,7 +74,7 @@ export const getReplCommand = () =>
         if (!repl) return
       }
 
-      start(
+      replLib.start(
         // the object being passed as argument fits the interface ReplOptions in the repl module.
         {
           eval: (cmd, unusedContext, unusedFilename, callback) => {

@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest'
 import { mockContext } from '../../utils/testing/mocks'
-import { Chapter, type Context, type Environment } from '../../types'
+import type { Context, Environment } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { runCodeInSource } from '../../runner'
 import { createProgramEnvironment } from '../utils'

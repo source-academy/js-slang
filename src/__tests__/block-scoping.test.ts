@@ -1,5 +1,5 @@
 import { test } from 'vitest'
-import { Chapter } from '../types'
+import { Chapter } from '../langs'
 import { stripIndent } from '../utils/formatters'
 import { expectParsedError, expectFinishedResult } from '../utils/testing'
 
@@ -121,7 +121,7 @@ test('Cannot overwrite loop variables within a block', () => {
   test();
   `,
     Chapter.SOURCE_3
-  ).toEqual("Line 4: Assignment to a for loop variable in the for loop is not allowed.")
+  ).toEqual('Line 4: Assignment to a for loop variable in the for loop is not allowed.')
 })
 
 test('No hoisting of functions. Only the name is hoisted like let and const', () => {
@@ -168,7 +168,5 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   test();
   `,
     Chapter.SOURCE_3
-  ).toEqual(
-    "Line 3: ReferenceError: Cannot access 'variable' before initialization"
-  )
+  ).toEqual("Line 3: ReferenceError: Cannot access 'variable' before initialization")
 })

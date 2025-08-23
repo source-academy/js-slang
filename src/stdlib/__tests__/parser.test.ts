@@ -1,5 +1,5 @@
 import { test } from 'vitest'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { oneLine } from '../../utils/formatters'
 import { expectFinishedResult } from '../../utils/testing'
 

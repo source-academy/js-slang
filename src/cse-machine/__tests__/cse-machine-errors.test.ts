@@ -1,14 +1,20 @@
 import { expect, test } from 'vitest'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectFinishedResult, testFailure } from '../../utils/testing'
+import {
+  expectParsedError,
+  expectFinishedResult,
+  testFailure,
+  testSuccess
+} from '../../utils/testing'
 import { TestOptions } from '../../utils/testing/types'
 
-async function expectDifferentParsedErrors(code1: string, code2: string, options: TestOptions = {}) {
-  const [err1, err2] = await Promise.all([
-    testFailure(code1, options),
-    testFailure(code2, options)
-  ])
+async function expectDifferentParsedErrors(
+  code1: string,
+  code2: string,
+  options: TestOptions = {}
+) {
+  const [err1, err2] = await Promise.all([testFailure(code1, options), testFailure(code2, options)])
 
   expect(err1).not.toEqual(err2)
 }
@@ -28,7 +34,7 @@ const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL
 
 test('Undefined variable error is thrown', () => {
   return expectParsedError(undefinedVariable, optionEC).toEqual(
-    "Line 1: Name im_undefined not declared."
+    'Line 1: Name im_undefined not declared.'
   )
 })
 
@@ -52,7 +58,7 @@ if (false) {
 
 test('Undefined variables are caught even when unreached', () => {
   return expectParsedError(undefinedUnreachedVariable, optionEC).toEqual(
-    "Line 3: Name im_undefined not declared."
+    'Line 3: Name im_undefined not declared.'
   )
 })
 
@@ -60,10 +66,12 @@ test('Undefined variable error message differs from verbose version', () => {
   return expectDifferentParsedErrors(undefinedVariable, undefinedVariableVerbose, optionEC)
 })
 
-const arrayaccessnotarray = '1[3]';
+const arrayaccessnotarray = '1[3];'
 
 test('Array access should have an array as object', () => {
-  return expectParsedError(arrayaccessnotarray, optionEC4).toEqual("Line 1: Expected array, got number.")
+  return expectParsedError(arrayaccessnotarray, optionEC4).toEqual(
+    'Line 1: Expected array, got number.'
+  )
 })
 
 const spreadelementnotarray = stripIndent`
@@ -72,7 +80,9 @@ f(...1);
 `
 
 test('Spread should have array as the argument', () => {
-  return expectParsedError(spreadelementnotarray, optionEC4).toEqual("Line 2: Expected array, got number.")
+  return expectParsedError(spreadelementnotarray, optionEC4).toEqual(
+    'Line 2: Expected array, got number.'
+  )
 })
 
 const assignToBuiltin = stripIndent`
@@ -86,7 +96,7 @@ const assignToBuiltinVerbose = stripIndent`
 
 test('Error when assigning to builtin', () => {
   return expectParsedError(assignToBuiltin, optionEC3).toEqual(
-    "Line 1: Cannot assign new value to constant map."
+    'Line 1: Cannot assign new value to constant map.'
   )
 })
 
@@ -114,8 +124,9 @@ const assignToBuiltinVerbose1 = stripIndent`
 `
 
 test('Error when assigning to keyword', () => {
-  return expectParsedError(assignToBuiltin1, optionEC3)
-    .toEqual("Line 1: Cannot assign new value to constant undefined.")
+  return expectParsedError(assignToBuiltin1, optionEC3).toEqual(
+    'Line 1: Cannot assign new value to constant undefined.'
+  )
 })
 
 test('Error when assigning to keyword - verbose', async ({ expect }) => {
@@ -134,13 +145,15 @@ test('Assigning to keyword error message differs from verbose version', () => {
 })
 
 test('Nice errors when errors occur inside builtins 1', () => {
-  return expectParsedError(`parse_int("10");`, optionEC4)
-    .toEqual("Line 1: Expected 2 arguments, but got 1.")
+  return expectParsedError(`parse_int("10");`, optionEC4).toEqual(
+    'Line 1: Expected 2 arguments, but got 1.'
+  )
 })
 
 test('Nice errors when errors occur inside builtins 2', () => {
-  return expectParsedError(`parse("'");`, optionEC4)
-    .toEqual(`"Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)"`)
+  return expectParsedError(`parse("'");`, optionEC4).toEqual(
+    'Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)'
+  )
 })
 
 test("Builtins don't create additional errors when it's not their fault", () => {
@@ -152,10 +165,10 @@ test("Builtins don't create additional errors when it's not their fault", () => 
     map(f, list(1, 2));
   `,
     optionEC4
-  ).toEqual(`"Line 2: Name a not declared."`)
+  ).toEqual('Line 2: Name a not declared.')
 })
 
-test('Infinite recursion with a block bodied function', () => {
+test('Infinite recursion with a block bodied function', { timeout: 15_000 }, () => {
   return expectParsedError(
     stripIndent`
     function i(n) {
@@ -165,9 +178,9 @@ test('Infinite recursion with a block bodied function', () => {
   `,
     optionEC4
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
-}, 15000)
+})
 
-test('Infinite recursion with function calls in argument', () => {
+test('Infinite recursion with function calls in argument', { timeout: 20_000 }, () => {
   return expectParsedError(
     stripIndent`
     function i(n, redundant) {
@@ -182,9 +195,9 @@ test('Infinite recursion with function calls in argument', () => {
   ).toEqual(
     expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
   )
-}, 20000)
+})
 
-test('Infinite recursion of mutually recursive functions', () => {
+test('Infinite recursion of mutually recursive functions', { timeout: 15_000 }, () => {
   return expectParsedError(
     stripIndent`
     function f(n) {
@@ -214,7 +227,7 @@ const callingNonFunctionValueUndefinedVerbose = stripIndent`
 // should not be different when error passing is fixed
 test('Error when calling non function value undefined', () => {
   return expectParsedError(callingNonFunctionValueUndefined, optionEC).toEqual(
-    "Line 1: Calling non-function value undefined."
+    'Line 1: Calling non-function value undefined.'
   )
 })
 
@@ -245,11 +258,14 @@ const callingNonFunctionValueUndefinedArgsVerbose = stripIndent`
 `
 // should not be different when error passing is fixed
 test('Error when calling non function value undefined with arguments', () => {
-  return expectParsedError(callingNonFunctionValueUndefinedArgs, optionEC)
-    .toEqual("Line 1: Calling non-function value undefined.")
+  return expectParsedError(callingNonFunctionValueUndefinedArgs, optionEC).toEqual(
+    'Line 1: Calling non-function value undefined.'
+  )
 })
 
-test('Error when calling non function value undefined with arguments - verbose', async ({ expect }) => {
+test('Error when calling non function value undefined with arguments - verbose', async ({
+  expect
+}) => {
   const errStr = await testFailure(callingNonFunctionValueUndefinedArgsVerbose, optionEC)
   expect(errStr).toMatchInlineSnapshot(`
           "Line 2, Column 2: Calling non-function value undefined.
@@ -276,8 +292,9 @@ const callingNonFunctionValueNullVerbose = stripIndent`
 `
 
 test('Error when calling non function value null', () => {
-  return expectParsedError(callingNonFunctionValueNull, optionEC)
-    .toEqual("Line 1: null literals are not allowed.")
+  return expectParsedError(callingNonFunctionValueNull, optionEC).toEqual(
+    'Line 1: null literals are not allowed.'
+  )
 })
 
 test('Error when calling non function value null - verbose', async ({ expect }) => {
@@ -306,8 +323,9 @@ const callingNonFunctionValueTrueVerbose = stripIndent`
 `
 
 test('Error when calling non function value true', () => {
-  return expectParsedError(callingNonFunctionValueTrue, optionEC)
-    .toEqual("Line 1: Calling non-function value true.")
+  return expectParsedError(callingNonFunctionValueTrue, optionEC).toEqual(
+    'Line 1: Calling non-function value true.'
+  )
 })
 
 test('Error when calling non function value true - verbose', async ({ expect }) => {
@@ -337,8 +355,9 @@ const callingNonFunctionValue0Verbose = stripIndent`
 `
 
 test('Error when calling non function value 0', () => {
-  return expectParsedError(callingNonFunctionValue0, optionEC)
-    .toEqual("Line 1: Calling non-function value 0.")
+  return expectParsedError(callingNonFunctionValue0, optionEC).toEqual(
+    'Line 1: Calling non-function value 0.'
+  )
 })
 
 test('Error when calling non function value 0 - verbose', async ({ expect }) => {
@@ -369,7 +388,7 @@ const callingNonFunctionValueStringVerbose = stripIndent`
 
 test('Error when calling non function value "string"', () => {
   return expectParsedError(callingNonFunctionValueString, optionEC).toEqual(
-    "Line 1: Calling non-function value \"string\"."
+    'Line 1: Calling non-function value "string".'
   )
 })
 
@@ -401,7 +420,7 @@ const callingNonFunctionValueArrayVerbose = stripIndent`
 
 test('Error when calling non function value array', () => {
   return expectParsedError(callingNonFunctionValueArray, optionEC3).toEqual(
-    "Line 1: Calling non-function value [1]."
+    'Line 1: Calling non-function value [1].'
   )
 })
 
@@ -447,7 +466,7 @@ test('Error when calling function with too few arguments', () => {
     f();
   `,
     optionEC
-  ).toEqual("Line 4: Expected 1 arguments, but got 0.")
+  ).toEqual('Line 4: Expected 1 arguments, but got 0.')
 })
 
 test('Error when calling function with too few arguments - verbose', async ({ expect }) => {
@@ -461,7 +480,7 @@ test('Error when calling function with too few arguments - verbose', async ({ ex
     `,
     optionEC
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 5, Column 2: Expected 1 arguments, but got 0.
             Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
@@ -478,7 +497,7 @@ test('Error when calling function with too many arguments', () => {
     f(1, 2);
   `,
     optionEC
-  ).toEqual("Line 4: Expected 1 arguments, but got 2.")
+  ).toEqual('Line 4: Expected 1 arguments, but got 2.')
 })
 
 test('Error when calling function with too many arguments - verbose', async ({ expect }) => {
@@ -492,7 +511,7 @@ test('Error when calling function with too many arguments - verbose', async ({ e
     `,
     optionEC
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 5, Column 2: Expected 1 arguments, but got 2.
             Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
@@ -507,7 +526,7 @@ test('Error when calling arrow function with too few arguments', () => {
     f();
   `,
     optionEC
-  ).toEqual("Line 2: Expected 1 arguments, but got 0.")
+  ).toEqual('Line 2: Expected 1 arguments, but got 0.')
 })
 
 test('Error when calling arrow function with too few arguments - verbose', async ({ expect }) => {
@@ -533,7 +552,7 @@ test('Error when calling arrow function with too many arguments', () => {
     f(1, 2);
   `,
     optionEC
-  ).toEqual("Line 2: Expected 1 arguments, but got 2.")
+  ).toEqual('Line 2: Expected 1 arguments, but got 2.')
 })
 
 test('Error when calling arrow function with too many arguments - verbose', async ({ expect }) => {
@@ -559,10 +578,12 @@ test('Error when calling function from member expression with too many arguments
     f[0](1, 2);
   `,
     optionEC3
-  ).toEqual("Line 2: Expected 1 arguments, but got 2.")
+  ).toEqual('Line 2: Expected 1 arguments, but got 2.')
 })
 
-test('Error when calling function from member expression with too many arguments - verbose', async ({ expect }) => {
+test('Error when calling function from member expression with too many arguments - verbose', async ({
+  expect
+}) => {
   const errStr = await testFailure(
     stripIndent`
     "enable verbose";
@@ -603,7 +624,7 @@ test('Error when calling arrow function in tail call with too many arguments', (
     f(1);
   `,
     optionEC
-  ).toEqual("Line 2: Expected 0 arguments, but got 1.")
+  ).toEqual('Line 2: Expected 0 arguments, but got 1.')
 })
 
 test('Error when calling builtin function in with too many arguments', () => {
@@ -612,7 +633,7 @@ test('Error when calling builtin function in with too many arguments', () => {
     is_number(1, 2, 3);
   `,
     optionEC
-  ).toEqual("Line 1: Expected 1 arguments, but got 3.")
+  ).toEqual('Line 1: Expected 1 arguments, but got 3.')
 })
 
 test('Error when calling builtin function in with too few arguments', () => {
@@ -621,11 +642,13 @@ test('Error when calling builtin function in with too few arguments', () => {
     parse_int("");
   `,
     optionEC
-  ).toEqual("Line 1: Expected 2 arguments, but got 1.")
+  ).toEqual('Line 1: Expected 2 arguments, but got 1.')
 })
 
 test('No error when calling list function in with variable arguments', async ({ expect }) => {
-  const errStr = await testFailure(
+  const {
+    result: { value }
+  } = await testSuccess(
     stripIndent`
     list();
     list(1);
@@ -634,7 +657,7 @@ test('No error when calling list function in with variable arguments', async ({ 
   `,
     optionEC2
   )
-  expect(errStr).toMatchInlineSnapshot(`
+  expect(value).toMatchInlineSnapshot(`
             Array [
               1,
               Array [
@@ -677,7 +700,7 @@ test('No error when calling stringify function in with variable arguments', () =
     stringify(1, 2, 3);
   `,
     optionEC2
-  ).toEqual("1")
+  ).toEqual('1')
 })
 
 test('No error when calling math_max function in with variable arguments', () => {
@@ -708,7 +731,7 @@ test('Error with too many arguments passed to math_sin', () => {
     math_sin(7,8);
   `,
     optionEC3
-  ).toEqual("Line 1: Expected 1 arguments, but got 2.")
+  ).toEqual('Line 1: Expected 1 arguments, but got 2.')
 })
 
 test('Error with too few arguments passed to rest parameters', () => {
@@ -718,7 +741,7 @@ test('Error with too few arguments passed to rest parameters', () => {
     rest(1);
   `,
     optionEC3
-  ).toEqual("Line 2: Expected 2 or more arguments, but got 1.")
+  ).toEqual('Line 2: Expected 2 or more arguments, but got 1.')
 })
 
 test('Error when redeclaring constant', () => {
@@ -901,7 +924,7 @@ test('Type error with non boolean in if statement, error line at if statement, n
     } else {}
     `,
     optionEC1
-  ).toEqual("Line 1: Expected boolean as condition, got number.")
+  ).toEqual('Line 1: Expected boolean as condition, got number.')
 })
 
 test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnumber>', () => {
@@ -912,7 +935,7 @@ test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnu
     'string';
     `,
     optionEC1
-  ).toEqual("Line 1: Expected number on right hand side of operation, got string.")
+  ).toEqual('Line 1: Expected number on right hand side of operation, got string.')
 })
 
 test.skip('Cascading js errors work properly 1', () => {
@@ -932,7 +955,7 @@ test.skip('Cascading js errors work properly 1', () => {
     eval_stream(make_alternating_stream(enum_stream(1, 9)), 10);
     `,
     optionEC3
-  ).toEqual("Line 8: Error: head(xs) expects a pair as argument xs, but encountered null")
+  ).toEqual('Line 8: Error: head(xs) expects a pair as argument xs, but encountered null')
 })
 
 test('Cascading js errors work properly', () => {
@@ -945,7 +968,7 @@ test('Cascading js errors work properly', () => {
     h(null);
     `,
     optionEC2
-  ).toEqual("Line 2: Error: head(xs) expects a pair as argument xs, but encountered null")
+  ).toEqual('Line 2: Error: head(xs) expects a pair as argument xs, but encountered null')
 })
 
 test('Check that stack is at most 10k in size', { timeout: 10_000 }, () => {
@@ -977,21 +1000,25 @@ test('Cannot overwrite loop variables within a block', () => {
   test();
   `,
     optionEC3
-  ).toEqual("Line 4: Assignment to a for loop variable in the for loop is not allowed.")
+  ).toEqual('Line 4: Assignment to a for loop variable in the for loop is not allowed.')
 })
 
-test('No hoisting of functions. Only the name is hoisted like let and const', { timeout: 30_000 }, () => {
-  return expectParsedError(
-    stripIndent`
+test(
+  'No hoisting of functions. Only the name is hoisted like let and const',
+  { timeout: 30_000 },
+  () => {
+    return expectParsedError(
+      stripIndent`
       const v = f();
       function f() {
         return 1;
       }
       v;
     `,
-    optionEC
-  ).toEqual("Line 1: Name f declared later in current scope but not yet assigned")
-})
+      optionEC
+    ).toEqual('Line 1: Name f declared later in current scope but not yet assigned')
+  }
+)
 
 test('Error when accessing temporal dead zone', { timeout: 30_000 }, () => {
   return expectParsedError(
@@ -1004,23 +1031,25 @@ test('Error when accessing temporal dead zone', { timeout: 30_000 }, () => {
     f();
     `,
     optionEC
-  ).toEqual("Line 3: Name a declared later in current scope but not yet assigned")
-} )
+  ).toEqual('Line 3: Name a declared later in current scope but not yet assigned')
+})
 
-test('In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.',
+test(
+  'In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.',
   { timeout: 30_000 },
   () => {
-  return expectParsedError(
-    stripIndent`
+    return expectParsedError(
+      stripIndent`
       const a = 1;
       {
         a + a;
         const a = 10;
       }
     `,
-    optionEC
-  ).toEqual("Line 3: Name a declared later in current scope but not yet assigned")
-})
+      optionEC
+    ).toEqual('Line 3: Name a declared later in current scope but not yet assigned')
+  }
+)
 
 test('Shadowed variables may not be assigned to until declared in the current scope', () => {
   return expectParsedError(
@@ -1034,5 +1063,5 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   test();
   `,
     optionEC3
-  ).toEqual("Line 3: Name variable not declared.")
+  ).toEqual('Line 3: Name variable not declared.')
 })

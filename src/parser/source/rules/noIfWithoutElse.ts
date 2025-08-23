@@ -3,7 +3,7 @@ import type { IfStatement } from 'estree'
 import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 import { RuleError } from '../../errors'
-import { Chapter } from '../../../types'
+import { Chapter } from '../../../langs'
 
 export class NoIfWithoutElseError extends RuleError<IfStatement> {
   public explain() {

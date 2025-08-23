@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 import { mockClosure, mockContext } from '../../utils/testing/mocks'
 import { runCodeInSource } from '../../runner'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import Heap from '../heap'
 import type { EnvArray } from '../types'
@@ -79,7 +79,9 @@ test('Arrays and closures are correctly added to their respective heaps', ({ exp
   )
 })
 
-test('Arrays created from built-in functions are correctly added to their respective heaps', ({ expect }) => {
+test('Arrays created from built-in functions are correctly added to their respective heaps', ({
+  expect
+}) => {
   return expectEnvTreeFrom(
     stripIndent`
     pair(1, 2);
@@ -91,7 +93,9 @@ test('Arrays created from built-in functions are correctly added to their respec
   )
 })
 
-test('Variadic closures correctly add argument array to the function environment heap', ({ expect }) => {
+test('Variadic closures correctly add argument array to the function environment heap', ({
+  expect
+}) => {
   return expectEnvTreeFrom(
     stripIndent`
     const f = (...x) => x;

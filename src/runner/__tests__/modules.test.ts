@@ -1,5 +1,5 @@
 import { describe, test, vi } from 'vitest'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { getChapterName } from '../../utils/misc'
 import { expectFinishedResult } from '../../utils/testing'

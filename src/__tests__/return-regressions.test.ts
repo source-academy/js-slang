@@ -4,7 +4,7 @@
  */
 
 import { test } from 'vitest'
-import { Chapter } from '../types'
+import { Chapter } from '../langs'
 import { expectParsedError, expectFinishedResult } from '../utils/testing'
 
 // This is bad practice. Don't do this!
@@ -18,9 +18,7 @@ test('Calling unreachable results in error', () => {
       return 0;
     }
     f();
-  `).toEqual(
-    "Line 3: Expected number on right hand side of operation, got boolean."
-  )
+  `).toEqual('Line 3: Expected number on right hand side of operation, got boolean.')
 })
 
 // This is bad practice. Don't do this!

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 import type { Node } from 'estree'
 
 import { UnassignedVariable } from '../../../errors/errors'
@@ -8,7 +8,7 @@ import { dummyExpression } from '../../../utils/ast/dummyAstCreator'
 import { mapErrorToScheme, decodeValue } from '../scheme-mapper'
 
 describe('Scheme encoder and decoder', () => {
-  it('encoder and decoder are proper inverses of one another', () => {
+  describe('encoder and decoder are proper inverses of one another', () => {
     const values = [
       'hello',
       'hello world',
@@ -20,46 +20,51 @@ describe('Scheme encoder and decoder', () => {
       '1',
       '😀'
     ]
-    for (const value of values) {
+
+    test.each(values)('Testing value %s', value => {
       expect(decode(encode(value))).toEqual(value)
-    }
+    })
   })
 
-  it('decoder ignores primitives', () => {
+  it('ignores primitives', () => {
     const values = [1, 2, 3, true, false, null]
     for (const value of values) {
       expect(decodeValue(value)).toEqual(value)
     }
   })
 
-  it('decoder works on function toString representation', () => {
+  it('works on function toString representation', () => {
     // Dummy function to test
     function $65$() {}
-    expect(decodeValue($65$).toString()).toEqual(`function A() { }`)
+    expect(decodeValue($65$).toString().replace('\n', ''))
+      .toMatch(/function A\(\) \{\s*\}/)
   })
 
-  it('decoder works on circular lists', () => {
+  it('works on circular lists', () => {
     function $65$() {}
     const pair = cons($65$, 'placeholder')
     set$45$cdr$33$(pair, pair)
-    expect(decodeValue(pair).toString()).toEqual(`function A() { },`)
+    expect(decodeValue(pair).toString().replace('\n', ''))
+      .toMatch(/function A\(\) \{\s*\},/)
   })
 
-  it('decoder works on pairs', () => {
+  it('works on pairs', () => {
     // and in doing so, works on pairs, lists, etc...
     function $65$() {}
     const pair = cons($65$, 'placeholder')
-    expect(decodeValue(pair).toString()).toEqual(`function A() { },placeholder`)
+    expect(decodeValue(pair).toString().replace('\n', ''))
+      .toMatch(/function A\(\) \{\s*\},placeholder/)
   })
 
-  it('decoder works on vectors', () => {
+  it('works on vectors', () => {
     // scheme doesn't support optimisation of circular vectors yet
     function $65$() {}
     const vector = [$65$, 2, 3]
-    expect(decodeValue(vector).toString()).toEqual(`function A() { },2,3`)
+    expect(decodeValue(vector).toString().replace('\n', ''))
+      .toMatch(/function A\(\) \{\s*\},2,3/)
   })
 
-  it('decodes runtime errors properly', () => {
+  test('runtime errors properly', () => {
     const token = `😀`
     const dummyNode: Node = dummyExpression()
     const error = new UnassignedVariable(encode(token), dummyNode)

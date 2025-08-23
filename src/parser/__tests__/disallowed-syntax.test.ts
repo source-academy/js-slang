@@ -1,5 +1,5 @@
 import { describe, test, vi } from 'vitest'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError, testFailure } from '../../utils/testing'
 import { testWithChapters } from '../../utils/testing/misc'
@@ -14,7 +14,7 @@ test('Cannot leave blank init in for loop', () => {
     }
   `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 1: Missing init expression in for statement.")
+  ).toEqual('Line 1: Missing init expression in for statement.')
 })
 
 test('Cannot leave blank init in for loop - verbose', async ({ expect }) => {
@@ -42,7 +42,7 @@ test('Cannot leave blank test in for loop', () => {
     }
   `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 1: Missing test expression in for statement.")
+  ).toEqual('Line 1: Missing test expression in for statement.')
 })
 
 test('Cannot leave blank test in for loop - verbose', async ({ expect }) => {
@@ -55,7 +55,7 @@ test('Cannot leave blank test in for loop - verbose', async ({ expect }) => {
   `,
     Chapter.LIBRARY_PARSER
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 2, Column 0: Missing test expression in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
@@ -71,7 +71,7 @@ test('Cannot leave blank update in for loop', () => {
     }
   `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 1: Missing update expression in for statement.")
+  ).toEqual('Line 1: Missing update expression in for statement.')
 })
 
 test('Cannot leave blank update in for loop - verbose', async ({ expect }) => {
@@ -99,7 +99,7 @@ test('Cannot leave blank expressions in for loop', () => {
     }
   `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 1: Missing init, test, update expressions in for statement.")
+  ).toEqual('Line 1: Missing init, test, update expressions in for statement.')
 })
 
 test('Cannot leave blank expressions in for loop - verbose', async ({ expect }) => {
@@ -127,7 +127,7 @@ test('Cannot leave while loop predicate blank', () => {
     }
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 1: SyntaxError: Unexpected token (1:7)")
+  ).toEqual('Line 1: SyntaxError: Unexpected token (1:7)')
 })
 
 test('Cannot leave while loop predicate blank - verbose', async ({ expect }) => {
@@ -155,7 +155,7 @@ test('Cannot use update expressions', () => {
     x;
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 2: Update expressions are not allowed")
+  ).toEqual('Line 2: Update expressions are not allowed')
 })
 
 test('Cannot use update expressions - verbose', async ({ expect }) => {
@@ -176,7 +176,9 @@ test('Cannot use update expressions - verbose', async ({ expect }) => {
 })
 
 test('Cannot have incomplete statements', () => {
-  return expectParsedError(`5`, Chapter.LIBRARY_PARSER).toEqual("Line 1: Missing semicolon at the end of statement")
+  return expectParsedError(`5`, Chapter.LIBRARY_PARSER).toEqual(
+    'Line 1: Missing semicolon at the end of statement'
+  )
 })
 
 test('Cannot have incomplete statements - verbose', async ({ expect }) => {
@@ -195,11 +197,11 @@ test('Cannot have incomplete statements - verbose', async ({ expect }) => {
 })
 
 test('Equality operator has specific error', () => {
-  return expectParsedError('0 == 0;').toEqual("Line 1: Use === instead of ==.")
+  return expectParsedError('0 == 0;').toEqual('Line 1: Use === instead of ==.')
 })
 
 test('Inequality operator has specific error', () => {
-  return expectParsedError('0 != 0;').toEqual("Line 1: Use !== instead of !=.")
+  return expectParsedError('0 != 0;').toEqual('Line 1: Use !== instead of !=.')
 })
 
 test('No anonymous function declarations', () => {
@@ -231,7 +233,9 @@ test('No anonymous function declarations - verbose', async ({ expect }) => {
 })
 
 test('Cannot have if without else in chapter <= 2', () => {
-  return expectParsedError(` if (true) { 5; } `, Chapter.SOURCE_2).toEqual(`Line 1: Missing "else" in "if-else" statement.`)
+  return expectParsedError(` if (true) { 5; } `, Chapter.SOURCE_2).toEqual(
+    `Line 1: Missing "else" in "if-else" statement.`
+  )
 })
 
 test('Cannot have if without else in chapter <= 2 - verbose', async ({ expect }) => {
@@ -261,7 +265,7 @@ describe('Cannot use multiple declarations', () => {
       x;
       `,
       Chapter.LIBRARY_PARSER
-    ).toEqual("Line 1: Multiple declarations in a single statement.")
+    ).toEqual('Line 1: Multiple declarations in a single statement.')
   })
 
   test('let - verbose', async ({ expect }) => {
@@ -291,7 +295,7 @@ describe('Cannot use multiple declarations', () => {
         const x = 3, y = 5;
         `
     )
-    
+
     expect(errStr).toMatchInlineSnapshot(`
         "Line 2, Column 0: Multiple declarations in a single statement.
         Split the variable declaration into multiple lines as follows
@@ -312,7 +316,7 @@ test('Cannot use destructuring declarations', () => {
     a;
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 2: Array patterns are not allowed")
+  ).toEqual('Line 2: Array patterns are not allowed')
 })
 
 test('Cannot use destructuring declarations - verbose', async ({ expect }) => {
@@ -333,8 +337,9 @@ test('Cannot use destructuring declarations - verbose', async ({ expect }) => {
 })
 
 test('No declaration without assignment', () => {
-  return expectParsedError(`let x;`, Chapter.LIBRARY_PARSER)
-    .toEqual("Line 1: Missing value in variable declaration.")
+  return expectParsedError(`let x;`, Chapter.LIBRARY_PARSER).toEqual(
+    'Line 1: Missing value in variable declaration.'
+  )
 })
 
 test('No declaration without assignment - verbose', async ({ expect }) => {
@@ -345,7 +350,7 @@ test('No declaration without assignment - verbose', async ({ expect }) => {
     `,
     Chapter.LIBRARY_PARSER
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 2, Column 4: Missing value in variable declaration.
             A variable declaration assigns a value to a name.
@@ -359,8 +364,9 @@ test('No declaration without assignment - verbose', async ({ expect }) => {
 })
 
 test('No var statements', () => {
-  return expectParsedError(`var x = 1; `, Chapter.LIBRARY_PARSER)
-    .toEqual(`Line 1: Variable declaration using "var" is not allowed.`)
+  return expectParsedError(`var x = 1; `, Chapter.LIBRARY_PARSER).toEqual(
+    `Line 1: Variable declaration using "var" is not allowed.`
+  )
 })
 
 test('No var statements - verbose', async ({ expect }) => {
@@ -388,7 +394,7 @@ test('Cannot use update statements (+=)', () => {
     x;
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 2: The assignment operator += is not allowed. Use = instead.")
+  ).toEqual('Line 2: The assignment operator += is not allowed. Use = instead.')
 })
 
 test('Cannot use update statements (+=) - verbose', async ({ expect }) => {
@@ -410,10 +416,9 @@ test('Cannot use update statements (+=) - verbose', async ({ expect }) => {
 })
 
 test('No default exports', () => {
-  return expectParsedError(
-    'const a = 0; export { a as default };',
-    Chapter.SOURCE_4
-  ).toEqual("Line 1: Export default declarations are not allowed.")
+  return expectParsedError('const a = 0; export { a as default };', Chapter.SOURCE_4).toEqual(
+    'Line 1: Export default declarations are not allowed.'
+  )
 })
 
 test('Cannot use update statements (<<=)', () => {
@@ -424,7 +429,7 @@ test('Cannot use update statements (<<=)', () => {
     x;
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 2: The assignment operator <<= is not allowed. Use = instead.")
+  ).toEqual('Line 2: The assignment operator <<= is not allowed. Use = instead.')
 })
 
 test('Cannot use update statements (<<=) - verbose', async ({ expect }) => {
@@ -437,7 +442,7 @@ test('Cannot use update statements (<<=) - verbose', async ({ expect }) => {
     `,
     Chapter.LIBRARY_PARSER
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 3, Column 0: The assignment operator <<= is not allowed. Use = instead.
 
@@ -451,7 +456,7 @@ test('Cannot use function expressions', () => {
     (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
     `,
     5
-  ).toEqual("Line 1: Function expressions are not allowed")
+  ).toEqual('Line 1: Function expressions are not allowed')
 })
 
 test('Cannot use function expressions - verbose', async ({ expect }) => {
@@ -565,7 +570,7 @@ test('for needs braces', () => {
       i;
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 1: Missing curly braces around \"for\" block.")
+  ).toEqual('Line 1: Missing curly braces around "for" block.')
 })
 
 test('for needs braces - verbose', async ({ expect }) => {
@@ -596,7 +601,7 @@ test('while needs braces', () => {
       i = i + 1;
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 2: Missing curly braces around \"while\" block.")
+  ).toEqual('Line 2: Missing curly braces around "while" block.')
 })
 
 test('while needs braces - verbose', async ({ expect }) => {
@@ -609,7 +614,7 @@ test('while needs braces - verbose', async ({ expect }) => {
     `,
     Chapter.LIBRARY_PARSER
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 3, Column 0: Missing curly braces around \\"while\\" block.
             Remember to enclose your \\"while\\" block with braces:
@@ -623,10 +628,8 @@ test('while needs braces - verbose', async ({ expect }) => {
 
 describe('No empty statements', () => {
   testWithChapters(chapter => {
-    return expectParsedError(`;`, chapter)
-      .toEqual("Line 1: Empty statements are not allowed")
-    }
-  )
+    return expectParsedError(`;`, chapter).toEqual('Line 1: Empty statements are not allowed')
+  })
 })
 
 test('No empty statements - verbose', async ({ expect }) => {
@@ -645,13 +648,19 @@ test('No empty statements - verbose', async ({ expect }) => {
 })
 
 describe('No array expressions in chapter <= 2', () => {
-  return testWithChapters(Chapter.SOURCE_1, Chapter.SOURCE_2)(chapter => {
-    return expectParsedError(`[];`, chapter).toEqual("Line 1: Array expressions are not allowed")
+  return testWithChapters(
+    Chapter.SOURCE_1,
+    Chapter.SOURCE_2
+  )(chapter => {
+    return expectParsedError(`[];`, chapter).toEqual('Line 1: Array expressions are not allowed')
   })
 })
 
 describe('No array expressions in chapter 2 - verbose', async () => {
-  return testWithChapters(Chapter.SOURCE_1, Chapter.SOURCE_2)(async (chapter, { expect }) => {
+  return testWithChapters(
+    Chapter.SOURCE_1,
+    Chapter.SOURCE_2
+  )(async (chapter, { expect }) => {
     const errStr = await testFailure(
       stripIndent`
       "enable verbose";
@@ -664,18 +673,17 @@ describe('No array expressions in chapter 2 - verbose', async () => {
               You are trying to use Array expressions, which is not allowed (yet).
               "
             `)
-
   })
 })
 
 test('No spread in array expressions', () => {
-  return expectParsedError(`[...[]];`, Chapter.SOURCE_3)
-    .toEqual("Line 1: Spread syntax is not allowed in arrays.")
+  return expectParsedError(`[...[]];`, Chapter.SOURCE_3).toEqual(
+    'Line 1: Spread syntax is not allowed in arrays.'
+  )
 })
 
 test('No trailing commas in arrays', () => {
-  return expectParsedError(`[1,]; `, Chapter.LIBRARY_PARSER)
-    .toEqual("Line 1: Trailing comma")
+  return expectParsedError(`[1,]; `, Chapter.LIBRARY_PARSER).toEqual('Line 1: Trailing comma')
 })
 
 test('No trailing commas in arrays - verbose', async ({ expect }) => {
@@ -702,7 +710,7 @@ test('No trailing commas in objects', () => {
     });
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 3: Trailing comma")
+  ).toEqual('Line 3: Trailing comma')
 })
 
 test('No try statements', async ({ expect }) => {
@@ -751,8 +759,9 @@ test('No try statements - verbose', async ({ expect }) => {
 })
 
 test('No for of loops', () => {
-  return expectParsedError(`for (let i of list()) {}`, Chapter.LIBRARY_PARSER)
-    .toEqual("Line 1: For of statements are not allowed")
+  return expectParsedError(`for (let i of list()) {}`, Chapter.LIBRARY_PARSER).toEqual(
+    'Line 1: For of statements are not allowed'
+  )
 })
 
 test('No for of loops - verbose', async ({ expect }) => {
@@ -778,7 +787,7 @@ test('No for in loops', () => {
     }
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 1: For in statements are not allowed")
+  ).toEqual('Line 1: For in statements are not allowed')
 })
 
 test('No for in loops - verbose', async ({ expect }) => {
@@ -790,7 +799,7 @@ test('No for in loops - verbose', async ({ expect }) => {
     `,
     Chapter.LIBRARY_PARSER
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 2, Column 0: For in statements are not allowed
             You are trying to use For in statements, which is not allowed (yet).
@@ -807,11 +816,11 @@ test('No generator functions', () => {
     }
   `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 2: Yield expressions are not allowed")
+  ).toEqual('Line 2: Yield expressions are not allowed')
 })
 
 test('No generator functions - verbose', async ({ expect }) => {
-   const errStr = await testFailure(
+  const errStr = await testFailure(
     stripIndent`
     "enable verbose";
     function* gen() {
@@ -851,7 +860,7 @@ test('No classes - verbose', async ({ expect }) => {
     `,
     5
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 2, Column 10: Class bodys are not allowed
             You are trying to use Class bodys, which is not allowed (yet).
@@ -894,7 +903,7 @@ test('No super - verbose', async ({ expect }) => {
   `,
     5
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 4, Column 4: Supers are not allowed
             You are trying to use Supers, which is not allowed (yet).
@@ -915,8 +924,9 @@ test('No super - verbose', async ({ expect }) => {
 })
 
 test('No sequence expression', () => {
-  return expectParsedError(`(1, 2); `, Chapter.LIBRARY_PARSER)
-    .toEqual("Line 1: Sequence expressions are not allowed")
+  return expectParsedError(`(1, 2); `, Chapter.LIBRARY_PARSER).toEqual(
+    'Line 1: Sequence expressions are not allowed'
+  )
 })
 
 test('No sequence expression - verbose', async ({ expect }) => {
@@ -927,7 +937,7 @@ test('No sequence expression - verbose', async ({ expect }) => {
     `,
     Chapter.LIBRARY_PARSER
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 2, Column 1: Sequence expressions are not allowed
             You are trying to use Sequence expressions, which is not allowed (yet).
@@ -936,8 +946,9 @@ test('No sequence expression - verbose', async ({ expect }) => {
 })
 
 test('No interface', () => {
-  return expectParsedError(`interface Box { } `, Chapter.LIBRARY_PARSER)
-    .toEqual("Line 1: SyntaxError: The keyword 'interface' is reserved (1:0)")
+  return expectParsedError(`interface Box { } `, Chapter.LIBRARY_PARSER).toEqual(
+    "Line 1: SyntaxError: The keyword 'interface' is reserved (1:0)"
+  )
 })
 
 test('No interface - verbose', async ({ expect }) => {
@@ -949,7 +960,7 @@ test('No interface - verbose', async ({ expect }) => {
     `,
     Chapter.LIBRARY_PARSER
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 2, Column 0: SyntaxError: The keyword 'interface' is reserved (2:0)
             There is a syntax error in your program
@@ -958,8 +969,9 @@ test('No interface - verbose', async ({ expect }) => {
 })
 
 test('No expressions in template literals', () => {
-  return expectParsedError(stripIndent('`hi${0}`;'))
-    .toEqual("Line 1: Expressions are not allowed in template literals (\`multiline strings\`)")
+  return expectParsedError(stripIndent('`hi${0}`;')).toEqual(
+    'Line 1: Expressions are not allowed in template literals (\`multiline strings\`)'
+  )
 })
 
 test('No regexp', async ({ expect }) => {
@@ -997,7 +1009,7 @@ test('No this, no new', () => {
     const box = new Box();
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 4: TypeError: Box is not a constructor")
+  ).toEqual('Line 4: TypeError: Box is not a constructor')
 })
 
 test('No this, no new - verbose', () => {
@@ -1010,12 +1022,13 @@ test('No this, no new - verbose', () => {
     const box = new Box();
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("")
+  ).toEqual('')
 })
 
 test('No unspecified operators', () => {
-  return expectParsedError(`1 << 10;`, Chapter.LIBRARY_PARSER)
-    .toEqual("Line 1: Operator '<<' is not allowed.")
+  return expectParsedError(`1 << 10;`, Chapter.LIBRARY_PARSER).toEqual(
+    "Line 1: Operator '<<' is not allowed."
+  )
 })
 
 test('No unspecified operators - verbose', async ({ expect }) => {
@@ -1067,7 +1080,7 @@ test('No implicit undefined return', () => {
     }
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 2: Missing value in return statement.")
+  ).toEqual('Line 2: Missing value in return statement.')
 })
 test('No implicit undefined return - verbose', async ({ expect }) => {
   const errStr = await testFailure(
@@ -1097,7 +1110,7 @@ test('No repeated params', () => {
     }
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 1: SyntaxError: Argument name clash (1:14)")
+  ).toEqual('Line 1: SyntaxError: Argument name clash (1:14)')
 })
 
 test('No repeated params - verbose', async ({ expect }) => {
@@ -1118,8 +1131,9 @@ test('No repeated params - verbose', async ({ expect }) => {
 })
 
 test('No declaring reserved keywords', () => {
-  return expectParsedError(`let yield = 5; `, Chapter.LIBRARY_PARSER)
-    .toEqual("Line 1: SyntaxError: The keyword 'yield' is reserved (1:4)")
+  return expectParsedError(`let yield = 5; `, Chapter.LIBRARY_PARSER).toEqual(
+    "Line 1: SyntaxError: The keyword 'yield' is reserved (1:4)"
+  )
 })
 
 test('No declaring reserved keywords - verbose', async ({ expect }) => {
@@ -1130,7 +1144,7 @@ test('No declaring reserved keywords - verbose', async ({ expect }) => {
     `,
     Chapter.LIBRARY_PARSER
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 2, Column 4: SyntaxError: The keyword 'yield' is reserved (2:4)
             There is a syntax error in your program
@@ -1139,8 +1153,9 @@ test('No declaring reserved keywords - verbose', async ({ expect }) => {
 })
 
 test('No assigning to reserved keywords', () => {
-  return expectParsedError(`package = 5;`, Chapter.LIBRARY_PARSER)
-    .toEqual("Line 1: SyntaxError: The keyword 'package' is reserved (1:0)")
+  return expectParsedError(`package = 5;`, Chapter.LIBRARY_PARSER).toEqual(
+    "Line 1: SyntaxError: The keyword 'package' is reserved (1:0)"
+  )
 })
 
 test('No assigning to reserved keywords - verbose', async ({ expect }) => {
@@ -1151,7 +1166,7 @@ test('No assigning to reserved keywords - verbose', async ({ expect }) => {
     `,
     Chapter.LIBRARY_PARSER
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 2, Column 0: SyntaxError: The keyword 'package' is reserved (2:0)
             There is a syntax error in your program
@@ -1165,7 +1180,7 @@ test('No holes in arrays', () => {
     [1, , 3];
     `,
     Chapter.LIBRARY_PARSER
-  ).toEqual("Line 1: No holes are allowed in array literals.")
+  ).toEqual('Line 1: No holes are allowed in array literals.')
 })
 
 test('No holes in arrays - verbose', async ({ expect }) => {
@@ -1190,7 +1205,7 @@ test('No namespace imports', () => {
     import * as x from "one_module";
     `,
     Chapter.SOURCE_4
-  ).toEqual("Line 1: Namespace imports are not allowed")
+  ).toEqual('Line 1: Namespace imports are not allowed')
 })
 
 test('No namespace imports - verbose', async ({ expect }) => {
@@ -1201,7 +1216,7 @@ test('No namespace imports - verbose', async ({ expect }) => {
     `,
     Chapter.SOURCE_4
   )
-  
+
   expect(errStr).toMatchInlineSnapshot(`
             "Line 2, Column 7: Namespace imports are not allowed
             You are trying to use Namespace imports, which is not allowed (yet).
@@ -1209,25 +1224,23 @@ test('No namespace imports - verbose', async ({ expect }) => {
           `)
 })
 
-test('No reexports', async ({ expect }) =>
-  {
-    const errStr = await testFailure('export { a } from "./hi.js";')
-    expect(errStr).toMatchInlineSnapshot(`
+test('No reexports', async ({ expect }) => {
+  const errStr = await testFailure('export { a } from "./hi.js";')
+  expect(errStr).toMatchInlineSnapshot(`
     "Line 1: Export named declarations are not allowed
     Line 1: exports of the form \`export { a } from \\"./file.js\\";\` are not allowed."
   `)
-  })
+})
 
 describe('No reexports - verbose', () => {
-  test('single export', async ({ expect }) =>
-    {
-      const errStr = await testFailure(
-        stripIndent`
+  test('single export', async ({ expect }) => {
+    const errStr = await testFailure(
+      stripIndent`
     "enable verbose";
     export { a } from "./hi.js";
   `
-      )
-      expect(errStr).toMatchInlineSnapshot(`
+    )
+    expect(errStr).toMatchInlineSnapshot(`
     "Line 2, Column 0: Export named declarations are not allowed
     You are trying to use Export named declarations, which is not allowed (yet).
 
@@ -1237,18 +1250,17 @@ describe('No reexports - verbose', () => {
     export { a };
     "
   `)
-    })
+  })
 
-  test('multiple exports', async ({ expect }) =>
-    {
-      const errStr = await testFailure(
-        stripIndent`
+  test('multiple exports', async ({ expect }) => {
+    const errStr = await testFailure(
+      stripIndent`
       "enable verbose";
       export { a, b } from "./hi.js";
     `
-      )
-      
-      expect(errStr).toMatchInlineSnapshot(`
+    )
+
+    expect(errStr).toMatchInlineSnapshot(`
     "Line 2, Column 0: Export named declarations are not allowed
     You are trying to use Export named declarations, which is not allowed (yet).
 
@@ -1258,17 +1270,16 @@ describe('No reexports - verbose', () => {
     export { a, b };
     "
   `)
-    })
+  })
 
-  test('aliased exports', async ({ expect }) =>
-    {
-      const errStr = await testFailure(
-        stripIndent`
+  test('aliased exports', async ({ expect }) => {
+    const errStr = await testFailure(
+      stripIndent`
       "enable verbose";
       export { a as x, b } from "./hi.js";
       `
-      )
-      expect(errStr).toMatchInlineSnapshot(`
+    )
+    expect(errStr).toMatchInlineSnapshot(`
     "Line 2, Column 0: Export named declarations are not allowed
     You are trying to use Export named declarations, which is not allowed (yet).
 
@@ -1278,5 +1289,5 @@ describe('No reexports - verbose', () => {
     export { a as x, b };
     "
   `)
-    })
+  })
 })

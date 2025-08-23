@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
 
@@ -15,10 +15,9 @@ describe('primitive stream functions', () => {
   })
 
   test('stream_tail is lazy', async ({ expect }) => {
-    const { result: { value } } = await testSuccess(
-      `stream_tail(integers_from(0));`,
-      Chapter.SOURCE_3
-    )
+    const {
+      result: { value }
+    } = await testSuccess(`stream_tail(integers_from(0));`, Chapter.SOURCE_3)
 
     expect(value).toMatchInlineSnapshot(`
       Array [
@@ -30,7 +29,7 @@ describe('primitive stream functions', () => {
 
   test('infinite stream is infinite', { timeout: 15_000 }, () => {
     return expectParsedError(`stream_length(integers_from(0));`, Chapter.SOURCE_3).toEqual(
-      "Line 1: The error may have arisen from forcing the infinite stream: function integers_from."
+      'Line 1: The error may have arisen from forcing the infinite stream: function integers_from.'
     )
   })
 
@@ -53,10 +52,9 @@ describe('primitive stream functions', () => {
   })
 
   test('stream_to_list works', async () => {
-    const { result: { value } } = await testSuccess(
-      `stream_to_list(stream(1, true, 3, 4.4, [1, 2]));`,
-      Chapter.SOURCE_3
-    )
+    const {
+      result: { value }
+    } = await testSuccess(`stream_to_list(stream(1, true, 3, 4.4, [1, 2]));`, Chapter.SOURCE_3)
 
     expect(value).toMatchInlineSnapshot(`
       Array [
@@ -169,10 +167,9 @@ test('remove', () => {
 })
 
 test('remove not found', async () => {
-  const { result: { value } } = await testSuccess(
-    `stream_to_list(stream_remove(2, stream(1)));`,
-    Chapter.SOURCE_3
-  )
+  const {
+    result: { value }
+  } = await testSuccess(`stream_to_list(stream_remove(2, stream(1)));`, Chapter.SOURCE_3)
 
   expect(value).toMatchInlineSnapshot(`
     Array [

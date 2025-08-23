@@ -2,7 +2,8 @@ import { parse as acornParse, type Token, tokenizer } from 'acorn'
 import type es from 'estree'
 
 import { DEFAULT_ECMA_VERSION } from '../../constants'
-import { Chapter, type Context, type Node, type SourceError, Variant } from '../../types'
+import type { Context, Node } from '../../types'
+import type { Chapter, Variant } from '../../langs'
 import { ancestor, AncestorWalkerFn } from '../../utils/walkers'
 import { DisallowedConstructError, FatalSyntaxError } from '../errors'
 import type { AcornOptions, Rule, Parser } from '../types'
@@ -78,7 +79,7 @@ export class SourceParser implements Parser<AcornOptions> {
       .flat()
       .forEach(([syntaxNodeName, checker]) => {
         const langWalker: AncestorWalkerFn<any> = (node: Node, _state: any, ancestors: Node[]) => {
-          const errors: SourceError[] = checker(node, ancestors)
+          const errors  = checker(node, ancestors)
 
           if (throwOnError && errors.length > 0) throw errors[0]
           errors.forEach(e => context.errors.push(e))

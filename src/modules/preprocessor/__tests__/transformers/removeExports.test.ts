@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'vitest'
 import { mockContext } from '../../../../utils/testing/mocks'
 import { parse } from '../../../../parser/parser'
-import { Chapter, type Context } from '../../../../types'
+import type { Context } from '../../../../types'
+import { Chapter } from '../../../../langs'
 import removeExports from '../../transformers/removeExports'
 import { sanitizeAST } from '../../../../utils/testing/sanitizer'
 

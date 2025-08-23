@@ -6,7 +6,7 @@ import {
   UndefinedImportError,
   UndefinedNamespaceImportError
 } from '../../errors'
-import { Chapter } from '../../../types'
+import { Chapter } from '../../../langs'
 import { stripIndent } from '../../../utils/formatters'
 import parseProgramsAndConstructImportGraph from '../linker'
 import analyzeImportsAndExports from '../analyzer'

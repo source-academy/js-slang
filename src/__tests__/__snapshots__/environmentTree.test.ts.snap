@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`EnvTree::getTreeNode should return the tree node that contains a pointer to the given environment 1`] = `
 Object {

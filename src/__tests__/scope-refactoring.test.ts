@@ -12,7 +12,8 @@ import {
   getScopeHelper,
   scopeVariables
 } from '../scope-refactoring'
-import { type BlockFrame, Chapter } from '../types'
+import type { BlockFrame } from '../types'
+import { Chapter } from '../langs'
 
 class Target {
   public name: string

@@ -1,7 +1,7 @@
 // TODO: Convert to actual benchmark
 
 import { test } from 'vitest'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResult } from '../../utils/testing'
 import * as list from '../list'

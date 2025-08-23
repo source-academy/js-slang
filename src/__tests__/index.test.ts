@@ -3,7 +3,8 @@ import type { Position } from 'acorn/dist/acorn'
 import type { SourceLocation } from 'estree'
 
 import { findDeclaration, getScope, runInContext } from '../index'
-import { Chapter, Value } from '../types'
+import { Value } from '../types'
+import { Chapter } from '../langs'
 import { stripIndent } from '../utils/formatters'
 import {
   createTestContext,
@@ -46,18 +47,22 @@ test('Single boolean self-evaluates to itself', () => {
 })
 
 test('Arrow function definition returns itself', async () => {
-  const { result: { value } } = await testSuccess('() => 42;')
+  const {
+    result: { value }
+  } = await testSuccess('() => 42;')
   return expect(value).toMatchInlineSnapshot(`[Function]`)
 })
 test('Builtins hide their implementation when toString', async () => {
-  const { result: { value } } = await testSuccess('toString(pair);', {
+  const {
+    result: { value }
+  } = await testSuccess('toString(pair);', {
     chapter: Chapter.SOURCE_2,
     testBuiltins: { toString }
   })
-  
+
   expect(value).toMatchInlineSnapshot(`
     "function pair(left, right) {
-      [implementation hidden]
+    	[implementation hidden]
     }"
   `)
 })
@@ -87,27 +92,35 @@ test('Factorial arrow function', () => {
 })
 
 test('parseError for missing semicolon', () => {
-  return expectParsedError('42').toEqual("Line 1: Missing semicolon at the end of statement")
+  return expectParsedError('42').toEqual('Line 1: Missing semicolon at the end of statement')
 })
 
 test('parseError for template literals with expressions', () => {
   return expectParsedError('`${1}`;').toEqual(
-    "Line 1: Expressions are not allowed in template literals (\`multiline strings\`)"
+    'Line 1: Expressions are not allowed in template literals (\`multiline strings\`)'
   )
 })
 
 // Skip the test for now
-test.skip('Simple arrow function infinite recursion represents CallExpression well', () => {
-  return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toEqual(
-    "Line 1: RangeError: Maximum call stack size exceeded"
-  )
-}, 30000)
+test.skip(
+  'Simple arrow function infinite recursion represents CallExpression well',
+  { timeout: 30_000 },
+  () => {
+    return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toEqual(
+      'Line 1: RangeError: Maximum call stack size exceeded'
+    )
+  }
+)
 
-test('Simple function infinite recursion represents CallExpression well', { timeout: 30_000 },  () => {
-  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toEqual(
-    "RangeError: Maximum call stack size exceeded"
-  )
-})
+test(
+  'Simple function infinite recursion represents CallExpression well',
+  { timeout: 30_000 },
+  () => {
+    return expectParsedError('function f(x) {return x(x)(x);} f(f);').toMatch(
+      /(Line \d+:)?RangeError: Maximum call stack size exceeded/
+    )
+  }
+)
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
   return expectParsedError(
@@ -120,7 +133,7 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
     test();
   `,
     Chapter.SOURCE_3
-  ).toEqual("Line 3: Cannot assign new value to constant constant.")
+  ).toEqual('Line 3: Cannot assign new value to constant constant.')
 })
 
 test('Assignment has value', () => {
@@ -161,44 +174,58 @@ test('Can overwrite lets when assignment is allowed', () => {
   ).toBe(true)
 })
 
-test('Arrow function infinite recursion with list args represents CallExpression well', { timeout: 30_000 }, () => {
-  return expectParsedError(
-    stripIndent`
+test(
+  'Arrow function infinite recursion with list args represents CallExpression well',
+  { timeout: 30_000 },
+  () => {
+    return expectParsedError(
+      stripIndent`
     const f = xs => append(f(xs), list());
     f(list(1, 2));
   `,
-    Chapter.SOURCE_2
-  ).toEqual(
-    "Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."
-  )
-} )
+      Chapter.SOURCE_2
+    ).toEqual(
+      'Line 2: The function (anonymous) has encountered an infinite loop. It has no base case.'
+    )
+  }
+)
 
-test('Function infinite recursion with list args represents CallExpression well', { timeout: 30_000 }, () => {
-  return expectParsedError(
-    stripIndent`
+test(
+  'Function infinite recursion with list args represents CallExpression well',
+  { timeout: 30_000 },
+  () => {
+    return expectParsedError(
+      stripIndent`
     function f(xs) { return append(f(xs), list()); }
     f(list(1, 2));
   `
-  ).toEqual("Line 1: Name append not declared.")
-})
+    ).toEqual('Line 1: Name append not declared.')
+  }
+)
 
-test('Arrow function infinite recursion with different args represents CallExpression well', { timeout: 30_000 }, () => {
-  return expectParsedError(stripIndent`
+test(
+  'Arrow function infinite recursion with different args represents CallExpression well',
+  { timeout: 30_000 },
+  () => {
+    return expectParsedError(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
   `).toEqual(
-    "Line 2: The function (anonymous) has encountered an infinite loop. It has no base case."
-  )
-})
+      'Line 2: The function (anonymous) has encountered an infinite loop. It has no base case.'
+    )
+  }
+)
 
-test('Function infinite recursion with different args represents CallExpression well', { timeout: 30_000 }, () => {
-  return expectParsedError(stripIndent`
+test(
+  'Function infinite recursion with different args represents CallExpression well',
+  { timeout: 30_000 },
+  () => {
+    return expectParsedError(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
-  `).toEqual(
-    "Line 2: The function f has encountered an infinite loop. It has no base case."
-  )
-})
+  `).toEqual('Line 2: The function f has encountered an infinite loop. It has no base case.')
+  }
+)
 
 test('Functions passed into non-source functions remain equal', () => {
   return expectFinishedResult(

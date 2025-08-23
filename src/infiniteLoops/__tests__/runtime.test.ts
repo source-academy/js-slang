@@ -5,7 +5,7 @@ import { runInContext } from '../..'
 import createContext from '../../createContext'
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
 

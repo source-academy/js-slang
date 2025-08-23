@@ -3,7 +3,8 @@ import type es from 'estree'
 
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
-import { Chapter, NodeWithInferredType } from '../../types'
+import { NodeWithInferredType } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
 import { simple } from '../../utils/walkers'
@@ -24,7 +25,7 @@ test('for loop variable cannot be reassigned', () => {
     }
   `
   return expectParsedError(code, { chapter: Chapter.SOURCE_4 }).toEqual(
-    "Line 2: Assignment to a for loop variable in the for loop is not allowed."
+    'Line 2: Assignment to a for loop variable in the for loop is not allowed.'
   )
 })
 
@@ -37,7 +38,7 @@ test('for loop variable cannot be reassigned in closure', () => {
     }
   `
   return expectParsedError(code, { chapter: Chapter.SOURCE_4 }).toEqual(
-    "Line 3: Assignment to a for loop variable in the for loop is not allowed."
+    'Line 3: Assignment to a for loop variable in the for loop is not allowed.'
   )
 })
 

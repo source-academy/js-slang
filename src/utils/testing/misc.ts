@@ -1,6 +1,7 @@
 import { expect, test, type TestContext as VitestTestContext } from 'vitest'
 import type { Result } from '../..'
-import { Finished, Value, Node, NodeTypeToNode, Chapter } from '../../types'
+import { Finished, Value, Node, NodeTypeToNode } from '../../types'
+import { Chapter } from '../../langs'
 import { getChapterName } from '../misc'
 import type { TestBuiltins, TestOptions } from './types'
 
@@ -40,7 +41,10 @@ export function testMultipleCases<T extends Array<any>>(
   test.each(withIndex)('%s', (_, i, ...args) => tester(args, i), timeout)
 }
 
-type TestingFunction<T extends Promise<void> | void> = (chapter: Chapter, context: VitestTestContext) => T
+type TestingFunction<T extends Promise<void> | void> = (
+  chapter: Chapter,
+  context: VitestTestContext
+) => T
 
 /**
  * Convenience wrapper for testing a case with multiple chapters. Tests with source chapters 1-4 and the library parser
@@ -51,17 +55,22 @@ export function testWithChapters<T extends Promise<void> | void>(func: TestingFu
  * Convenience wrapper for testing a case with multiple chapters. Tests with the given chapters. Returns a function
  * that should be called in the same way `test.each` is
  */
-export function testWithChapters<T extends Promise<void> | void>(...chapters: Chapter[]): (f: TestingFunction<T>) => T
-export function testWithChapters<T extends Promise<void> | void>(arg0: TestingFunction<T> | Chapter, ...chapters: Chapter[]) {
+export function testWithChapters<T extends Promise<void> | void>(
+  ...chapters: Chapter[]
+): (f: TestingFunction<T>) => T
+export function testWithChapters<T extends Promise<void> | void>(
+  arg0: TestingFunction<T> | Chapter,
+  ...chapters: Chapter[]
+) {
   function tester(chapters: Chapter[], func: TestingFunction<T>) {
     test.for(chapters.map(chapter => [getChapterName(chapter), chapter] as [string, Chapter]))(
       'Testing %s',
-      ([,chapter], context) => func(chapter, context)
+      ([, chapter], context) => func(chapter, context)
     )
   }
 
   if (typeof arg0 === 'function') {
-    return tester([Chapter.SOURCE_1, Chapter.SOURCE_2, Chapter.SOURCE_3, Chapter.SOURCE_4 ], arg0)
+    return tester([Chapter.SOURCE_1, Chapter.SOURCE_2, Chapter.SOURCE_3, Chapter.SOURCE_4], arg0)
   }
 
   return (func: TestingFunction<T>) => tester([arg0, ...chapters], func)

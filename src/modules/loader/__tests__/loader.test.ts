@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { mockContext } from '../../../utils/testing/mocks'
-import { Chapter, Variant } from '../../../types'
+import { Chapter, Variant } from '../../../langs'
 import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
 import * as moduleLoader from '../loaders'
 import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
@@ -12,23 +12,17 @@ const mockedFetch = vi.spyOn(global, 'fetch')
 // import path actually exist
 // When testing the import loader we can generally rely on the mocked versions
 // under __mocks__ instead.
-vi.mock(`${moduleLoader.MODULES_STATIC_URL}/bundles/one_module.js`,
-  () => ({
-    default: moduleMocker
-  }),
-)
+vi.mock(`${moduleLoader.MODULES_STATIC_URL}/bundles/one_module.js`, () => ({
+  default: moduleMocker
+}))
 
-vi.mock(`${moduleLoader.MODULES_STATIC_URL}/tabs/tab1.js`,
-  () => ({
-    default: () => 'tab1'
-  }),
-)
+vi.mock(`${moduleLoader.MODULES_STATIC_URL}/tabs/tab1.js`, () => ({
+  default: () => 'tab1'
+}))
 
-vi.mock(`${moduleLoader.MODULES_STATIC_URL}/tabs/tab2.js`,
-  () => ({
-    default: () => 'tab2'
-  }),
-)
+vi.mock(`${moduleLoader.MODULES_STATIC_URL}/tabs/tab2.js`, () => ({
+  default: () => 'tab2'
+}))
 
 const mockedDocsImporter = vi.spyOn(moduleLoader, 'docsImporter')
 
@@ -78,7 +72,6 @@ describe('tab loading', () => {
 })
 
 describe('docs loading', () => {
-
   beforeEach(() => {
     mockedDocsImporter.mockClear()
   })

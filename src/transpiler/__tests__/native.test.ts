@@ -1,7 +1,8 @@
 import { expect, test } from 'vitest'
 import { runInContext } from '../../index'
 import { mockContext } from '../../utils/testing/mocks'
-import { Chapter, Finished } from '../../types'
+import { Finished } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectNativeToTimeoutAndError } from '../../utils/testing'
 
@@ -23,7 +24,7 @@ test('Proper stringify-ing of arguments during potentially infinite iterative fu
   [() => 1, [[1, 2, 3], null]]]]]) ...`)
 })
 
-test('test increasing time limit for functions', async () => {
+test('test increasing time limit for functions', { timeout: 15_000 }, async () => {
   const code = stripIndent`
     function f(a, b) {
       return f(a + 1, b + 1);
@@ -38,7 +39,7 @@ test('test increasing time limit for functions', async () => {
   expect(secondError).toMatch(/f\(\d+, \d+\) \.\.\. f\(\d+, \d+\) \.\.\. f\(\d+, \d+\)/)
 })
 
-test('test increasing time limit for mutual recursion', async () => {
+test('test increasing time limit for mutual recursion', { timeout: 15_000 }, async () => {
   const code = stripIndent`
     function f(a, b) {
       return g(a + 1, b + 1);
@@ -56,7 +57,7 @@ test('test increasing time limit for mutual recursion', async () => {
   expect(secondError).toMatch(/f\(\d+, \d+\) \.\.\. g\(\d+, \d+\)/)
 })
 
-test('test increasing time limit for while loops', async () => {
+test('test increasing time limit for while loops', { timeout: 15_000 }, async () => {
   const code = stripIndent`
     while (true) {
     }

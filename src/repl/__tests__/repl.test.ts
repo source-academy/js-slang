@@ -2,18 +2,11 @@ import fs from 'fs/promises'
 import repl from 'repl'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import type { SourceFiles } from '../../modules/moduleTypes'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { getReplCommand } from '../repl'
 import { chapterParser } from '../utils'
 
-const readFileMocker = vi.spyOn(fs, 'readFile')
-
-function mockReadFiles(files: SourceFiles) {
-  readFileMocker.mockImplementation((fileName: string) => {
-    if (fileName in files) return Promise.resolve(files[fileName]!)
-    return Promise.reject({ code: 'ENOENT' })
-  })
-}
+vi.mock(import('../../modules/loader/loaders'))
 
 vi.mock(import('path'), async importOriginal => {
   const { posix, ...originalPath } = await importOriginal()
@@ -27,7 +20,14 @@ vi.mock(import('path'), async importOriginal => {
 })
 
 const mockedReplStart = vi.spyOn(repl, 'start')
-vi.mock(import('../../modules/loader/loaders'))
+const readFileMocker = vi.spyOn(fs, 'readFile')
+
+function mockReadFiles(files: SourceFiles) {
+  readFileMocker.mockImplementation((fileName: string) => {
+    if (fileName in files) return Promise.resolve(files[fileName]!)
+    return Promise.reject({ code: 'ENOENT' })
+  })
+}
 
 const mockedConsoleLog = vi.spyOn(console, 'log')
 
@@ -189,7 +189,7 @@ describe('Test repl command', () => {
         ]
       ))
 
-    test('Running with a file name evaluates code and then enters the REPL', async () => {
+    test.only('Running with a file name evaluates code and then enters the REPL', async () => {
       mockReadFiles({
         '/a.js': `
           import { b } from './b.js';

@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
 import { parseError } from '../..'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResult, testSuccess } from '../../utils/testing'
 import { assertFinishedResultValue } from '../../utils/testing/misc'

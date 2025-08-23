@@ -7,19 +7,17 @@ import { findDeclarationNode, findIdentifierNode } from './finder'
 import { looseParse, parseWithComments } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
-import {
-  Chapter,
-  type Context,
-  type Error as ResultError,
-  type ExecutionMethod,
-  type Finished,
-  type ModuleContext,
-  type RecursivePartial,
-  type Result,
-  type SourceError,
-  type SVMProgram,
-  type Variant
+import type {
+  Context,
+  Error as ResultError,
+  ExecutionMethod,
+  Finished,
+  ModuleContext,
+  RecursivePartial,
+  Result,
+  SVMProgram
 } from './types'
+import { Chapter, type Variant } from './langs'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
@@ -31,6 +29,7 @@ import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
 import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
+import { SourceError } from './errors/base'
 
 export interface IOptions {
   steps: number

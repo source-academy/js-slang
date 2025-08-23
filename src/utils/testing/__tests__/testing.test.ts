@@ -6,7 +6,7 @@ import {
   testFailure,
   testSuccess
 } from '..'
-import { Chapter, Variant } from '../../../types'
+import { Chapter, Variant } from '../../../langs'
 import { processTestOptions } from '../misc'
 import type { TestOptions } from '../types'
 import * as main from '../../..'

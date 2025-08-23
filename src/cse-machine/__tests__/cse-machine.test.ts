@@ -1,5 +1,5 @@
 import { test, vi } from 'vitest'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResult, testSuccess } from '../../utils/testing'
 
@@ -359,7 +359,9 @@ test('Nullary functions properly restore environment 2', () => {
 })
 
 test('Array literals work as expected', async ({ expect }) => {
-  const { result: { value } } = await testSuccess(
+  const {
+    result: { value }
+  } = await testSuccess(
     stripIndent`
     let c = [1, 2, 3];
     c;

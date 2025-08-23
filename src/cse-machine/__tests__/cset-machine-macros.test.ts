@@ -1,5 +1,5 @@
 import { test } from 'vitest'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
 
 // CSET tests for Scheme Macros
@@ -18,7 +18,9 @@ test('definition of a macro', () => {
 })
 
 test('use of a macro', async ({ expect }) => {
-  const { result: { value } } = await testSuccess(
+  const {
+    result: { value }
+  } = await testSuccess(
     `
     (define-syntax my-let
       (syntax-rules ()
@@ -29,7 +31,7 @@ test('use of a macro', async ({ expect }) => {
     `,
     optionECScm
   )
-  
+
   expect(value).toMatchInlineSnapshot(`
     SchemeInteger {
       "numberType": 1,
@@ -39,7 +41,9 @@ test('use of a macro', async ({ expect }) => {
 })
 
 test('use of a more complex macro (recursive)', async ({ expect }) => {
-  const { result: { value } } = await testSuccess(
+  const {
+    result: { value }
+  } = await testSuccess(
     `
 (define-syntax define-match
     (syntax-rules ()
@@ -62,7 +66,7 @@ test('use of a more complex macro (recursive)', async ({ expect }) => {
     `,
     optionECScm
   )
-  
+
   expect(value).toMatchInlineSnapshot(`
             SchemeInteger {
               "numberType": 1,
@@ -82,5 +86,5 @@ test('failed usage of a macro (no matching pattern)', () => {
       (+ x y))
     `,
     optionECScm
-  ).toEqual("Error: No matching transformer found for macro my-let")
+  ).toEqual('Error: No matching transformer found for macro my-let')
 })

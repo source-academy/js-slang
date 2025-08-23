@@ -1,5 +1,5 @@
 import { test } from 'vitest'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResult, expectParsedError } from '../../utils/testing'
 
@@ -99,7 +99,7 @@ test('cannot multiply non-number values', () => {
     True * 2
   `,
     Chapter.PYTHON_1
-  ).toEqual("Line 1: Error: Invalid types for multiply operation: boolean, bigint")
+  ).toEqual('Line 1: Error: Invalid types for multiply operation: boolean, bigint')
 })
 
 test('dividing integer and float is ok', () => {
@@ -135,9 +135,7 @@ test('cannot divide non-number values', () => {
     "a" / 2
   `,
     Chapter.PYTHON_1
-  ).toEqual(
-    "Line 1: Error: Expected number on left hand side of operation, got string."
-  )
+  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.')
 })
 
 test('modding integer and float is ok', () => {
@@ -173,9 +171,7 @@ test('cannot mod non-number values', () => {
     "a" % 2
   `,
     Chapter.PYTHON_1
-  ).toEqual(
-    "Line 1: Error: Expected number on left hand side of operation, got string."
-  )
+  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.')
 })
 
 test('powering integer and float is ok', () => {
@@ -211,9 +207,7 @@ test('cannot power non-number values', () => {
     "a" ** 2
   `,
     Chapter.PYTHON_1
-  ).toEqual(
-    "Line 1: Error: Expected number on left hand side of operation, got string."
-  )
+  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.')
 })
 
 test('flooring integer and float is ok', () => {
@@ -249,7 +243,5 @@ test('cannot floor non-number values', () => {
     "a" // 2
   `,
     Chapter.PYTHON_1
-  ).toEqual(
-    "Line 1: Error: Expected number on left hand side of operation, got string."
-  )
+  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.')
 })

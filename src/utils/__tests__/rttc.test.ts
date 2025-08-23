@@ -2,7 +2,8 @@ import { describe, expect, test } from 'vitest'
 import type { BinaryOperator, UnaryOperator } from 'estree'
 
 import { mockClosure, mockRuntimeContext } from '../testing/mocks'
-import { Chapter, Value } from '../../types'
+import { Value } from '../../types'
+import { Chapter } from '../../langs'
 import * as rttc from '../rttc'
 
 const num = 0

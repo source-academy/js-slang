@@ -4,7 +4,7 @@
  */
 
 import { test } from 'vitest'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 import { expectParsedError, expectFinishedResult } from '../../utils/testing'
 
 const optionEC = { variant: Variant.EXPLICIT_CONTROL }
@@ -24,7 +24,7 @@ test('Calling unreachable results in error', () => {
     f();
   `,
     optionEC
-  ).toEqual("Line 3: Expected number on right hand side of operation, got boolean.")
+  ).toEqual('Line 3: Expected number on right hand side of operation, got boolean.')
 })
 
 // This is bad practice. Don't do this!

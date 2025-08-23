@@ -1,5 +1,5 @@
 import { test } from 'vitest'
-import { Chapter } from '../types'
+import { Chapter } from '../langs'
 import { expectParsedError, expectFinishedResult } from '../utils/testing'
 
 test('draw_data returns first argument if more than one argument', () => {
@@ -14,6 +14,6 @@ test('draw_data returns first argument if exactly one argument', () => {
 
 test('draw_data with no arguments throws error', () => {
   return expectParsedError(`draw_data();`, Chapter.SOURCE_3).toEqual(
-    "Line 1: Expected 1 or more arguments, but got 0."
+    'Line 1: Expected 1 or more arguments, but got 0.'
   )
 })

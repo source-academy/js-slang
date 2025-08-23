@@ -1,5 +1,6 @@
 import type { Context } from '../..'
-import type { Chapter, LanguageOptions, Variant, Value } from '../../types'
+import type { Chapter, LanguageOptions, Variant } from '../../langs'
+import { Value } from '../../types'
 
 export type TestOptions =
   | {

@@ -1,5 +1,6 @@
 import { expect } from 'vitest'
-import { Chapter, type CustomBuiltIns } from '../../types'
+import type { CustomBuiltIns } from '../../types'
+import { Chapter } from '../../langs'
 import { parseError, runInContext } from '../..'
 import createContext, { defineBuiltin } from '../../createContext'
 import { assertIsFinished, processTestOptions } from './misc'
@@ -103,16 +104,18 @@ export async function testFailure(code: string, options: TestOptions = {}) {
  * as if using `expect()`
  */
 export function expectFinishedResult(code: string, options: TestOptions = {}) {
-  return removeMatcher(expect(
-    testInContext(code, options).then(({ result, context }) => {
-      if (result.status === 'error') {
-        const errStr = parseError(context.errors)
-        console.log(errStr)
-      }
-      assertIsFinished(result)
-      return result.value
-    })
-  ).resolves)
+  return removeMatcher(
+    expect(
+      testInContext(code, options).then(({ result, context }) => {
+        if (result.status === 'error') {
+          const errStr = parseError(context.errors)
+          console.log(errStr)
+        }
+        assertIsFinished(result)
+        return result.value
+      })
+    ).resolves
+  )
 }
 
 /**
@@ -120,12 +123,14 @@ export function expectFinishedResult(code: string, options: TestOptions = {}) {
  * `expect`
  */
 export function expectParsedError(code: string, options: TestOptions = {}, verbose?: boolean) {
-  return removeMatcher(expect(
-    testInContext(code, options).then(({ result, context }) => {
-      expect(result.status).toEqual('error')
-      return parseError(context.errors, verbose)
-    })
-  ).resolves)
+  return removeMatcher(
+    expect(
+      testInContext(code, options).then(({ result, context }) => {
+        expect(result.status).toEqual('error')
+        return parseError(context.errors, verbose)
+      })
+    ).resolves
+  )
 }
 
 export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
@@ -168,6 +173,8 @@ export async function snapshotFailure(code: string, options: TestOptions = {}, n
 }
 
 export function expectDisplayResult(code: string, options: TestOptions = {}) {
-  return removeMatcher(expect(testSuccess(code, options).then(({ context: { displayResult } }) => displayResult))
-    .resolves)
+  return removeMatcher(
+    expect(testSuccess(code, options).then(({ context: { displayResult } }) => displayResult))
+      .resolves
+  )
 }

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { parseError } from '../..'
 import { mockContext } from '../../utils/testing/mocks'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { FatalSyntaxError } from '../errors'
 import { parse } from '../parser'
 import { PythonParser } from '../python'

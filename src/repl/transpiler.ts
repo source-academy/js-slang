@@ -8,14 +8,8 @@ import { createContext, parseError } from '../index'
 import defaultBundler from '../modules/preprocessor/bundler'
 import parseProgramsAndConstructImportGraph from '../modules/preprocessor/linker'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, Variant } from '../types'
-import {
-  chapterParser,
-  getChapterOption,
-  getLanguageOption,
-  getVariantOption,
-  validateChapterAndVariantCombo
-} from './utils'
+import { Chapter, isSourceLanguage, Variant } from '../langs'
+import { chapterParser, getChapterOption, getLanguageOption, getVariantOption } from './utils'
 
 export const getTranspilerCommand = () =>
   new Command('transpiler')
@@ -29,7 +23,7 @@ export const getTranspilerCommand = () =>
     .option('-o, --out <outFile>', 'Specify a file to write to')
     .argument('<filename>')
     .action(async (fileName, opts) => {
-      if (!validateChapterAndVariantCombo(opts)) {
+      if (!isSourceLanguage(opts)) {
         console.log('Invalid language combination!')
         return
       }

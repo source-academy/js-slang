@@ -22,7 +22,6 @@ import {
 } from '../errors/typeErrors'
 import {
   BindableType,
-  Chapter,
   type Context,
   disallowedTypes,
   type Pair,
@@ -35,6 +34,7 @@ import {
   TypeEnvironment,
   Variable
 } from '../types'
+import { Chapter } from '../langs'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import * as tsEs from './tsESTree'

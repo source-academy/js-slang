@@ -1,10 +1,12 @@
 import { describe, expect, it, test } from 'vitest'
-import { Chapter } from '../../types'
+import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
 
 test('list creates list', async () => {
-  const { result: { value } } = await testSuccess(
+  const {
+    result: { value }
+  } = await testSuccess(
     stripIndent`
       function f() { return 1; }
       list(1, 'a string ""', () => f, f, true, 3.14);
@@ -36,8 +38,10 @@ test('list creates list', async () => {
 })
 
 test('pair creates pair', async () => {
-  const { result: { value } } = await testSuccess( `pair(1, 'a string ""')`, Chapter.SOURCE_2)
-  
+  const {
+    result: { value }
+  } = await testSuccess(`pair(1, 'a string ""');`, Chapter.SOURCE_2)
+
   expect(value).toMatchInlineSnapshot(`
     Array [
       1,
@@ -47,13 +51,13 @@ test('pair creates pair', async () => {
 })
 
 test('head works', () => {
-  return expectFinishedResult(`head(pair(1, 'a string ""'));`, Chapter.SOURCE_2)
-    .toEqual(1)
+  return expectFinishedResult(`head(pair(1, 'a string ""'));`, Chapter.SOURCE_2).toEqual(1)
 })
 
 test('tail works', () => {
-  return expectFinishedResult(`tail(pair(1, 'a string ""'));`, Chapter.SOURCE_2)
-    .toEqual("a string \"\"")
+  return expectFinishedResult(`tail(pair(1, 'a string ""'));`, Chapter.SOURCE_2).toEqual(
+    'a string ""'
+  )
 })
 
 test('tail of a 1 element list is null', () => {
@@ -65,7 +69,9 @@ test('empty list is null', () => {
 })
 
 test('equal', () => {
-  return expectFinishedResult(`!equal(1, x => x) && !equal(x => x, 1);`, Chapter.SOURCE_2).toEqual(true)
+  return expectFinishedResult(`!equal(1, x => x) && !equal(x => x, 1);`, Chapter.SOURCE_2).toEqual(
+    true
+  )
 })
 
 test('for_each', () => {
@@ -110,7 +116,8 @@ test('build_list', () => {
 
 test('reverse', () => {
   return expectFinishedResult(
-    `equal(reverse(list("string", "null", "undefined", "null", 123)), list(123, "null", "undefined", "null", "string")); `, Chapter.SOURCE_2
+    `equal(reverse(list("string", "null", "undefined", "null", 123)), list(123, "null", "undefined", "null", "string")); `,
+    Chapter.SOURCE_2
   ).toEqual(true)
 })
 
@@ -138,7 +145,9 @@ test('remove', () => {
 })
 
 test('remove not found', async () => {
-  const { result: { value } } = await testSuccess(`remove(2, list(1));`, Chapter.SOURCE_2)
+  const {
+    result: { value }
+  } = await testSuccess(`remove(2, list(1));`, Chapter.SOURCE_2)
   expect(value).toMatchInlineSnapshot(`
     Array [
       1,
@@ -180,17 +189,13 @@ test('enum_list with floats', () => {
 })
 
 test('list_ref', () => {
-  return expectFinishedResult(
-    `list_ref(list(1, 2, 3, "4", 4), 4);`,
-    Chapter.SOURCE_2
-  ).toEqual(4)
+  return expectFinishedResult(`list_ref(list(1, 2, 3, "4", 4), 4);`, Chapter.SOURCE_2).toEqual(4)
 })
 
 test('list_to_string', () => {
-  return expectFinishedResult(
-    `list_to_string(list(1, 2, 3));`,
-    Chapter.SOURCE_2
-  ).toEqual("[1,[2,[3,null]]]")
+  return expectFinishedResult(`list_to_string(list(1, 2, 3));`, Chapter.SOURCE_2).toEqual(
+    '[1,[2,[3,null]]]'
+  )
 })
 
 describe('accumulate', () => {
@@ -276,9 +281,7 @@ test('non-list error head', () => {
     head([1, 2, 3]);
   `,
     Chapter.SOURCE_3
-  ).toEqual(
-    "Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-  )
+  ).toEqual('Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]')
 })
 
 test('non-list error tail', () => {
@@ -287,139 +290,160 @@ test('non-list error tail', () => {
     tail([1, 2, 3]);
   `,
     Chapter.SOURCE_3
-  ).toEqual(
-    "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-  )
+  ).toEqual('Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]')
 })
 
 describe('These tests are reporting weird line numbers, as list functions are now implemented in Source.', () => {
   test('non-list error length', () => {
-    return expectParsedError(`length([1, 2, 3]);`, Chapter.SOURCE_3)
-      .toEqual("Line 33: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`length([1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+      'Line 33: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   test('non-list error map', () => {
-    return expectParsedError(`map(x=>x, [1, 2, 3]);`, Chapter.SOURCE_3)
-      .toEqual("Line 47: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`map(x=>x, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+      'Line 47: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   test('non-list error for_each', () => {
-    return expectParsedError(`for_each(x=>x, [1, 2, 3]);`, Chapter.SOURCE_3)
-      .toEqual("Line 76: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`for_each(x=>x, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+      'Line 76: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   test('non-list error reverse', () => {
-    return expectParsedError(`reverse([1, 2, 3]); `, Chapter.SOURCE_3)
-      .toEqual("Line 106: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`reverse([1, 2, 3]); `, Chapter.SOURCE_3).toEqual(
+      'Line 106: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   test('non-list error append', () => {
-    return expectParsedError(`append([1, 2, 3], list(1, 2, 3));`, Chapter.SOURCE_3)
-      .toEqual("Line 121: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`append([1, 2, 3], list(1, 2, 3));`, Chapter.SOURCE_3).toEqual(
+      'Line 121: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   test('non-list error member', () => {
-    return expectParsedError(`member(1, [1, 2, 3]);`, Chapter.SOURCE_3)
-      .toEqual("Line 136: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`member(1, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+      'Line 136: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   test('non-list error remove', () => {
-    return expectParsedError(`remove(1, [1, 2, 3]);`, Chapter.SOURCE_3)
-      .toEqual("Line 151: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`remove(1, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+      'Line 151: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   test('non-list error remove_all', () => {
-    return expectParsedError(`remove_all(1, [1, 2, 3]); `, Chapter.SOURCE_3)
-      .toEqual("Line 169: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`remove_all(1, [1, 2, 3]); `, Chapter.SOURCE_3).toEqual(
+      'Line 169: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   test.skip('non-list error assoc', () => {
-    return expectParsedError(`assoc(1, [1, 2, 3]);`, Chapter.LIBRARY_PARSER)
-      .toEqual("Line 1: Name assoc not declared.")
+    return expectParsedError(`assoc(1, [1, 2, 3]);`, Chapter.LIBRARY_PARSER).toEqual(
+      'Line 1: Name assoc not declared.'
+    )
   })
 
   test('non-list error filter', () => {
-    return expectParsedError(`filter(x => true, [1, 2, 3]);`, Chapter.SOURCE_3)
-      .toEqual("Line 185: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`filter(x => true, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+      'Line 185: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   test('non-list error accumulate', () => {
-    return expectParsedError(`accumulate((x, y) => x + y, [1, 2, 3]);`, Chapter.SOURCE_3)
-      .toEqual("Line 1: Expected 3 arguments, but got 2.")
+    return expectParsedError(`accumulate((x, y) => x + y, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+      'Line 1: Expected 3 arguments, but got 2.'
+    )
   })
 
   test('non-list error set_head', () => {
-    return expectParsedError(`set_head([1, 2, 3], 4);`, Chapter.SOURCE_3)
-      .toEqual("Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`set_head([1, 2, 3], 4);`, Chapter.SOURCE_3).toEqual(
+      'Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   test('non-list error set_tail', () => {
-    return expectParsedError(`set_tail([1, 2, 3], 4);`, Chapter.SOURCE_3)
-      .toEqual("Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]")
+    return expectParsedError(`set_tail([1, 2, 3], 4);`, Chapter.SOURCE_3).toEqual(
+      'Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]'
+    )
   })
 
   // skipped as implementation does not check types, causing infinite recursion.
   test.skip('build_list with negative integer', () => {
-    return expectParsedError(`build_list(x => x, -1);`, Chapter.SOURCE_2)
-      .toEqual("Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1")
+    return expectParsedError(`build_list(x => x, -1);`, Chapter.SOURCE_2).toEqual(
+      'Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1'
+    )
   })
 
   // skipped as implementation does not check types, causing infinite recursion.
   test.skip('build_list with float', () => {
-    return expectParsedError(`build_list(x => x, 1.5); `, Chapter.SOURCE_2)
-      .toEqual("Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered 1.5")
-  })
-
-  test('build_list with string', () => {
-    return expectParsedError(`build_list(x => x, '1'); `, Chapter.SOURCE_2)
-      .toEqual("Line 63: Expected number on left hand side of operation, got string.")
-  })
-
-  describe('enum_list', () => {
-  test('bad number error enum_list', () => {
-    return expectParsedError(`enum_list('1', '5'); `, Chapter.SOURCE_2)
-      .toEqual("Line 203: Expected string on right hand side of operation, got number.")
-  })
-
-  test('enum_list called with string and number', () => {
-    return expectParsedError(`enum_list('1', 5); `, Chapter.SOURCE_2)
-      .toEqual("Line 201: Expected string on right hand side of operation, got number.")
-  })
-
-  test('enum_list called with number and string', () => {
-    return expectParsedError(`enum_list(1, '5'); `, Chapter.SOURCE_2)
-      .toEqual("Line 201: Expected number on right hand side of operation, got string.")
-  })
-  })
-
-  describe('list_ref', () => {
-  test('list_ref out of bounds', () => {
-    return expectParsedError(`list_ref(list(1, 2, 3), 3); `, Chapter.SOURCE_2)
-      .toEqual("Line 216: Error: head(xs) expects a pair as argument xs, but encountered null")
-  })
-
-  test('list_ref with negative index', () => {
-    return expectParsedError(`list_ref(list(1, 2, 3), -1); `, Chapter.SOURCE_2)
-      .toEqual("Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null")
-  })
-
-  test('list_ref with float index', () => {
-    return expectParsedError(`list_ref(list(1, 2, 3), 1.5); `, Chapter.SOURCE_2)  
-      .toEqual("Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null")
-  })
-
-  test('list_ref with string index', () => {
-    return expectParsedError(`list_ref(list(1, 2, 3), '1'); `, Chapter.SOURCE_2).toEqual(
-      "Line 215: Expected string on right hand side of operation, got number."
+    return expectParsedError(`build_list(x => x, 1.5); `, Chapter.SOURCE_2).toEqual(
+      'Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered 1.5'
     )
   })
 
+  test('build_list with string', () => {
+    return expectParsedError(`build_list(x => x, '1'); `, Chapter.SOURCE_2).toEqual(
+      'Line 63: Expected number on left hand side of operation, got string.'
+    )
+  })
+
+  describe('enum_list', () => {
+    test('bad number error enum_list', () => {
+      return expectParsedError(`enum_list('1', '5'); `, Chapter.SOURCE_2).toEqual(
+        'Line 203: Expected string on right hand side of operation, got number.'
+      )
+    })
+
+    test('enum_list called with string and number', () => {
+      return expectParsedError(`enum_list('1', 5); `, Chapter.SOURCE_2).toEqual(
+        'Line 201: Expected string on right hand side of operation, got number.'
+      )
+    })
+
+    test('enum_list called with number and string', () => {
+      return expectParsedError(`enum_list(1, '5'); `, Chapter.SOURCE_2).toEqual(
+        'Line 201: Expected number on right hand side of operation, got string.'
+      )
+    })
+  })
+
+  describe('list_ref', () => {
+    test('list_ref out of bounds', () => {
+      return expectParsedError(`list_ref(list(1, 2, 3), 3); `, Chapter.SOURCE_2).toEqual(
+        'Line 216: Error: head(xs) expects a pair as argument xs, but encountered null'
+      )
+    })
+
+    test('list_ref with negative index', () => {
+      return expectParsedError(`list_ref(list(1, 2, 3), -1); `, Chapter.SOURCE_2).toEqual(
+        'Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null'
+      )
+    })
+
+    test('list_ref with float index', () => {
+      return expectParsedError(`list_ref(list(1, 2, 3), 1.5); `, Chapter.SOURCE_2).toEqual(
+        'Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null'
+      )
+    })
+
+    test('list_ref with string index', () => {
+      return expectParsedError(`list_ref(list(1, 2, 3), '1'); `, Chapter.SOURCE_2).toEqual(
+        'Line 215: Expected string on right hand side of operation, got number.'
+      )
+    })
   })
 })
 
 describe('display_list', () => {
   async function testForDisplayResult(code: string, chapter: Chapter = Chapter.SOURCE_2) {
-    const { context: { displayResult } } = await testSuccess(code, chapter)
+    const {
+      context: { displayResult }
+    } = await testSuccess(code, chapter)
     return displayResult
   }
 
@@ -428,15 +452,14 @@ describe('display_list', () => {
       stripIndent`
         display_list(build_list(i => i, 5));
         0; // suppress long result in snapshot
-      `,
+      `
     )
-    
+
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list(0, 1, 2, 3, 4)",
       ]
-      `
-    )
+      `)
   })
 
   test('standard acyclic 2', async () => {
@@ -444,15 +467,14 @@ describe('display_list', () => {
       stripIndent`
         display_list(build_list(i => build_list(j => j, i), 5));
         0; // suppress long result in snapshot
-      `,
+      `
     )
-    
+
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list(null, list(0), list(0, 1), list(0, 1, 2), list(0, 1, 2, 3))",
       ]
-      `
-    )
+      `)
   })
 
   test('standard acyclic with pairs', async () => {
@@ -462,17 +484,16 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `
     )
-    
+
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list(null,
-          list([0, 0]),
-          list([0, 0], [1, 1]),
-          list([0, 0], [1, 1], [2, 2]),
-          list([0, 0], [1, 1], [2, 2], [3, 3]))",
+         list([0, 0]),
+         list([0, 0], [1, 1]),
+         list([0, 0], [1, 1], [2, 2]),
+         list([0, 0], [1, 1], [2, 2], [3, 3]))",
       ]
-      `
-    )
+      `)
   })
 
   test('standard acyclic with pairs 2', async () => {
@@ -480,9 +501,9 @@ describe('display_list', () => {
       stripIndent`
         display_list(build_list(i => build_list(j => pair(build_list(k => k, j), j), i), 5));
         0; // suppress long result in snapshot
-      `,
+      `
     )
-    
+
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list(null,
@@ -491,8 +512,7 @@ describe('display_list', () => {
           list([null, 0], [list(0), 1], [list(0, 1), 2]),
           list([null, 0], [list(0), 1], [list(0, 1), 2], [list(0, 1, 2), 3]))",
       ]
-      `
-    )
+      `)
   })
 
   test('returns argument', () => {
@@ -531,14 +551,13 @@ describe('display_list', () => {
       stripIndent`
         display_list(build_list(i => i, 5), "build_list:");
         0; // suppress long result in snapshot
-      `,
+      `
     )
     expect(result).toMatchInlineSnapshot(`
       Array [
         "build_list: list(0, 1, 2, 3, 4)",
       ]
-      `
-    )
+      `)
   })
 
   test('checks prepend type', () => {
@@ -548,7 +567,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       Chapter.SOURCE_2
-    ).toEqual("Line 1: TypeError: display_list expects the second argument to be a string")
+    ).toEqual('Line 1: TypeError: display_list expects the second argument to be a string')
   })
 
   /**************
@@ -561,8 +580,9 @@ describe('display_list', () => {
         display_list(parse('const twice = f => x => {const result = f(f(x)); return two;};'));
         0; // suppress long result in snapshot
       `,
+      Chapter.SOURCE_4
     )
-    
+
     expect(result).toMatchInlineSnapshot(`
 Array [
   "list(\\"constant_declaration\\",
@@ -589,7 +609,7 @@ Array [
       stripIndent`
         display_list(build_list(i => build_list(j => j, i), 20));
         0; // suppress long result in snapshot
-      `,
+      `
     )
 
     expect(result).toMatchInlineSnapshot(`
@@ -628,13 +648,12 @@ Array [
       `,
       Chapter.SOURCE_3
     )
-    
+
     expect(result).toMatchInlineSnapshot(`
       Array [
         "[1, ...<circular>]",
       ]
-      `
-    )
+      `)
   })
 
   test('infinite list 2', async () => {
@@ -651,8 +670,7 @@ Array [
       Array [
         "[1, [2, [3, ...<circular>]]]",
       ]
-      `
-    )
+      `)
   })
 
   test('reusing lists', async () => {
@@ -670,8 +688,7 @@ Array [
       Array [
         "list(list(1), list(list(1), 1))",
       ]
-      `
-    )
+      `)
   })
 
   test('reusing lists 2', async () => {
@@ -682,14 +699,13 @@ Array [
         const p3 = list(p1, p2);
         display_list(p3);
         0; // suppress long result in snapshot
-      `,
+      `
     )
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list(list(1), list(2, 1))",
       ]
-      `
-    )
+      `)
   })
 
   test('list of infinite list', async () => {
@@ -709,17 +725,16 @@ Array [
       `,
       Chapter.SOURCE_3
     )
-    
+
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list([0, ...<circular>],
-          [0, [1, ...<circular>]],
-          [0, [1, [2, ...<circular>]]],
-          [0, [1, [2, [3, ...<circular>]]]],
-          [0, [1, [2, [3, [4, ...<circular>]]]]])",
+         [0, [1, ...<circular>]],
+         [0, [1, [2, ...<circular>]]],
+         [0, [1, [2, [3, ...<circular>]]]],
+         [0, [1, [2, [3, [4, ...<circular>]]]]])",
       ]
-      `
-    )
+      `)
   })
 
   test('list of infinite list of list', async () => {
@@ -739,15 +754,14 @@ Array [
       `,
       Chapter.SOURCE_3
     )
-    
+
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list([null, ...<circular>],
-          [null, [list(0), ...<circular>]],
-          [null, [list(0), [list(0, 1), ...<circular>]]])",
+         [null, [list(0), ...<circular>]],
+         [null, [list(0), [list(0, 1), ...<circular>]]])",
       ]
-      `
-    )
+      `)
   })
 
   test('infinite list of list of infinite list', async () => {
@@ -767,7 +781,7 @@ Array [
       `,
       Chapter.SOURCE_3
     )
-    
+
     expect(result).toMatchInlineSnapshot(`
       Array [
         "[ null,
@@ -776,7 +790,6 @@ Array [
       [ list([0, ...<circular>], [0, [1, ...<circular>]], [0, [1, [2, ...<circular>]]]),
       ...<circular>]]]]",
       ]
-      `
-    )
+      `)
   })
 })

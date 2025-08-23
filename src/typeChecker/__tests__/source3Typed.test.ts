@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { parseError } from '../..'
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 
 let context = mockContext(Chapter.SOURCE_3, Variant.TYPED)
 

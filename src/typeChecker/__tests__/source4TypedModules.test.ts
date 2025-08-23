@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mockContext } from '../../utils/testing/mocks'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 import { parse } from '../../parser/parser'
 import { parseError } from '../../index'
 
@@ -32,7 +32,7 @@ function getContext() {
   return context
 }
 
-function testParseSuccess(code: string) {
+function expectParseSuccess(code: string) {
   const context = getContext()
   const program = parse(code, context)
   expect(program).not.toBeNull()
@@ -90,7 +90,7 @@ describe('Typed module tests', () => {
         const a: boolean = function3(z, x, y);
       `
       ]
-    ])('%s', (_, code) => testParseSuccess(code)))
+    ])('%s', (_, code) => expectParseSuccess(code)))
 
   /* ERROR CASES */
   describe('Error cases', () => {
@@ -213,7 +213,7 @@ describe('Typed module tests', () => {
         import { test1 } from 'exampleModule';
         const a: Test1 = test1;
       `
-      testParseSuccess(code)
+      expectParseSuccess(code)
     })
 
     it('should allow correct assignment of Test2 to a variable of type Test2', () => {
@@ -221,7 +221,7 @@ describe('Typed module tests', () => {
         import { test2 } from 'exampleModule';
         const a: Test2 = test2;
       `
-      testParseSuccess(code)
+      expectParseSuccess(code)
     })
 
     it('should allow correct assignment of Test3 to a variable of type Test3', () => {
@@ -229,7 +229,7 @@ describe('Typed module tests', () => {
         import { test3 } from 'exampleModule';
         const a: Test3 = test3;
       `
-      testParseSuccess(code)
+      expectParseSuccess(code)
     })
 
     it('should error when assigning Test1 to a variable of type string', () => {

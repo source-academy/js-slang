@@ -1621,7 +1621,7 @@ describe('Test runtime errors', () => {
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
-  
+
   test('Incompatible types operation', () => {
     const code = `
     "1" + 2 * 3;

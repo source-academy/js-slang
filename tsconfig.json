@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
-    "target": "es6",
+    "target": "es2020",
     "lib": [
       "es2021.string",
       "es2018",
@@ -19,6 +19,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
+    "skipLibCheck": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "resolveJsonModule": true,
@@ -29,6 +30,8 @@
   "exclude": [
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",
+    "src/alt-langs/scheme/scm-slang/**/__tests__",
+    "src/py-slang/src/tests",
     "node_modules",
     "dist",
     "sicp_publish",

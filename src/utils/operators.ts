@@ -11,7 +11,8 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import { Chapter, type NativeStorage } from '../types'
+import type { NativeStorage } from '../types'
+import { Chapter } from '../langs'
 import { callExpression, locationDummyNode } from './ast/astCreator'
 import * as create from './ast/astCreator'
 import { makeWrapper } from './makeWrapper'

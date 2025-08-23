@@ -116,7 +116,7 @@ function getBundleAndTabImporter(): (p: string) => Promise<{ default: ModuleBund
   }
 
   if (typeof window !== 'undefined') {
-    return (new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any)
+    return new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any
   }
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports

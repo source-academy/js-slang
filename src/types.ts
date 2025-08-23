@@ -5,14 +5,15 @@
 
 /* tslint:disable:max-classes-per-file */
 
-import { SourceLocation } from 'acorn'
-import * as es from 'estree'
+import type es from 'estree'
 
-import { EnvTree } from './createContext'
-import Heap from './cse-machine/heap'
-import { Control, Stash, Transformers } from './cse-machine/interpreter'
+import type { EnvTree } from './createContext'
+import type Heap from './cse-machine/heap'
+import type { Control, Stash, Transformers } from './cse-machine/interpreter'
 import type { ModuleFunctions } from './modules/moduleTypes'
-import { Representation } from './alt-langs/mapper'
+import type { Representation } from './alt-langs/mapper'
+import type { Chapter, LanguageOptions, Variant } from './langs'
+import type { SourceError } from './errors/base'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -26,88 +27,11 @@ export interface CustomBuiltIns {
   visualiseList: (list: any, externalContext: any) => void
 }
 
-export enum ErrorType {
-  IMPORT = 'Import',
-  RUNTIME = 'Runtime',
-  SYNTAX = 'Syntax',
-  TYPE = 'Type'
-}
 
-export enum ErrorSeverity {
-  WARNING = 'Warning',
-  ERROR = 'Error'
-}
 
-// any and all errors ultimately implement this interface. as such, changes to this will affect every type of error.
-export interface SourceError {
-  type: ErrorType
-  severity: ErrorSeverity
-  location: es.SourceLocation
-  explain(): string
-  elaborate(): string
-}
 
-export interface Comment {
-  type: 'Line' | 'Block'
-  value: string
-  start: number
-  end: number
-  loc: SourceLocation | undefined
-}
 
 export type ExecutionMethod = 'native' | 'auto' | 'cse-machine'
-
-export enum Chapter {
-  SOURCE_1 = 1,
-  SOURCE_2 = 2,
-  SOURCE_3 = 3,
-  SOURCE_4 = 4,
-  FULL_JS = -1,
-  HTML = -2,
-  FULL_TS = -3,
-  PYTHON_1 = -4,
-  PYTHON_2 = -5,
-  PYTHON_3 = -6,
-  PYTHON_4 = -7,
-  FULL_PYTHON = -8,
-  SCHEME_1 = -9,
-  SCHEME_2 = -10,
-  SCHEME_3 = -11,
-  SCHEME_4 = -12,
-  FULL_SCHEME = -13,
-  FULL_C = -14,
-  FULL_JAVA = -15,
-  LIBRARY_PARSER = 100
-}
-
-export enum Variant {
-  DEFAULT = 'default',
-  TYPED = 'typed',
-  NATIVE = 'native',
-  WASM = 'wasm',
-  EXPLICIT_CONTROL = 'explicit-control'
-}
-
-export type LanguageOptions = Record<string, string>
-
-export interface Language {
-  chapter: Chapter
-  variant: Variant
-  languageOptions?: LanguageOptions
-}
-
-export type ValueWrapper = LetWrapper | ConstWrapper
-
-export interface LetWrapper {
-  kind: 'let'
-  getValue: () => Value
-  assignNewValue: <T>(newValue: T) => T
-}
-
-export interface ConstWrapper {
-  kind: 'const'
-  getValue: () => Value
-}
 
 export interface NativeStorage {
   builtins: Map<string, Value>

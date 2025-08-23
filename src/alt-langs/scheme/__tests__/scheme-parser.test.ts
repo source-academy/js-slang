@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { parseError } from '../../..'
 import { mockContext } from '../../../utils/testing/mocks'
-import { Chapter } from '../../../types'
+import { Chapter } from "../../../langs"
 import { SchemeParser } from '../../../parser/scheme'
 
 const parser_1 = new SchemeParser(Chapter.SCHEME_1)

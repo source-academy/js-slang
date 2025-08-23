@@ -1,12 +1,14 @@
 import { test } from 'vitest'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
 
 // Continuation tests for Scheme
 const optionECScm = { chapter: Chapter.SCHEME_4, variant: Variant.EXPLICIT_CONTROL }
 
 test('basic call/cc works', async ({ expect }) => {
-  const { result: { value } } = await testSuccess(
+  const {
+    result: { value }
+  } = await testSuccess(
     `
     (+ 1 2 (call/cc
               (lambda (k) (k 3)))
@@ -23,7 +25,9 @@ SchemeInteger {
 })
 
 test('call/cc can be used to escape a computation', async ({ expect }) => {
-  const { result: { value } } = await testSuccess(
+  const {
+    result: { value }
+  } = await testSuccess(
     `
     (define test 1)
     (call/cc (lambda (k)
@@ -49,7 +53,7 @@ test('call/cc throws error given no arguments', () => {
     (+ 1 2 (call/cc) 4)
   `,
     optionECScm
-  ).toEqual("Line 2: Expected 1 arguments, but got 0.")
+  ).toEqual('Line 2: Expected 1 arguments, but got 0.')
 })
 
 test('call/cc throws error given >1 argument', () => {
@@ -61,7 +65,7 @@ test('call/cc throws error given >1 argument', () => {
             4)
   `,
     optionECScm
-  ).toEqual("Line 2: Expected 1 arguments, but got 2.")
+  ).toEqual('Line 2: Expected 1 arguments, but got 2.')
 })
 
 /*
@@ -76,7 +80,7 @@ test.skip('cont throws error given no arguments', () => {
             4)
   `,
     optionECScm
-  ).toEqual("Line 3: Expected 1 arguments, but got 0.")
+  ).toEqual('Line 3: Expected 1 arguments, but got 0.')
 })
 
 test.skip('cont throws error given >1 argument', () => {
@@ -87,7 +91,7 @@ test.skip('cont throws error given >1 argument', () => {
             4)
   `,
     optionECScm
-  ).toEqual("Line 3: Expected 1 arguments, but got 2.")
+  ).toEqual('Line 3: Expected 1 arguments, but got 2.')
 })
 
 test('call/cc can be stored as a value', () => {
