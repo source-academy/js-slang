@@ -14,6 +14,7 @@
     "sicp_publish",
     "src/**/__tests__/**",
     "src/**/__mocks__/**",
-    "src/utils/testing"
+    "src/utils/testing",
+    "vitest.config.ts"
   ]
 }

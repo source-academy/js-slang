@@ -14,7 +14,6 @@
     "removeComments": false,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
-    "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "noImplicitReturns": true,
@@ -26,6 +25,7 @@
     "noUnusedLocals": true,
     "incremental": true,
   },
+  "include": ["src", "vitest.config.ts"],
   "exclude": [
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { mockContext } from '../../utils/testing/mocks'
 import { Chapter, Variant } from '../../types'
 import { parse } from '../../parser/parser'
