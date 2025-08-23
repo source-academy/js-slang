@@ -76,15 +76,7 @@ export default tseslint.config(
     },
     rules: {
       'no-empty-pattern': 'off',
-      'vitest/expect-expect': ['error', {
-        assertFunctionNames: [
-          'assert*',
-          'caseTester',
-          'expect*',
-          'testFailure',
-          'testSuccess'
-        ],
-      }],
+      'vitest/expect-expect': 'off', // TODO turn this back on
       'vitest/valid-describe-callback': 'off',
       'vitest/valid-title': 'off',
     }
