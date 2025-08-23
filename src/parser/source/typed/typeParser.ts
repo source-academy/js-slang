@@ -395,7 +395,7 @@ const tsPlugin = (BaseParser: any) => {
       let node
       switch (this.type) {
         case tokTypes.name:
-          switch (tsTypeOperator[this.value]) {
+          switch (tsTypeOperator[this.value as keyof typeof tsTypeOperator]) {
             case tsTypeOperator.infer:
               node = this.parseTSInferType()
               break
@@ -431,7 +431,7 @@ const tsPlugin = (BaseParser: any) => {
     }
 
     _parseTSDeclaration(node: any, expr: { name: string | number }) {
-      const val = tsDeclaration[expr.name]
+      const val = tsDeclaration[expr.name as keyof typeof tsDeclaration]
       switch (val) {
         case tsDeclaration.interface:
           if (this.type === tokTypes.name) {
@@ -467,7 +467,7 @@ const tsPlugin = (BaseParser: any) => {
       const node = this.startNode()
       const keyword = this.value
       this.next()
-      this.finishNode(node, tsPredefinedType[keyword])
+      this.finishNode(node, tsPredefinedType[keyword as keyof typeof tsPredefinedType])
       return node
     }
 
@@ -1028,10 +1028,16 @@ const tsPlugin = (BaseParser: any) => {
     }
 
     _parseMaybeTSExpression(node: any) {
-      if (this.type === tokTypes.prefix && tsExprMarkup[this.value] === tsExprMarkup['!']) {
+      if (
+        this.type === tokTypes.prefix &&
+        tsExprMarkup[this.value as keyof typeof tsExprMarkup] === tsExprMarkup['!']
+      ) {
         node = this.parseTSNonNullExpression(node)
       }
-      if (this.type === tokTypes.name && tsExprMarkup[this.value] === tsExprMarkup.as) {
+      if (
+        this.type === tokTypes.name &&
+        tsExprMarkup[this.value as keyof typeof tsExprMarkup] === tsExprMarkup.as
+      ) {
         node = this.parseTSAsExpression(node)
       }
       return node
@@ -1039,7 +1045,10 @@ const tsPlugin = (BaseParser: any) => {
 
     parseTSAsExpression(expression: any) {
       let node = expression
-      while (this.type === tokTypes.name && tsExprMarkup[this.value] === tsExprMarkup.as) {
+      while (
+        this.type === tokTypes.name &&
+        tsExprMarkup[this.value as keyof typeof tsExprMarkup] === tsExprMarkup.as
+      ) {
         const _node = this.startNodeAtNode(node)
         this.next()
         _node.expression = node
@@ -1051,7 +1060,10 @@ const tsPlugin = (BaseParser: any) => {
 
     parseTSNonNullExpression(expression: any) {
       let node = expression
-      while (this.type === tokTypes.prefix && tsExprMarkup[this.value] === tsExprMarkup['!']) {
+      while (
+        this.type === tokTypes.prefix &&
+        tsExprMarkup[this.value as keyof typeof tsExprMarkup] === tsExprMarkup['!']
+      ) {
         const _node = this.startNodeAtNode(node)
         _node.expression = node
         this.next()

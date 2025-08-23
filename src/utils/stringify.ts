@@ -49,9 +49,9 @@ function niceTypeToString(type: Type, nameMap = { _next: 0 }): string {
       }
       if (!(type.name in nameMap)) {
         // type name is not in map, so add it
-        nameMap[type.name] = 'T' + nameMap._next++
+        ;(nameMap as any)[type.name] = 'T' + nameMap._next++
       }
-      return nameMap[type.name]
+      return (nameMap as any)[type.name]
     case 'list':
       return `List<${curriedTypeToString(type.elementType)}>`
     case 'array':

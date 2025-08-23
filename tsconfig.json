@@ -3,12 +3,7 @@
     "module": "commonjs",
     "declaration": true,
     "target": "es2020",
-    "lib": [
-      "es2021.string",
-      "es2018",
-      "es2017.object",
-      "dom"
-    ],
+    "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
     "sourceMap": true,
     "allowJs": false,
     "removeComments": false,
@@ -19,12 +14,11 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
-    "skipLibCheck": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "incremental": true,
+    "skipLibCheck": true
   },
   "include": ["src", "vitest.config.ts"],
   "exclude": [
@@ -34,9 +28,7 @@
     "src/py-slang/src/tests",
     "node_modules",
     "dist",
-    "sicp_publish",
+    "sicp_publish"
   ],
-  "types": [
-    "typePatches",
-  ]
+  "types": ["typePatches", "jest"]
 }

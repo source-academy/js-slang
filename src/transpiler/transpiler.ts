@@ -8,6 +8,7 @@ import type { Context, NativeStorage, Node } from '../types'
 import { Chapter, Variant } from '../langs'
 import * as create from '../utils/ast/astCreator'
 import { filterImportDeclarations, getImportedName } from '../utils/ast/helpers'
+import { isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -18,7 +19,6 @@ import {
 } from '../utils/uniqueIds'
 import { simple } from '../utils/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'
-import { isNamespaceSpecifier } from '../utils/ast/typeGuards'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -261,8 +261,8 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds
     const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
     const source = node.loc?.source ?? null
     const test = node.type === 'LogicalExpression' ? 'left' : 'test'
-    node[test] = create.callExpression(globalIds.boolOrErr, [
-      node[test],
+    ;(node as any)[test] = create.callExpression(globalIds.boolOrErr, [
+      (node as any)[test],
       create.literal(line),
       create.literal(column),
       create.literal(source)

@@ -50,7 +50,7 @@ type TestingFunction<T extends Promise<void> | void> = (
  * Convenience wrapper for testing a case with multiple chapters. Tests with source chapters 1-4 and the library parser
  */
 export function testWithChapters<T extends Promise<void> | void>(
-  this: undefined | boolean,
+  this: void | undefined | boolean,
   func: TestingFunction<T>
 ): T
 
@@ -59,11 +59,11 @@ export function testWithChapters<T extends Promise<void> | void>(
  * that should be called in the same way `test.each` is
  */
 export function testWithChapters<T extends Promise<void> | void>(
-  this: undefined | boolean,
+  this: void | undefined | boolean,
   ...chapters: Chapter[]
 ): (f: TestingFunction<T>) => T
 export function testWithChapters<T extends Promise<void> | void>(
-  this: undefined | boolean,
+  this: void | undefined | boolean,
   arg0: TestingFunction<T> | Chapter,
   ...chapters: Chapter[]
 ) {
@@ -83,7 +83,7 @@ export function testWithChapters<T extends Promise<void> | void>(
   return (func: TestingFunction<T>) => tester([arg0, ...chapters], func)
 }
 
-testWithChapters.skip = function(...args: Parameters<typeof testWithChapters>) {
+testWithChapters.skip = function (...args: Parameters<typeof testWithChapters>) {
   return this.call(true, ...args)
 }
 

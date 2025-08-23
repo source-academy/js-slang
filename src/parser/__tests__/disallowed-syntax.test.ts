@@ -455,7 +455,7 @@ test('Cannot use function expressions', () => {
     stripIndent`
     (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
     `,
-    5
+    Chapter.SOURCE_4
   ).toEqual('Line 1: Function expressions are not allowed')
 })
 
@@ -465,7 +465,7 @@ test('Cannot use function expressions - verbose', async ({ expect }) => {
     "enable verbose";
     (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
     `,
-    5
+    Chapter.SOURCE_4
   )
   expect(errStr).toMatchInlineSnapshot(`
             "Line 2, Column 1: Function expressions are not allowed
@@ -843,7 +843,7 @@ test('No classes', async ({ expect }) => {
     class Box {
     }
     `,
-    5
+    Chapter.SOURCE_4
   )
   expect(errStr).toMatchInlineSnapshot(`
             "Line 1: Class bodys are not allowed
@@ -858,7 +858,7 @@ test('No classes - verbose', async ({ expect }) => {
     class Box {
     }
     `,
-    5
+    Chapter.SOURCE_4
   )
 
   expect(errStr).toMatchInlineSnapshot(`
@@ -880,7 +880,7 @@ test('No super', async ({ expect }) => {
       }
     }
     `,
-    5
+    Chapter.SOURCE_4
   )
   expect(errStr).toMatchInlineSnapshot(`
             "Line 3: Supers are not allowed
@@ -901,7 +901,7 @@ test('No super - verbose', async ({ expect }) => {
       }
     }
   `,
-    5
+    Chapter.SOURCE_4
   )
 
   expect(errStr).toMatchInlineSnapshot(`
