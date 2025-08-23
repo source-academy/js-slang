@@ -418,10 +418,10 @@ test('Builtins hide their implementation when stringify', async () => {
     result: { value }
   } = await testSuccess('stringify(pair);', Chapter.SOURCE_2)
   return expect(value).toMatchInlineSnapshot(`
-      "function pair(left, right) {
-        [implementation hidden]
-      }"
-    `)
+    "function pair(left, right) {
+    	[implementation hidden]
+    }"
+  `)
 })
 
 test('String representation of null is nice', () => {
@@ -460,10 +460,10 @@ test('String representation with default (2 space) indent', async () => {
     result: { value }
   } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 1);`, Chapter.SOURCE_4)
   expect(value).toMatchInlineSnapshot(`
-            "[ \\"lambda_expression\\",
-            [ [[\\"name\\", [\\"x\\", null]], null],
-            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
-          `)
+    "[\\"lambda_expression\\",
+    [[[\\"name\\", [\\"x\\", null]], null],
+    [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
+  `)
 })
 
 test('String representation with more than 10 space indent should trim to 10 space indent', async () => {

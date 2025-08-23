@@ -27,7 +27,7 @@ function mockEvalFailure() {
   })
 }
 
-describe('Test processRawOptions', () => {
+describe(processTestOptions, () => {
   const options: [string, TestOptions, TestOptions][] = [
     ['Chapter Number is a valid TestOption', Chapter.SOURCE_4, { chapter: Chapter.SOURCE_4 }],
     [
@@ -42,7 +42,7 @@ describe('Test processRawOptions', () => {
   })
 })
 
-describe('Testing createTestContext', () => {
+describe(createTestContext, () => {
   test('Providing no test options runs default variant and Source 1', () => {
     const context = createTestContext()
     expect(context.chapter).toEqual(Chapter.SOURCE_1)

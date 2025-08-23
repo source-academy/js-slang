@@ -20,7 +20,7 @@ export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions
 /**
  * Asserts that the given value is true
  */
-export function assertTrue(cond: boolean): asserts cond {
+export function assertTruthy(cond: boolean): asserts cond {
   expect(cond).toBeTruthy()
 }
 
@@ -49,21 +49,28 @@ type TestingFunction<T extends Promise<void> | void> = (
 /**
  * Convenience wrapper for testing a case with multiple chapters. Tests with source chapters 1-4 and the library parser
  */
-export function testWithChapters<T extends Promise<void> | void>(func: TestingFunction<T>): T
+export function testWithChapters<T extends Promise<void> | void>(
+  this: undefined | boolean,
+  func: TestingFunction<T>
+): T
 
 /**
  * Convenience wrapper for testing a case with multiple chapters. Tests with the given chapters. Returns a function
  * that should be called in the same way `test.each` is
  */
 export function testWithChapters<T extends Promise<void> | void>(
+  this: undefined | boolean,
   ...chapters: Chapter[]
 ): (f: TestingFunction<T>) => T
 export function testWithChapters<T extends Promise<void> | void>(
+  this: undefined | boolean,
   arg0: TestingFunction<T> | Chapter,
   ...chapters: Chapter[]
 ) {
+  const testFunc = this ? test.skip : test
+
   function tester(chapters: Chapter[], func: TestingFunction<T>) {
-    test.for(chapters.map(chapter => [getChapterName(chapter), chapter] as [string, Chapter]))(
+    testFunc.for(chapters.map(chapter => [getChapterName(chapter), chapter] as [string, Chapter]))(
       'Testing %s',
       ([, chapter], context) => func(chapter, context)
     )
@@ -74,6 +81,10 @@ export function testWithChapters<T extends Promise<void> | void>(
   }
 
   return (func: TestingFunction<T>) => tester([arg0, ...chapters], func)
+}
+
+testWithChapters.skip = function(...args: Parameters<typeof testWithChapters>) {
+  return this.call(true, ...args)
 }
 
 /**

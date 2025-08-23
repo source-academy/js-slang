@@ -27,10 +27,6 @@ export interface CustomBuiltIns {
   visualiseList: (list: any, externalContext: any) => void
 }
 
-
-
-
-
 export type ExecutionMethod = 'native' | 'auto' | 'cse-machine'
 
 export interface NativeStorage {

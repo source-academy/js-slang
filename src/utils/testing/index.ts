@@ -7,7 +7,15 @@ import { assertIsFinished, processTestOptions } from './misc'
 import { mockContext } from './mocks'
 import type { TestContext, TestOptions, TestResults } from './types'
 
-type RemoveMatcher<T extends object> = Omit<T, 'toMatchInlineSnapshot'>
+/**
+ * The way Vitest works means that it doesn't let us call inline snapshot matchers via a 'proxy' function.
+ * You have to call the matchers directly from `expect`. So, we remove the type here to prevent
+ * usage of these matchers with the expect functions below.
+ */
+type RemoveMatcher<T extends object> = Omit<
+  T,
+  'toMatchInlineSnapshot' | 'toThrowErrorMatchingInlineSnapshot'
+>
 function removeMatcher<T extends object>(obj: T): RemoveMatcher<T> {
   return obj
 }

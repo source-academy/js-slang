@@ -8,11 +8,14 @@ vi.mock(import('path'), async importOriginal => {
   const newResolve = (...args: string[]) => posix.resolve('/', ...args)
 
   return {
-    ...originalPath,
-    posix,
-    resolve: newResolve
+    default: {
+      ...originalPath.default,
+      resolve: newResolve
+    },
+    posix
   }
 })
+
 beforeEach(() => {
   vi.clearAllMocks()
 })

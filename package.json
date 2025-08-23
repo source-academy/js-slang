@@ -57,7 +57,7 @@
     "autocomplete": "node ./scripts/docs.mjs autocomplete",
     "build_sicp_package": "yarn build && node ./scripts/build_sicp_package.mjs",
     "publish_sicp_package": "./scripts/publish_sicp_package.sh",
-    "benchmark": "vitest run benchmark",
+    "benchmark": "vitest benchmark",
     "prepare": "husky"
   },
   "devDependencies": {

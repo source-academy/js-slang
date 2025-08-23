@@ -38,13 +38,12 @@ test.skip('recursion', () => {
   f(2);
     `
   const program = parse(code, { ecmaVersion: 10 })!
-  const steps = getSteps(convert(program), {} as Context, {stepLimit: 1000})
+  const steps = getSteps(convert(program), {} as Context, { stepLimit: 1000 })
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
-
 
 test.skip('fact', () => {
   const code = `
@@ -53,14 +52,12 @@ test.skip('fact', () => {
   `
   const program = parse(code, { ecmaVersion: 10 })!
 
-
-  const steps = getSteps(convert(program), {} as Context, {stepLimit: 1000})
+  const steps = getSteps(convert(program), {} as Context, { stepLimit: 1000 })
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
-
 
 test.skip('substitution-block', () => {
   const code = `
@@ -74,7 +71,7 @@ test.skip('substitution-block', () => {
     `
   const program = parse(code, { ecmaVersion: 10 })!
 
-  const steps = getSteps(convert(program), {} as Context, {stepLimit: 1000})
+  const steps = getSteps(convert(program), {} as Context, { stepLimit: 1000 })
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
   const output = steps.map(stringifyWithExplanation)
@@ -88,7 +85,7 @@ test.skip('function calling', () => {
   `
   const program = parse(code, { ecmaVersion: 10 })!
 
-  const steps = getSteps(convert(program), {} as Context, {stepLimit: 1000})
+  const steps = getSteps(convert(program), {} as Context, { stepLimit: 1000 })
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n'))
 })
@@ -101,5 +98,4 @@ test('general', ({ expect }) => {
     const output = steps.map(stringifyWithExplanation)
     console.log(output.join('\n\n'))
   }).not.toThrow()
-
 })

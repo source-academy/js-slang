@@ -13,9 +13,11 @@ vi.mock(import('path'), async importOriginal => {
   const newResolve = (...args: string[]) => posix.resolve('/', ...args)
 
   return {
-    ...originalPath,
-    posix,
-    resolve: newResolve
+    default: {
+      ...originalPath.default,
+      resolve: newResolve
+    },
+    posix
   }
 })
 
@@ -189,7 +191,7 @@ describe('Test repl command', () => {
         ]
       ))
 
-    test.only('Running with a file name evaluates code and then enters the REPL', async () => {
+    test('Running with a file name evaluates code and then enters the REPL', async () => {
       mockReadFiles({
         '/a.js': `
           import { b } from './b.js';

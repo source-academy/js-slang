@@ -1,3 +1,4 @@
+// TODO: Convert to actual benchmark
 import { test } from 'vitest'
 import * as list from '../stdlib/list'
 import { Chapter } from '../langs'

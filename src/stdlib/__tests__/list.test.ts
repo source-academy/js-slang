@@ -488,12 +488,12 @@ describe('display_list', () => {
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list(null,
-         list([0, 0]),
-         list([0, 0], [1, 1]),
-         list([0, 0], [1, 1], [2, 2]),
-         list([0, 0], [1, 1], [2, 2], [3, 3]))",
+           list([0, 0]),
+           list([0, 0], [1, 1]),
+           list([0, 0], [1, 1], [2, 2]),
+           list([0, 0], [1, 1], [2, 2], [3, 3]))",
       ]
-      `)
+    `)
   })
 
   test('standard acyclic with pairs 2', async () => {
@@ -507,12 +507,12 @@ describe('display_list', () => {
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list(null,
-          list([null, 0]),
-          list([null, 0], [list(0), 1]),
-          list([null, 0], [list(0), 1], [list(0, 1), 2]),
-          list([null, 0], [list(0), 1], [list(0, 1), 2], [list(0, 1, 2), 3]))",
+           list([null, 0]),
+           list([null, 0], [list(0), 1]),
+           list([null, 0], [list(0), 1], [list(0, 1), 2]),
+           list([null, 0], [list(0), 1], [list(0, 1), 2], [list(0, 1, 2), 3]))",
       ]
-      `)
+    `)
   })
 
   test('returns argument', () => {
@@ -729,12 +729,12 @@ Array [
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list([0, ...<circular>],
-         [0, [1, ...<circular>]],
-         [0, [1, [2, ...<circular>]]],
-         [0, [1, [2, [3, ...<circular>]]]],
-         [0, [1, [2, [3, [4, ...<circular>]]]]])",
+           [0, [1, ...<circular>]],
+           [0, [1, [2, ...<circular>]]],
+           [0, [1, [2, [3, ...<circular>]]]],
+           [0, [1, [2, [3, [4, ...<circular>]]]]])",
       ]
-      `)
+    `)
   })
 
   test('list of infinite list of list', async () => {
@@ -758,10 +758,10 @@ Array [
     expect(result).toMatchInlineSnapshot(`
       Array [
         "list([null, ...<circular>],
-         [null, [list(0), ...<circular>]],
-         [null, [list(0), [list(0, 1), ...<circular>]]])",
+           [null, [list(0), ...<circular>]],
+           [null, [list(0), [list(0, 1), ...<circular>]]])",
       ]
-      `)
+    `)
   })
 
   test('infinite list of list of infinite list', async () => {

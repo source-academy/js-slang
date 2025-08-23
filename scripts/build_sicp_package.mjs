@@ -5,7 +5,7 @@ import { join, extname } from 'path'
 import { parse } from 'acorn'
 import createContext from '../dist/createContext.js'
 import { ACORN_PARSE_OPTIONS } from '../dist/constants.js'
-import { Chapter } from '../dist/types.js'
+import { Chapter } from '../dist/langs.js'
 
 const SICP_DIR = 'sicp_publish/dist'
 

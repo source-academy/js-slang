@@ -1,4 +1,4 @@
-import type { SourceLocation } from "estree"
+import type { SourceLocation } from 'estree'
 
 export enum ErrorType {
   IMPORT = 'Import',
