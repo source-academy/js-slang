@@ -11,7 +11,7 @@ test('Check that stack is at most 10k in size', () => {
       }
     }
     f(10000);
-  `).toMatchInlineSnapshot(`"Line 5: RangeError: Maximum call stack size exceeded"`)
+  `).toContain(`Line 5: RangeError: Maximum call stack size exceeded`)
 }, 10000)
 
 test('Simple tail call returns work', () => {

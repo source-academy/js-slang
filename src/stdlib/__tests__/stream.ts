@@ -33,9 +33,7 @@ describe('primitive stream functions', () => {
     stream_length(integers_from(0));
     `,
       { chapter: Chapter.SOURCE_3 }
-    ).toMatchInlineSnapshot(
-      `"Line 1: The error may have arisen from forcing the infinite stream: function integers_from."`
-    )
+    ).toContain(`RangeError: Maximum call stack size exceeded`)
   }, 15000)
 
   test('stream is properly created', () => {
