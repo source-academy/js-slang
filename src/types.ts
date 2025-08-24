@@ -249,7 +249,7 @@ export interface BlockExpression extends es.BaseExpression {
 
 export type substituterNodes = Node | BlockExpression
 
-export {
+export type {
   Instruction as SVMInstruction,
   Program as SVMProgram,
   Address as SVMAddress,

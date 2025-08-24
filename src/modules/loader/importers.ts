@@ -15,8 +15,6 @@ function wrapImporter<T>(func: (p: string) => Promise<T>) {
       const result = await timeoutPromise(func(p), 10000)
       return result
     } catch (error) {
-      console.error('the error is', error)
-
       // Before calling this function, the import analyzer should've been used to make sure
       // that the module being imported already exists, so the following errors should
       // be thrown only if the modules server is unreachable

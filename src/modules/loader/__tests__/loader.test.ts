@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { mockContext } from '../../../utils/testing/mocks'
 import { Chapter, Variant } from '../../../langs'
 import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
@@ -33,10 +33,6 @@ const mockedDocsImporter = vi.spyOn(importers, 'docsImporter')
 
 beforeEach(() => {
   vi.clearAllMocks()
-})
-
-afterEach(() => {
-  vi.resetModules()
 })
 
 describe('bundle loading', () => {
