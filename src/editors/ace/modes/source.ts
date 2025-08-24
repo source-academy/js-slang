@@ -660,7 +660,7 @@ export function HighlightRulesSelector(
             }
             // @ts-ignore
             this.next = stack[0] || 'start'
-            return [{ type: this.token, value: value }]
+            return [{ type: this.token, value }]
           },
           nextState: 'jsx'
         },

@@ -31,16 +31,20 @@ export default tseslint.config(
     rules: {
       'import/no-duplicates': ['warn', { 'prefer-inline': true }],
       'import/order': 'warn',
-      '@typescript-eslint/no-base-to-string': 'off', // TODO: Remove
+
+      'object-shorthand': ['warn', 'properties'],
       'prefer-const': 'off', // TODO: Remove
+      'prefer-rest-params': 'off',
       'no-constant-condition': ['warn', { checkLoops: false }],
       'no-var': 'off', // TODO: Remove
+
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/camelcase': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/interface-name-prefix': 'off',
+      '@typescript-eslint/no-base-to-string': 'off', // TODO: Remove
       '@typescript-eslint/no-duplicate-type-constituents': 'off',
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
@@ -65,7 +69,6 @@ export default tseslint.config(
       '@typescript-eslint/restrict-plus-operands': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/unbound-method': 'off',
-      'prefer-rest-params': 'off'
     }
   },
   {

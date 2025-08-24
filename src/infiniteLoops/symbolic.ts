@@ -1,4 +1,4 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import * as create from '../utils/ast/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
@@ -57,9 +57,9 @@ export const hybridValueConstructor = (
 ) =>
   ({
     type: 'value',
-    concrete: concrete,
-    symbolic: symbolic,
-    validity: validity
+    concrete,
+    symbolic,
+    validity
   }) as HybridValue
 
 export function makeDummyHybrid(concrete: any): HybridValue {
@@ -68,7 +68,7 @@ export function makeDummyHybrid(concrete: any): HybridValue {
   }
   const val: HybridValue = {
     type: 'value',
-    concrete: concrete,
+    concrete,
     symbolic: create.literal(concrete),
     validity: Validity.Valid
   }
@@ -93,9 +93,9 @@ export const hybridArrayConstructor = (
 ) =>
   ({
     type: 'array',
-    concrete: concrete,
-    symbolic: symbolic,
-    listHeads: listHeads,
+    concrete,
+    symbolic,
+    listHeads,
     validity: Validity.Valid
   }) as HybridArray
 

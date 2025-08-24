@@ -1,11 +1,11 @@
-import * as es from 'estree'
+import type es from 'estree'
 import * as errors from '../errors/errors'
-import { List } from '../stdlib/list'
+import type { List } from '../stdlib/list'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { is_number, SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
-import { Context } from '..'
+import type { Context } from '../types'
 import { encode } from '../alt-langs/scheme/scm-slang/src'
-import { Control, Stash } from './interpreter'
+import type { Control, Stash } from './interpreter'
 import { currentTransformers, getVariable, handleRuntimeError } from './utils'
 import { Transformer, macro_transform, match } from './patterns'
 import {
@@ -16,7 +16,7 @@ import {
   flattenList,
   isList
 } from './macro-utils'
-import { ControlItem } from './types'
+import type { ControlItem } from './types'
 import { popInstr } from './instrCreator'
 
 // this needs to be better but for now it's fine
@@ -250,7 +250,7 @@ export function schemeEval(
           // estree ArrowFunctionExpression
           const lambda = {
             type: 'ArrowFunctionExpression',
-            params: params,
+            params,
             body: convertToEvalExpression(body)
           }
 
