@@ -1,7 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { simple } from '../utils/walkers'
+import { simple } from '../utils/ast/walkers'
 import { InfiniteLoopError, InfiniteLoopErrorType } from './errors'
 import { getOriginalName } from './instrument'
 import * as st from './state'

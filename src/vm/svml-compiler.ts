@@ -12,7 +12,7 @@ import {
 } from '../stdlib/vm.prelude'
 import type { Context, ContiguousArrayElements, Node } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { recursive, simple } from '../utils/walkers'
+import { recursive, simple } from '../utils/ast/walkers'
 import OpCodes from './opcodes'
 
 const VALID_UNARY_OPERATORS = new Map([

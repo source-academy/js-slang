@@ -7,7 +7,7 @@ import { NodeWithInferredType } from '../../types'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
-import { simple } from '../../utils/walkers'
+import { simple } from '../../utils/ast/walkers'
 import { validateAndAnnotate } from '../validator'
 import { getSourceVariableDeclaration } from '../../utils/ast/helpers'
 

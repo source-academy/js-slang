@@ -1,6 +1,6 @@
 import type es from 'estree'
 
-import { simple } from '../walkers'
+import { simple } from '../ast/walkers'
 
 const locationKeys = ['loc', 'start', 'end']
 

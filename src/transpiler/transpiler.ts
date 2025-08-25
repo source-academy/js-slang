@@ -17,7 +17,7 @@ import {
   getUniqueId,
   NativeIds
 } from '../utils/uniqueIds'
-import { simple } from '../utils/walkers'
+import { simple } from '../utils/ast/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'
 
 /**

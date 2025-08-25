@@ -2,7 +2,7 @@ import type es from 'estree'
 
 import { isInLoc } from './finder'
 import type { BlockFrame, DefinitionNode, Node } from './types'
-import { simple } from './utils/walkers'
+import { simple } from './utils/ast/walkers'
 
 /**
  * This file parses the original AST Tree into another tree with a similar structure
