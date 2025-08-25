@@ -3,7 +3,8 @@ import type es from 'estree'
 import createContext from '../createContext'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
-import { Chapter, Variant, type NativeStorage } from '../types'
+import type { NativeStorage } from '../types'
+import { Chapter, Variant } from '../langs'
 import * as create from '../utils/ast/astCreator'
 import { checkForInfiniteLoop } from './detect'
 import { InfiniteLoopError } from './errors'
@@ -251,7 +252,7 @@ function prepareBuiltins(oldBuiltins: Map<string, any>) {
   const nonDetFunctions = ['get_time', 'math_random']
   const newBuiltins = new Map<string, any>()
   for (const [name, fun] of oldBuiltins) {
-    const specialCase = builtinSpecialCases[name]
+    const specialCase = builtinSpecialCases[name as keyof typeof builtinSpecialCases]
     if (specialCase !== undefined) {
       newBuiltins.set(name, specialCase)
     } else {

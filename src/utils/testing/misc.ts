@@ -1,6 +1,7 @@
-import type { MockedFunction } from 'jest-mock'
+import { expect, test, type TestContext as VitestTestContext } from 'vitest'
 import type { Result } from '../..'
-import type { Finished, Value, Node, NodeTypeToNode, Chapter } from '../../types'
+import { Finished, Value, Node, NodeTypeToNode } from '../../types'
+import { Chapter } from '../../langs'
 import { getChapterName } from '../misc'
 import type { TestBuiltins, TestOptions } from './types'
 
@@ -17,17 +18,9 @@ export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions
 }
 
 /**
- * Wrapper around the MockedFunction type to provide type checking
- * for mocked functions
- */
-export function asMockedFunc<T extends (...args: any[]) => any>(func: T) {
-  return func as MockedFunction<T>
-}
-
-/**
  * Asserts that the given value is true
  */
-export function assertTrue(cond: boolean): asserts cond {
+export function assertTruthy(cond: boolean): asserts cond {
   expect(cond).toBeTruthy()
 }
 
@@ -48,15 +41,50 @@ export function testMultipleCases<T extends Array<any>>(
   test.each(withIndex)('%s', (_, i, ...args) => tester(args, i), timeout)
 }
 
+type TestingFunction<T extends Promise<void> | void> = (
+  chapter: Chapter,
+  context: VitestTestContext
+) => T
+
 /**
- * Convenience wrapper for testing a case with multiple chapters
+ * Convenience wrapper for testing a case with multiple chapters. Tests with source chapters 1-4 and the library parser
  */
-export function testWithChapters(...chapters: Chapter[]) {
-  return (func: (chapter: Chapter) => any) =>
-    test.each(chapters.map(chapter => [getChapterName(chapter), chapter]))(
+export function testWithChapters<T extends Promise<void> | void>(
+  this: void | undefined | boolean,
+  func: TestingFunction<T>
+): T
+
+/**
+ * Convenience wrapper for testing a case with multiple chapters. Tests with the given chapters. Returns a function
+ * that should be called in the same way `test.each` is
+ */
+export function testWithChapters<T extends Promise<void> | void>(
+  this: void | undefined | boolean,
+  ...chapters: Chapter[]
+): (f: TestingFunction<T>) => T
+export function testWithChapters<T extends Promise<void> | void>(
+  this: void | undefined | boolean,
+  arg0: TestingFunction<T> | Chapter,
+  ...chapters: Chapter[]
+) {
+  const testFunc = this ? test.skip : test
+
+  function tester(chapters: Chapter[], func: TestingFunction<T>) {
+    testFunc.for(chapters.map(chapter => [getChapterName(chapter), chapter] as [string, Chapter]))(
       'Testing %s',
-      (_, chapter) => func(chapter)
+      ([, chapter], context) => func(chapter, context)
     )
+  }
+
+  if (typeof arg0 === 'function') {
+    return tester([Chapter.SOURCE_1, Chapter.SOURCE_2, Chapter.SOURCE_3, Chapter.SOURCE_4], arg0)
+  }
+
+  return (func: TestingFunction<T>) => tester([arg0, ...chapters], func)
+}
+
+testWithChapters.skip = function (...args: Parameters<typeof testWithChapters>) {
+  return this.call(true, ...args)
 }
 
 /**

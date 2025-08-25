@@ -29,8 +29,6 @@ const OPCODES_STR = {
   [OpCodes.DIVF]: 'DIVF  ',
   [OpCodes.MODG]: 'MODG  ',
   [OpCodes.MODF]: 'MODF  ',
-  [OpCodes.NEGG]: 'NEGG  ',
-  [OpCodes.NEGF]: 'NEGF  ',
   [OpCodes.NOTG]: 'NOTG  ',
   [OpCodes.NOTB]: 'NOTB  ',
   [OpCodes.LTG]: 'LTG   ',
@@ -44,9 +42,6 @@ const OPCODES_STR = {
   [OpCodes.EQG]: 'EQG   ',
   [OpCodes.EQF]: 'EQF   ',
   [OpCodes.EQB]: 'EQB   ',
-  [OpCodes.NEQG]: 'NEQG  ',
-  [OpCodes.NEQF]: 'NEQF  ',
-  [OpCodes.NEQB]: 'NEQB  ',
   [OpCodes.NEWC]: 'NEWC  ',
   [OpCodes.NEWA]: 'NEWA  ',
   [OpCodes.LDLG]: 'LDLG  ',
@@ -156,7 +151,7 @@ const OPCODES_STR = {
 
 // get name of opcode for debugging
 export function getName(op: number) {
-  return OPCODES_STR[op] // need to add guard in case op does not exist
+  return OPCODES_STR[op as keyof typeof OPCODES_STR] // need to add guard in case op does not exist
 }
 
 // pretty-print the program

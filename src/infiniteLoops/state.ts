@@ -1,5 +1,5 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { identifier } from '../utils/ast/astCreator'
 import * as sym from './symbolic'
@@ -13,13 +13,13 @@ export type Transition = {
   cachedSymbolicValue: number
 }
 const makeTransition = (name: string, value: any, id: number) =>
-  ({ name: name, value: value, cachedSymbolicValue: id }) as Transition
+  ({ name, value, cachedSymbolicValue: id }) as Transition
 type FunctionStackFrame = {
   name: string
   transitions: Transition[]
 }
 const makeFunctionStackFrame = (name: string, transitions: Transition[]) =>
-  ({ name: name, transitions: transitions }) as FunctionStackFrame
+  ({ name, transitions }) as FunctionStackFrame
 type Iteration = {
   loc: string
   paths: Path
@@ -138,7 +138,9 @@ export class State {
     }
     const transitions = this.mixedStack[this.stackPointer].transitions
     for (let i = 0; i < transitions.length; i++) {
-      const transition = transitions[i]
+      // TODO: Something seems to be very wrong with the type definitions here
+      // Shall we just remove the infinite loop detector as per #1516?
+      const transition: any = transitions[i]
       if (transition[0] === name) {
         transition[1] = concrete
         transition[2] = id
@@ -154,7 +156,7 @@ export class State {
    */
   public newStackFrame(loc: string) {
     this.stackPointer++
-    this.mixedStack.push({ loc: loc, paths: [], transitions: [] })
+    this.mixedStack.push({ loc, paths: [], transitions: [] })
     return this.stackPointer
   }
   /**
@@ -234,6 +236,6 @@ export class State {
    * @returns the name of the last function in the stack.
    */
   public getLastFunctionName() {
-    return this.functionStack[this.functionStack.length - 1][0]
+    return (this.functionStack[this.functionStack.length - 1] as any)[0]
   }
 }

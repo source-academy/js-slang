@@ -1,5 +1,6 @@
 // @ts-check
 
+import vitestPlugin from '@vitest/eslint-plugin'
 import tseslint from 'typescript-eslint'
 import globals from 'globals'
 import * as importPlugin from 'eslint-plugin-import'
@@ -11,13 +12,30 @@ export default tseslint.config(
   },
   ...tseslint.configs.recommended,
   {
-    files: ['**/*.ts*', 'scripts/*.mjs'],
     languageOptions: {
       globals: {
         ...globals.node,
         ...globals.es2016,
         ...globals.browser
       },
+    },
+    plugins: {
+      import: importPlugin
+    },
+    rules: {
+      'import/no-duplicates': ['warn', { 'prefer-inline': true }],
+      'import/order': 'warn',
+
+      'no-constant-condition': ['warn', { checkLoops: false }],
+      'no-var': 'off', // TODO: Remove
+      'object-shorthand': ['warn', 'properties'],
+      'prefer-const': 'off', // TODO: Remove
+      'prefer-rest-params': 'off',
+    }
+  },
+  {
+    files: ['**/*.ts*'],
+    languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
         project: './tsconfig.json'
@@ -25,26 +43,21 @@ export default tseslint.config(
     },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
-      import: importPlugin
     },
     rules: {
-      'import/no-duplicates': ['warn', { 'prefer-inline': true }],
-      'import/order': 'warn',
-      '@typescript-eslint/no-base-to-string': 'off', // TODO: Remove
-      'prefer-const': 'off', // TODO: Remove
-      'no-constant-condition': ['warn', { checkLoops: false }],
-      'no-var': 'off', // TODO: Remove
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/camelcase': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/interface-name-prefix': 'off',
+      '@typescript-eslint/no-base-to-string': 'off', // TODO: Remove
       '@typescript-eslint/no-duplicate-type-constituents': 'off',
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-implied-eval': 'off',
+      '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/no-inferrable-types': 'off',
       '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
@@ -63,7 +76,20 @@ export default tseslint.config(
       '@typescript-eslint/restrict-plus-operands': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/unbound-method': 'off',
-      'prefer-rest-params': 'off'
+    }
+  },
+  {
+    extends: [vitestPlugin.configs.recommended],
+    files: ['**/__tests__/**/*.test.ts'],
+    plugins: {
+      vitest: vitestPlugin
+    },
+    rules: {
+      'no-empty-pattern': 'off',
+      'vitest/expect-expect': 'off', // TODO turn this back on
+      'vitest/prefer-describe-function-title': 'warn',
+      'vitest/valid-describe-callback': 'off',
+      'vitest/valid-title': 'off',
     }
   },
   {

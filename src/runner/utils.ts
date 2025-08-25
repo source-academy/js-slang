@@ -1,8 +1,9 @@
 import type { Program } from 'estree'
 
 import type { IOptions, Result } from '..'
+import type { Variant } from '../langs'
 import { areBreakpointsSet } from '../stdlib/inspector'
-import type { Context, RecursivePartial, Variant } from '../types'
+import type { Context, RecursivePartial } from '../types'
 import { simple } from '../utils/walkers'
 
 // Context Utils

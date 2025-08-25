@@ -485,7 +485,17 @@ function compileStatements(
 }
 
 // each compiler should return a maxStackSize
-const compilers = {
+const compilers: Partial<
+  Record<
+    Node['type'],
+    (
+      node: Node,
+      indexTable: Map<string, EnvEntry>[],
+      insertFlag: boolean,
+      isTailCallPosition?: boolean
+    ) => ReturnType<typeof compileStatements>
+  >
+> = {
   // wrapper
   Program(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.Program
