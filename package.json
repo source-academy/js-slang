@@ -46,7 +46,7 @@
   "scripts": {
     "build": "yarn docs && yarn build:slang",
     "build:slang": "tsc --project tsconfig.prod.json",
-    "eslint": "eslint src",
+    "eslint": "eslint src scripts",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "test": "vitest",
