@@ -52,12 +52,13 @@ export interface DeclAssmtInstr extends BaseInstr<InstrType.ASSIGNMENT, es.Varia
   declaration: true
 }
 
-export interface RegularAssmtInstr extends BaseInstr<InstrType.ASSIGNMENT, es.AssignmentExpression> {
+export interface RegularAssmtInstr
+  extends BaseInstr<InstrType.ASSIGNMENT, es.AssignmentExpression> {
   declaration: false
   symbol: string
 }
 
-export type AssmtInstr = DeclAssmtInstr | RegularAssmtInstr;
+export type AssmtInstr = DeclAssmtInstr | RegularAssmtInstr
 
 export interface UnOpInstr extends BaseInstr<InstrType.UNARY_OP, es.UnaryExpression> {
   symbol: es.UnaryOperator
@@ -96,6 +97,9 @@ export type Instr =
   | ForInstr
   | UnOpInstr
   | WhileInstr
+
+export type InstrTypeToInstr<T extends InstrType> =
+  Extract<Instr, { instrType: T }> extends never ? BaseInstr : Extract<Instr, { instrType: T }>
 
 export type ControlItem = (Node | Instr | SchemeControlItems) & {
   isEnvDependent?: boolean

@@ -126,7 +126,7 @@ export function schemeEval(
       // if it does, then apply the corresponding rule.
       if (transformers.hasPattern(elem.sym)) {
         // get the relevant transformers
-        const transformerList: Transformer[] = transformers.getPattern(elem.sym)
+        const transformerList = transformers.getPattern(elem.sym)
 
         // find the first matching transformer
         for (const transformer of transformerList) {
@@ -138,7 +138,7 @@ export function schemeEval(
               control.push(transformedMacro as ControlItem)
               return
             }
-          } catch (e) {
+          } catch {
             return handleRuntimeError(
               context,
               new errors.ExceptionError(

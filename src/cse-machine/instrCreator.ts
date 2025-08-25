@@ -51,7 +51,10 @@ export const forInstr = (
 
 export function assmtInstr(symbol: string, srcNode: es.VariableDeclaration): DeclAssmtInstr
 export function assmtInstr(symbol: string, srcNode: es.AssignmentExpression): RegularAssmtInstr
-export function assmtInstr(symbol: string, srcNode: es.VariableDeclaration | es.AssignmentExpression): AssmtInstr {
+export function assmtInstr(
+  symbol: string,
+  srcNode: es.VariableDeclaration | es.AssignmentExpression
+): AssmtInstr {
   if (srcNode.type === 'VariableDeclaration') {
     return {
       instrType: InstrType.ASSIGNMENT,
@@ -62,7 +65,6 @@ export function assmtInstr(symbol: string, srcNode: es.VariableDeclaration | es.
     }
   }
 
-
   return {
     instrType: InstrType.ASSIGNMENT,
     symbol,
@@ -70,7 +72,6 @@ export function assmtInstr(symbol: string, srcNode: es.VariableDeclaration | es.
     srcNode
   }
 }
-
 
 export const unOpInstr = (symbol: es.UnaryOperator, srcNode: es.UnaryExpression): UnOpInstr => ({
   instrType: InstrType.UNARY_OP,

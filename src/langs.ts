@@ -61,6 +61,8 @@ export const { languages: sourceLanguages, typeguard: isSourceLanguage } = defin
   { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 ])
 
+export type SourceLanguages = (typeof sourceLanguages)[number]
+
 export const { languages: scmLanguages, typeguard: isSchemeLanguage } = defineLanguages([
   { chapter: Chapter.SCHEME_1, variant: Variant.EXPLICIT_CONTROL },
   { chapter: Chapter.SCHEME_2, variant: Variant.EXPLICIT_CONTROL },
@@ -69,9 +71,13 @@ export const { languages: scmLanguages, typeguard: isSchemeLanguage } = defineLa
   { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 ])
 
+export type SchemeLanguages = (typeof scmLanguages)[number]
+
 export const { languages: pyLanguages, typeguard: isPythonLanguage } = defineLanguages([
   { chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT }
 ])
+
+export type PythonLanguages = (typeof pyLanguages)[number]
 
 export function isSupportedLanguageCombo(lang: Language) {
   return isSourceLanguage(lang) || isPythonLanguage(lang) || isSchemeLanguage(lang)
