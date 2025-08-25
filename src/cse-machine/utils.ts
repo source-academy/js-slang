@@ -1,10 +1,9 @@
 import type es from 'estree'
-import { isArray, isFunction } from 'lodash'
+import { isFunction } from 'lodash'
 
-import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import type { Environment, Node, StatementSequence, Value } from '../types'
+import type { Context, Environment, Node, NodeTypeToNode, StatementSequence, Value } from '../types'
 import { Chapter } from '../langs'
 import * as ast from '../utils/ast/astCreator'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
@@ -14,14 +13,12 @@ import Heap from './heap'
 import * as instr from './instrCreator'
 import { Control, Transformers } from './interpreter'
 import {
-  AppInstr,
-  EnvArray,
-  ControlItem,
-  Instr,
+  type AppInstr,
+  type EnvArray,
+  type ControlItem,
+  type Instr,
   InstrType,
-  BranchInstr,
-  WhileInstr,
-  ForInstr
+  type InstrTypeToInstr
 } from './types'
 import Closure from './closure'
 import { Continuation, isCallWithCurrentContinuation } from './continuations'
@@ -38,7 +35,7 @@ export const isSchemeValue = (command: ControlItem): boolean => {
     command === null ||
     typeof command === 'string' ||
     typeof command === 'boolean' ||
-    isArray(command) ||
+    Array.isArray(command) ||
     command instanceof _Symbol ||
     is_number(command)
   )
@@ -137,7 +134,7 @@ export const uniqueId = (context: Context): string => {
  */
 export const isEnvArray = (item: any): item is EnvArray => {
   return (
-    isArray(item) &&
+    Array.isArray(item) &&
     {}.hasOwnProperty.call(item, 'id') &&
     {}.hasOwnProperty.call(item, 'environment')
   )
@@ -149,7 +146,7 @@ export const isEnvArray = (item: any): item is EnvArray => {
  * pass it in here as a 2nd argument for stronger checking
  */
 export const isStreamFn = (item: any, result?: any): result is [any, () => any] => {
-  if (result == null || !isArray(result) || result.length !== 2) return false
+  if (result == null || !Array.isArray(result) || result.length !== 2) return false
   return (
     isFunction(item) &&
     !(item instanceof Closure) &&
@@ -660,18 +657,21 @@ export const hasReturnStatement = (block: es.BlockStatement | StatementSequence)
   return hasReturn
 }
 
-export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
-  let hasBreak = false
-  // Parser enforces that if/else have braces (block statement)
-  hasBreak = hasBreak || hasBreakStatement(statement.consequent as es.BlockStatement)
-  if (statement.alternate) {
-    if (isIfStatement(statement.alternate)) {
-      hasBreak = hasBreak || hasBreakStatementIf(statement.alternate)
-    } else if (isBlockStatement(statement.alternate) || isStatementSequence(statement.alternate)) {
-      hasBreak = hasBreak || hasBreakStatement(statement.alternate)
+function nodeVisitor(node: Node, type: Node['type']): boolean {
+  switch (node.type) {
+    case 'BlockStatement':
+    case 'StatementSequence':
+    case 'Program':
+      return node.body.some(each => nodeVisitor(each, type))
+    case 'IfStatement': {
+      const { consequent, alternate } = node
+      if (nodeVisitor(consequent, type)) return true
+
+      return !!alternate && nodeVisitor(alternate, type)
     }
+    default:
+      return node.type === type
   }
-  return hasBreak
 }
 
 /**
@@ -680,32 +680,7 @@ export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
  * @return `true` if there is a `break` statement, else `false`.
  */
 export const hasBreakStatement = (block: es.BlockStatement | StatementSequence): boolean => {
-  let hasBreak = false
-  for (const statement of block.body) {
-    if (statement.type === 'BreakStatement') {
-      hasBreak = true
-    } else if (isIfStatement(statement)) {
-      // Parser enforces that if/else have braces (block statement)
-      hasBreak = hasBreak || hasBreakStatementIf(statement)
-    } else if (isBlockStatement(statement) || isStatementSequence(statement)) {
-      hasBreak = hasBreak || hasBreakStatement(statement)
-    }
-  }
-  return hasBreak
-}
-
-export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
-  let hasContinue = false
-  // Parser enforces that if/else have braces (block statement)
-  hasContinue = hasContinue || hasContinueStatement(statement.consequent as es.BlockStatement)
-  if (statement.alternate) {
-    if (isIfStatement(statement.alternate)) {
-      hasContinue = hasContinue || hasContinueStatementIf(statement.alternate)
-    } else if (isBlockStatement(statement.alternate) || isStatementSequence(statement.alternate)) {
-      hasContinue = hasContinue || hasContinueStatement(statement.alternate)
-    }
-  }
-  return hasContinue
+  return nodeVisitor(block, 'BreakStatement')
 }
 
 /**
@@ -714,239 +689,91 @@ export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
  * @return `true` if there is a `continue` statement, else `false`.
  */
 export const hasContinueStatement = (block: es.BlockStatement | StatementSequence): boolean => {
-  let hasContinue = false
-  for (const statement of block.body) {
-    if (statement.type === 'ContinueStatement') {
-      hasContinue = true
-    } else if (isIfStatement(statement)) {
-      // Parser enforces that if/else have braces (block statement)
-      hasContinue = hasContinue || hasContinueStatementIf(statement)
-    } else if (isBlockStatement(statement) || isStatementSequence(statement)) {
-      hasContinue = hasContinue || hasContinueStatement(statement)
-    }
-  }
-  return hasContinue
+  return nodeVisitor(block, 'ContinueStatement')
 }
 
-type PropertySetter = Map<string, Transformer>
-type Transformer = (item: ControlItem) => ControlItem
+/**
+ * Utility type for getting all the keys of a ControlItem that have values
+ * that are assignable to Nodes
+ */
+type GetNodeKeys<T extends ControlItem> = {
+  [K in keyof T as T[K] extends Node | null | undefined ? K : never]: K
+}
+/**
+ * Extracts all the keys of a ControlItem that have values that are assignable to Nodes
+ * as a union
+ */
+type KeysOfNodeProperties<T extends ControlItem> = GetNodeKeys<T>[keyof GetNodeKeys<T>]
 
-const setToTrue = (item: ControlItem): ControlItem => {
-  item.isEnvDependent = true
-  return item
+/**
+ * To provide a specifcation on how to calculate whether a ControlItem is env dependent or not:
+ * - If a boolean is provided, that value is used directly
+ * - If a string is provided, it is treated as the name of a property. `isEnvDependent` is then called on the value of that property.
+ * - If an array of strings is provided, all values are treated as names of properties and `isEnvDependent` is called on all
+ * their values
+ * - If a function is provided, the function is called with the node and the return value is used
+ */
+type EnvDependentCalculator<T extends ControlItem> =
+  | ((item: T) => boolean)
+  | boolean
+  | KeysOfNodeProperties<T>
+  | KeysOfNodeProperties<T>[]
+
+type EnvCalculators = {
+  [K in Node['type']]?: EnvDependentCalculator<NodeTypeToNode<K>>
+} & {
+  [K in InstrType]?: EnvDependentCalculator<InstrTypeToInstr<K>>
 }
 
-const setToFalse = (item: ControlItem): ControlItem => {
-  item.isEnvDependent = false
-  return item
-}
-
-const propertySetter: PropertySetter = new Map<string, Transformer>([
-  [
-    'Program',
-    (node: Node) => {
-      node = node as es.Program
-      node.isEnvDependent = node.body.some(elem => isEnvDependent(elem))
-      return node
-    }
-  ],
-  ['Literal', setToFalse],
-  ['ImportDeclaration', setToFalse],
-  ['BreakStatement', setToFalse],
-  ['ContinueStatement', setToFalse],
-  ['DebuggerStatement', setToFalse],
-  ['VariableDeclaration', setToTrue],
-  ['FunctionDeclaration', setToTrue],
-  ['ArrowFunctionExpression', setToTrue],
-  ['Identifier', setToTrue],
-  [
-    'LogicalExpression',
-    (node: Node) => {
-      node = node as es.LogicalExpression
-      node.isEnvDependent = isEnvDependent(node.left) || isEnvDependent(node.right)
-      return node
-    }
-  ],
-  [
-    'BinaryExpression',
-    (node: Node) => {
-      node = node as es.BinaryExpression
-      node.isEnvDependent = isEnvDependent(node.left) || isEnvDependent(node.right)
-      return node
-    }
-  ],
-  [
-    'UnaryExpression',
-    (node: Node) => {
-      node = node as es.UnaryExpression
-      node.isEnvDependent = isEnvDependent(node.argument)
-      return node
-    }
-  ],
-  [
-    'ConditionalExpression',
-    (node: Node) => {
-      node = node as es.ConditionalExpression
-      node.isEnvDependent =
-        isEnvDependent(node.consequent) ||
-        isEnvDependent(node.alternate) ||
-        isEnvDependent(node.test)
-      return node
-    }
-  ],
-  [
-    'MemberExpression',
-    (node: Node) => {
-      node = node as es.MemberExpression
-      node.isEnvDependent = isEnvDependent(node.property) || isEnvDependent(node.object)
-      return node
-    }
-  ],
-  [
-    'ArrayExpression',
-    (node: Node) => {
-      node = node as es.ArrayExpression
-      node.isEnvDependent = node.elements.some(elem => isEnvDependent(elem))
-      return node
-    }
-  ],
-  [
-    'AssignmentExpression',
-    (node: Node) => {
-      node = node as es.AssignmentExpression
-      node.isEnvDependent = isEnvDependent(node.left) || isEnvDependent(node.right)
-      return node
-    }
-  ],
-  [
-    'ReturnStatement',
-    (node: Node) => {
-      node = node as es.ReturnStatement
-      node.isEnvDependent = isEnvDependent(node.argument)
-      return node
-    }
-  ],
-  [
-    'CallExpression',
-    (node: Node) => {
-      node = node as es.CallExpression
-      node.isEnvDependent =
-        isEnvDependent(node.callee) || node.arguments.some(arg => isEnvDependent(arg))
-      return node
-    }
-  ],
-  [
-    'ExpressionStatement',
-    (node: Node) => {
-      node = node as es.ExpressionStatement
-      node.isEnvDependent = isEnvDependent(node.expression)
-      return node
-    }
-  ],
-  [
-    'IfStatement',
-    (node: Node) => {
-      node = node as es.IfStatement
-      node.isEnvDependent =
-        isEnvDependent(node.test) ||
-        isEnvDependent(node.consequent) ||
-        isEnvDependent(node.alternate)
-      return node
-    }
-  ],
-  [
-    'ForStatement',
-    (node: Node) => {
-      node = node as es.ForStatement
-      node.isEnvDependent =
-        isEnvDependent(node.body) ||
-        isEnvDependent(node.init) ||
-        isEnvDependent(node.test) ||
-        isEnvDependent(node.update)
-      return node
-    }
-  ],
-  [
-    'WhileStatement',
-    (node: Node) => {
-      node = node as es.WhileStatement
-      node.isEnvDependent = isEnvDependent(node.body) || isEnvDependent(node.test)
-      return node
-    }
-  ],
-  [
-    'BlockStatement',
-    (node: Node) => {
-      node = node as es.BlockStatement
-      node.isEnvDependent = node.body.some(stm => isEnvDependent(stm))
-      return node
-    }
-  ],
-  [
-    'StatementSequence',
-    (node: Node) => {
-      node = node as StatementSequence
-      node.isEnvDependent = node.body.some(stm => isEnvDependent(stm))
-      return node
-    }
-  ],
-
-  [
-    'ImportDeclaration',
-    (node: Node) => {
-      node = node as es.ImportDeclaration
-      node.isEnvDependent = node.specifiers.some(x => isEnvDependent(x))
-      return node
-    }
-  ],
-
-  ['ImportSpecifier', setToTrue],
-
-  ['ImportDefaultSpecifier', setToTrue],
+const envCalculators: EnvCalculators = {
+  ArrayExpression: ({ elements }) => elements.some(isEnvDependent),
+  ArrowFunctionExpression: true,
+  AssignmentExpression: ['left', 'right'],
+  BlockStatement: ({ body }) => body.some(isEnvDependent),
+  BinaryExpression: ['left', 'right'],
+  BreakStatement: false,
+  CallExpression: node => [node.callee, ...node.arguments].some(isEnvDependent),
+  ConditionalExpression: ['alternate', 'consequent', 'test'],
+  ContinueStatement: false,
+  DebuggerStatement: false,
+  ExpressionStatement: 'expression',
+  ForStatement: ['body', 'init', 'test', 'update'],
+  FunctionDeclaration: true,
+  Identifier: true,
+  IfStatement: ['alternate', 'consequent', 'test'],
+  ImportDeclaration: ({ specifiers }) => specifiers.some(isEnvDependent),
+  ImportDefaultSpecifier: true,
+  ImportSpecifier: true,
+  Literal: false,
+  LogicalExpression: ['left', 'right'],
+  MemberExpression: ['object', 'property'],
+  Program: ({ body }) => body.some(isEnvDependent),
+  ReturnStatement: 'argument',
+  StatementSequence: ({ body }) => body.some(isEnvDependent),
+  UnaryExpression: 'argument',
+  VariableDeclaration: true,
+  WhileStatement: ['body', 'test'],
 
   //Instruction
-  [InstrType.RESET, setToFalse],
-  [InstrType.UNARY_OP, setToFalse],
-  [InstrType.BINARY_OP, setToFalse],
-  [InstrType.POP, setToFalse],
-  [InstrType.ARRAY_ACCESS, setToFalse],
-  [InstrType.ARRAY_ASSIGNMENT, setToFalse],
-  [InstrType.CONTINUE, setToFalse],
-  [InstrType.CONTINUE_MARKER, setToFalse],
-  [InstrType.BREAK_MARKER, setToFalse],
-  [InstrType.MARKER, setToFalse],
-  [InstrType.ENVIRONMENT, setToFalse],
-  [InstrType.APPLICATION, setToTrue],
-  [InstrType.ASSIGNMENT, setToTrue],
-  [InstrType.ARRAY_LITERAL, setToTrue],
-  [InstrType.SPREAD, setToFalse],
-  [
-    InstrType.WHILE,
-    (instr: WhileInstr) => {
-      instr.isEnvDependent = isEnvDependent(instr.test) || isEnvDependent(instr.body)
-      return instr
-    }
-  ],
-  [
-    InstrType.FOR,
-    (instr: ForInstr) => {
-      instr.isEnvDependent =
-        isEnvDependent(instr.init) ||
-        isEnvDependent(instr.test) ||
-        isEnvDependent(instr.update) ||
-        isEnvDependent(instr.body)
-      return instr
-    }
-  ],
-  [
-    InstrType.BRANCH,
-    (instr: BranchInstr) => {
-      instr.isEnvDependent = isEnvDependent(instr.consequent) || isEnvDependent(instr.alternate)
-      return instr
-    }
-  ]
-])
-
+  [InstrType.APPLICATION]: true,
+  [InstrType.ARRAY_ACCESS]: false,
+  [InstrType.ARRAY_ASSIGNMENT]: false,
+  [InstrType.ARRAY_LITERAL]: true,
+  [InstrType.ASSIGNMENT]: true,
+  [InstrType.BINARY_OP]: false,
+  [InstrType.BRANCH]: ['alternate', 'consequent'],
+  [InstrType.BREAK_MARKER]: false,
+  [InstrType.CONTINUE]: false,
+  [InstrType.CONTINUE_MARKER]: false,
+  [InstrType.ENVIRONMENT]: false,
+  [InstrType.MARKER]: false,
+  [InstrType.POP]: false,
+  [InstrType.RESET]: false,
+  [InstrType.SPREAD]: false,
+  [InstrType.UNARY_OP]: false,
+  [InstrType.WHILE]: ['body', 'test'],
+  [InstrType.FOR]: ['body', 'init', 'test', 'update']
+}
 /**
  * Checks whether the evaluation of the given control item depends on the current environment.
  * The item is also considered environment dependent if its evaluation introduces
@@ -971,7 +798,7 @@ export function isEnvDependent(item: ControlItem | null | undefined): boolean {
   }
 
   // We assume no optimisations for scheme lists.
-  if (isArray(item)) {
+  if (Array.isArray(item)) {
     return true
   }
 
@@ -980,15 +807,40 @@ export function isEnvDependent(item: ControlItem | null | undefined): boolean {
     return item.isEnvDependent
   }
 
-  const setter = isNode(item)
-    ? propertySetter.get(item.type)
-    : isInstr(item)
-      ? propertySetter.get(item.instrType)
-      : undefined
-
-  if (setter) {
-    return setter(item)?.isEnvDependent ?? false
+  let calculator
+  if (isNode(item)) {
+    calculator = envCalculators[item.type]
+  } else if (isInstr(item)) {
+    calculator = envCalculators[item.instrType]
   }
 
-  return false
+  switch (typeof calculator) {
+    case 'boolean': {
+      item.isEnvDependent = calculator
+      break
+    }
+    case 'string': {
+      // @ts-expect-error Indexing with an arbitrary index
+      item.isEnvDependent = isEnvDependent(item[calculator])
+      break
+    }
+    case 'function': {
+      // @ts-expect-error Function parameter gets narrowed to never
+      item.isEnvDependent = calculator(item)
+      break
+    }
+    case 'undefined': {
+      item.isEnvDependent = false
+      break
+    }
+    default: {
+      if (!Array.isArray(calculator)) throw new Error(`Invalid setter for ${item}: ${calculator}`)
+
+      // @ts-expect-error Indexing with an arbitrary index
+      item.isEnvDependent = calculator.some(each => isEnvDependent(item[each]))
+      break
+    }
+  }
+
+  return item.isEnvDependent
 }
