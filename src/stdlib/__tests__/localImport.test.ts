@@ -47,7 +47,7 @@ describe('__access_named_export__', () => {
       __access_named_export__(importedFile(), "identity");
     `,
       Chapter.SOURCE_2
-    ).toEqual(undefined)
+    ).toBeUndefined()
   })
 
   it('returns undefined if list of exported names is empty', () => {
@@ -61,7 +61,7 @@ describe('__access_named_export__', () => {
       __access_named_export__(importedFile(), "identity");
     `,
       Chapter.SOURCE_2
-    ).toEqual(undefined)
+    ).toBeUndefined()
   })
 })
 

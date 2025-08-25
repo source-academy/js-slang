@@ -11,6 +11,7 @@ test('eval of numbers', async ({ expect }) => {
   } = await testSuccess(`(eval 1)`, optionECScm)
   expect(value).toMatchInlineSnapshot(`
     SchemeInteger {
+      "isEnvDependent": false,
       "numberType": 1,
       "value": 1n,
     }
@@ -37,11 +38,12 @@ test('eval of symbols', async ({ expect }) => {
   )
 
   expect(value).toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 1n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 1n,
+    }
+  `)
 })
 
 test('eval of empty list', () => {
@@ -60,11 +62,12 @@ test('eval of define', async ({ expect }) => {
   )
 
   expect(value).toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 1n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 1n,
+    }
+  `)
 })
 
 test('eval of lambda', async ({ expect }) => {
@@ -90,11 +93,12 @@ test('eval of if', async ({ expect }) => {
   )
 
   expect(value).toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 1n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 1n,
+    }
+  `)
 })
 
 test('eval of begin', async ({ expect }) => {
@@ -108,11 +112,12 @@ test('eval of begin', async ({ expect }) => {
   )
 
   expect(value).toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 3n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 3n,
+    }
+  `)
 })
 
 test('eval of set!', async ({ expect }) => {
@@ -128,11 +133,12 @@ test('eval of set!', async ({ expect }) => {
   )
 
   expect(value).toMatchInlineSnapshot(`
-            SchemeInteger {
-              "numberType": 1,
-              "value": 1n,
-            }
-          `)
+    SchemeInteger {
+      "isEnvDependent": false,
+      "numberType": 1,
+      "value": 1n,
+    }
+  `)
 })
 
 test('eval of application', async ({ expect }) => {

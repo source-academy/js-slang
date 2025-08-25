@@ -38,7 +38,7 @@ test('stringify is fast', () => {
   // but less than 2 seconds should be good enough on the test servers.
 })
 
-test('display_list with stringify is linear runtime', () => {
+test('display_list with stringify is linear runtime', { timeout: 1_000_000 }, () => {
   const placeholder = Symbol('placeholder')
   const noDisplayList = (v: any, s: any = placeholder) => {
     if (s !== placeholder && typeof s !== 'string') {
@@ -147,4 +147,4 @@ test('display_list with stringify is linear runtime', () => {
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?
-}, 1000000)
+})

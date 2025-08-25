@@ -45,7 +45,7 @@ describe('parse tree types', () => {
   })
 })
 
-describe('parse', () => {
+describe(parse, () => {
   it('takes in string', () => {
     const code = `const x1 = parse('1;');
       const x2 = parse(1);

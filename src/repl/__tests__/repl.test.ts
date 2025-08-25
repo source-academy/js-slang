@@ -52,7 +52,8 @@ describe(chapterParser, () =>
     }
 
     expect(chapterParser(value)).toEqual(expected)
-  }))
+  })
+)
 
 describe('Test repl command', () => {
   beforeEach(() => {
