@@ -1,12 +1,12 @@
-import { StepperArrayExpression } from './Expression/ArrayExpression'
-import { StepperArrowFunctionExpression } from './Expression/ArrowFunctionExpression'
-import { StepperBinaryExpression } from './Expression/BinaryExpression'
-import { StepperConditionalExpression } from './Expression/ConditionalExpression'
-import { StepperFunctionApplication } from './Expression/FunctionApplication'
-import { StepperIdentifier } from './Expression/Identifier'
+import type { StepperArrayExpression } from './Expression/ArrayExpression'
+import type { StepperArrowFunctionExpression } from './Expression/ArrowFunctionExpression'
+import type { StepperBinaryExpression } from './Expression/BinaryExpression'
+import type { StepperConditionalExpression } from './Expression/ConditionalExpression'
+import type { StepperFunctionApplication } from './Expression/FunctionApplication'
+import type { StepperIdentifier } from './Expression/Identifier'
 import { StepperLiteral } from './Expression/Literal'
-import { StepperLogicalExpression } from './Expression/LogicalExpression'
-import { StepperUnaryExpression } from './Expression/UnaryExpression'
+import type { StepperLogicalExpression } from './Expression/LogicalExpression'
+import type { StepperUnaryExpression } from './Expression/UnaryExpression'
 
 export type StepperExpression =
   | StepperUnaryExpression

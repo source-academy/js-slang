@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { stringify } from '../stringify'
 
-describe('stringify', () => {
+describe(stringify, () => {
   test('works with arrays with holes', () => {
     {
       const a = []

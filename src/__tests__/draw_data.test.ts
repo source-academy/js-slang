@@ -3,9 +3,7 @@ import { Chapter } from '../langs'
 import { expectParsedError, expectFinishedResult } from '../utils/testing'
 
 test('draw_data returns first argument if more than one argument', () => {
-  return expectFinishedResult(`draw_data(1, 2);`, {
-    chapter: Chapter.SOURCE_3
-  }).toEqual(1)
+  return expectFinishedResult(`draw_data(1, 2);`, Chapter.SOURCE_3).toEqual(1)
 })
 
 test('draw_data returns first argument if exactly one argument', () => {

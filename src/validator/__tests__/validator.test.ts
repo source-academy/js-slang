@@ -11,7 +11,7 @@ import { simple } from '../../utils/walkers'
 import { validateAndAnnotate } from '../validator'
 import { getSourceVariableDeclaration } from '../../utils/ast/helpers'
 
-export function toValidatedAst(code: string) {
+function toValidatedAst(code: string) {
   const context = mockContext(Chapter.SOURCE_1)
   const ast = parse(code, context)
   expect(ast).not.toBeUndefined()

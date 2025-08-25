@@ -33,7 +33,7 @@ function mockReadFiles(files: SourceFiles) {
 
 const mockedConsoleLog = vi.spyOn(console, 'log')
 
-describe('Test chapter parser', () =>
+describe(chapterParser, () =>
   test.each([
     ['1', Chapter.SOURCE_1],
     ['SOURCE_1', Chapter.SOURCE_1],

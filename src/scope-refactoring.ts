@@ -1,7 +1,7 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { isInLoc } from './finder'
-import { BlockFrame, DefinitionNode, Node } from './types'
+import type { BlockFrame, DefinitionNode, Node } from './types'
 import { simple } from './utils/walkers'
 
 /**

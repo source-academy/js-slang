@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 import { assemble } from '../svml-assembler'
 
-test('assemble', () => {
+test(assemble, () => {
   expect(
     assemble([
       0,
