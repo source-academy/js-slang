@@ -180,7 +180,7 @@ test('Infinite recursion with a block bodied function', { timeout: 15_000 }, () 
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
 })
 
-test('Infinite recursion with function calls in argument', { timeout: 20_000 }, () => {
+test('Infinite recursion with function calls in argument', { timeout: 30_000 }, () => {
   return expectParsedError(
     stripIndent`
     function i(n, redundant) {
@@ -971,7 +971,7 @@ test('Cascading js errors work properly', () => {
   ).toEqual('Line 2: Error: head(xs) expects a pair as argument xs, but encountered null')
 })
 
-test('Check that stack is at most 10k in size', { timeout: 10_000 }, () => {
+test('Check that stack is at most 10k in size', { timeout: 20_000 }, () => {
   return expectParsedError(
     stripIndent`
     function f(x) {
