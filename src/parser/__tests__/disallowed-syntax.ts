@@ -446,7 +446,7 @@ test('Cannot use function expressions', () => {
     stripIndent`
     (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
     `,
-    { chapter: 5 }
+    { chapter: 5 as Chapter }
   ).toMatchInlineSnapshot(`"Line 1: Function expressions are not allowed"`)
 })
 
@@ -456,7 +456,7 @@ test('Cannot use function expressions - verbose', () => {
     "enable verbose";
     (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
     `,
-    { chapter: 5 }
+    { chapter: 5 as Chapter }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 1: Function expressions are not allowed
             You are trying to use Function expressions, which is not allowed (yet).
@@ -469,7 +469,7 @@ test('Cannot use function expressions', () => {
     stripIndent`
     (function(x) { return x + 1; })(4);
     `,
-    { chapter: 5 }
+    { chapter: 5 as Chapter }
   ).toMatchInlineSnapshot(`"Line 1: Function expressions are not allowed"`)
 })
 
@@ -479,7 +479,7 @@ test('Cannot use function expressions - verbose', () => {
     "enable verbose";
     (function(x) { return x + 1; })(4);
     `,
-    { chapter: 5 }
+    { chapter: 5 as Chapter }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 1: Function expressions are not allowed
             You are trying to use Function expressions, which is not allowed (yet).
@@ -852,7 +852,7 @@ test('No classes', () => {
     class Box {
     }
     `,
-    { chapter: 5 }
+    { chapter: 5 as Chapter }
   ).toMatchInlineSnapshot(`
             "Line 1: Class bodys are not allowed
             Line 1: Class declarations are not allowed"
@@ -866,7 +866,7 @@ test('No classes - verbose', () => {
     class Box {
     }
     `,
-    { chapter: 5 }
+    { chapter: 5 as Chapter }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 10: Class bodys are not allowed
             You are trying to use Class bodys, which is not allowed (yet).
@@ -886,7 +886,7 @@ test('No super', () => {
       }
     }
     `,
-    { chapter: 5 }
+    { chapter: 5 as Chapter }
   ).toMatchInlineSnapshot(`
             "Line 3: Supers are not allowed
             Line 2: Function expressions are not allowed
@@ -906,7 +906,7 @@ test('No super - verbose', () => {
       }
     }
   `,
-    { chapter: 5 }
+    { chapter: 5 as Chapter }
   ).toMatchInlineSnapshot(`
             "Line 4, Column 4: Supers are not allowed
             You are trying to use Supers, which is not allowed (yet).
