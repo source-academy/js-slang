@@ -1,8 +1,8 @@
 import type es from 'estree'
 
 import assert from '../assert'
-import { simple } from './walkers'
 import { ArrayMap } from '../dict'
+import { simple } from './walkers'
 import { isIdentifier, isImportDeclaration, isVariableDeclaration } from './typeGuards'
 
 export function getModuleDeclarationSource(

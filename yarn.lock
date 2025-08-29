@@ -92,12 +92,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commander-js/extra-typings@npm:^12.0.1":
-  version: 12.0.1
-  resolution: "@commander-js/extra-typings@npm:12.0.1"
+"@commander-js/extra-typings@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "@commander-js/extra-typings@npm:14.0.0"
   peerDependencies:
-    commander: ~12.0.0
-  checksum: 10c0/cc3219c70df3ab5c9d3a1f34eda7bd982762b5f68add49067aa80a7ae56a42211c46984e638263bd598c50d2714ed2dbab71301e823970a6bcc14b0303c39d81
+    commander: ~14.0.0
+  checksum: 10c0/b064889e254e1c895886ec8148ac6e0d9bfa3c0336b9ee58124178308819dcf008f15e2a7abdc89b6c1ac3bdbd8003d8cfdaf363971d41dcce64b28c9714af12
   languageName: node
   linkType: hard
 
@@ -1654,10 +1654,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^12.0.0":
-  version: 12.1.0
-  resolution: "commander@npm:12.1.0"
-  checksum: 10c0/6e1996680c083b3b897bfc1cfe1c58dfbcd9842fd43e1aaf8a795fbc237f65efcc860a3ef457b318e73f29a4f4a28f6403c3d653d021d960e4632dd45bde54a9
+"commander@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "commander@npm:14.0.0"
+  checksum: 10c0/73c4babfa558077868d84522b11ef56834165d472b9e86a634cd4c3ae7fc72d59af6377d8878e06bd570fe8f3161eced3cbe383c38f7093272bb65bd242b595b
   languageName: node
   linkType: hard
 
@@ -3340,7 +3340,7 @@ __metadata:
   resolution: "js-slang@workspace:."
   dependencies:
     "@babel/parser": "npm:^7.19.4"
-    "@commander-js/extra-typings": "npm:^12.0.1"
+    "@commander-js/extra-typings": "npm:^14.0.0"
     "@joeychenofficial/alt-ergo-modified": "npm:^2.4.0"
     "@ts-morph/bootstrap": "npm:^0.18.0"
     "@types/estree": "npm:^1.0.5"
@@ -3357,7 +3357,7 @@ __metadata:
     acorn-loose: "npm:^8.0.0"
     acorn-walk: "npm:^8.0.0"
     astring: "npm:^1.4.3"
-    commander: "npm:^12.0.0"
+    commander: "npm:^14.0.0"
     coveralls: "npm:^3.1.0"
     eslint: "npm:^9.34.0"
     eslint-plugin-import: "npm:^2.32.0"

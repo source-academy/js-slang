@@ -179,6 +179,7 @@ export interface Environment {
 
 export interface Error {
   status: 'error'
+  context: Context
 }
 
 export interface Finished {

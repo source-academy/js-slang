@@ -13,7 +13,6 @@ import { transpile } from '../transpiler/transpiler'
 import { getSteps } from '../tracer/steppers'
 import { Variant } from '../langs'
 import { toSourceError } from './errors'
-import { resolvedErrorPromise } from './utils'
 import type { Runner } from './types'
 import fullJSRunner from './fullJSRunner'
 
@@ -27,7 +26,7 @@ const runners = {
   substitution: (program, context, options) => {
     const steps = getSteps(program, context, options)
     if (context.errors.length > 0) {
-      return resolvedErrorPromise
+      return Promise.resolve({ status: 'error', context })
     }
     return Promise.resolve({
       status: 'finished',
@@ -75,7 +74,7 @@ const runners = {
         if (detectedInfiniteLoop !== undefined) {
           if (options.throwInfiniteLoops) {
             context.errors.push(detectedInfiniteLoop)
-            return resolvedErrorPromise
+            return { status: 'error', context }
           } else {
             error.infiniteLoopError = detectedInfiniteLoop
             if (error instanceof ExceptionError) {
@@ -89,13 +88,13 @@ const runners = {
         if (error instanceof TimeoutError) {
           isPreviousCodeTimeoutError = true
         }
-        return resolvedErrorPromise
+        return { status: 'error', context }
       }
       if (error instanceof ExceptionError) {
         // if we know the location of the error, just throw it
         if (error.location.start.line !== -1) {
           context.errors.push(error)
-          return resolvedErrorPromise
+          return { status: 'error', context }
         } else {
           error = error.error // else we try to get the location from source map
         }
@@ -103,7 +102,7 @@ const runners = {
 
       const sourceError = await toSourceError(error, sourceMapJson)
       context.errors.push(sourceError)
-      return resolvedErrorPromise
+      return { status: 'error', context }
     }
   }
 } satisfies Record<string, Runner>

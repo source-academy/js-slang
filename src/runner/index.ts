@@ -11,7 +11,7 @@ import { parse } from '../parser/parser'
 import assert from '../utils/assert'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
-import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
+import { determineExecutionMethod, determineVariant } from './utils'
 import runners from './sourceRunner'
 
 let previousCode: {
@@ -58,7 +58,10 @@ async function sourceRunner(
 
   validateAndAnnotate(program, context)
   if (context.errors.length > 0) {
-    return resolvedErrorPromise
+    return {
+      status: 'error',
+      context
+    }
   }
 
   if (theOptions.useSubst) {
@@ -77,7 +80,7 @@ async function sourceRunner(
     context.unTypecheckedCode.push(context.prelude)
 
     const prelude = parse(context.prelude, context)
-    if (prelude === null) return resolvedErrorPromise
+    if (prelude === null) return { status: 'error', context }
 
     await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true })
   }
@@ -122,7 +125,7 @@ export async function sourceFilesRunner(
 
   if (!preprocessResult.ok) {
     return {
-      result: { status: 'error' },
+      result: { status: 'error', context },
       verboseErrors: preprocessResult.verboseErrors
     }
   }
@@ -181,4 +184,3 @@ export function runCodeInSource(
 }
 
 export { htmlRunner } from './htmlRunner'
-export { resolvedErrorPromise }

@@ -2,7 +2,6 @@ import acorn from 'acorn'
 import type es from 'estree'
 
 import { partition } from 'lodash'
-import type { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
 import { findAncestors, findIdentifierNode } from '../finder'
 import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from '../modules/loader'
@@ -11,6 +10,7 @@ import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
 import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
 import { isDeclaration, isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
+import type { Context, Node } from '../types'
 
 export enum DeclarationKind {
   KIND_IMPORT = 'import',
@@ -20,7 +20,6 @@ export enum DeclarationKind {
   KIND_CONST = 'const',
   KIND_KEYWORD = 'keyword'
 }
-import { Node } from '../types'
 
 export interface NameDeclaration {
   name: string
@@ -422,7 +421,7 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
             }
           })
         )
-      } catch (err) {
+      } catch {
         // Failed to load docs for whatever reason
         return specs.map(spec => ({
           name: spec.local.name,

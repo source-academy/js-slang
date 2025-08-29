@@ -58,7 +58,7 @@ describe('bundle loading', () => {
 describe('tab loading', () => {
   test("Load a module's tabs", async () => {
     mockedDocsImporter.mockResolvedValueOnce({
-      default: { 
+      default: {
         one_module: { tabs: ['tab1', 'tab2'] }
       }
     })

@@ -1251,5 +1251,5 @@ const cmdEvaluators: CommandEvaluators = {
       control.push(command.body)
       control.push(instr.popInstr(command.srcNode)) // Pop previous body value
     }
-  },
+  }
 }

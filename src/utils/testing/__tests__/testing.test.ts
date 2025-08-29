@@ -23,7 +23,8 @@ function mockEvalSuccess(value: any = 0) {
 
 function mockEvalFailure() {
   mockedRunInContext.mockResolvedValueOnce({
-    status: 'error'
+    status: 'error',
+    context: {} as main.Context
   })
 }
 

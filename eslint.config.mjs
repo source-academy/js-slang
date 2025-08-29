@@ -23,6 +23,7 @@ export default tseslint.config(
       import: importPlugin
     },
     rules: {
+      'import/first': 'warn',
       'import/no-duplicates': ['warn', { 'prefer-inline': true }],
       'import/order': 'warn',
 
