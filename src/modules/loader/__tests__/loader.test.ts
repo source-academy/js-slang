@@ -11,7 +11,7 @@ import {
 } from '../loaders'
 import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
 
-const moduleMocker = vi.hoisted(() => vi.fn())
+const moduleMocker = vi.fn()
 
 // Using virtual modules, we can pretend the modules with the given
 // import path actually exist
@@ -56,16 +56,12 @@ describe('bundle loading', () => {
 })
 
 describe('tab loading', () => {
-  const mockedFetch = vi.spyOn(global, 'fetch')
-
   test("Load a module's tabs", async () => {
-    mockedFetch.mockResolvedValueOnce({
-      json: () =>
-        Promise.resolve({
-          one_module: { tabs: ['tab1', 'tab2'] }
-        }),
-      status: 200
-    } as any)
+    mockedDocsImporter.mockResolvedValueOnce({
+      default: { 
+        one_module: { tabs: ['tab1', 'tab2'] }
+      }
+    })
 
     const tabs = await loadModuleTabsAsync('one_module')
 

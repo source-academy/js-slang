@@ -6,6 +6,7 @@ import type { ModuleBundle } from '../moduleTypes'
 export let MODULES_STATIC_URL = 'https://source-academy.github.io/modules'
 
 export function setModulesStaticURL(url: string) {
+  console.log('Modules Static URL set to', url)
   MODULES_STATIC_URL = url
 }
 
@@ -33,18 +34,41 @@ function wrapImporter<T>(func: (p: string) => Promise<T>) {
   }
 }
 
-export const docsImporter = wrapImporter<{ default: any }>(async p => {
-  // TODO: Use import attributes when they become supported
-  // Import Assertions and Attributes are not widely supported by all
-  // browsers yet, so we use fetch in the meantime
-  const resp = await fetch(p)
-  if (resp.status !== 200 && resp.status !== 304) {
-    throw new ModuleConnectionError()
+function getDocsImporter(): (p: string) => Promise<{ default: object }> {
+  async function fallbackImporter(p: string) {
+    const resp = await fetch(p)
+    if (resp.status !== 200 && resp.status !== 304) {
+      throw new ModuleConnectionError()
+    }
+
+    const result = await resp.json()
+    return { default: result }
   }
 
-  const result = await resp.json()
-  return { default: result }
-})
+  if (process.env.NODE_ENV === 'test') {
+    return async p => {
+      // @ts-expect-error This directive is here until js-slang moves to ESM
+      const result = await import(p, { with: { type: 'json' } })
+      return result
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    try {
+      return new Function(
+        'path',
+        "return import(`${path}?q=${Date.now()}`, { with: { type: 'json'} })"
+      ) as any
+    } catch {
+      // If the browser doesn't support import assertions, the above call will throw an error.
+      // In that case, fallback to using fetch
+    }
+  }
+
+  return fallbackImporter
+}
+
+export const docsImporter = wrapImporter<{ default: any }>(getDocsImporter())
 
 function getBundleAndTabImporter(): (p: string) => Promise<{ default: ModuleBundle }> {
   if (process.env.NODE_ENV === 'test') {
