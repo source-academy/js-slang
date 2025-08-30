@@ -28,6 +28,15 @@ export default tseslint.config(
       'import/order': 'warn',
 
       'no-constant-condition': ['warn', { checkLoops: false }],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [{
+            name: 'commander',
+            message: 'Import from @commander-js/extra-typings instead'
+          }]
+        }
+      ],
       'no-var': 'off', // TODO: Remove
       'object-shorthand': ['warn', 'properties'],
       'prefer-const': 'off', // TODO: Remove

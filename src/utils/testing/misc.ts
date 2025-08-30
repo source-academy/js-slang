@@ -1,6 +1,6 @@
 import { expect, test, type TestContext as VitestTestContext } from 'vitest'
 import type { Result } from '../..'
-import { Finished, Value, Node, NodeTypeToNode } from '../../types'
+import type { Finished, Value, Node, NodeTypeToNode } from '../../types'
 import { Chapter } from '../../langs'
 import { getChapterName } from '../misc'
 import type { TestBuiltins, TestOptions } from './types'

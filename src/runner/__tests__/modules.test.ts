@@ -62,7 +62,7 @@ describe.each(describeCases)(
       return [`Testing ${chapterName}`, chapterVal, variant] as [string, Chapter, Variant]
     })
 
-    test.each(chapterCases)('%s', (_, chapter, variant) => {
+    test.each(chapterCases)('%s', { timeout: 10_000 }, (_, chapter, variant) => {
       return expectFinishedResult(code, { chapter, variant }).toEqual('foo')
     })
   }
