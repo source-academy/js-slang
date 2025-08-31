@@ -180,9 +180,12 @@ test('Infinite recursion with a block bodied function', { timeout: 15_000 }, () 
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
 })
 
-test('Infinite recursion with function calls in argument', { timeout: process.env.GITHUB_ACTIONS ? 35_000 : 20_000 }, () => {
-  return expectParsedError(
-    stripIndent`
+test(
+  'Infinite recursion with function calls in argument',
+  { timeout: process.env.GITHUB_ACTIONS ? 35_000 : 20_000 },
+  () => {
+    return expectParsedError(
+      stripIndent`
     function i(n, redundant) {
       return n === 0 ? 0 : 1 + i(n-1, r());
     }
@@ -191,11 +194,12 @@ test('Infinite recursion with function calls in argument', { timeout: process.en
     }
     i(300000, 1);
   `,
-    optionEC4
-  ).toEqual(
-    expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
-  )
-})
+      optionEC4
+    ).toEqual(
+      expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
+    )
+  }
+)
 
 test('Infinite recursion of mutually recursive functions', { timeout: 15_000 }, () => {
   return expectParsedError(
