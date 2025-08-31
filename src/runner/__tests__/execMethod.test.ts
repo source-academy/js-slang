@@ -8,6 +8,7 @@ import { mockContext } from '../../utils/testing/mocks'
 import { getChapterName, objectKeys, objectValues } from '../../utils/misc'
 import { parseError } from '../..'
 import * as validator from '../../validator/validator'
+import { wrapWithSkipAndOnly } from '../../utils/testing/misc'
 
 vi.spyOn(validator, 'validateAndAnnotate')
 
@@ -216,8 +217,8 @@ async function caseTester({
   }
 }
 
-function testCases(desc: string, cases: TestCase[]) {
-  describe(desc, () =>
+const testCases = wrapWithSkipAndOnly('describe', function (desc: string, cases: TestCase[]) {
+  this(desc, () =>
     test.each(
       cases.map(({ code, verboseErrors, contextMethod, chapter, variant, ...tc }, i) => {
         chapter = chapter ?? Chapter.SOURCE_1
@@ -239,7 +240,7 @@ function testCases(desc: string, cases: TestCase[]) {
       })
     )('%s', async (_, to) => caseTester(to))
   )
-}
+})
 
 describe('Ensure that the correct runner is used for the given evaluation context and settings', () => {
   testCases('Test regular source cases', sourceCases)
