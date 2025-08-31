@@ -82,7 +82,7 @@ describe('Test output options', () => {
       const [[fileName, contents]] = mockedWriteFile.mock.calls
 
       expect((fileName as string).startsWith('test')).toEqual(true)
-      expect(contents).toMatchSnapshot()
+      expect(contents).toMatchSnapshot(`output ${choice}`)
     })
   })
 })

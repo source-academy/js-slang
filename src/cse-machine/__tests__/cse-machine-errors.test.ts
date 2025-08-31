@@ -180,7 +180,7 @@ test('Infinite recursion with a block bodied function', { timeout: 15_000 }, () 
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
 })
 
-test('Infinite recursion with function calls in argument', { timeout: 30_000 }, () => {
+test('Infinite recursion with function calls in argument', { timeout: process.env.GITHUB_ACTIONS ? 35_000 : 20_000 }, () => {
   return expectParsedError(
     stripIndent`
     function i(n, redundant) {
