@@ -20,8 +20,10 @@ export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions
 /**
  * Utility type for removing the `this` parameter from a function's type
  */
-type RemoveThis<T extends (this: any, ...args: any) => any> =
-  T extends (this: any, ...args: infer U) => any
+type RemoveThis<T extends (this: any, ...args: any) => any> = T extends (
+  this: any,
+  ...args: infer U
+) => any
   ? U
   : Parameters<T>
 
@@ -34,27 +36,38 @@ interface FuncWithSkipAndOnly<T extends (...args: any[]) => any> {
 /**
  * Refers to the three `describe` operations
  */
-export type DescribeFunctions = typeof describe | typeof describe['only'] | typeof describe['skip'];
+export type DescribeFunctions =
+  | typeof describe
+  | (typeof describe)['only']
+  | (typeof describe)['skip']
 
 /**
  * Refers to the three `test` operations
  */
-export type TestFunctions = typeof test | typeof test['only'] | typeof test['skip'];
+export type TestFunctions = typeof test | (typeof test)['only'] | (typeof test)['skip']
 
 /**
  * For functions that are designed to wrap around a `describe` or `test` block. Adds the `.only` and `.skip`
  * properties to them. The wrapped functions should use the `this` object to access the `test` or `describe` function
  * they are supposed to call.
  */
-export function wrapWithSkipAndOnly<T extends (this: DescribeFunctions, ...args: any[]) => any>(type: 'describe', f: T): FuncWithSkipAndOnly<T>
-export function wrapWithSkipAndOnly<T extends (this: TestFunctions, ...args: any[]) => any>(type: 'test', f: T): FuncWithSkipAndOnly<T>
-export function wrapWithSkipAndOnly<T extends (this: TestFunctions | DescribeFunctions, ...args: any[]) => any>(type: 'test' | 'describe', f: T) {
+export function wrapWithSkipAndOnly<T extends (this: DescribeFunctions, ...args: any[]) => any>(
+  type: 'describe',
+  f: T
+): FuncWithSkipAndOnly<T>
+export function wrapWithSkipAndOnly<T extends (this: TestFunctions, ...args: any[]) => any>(
+  type: 'test',
+  f: T
+): FuncWithSkipAndOnly<T>
+export function wrapWithSkipAndOnly<
+  T extends (this: TestFunctions | DescribeFunctions, ...args: any[]) => any
+>(type: 'test' | 'describe', f: T) {
   function func(...args: Parameters<T>): ReturnType<T> {
     return f.call(type === 'test' ? test : describe, ...args)
   }
 
   func.skip = (...args: Parameters<T>) => {
-    return f.call((type  === 'test' ? test : describe).skip, ...args)
+    return f.call((type === 'test' ? test : describe).skip, ...args)
   }
 
   func.only = (...args: Parameters<T>) => {
@@ -75,13 +88,9 @@ export function assertTruthy(cond: boolean): asserts cond {
  * Convenience wrapper for testing multiple cases with the same
  * test function
  */
-export const testMultipleCases = wrapWithSkipAndOnly('test', function <T extends Array<any>>(
-  this: TestFunctions,
-  cases: [string, ...T][],
-  tester: (args: T, i: number) => void | Promise<void>,
-  includeIndex?: boolean,
-  timeout?: number
-) {
+export const testMultipleCases = wrapWithSkipAndOnly('test', function <
+  T extends Array<any>
+>(this: TestFunctions, cases: [string, ...T][], tester: (args: T, i: number) => void | Promise<void>, includeIndex?: boolean, timeout?: number) {
   const withIndex = cases.map(([desc, ...c], i) => {
     const newDesc = includeIndex ? `${i + 1}. ${desc}` : desc
     return [newDesc, i, ...c] as [string, number, ...T]
@@ -132,7 +141,7 @@ function testWithChaptersInternal<T extends Promise<void> | void>(
 /**
  * @inheritDoc testWithChaptersInternal
  */
-export const testWithChapters = wrapWithSkipAndOnly('test', testWithChaptersInternal);
+export const testWithChapters = wrapWithSkipAndOnly('test', testWithChaptersInternal)
 
 /**
  * Asserts that the provided result is a `Finished`
