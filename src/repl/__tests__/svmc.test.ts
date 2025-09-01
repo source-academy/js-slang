@@ -76,13 +76,11 @@ describe('--internals option', () => {
 })
 
 describe('Test output options', () => {
-  compileToChoices.forEach(choice => {
-    test(choice, async () => {
-      await expectSuccess('1 + 1;', 'test.js', '-t', choice)
-      const [[fileName, contents]] = mockedWriteFile.mock.calls
+  test.each(compileToChoices)('%s', async choice => {
+    await expectSuccess('1 + 1;', 'test.js', '-t', choice)
+    const [[fileName, contents]] = mockedWriteFile.mock.calls
 
-      expect((fileName as string).startsWith('test')).toEqual(true)
-      expect(contents).toMatchSnapshot(`output ${choice}`)
-    })
+    expect((fileName as string).startsWith('test')).toEqual(true)
+    expect(contents).toMatchSnapshot(`output ${choice}`)
   })
 })
