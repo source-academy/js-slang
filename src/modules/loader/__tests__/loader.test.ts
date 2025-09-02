@@ -53,6 +53,26 @@ describe('bundle loading', () => {
     const promise = loadModuleBundleAsync('unknown_module', context)
     return expect(promise).rejects.toBeInstanceOf(ModuleConnectionError)
   })
+
+  test('Loading a bundle preserves properties', async () => {
+    const context = mockContext(Chapter.SOURCE_4, Variant.DEFAULT)
+
+    function foo() {
+      return foo.name
+    }
+    foo.someprop = true
+
+    expect('someprop' in foo).toEqual(true)
+
+    moduleMocker.mockReturnValueOnce({
+      foo,
+      bar: () => 'bar'
+    })
+
+    const mod = await loadModuleBundleAsync('one_module', context)
+    expect(mod.foo()).toEqual('foo')
+    expect('someprop' in mod.foo).toEqual(true)
+  })
 })
 
 describe('tab loading', () => {
