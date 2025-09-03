@@ -2,7 +2,7 @@ import { generate } from 'astring'
 import type { VariableDeclaration } from 'estree'
 import type { Rule } from '../../types'
 import { RuleError } from '../../errors'
-import { Chapter } from '../../../types'
+import { Chapter } from '../../../langs'
 import { getSourceVariableDeclaration } from '../../../utils/ast/helpers'
 
 const mutableDeclarators: VariableDeclaration['kind'][] = ['let', 'var']

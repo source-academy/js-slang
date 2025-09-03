@@ -1,6 +1,7 @@
 import { Program } from 'estree'
 import { schemeParse } from '../../alt-langs/scheme/scm-slang/src'
-import { Chapter, Context } from '../../types'
+import { Context } from '../../types'
+import { Chapter } from '../../langs'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'

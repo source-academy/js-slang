@@ -1,8 +1,9 @@
 import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
+import { ErrorSeverity, ErrorType, SourceError } from '../errors/base'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../types'
+import type { Node } from '../types'
 import { nonAlphanumericCharEncoding } from './preprocessor/filePaths'
 
 export class ModuleInternalError extends RuntimeSourceError {

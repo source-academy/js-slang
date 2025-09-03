@@ -5,7 +5,7 @@
  */
 
 import { Context, Result } from ".."
-import { Chapter } from "../types"
+import { Chapter } from "../langs"
 import { mapErrorToScheme, mapResultToScheme } from "./scheme/scheme-mapper"
 
 /**

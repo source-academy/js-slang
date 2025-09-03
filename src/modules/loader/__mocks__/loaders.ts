@@ -1,10 +1,11 @@
+import { vi } from 'vitest'
 import {
   unknownDocs,
   type FunctionDocumentation,
   type VariableDocumentation
 } from '../../moduleTypes'
 
-export const memoizedGetModuleDocsAsync = jest.fn((module: string) => {
+export const memoizedGetModuleDocsAsync = vi.fn((module: string) => {
   const barDocs: FunctionDocumentation = {
     kind: 'function',
     retType: 'void',
@@ -32,13 +33,13 @@ export const memoizedGetModuleDocsAsync = jest.fn((module: string) => {
   )
 })
 
-export const memoizedGetModuleManifestAsync = jest.fn().mockResolvedValue({
+export const memoizedGetModuleManifestAsync = vi.fn().mockResolvedValue({
   one_module: { tabs: [] },
   another_module: { tabs: [] },
   other_module: { tabs: [] }
 })
 
-export const loadModuleBundleAsync = jest.fn((name: string) => {
+export const loadModuleBundleAsync = vi.fn((name: string) => {
   const baseModule = {
     foo: () => 'foo',
     bar: () => 'bar'
@@ -49,4 +50,4 @@ export const loadModuleBundleAsync = jest.fn((name: string) => {
   )
 })
 
-export const loadModuleTabsAsync = jest.fn().mockResolvedValue([])
+export const loadModuleTabsAsync = vi.fn().mockResolvedValue([])

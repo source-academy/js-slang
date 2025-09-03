@@ -1,16 +1,12 @@
 // Variable determining chapter of Source is contained in this file.
 
+import { schemeVisualise } from './alt-langs/scheme/scheme-mapper'
 import * as scheme_libs from './alt-langs/scheme/scm-slang/src/stdlib/source-scheme-library'
-import {
-  scheme1Prelude,
-  scheme2Prelude,
-  scheme3Prelude,
-  scheme4Prelude,
-  schemeFullPrelude
-} from './stdlib/scheme.prelude'
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
 import Heap from './cse-machine/heap'
+import { Transformers } from './cse-machine/interpreter'
+import { cset_apply, cset_eval } from './cse-machine/scheme-macros'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
@@ -18,24 +14,20 @@ import { localImportPrelude } from './stdlib/localImport.prelude'
 import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as pylib from './stdlib/pylib'
+import {
+  scheme1Prelude,
+  scheme2Prelude,
+  scheme3Prelude,
+  scheme4Prelude,
+  schemeFullPrelude
+} from './stdlib/scheme.prelude'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils'
-import {
-  Chapter,
-  type Context,
-  type CustomBuiltIns,
-  type Environment,
-  type LanguageOptions,
-  type NativeStorage,
-  type Value,
-  Variant
-} from './types'
+import type { Context, CustomBuiltIns, Environment, NativeStorage, Value } from './types'
+import { Chapter, Variant, type LanguageOptions } from './langs'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
-import { schemeVisualise } from './alt-langs/scheme/scheme-mapper'
-import { cset_apply, cset_eval } from './cse-machine/scheme-macros'
-import { Transformers } from './cse-machine/interpreter'
 
 export class EnvTree {
   private _root: EnvTreeNode | null = null
@@ -262,7 +254,7 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
   ensureGlobalEnvironmentExist(context)
 
   externalSymbols.forEach(symbol => {
-    defineSymbol(context, symbol, GLOBAL[symbol])
+    defineSymbol(context, symbol, GLOBAL[symbol as keyof typeof GLOBAL])
   })
 }
 
@@ -324,7 +316,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     // Short param names for stringified version of math functions
     const parameterNames = [...'abcdefghijklmnopqrstuvwxyz']
     for (const name of mathLibraryNames) {
-      const value = Math[name]
+      const value = Math[name as keyof typeof Math]
       if (typeof value === 'function') {
         let paramString: string
         let minArgsNeeded = undefined

@@ -12,7 +12,7 @@ import {
 } from '../stdlib/vm.prelude'
 import type { Context, ContiguousArrayElements, Node } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { recursive, simple } from '../utils/walkers'
+import { recursive, simple } from '../utils/ast/walkers'
 import OpCodes from './opcodes'
 
 const VALID_UNARY_OPERATORS = new Map([
@@ -485,7 +485,17 @@ function compileStatements(
 }
 
 // each compiler should return a maxStackSize
-const compilers = {
+const compilers: Partial<
+  Record<
+    Node['type'],
+    (
+      node: Node,
+      indexTable: Map<string, EnvEntry>[],
+      insertFlag: boolean,
+      isTailCallPosition?: boolean
+    ) => ReturnType<typeof compileStatements>
+  >
+> = {
   // wrapper
   Program(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.Program

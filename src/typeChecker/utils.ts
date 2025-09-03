@@ -5,7 +5,6 @@
 import {
   AllowedDeclarations,
   BindableType,
-  Chapter,
   ForAll,
   FunctionType,
   List,
@@ -20,6 +19,7 @@ import {
   UnionType,
   Variable
 } from '../types'
+import { Chapter } from '../langs'
 import * as tsEs from './tsESTree'
 
 // Name of Unary negative builtin operator
