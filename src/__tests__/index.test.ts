@@ -101,17 +101,25 @@ test('parseError for template literals with expressions', () => {
   )
 })
 
-test('Simple arrow function infinite recursion represents CallExpression well', { timeout: 30_000 }, () => {
-  return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toContain(
-    `RangeError: Maximum call stack size exceeded`
-  )
-})
+test(
+  'Simple arrow function infinite recursion represents CallExpression well',
+  { timeout: 30_000 },
+  () => {
+    return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toContain(
+      `RangeError: Maximum call stack size exceeded`
+    )
+  }
+)
 
-test('Simple function infinite recursion represents CallExpression well', { timeout:30_000 }, () => {
-  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toContain(
-    `RangeError: Maximum call stack size exceeded`
-  )
-})
+test(
+  'Simple function infinite recursion represents CallExpression well',
+  { timeout: 30_000 },
+  () => {
+    return expectParsedError('function f(x) {return x(x)(x);} f(f);').toContain(
+      `RangeError: Maximum call stack size exceeded`
+    )
+  }
+)
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
   return expectParsedError(
@@ -174,9 +182,10 @@ test(
     const f = xs => append(f(xs), list());
     f(list(1, 2));
   `,
-    Chapter.SOURCE_2,
-  ).toContain(`RangeError: Maximum call stack size exceeded`)
-})
+      Chapter.SOURCE_2
+    ).toContain(`RangeError: Maximum call stack size exceeded`)
+  }
+)
 
 test(
   'Function infinite recursion with list args represents CallExpression well',
@@ -199,7 +208,8 @@ test(
     const f = i => f(i+1) - 1;
     f(0);
   `).toContain(`RangeError: Maximum call stack size exceeded`)
-})
+  }
+)
 
 test(
   'Function infinite recursion with different args represents CallExpression well',
@@ -209,7 +219,8 @@ test(
     function f(i) { return f(i+1) - 1; }
     f(0);
   `).toContain(`RangeError: Maximum call stack size exceeded`)
-})
+  }
+)
 
 test('Functions passed into non-source functions remain equal', () => {
   return expectFinishedResult(

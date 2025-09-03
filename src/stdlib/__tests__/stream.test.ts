@@ -27,7 +27,7 @@ describe('primitive stream functions', () => {
     `)
   })
 
-  test('infinite stream is infinite', { timeout:15_000 }, () => {
+  test('infinite stream is infinite', { timeout: 15_000 }, () => {
     return expectParsedError(
       stripIndent`
     stream_length(integers_from(0));
