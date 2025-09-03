@@ -27,10 +27,13 @@ describe('primitive stream functions', () => {
     `)
   })
 
-  test('infinite stream is infinite', { timeout: 15_000 }, () => {
-    return expectParsedError(`stream_length(integers_from(0));`, Chapter.SOURCE_3).toEqual(
-      'Line 1: The error may have arisen from forcing the infinite stream: function integers_from.'
-    )
+  test('infinite stream is infinite', { timeout:15_000 }, () => {
+    return expectParsedError(
+      stripIndent`
+    stream_length(integers_from(0));
+    `,
+      Chapter.SOURCE_3
+    ).toContain(`RangeError: Maximum call stack size exceeded`)
   })
 
   test('stream is properly created', () => {

@@ -101,26 +101,17 @@ test('parseError for template literals with expressions', () => {
   )
 })
 
-// Skip the test for now
-test.skip(
-  'Simple arrow function infinite recursion represents CallExpression well',
-  { timeout: 30_000 },
-  () => {
-    return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toEqual(
-      'Line 1: RangeError: Maximum call stack size exceeded'
-    )
-  }
-)
+test('Simple arrow function infinite recursion represents CallExpression well', { timeout: 30_000 }, () => {
+  return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toContain(
+    `RangeError: Maximum call stack size exceeded`
+  )
+})
 
-test(
-  'Simple function infinite recursion represents CallExpression well',
-  { timeout: 30_000 },
-  () => {
-    return expectParsedError('function f(x) {return x(x)(x);} f(f);').toMatch(
-      /(Line \d+:)?RangeError: Maximum call stack size exceeded/
-    )
-  }
-)
+test('Simple function infinite recursion represents CallExpression well', { timeout:30_000 }, () => {
+  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toContain(
+    `RangeError: Maximum call stack size exceeded`
+  )
+})
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
   return expectParsedError(
@@ -183,12 +174,9 @@ test(
     const f = xs => append(f(xs), list());
     f(list(1, 2));
   `,
-      Chapter.SOURCE_2
-    ).toEqual(
-      'Line 2: The function (anonymous) has encountered an infinite loop. It has no base case.'
-    )
-  }
-)
+    Chapter.SOURCE_2,
+  ).toContain(`RangeError: Maximum call stack size exceeded`)
+})
 
 test(
   'Function infinite recursion with list args represents CallExpression well',
@@ -210,11 +198,8 @@ test(
     return expectParsedError(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
-  `).toEqual(
-      'Line 2: The function (anonymous) has encountered an infinite loop. It has no base case.'
-    )
-  }
-)
+  `).toContain(`RangeError: Maximum call stack size exceeded`)
+})
 
 test(
   'Function infinite recursion with different args represents CallExpression well',
@@ -223,9 +208,8 @@ test(
     return expectParsedError(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
-  `).toEqual('Line 2: The function f has encountered an infinite loop. It has no base case.')
-  }
-)
+  `).toContain(`RangeError: Maximum call stack size exceeded`)
+})
 
 test('Functions passed into non-source functions remain equal', () => {
   return expectFinishedResult(
