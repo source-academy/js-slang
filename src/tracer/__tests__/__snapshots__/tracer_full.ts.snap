@@ -17103,9 +17103,6 @@ function f() { return f();}f();
 
 (() => { return f();})();
 [noMarker] Maximum number of steps exceeded
-
-(() => { return f();})();
-[noMarker] Evaluation complete
 "
 `;
 

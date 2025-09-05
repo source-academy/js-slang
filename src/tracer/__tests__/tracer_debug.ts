@@ -95,8 +95,8 @@ test('function calling', () => {
 
 test('general', () => {
   const code = `
-  false && true;
-  true || false;
+  const f = (n) => (n <= 0 ? 0 : f(n - 1));
+  f(10000);
   `
   const program = parse(code, { ecmaVersion: 10, locations: true })!
   const steps = getSteps(convert(program), createContext(2), { stepLimit: 200 })

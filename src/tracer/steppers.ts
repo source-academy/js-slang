@@ -125,6 +125,7 @@ export function getSteps(
         }
       ]
     })
+    return steps; 
   }
   // If the program does not return anything, return undefined
   if (result.type === 'Program' && (result as StepperProgram).body.length === 0) {
