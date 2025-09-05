@@ -20,13 +20,8 @@ export function getSteps(
   const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
   let hasError = false
 
-  let numSteps = 0
+  let numSteps = 1
   function evaluate(node: StepperBaseNode): StepperBaseNode {
-    numSteps += 1
-    if (numSteps >= limit) {
-      return node
-    }
-
     try {
       const isOneStepPossible = node.isOneStepPossible()
       if (isOneStepPossible) {
@@ -41,6 +36,10 @@ export function getSteps(
             redexType: 'beforeMarker',
             explanation: explanations[index]
           }))
+          numSteps += 1
+          if (numSteps >= limit) {
+            return node
+          }
           steps.push({
             ast: oldNode,
             markers: beforeMarkers
@@ -58,6 +57,10 @@ export function getSteps(
                     explanation: explanations[0] // use explanation based on preRedex
                   }
                 ]
+          numSteps += 1
+          if (numSteps >= limit) {
+            return node
+          }
           steps.push({
             ast: newNode,
             markers: afterMarkers
@@ -125,7 +128,7 @@ export function getSteps(
         }
       ]
     })
-    return steps; 
+    return steps;
   }
   // If the program does not return anything, return undefined
   if (result.type === 'Program' && (result as StepperProgram).body.length === 0) {
