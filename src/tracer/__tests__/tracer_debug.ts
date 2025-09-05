@@ -95,7 +95,8 @@ test('function calling', () => {
 
 test('general', () => {
   const code = `
-  math_sqrt("TEST"); 
+  false && true;
+  true || false;
   `
   const program = parse(code, { ecmaVersion: 10, locations: true })!
   const steps = getSteps(convert(program), createContext(2), { stepLimit: 200 })

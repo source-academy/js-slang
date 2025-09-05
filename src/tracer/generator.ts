@@ -94,7 +94,7 @@ export function explain(redex: StepperBaseNode): string {
     },
     LogicalExpression: (node: StepperLogicalExpression) => {
       if (node.operator == '&&') {
-        return (node.left as StepperLiteral).value === false
+        return (node.left as StepperLiteral).value === true
           ? 'AND operation evaluated, left of operator is true, continue evaluating right of operator'
           : 'AND operation evaluated, left of operator is false, stop evaluation'
       } else if (node.operator == '||') {
