@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "1.0.84",
+  "version": "1.0.85",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -42,7 +42,7 @@
     "commander": "^12.0.0",
     "js-base64": "^3.7.5",
     "lodash": "^4.17.21",
-    "source-map": "0.7.3"
+    "source-map": "0.7.6"
   },
   "scripts": {
     "build": "yarn docs && yarn build:slang",
