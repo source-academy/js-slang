@@ -2,7 +2,7 @@ import { test } from 'vitest'
 import { stripIndent } from '../utils/formatters'
 import { expectParsedError, expectFinishedResult } from '../utils/testing'
 
-test('Check that stack is at most 10k in size', () => {
+test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
   return expectParsedError(stripIndent`
     function f(x) {
       if (x <= 0) {
@@ -13,7 +13,7 @@ test('Check that stack is at most 10k in size', () => {
     }
     f(10000);
   `).toContain(`Line 5: RangeError: Maximum call stack size exceeded`)
-}, 10000)
+})
 
 test('Simple tail call returns work', () => {
   return expectFinishedResult(
