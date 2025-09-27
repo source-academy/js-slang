@@ -90,7 +90,7 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
         }
       },
       ImportSpecifier(node: ImportSpecifier, _state: any, _callback: WalkerCallback<any>) {
-        if ((node.imported as Identifier).name === identifier.name) {
+        if (node.imported.name === identifier.name) {
           declarations.push(node.imported)
         }
       }

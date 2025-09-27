@@ -28,7 +28,8 @@ import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
 import { htmlRunner, sourceFilesRunner } from './runner'
-import { SourceError } from './errors/base'
+import type { SourceError } from './errors/base'
+
 export { SourceDocumentation } from './editors/ace/docTooltip'
 
 export interface IOptions {

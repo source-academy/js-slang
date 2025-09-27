@@ -24,7 +24,12 @@ import type {
   NodeTypeToNode
 } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { filterImportDeclarations, getSourceVariableDeclaration } from '../utils/ast/helpers'
+import {
+  filterImportDeclarations,
+  getSourceVariableDeclaration,
+  hasNoDeclarations,
+  hasNoImportDeclarations
+} from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
@@ -64,8 +69,6 @@ import {
   handleSequence,
   hasBreakStatement,
   hasContinueStatement,
-  hasDeclarations,
-  hasImportDeclarations,
   isBlockStatement,
   isEnvArray,
   isEnvDependent,
@@ -134,7 +137,7 @@ export class Control extends Stack<ControlItem> {
   private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
     const itemsNew: ControlItem[] = []
     items.forEach(item => {
-      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
+      if (isNode(item) && isBlockStatement(item) && hasNoDeclarations(item.body)) {
         // Push block body as statement sequence
         const seq: StatementSequence = ast.statementSequence(item.body, item.loc)
         itemsNew.push(seq)
@@ -645,7 +648,7 @@ const cmdEvaluators: CommandEvaluators = {
     // If the program has outer declarations:
     // - Create the program environment (if none exists yet), and
     // - Declare the functions and variables in the program environment.
-    if (hasDeclarations(command) || hasImportDeclarations(command)) {
+    if (!hasNoDeclarations(command.body) || !hasNoImportDeclarations(command.body)) {
       if (currentEnvironment(context).name !== 'programEnvironment') {
         const programEnv = createProgramEnvironment(context, isPrelude)
         pushEnvironment(context, programEnv)

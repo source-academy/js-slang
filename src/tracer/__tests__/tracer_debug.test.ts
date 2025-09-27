@@ -9,7 +9,7 @@ import type { IStepperPropContents } from '..'
 import createContext from '../../createContext'
 
 const stringify = (ast: StepperBaseNode) => {
-  if (ast === undefined || ast!.type === undefined) {
+  if (ast === undefined || ast.type === undefined) {
     return ''
   }
   return astring.generate(ast).replace(/\n/g, '').replace(/\s+/g, ' ')
@@ -37,7 +37,7 @@ test.skip('recursion', () => {
   const h = z => z <= 1 ? 1 : h(z - 1) + f(z - 1);
   f(2);
     `
-  const program = parse(code, { ecmaVersion: 10 })!
+  const program = parse(code, { ecmaVersion: 10 })
   const steps = getSteps(convert(program), {} as Context, { stepLimit: 1000 })
   console.log(steps.length)
   // const output = steps.map(x => [stringify(x.ast), x.ast.freeNames(), x.markers && x.markers[0] ? x.markers[0].redexType + " " + stringify(x.markers[0].redex) : '...'])
@@ -50,7 +50,7 @@ test.skip('fact', () => {
   const fact = n => n === 1 ? 1 : fact(n - 1) * n;
   fact(5); 
   `
-  const program = parse(code, { ecmaVersion: 10 })!
+  const program = parse(code, { ecmaVersion: 10 })
 
   const steps = getSteps(convert(program), {} as Context, { stepLimit: 1000 })
   console.log(steps.length)
@@ -69,7 +69,7 @@ test.skip('substitution-block', () => {
     x + y;
   }
     `
-  const program = parse(code, { ecmaVersion: 10 })!
+  const program = parse(code, { ecmaVersion: 10 })
 
   const steps = getSteps(convert(program), {} as Context, { stepLimit: 1000 })
   console.log(steps.length)
@@ -83,7 +83,7 @@ test.skip('function calling', () => {
     const getFirst = xs => head(xs);
     getFirst(list(1, 3, 5));
   `
-  const program = parse(code, { ecmaVersion: 10 })!
+  const program = parse(code, { ecmaVersion: 10 })
 
   const steps = getSteps(convert(program), {} as Context, { stepLimit: 1000 })
   const output = steps.map(stringifyWithExplanation)
@@ -95,7 +95,7 @@ test('general', () => {
   const f = (n) => (n <= 0 ? 0 : f(n - 1));
   f(10000);
   `
-  const program = parse(code, { ecmaVersion: 10, locations: true })!
+  const program = parse(code, { ecmaVersion: 10, locations: true })
   const steps = getSteps(convert(program), createContext(2), { stepLimit: 200 })
   const output = steps.map(stringifyWithExplanation)
   console.log(output.join('\n\n'))

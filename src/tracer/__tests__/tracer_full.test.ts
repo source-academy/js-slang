@@ -14,7 +14,7 @@ import { mockContext } from '../../utils/testing/mocks'
 function codify(node: StepperBaseNode) {
   const steps = getSteps(convert(node), createContext(2), { stepLimit: 1000 })
   const stringify = (ast: StepperBaseNode) => {
-    if (ast === undefined || ast!.type === undefined) {
+    if (ast === undefined || ast.type === undefined) {
       return ''
     }
     return astring.generate(ast)
@@ -26,7 +26,7 @@ function codify(node: StepperBaseNode) {
       if (prop.markers[0].explanation !== undefined && prop.markers[0].explanation !== '') {
         explanation = prop.markers[0].explanation
       } else {
-        explanation = `Missing explanation for type ${prop.markers![0].redex?.type}.`
+        explanation = `Missing explanation for type ${prop.markers[0].redex?.type}.`
         throw new Error(explanation)
       }
     }

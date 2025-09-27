@@ -24,6 +24,7 @@ export default tseslint.config(
     },
     rules: {
       'import/first': 'warn',
+      'import/newline-after-import': 'warn',
       'import/no-duplicates': ['warn', { 'prefer-inline': true }],
       'import/order': 'warn',
 
@@ -72,7 +73,7 @@ export default tseslint.config(
       '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-redundant-type-constituents': 'off',
-      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
@@ -103,7 +104,7 @@ export default tseslint.config(
     }
   },
   {
-    files: ['**/*.js', 'src/repl/*.ts'],
+    files: ['**/*.js'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off'
     }

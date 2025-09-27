@@ -120,7 +120,7 @@ function transformFunctionDeclarationsToArrowFunctions(
       node.declarations = [
         {
           type: 'VariableDeclarator',
-          id: id as es.Identifier,
+          id,
           init: asArrowFunction
         }
       ]
@@ -301,7 +301,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
     UnaryExpression(node: es.UnaryExpression) {
       const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
       const source = node.loc?.source ?? null
-      const { operator, argument } = node as es.UnaryExpression
+      const { operator, argument } = node
       create.mutateToCallExpression(node, globalIds.unaryOp, [
         create.literal(operator),
         argument,

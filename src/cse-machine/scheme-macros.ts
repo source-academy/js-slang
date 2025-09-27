@@ -660,6 +660,6 @@ export function convertToEvalExpression(expression: SchemeControlItems): es.Call
       type: 'Identifier',
       name: encode('eval')
     },
-    arguments: [convertToEstreeExpression(expression) as es.Expression]
+    arguments: [convertToEstreeExpression(expression)]
   }
 }

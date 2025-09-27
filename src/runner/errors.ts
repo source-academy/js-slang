@@ -72,7 +72,7 @@ function getErrorLocation(
   const errorLocator: EvalErrorLocator | undefined = EVAL_LOCATORS.find(
     locator => locator.browser === browser
   )
-  const errorStack: string | undefined = error.stack!
+  const errorStack: string | undefined = error.stack
 
   if (errorStack && errorLocator) {
     return extractErrorLocation(errorStack, lineOffset, errorLocator)

@@ -8,7 +8,7 @@ import { Chapter } from '../langs'
 import * as ast from '../utils/ast/astCreator'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
-import { isDeclaration, isIdentifier, isImportDeclaration } from '../utils/ast/typeGuards'
+import { isIdentifier, isImportDeclaration } from '../utils/ast/typeGuards'
 import Heap from './heap'
 import * as instr from './instrCreator'
 import { Control, Transformers } from './interpreter'
@@ -415,24 +415,10 @@ export function declareFunctionsAndVariables(
         break
       case 'FunctionDeclaration':
         // FunctionDeclaration is always of type constant
-        declareIdentifier(
-          context,
-          (statement.id as es.Identifier).name,
-          statement,
-          environment,
-          true
-        )
+        declareIdentifier(context, statement.id.name, statement, environment, true)
         break
     }
   }
-}
-
-export function hasDeclarations(node: es.Program | es.BlockStatement): boolean {
-  return node.body.some(isDeclaration)
-}
-
-export function hasImportDeclarations(node: es.Program | es.BlockStatement): boolean {
-  return node.body.some(isImportDeclaration)
 }
 
 export function defineVariable(

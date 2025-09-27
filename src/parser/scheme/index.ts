@@ -19,8 +19,7 @@ export class SchemeParser implements Parser<AcornOptions> {
   ): Program | null {
     try {
       // parse the scheme code
-      const estree = schemeParse(programStr, this.chapter, true)
-      return estree as Program
+      return schemeParse(programStr, this.chapter, true)
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())

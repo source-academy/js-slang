@@ -1,11 +1,11 @@
 import type es from 'estree'
 
-import {
+import type {
   AllowedDeclarations,
-  type BlockExpression,
-  type FunctionDeclarationExpression,
-  type Node,
-  type StatementSequence
+  BlockExpression,
+  FunctionDeclarationExpression,
+  Node,
+  StatementSequence
 } from '../../types'
 
 export const locationDummyNode = (line: number, column: number, source: string | null) =>

@@ -132,7 +132,16 @@ function testWithChaptersInternal<T extends Promise<void> | void>(
   }
 
   if (typeof arg0 === 'function') {
-    return tester([Chapter.SOURCE_1, Chapter.SOURCE_2, Chapter.SOURCE_3, Chapter.SOURCE_4], arg0)
+    return tester(
+      [
+        Chapter.SOURCE_1,
+        Chapter.SOURCE_2,
+        Chapter.SOURCE_3,
+        Chapter.SOURCE_4,
+        Chapter.LIBRARY_PARSER
+      ],
+      arg0
+    )
   }
 
   return (func: ChapterTestingFunction<T>) => tester([arg0, ...chapters], func)

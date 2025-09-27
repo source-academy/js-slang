@@ -1,6 +1,6 @@
 import * as astring from 'astring'
 
-import { Node } from '../../types'
+import type { Node } from '../../types'
 
 /**
  * Writes into `state` the `text` string reindented with the provided `indent`.

@@ -1,15 +1,7 @@
 import type es from 'estree'
 import type { Node, NodeTypeToNode } from '../types'
 import * as ast from './ast/astCreator'
-
-function hasDeclarations(node: es.BlockStatement | es.Program): boolean {
-  for (const statement of node.body) {
-    if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
-      return true
-    }
-  }
-  return false
-}
+import { hasNoDeclarations } from './ast/helpers'
 
 function hasImportDeclarations(node: es.Program): boolean {
   for (const statement of node.body) {
@@ -33,7 +25,7 @@ type GetNodeKeys<T extends Node> = {
  */
 type KeysOfNodeProperties<T extends Node> = GetNodeKeys<T>[keyof GetNodeKeys<T>]
 
-type NodeTransformer<T extends Node> = 
+type NodeTransformer<T extends Node> =
   | KeysOfNodeProperties<T>
   | KeysOfNodeProperties<T>[]
   | ((node: T) => Node)
@@ -56,10 +48,10 @@ const transformers: NodeTransformers = {
   BinaryExpression: ['left', 'right'],
   BlockStatement: node => {
     node.body = node.body.map(transform)
-    if (hasDeclarations(node)) {
-      return node
-    } else {
+    if (hasNoDeclarations(node.body)) {
       return ast.statementSequence(node.body, node.loc)
+    } else {
+      return node
     }
   },
   BreakStatement: 'label',
@@ -121,10 +113,10 @@ const transformers: NodeTransformers = {
     return node
   },
   Program: node => {
-    if (hasDeclarations(node) || hasImportDeclarations(node)) {
-      return node
-    } else {
+    if (!hasNoDeclarations(node.body) && !hasImportDeclarations(node)) {
       return ast.statementSequence(node.body as es.Statement[], node.loc)
+    } else {
+      return node
     }
   },
   Property: ['key', 'value'],

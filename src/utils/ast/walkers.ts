@@ -3,8 +3,8 @@ acorn.Node differs from estree.Node, so we have this file to handle the `as any`
  */
 
 import * as walkers from 'acorn-walk'
-
 import type { Node } from '../../types'
+
 export type FullWalkerCallback<TState> = (node: Node, state: TState, type: string) => void
 
 type FullAncestorWalkerCallback<TState> = (

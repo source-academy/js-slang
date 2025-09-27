@@ -71,7 +71,7 @@ test('testing typability', () => {
     },
     FunctionDeclaration(node: NodeWithInferredType<es.FunctionDeclaration>) {
       let expectedTypability = ''
-      switch (node.id!.name) {
+      switch (node.id.name) {
         case 'f':
           expectedTypability = 'NotYetTyped'
           break

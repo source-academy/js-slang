@@ -1,5 +1,4 @@
 import { expect, test } from 'vitest'
-import type { Program } from 'estree'
 
 import { default as createContext } from '../createContext'
 import { getAllOccurrencesInScope } from '../index'
@@ -266,7 +265,7 @@ test('scopeVariables should return an accurate scope tree', () => {
       return hahaha;
     }
   `
-  expect(scopeVariables(looseParse(program, context) as Program)).toMatchSnapshot()
+  expect(scopeVariables(looseParse(program, context))).toMatchSnapshot()
 })
 
 test('scopeVariables should return an accurate scope tree with normal block scopes', () => {
@@ -291,7 +290,7 @@ test('scopeVariables should return an accurate scope tree with normal block scop
       }
     }
   `
-  expect(scopeVariables(looseParse(program, context) as Program)).toMatchSnapshot()
+  expect(scopeVariables(looseParse(program, context))).toMatchSnapshot()
 })
 
 test('getBlockFromLoc with normal variable name', () => {
@@ -306,7 +305,7 @@ const nextline = 'having the time of your life';
     return dancingqueen;
   }
 }`
-  const scopedTree = scopeVariables(looseParse(program, context) as Program)
+  const scopedTree = scopeVariables(looseParse(program, context))
   const loc = { start: { line: 8, column: 12 }, end: { line: 8, column: 23 } }
   expect(getBlockFromLoc(loc, scopedTree)).toMatchSnapshot()
 })
@@ -327,7 +326,7 @@ function picklerick() {
   }
   picklerick();
 }`
-  const scopedTree = scopeVariables(looseParse(program, context) as Program)
+  const scopedTree = scopeVariables(looseParse(program, context))
   const loc = { start: { line: 13, column: 3 }, end: { line: 13, column: 12 } }
   expect(getBlockFromLoc(loc, scopedTree)).toMatchSnapshot()
 })
@@ -348,7 +347,7 @@ const picklerick() = x => {
   }
   picklerick();
 }`
-  const scopedTree = scopeVariables(looseParse(program, context) as Program)
+  const scopedTree = scopeVariables(looseParse(program, context))
   const loc = { start: { line: 13, column: 3 }, end: { line: 13, column: 12 } }
   expect(getBlockFromLoc(loc, scopedTree)).toMatchSnapshot()
 })
@@ -389,7 +388,7 @@ if (true) {
   return 'idontliketests';
 }
 `
-  expect(getAllIdentifiers(looseParse(program, context) as Program, 'virus').length).toBe(4)
+  expect(getAllIdentifiers(looseParse(program, context), 'virus').length).toBe(4)
 })
 
 test('getNodeLocsInCurrentBlockFrame should return all nodes in the current block frame', () => {
@@ -427,8 +426,8 @@ if (true) {
 } else {
   return 'idontliketests';
 }`
-  const block = scopeVariables(looseParse(program, context) as Program)
-  const identifiers = getAllIdentifiers(looseParse(program, context) as Program, 'virus')
+  const block = scopeVariables(looseParse(program, context))
+  const identifiers = getAllIdentifiers(looseParse(program, context), 'virus')
   expect(
     getNodeLocsInCurrentBlockFrame(
       identifiers,
@@ -476,7 +475,7 @@ if (true) {
 } else {
   return 'idontliketests';
 }`
-  const block = scopeVariables(looseParse(program, context) as Program)
+  const block = scopeVariables(looseParse(program, context))
   const blockFrames = block.children.filter(node => node.type === 'BlockFrame')
   expect(
     getBlockFramesInCurrentBlockFrame(
