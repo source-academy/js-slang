@@ -7,7 +7,6 @@ import { createContext, type IOptions } from '..'
 import { setModulesStaticURL } from '../modules/loader'
 import type { RecursivePartial } from '../types'
 import { Chapter, isSupportedLanguageCombo, Variant } from '../langs'
-import { objectValues } from '../utils/misc'
 import { runCodeInSource, sourceFilesRunner } from '../runner'
 import type { FileGetter } from '../modules/moduleTypes'
 import {
@@ -21,7 +20,7 @@ import {
 export const getReplCommand = () =>
   new Command('run')
     .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
-    .addOption(getVariantOption(Variant.DEFAULT, objectValues(Variant)))
+    .addOption(getVariantOption(Variant.DEFAULT, Object.values(Variant)))
     .addOption(getLanguageOption())
     .option('-v, --verbose', 'Enable verbose errors')
     .option('--modulesBackend <backend>')

@@ -20,7 +20,7 @@ export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions
 /**
  * Utility type for removing the `this` parameter from a function's type
  */
-type RemoveThis<T extends (this: any, ...args: any) => any> = T extends (
+type RemoveThis<T extends (this: any, ...args: any[]) => any> = T extends (
   this: any,
   ...args: infer U
 ) => any
@@ -28,7 +28,7 @@ type RemoveThis<T extends (this: any, ...args: any) => any> = T extends (
   : Parameters<T>
 
 interface FuncWithSkipAndOnly<T extends (...args: any[]) => any> {
-  (...args: Parameters<T>): ReturnType<T>
+  (...args: RemoveThis<T>): ReturnType<T>
   skip: (...args: RemoveThis<T>) => ReturnType<T>
   only: (...args: RemoveThis<T>) => ReturnType<T>
 }
@@ -98,38 +98,24 @@ export const testMultipleCases = wrapWithSkipAndOnly('test', function <
   this.each(withIndex)('%s', (_, i, ...args) => tester(args, i), timeout)
 })
 
-type ChapterTestingFunction<T extends Promise<void> | void> = (
-  chapter: Chapter,
-  context: VitestTestContext
-) => T
+type ChapterTestingFunction = (chapter: Chapter, context: VitestTestContext) => void | Promise<void>
 
 /**
  * Convenience wrapper for testing a case with multiple chapters. Tests with source chapters 1-4 and the library parser
  */
-function testWithChaptersInternal<T extends Promise<void> | void>(
-  this: TestFunctions,
-  func: ChapterTestingFunction<T>
-): T
+export function testWithChapters(func: ChapterTestingFunction): void
 
 /**
  * Convenience wrapper for testing a case with multiple chapters. Tests with the given chapters. Returns a function
  * that should be called in the same way `test.each` is
  */
-function testWithChaptersInternal<T extends Promise<void> | void>(
-  this: TestFunctions,
-  ...chapters: Chapter[]
-): (f: ChapterTestingFunction<T>) => T
-function testWithChaptersInternal<T extends Promise<void> | void>(
-  this: TestFunctions,
-  arg0: ChapterTestingFunction<T> | Chapter,
-  ...chapters: Chapter[]
-) {
-  const tester = (chapters: Chapter[], func: ChapterTestingFunction<T>) => {
-    this.for(chapters.map(chapter => [getChapterName(chapter), chapter] as [string, Chapter]))(
+export function testWithChapters(...chapters: Chapter[]): (f: ChapterTestingFunction) => void
+export function testWithChapters(arg0: ChapterTestingFunction | Chapter, ...chapters: Chapter[]) {
+  const tester = (chapters: Chapter[], func: ChapterTestingFunction) =>
+    test.for(chapters.map(chapter => [getChapterName(chapter), chapter] as [string, Chapter]))(
       'Testing %s',
       ([, chapter], context) => func(chapter, context)
     )
-  }
 
   if (typeof arg0 === 'function') {
     return tester(
@@ -144,13 +130,8 @@ function testWithChaptersInternal<T extends Promise<void> | void>(
     )
   }
 
-  return (func: ChapterTestingFunction<T>) => tester([arg0, ...chapters], func)
+  return (func: ChapterTestingFunction) => tester([arg0, ...chapters], func)
 }
-
-/**
- * @inheritDoc testWithChaptersInternal
- */
-export const testWithChapters = wrapWithSkipAndOnly('test', testWithChaptersInternal)
 
 /**
  * Asserts that the provided result is a `Finished`

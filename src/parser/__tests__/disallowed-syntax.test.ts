@@ -656,7 +656,7 @@ describe('No array expressions in chapter <= 2', () => {
   })
 })
 
-describe('No array expressions in chapter 2 - verbose', async () => {
+describe('No array expressions in chapter 2 - verbose', () => {
   return testWithChapters(
     Chapter.SOURCE_1,
     Chapter.SOURCE_2

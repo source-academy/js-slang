@@ -86,6 +86,7 @@ export default tseslint.config(
       '@typescript-eslint/require-await': 'error',
       '@typescript-eslint/restrict-plus-operands': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/return-await': ['error', 'in-try-catch'],
       '@typescript-eslint/unbound-method': 'off',
     }
   },

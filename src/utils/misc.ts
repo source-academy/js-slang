@@ -38,13 +38,6 @@ export function objectKeys<T extends string | number | symbol>(obj: Record<T, an
 }
 
 /**
- * Type safe `Object.values`
- */
-export function objectValues<T>(obj: Record<any, T>): T[] {
-  return Object.values(obj)
-}
-
-/**
  * Given the chapter value, return the string name of that chapter
  */
 export function getChapterName(chapter: Chapter) {

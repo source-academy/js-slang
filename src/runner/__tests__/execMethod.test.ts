@@ -5,7 +5,7 @@ import { Chapter, Variant } from '../../langs'
 import type { Runner } from '../types'
 import { runCodeInSource } from '..'
 import { mockContext } from '../../utils/testing/mocks'
-import { getChapterName, objectKeys, objectValues } from '../../utils/misc'
+import { getChapterName, objectKeys } from '../../utils/misc'
 import { parseError } from '../..'
 import * as validator from '../../validator/validator'
 import { wrapWithSkipAndOnly } from '../../utils/testing/misc'
@@ -287,7 +287,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
         verboseErrors: true
       }
 
-      const variantCases = objectValues(Variant).map(
+      const variantCases = Object.values(Variant).map(
         (variant): TestCase => ({
           code: '',
           variant,
@@ -306,7 +306,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
   testCases(
     'Test alt-langs',
     altLangCases.flatMap(([chapter, expectedRunner]) =>
-      objectValues(Variant).map(
+      Object.values(Variant).map(
         (variant): TestCase => ({
           code: '',
           variant,

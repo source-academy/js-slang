@@ -84,7 +84,7 @@ function getBundleAndTabImporter(): (p: string) => Promise<{ default: ModuleBund
 }
 
 /*
-  Browsers natively support esm's import() but Jest and Node do not. So we need
+  Browsers natively support esm's import() but Node does not. So we need
   to change which import function we use based on the environment.
 
   For the browser, we use the function constructor to hide the import calls from
