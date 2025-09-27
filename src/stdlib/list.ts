@@ -49,7 +49,9 @@ export function head(xs: unknown) {
   if (is_pair(xs)) {
     return xs[0]
   } else {
-    throw new Error('head(xs) expects a pair as argument xs, but encountered ' + stringify(xs))
+    throw new Error(
+      `${head.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`
+    )
   }
 }
 
@@ -58,14 +60,16 @@ export function head(xs: unknown) {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  * @throws an exception if the argument is not a pair
  */
-export function tail<T>(xs: NonEmptyList<T>): List<T>
+export function tail<T>(xs: List<T>): List<T>
 export function tail<T>(xs: Pair<unknown, T>): T
 export function tail(xs: unknown): unknown
 export function tail(xs: unknown) {
   if (is_pair(xs)) {
     return xs[1]
   } else {
-    throw new Error('tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs))
+    throw new Error(
+      `${tail.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`
+    )
   }
 }
 
@@ -135,7 +139,7 @@ export function set_head(xs: unknown, x: any): void {
     xs[0] = x
   } else {
     throw new Error(
-      'set_head(xs,x) expects a pair as argument xs, but encountered ' + stringify(xs)
+      `${set_head.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
     )
   }
 }
@@ -150,7 +154,7 @@ export function set_tail(xs: unknown, x: any): void {
     xs[1] = x
   } else {
     throw new Error(
-      'set_tail(xs,x) expects a pair as argument xs, but encountered ' + stringify(xs)
+      `${set_tail.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
     )
   }
 }
@@ -176,7 +180,7 @@ export function accumulate<T, U>(op: (each: T, result: U) => U, initial: U, sequ
  */
 export function length(xs: unknown): number {
   if (!is_list(xs)) {
-    throw new Error('length(xs) expects a list')
+    throw new Error(`${length.name}(xs) expects a list`)
   }
 
   return accumulate((_, total) => total + 1, 0, xs)

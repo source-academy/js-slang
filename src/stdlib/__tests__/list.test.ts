@@ -2,6 +2,7 @@ import { describe, expect, it, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
+import * as list from '../list'
 
 test('list creates list', async () => {
   const {
@@ -37,31 +38,67 @@ test('list creates list', async () => {
   `)
 })
 
-test('pair creates pair', async () => {
-  const {
-    result: { value }
-  } = await testSuccess(`pair(1, 'a string ""');`, Chapter.SOURCE_2)
+describe(list.pair, () => {
+  test('pair creates pair', async () => {
+    const {
+      result: { value }
+    } = await testSuccess(`pair(1, 'a string ""');`, Chapter.SOURCE_2)
 
-  expect(value).toMatchInlineSnapshot(`
-    Array [
-      1,
-      "a string \\"\\"",
-    ]
-  `)
+    expect(value).toMatchInlineSnapshot(`
+      Array [
+        1,
+        "a string \\"\\"",
+      ]
+    `)
+  })
 })
 
-test('head works', () => {
-  return expectFinishedResult(`head(pair(1, 'a string ""'));`, Chapter.SOURCE_2).toEqual(1)
+describe(list.head, () => {
+  it('throws an error when argument is not a pair (in Javascript)', () => {
+    expect(() => list.head(0 as unknown)).toThrowError(
+      'head(xs) expects a pair as argument xs, but encountered 0'
+    )
+  })
+
+  test('non-list error head (in Source)', () => {
+    return expectParsedError(
+      stripIndent`
+    head([1, 2, 3]);
+  `,
+      Chapter.SOURCE_3
+    ).toEqual('Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]')
+  })
+
+  it('works', () => {
+    return expectFinishedResult(`head(pair(1, 'a string ""'));`, Chapter.SOURCE_2).toEqual(1)
+  })
 })
 
-test('tail works', () => {
-  return expectFinishedResult(`tail(pair(1, 'a string ""'));`, Chapter.SOURCE_2).toEqual(
-    'a string ""'
-  )
-})
+describe(list.tail, () => {
+  it('throws an error when argument is not a pair (in Javascript)', () => {
+    expect(() => list.tail(0 as unknown)).toThrowError(
+      'tail(xs) expects a pair as argument xs, but encountered 0'
+    )
+  })
 
-test('tail of a 1 element list is null', () => {
-  return expectFinishedResult(`tail(list(1));`, Chapter.SOURCE_2).toBeNull()
+  it('works', () => {
+    return expectFinishedResult(`tail(pair(1, 'a string ""'));`, Chapter.SOURCE_2).toEqual(
+      'a string ""'
+    )
+  })
+
+  test('tail of a 1 element list is null', () => {
+    return expectFinishedResult(`tail(list(1));`, Chapter.SOURCE_2).toBeNull()
+  })
+
+  test('non-list error tail (in Source)', () => {
+    return expectParsedError(
+      stripIndent`
+    tail([1, 2, 3]);
+  `,
+      Chapter.SOURCE_3
+    ).toEqual('Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]')
+  })
 })
 
 test('empty list is null', () => {
@@ -198,23 +235,57 @@ test('list_to_string', () => {
   )
 })
 
-describe('accumulate', () => {
-  test('works properly', () => {
-    return expectFinishedResult(
-      `accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));`,
-      Chapter.SOURCE_2
-    ).toEqual(10)
+describe(list.accumulate, () => {
+  describe('in Javascript', () => {
+    test('works properly', () => {
+      expect(list.accumulate((curr, acc) => curr + acc, 0, list.list(2, 3, 4, 1))).toEqual(10)
+    })
+
+    it('works from right to left', () => {
+      expect(list.accumulate((curr, acc) => curr + acc, '1', list.list('4', '3', '2'))).toEqual(
+        '4321'
+      )
+    })
   })
 
-  it('works from right to left', () => {
-    return expectFinishedResult(
-      `accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));`,
-      Chapter.SOURCE_2
-    ).toEqual('4321')
+  describe('in source', () => {
+    test('works properly', () => {
+      return expectFinishedResult(
+        `accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));`,
+        Chapter.SOURCE_2
+      ).toEqual(10)
+    })
+
+    it('works from right to left', () => {
+      return expectFinishedResult(
+        `accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));`,
+        Chapter.SOURCE_2
+      ).toEqual('4321')
+    })
   })
 })
 
-describe('length', () => {
+describe(list.vector_to_list, () => {
+  it('preserves element order', () => {
+    let xs = list.vector_to_list([1, 2, 3])
+
+    for (let i = 1; i < 4; i++) {
+      expect(list.head(xs)).toEqual(i)
+      xs = list.tail(xs)
+    }
+
+    expect(xs).toBeNull()
+  })
+})
+
+describe(list.list_to_vector, () => {
+  it('preserves element order', () => {
+    const xs = list.list(1, 2, 3, 4)
+    expect(list.list_to_vector(xs)).toEqual([1, 2, 3, 4])
+  })
+})
+
+describe(list.length, () => {
   test('works with populated lists', () => {
     return expectFinishedResult(
       stripIndent`
@@ -251,46 +322,43 @@ test.skip('assoc not found', () => {
   ).toEqual(true)
 })
 
-test('set_head', () => {
-  return expectFinishedResult(
-    stripIndent`
-    let p = pair(1, 2);
-    const q = p;
-    set_head(p, 3);
-    p === q && equal(p, pair(3, 2));
-  `,
-    Chapter.SOURCE_3
-  ).toEqual(true)
+describe(list.set_head, () => {
+  it('throws when the argument is not a pair', () => {
+    expect(() => list.set_head(0 as unknown, 0)).toThrowError(
+      'set_head(xs,x) expects a pair as argument xs, but encountered 0'
+    )
+  })
+
+  it('works', () => {
+    return expectFinishedResult(
+      stripIndent`
+      let p = pair(1, 2);
+      const q = p;
+      set_head(p, 3);
+      p === q && equal(p, pair(3, 2));
+    `,
+      Chapter.SOURCE_3
+    ).toEqual(true)
+  })
 })
 
-test('set_tail', () => {
-  return expectFinishedResult(
-    stripIndent`
-    let p = pair(1, 2);
-    const q = p;
-    set_tail(p, 3);
-    p === q && equal(p, pair(1, 3));
-  `,
-    Chapter.SOURCE_3
-  ).toEqual(true)
-})
-
-test('non-list error head', () => {
-  return expectParsedError(
-    stripIndent`
-    head([1, 2, 3]);
-  `,
-    Chapter.SOURCE_3
-  ).toEqual('Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]')
-})
-
-test('non-list error tail', () => {
-  return expectParsedError(
-    stripIndent`
-    tail([1, 2, 3]);
-  `,
-    Chapter.SOURCE_3
-  ).toEqual('Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]')
+describe(list.set_tail, () => {
+  it('throws when the argument is not a pair', () => {
+    expect(() => list.set_tail(0 as unknown, 0)).toThrowError(
+      'set_tail(xs,x) expects a pair as argument xs, but encountered 0'
+    )
+  })
+  it('works', () => {
+    return expectFinishedResult(
+      stripIndent`
+      let p = pair(1, 2);
+      const q = p;
+      set_tail(p, 3);
+      p === q && equal(p, pair(1, 3));
+    `,
+      Chapter.SOURCE_3
+    ).toEqual(true)
+  })
 })
 
 describe('These tests are reporting weird line numbers, as list functions are now implemented in Source.', () => {
