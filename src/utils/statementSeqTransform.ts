@@ -1,7 +1,7 @@
-import * as es from 'estree'
-
-import { Node, StatementSequence } from '../types'
+import type es from 'estree'
+import type { Node, NodeTypeToNode } from '../types'
 import * as ast from './ast/astCreator'
+
 function hasDeclarations(node: es.BlockStatement | es.Program): boolean {
   for (const statement of node.body) {
     if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
@@ -20,416 +20,259 @@ function hasImportDeclarations(node: es.Program): boolean {
   return false
 }
 
-type NodeTransformer = (node: Node) => Node
+/**
+ * Utility type for getting all the keys of a ControlItem that have values
+ * that are assignable to Nodes
+ */
+type GetNodeKeys<T extends Node> = {
+  [K in keyof T as T[K] extends Node | null | undefined ? K : never]: K
+}
+/**
+ * Extracts all the keys of a ControlItem that have values that are assignable to Nodes
+ * as a union
+ */
+type KeysOfNodeProperties<T extends Node> = GetNodeKeys<T>[keyof GetNodeKeys<T>]
 
-type ASTTransformers = Map<string, NodeTransformer>
+type NodeTransformer<T extends Node> = 
+  | KeysOfNodeProperties<T>
+  | KeysOfNodeProperties<T>[]
+  | ((node: T) => Node)
 
-const transformers: ASTTransformers = new Map<string, NodeTransformer>([
-  [
-    'Program',
-    (node: es.Program) => {
-      if (hasDeclarations(node) || hasImportDeclarations(node)) {
-        return node
-      } else {
-        return ast.statementSequence(node.body as es.Statement[], node.loc)
-      }
-    }
-  ],
+type NodeTransformers = {
+  [K in Node['type']]?: NodeTransformer<NodeTypeToNode<K>>
+}
 
-  [
-    'BlockStatement',
-    (node: es.BlockStatement) => {
-      node.body = node.body.map(x => transform(x))
-      if (hasDeclarations(node)) {
-        return node
-      } else {
-        return ast.statementSequence(node.body, node.loc)
-      }
-    }
-  ],
-
-  [
-    'StatementSequence',
-    (node: StatementSequence) => {
-      node.body = node.body.map(x => transform(x))
+const transformers: NodeTransformers = {
+  ArrayExpression: node => {
+    node.elements = node.elements.map(x => (x ? transform(x) : null))
+    return node
+  },
+  ArrowFunctionExpression: node => {
+    node.params = node.params.map(transform)
+    node.body = transform(node.body)
+    return node
+  },
+  AssignmentExpression: node => {
+    node.left = transform(node.left)
+    node.right = transform(node.right)
+    return node
+  },
+  BinaryExpression: node => {
+    node.left = transform(node.left)
+    node.right = transform(node.right)
+    return node
+  },
+  BlockStatement: node => {
+    node.body = node.body.map(transform)
+    if (hasDeclarations(node)) {
       return node
+    } else {
+      return ast.statementSequence(node.body, node.loc)
     }
-  ],
-
-  [
-    'ExpressionStatement',
-    (node: es.ExpressionStatement) => {
-      node.expression = transform(node.expression)
-      return node
+  },
+  BreakStatement: node => {
+    if (node.label) {
+      node.label = transform(node.label)
     }
-  ],
-
-  [
-    'IfStatement',
-    (node: es.IfStatement) => {
-      node.test = transform(node.test)
-      node.consequent = transform(node.consequent)
-      if (node.alternate) {
-        node.alternate = transform(node.alternate)
-      }
-      return node
-    }
-  ],
-
-  [
-    'FunctionDeclaration',
-    (node: es.FunctionDeclaration) => {
-      node.params = node.params.map(x => transform(x))
-      node.body = transform(node.body)
-      if (node.id) {
-        node.id = transform(node.id)
-      }
-      return node
-    }
-  ],
-
-  [
-    'VariableDeclarator',
-    (node: es.VariableDeclarator) => {
+    return node
+  },
+  CallExpression: node => {
+    node.callee = transform(node.callee)
+    node.arguments = node.arguments.map(transform)
+    return node
+  },
+  ClassDeclaration: node => {
+    if (node.id) {
       node.id = transform(node.id)
-      if (node.init) {
-        node.init = transform(node.init)
-      }
-      return node
     }
-  ],
-
-  [
-    'VariableDeclaration',
-    (node: es.VariableDeclaration) => {
-      node.declarations = node.declarations.map(x => transform(x))
-      return node
+    if (node.superClass) {
+      node.superClass = transform(node.superClass)
     }
-  ],
-
-  [
-    'ReturnStatement',
-    (node: es.ReturnStatement) => {
-      if (node.argument) {
-        node.argument = transform(node.argument)
-      }
-      return node
+    node.body = transform(node.body)
+    return node
+  },
+  ConditionalExpression: node => {
+    node.test = transform(node.test)
+    node.consequent = transform(node.consequent)
+    node.alternate = transform(node.alternate)
+    return node
+  },
+  ContinueStatement: node => {
+    if (node.label) {
+      node.label = transform(node.label)
     }
-  ],
-
-  [
-    'CallExpression',
-    (node: es.SimpleCallExpression) => {
-      node.callee = transform(node.callee)
-      node.arguments = node.arguments.map(x => transform(x))
-      return node
-    }
-  ],
-
-  [
-    'UnaryExpression',
-    (node: es.UnaryExpression) => {
-      node.argument = transform(node.argument)
-      return node
-    }
-  ],
-
-  [
-    'BinaryExpression',
-    (node: es.BinaryExpression) => {
-      node.left = transform(node.left)
-      node.right = transform(node.right)
-      return node
-    }
-  ],
-
-  [
-    'LogicalExpression',
-    (node: es.LogicalExpression) => {
-      node.left = transform(node.left)
-      node.right = transform(node.right)
-      return node
-    }
-  ],
-
-  [
-    'ConditionalExpression',
-    (node: es.ConditionalExpression) => {
-      node.test = transform(node.test)
-      node.consequent = transform(node.consequent)
-      node.alternate = transform(node.alternate)
-      return node
-    }
-  ],
-
-  [
-    'ArrowFunctionExpression',
-    (node: es.ArrowFunctionExpression) => {
-      node.params = node.params.map(x => transform(x))
-      node.body = transform(node.body)
-      return node
-    }
-  ],
-
-  [
-    'Identifier',
-    (node: es.Identifier) => {
-      return node
-    }
-  ],
-
-  [
-    'Literal',
-    (node: es.Literal) => {
-      return node
-    }
-  ],
-
-  [
-    'ArrayExpression',
-    (node: es.ArrayExpression) => {
-      node.elements = node.elements.map(x => (x ? transform(x) : null))
-      return node
-    }
-  ],
-
-  [
-    'AssignmentExpression',
-    (node: es.AssignmentExpression) => {
-      node.left = transform(node.left)
-      node.right = transform(node.right)
-      return node
-    }
-  ],
-
-  [
-    'ForStatement',
-    (node: es.ForStatement) => {
-      if (node.init) {
-        node.init = transform(node.init)
-      }
-      if (node.test) {
-        node.test = transform(node.test)
-      }
-      if (node.update) {
-        node.update = transform(node.update)
-      }
-      node.body = transform(node.body)
-      return node
-    }
-  ],
-
-  [
-    'WhileStatement',
-    (node: es.WhileStatement) => {
-      node.test = transform(node.test)
-      node.body = transform(node.body)
-      return node
-    }
-  ],
-
-  [
-    'BreakStatement',
-    (node: es.BreakStatement) => {
-      if (node.label) {
-        node.label = transform(node.label)
-      }
-      return node
-    }
-  ],
-
-  [
-    'ContinueStatement',
-    (node: es.ContinueStatement) => {
-      if (node.label) {
-        node.label = transform(node.label)
-      }
-      return node
-    }
-  ],
-
-  [
-    'ObjectExpression',
-    (node: es.ObjectExpression) => {
-      node.properties = node.properties.map(x => transform(x))
-      return node
-    }
-  ],
-
-  [
-    'MemberExpression',
-    (node: es.MemberExpression) => {
-      node.object = transform(node.object)
-      node.property = transform(node.property)
-      return node
-    }
-  ],
-
-  [
-    'Property',
-    (node: es.Property) => {
-      node.key = transform(node.key)
-      node.value = transform(node.value)
-      return node
-    }
-  ],
-
-  [
-    'ImportDeclaration',
-    (node: es.ImportDeclaration) => {
-      node.specifiers = node.specifiers.map(x => transform(x))
-      node.source = transform(node.source)
-      return node
-    }
-  ],
-
-  [
-    'ImportSpecifier',
-    (node: es.ImportSpecifier) => {
-      node.local = transform(node.local)
-      node.imported = transform(node.imported)
-      return node
-    }
-  ],
-
-  [
-    'ImportDefaultSpecifier',
-    (node: es.ImportDefaultSpecifier) => {
-      node.local = transform(node.local)
-      return node
-    }
-  ],
-
-  [
-    'ExportNamedDeclaration',
-    (node: es.ExportNamedDeclaration) => {
-      if (node.declaration) {
-        node.declaration = transform(node.declaration)
-      }
-      node.specifiers = node.specifiers.map(x => transform(x))
-      if (node.source) {
-        transform(node.source)
-      }
-      return node
-    }
-  ],
-
-  [
-    'ExportDefaultDeclaration',
-    (node: es.ExportDefaultDeclaration) => {
+    return node
+  },
+  ExportDefaultDeclaration: node => {
+    node.declaration = transform(node.declaration)
+    return node
+  },
+  ExportNamedDeclaration: node => {
+    if (node.declaration) {
       node.declaration = transform(node.declaration)
+    }
+    node.specifiers = node.specifiers.map(x => transform(x))
+    if (node.source) {
+      transform(node.source)
+    }
+    return node
+  },
+  ExportSpecifier: node => {
+    node.local = transform(node.local)
+    node.exported = transform(node.exported)
+    return node
+  },
+  ExpressionStatement: node => {
+    node.expression = transform(node.expression)
+    return node
+  },
+  ForStatement: node => {
+    if (node.init) {
+      node.init = transform(node.init)
+    }
+    if (node.test) {
+      node.test = transform(node.test)
+    }
+    if (node.update) {
+      node.update = transform(node.update)
+    }
+    node.body = transform(node.body)
+    return node
+  },
+  FunctionDeclaration: node => {
+    node.params = node.params.map(x => transform(x))
+    node.body = transform(node.body)
+    if (node.id) {
+      node.id = transform(node.id)
+    }
+    return node
+  },
+  FunctionExpression: node => {
+    if (node.id) {
+      node.id = transform(node.id)
+    }
+    node.params = node.params.map(x => transform(x))
+    node.body = transform(node.body)
+    return node
+  },
+  Identifier: node => node,
+  IfStatement: node => {
+    node.test = transform(node.test)
+    node.consequent = transform(node.consequent)
+    if (node.alternate) {
+      node.alternate = transform(node.alternate)
+    }
+    return node
+  },
+  ImportDeclaration: node => {
+    node.specifiers = node.specifiers.map(transform)
+    node.source = transform(node.source)
+    return node
+  },
+  ImportDefaultSpecifier: node => {
+    node.local = transform(node.local)
+    return node
+  },
+  ImportSpecifier: node => {
+    node.local = transform(node.local)
+    node.imported = transform(node.imported)
+    return node
+  },
+  Literal: node => node,
+  LogicalExpression: node => {
+    node.left = transform(node.left)
+    node.right = transform(node.right)
+    return node
+  },
+  MemberExpression: node => {
+    node.object = transform(node.object)
+    node.property = transform(node.property)
+    return node
+  },
+  MethodDefinition: node => {
+    node.key = transform(node.key)
+    node.value = transform(node.value)
+    return node
+  },
+  NewExpression: node => {
+    node.arguments = node.arguments.map(transform)
+    return node
+  },
+  ObjectExpression: node => {
+    node.properties = node.properties.map(transform)
+    return node
+  },
+  Program: node => {
+    if (hasDeclarations(node) || hasImportDeclarations(node)) {
       return node
+    } else {
+      return ast.statementSequence(node.body as es.Statement[], node.loc)
     }
-  ],
-
-  [
-    'ExportSpecifier',
-    (node: es.ExportSpecifier) => {
-      node.local = transform(node.local)
-      node.exported = transform(node.exported)
-      return node
-    }
-  ],
-
-  [
-    'ClassDeclaration',
-    (node: es.ClassDeclaration) => {
-      if (node.id) {
-        node.id = transform(node.id)
-      }
-      if (node.superClass) {
-        node.superClass = transform(node.superClass)
-      }
-      node.body = transform(node.body)
-      return node
-    }
-  ],
-
-  [
-    'NewExpression',
-    (node: es.NewExpression) => {
-      node.arguments = node.arguments.map(x => transform(x))
-      return node
-    }
-  ],
-
-  [
-    'MethodDefinition',
-    (node: es.MethodDefinition) => {
-      node.key = transform(node.key)
-      node.value = transform(node.value)
-      return node
-    }
-  ],
-
-  [
-    'FunctionExpression',
-    (node: es.FunctionExpression) => {
-      if (node.id) {
-        node.id = transform(node.id)
-      }
-      node.params = node.params.map(x => transform(x))
-      node.body = transform(node.body)
-      return node
-    }
-  ],
-
-  [
-    'ThisExpression',
-    (_node: es.ThisExpression) => {
-      return _node
-    }
-  ],
-
-  [
-    'Super',
-    (_node: es.Super) => {
-      return _node
-    }
-  ],
-
-  [
-    'TryStatement',
-    (node: es.TryStatement) => {
-      node.block = transform(node.block)
-      if (node.handler) {
-        node.handler = transform(node.handler)
-      }
-      if (node.finalizer) {
-        node.finalizer = transform(node.finalizer)
-      }
-      return node
-    }
-  ],
-  [
-    'ThrowStatement',
-    (node: es.ThrowStatement) => {
+  },
+  Property: node => {
+    node.key = transform(node.key)
+    node.value = transform(node.value)
+    return node
+  },
+  RestElement: node => {
+    node.argument = transform(node.argument)
+    return node
+  },
+  ReturnStatement: node => {
+    if (node.argument) {
       node.argument = transform(node.argument)
-      return node
     }
-  ],
-  [
-    'SpreadElement',
-    (node: es.SpreadElement) => {
-      node.argument = transform(node.argument)
-      return node
+    return node
+  },
+  SpreadElement: node => {
+    node.argument = transform(node.argument)
+    return node
+  },
+  StatementSequence: node => {
+    node.body = node.body.map(x => transform(x))
+    return node
+  },
+  Super: node => node,
+  ThisExpression: node => node,
+  ThrowStatement: node => {
+    node.argument = transform(node.argument)
+    return node
+  },
+  TryStatement: node => {
+    node.block = transform(node.block)
+    if (node.handler) {
+      node.handler = transform(node.handler)
     }
-  ],
-  [
-    'RestElement',
-    (node: es.RestElement) => {
-      node.argument = transform(node.argument)
-      return node
+    if (node.finalizer) {
+      node.finalizer = transform(node.finalizer)
     }
-  ]
-])
-
-export function transform<NodeType extends Node>(node: NodeType): NodeType {
-  if (transformers.has(node.type)) {
-    const transformer = transformers.get(node.type) as (n: NodeType) => NodeType
-    const transformed = transformer(node)
-    return transformed
-  } else {
+    return node
+  },
+  UnaryExpression: node => {
+    node.argument = transform(node.argument)
+    return node
+  },
+  VariableDeclarator: node => {
+    node.id = transform(node.id)
+    if (node.init) {
+      node.init = transform(node.init)
+    }
+    return node
+  },
+  VariableDeclaration: node => {
+    node.declarations = node.declarations.map(transform)
+    return node
+  },
+  WhileStatement: node => {
+    node.test = transform(node.test)
+    node.body = transform(node.body)
     return node
   }
+}
+
+export function transform<NodeType extends Node>(node: NodeType): NodeType {
+  if (!(node.type in transformers)) return node
+
+  const transformer = transformers[node.type] as NodeTransformer<NodeType>;
+  return transformer(node) as NodeType
 }
