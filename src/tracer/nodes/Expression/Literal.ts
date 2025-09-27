@@ -1,20 +1,19 @@
+import type { Comment, SimpleLiteral, SourceLocation } from 'estree'
+import type { StepperBaseNode } from '../../interface'
+import type { StepperExpression, StepperPattern } from '..'
+
 /**
  * This class represents a literal node in the stepper's AST (Abstract Syntax Tree).
  * It extends both SimpleLiteral and StepperBaseNode to integrate with the stepper system.
  * The class stores value-related properties such as type, value, raw representation,
  * and location metadata.
  *
- * Methods:
- * - isContractible(): Indicates whether this node can be contracted (returns false).
- * - isOneStepPossible(): Indicates whether a single step evaluation is possible (returns false).
- * - contract(): Throws an error as contraction is not implemented.
- * - oneStep(): Throws an error as one-step evaluation is not implemented.
+ * @method isContractible() Indicates whether this node can be contracted (returns false).
+ * @method isOneStepPossible() Indicates whether a single step evaluation is possible (returns false).
+ * @method contract() Throws an error as contraction is not implemented.
+ * @method oneStep() Throws an error as one-step evaluation is not implemented.
  */
-import type { Comment, SimpleLiteral, SourceLocation } from 'estree'
-import type { StepperBaseNode } from '../../interface'
-import type { StepperExpression, StepperPattern } from '..'
-
-export class StepperLiteral implements SimpleLiteral, StepperBaseNode<SimpleLiteral> {
+export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
   type: 'Literal'
   value: string | number | boolean | null
   raw?: string
