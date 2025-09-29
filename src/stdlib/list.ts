@@ -60,7 +60,7 @@ export function head(xs: unknown) {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  * @throws an exception if the argument is not a pair
  */
-export function tail<T>(xs: List<T>): List<T>
+export function tail<T>(xs: NonEmptyList<T>): List<T>
 export function tail<T>(xs: Pair<unknown, T>): T
 export function tail(xs: unknown): unknown
 export function tail(xs: unknown) {

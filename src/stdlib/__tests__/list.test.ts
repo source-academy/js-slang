@@ -271,7 +271,7 @@ describe(list.vector_to_list, () => {
 
     for (let i = 1; i < 4; i++) {
       expect(list.head(xs)).toEqual(i)
-      xs = list.tail(xs)
+      xs = list.tail(xs) as list.List<number>
     }
 
     expect(xs).toBeNull()
