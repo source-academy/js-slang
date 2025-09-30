@@ -1,19 +1,19 @@
-// we need this file for now, because the lazy variants
-// of Source cannot handle ... yet
+import { head, is_null, type List, type Pair, pair, tail } from './list'
 
-import { head, is_null, type List, list, type Pair, pair, tail } from './list'
+export type Stream<T = unknown> = null | Pair<T, () => Stream<T>>
 
-type Stream = null | Pair<any, () => Stream>
+/** 
+ * Makes a Stream out of its arguments\
+ * LOW-LEVEL FUNCTION, NOT SOURCE
+ */          
+export function stream<T>(...elements: T[]): Stream<T> {
+  if (elements.length === 0) return null
 
-// stream makes a stream out of its arguments
-// LOW-LEVEL FUNCTION, NOT SOURCE
-// Lazy? No: In this implementation, we generate first a
-//           complete list, and then a stream using list_to_stream
-export function stream(...elements: any[]): Stream {
-  return list_to_stream(list(...elements))
+  const [item, ...rest] = elements
+  return pair(item, () => stream(...rest))
 }
 
 // same as list_to_stream in stream.prelude.ts
-function list_to_stream(xs: List): Stream {
+export function list_to_stream<T>(xs: List<T>): Stream<T> {
   return is_null(xs) ? null : pair(head(xs), () => list_to_stream(tail(xs)))
 }

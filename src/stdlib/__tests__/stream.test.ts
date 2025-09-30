@@ -83,7 +83,7 @@ describe('primitive stream functions', () => {
   })
 })
 
-test('for_each', () => {
+test('stream_for_each', () => {
   return expectFinishedResult(
     stripIndent`
     let sum = 0;
@@ -96,7 +96,7 @@ test('for_each', () => {
   ).toEqual(6)
 })
 
-test('map', () => {
+test('stream_map', () => {
   return expectFinishedResult(
     stripIndent`
     equal(stream_to_list(stream_map(x => 2 * x, stream(12, 11, 3))), list(24, 22, 6));
@@ -105,7 +105,7 @@ test('map', () => {
   ).toEqual(true)
 })
 
-test('filter', () => {
+test('stream_filter', () => {
   return expectFinishedResult(
     stripIndent`
     equal(
@@ -118,7 +118,7 @@ test('filter', () => {
   ).toEqual(true)
 })
 
-test('build_list', () => {
+test('build_stream', () => {
   return expectFinishedResult(
     stripIndent`
     equal(stream_to_list(build_stream(x => x * x, 5)), list(0, 1, 4, 9, 16));
@@ -127,7 +127,7 @@ test('build_list', () => {
   ).toEqual(true)
 })
 
-test('reverse', () => {
+test('stream_reverse', () => {
   return expectFinishedResult(
     stripIndent`
     equal(stream_to_list(
@@ -139,7 +139,7 @@ test('reverse', () => {
   ).toEqual(true)
 })
 
-test('append', () => {
+test('stream_append', () => {
   return expectFinishedResult(
     stripIndent`
     equal(stream_to_list(stream_append(stream("string", 123), stream(456, null, undefined)))
@@ -149,7 +149,7 @@ test('append', () => {
   ).toEqual(true)
 })
 
-test('member', () => {
+test('stream_member', () => {
   return expectFinishedResult(
     stripIndent`
     equal(
@@ -160,7 +160,7 @@ test('member', () => {
   ).toEqual(true)
 })
 
-test('remove', () => {
+test('stream_remove', () => {
   return expectFinishedResult(
     stripIndent`
     stream_remove(1, stream(1));
@@ -169,7 +169,7 @@ test('remove', () => {
   ).toEqual(null)
 })
 
-test('remove not found', async () => {
+test('stream_remove not found', async () => {
   const {
     result: { value }
   } = await testSuccess(`stream_to_list(stream_remove(2, stream(1)));`, Chapter.SOURCE_3)
@@ -182,7 +182,7 @@ test('remove not found', async () => {
   `)
 })
 
-test('remove_all', () => {
+test('stream_remove_all', () => {
   return expectFinishedResult(
     stripIndent`
     equal(stream_to_list(stream_remove_all(1, stream(1, 2, 3, 4, 1, 1, "1", 5, 1, 1, 6))),
@@ -192,7 +192,7 @@ test('remove_all', () => {
   ).toEqual(true)
 })
 
-test('remove_all not found', () => {
+test('stream_remove_all not found', () => {
   return expectFinishedResult(
     stripIndent`
     equal(stream_to_list(stream_remove_all(1, stream(2, 3, "1"))), list(2, 3, "1"));
@@ -201,7 +201,7 @@ test('remove_all not found', () => {
   ).toEqual(true)
 })
 
-test('enum_list', () => {
+test('enum_stream', () => {
   return expectFinishedResult(
     stripIndent`
     equal(stream_to_list(enum_stream(1, 5)), list(1, 2, 3, 4, 5));
@@ -210,7 +210,7 @@ test('enum_list', () => {
   ).toEqual(true)
 })
 
-test('enum_list with floats', () => {
+test('enum_stream with floats', () => {
   return expectFinishedResult(
     stripIndent`
     equal(stream_to_list(enum_stream(1.5, 5)), list(1.5, 2.5, 3.5, 4.5));
@@ -219,7 +219,7 @@ test('enum_list with floats', () => {
   ).toEqual(true)
 })
 
-test('list_ref', () => {
+test('stream_ref', () => {
   return expectFinishedResult(
     stripIndent`
     stream_ref(stream(1, 2, 3, "4", 4), 4);
