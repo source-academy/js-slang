@@ -2,10 +2,10 @@ import { head, is_null, type List, type Pair, pair, tail } from './list'
 
 export type Stream<T = unknown> = null | Pair<T, () => Stream<T>>
 
-/** 
+/**
  * Makes a Stream out of its arguments\
  * LOW-LEVEL FUNCTION, NOT SOURCE
- */          
+ */
 export function stream<T>(...elements: T[]): Stream<T> {
   if (elements.length === 0) return null
 
