@@ -9,21 +9,24 @@ import { Chapter } from '../dist/langs.js'
 
 const SICP_DIR = 'sicp_publish/dist'
 
+/**
+ * Copies .js files from one directory to another, respecting the
+ * structure of the source directory.
+ * @param {string} srcPath 
+ * @param {string} dstPath 
+ */
 async function recursiveDirCopy(srcPath, dstPath) {
-  // Copy and keep only necessary files
-  const files = await fsPromises.readdir(srcPath)
+  const files = await fsPromises.readdir(srcPath, { withFileTypes: true })
 
-  return Promise.all(files.map(async fileName => {
-    const fullSrcPath = join(srcPath, fileName)
-    const fullDstPath = join(dstPath, fileName)
-    
-    const stats = await fsPromises.stat(fullSrcPath)
+  return Promise.all(files.map(async file => {
+    const fullSrcPath = join(srcPath, file.name)
+    const fullDstPath = join(dstPath, file.name)
 
-    if (stats.isFile()) {
-      const extension = extname(fileName)
+    if (file.isFile()) {
+      const extension = extname(file.name)
       if (extension !== '.js') return;
       await fsPromises.copyFile(fullSrcPath, fullDstPath)
-    } else if (stats.isDirectory()) {
+    } else if (file.isDirectory()) {
       await fsPromises.mkdir(fullDstPath)
       await recursiveDirCopy(fullSrcPath, fullDstPath)
     }

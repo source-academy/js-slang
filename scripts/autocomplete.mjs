@@ -98,6 +98,9 @@ async function processDirGlobals(target) {
   return undefined
 }
 
+/**
+ * Generates the autocomplete documentation for js-slang
+ */
 export default async function autocomplete() {
   try {
     // Check that the BASE_DIR exists and that we can read from it
