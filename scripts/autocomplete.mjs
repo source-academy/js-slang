@@ -1,7 +1,9 @@
 // @ts-check
 
+import assert from 'assert'
 import fs from 'fs/promises'
 import pathlib from 'path'
+import { isNativeError } from 'util/types'
 import { JSDOM } from 'jsdom'
 
 const CONST_DECL = 'const'
@@ -25,6 +27,10 @@ const TARGETS = [
   "External libraries"
 ]
 
+/**
+ * @param {string} title 
+ * @param {Document} document 
+ */
 function newTitleNode(title, document) {
   const node = document.createElement('h4')
   const text = document.createTextNode(title)
@@ -32,10 +38,18 @@ function newTitleNode(title, document) {
   return node
 }
 
+/**
+ * @param {HTMLDivElement} div 
+ */
 function buildDescriptionHtml(div) {
   return div.outerHTML.replace('/\n+/', '\n')
 }
 
+/**
+ * @param {Record<string ,any>} namespace 
+ * @param {Element} element 
+ * @param {Document} document 
+ */
 function processConstant(namespace, element, document) {
   const header = element.getElementsByTagName('h4')[0]
   const rawName = header.textContent
@@ -43,6 +57,8 @@ function processConstant(namespace, element, document) {
 
   let title = fields.join('')
   const name = header.getAttribute('id')
+  assert(name !== null, `Missing id for ${element}`)
+
   if (!title) {
     title = name
   }
@@ -58,10 +74,16 @@ function processConstant(namespace, element, document) {
   namespace[name] = { title, description: html, meta: CONST_DECL }
 }
 
+/**
+ * @param {Record<string ,any>} namespace 
+ * @param {Element} element 
+ * @param {Document} document 
+ */
 function processFunction(namespace, element, document) {
   const header = element.getElementsByTagName('h4')[0]
   const title = header.textContent
   const name = header.getAttribute('id')
+  assert(name !== null, `Missing name for ${element}`)
 
   const titleNode = newTitleNode(title, document)
   const descriptionNode = element.getElementsByClassName('description')[0]
@@ -74,6 +96,11 @@ function processFunction(namespace, element, document) {
   namespace[name] = { title, description: html, meta: FUNC_DECL }
 }
 
+/**
+ * Process all the globals in the given target directory
+ * @param {string} target
+ * @returns {Promise<unknown|undefined>}
+ */
 async function processDirGlobals(target) {
   const inFile = pathlib.join(BASE_DIR, target, SRC_FILENAME)
   let document
@@ -106,6 +133,8 @@ export default async function autocomplete() {
     // Check that the BASE_DIR exists and that we can read from it
     await fs.access(BASE_DIR, fs.constants.R_OK)
   } catch (error) {
+    if (!isNativeError(error) || !('code' in error)) throw error
+
     if (error.code === 'ENOENT') {
       console.error(`
       Error: path to jsdoc html is invalid.
