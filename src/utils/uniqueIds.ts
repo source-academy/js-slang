@@ -1,6 +1,6 @@
-import * as es from 'estree'
+import type es from 'estree'
 
-import { NativeStorage } from '../types'
+import type { NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { simple } from './ast/walkers'
 

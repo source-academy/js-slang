@@ -3,8 +3,6 @@
 	error-related classes).
 */
 
-/* tslint:disable:max-classes-per-file */
-
 import type es from 'estree'
 
 import type { EnvTree } from './createContext'
@@ -136,7 +134,7 @@ export interface Context<T = any> {
   shouldIncreaseEvaluationTimeout: boolean
 }
 
-export type ModuleContext = {
+export interface ModuleContext {
   state: null | any
   tabs: null | any[]
 }
@@ -177,11 +175,17 @@ export interface Environment {
   thisContext?: Value
 }
 
+/**
+ * Represents an evaluation that resulted in an error
+ */
 export interface Error {
   status: 'error'
   context: Context
 }
 
+/**
+ * Represents an evaluation that finished successfully
+ */
 export interface Finished {
   status: 'finished'
   context: Context
@@ -192,15 +196,22 @@ export interface Finished {
   // field instead
 }
 
+/**
+ * Represents an evaluation that has been suspended. Only possible when the `cse-machine`
+ * is being used.
+ */
 export interface SuspendedCseEval {
   status: 'suspended-cse-eval'
   context: Context
 }
 
+/**
+ * Represents the result of an evaluation
+ */
 export type Result = Finished | Error | SuspendedCseEval
 
 /**
- * StatementSequence : A sequence of statements not surrounded by braces.
+ * StatementSequence: A sequence of statements not surrounded by braces.
  * It is *not* a block, and thus does not trigger environment creation when evaluated.
  *
  * The current ESTree specification does not have this node type, so we define it here.
@@ -229,26 +240,6 @@ export interface Directive extends es.ExpressionStatement {
   expression: es.Literal
   directive: string
 }
-
-/** For use in the substituter, to differentiate between a function declaration in the expression position,
- * which has an id, as opposed to function expressions.
- */
-export interface FunctionDeclarationExpression extends es.FunctionExpression {
-  id: es.Identifier
-  body: es.BlockStatement
-}
-
-/**
- * For use in the substituter: call expressions can be reduced into an expression if the block
- * only contains a single return statement; or a block, but has to be in the expression position.
- * This is NOT compliant with the ES specifications, just as an intermediate step during substitutions.
- */
-export interface BlockExpression extends es.BaseExpression {
-  type: 'BlockExpression'
-  body: es.Statement[]
-}
-
-export type substituterNodes = Node | BlockExpression
 
 export type {
   Instruction as SVMInstruction,
@@ -419,4 +410,8 @@ export type RecursivePartial<T> =
         }>
       : T
 
+/**
+ * Utility type for selecting extracting the specific Node type when provided
+ * the type string.
+ */
 export type NodeTypeToNode<T extends Node['type']> = Extract<Node, { type: T }>
