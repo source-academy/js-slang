@@ -15,7 +15,7 @@ import {
   getIdentifiersInProgram,
   getNativeIds,
   getUniqueId,
-  NativeIds
+  type NativeIds
 } from '../utils/uniqueIds'
 import { simple } from '../utils/ast/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'

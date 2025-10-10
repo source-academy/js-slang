@@ -11,7 +11,7 @@ import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import { isIdentifier, isImportDeclaration } from '../utils/ast/typeGuards'
 import Heap from './heap'
 import * as instr from './instrCreator'
-import { Control, Transformers } from './interpreter'
+import { type Control, Transformers } from './interpreter'
 import {
   type AppInstr,
   type EnvArray,

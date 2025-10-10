@@ -2,7 +2,7 @@
 // Helper functions/constants for type checker and type error checker
 // =======================================
 
-import {
+import type {
   AllowedDeclarations,
   BindableType,
   ForAll,

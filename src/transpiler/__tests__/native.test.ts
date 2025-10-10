@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 import { runInContext } from '../../index'
 import { mockContext } from '../../utils/testing/mocks'
-import { Finished } from '../../types'
+import type { Finished } from '../../types'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectNativeToTimeoutAndError } from '../../utils/testing'

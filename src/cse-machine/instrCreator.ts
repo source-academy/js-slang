@@ -2,21 +2,21 @@
  * Utility functions for creating the various control instructions.
  */
 
-import * as es from 'estree'
+import type es from 'estree'
 
-import { Environment, Node } from '../types'
+import type { Environment, Node } from '../types'
 import {
-  AppInstr,
-  ArrLitInstr,
-  AssmtInstr,
-  BinOpInstr,
-  BranchInstr,
-  EnvInstr,
-  ForInstr,
-  Instr,
+  type AppInstr,
+  type ArrLitInstr,
+  type AssmtInstr,
+  type BinOpInstr,
+  type BranchInstr,
+  type EnvInstr,
+  type ForInstr,
+  type Instr,
   InstrType,
-  UnOpInstr,
-  WhileInstr,
+  type UnOpInstr,
+  type WhileInstr,
   type DeclAssmtInstr,
   type RegularAssmtInstr
 } from './types'

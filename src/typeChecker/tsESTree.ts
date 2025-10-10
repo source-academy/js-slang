@@ -1,5 +1,5 @@
 // Clone of estree library, with modifications that add type syntax support.
-import * as es from 'estree'
+import type es from 'estree'
 
 interface BaseNodeWithoutComments {
   // Every leaf interface that extends BaseNode must specify a type property.

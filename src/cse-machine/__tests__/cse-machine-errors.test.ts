@@ -7,7 +7,7 @@ import {
   testFailure,
   testSuccess
 } from '../../utils/testing'
-import { TestOptions } from '../../utils/testing/types'
+import type { TestOptions } from '../../utils/testing/types'
 
 async function expectDifferentParsedErrors(
   code1: string,
