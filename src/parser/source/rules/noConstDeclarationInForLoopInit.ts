@@ -5,7 +5,7 @@ import { RuleError } from '../../errors'
 
 export class NoConstDeclarationInForLoopInit extends RuleError<ForStatement> {
   public explain(): string {
-    return 'Const declaration in init part of for statement is not allowed'
+    return 'Const declaration in init part of for statement is not allowed.'
   }
   public elaborate(): string {
     return stripIndent`
