@@ -4,9 +4,6 @@ import { stripIndent } from '../../../utils/formatters'
 import { RuleError } from '../../errors'
 
 export class NoConstDeclarationInForLoopInit extends RuleError<ForStatement> {
-  constructor(node: ForStatement) {
-    super(node)
-  }
   public explain(): string {
     return 'Const declaration in init part of for statement is not allowed'
   }
