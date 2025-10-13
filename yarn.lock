@@ -1816,6 +1816,52 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sourceacademy/js-slang@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@sourceacademy/js-slang@workspace:."
+  dependencies:
+    "@babel/core": "npm:^7.26.10"
+    "@babel/parser": "npm:^7.19.4"
+    "@babel/preset-env": "npm:^7.23.2"
+    "@commander-js/extra-typings": "npm:^12.0.1"
+    "@joeychenofficial/alt-ergo-modified": "npm:^2.4.0"
+    "@ts-morph/bootstrap": "npm:^0.18.0"
+    "@types/babel__core": "npm:^7"
+    "@types/estree": "npm:^1.0.5"
+    "@types/jest": "npm:^29.0.0"
+    "@types/lodash": "npm:^4.14.202"
+    "@types/node": "npm:^20.0.0"
+    "@types/offscreencanvas": "npm:^2019.7.0"
+    ace-builds: "npm:~1.17.0"
+    acorn: "npm:^8.8.2"
+    acorn-class-fields: "npm:^1.0.0"
+    acorn-loose: "npm:^8.0.0"
+    acorn-walk: "npm:^8.0.0"
+    astring: "npm:^1.4.3"
+    commander: "npm:^12.0.0"
+    coveralls: "npm:^3.1.0"
+    escodegen: "npm:^2.0.0"
+    eslint: "npm:^9.0.0"
+    eslint-plugin-import: "npm:^2.29.1"
+    globals: "npm:^16.0.0"
+    husky: "npm:^9.0.0"
+    jest: "npm:^29.0.0"
+    jest-environment-jsdom: "npm:^29.0.0"
+    jest-html-reporter: "npm:^3.2.0"
+    js-base64: "npm:^3.7.5"
+    jsdoc: "npm:3.6.11"
+    jsdom: "npm:^19.0.0"
+    lodash: "npm:^4.17.21"
+    prettier: "npm:^3.6.2"
+    source-map: "npm:0.7.6"
+    ts-jest: "npm:^29.0.0"
+    typescript: "npm:^4.0.3"
+    typescript-eslint: "npm:^8.8.1"
+  bin:
+    js-slang: dist/repl/index.js
+  languageName: unknown
+  linkType: soft
+
 "@tootallnate/once@npm:2":
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
@@ -5241,52 +5287,6 @@ __metadata:
   checksum: 10c0/3c905a7e78b601e4751b5e710edd0d6d045ce2d23eb84c9df03515371e1b291edc72808dc91e081cb9855aef6758292a2407006f4608ec3705373dd8baf2f80f
   languageName: node
   linkType: hard
-
-"js-slang@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "js-slang@workspace:."
-  dependencies:
-    "@babel/core": "npm:^7.26.10"
-    "@babel/parser": "npm:^7.19.4"
-    "@babel/preset-env": "npm:^7.23.2"
-    "@commander-js/extra-typings": "npm:^12.0.1"
-    "@joeychenofficial/alt-ergo-modified": "npm:^2.4.0"
-    "@ts-morph/bootstrap": "npm:^0.18.0"
-    "@types/babel__core": "npm:^7"
-    "@types/estree": "npm:^1.0.5"
-    "@types/jest": "npm:^29.0.0"
-    "@types/lodash": "npm:^4.14.202"
-    "@types/node": "npm:^20.0.0"
-    "@types/offscreencanvas": "npm:^2019.7.0"
-    ace-builds: "npm:~1.17.0"
-    acorn: "npm:^8.8.2"
-    acorn-class-fields: "npm:^1.0.0"
-    acorn-loose: "npm:^8.0.0"
-    acorn-walk: "npm:^8.0.0"
-    astring: "npm:^1.4.3"
-    commander: "npm:^12.0.0"
-    coveralls: "npm:^3.1.0"
-    escodegen: "npm:^2.0.0"
-    eslint: "npm:^9.0.0"
-    eslint-plugin-import: "npm:^2.29.1"
-    globals: "npm:^16.0.0"
-    husky: "npm:^9.0.0"
-    jest: "npm:^29.0.0"
-    jest-environment-jsdom: "npm:^29.0.0"
-    jest-html-reporter: "npm:^3.2.0"
-    js-base64: "npm:^3.7.5"
-    jsdoc: "npm:3.6.11"
-    jsdom: "npm:^19.0.0"
-    lodash: "npm:^4.17.21"
-    prettier: "npm:^3.6.2"
-    source-map: "npm:0.7.6"
-    ts-jest: "npm:^29.0.0"
-    typescript: "npm:^4.0.3"
-    typescript-eslint: "npm:^8.8.1"
-  bin:
-    js-slang: dist/repl/index.js
-  languageName: unknown
-  linkType: soft
 
 "js-tokens@npm:^4.0.0":
   version: 4.0.0
