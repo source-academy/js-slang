@@ -119,6 +119,37 @@ test('Cannot leave blank expressions in for loop - verbose', async ({ expect }) 
           `)
 })
 
+test('Cannot use const declaration in for loop init', () => {
+  return expectParsedError(
+    stripIndent`
+    let b = 1;
+    for (const a = 4; b < 10; b = b + 1) {
+      break;
+    }
+  `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  ).toMatchInlineSnapshot(
+    `"Line 2: Const declaration in init part of for statement is not allowed."`
+  )
+})
+
+test('Cannot use const declaration in for loop init - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+    "enable verbose";
+    let b = 1;
+    for (const a = 4; b < 10; b = b + 1) {
+      break;
+    }
+  `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  ).toMatchInlineSnapshot(`
+            "Line 3, Column 0: Const declaration in init part of for statement is not allowed.
+            The init part of this statement cannot contain a const declaration, use a let declaration instead.
+            "
+          `)
+})
+
 test('Cannot leave while loop predicate blank', () => {
   return expectParsedError(
     stripIndent`
