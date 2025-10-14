@@ -52,6 +52,7 @@ test('Arrow function definition returns itself', async () => {
   } = await testSuccess('() => 42;')
   return expect(value).toMatchInlineSnapshot(`[Function]`)
 })
+
 test('Builtins hide their implementation when toString', async () => {
   const {
     result: { value }

@@ -119,22 +119,24 @@ test('Cannot leave blank expressions in for loop - verbose', async ({ expect }) 
           `)
 })
 
-test('Cannot use const declaration in for loop init', () => {
-  return expectParsedError(
+test('Cannot use const declaration in for loop init', async ({ expect }) => {
+  const errStr = await testFailure(
     stripIndent`
     let b = 1;
     for (const a = 4; b < 10; b = b + 1) {
       break;
     }
   `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(
+    Chapter.LIBRARY_PARSER
+  )
+
+  expect(errStr).toMatchInlineSnapshot(
     `"Line 2: Const declaration in init part of for statement is not allowed."`
   )
 })
 
-test('Cannot use const declaration in for loop init - verbose', () => {
-  return expectParsedError(
+test('Cannot use const declaration in for loop init - verbose', async ({ expect }) => {
+  const errStr = await testFailure(
     stripIndent`
     "enable verbose";
     let b = 1;
@@ -142,8 +144,10 @@ test('Cannot use const declaration in for loop init - verbose', () => {
       break;
     }
   `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
+    Chapter.LIBRARY_PARSER
+  )
+
+  expect(errStr).toMatchInlineSnapshot(`
             "Line 3, Column 0: Const declaration in init part of for statement is not allowed.
             The init part of this statement cannot contain a const declaration, use a let declaration instead.
             "
