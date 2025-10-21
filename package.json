@@ -66,7 +66,7 @@
     "@types/babel__core": "^7",
     "@types/jest": "^29.0.0",
     "@types/lodash": "^4.14.202",
-    "@types/node": "^20.0.0",
+    "@types/node": "^22.0.0",
     "@types/offscreencanvas": "^2019.7.0",
     "ace-builds": "~1.17.0",
     "coveralls": "^3.1.0",
