@@ -1,4 +1,4 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
@@ -12,7 +12,8 @@ import {
 } from '../stdlib/vm.prelude'
 import type { Context, ContiguousArrayElements, Node } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { recursive, simple } from '../utils/walkers'
+import { recursive, simple } from '../utils/ast/walkers'
+import { getSourceVariableDeclaration } from '../utils/ast/helpers'
 import OpCodes from './opcodes'
 
 const VALID_UNARY_OPERATORS = new Map([
@@ -215,17 +216,19 @@ function extractAndRenameNames(
   const namesToRename = new Map<string, string>()
   for (const stmt of baseNode.body) {
     if (stmt.type === 'VariableDeclaration') {
-      const node = stmt as es.VariableDeclaration
-      let name = (node.declarations[0].id as es.Identifier).name
+      let {
+        id: { name }
+      } = getSourceVariableDeclaration(stmt)
+
       if (rename) {
-        const loc = (node.loc ?? UNKNOWN_LOCATION).start
+        const loc = (stmt.loc ?? UNKNOWN_LOCATION).start
         const oldName = name
         do {
           name = `${name}-${loc.line}-${loc.column}`
         } while (names.has(name))
         namesToRename.set(oldName, name)
       }
-      const isVar = node.kind === 'let'
+      const isVar = stmt.kind === 'let'
       const index = names.size
       names.set(name, { index, isVar })
     } else if (stmt.type === 'FunctionDeclaration') {
@@ -256,19 +259,18 @@ function extractAndRenameNames(
   // recurse for blocks. Need to manually add all cases to recurse
   for (const stmt of baseNode.body) {
     if (stmt.type === 'BlockStatement') {
-      const node = stmt as es.BlockStatement
-      extractAndRenameNames(node, names, true)
+      extractAndRenameNames(stmt, names, true)
     }
     if (stmt.type === 'IfStatement') {
       let nextAlt = stmt as es.IfStatement | es.BlockStatement
       while (nextAlt.type === 'IfStatement') {
         // if else if...
-        const { consequent, alternate } = nextAlt as es.IfStatement
+        const { consequent, alternate } = nextAlt
         extractAndRenameNames(consequent as es.BlockStatement, names, true)
         // Source spec must have alternate
         nextAlt = alternate as es.IfStatement | es.BlockStatement
       }
-      extractAndRenameNames(nextAlt as es.BlockStatement, names, true)
+      extractAndRenameNames(nextAlt, names, true)
     }
     if (stmt.type === 'WhileStatement') {
       extractAndRenameNames(stmt.body as es.BlockStatement, names, true)
@@ -351,7 +353,7 @@ function renameVariables(
         c(nextAlt.test, inactive)
         nextAlt = alternate as es.IfStatement | es.BlockStatement
       }
-      recurseBlock(nextAlt! as es.BlockStatement, inactive, c)
+      recurseBlock(nextAlt, inactive, c)
     },
     Function(node: es.Function, inactive, c) {
       if (node.type === 'FunctionDeclaration') {
@@ -485,7 +487,17 @@ function compileStatements(
 }
 
 // each compiler should return a maxStackSize
-const compilers = {
+const compilers: Partial<
+  Record<
+    Node['type'],
+    (
+      node: Node,
+      indexTable: Map<string, EnvEntry>[],
+      insertFlag: boolean,
+      isTailCallPosition?: boolean
+    ) => ReturnType<typeof compileStatements>
+  >
+> = {
   // wrapper
   Program(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.Program
@@ -590,7 +602,7 @@ const compilers = {
     let callType: 'normal' | 'primitive' | 'internal' = 'normal'
     let callValue: any = NaN
     if (node.callee.type === 'Identifier') {
-      const callee = node.callee as es.Identifier
+      const callee = node.callee
       const { envLevel, index, type } = indexOf(indexTable, callee)
       if (type === 'primitive' || type === 'internal') {
         callType = type
@@ -695,7 +707,7 @@ const compilers = {
       BRIndex = functionCode.length - 1
     }
     functionCode[BRFIndex][1] = functionCode.length - BRFIndex
-    const { maxStackSize: m3 } = compile(alternate!, indexTable, insertFlag, isTailCallPosition)
+    const { maxStackSize: m3 } = compile(alternate, indexTable, insertFlag, isTailCallPosition)
     if (!insertFlag) {
       functionCode[BRIndex][1] = functionCode.length - BRIndex
     }
@@ -1046,19 +1058,20 @@ function transformForLoopsToWhileLoops(program: es.Program) {
       let forLoopBody = body
       // Source spec: init must be present
       if (init!.type === 'VariableDeclaration') {
-        const loopVarName = ((init as es.VariableDeclaration).declarations[0].id as es.Identifier)
-          .name
+        const {
+          id: { name: loopVarName }
+        } = getSourceVariableDeclaration(init)
+
         // loc is used for renaming. It doesn't matter if we use the same location, as the
         // renaming function will notice that they are the same, and rename it further so that
         // there aren't any clashes.
-        const loc = init!.loc
         const copyOfLoopVarName = 'copy-of-' + loopVarName
         const innerBlock = create.blockStatement([
-          create.constantDeclaration(loopVarName, create.identifier(copyOfLoopVarName), loc),
+          create.constantDeclaration(loopVarName, create.identifier(copyOfLoopVarName), init.loc),
           body
         ])
         forLoopBody = create.blockStatement([
-          create.constantDeclaration(copyOfLoopVarName, create.identifier(loopVarName), loc),
+          create.constantDeclaration(copyOfLoopVarName, create.identifier(loopVarName), init.loc),
           innerBlock
         ])
       }

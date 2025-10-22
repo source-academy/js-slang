@@ -1,4 +1,4 @@
-import { Variant } from '../../../types'
+import { Variant } from '../../../langs'
 import { SourceDocumentation } from '../docTooltip'
 
 /* tslint:disable */
@@ -37,7 +37,7 @@ export function HighlightRulesSelector(
       }
   )[] = []
 ) {
-  // @ts-ignore
+  // @ts-expect-error implicit any
   function _SourceHighlightRules(acequire, exports, _module) {
     'use strict'
 
@@ -49,7 +49,8 @@ export function HighlightRulesSelector(
     const identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
 
     const chapter = variant === Variant.DEFAULT ? id.toString() : id.toString() + '_' + variant
-    const builtin_lib = SourceDocumentation.builtins[chapter]
+    const builtin_lib =
+      SourceDocumentation.builtins[chapter as keyof typeof SourceDocumentation.builtins]
 
     function addFromBuiltinLibrary(meta: string) {
       if (builtin_lib === null) {
@@ -659,7 +660,7 @@ export function HighlightRulesSelector(
             }
             // @ts-ignore
             this.next = stack[0] || 'start'
-            return [{ type: this.token, value: value }]
+            return [{ type: this.token, value }]
           },
           nextState: 'jsx'
         },

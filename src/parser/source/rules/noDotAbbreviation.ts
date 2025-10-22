@@ -1,7 +1,7 @@
 import type { MemberExpression } from 'estree'
 import type { Rule } from '../../types'
 import { RuleError } from '../../errors'
-import { Chapter } from '../../../types'
+import { Chapter } from '../../../langs'
 
 export class NoDotAbbreviationError extends RuleError<MemberExpression> {
   public explain() {

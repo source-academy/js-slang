@@ -1,7 +1,7 @@
 import type { Literal } from 'estree'
 import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
-import { Chapter } from '../../../types'
+import { Chapter } from '../../../langs'
 
 export class NoNullError extends RuleError<Literal> {
   public explain() {

@@ -4,20 +4,21 @@ import type es from 'estree'
 import { type RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
-import { Chapter, type Context, type NativeStorage, type Node, Variant } from '../types'
+import type { Context, NativeStorage, Node } from '../types'
+import { Chapter, Variant } from '../langs'
 import * as create from '../utils/ast/astCreator'
 import { filterImportDeclarations, getImportedName } from '../utils/ast/helpers'
+import { isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getNativeIds,
   getUniqueId,
-  NativeIds
+  type NativeIds
 } from '../utils/uniqueIds'
-import { simple } from '../utils/walkers'
+import { simple } from '../utils/ast/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'
-import { isNamespaceSpecifier } from '../utils/ast/typeGuards'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -119,7 +120,7 @@ function transformFunctionDeclarationsToArrowFunctions(
       node.declarations = [
         {
           type: 'VariableDeclarator',
-          id: id as es.Identifier,
+          id,
           init: asArrowFunction
         }
       ]
@@ -260,8 +261,8 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds
     const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
     const source = node.loc?.source ?? null
     const test = node.type === 'LogicalExpression' ? 'left' : 'test'
-    node[test] = create.callExpression(globalIds.boolOrErr, [
-      node[test],
+    ;(node as any)[test] = create.callExpression(globalIds.boolOrErr, [
+      (node as any)[test],
       create.literal(line),
       create.literal(column),
       create.literal(source)
@@ -300,7 +301,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
     UnaryExpression(node: es.UnaryExpression) {
       const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
       const source = node.loc?.source ?? null
-      const { operator, argument } = node as es.UnaryExpression
+      const { operator, argument } = node
       create.mutateToCallExpression(node, globalIds.unaryOp, [
         create.literal(operator),
         argument,

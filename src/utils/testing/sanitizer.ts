@@ -1,6 +1,6 @@
 import type es from 'estree'
 
-import { simple } from '../walkers'
+import { simple } from '../ast/walkers'
 
 const locationKeys = ['loc', 'start', 'end']
 
@@ -21,7 +21,7 @@ const sanitizers = Object.entries(propertiesToDelete).reduce(
     ...res,
     [nodeType](node: es.Node) {
       for (const prop of props) {
-        delete node[prop]
+        delete node[prop as keyof typeof node]
       }
     }
   }),

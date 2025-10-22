@@ -1,7 +1,7 @@
-import * as es from 'estree'
+import type es from 'estree'
 
-import { Context, Environment } from '../types'
-import { Control, Stash, Transformers } from './interpreter'
+import type { Context, Environment } from '../types'
+import type { Control, Stash, Transformers } from './interpreter'
 import { uniqueId } from './utils'
 
 /**

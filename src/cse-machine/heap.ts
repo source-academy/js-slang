@@ -1,4 +1,4 @@
-import { HeapObject } from './types'
+import type { HeapObject } from './types'
 
 /**
  * The heap stores all objects in each environment.

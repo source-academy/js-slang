@@ -1,7 +1,7 @@
-import { ArrayExpression, Comment, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../../interface'
+import type { ArrayExpression, Comment, SourceLocation } from 'estree'
+import type { StepperBaseNode } from '../../interface'
 import { redex } from '../..'
-import { StepperExpression, StepperPattern } from '..'
+import type { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
 
 export class StepperArrayExpression implements ArrayExpression, StepperBaseNode {
@@ -86,7 +86,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
   freeNames(): string[] {
     const names = this.elements
       .filter(element => element !== null)
-      .map(element => element!.freeNames())
+      .map(element => element.freeNames())
       .flat()
     return Array.from(new Set(names))
   }
@@ -94,7 +94,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
   allNames(): string[] {
     const names = this.elements
       .filter(element => element !== null)
-      .map(element => element!.allNames())
+      .map(element => element.allNames())
       .flat()
     return Array.from(new Set(names))
   }

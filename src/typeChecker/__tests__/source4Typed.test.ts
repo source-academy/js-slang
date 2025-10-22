@@ -1,7 +1,8 @@
+import { beforeEach, describe, expect, it } from 'vitest'
 import { parseError } from '../..'
 import { mockContext } from '../../utils/testing/mocks'
 import { parse } from '../../parser/parser'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Variant } from '../../langs'
 
 let context = mockContext(Chapter.SOURCE_4, Variant.TYPED)
 
@@ -44,7 +45,7 @@ describe('parse tree types', () => {
   })
 })
 
-describe('parse', () => {
+describe(parse, () => {
   it('takes in string', () => {
     const code = `const x1 = parse('1;');
       const x2 = parse(1);

@@ -1,5 +1,5 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
 
 import {
   currentEnvironment,
@@ -9,7 +9,7 @@ import {
   isStatementSequence,
   uniqueId
 } from '../cse-machine/utils'
-import { Context, Environment, StatementSequence, Value } from '../types'
+import type { Context, Environment, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { Control, Transformers, Stash, generateCSEMachineStateStream } from './interpreter'
 import { envInstr } from './instrCreator'

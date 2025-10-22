@@ -53,9 +53,10 @@ export async function loadSourceModuleTypes(sourceModulesToImport: Set<string>, 
   })
 }
 
+export { MODULES_STATIC_URL } from './importers'
+
 export {
   setModulesStaticURL,
-  MODULES_STATIC_URL,
   memoizedGetModuleDocsAsync,
   memoizedGetModuleManifestAsync
 } from './loaders'

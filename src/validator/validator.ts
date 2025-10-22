@@ -11,7 +11,7 @@ import {
   getNativeIds,
   type NativeIds
 } from '../utils/uniqueIds'
-import { ancestor, base, type FullWalkerCallback } from '../utils/walkers'
+import { ancestor, base, type FullWalkerCallback } from '../utils/ast/walkers'
 import { getSourceVariableDeclaration } from '../utils/ast/helpers'
 
 class Declaration {
