@@ -1,10 +1,10 @@
 import { expect, test } from 'vitest'
 import { runInContext } from '../../index'
 import { mockContext } from '../../utils/testing/mocks'
-import type { Finished } from '../../types'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectNativeToTimeoutAndError } from '../../utils/testing'
+import { assertFinishedResultValue } from '../../utils/testing/misc'
 
 test('Proper stringify-ing of arguments during potentially infinite iterative function calls', async () => {
   const code = stripIndent`
@@ -80,8 +80,7 @@ test('test proper setting of variables in an outer scope', async () => {
     context
   )
   const result = await runInContext('a = "new"; f();', context)
-  expect(result.status).toBe('finished')
-  expect((result as Finished).value).toBe('new')
+  assertFinishedResultValue(result, 'new');
 })
 
 test('using internal names still work', async () => {
@@ -97,11 +96,9 @@ test('using internal names still work', async () => {
   `,
     context
   )
-  expect(result.status).toBe('finished')
-  expect((result as Finished).value).toBe(1)
+  assertFinishedResultValue(result, 1)
   result = await runInContext('program;', context)
-  expect(result.status).toBe('finished')
-  expect((result as Finished).value).toBe(2)
+  assertFinishedResultValue(result, 2)
 })
 
 test('assigning a = b where b was from a previous program call works', async () => {
@@ -114,6 +111,5 @@ test('assigning a = b where b was from a previous program call works', async () 
   `,
     context
   )
-  expect(result.status).toBe('finished')
-  expect((result as Finished).value).toBe(1)
+  assertFinishedResultValue(result, 1)
 })
