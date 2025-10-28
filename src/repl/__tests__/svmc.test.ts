@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import fs from 'fs/promises'
 import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { compileToChoices, getSVMCCommand } from '../svmc'

@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import fs from 'fs/promises'
 import repl from 'repl'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
@@ -9,15 +11,17 @@ import { chapterParser } from '../utils'
 vi.mock(import('../../modules/loader/loaders'))
 
 vi.mock(import('path'), async importOriginal => {
-  const { posix, ...originalPath } = await importOriginal()
+  const { posix } = await importOriginal()
   const newResolve = (...args: string[]) => posix.resolve('/', ...args)
 
+  const newPath = {
+    ...posix,
+    resolve: newResolve
+  }
+
   return {
-    default: {
-      ...originalPath.default,
-      resolve: newResolve
-    },
-    posix
+    default: newPath,
+    posix: newPath
   }
 })
 

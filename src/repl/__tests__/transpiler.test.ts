@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import fs from 'fs/promises'
 import { beforeEach, expect, test, vi } from 'vitest'
 import { getTranspilerCommand } from '../transpiler'

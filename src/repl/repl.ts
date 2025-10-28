@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-import { resolve } from 'path'
+import pathlib from 'path'
 import replLib from 'repl'
 import { Command } from '@commander-js/extra-typings'
 
@@ -56,7 +56,7 @@ export const getReplCommand = () =>
       }
 
       if (filename !== undefined) {
-        const entrypointFilePath = resolve(filename)
+        const entrypointFilePath = pathlib.resolve(filename)
         const { result, verboseErrors } = await sourceFilesRunner(
           fileGetter,
           entrypointFilePath,

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import fs from 'fs/promises'
-import { resolve } from 'path'
+import pathlib from 'path'
 import { Command } from '@commander-js/extra-typings'
 import { generate } from 'astring'
 
@@ -29,7 +29,7 @@ export const getTranspilerCommand = () =>
       }
 
       const context = createContext(opts.chapter, opts.variant, opts.languageOptions)
-      const entrypointFilePath = resolve(fileName)
+      const entrypointFilePath = pathlib.resolve(fileName)
 
       const linkerResult = await parseProgramsAndConstructImportGraph(
         async p => {
