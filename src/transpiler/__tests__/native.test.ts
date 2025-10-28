@@ -80,7 +80,7 @@ test('test proper setting of variables in an outer scope', async () => {
     context
   )
   const result = await runInContext('a = "new"; f();', context)
-  assertFinishedResultValue(result, 'new');
+  assertFinishedResultValue(result, 'new')
 })
 
 test('using internal names still work', async () => {

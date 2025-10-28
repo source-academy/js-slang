@@ -40,11 +40,7 @@ export type Address = [
   number, // function index
   number? // instruction index within function; optional
 ]
-export type Instruction = [
-  OpCodes,
-  Argument?,
-  Argument?
-]
+export type Instruction = [OpCodes, Argument?, Argument?]
 export type Argument = number | boolean | string | Offset | Address
 export type SVMFunction = [
   number, // stack size

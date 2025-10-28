@@ -151,7 +151,7 @@ const OPCODES_STR: { [K in OpCodes]?: string } = {
 
 /**
  * Returns name of opcode for debugging
- */ 
+ */
 export function getName(op: OpCodes) {
   return OPCODES_STR[op]
 }
