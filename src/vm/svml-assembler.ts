@@ -154,7 +154,7 @@ export function assemble(p: Program): Uint8Array {
   const [entrypointIndex, jsonFns] = p
 
   // serialise all the functions
-  const imFns = jsonFns.map(fn => serialiseFunction(fn))
+  const imFns = jsonFns.map(serialiseFunction)
 
   // collect all string constants
   const uniqueStrings = [
