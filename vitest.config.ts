@@ -1,4 +1,4 @@
-import { defineConfig, coverageConfigDefaults } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
@@ -11,17 +11,11 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       exclude: [
-        ...coverageConfigDefaults.exclude,
         "dist",
-        'docs',
         '**/__mocks__/**',
-        "node_modules/",
-        "scripts",
-        'sicp_publish',
         "src/alt-langs/scheme/scm-slang",
         "src/py-slang/",
         "src/typings",
-        'test-report'
       ],
       reporter: ['text', 'html', 'lcov']
     },

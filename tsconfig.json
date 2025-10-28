@@ -8,7 +8,7 @@
     "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
     "module": "commonjs",
     "moduleResolution": "node",
-    "isolatedModules": true,
+    // "isolatedModules": true, Temporarily disabled
     "noEmit": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
