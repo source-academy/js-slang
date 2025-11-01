@@ -1,7 +1,9 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { Chapter, ErrorSeverity, ErrorType, Node, Value } from '../types'
+import type { Node, Value } from '../types'
+import { Chapter } from '../langs'
+import { ErrorSeverity, ErrorType } from '../errors/base'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'

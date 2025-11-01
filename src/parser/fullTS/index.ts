@@ -1,13 +1,13 @@
 import { parse as babelParse } from '@babel/parser'
 import { createProjectSync, ts } from '@ts-morph/bootstrap'
-import { Program } from 'estree'
+import type { Program } from 'estree'
 
-import { Context } from '../..'
-import * as TypedES from '../../typeChecker/tsESTree'
+import type { Context } from '../..'
+import type * as TypedES from '../../typeChecker/tsESTree'
 import { removeTSNodes } from '../../typeChecker/typeErrorChecker'
 import { FatalSyntaxError } from '../errors'
 import { transformBabelASTToESTreeCompliantAST } from '../source/typed/utils'
-import { AcornOptions, Parser } from '../types'
+import type { AcornOptions, Parser } from '../types'
 import { defaultBabelOptions, positionToSourceLocation } from '../utils'
 
 const IMPORT_TOP_LEVEL_ERROR =

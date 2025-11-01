@@ -1,6 +1,7 @@
-import type { MockedFunction } from 'jest-mock'
+import { describe, expect, test, type TestContext as VitestTestContext } from 'vitest'
 import type { Result } from '../..'
-import type { Finished, Value, Node, NodeTypeToNode, Chapter } from '../../types'
+import type { Finished, Value, Node, NodeTypeToNode } from '../../types'
+import { Chapter } from '../../langs'
 import { getChapterName } from '../misc'
 import type { TestBuiltins, TestOptions } from './types'
 
@@ -17,17 +18,69 @@ export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions
 }
 
 /**
- * Wrapper around the MockedFunction type to provide type checking
- * for mocked functions
+ * Utility type for removing the `this` parameter from a function's type
  */
-export function asMockedFunc<T extends (...args: any[]) => any>(func: T) {
-  return func as MockedFunction<T>
+type RemoveThis<T extends (this: any, ...args: any[]) => any> = T extends (
+  this: any,
+  ...args: infer U
+) => any
+  ? U
+  : Parameters<T>
+
+interface FuncWithSkipAndOnly<T extends (...args: any[]) => any> {
+  (...args: RemoveThis<T>): ReturnType<T>
+  skip: (...args: RemoveThis<T>) => ReturnType<T>
+  only: (...args: RemoveThis<T>) => ReturnType<T>
+}
+
+/**
+ * Refers to the three `describe` operations
+ */
+export type DescribeFunctions =
+  | typeof describe
+  | (typeof describe)['only']
+  | (typeof describe)['skip']
+
+/**
+ * Refers to the three `test` operations
+ */
+export type TestFunctions = typeof test | (typeof test)['only'] | (typeof test)['skip']
+
+/**
+ * For functions that are designed to wrap around a `describe` or `test` block. Adds the `.only` and `.skip`
+ * properties to them. The wrapped functions should use the `this` object to access the `test` or `describe` function
+ * they are supposed to call.
+ */
+export function wrapWithSkipAndOnly<T extends (this: DescribeFunctions, ...args: any[]) => any>(
+  type: 'describe',
+  f: T
+): FuncWithSkipAndOnly<T>
+export function wrapWithSkipAndOnly<T extends (this: TestFunctions, ...args: any[]) => any>(
+  type: 'test',
+  f: T
+): FuncWithSkipAndOnly<T>
+export function wrapWithSkipAndOnly<
+  T extends (this: TestFunctions | DescribeFunctions, ...args: any[]) => any
+>(type: 'test' | 'describe', f: T) {
+  function func(...args: Parameters<T>): ReturnType<T> {
+    return f.call(type === 'test' ? test : describe, ...args)
+  }
+
+  func.skip = (...args: Parameters<T>) => {
+    return f.call((type === 'test' ? test : describe).skip, ...args)
+  }
+
+  func.only = (...args: Parameters<T>) => {
+    return f.call((type === 'test' ? test : describe).only, ...args)
+  }
+
+  return func as FuncWithSkipAndOnly<T>
 }
 
 /**
  * Asserts that the given value is true
  */
-export function assertTrue(cond: boolean): asserts cond {
+export function assertTruthy(cond: boolean): asserts cond {
   expect(cond).toBeTruthy()
 }
 
@@ -35,28 +88,49 @@ export function assertTrue(cond: boolean): asserts cond {
  * Convenience wrapper for testing multiple cases with the same
  * test function
  */
-export function testMultipleCases<T extends Array<any>>(
-  cases: [string, ...T][],
-  tester: (args: T, i: number) => void | Promise<void>,
-  includeIndex?: boolean,
-  timeout?: number
-) {
+export const testMultipleCases = wrapWithSkipAndOnly('test', function <
+  T extends Array<any>
+>(this: TestFunctions, cases: [string, ...T][], tester: (args: T, i: number) => void | Promise<void>, includeIndex?: boolean, timeout?: number) {
   const withIndex = cases.map(([desc, ...c], i) => {
     const newDesc = includeIndex ? `${i + 1}. ${desc}` : desc
     return [newDesc, i, ...c] as [string, number, ...T]
   })
-  test.each(withIndex)('%s', (_, i, ...args) => tester(args, i), timeout)
-}
+  this.each(withIndex)('%s', (_, i, ...args) => tester(args, i), timeout)
+})
+
+type ChapterTestingFunction = (chapter: Chapter, context: VitestTestContext) => void | Promise<void>
 
 /**
- * Convenience wrapper for testing a case with multiple chapters
+ * Convenience wrapper for testing a case with multiple chapters. Tests with source chapters 1-4 and the library parser
  */
-export function testWithChapters(...chapters: Chapter[]) {
-  return (func: (chapter: Chapter) => any) =>
-    test.each(chapters.map(chapter => [getChapterName(chapter), chapter]))(
+export function testWithChapters(func: ChapterTestingFunction): void
+
+/**
+ * Convenience wrapper for testing a case with multiple chapters. Tests with the given chapters. Returns a function
+ * that should be called in the same way `test.each` is
+ */
+export function testWithChapters(...chapters: Chapter[]): (f: ChapterTestingFunction) => void
+export function testWithChapters(arg0: ChapterTestingFunction | Chapter, ...chapters: Chapter[]) {
+  const tester = (chapters: Chapter[], func: ChapterTestingFunction) =>
+    test.for(chapters.map(chapter => [getChapterName(chapter), chapter] as [string, Chapter]))(
       'Testing %s',
-      (_, chapter) => func(chapter)
+      ([, chapter], context) => func(chapter, context)
     )
+
+  if (typeof arg0 === 'function') {
+    return tester(
+      [
+        Chapter.SOURCE_1,
+        Chapter.SOURCE_2,
+        Chapter.SOURCE_3,
+        Chapter.SOURCE_4,
+        Chapter.LIBRARY_PARSER
+      ],
+      arg0
+    )
+  }
+
+  return (func: ChapterTestingFunction) => tester([arg0, ...chapters], func)
 }
 
 /**

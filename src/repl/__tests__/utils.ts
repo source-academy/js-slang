@@ -1,5 +1,5 @@
+import { expect, vi } from 'vitest'
 import type { Command } from '@commander-js/extra-typings'
-import { asMockedFunc } from '../../utils/testing/misc'
 
 /**
  * Set up the environment for testing the given command. Returns
@@ -7,9 +7,9 @@ import { asMockedFunc } from '../../utils/testing/misc'
  * about the behaviour of the command
  */
 export function getCommandRunner<T extends Command<any, any>>(getter: () => T) {
-  jest.spyOn(process.stdout, 'write').mockImplementation(() => true)
-  jest.spyOn(process.stderr, 'write').mockImplementation(() => true)
-  jest.spyOn(process, 'exit').mockImplementation(code => {
+  vi.spyOn(process.stdout, 'write').mockImplementation(() => true)
+  vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+  vi.spyOn(process, 'exit').mockImplementation(code => {
     throw new Error(`process.exit called with ${code}`)
   })
 
@@ -33,6 +33,6 @@ export function getCommandRunner<T extends Command<any, any>>(getter: () => T) {
 
 export function expectWritten(f: (contents: string) => any) {
   expect(f).toHaveBeenCalledTimes(1)
-  const [[contents]] = asMockedFunc(f).mock.calls
+  const [[contents]] = vi.mocked(f).mock.calls
   return expect(contents)
 }

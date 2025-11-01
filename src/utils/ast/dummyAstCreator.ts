@@ -1,7 +1,5 @@
 import type es from 'estree'
 
-import type { BlockExpression } from '../../types'
-
 const DUMMY_STRING = '__DUMMY__'
 const DUMMY_UNARY_OPERATOR = '!'
 const DUMMY_LOGICAL_OPERATOR = '||'
@@ -150,12 +148,6 @@ export const dummyFunctionDeclaration = (): es.FunctionDeclaration => ({
   id: dummyIdentifier(),
   params: [],
   body: dummyBlockStatement(),
-  loc: dummyLocation()
-})
-
-export const dummyBlockExpression = (): BlockExpression => ({
-  type: 'BlockExpression',
-  body: [],
   loc: dummyLocation()
 })
 

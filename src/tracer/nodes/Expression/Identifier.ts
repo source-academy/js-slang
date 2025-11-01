@@ -1,6 +1,6 @@
-import { Identifier, Comment, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../../interface'
-import { StepperExpression, StepperPattern } from '..'
+import type { Identifier, Comment, SourceLocation } from 'estree'
+import type { StepperBaseNode } from '../../interface'
+import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { isBuiltinFunction } from '../../builtins'
 

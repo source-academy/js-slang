@@ -17,7 +17,7 @@ coverage/
 
 .vscode/
 *.tsbuildinfo
-test-report.html
+test-report
 
 # yarn files
 
