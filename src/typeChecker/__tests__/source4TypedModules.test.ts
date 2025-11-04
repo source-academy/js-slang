@@ -181,7 +181,7 @@ describe('Typed module tests', () => {
         const a: string = functionError(10);
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 6: Type 'number' is not assignable to type 'string'."`
+        `"Line 8: Type 'number' is not assignable to type 'string'."`
       )
     })
 
