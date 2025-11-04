@@ -1,9 +1,8 @@
 import type es from 'estree'
-
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import type { Node, Value } from '../types'
-import { Chapter } from '../langs'
 import { ErrorSeverity, ErrorType } from '../errors/base'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { Chapter } from '../langs'
+import type { Node, Value } from '../types'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'
@@ -48,7 +47,6 @@ const typeOf = (v: Value) => {
 const isNumber = (v: Value) => typeOf(v) === 'number'
 // See section 4 of https://2ality.com/2012/12/arrays.html
 // v >>> 0 === v checks that v is a valid unsigned 32-bit int
-// tslint:disable-next-line:no-bitwise
 const isArrayIndex = (v: Value) => isNumber(v) && v >>> 0 === v && v < 2 ** 32 - 1
 const isString = (v: Value) => typeOf(v) === 'string'
 const isBool = (v: Value) => typeOf(v) === 'boolean'
