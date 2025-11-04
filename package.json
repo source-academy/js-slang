@@ -67,7 +67,7 @@
     "@vitest/ui": "^4.0.4",
     "ace-builds": "~1.17.0",
     "coveralls": "^3.1.0",
-    "eslint": "^9.35.0",
+    "eslint": "^9.39.1",
     "eslint-plugin-import": "^2.32.0",
     "globals": "^16.0.0",
     "husky": "^9.0.0",
@@ -75,7 +75,7 @@
     "jsdom": "^19.0.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.40.0",
+    "typescript-eslint": "^8.46.3",
     "vitest": "^4.0.4"
   },
   "devEngines": {
