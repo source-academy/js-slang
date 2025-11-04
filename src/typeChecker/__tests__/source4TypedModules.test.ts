@@ -1,7 +1,7 @@
-import { mockContext } from '../../utils/testing/mocks'
-import { Chapter, Variant } from '../../types'
-import { parse } from '../../parser/parser'
 import { parseError } from '../../index'
+import { parse } from '../../parser/parser'
+import { Chapter, Variant } from '../../types'
+import { mockContext } from '../../utils/testing/mocks'
 
 function getContext() {
   const context = mockContext(Chapter.SOURCE_4, Variant.TYPED)
@@ -270,8 +270,7 @@ describe('Typed module tests', () => {
       import { test2 } from 'exampleModule';
       const result: Test4 = (arg: Test1) => test2;
     `
-    parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+    expect(testParseError(code)).toMatchInlineSnapshot(`""`)
   })
 
   it('should error when calling Test4 with a string argument', () => {
@@ -279,8 +278,7 @@ describe('Typed module tests', () => {
       import { test1 } from 'exampleModule';
       const result: Test4 = (arg: Test1) => test1;
     `
-    parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(
+    expect(testParseError(code)).toMatchInlineSnapshot(
       `"Line 3: Type '(Test1) => Test1' is not assignable to type 'Test4'."`
     )
   })
