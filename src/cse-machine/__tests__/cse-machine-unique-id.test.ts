@@ -91,7 +91,7 @@ const getProgramEnv = (context: Context) => {
 
 test(
   'Program environment id stays the same regardless of amount of steps',
-  { timeout: process.env.GITHUB_ACTIOS ? 20_000 : 10_000 },
+  { timeout: process.env.GITHUB_ACTIONS ? 20_000 : 10_000 },
   async () => {
     const code = stripIndent`
         let x = 0;
