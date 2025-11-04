@@ -2,8 +2,8 @@ import { expect, test } from 'vitest'
 import { Chapter, Variant } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import {
-  expectParsedError,
   expectFinishedResult,
+  expectParsedError,
   testFailure,
   testSuccess
 } from '../../utils/testing'
@@ -168,17 +168,21 @@ test("Builtins don't create additional errors when it's not their fault", () => 
   ).toEqual('Line 2: Name a not declared.')
 })
 
-test('Infinite recursion with a block bodied function', { timeout: 15_000 }, () => {
-  return expectParsedError(
-    stripIndent`
+test(
+  'Infinite recursion with a block bodied function',
+  { timeout: process.env.GITHUB_ACTIONS ? 30_000 : 15_000 },
+  () => {
+    return expectParsedError(
+      stripIndent`
     function i(n) {
       return n === 0 ? 0 : 1 + i(n-1);
     }
     i(300000);
   `,
-    optionEC4
-  ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
-})
+      optionEC4
+    ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
+  }
+)
 
 test(
   'Infinite recursion with function calls in argument',

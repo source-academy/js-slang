@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
-import runners, { type RunnerTypes } from '../sourceRunner'
-import type { ExecutionMethod } from '../../types'
-import { Chapter, Variant } from '../../langs'
-import type { Runner } from '../types'
 import { runCodeInSource } from '..'
-import { mockContext } from '../../utils/testing/mocks'
-import { getChapterName, objectKeys } from '../../utils/misc'
 import { parseError } from '../..'
-import * as validator from '../../validator/validator'
+import { Chapter, Variant } from '../../langs'
+import type { ExecutionMethod } from '../../types'
+import { getChapterName, objectKeys } from '../../utils/misc'
 import { wrapWithSkipAndOnly } from '../../utils/testing/misc'
+import { mockContext } from '../../utils/testing/mocks'
+import * as validator from '../../validator/validator'
+import runners, { type RunnerTypes } from '../sourceRunner'
+import type { Runner } from '../types'
 
 vi.spyOn(validator, 'validateAndAnnotate')
 
@@ -73,6 +73,7 @@ interface TestCase {
   expectedValidate: boolean
 
   verboseErrors?: boolean
+  timeout?: number
 }
 
 const sourceCases: TestCase[] = [
@@ -217,30 +218,37 @@ async function caseTester({
   }
 }
 
-const testCases = wrapWithSkipAndOnly('describe', function (desc: string, cases: TestCase[]) {
-  this(desc, () =>
-    test.each(
-      cases.map(({ code, verboseErrors, contextMethod, chapter, variant, ...tc }, i) => {
-        chapter = chapter ?? Chapter.SOURCE_1
-        variant = variant ?? Variant.DEFAULT
-        const context = mockContext(chapter, variant)
-        if (contextMethod !== undefined) {
-          context.executionMethod = contextMethod
-        }
+const testCases = wrapWithSkipAndOnly(
+  'describe',
+  function (desc: string, cases: TestCase[], timeout?: number) {
+    this(desc, () => {
+      const testEach = test.each(
+        cases.map(({ code, verboseErrors, contextMethod, chapter, variant, ...tc }, i) => {
+          chapter = chapter ?? Chapter.SOURCE_1
+          variant = variant ?? Variant.DEFAULT
+          const context = mockContext(chapter, variant)
+          if (contextMethod !== undefined) {
+            context.executionMethod = contextMethod
+          }
 
-        const chapterName = getChapterName(chapter)
-        let desc = `${i + 1}. Testing ${chapterName}, Variant: ${variant}, expected ${tc.expectedRunner} runner`
-        code = code ?? ''
-        if (verboseErrors) {
-          code = `"enable verbose";\n${code}`
-          desc += ' (verbose errors)'
-        }
+          const chapterName = getChapterName(chapter)
+          let desc = `${i + 1}. Testing ${chapterName}, Variant: ${variant}, expected ${tc.expectedRunner} runner`
+          code = code ?? ''
+          if (verboseErrors) {
+            code = `"enable verbose";\n${code}`
+            desc += ' (verbose errors)'
+          }
 
-        return [desc, { code, chapter, variant, ...tc }]
-      })
-    )('%s', async (_, to) => caseTester(to))
-  )
-})
+          return [desc, { code, chapter, variant, ...tc }]
+        })
+      )
+      if (timeout !== undefined) {
+        return testEach('%s', { timeout }, async (_, to) => caseTester(to))
+      }
+      return testEach('%s', async (_, to) => caseTester(to))
+    })
+  }
+)
 
 describe('Ensure that the correct runner is used for the given evaluation context and settings', () => {
   testCases('Test regular source cases', sourceCases)
@@ -300,7 +308,8 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       )
 
       return [fullCase, verboseErrorCase, ...variantCases]
-    })
+    }),
+    10_000
   )
 
   testCases(

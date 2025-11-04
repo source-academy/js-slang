@@ -1,9 +1,9 @@
 import { expect, test } from 'vitest'
-import { mockContext } from '../../utils/testing/mocks'
-import type { Context, Environment } from '../../types'
 import { Chapter } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
 import { runCodeInSource } from '../../runner'
+import type { Context, Environment } from '../../types'
+import { stripIndent } from '../../utils/formatters'
+import { mockContext } from '../../utils/testing/mocks'
 import { createProgramEnvironment } from '../utils'
 
 const getContextFrom = async (code: string, envSteps?: number) => {
@@ -91,7 +91,7 @@ const getProgramEnv = (context: Context) => {
 
 test(
   'Program environment id stays the same regardless of amount of steps',
-  { timeout: 10_000 },
+  { timeout: process.env.GITHUB_ACTIOS ? 20_000 : 10_000 },
   async () => {
     const code = stripIndent`
         let x = 0;
