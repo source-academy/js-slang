@@ -1,11 +1,11 @@
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectResult } from '../../utils/testing'
+import { expectParsedError, expectFinishedResult } from '../../utils/testing'
 
 // CSET tests for Scheme Macros
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('definition of a macro', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (define-syntax my-let
       (syntax-rules ()
@@ -17,7 +17,7 @@ test('definition of a macro', () => {
 })
 
 test('use of a macro', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
     (define-syntax my-let
       (syntax-rules ()
@@ -36,7 +36,7 @@ test('use of a macro', () => {
 })
 
 test('use of a more complex macro (recursive)', () => {
-  return expectResult(
+  return expectFinishedResult(
     `
 (define-syntax define-match
     (syntax-rules ()

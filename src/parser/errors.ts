@@ -1,7 +1,7 @@
-import { SourceLocation } from 'estree'
+import type { SourceLocation } from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../types'
+import { ErrorSeverity, ErrorType, type Node, type SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
 
 export class MissingSemicolonError implements SourceError {
@@ -92,4 +92,18 @@ export class DisallowedConstructError implements SourceError {
       }
     }
   }
+}
+
+export abstract class RuleError<T extends Node> implements SourceError {
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public readonly node: T) {}
+
+  get location() {
+    return this.node.loc ?? UNKNOWN_LOCATION
+  }
+
+  public abstract explain(): string
+  public abstract elaborate(): string
 }

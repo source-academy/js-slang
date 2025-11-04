@@ -1,12 +1,15 @@
-import { Node, Rule } from '../../../types'
+import { Node } from '../../../types'
+import { Rule } from '../../types'
 import bracesAroundFor from './bracesAroundFor'
 import bracesAroundIfElse from './bracesAroundIfElse'
 import bracesAroundWhile from './bracesAroundWhile'
 import forStatementMustHaveAllParts from './forStatementMustHaveAllParts'
+import { noConstDeclarationInForLoopInit } from './noConstDeclarationInForLoopInit'
 import noDeclareMutable from './noDeclareMutable'
 import noDotAbbreviation from './noDotAbbreviation'
 import noEval from './noEval'
 import noExportNamedDeclarationWithDefault from './noExportNamedDeclarationWithDefault'
+import noExportNamedDeclarationWithSource from './noExportNamedDeclarationWithSource'
 import noFunctionDeclarationWithoutIdentifier from './noFunctionDeclarationWithoutIdentifier'
 import noHolesInArrays from './noHolesInArrays'
 import noIfWithoutElse from './noIfWithoutElse'
@@ -28,9 +31,11 @@ const rules: Rule<Node>[] = [
   bracesAroundIfElse,
   bracesAroundWhile,
   forStatementMustHaveAllParts,
+  noConstDeclarationInForLoopInit,
   noDeclareMutable,
   noDotAbbreviation,
   noExportNamedDeclarationWithDefault,
+  noExportNamedDeclarationWithSource,
   noFunctionDeclarationWithoutIdentifier,
   noIfWithoutElse,
   noImportSpecifierWithDefault,

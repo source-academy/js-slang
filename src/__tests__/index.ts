@@ -1,52 +1,55 @@
 import { Position } from 'acorn/dist/acorn'
 import { SourceLocation } from 'estree'
 
-import { findDeclaration, getScope } from '../index'
+import { findDeclaration, getScope, runInContext } from '../index'
 import { Chapter, Value } from '../types'
 import { stripIndent } from '../utils/formatters'
 import {
   createTestContext,
   expectParsedError,
-  expectParsedErrorNoErrorSnapshot,
-  expectParsedErrorNoSnapshot,
-  expectResult,
-  expectToLooselyMatchJS,
-  expectToMatchJS
+  expectFinishedResult,
+  testSuccess
 } from '../utils/testing'
+import { TestOptions } from '../utils/testing/types'
+import {
+  evalWithBuiltins,
+  assertFinishedResultValue,
+  processTestOptions
+} from '../utils/testing/misc'
 
 const toString = (x: Value) => '' + x
 
 test('Empty code returns undefined', () => {
-  return expectResult('').toBe(undefined)
+  return expectFinishedResult('').toBe(undefined)
 })
 
 test('Single string self-evaluates to itself', () => {
-  return expectResult("'42';").toBe('42')
+  return expectFinishedResult("'42';").toBe('42')
 })
 
 test('Multiline string self-evaluates to itself', () => {
-  return expectResult('`1\n1`;').toBe(`1
+  return expectFinishedResult('`1\n1`;').toBe(`1
 1`)
 })
 
 test('Allow display to return value it is displaying', () => {
-  return expectResult('25*(display(1+1));').toBe(50)
+  return expectFinishedResult('25*(display(1+1));').toBe(50)
 })
 
 test('Single number self-evaluates to itself', () => {
-  return expectResult('42;').toBe(42)
+  return expectFinishedResult('42;').toBe(42)
 })
 
 test('Single boolean self-evaluates to itself', () => {
-  return expectResult('true;').toBe(true)
+  return expectFinishedResult('true;').toBe(true)
 })
 
 test('Arrow function definition returns itself', () => {
-  return expectResult('() => 42;').toMatchInlineSnapshot(`[Function]`)
+  return expectFinishedResult('() => 42;').toMatchInlineSnapshot(`[Function]`)
 })
 
 test('Builtins hide their implementation when stringify', () => {
-  return expectResult('stringify(pair);', { chapter: Chapter.SOURCE_2, native: true })
+  return expectFinishedResult('stringify(pair);', { chapter: Chapter.SOURCE_2 })
     .toMatchInlineSnapshot(`
             "function pair(left, right) {
             	[implementation hidden]
@@ -55,9 +58,8 @@ test('Builtins hide their implementation when stringify', () => {
 })
 
 test('Builtins hide their implementation when toString', () => {
-  return expectResult('toString(pair);', {
+  return expectFinishedResult('toString(pair);', {
     chapter: Chapter.SOURCE_2,
-    native: true,
     testBuiltins: { toString }
   }).toMatchInlineSnapshot(`
             "function pair(left, right) {
@@ -66,56 +68,27 @@ test('Builtins hide their implementation when toString', () => {
           `)
 })
 
-test('Objects toString matches up with JS', () => {
-  return expectToMatchJS('toString({a: 1});', {
-    chapter: Chapter.LIBRARY_PARSER,
-    native: true,
-    testBuiltins: { toString }
-  })
-})
-
-test('Arrays toString matches up with JS', () => {
-  return expectToMatchJS('toString([1, 2]);', {
-    chapter: Chapter.SOURCE_3,
-    native: true,
-    testBuiltins: { toString }
-  })
-})
-
-test('functions toString (mostly) matches up with JS', () => {
-  return expectToLooselyMatchJS(
-    stripIndent`
-  function f(x) {
+test('functions toString (mostly) matches up with JS', async () => {
+  const code = stripIndent`
+    function f(x) {
     return 5;
   }
   toString(a=>a) + toString(f);
-  `,
-    { native: true, testBuiltins: { toString } }
-  )
-})
+  `
+  const options: TestOptions = { testBuiltins: { toString } }
+  const { result } = await testSuccess(code, options)
 
-test('primitives toString matches up with JS', () => {
-  return expectToMatchJS(
-    stripIndent`
-    toString(true) +
-    toString(false) +
-    toString(1) +
-    toString(1.5) +
-    toString(null) +
-    toString(undefined) +
-    toString(NaN);
-    `,
-    { chapter: Chapter.SOURCE_2, native: true, testBuiltins: { toString } }
+  expect(result.value.replace(/ /g, '')).toEqual(
+    evalWithBuiltins(code, options.testBuiltins).replace(/ /g, '')
   )
 })
 
 test('Factorial arrow function', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
-  `,
-    { native: true }
+  `
   ).toBe(120)
 })
 
@@ -132,24 +105,15 @@ test('parseError for template literals with expressions', () => {
 })
 
 test('Simple arrow function infinite recursion represents CallExpression well', () => {
-  return expectParsedErrorNoErrorSnapshot('(x => x(x)(x))(x => x(x)(x));').toMatchInlineSnapshot(`
-            "Line 1: Maximum call stack size exceeded
-              x(x => x(x)(x))..  x(x => x(x)(x))..  x(x => x(x)(x)).."
-          `)
+  return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toContain(
+    `RangeError: Maximum call stack size exceeded`
+  )
 }, 30000)
 
 test('Simple function infinite recursion represents CallExpression well', () => {
-  return expectParsedErrorNoErrorSnapshot('function f(x) {return x(x)(x);} f(f);')
-    .toMatchInlineSnapshot(`
-            "Line 1: Maximum call stack size exceeded
-              x(function f(x) {
-              return x(x)(x);
-            })..  x(function f(x) {
-              return x(x)(x);
-            })..  x(function f(x) {
-              return x(x)(x);
-            }).."
-          `)
+  return expectParsedError('function f(x) {return x(x)(x);} f(f);').toContain(
+    `RangeError: Maximum call stack size exceeded`
+  )
 }, 30000)
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
@@ -162,36 +126,36 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
     }
     test();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant."`)
 })
 
 test('Assignment has value', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     let a = 1;
     let b = a = 4;
     b === 4 && a === 4;
   `,
 
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toBe(true)
 })
 
 test('Array assignment has value', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     let arr = [];
     const a = arr[0] = 1;
     const b = arr[1] = arr[2] = 4;
     arr[0] === 1 && arr[1] === 4 && arr[2] === 4;
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toBe(true)
 })
 
 test('Can overwrite lets when assignment is allowed', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function test() {
       let variable = false;
@@ -200,99 +164,88 @@ test('Can overwrite lets when assignment is allowed', () => {
     }
     test();
   `,
-    { chapter: Chapter.SOURCE_3, native: true }
+    { chapter: Chapter.SOURCE_3 }
   ).toBe(true)
 })
 
 test('Arrow function infinite recursion with list args represents CallExpression well', () => {
-  return expectParsedErrorNoErrorSnapshot(
+  return expectParsedError(
     stripIndent`
     const f = xs => append(f(xs), list());
     f(list(1, 2));
   `,
     { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`
-            "Line 1: Maximum call stack size exceeded
-              f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
-          `)
+  ).toContain(`RangeError: Maximum call stack size exceeded`)
 }, 30000)
 
 test('Function infinite recursion with list args represents CallExpression well', () => {
-  return expectParsedErrorNoErrorSnapshot(
+  return expectParsedError(
     stripIndent`
     function f(xs) { return append(f(xs), list()); }
     f(list(1, 2));
-  `,
-    { chapter: Chapter.SOURCE_2 }
-  ).toMatchInlineSnapshot(`
-            "Line 1: Maximum call stack size exceeded
-              f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]]).."
-          `)
+  `
+  ).toMatchInlineSnapshot(`"Line 1: Name append not declared."`)
 }, 30000)
 
 test('Arrow function infinite recursion with different args represents CallExpression well', () => {
-  return expectParsedErrorNoSnapshot(stripIndent`
+  return expectParsedError(stripIndent`
     const f = i => f(i+1) - 1;
     f(0);
-  `).toEqual(
-    expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/)
-  )
+  `).toContain(`RangeError: Maximum call stack size exceeded`)
 }, 30000)
 
 test('Function infinite recursion with different args represents CallExpression well', () => {
-  return expectParsedErrorNoSnapshot(stripIndent`
+  return expectParsedError(stripIndent`
     function f(i) { return f(i+1) - 1; }
     f(0);
-  `).toEqual(
-    expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/)
-  )
+  `).toContain(`RangeError: Maximum call stack size exceeded`)
 }, 30000)
 
 test('Functions passed into non-source functions remain equal', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function t(x, y, z) {
       return x + y + z;
     }
     identity(t) === t && t(1, 2, 3) === 6;
   `,
-    { chapter: Chapter.SOURCE_3, testBuiltins: { 'identity(x)': (x: any) => x }, native: true }
+    { chapter: Chapter.SOURCE_3, testBuiltins: { 'identity(x)': (x: any) => x } }
   ).toBe(true)
 })
 
 test('Accessing array with nonexistent index returns undefined', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     const a = [];
     a[1];
   `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   ).toBe(undefined)
 })
 
 test('Accessing object with nonexistent property returns undefined', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     const o = {};
     o.nonexistent;
   `,
-    { chapter: Chapter.LIBRARY_PARSER, native: true }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toBe(undefined)
 })
 
 test('Simple object assignment and retrieval', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     const o = {};
     o.a = 1;
     o.a;
   `,
-    { chapter: Chapter.LIBRARY_PARSER, native: true }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toBe(1)
 })
 
 test('Deep object assignment and retrieval', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     const o = {};
     o.a = {};
@@ -300,142 +253,187 @@ test('Deep object assignment and retrieval', () => {
     o.a.b.c = "string";
     o.a.b.c;
   `,
-    { chapter: Chapter.LIBRARY_PARSER, native: true }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toBe('string')
 })
 
 test('Test apply_in_underlying_javascript', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
   `,
-    { chapter: Chapter.SOURCE_4, native: true }
+    { chapter: Chapter.SOURCE_4 }
   ).toBe(60)
 })
 
 test('Test equal for primitives', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
   `,
-    { chapter: Chapter.SOURCE_2, native: true }
+    { chapter: Chapter.SOURCE_2 }
   ).toBe(true)
 })
 
 test('Test equal for lists', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
   `,
-    { chapter: Chapter.SOURCE_2, native: true }
+    { chapter: Chapter.SOURCE_2 }
   ).toBe(true)
 })
 
 test('Test equal for different lists', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
   `,
-    { chapter: Chapter.SOURCE_2, native: true }
+    { chapter: Chapter.SOURCE_2 }
   ).toBe(true)
 })
 
 test('true if with empty if works', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     if (true) {
     } else {
     }
-  `,
-    { native: true }
+  `
   ).toBe(undefined)
 })
 
 test('true if with nonempty if works', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     if (true) {
       1;
     } else {
     }
-  `,
-    { native: true }
+  `
   ).toBe(1)
 })
 
 test('false if with empty else works', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     if (false) {
     } else {
     }
-  `,
-    { native: true }
+  `
   ).toBe(undefined)
 })
 
 test('false if with nonempty if works', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     if (false) {
     } else {
       2;
     }
-  `,
-    { native: true }
+  `
   ).toBe(2)
 })
 
-test('test true conditional expression', () => {
-  return expectToMatchJS('true ? true : false;', { native: true })
-})
+describe('matchJSTests', () => {
+  async function expectToMatchJS(code: string, rawOptions: TestOptions = {}) {
+    const options = processTestOptions(rawOptions)
+    if (options.testBuiltins) {
+      options.testBuiltins = {
+        ...options.testBuiltins,
+        toString
+      }
+    } else {
+      options.testBuiltins = { toString }
+    }
 
-test('test false conditional expression', () => {
-  return expectToMatchJS('false ? true : false;', { native: true })
-})
+    const { result } = await testSuccess(code, options)
 
-test('test false && true', () => {
-  return expectToMatchJS('false && true;', { native: true })
-})
+    expect(evalWithBuiltins(code, options.testBuiltins)).toEqual(result.value)
+  }
 
-test('test false && false', () => {
-  return expectToMatchJS('false && false;', { native: true })
-})
+  test('primitives toString matches up with JS', async () => {
+    const code = stripIndent`
+      toString(true) +
+      toString(false) +
+      toString(1) +
+      toString(1.5) +
+      toString(null) +
+      toString(undefined) +
+      toString(NaN);
+      `
 
-test('test true && false', () => {
-  return expectToMatchJS('true && false;', { native: true })
-})
+    const options: TestOptions = {
+      testBuiltins: { toString },
+      chapter: Chapter.SOURCE_2
+    }
+    const { result } = await testSuccess(code, options)
+    expect(evalWithBuiltins(code, options.testBuiltins)).toEqual(result.value)
+  })
 
-test('test true && true', () => {
-  return expectToMatchJS('true && true;', { native: true })
-})
+  test('test true conditional expression', () => {
+    return expectToMatchJS('true ? true : false;')
+  })
 
-test('test && shortcircuiting', () => {
-  return expectToMatchJS('false && 1();', { native: true })
-})
+  test('test false conditional expression', () => {
+    return expectToMatchJS('false ? true : false;')
+  })
 
-test('test false || true', () => {
-  return expectToMatchJS('false || true;', { native: true })
-})
+  test('test false && true', () => {
+    return expectToMatchJS('false && true;')
+  })
 
-test('test false || false', () => {
-  return expectToMatchJS('false || false;', { native: true })
-})
+  test('test false && false', () => {
+    return expectToMatchJS('false && false;')
+  })
 
-test('test true || false', () => {
-  return expectToMatchJS('true || false;', { native: true })
-})
+  test('test true && false', () => {
+    return expectToMatchJS('true && false;')
+  })
 
-test('test true || true', () => {
-  return expectToMatchJS('true || true;', { native: true })
-})
+  test('test true && true', () => {
+    return expectToMatchJS('true && true;')
+  })
 
-test('test || shortcircuiting', () => {
-  return expectToMatchJS('true || 1();', { native: true })
+  test('test && shortcircuiting', () => {
+    return expectToMatchJS('false && 1();')
+  })
+
+  test('test false || true', () => {
+    return expectToMatchJS('false || true;')
+  })
+
+  test('test false || false', () => {
+    return expectToMatchJS('false || false;')
+  })
+
+  test('test true || false', () => {
+    return expectToMatchJS('true || false;')
+  })
+
+  test('test true || true', () => {
+    return expectToMatchJS('true || true;')
+  })
+
+  test('test || shortcircuiting', () => {
+    return expectToMatchJS('true || 1();')
+  })
+
+  test('Objects toString matches up with JS', () => {
+    return expectToMatchJS('toString({a: 1});', {
+      chapter: Chapter.LIBRARY_PARSER
+    })
+  })
+
+  test('Arrays toString matches up with JS', () => {
+    return expectToMatchJS('toString([1, 2]);', {
+      chapter: Chapter.SOURCE_3
+    })
+  })
 })
 
 test('Rest parameters work', () => {
-  return expectResult(
+  return expectFinishedResult(
     stripIndent`
     function rest(a, b, ...c) {
       let sum = a + b;
@@ -447,7 +445,7 @@ test('Rest parameters work', () => {
     rest(1, 2); // no error
     rest(1, 2, ...[3, 4, 5],  ...[6, 7], ...[]);
   `,
-    { native: true, chapter: Chapter.SOURCE_3 }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`28`)
 })
 
@@ -461,10 +459,18 @@ test('Test context reuse', async () => {
   }
   i;
   `
-  await expectResult(init, { context, native: true }).toBe(0)
-  await expectResult('i = 100; f();', { context, native: true }).toBe(101)
-  await expectResult('f(); i;', { context, native: true }).toBe(102)
-  return expectResult('i;', { context, native: true }).toBe(102)
+
+  const snippets: [string, any][] = [
+    [init, 0],
+    ['i = 100; f();', 101],
+    ['f(); i;', 102],
+    ['i;', 102]
+  ]
+
+  for (const [code, expected] of snippets) {
+    const result = await runInContext(code, context)
+    assertFinishedResultValue(result, expected)
+  }
 })
 
 class SourceLocationTestResult {

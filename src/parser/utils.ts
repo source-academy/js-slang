@@ -1,20 +1,20 @@
 import {
-  Comment,
+  type Comment,
   ecmaVersion,
-  Node,
+  type Node,
   parse as acornParse,
   parseExpressionAt as acornParseAt,
-  Position
+  type Position
 } from 'acorn'
 import { parse as acornLooseParse } from 'acorn-loose'
-import { Program, SourceLocation } from 'estree'
+import type { Program, SourceLocation } from 'estree'
 
-import { Context } from '..'
+import type { Context } from '..'
 import { DEFAULT_ECMA_VERSION } from '../constants'
-import { SourceError } from '../types'
+import type { SourceError } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
 import { MissingSemicolonError, TrailingCommaError } from './errors'
-import { AcornOptions, BabelOptions } from './types'
+import type { AcornOptions, BabelOptions } from './types'
 
 /**
  * Generates options object for acorn parser
@@ -62,7 +62,7 @@ export function parseAt(
 ): Node | null {
   try {
     return acornParseAt(programStr, offset, { ecmaVersion })
-  } catch (_error) {
+  } catch {
     return null
   }
 }

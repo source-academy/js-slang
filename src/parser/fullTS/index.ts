@@ -89,7 +89,7 @@ export class FullTSParser implements Parser<AcornOptions> {
       errorRecovery: throwOnError ?? true
     })
 
-    if (ast.errors.length) {
+    if (ast.errors?.length) {
       ast.errors
         .filter(error => error instanceof SyntaxError)
         .forEach(error => {
