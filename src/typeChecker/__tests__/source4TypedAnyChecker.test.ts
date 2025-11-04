@@ -1,13 +1,13 @@
-import { mockContext } from '../../mocks/context'
-import { Chapter, Variant } from '../../types'
 import { parseError } from '../../index'
 import { SourceTypedParser } from '../../parser/source/typed'
+import { Chapter, type LanguageOptions, Variant } from '../../types'
+import { mockContext } from '../../utils/testing/mocks'
 
 const parser = new SourceTypedParser(Chapter.SOURCE_4, Variant.TYPED)
 
 describe('Any checker tests', () => {
   test('disallow any type in a variable declaration', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInVariables'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('const x = 4;', localContext)
@@ -17,7 +17,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in a variable declaration', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInVariables'] = 'true'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('let x: any = 4;', localContext)
@@ -25,7 +25,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in a variable declaration, correct declaration', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInVariables'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('let x: number = 4;', localContext)
@@ -33,7 +33,7 @@ describe('Any checker tests', () => {
   })
 
   test('disallow any type in function parameter', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('function f(x: any) { return x; }', localContext)
@@ -43,7 +43,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in function parameter', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'true'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('function f(x: any) { return x; }', localContext)
@@ -51,7 +51,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in function parameter, correct declaration', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('function f(x: number) { return x; }', localContext)
@@ -59,7 +59,7 @@ describe('Any checker tests', () => {
   })
 
   test('disallow any type in function return type', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInReturnType'] = 'true'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('function g(): any { return 4; }', localContext)
@@ -67,7 +67,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in function return type', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInReturnType'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('function g(): any { return 4; }', localContext)
@@ -77,7 +77,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in function return type, correct declaration', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInReturnType'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('function g(): number { return 4; }', localContext)
@@ -85,7 +85,7 @@ describe('Any checker tests', () => {
   })
 
   test('disallow any type in lambda parameter', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('const h = (x: any) => x + 1;', localContext)
@@ -95,7 +95,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in lambda parameter', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'true'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('const h = (x: any) => x + 1;', localContext)
@@ -103,7 +103,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in lambda parameter, correct declaration', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('const h = (x: number) => x + 1;', localContext)
@@ -111,7 +111,7 @@ describe('Any checker tests', () => {
   })
 
   test('disallow any type in nested lambda', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('const f = (x: number) => (y: any) => x + y;', localContext)
@@ -121,7 +121,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in nested lambda', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'true'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('const f = (x: number) => (y: any) => x + y;', localContext)
@@ -129,7 +129,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in nested lambda, correct declaration', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('const f = (x: number) => (y: number) => x + y;', localContext)
@@ -137,7 +137,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in nested function', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'true'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse(
@@ -155,7 +155,7 @@ describe('Any checker tests', () => {
   })
 
   test('disallow any type in nested function', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse(
@@ -175,7 +175,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in nested function, correct declaration', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInParameters'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse(
@@ -193,7 +193,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in type annotation parameters', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInTypeAnnotationParameters'] = 'true'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse(
@@ -211,7 +211,7 @@ describe('Any checker tests', () => {
   })
 
   test('disallow any type in type annotation parameters', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInTypeAnnotationParameters'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse(
@@ -231,7 +231,7 @@ describe('Any checker tests', () => {
   })
 
   test('disallow any type in type annotation parameters, correct declaration', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInTypeAnnotationParameters'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse(
@@ -249,7 +249,7 @@ describe('Any checker tests', () => {
   })
 
   test('allow any type in type annotation return type', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInTypeAnnotationReturnType'] = 'true'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse(
@@ -267,7 +267,7 @@ describe('Any checker tests', () => {
   })
 
   test('disallow any type in type annotation return type', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInTypeAnnotationReturnType'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse(
@@ -287,7 +287,7 @@ describe('Any checker tests', () => {
   })
 
   test('disallow any type in type annotation return type, correct declaration', () => {
-    const languageOptions = new Map<string, string>()
+    const languageOptions: LanguageOptions = {}
     languageOptions['typedAllowAnyInTypeAnnotationReturnType'] = 'false'
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse(
