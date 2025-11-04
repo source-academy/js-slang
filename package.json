@@ -31,7 +31,7 @@
   "dependencies": {
     "@babel/parser": "^7.19.4",
     "@commander-js/extra-typings": "^14.0.0",
-    "@ts-morph/bootstrap": "^0.18.0",
+    "@ts-morph/bootstrap": "^0.28.0",
     "acorn": "^8.8.2",
     "acorn-class-fields": "^1.0.0",
     "acorn-loose": "^8.0.0",
