@@ -1,7 +1,7 @@
 import { OpCodes } from './opcodes'
-import { Program } from './svml-compiler'
+import type { Program } from './svml-compiler'
 
-const OPCODES_STR = {
+const OPCODES_STR: { [K in OpCodes]?: string } = {
   [OpCodes.NOP]: 'NOP   ',
   [OpCodes.LDCI]: 'LDCI  ',
   [OpCodes.LGCI]: 'LGCI  ',
@@ -29,8 +29,6 @@ const OPCODES_STR = {
   [OpCodes.DIVF]: 'DIVF  ',
   [OpCodes.MODG]: 'MODG  ',
   [OpCodes.MODF]: 'MODF  ',
-  [OpCodes.NEGG]: 'NEGG  ',
-  [OpCodes.NEGF]: 'NEGF  ',
   [OpCodes.NOTG]: 'NOTG  ',
   [OpCodes.NOTB]: 'NOTB  ',
   [OpCodes.LTG]: 'LTG   ',
@@ -44,9 +42,6 @@ const OPCODES_STR = {
   [OpCodes.EQG]: 'EQG   ',
   [OpCodes.EQF]: 'EQF   ',
   [OpCodes.EQB]: 'EQB   ',
-  [OpCodes.NEQG]: 'NEQG  ',
-  [OpCodes.NEQF]: 'NEQF  ',
-  [OpCodes.NEQB]: 'NEQB  ',
   [OpCodes.NEWC]: 'NEWC  ',
   [OpCodes.NEWA]: 'NEWA  ',
   [OpCodes.LDLG]: 'LDLG  ',
@@ -154,9 +149,11 @@ const OPCODES_STR = {
   [OpCodes.CLEAR]: 'CLEAR '
 }
 
-// get name of opcode for debugging
-export function getName(op: number) {
-  return OPCODES_STR[op] // need to add guard in case op does not exist
+/**
+ * Returns name of opcode for debugging
+ */
+export function getName(op: OpCodes) {
+  return OPCODES_STR[op]
 }
 
 // pretty-print the program
@@ -166,8 +163,7 @@ export function stringifyProgram(P: Program) {
   programStr += 'Entry function: ' + P[0] + '\n'
   for (let i = 0; i < functions.length; i++) {
     const f = functions[i]
-    let s =
-      '#' + i + ':\nStack Size: ' + f[0] + '\nEnv Size: ' + f[1] + '\nNum Args: ' + f[2] + '\n'
+    let s = `#${i}:\nStack Size: ${f[0]}\nEnv Size: ${f[1]}\nNum Args: ${f[2]}\n`
     for (let j = 0; j < f[3].length; j++) {
       s += j
       const ins = f[3][j]

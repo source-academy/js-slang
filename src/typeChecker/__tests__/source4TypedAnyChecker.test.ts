@@ -1,6 +1,7 @@
+import { describe, expect, test } from 'vitest'
 import { parseError } from '../../index'
+import { Chapter, type LanguageOptions, Variant } from '../../langs'
 import { SourceTypedParser } from '../../parser/source/typed'
-import { Chapter, type LanguageOptions, Variant } from '../../types'
 import { mockContext } from '../../utils/testing/mocks'
 
 const parser = new SourceTypedParser(Chapter.SOURCE_4, Variant.TYPED)

@@ -1,4 +1,4 @@
-import { List, Pair } from '../stdlib/list'
+import type { List, Pair } from '../stdlib/list'
 
 /**
  * Low-level check for a list.

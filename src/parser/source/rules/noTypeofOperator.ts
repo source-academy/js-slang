@@ -1,5 +1,5 @@
 import type { UnaryExpression } from 'estree'
-import { Variant } from '../../../types'
+import { Variant } from '../../../langs'
 import type { Rule } from '../../types'
 import { NoUnspecifiedOperatorError } from './noUnspecifiedOperator'
 

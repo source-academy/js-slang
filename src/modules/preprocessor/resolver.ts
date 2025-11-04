@@ -53,7 +53,7 @@ export default async function resolveFile(
   if (contents !== undefined) {
     return {
       type: 'local',
-      absPath: absPath,
+      absPath,
       contents
     }
   }

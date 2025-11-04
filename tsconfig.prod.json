@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "noEmit": false
+    "noEmit": false,
+    "skipLibCheck": true
   },
   // Excludes are overwritten when using extends, so we
   // list all the excludes again
@@ -14,6 +15,8 @@
     "sicp_publish",
     "src/**/__tests__/**",
     "src/**/__mocks__/**",
-    "src/utils/testing"
+    "src/py-slang/src/tests",
+    "src/utils/testing",
+    "vitest.config.ts"
   ]
 }

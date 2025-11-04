@@ -1,8 +1,8 @@
-import * as es from 'estree'
+import type es from 'estree'
 
-import { NativeStorage } from '../types'
+import type { NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { simple } from '../utils/walkers'
+import { simple } from './ast/walkers'
 
 const globalIdNames = [
   'native',
@@ -20,7 +20,7 @@ const globalIdNames = [
 export type NativeIds = Record<(typeof globalIdNames)[number], es.Identifier>
 
 export function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): NativeIds {
-  const globalIds = {}
+  const globalIds: Partial<NativeIds> = {}
   for (const identifier of globalIdNames) {
     globalIds[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier))
   }

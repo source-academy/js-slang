@@ -1,6 +1,6 @@
 import Buffer from '../utils/buffer'
 import OpCodes, { getInstructionSize, OPCODE_MAX } from './opcodes'
-import { Instruction, Program, SVMFunction } from './svml-compiler'
+import type { Instruction, Program, SVMFunction } from './svml-compiler'
 
 const SVM_MAGIC = 0x5005acad
 const MAJOR_VER = 0
@@ -93,7 +93,7 @@ function serialiseFunction(f: SVMFunction): ImFunction {
       case OpCodes.NEWC:
         holes.push({
           offset: b.cursor,
-          referent: ['function', instr[1]![0]]
+          referent: ['function', (instr[1]! as any)[0]]
         })
         b.putU(32, 0)
         break
@@ -154,7 +154,7 @@ export function assemble(p: Program): Uint8Array {
   const [entrypointIndex, jsonFns] = p
 
   // serialise all the functions
-  const imFns = jsonFns.map(fn => serialiseFunction(fn))
+  const imFns = jsonFns.map(serialiseFunction)
 
   // collect all string constants
   const uniqueStrings = [

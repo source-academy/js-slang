@@ -1,9 +1,14 @@
 import type es from 'estree'
 
 import assert from '../assert'
-import { simple } from '../walkers'
 import { ArrayMap } from '../dict'
-import { isIdentifier, isImportDeclaration, isVariableDeclaration } from './typeGuards'
+import { simple } from './walkers'
+import {
+  isDeclaration,
+  isIdentifier,
+  isImportDeclaration,
+  isVariableDeclaration
+} from './typeGuards'
 
 export function getModuleDeclarationSource(
   node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
@@ -13,31 +18,6 @@ export function getModuleDeclarationSource(
     `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`
   )
   return node.source.value
-}
-
-/**
- * Filters out all import declarations from a program, and sorts them by
- * the module they import from
- */
-export function filterImportDeclarations({
-  body
-}: es.Program): [
-  ArrayMap<string, es.ImportDeclaration>,
-  Exclude<es.Program['body'][0], es.ImportDeclaration>[]
-] {
-  return body.reduce(
-    ([importNodes, otherNodes], node) => {
-      if (!isImportDeclaration(node)) return [importNodes, [...otherNodes, node]]
-
-      const moduleName = getModuleDeclarationSource(node)
-      importNodes.add(moduleName, node)
-      return [importNodes, otherNodes]
-    },
-    [new ArrayMap(), []] as [
-      ArrayMap<string, es.ImportDeclaration>,
-      Exclude<es.Program['body'][0], es.ImportDeclaration>[]
-    ]
-  )
 }
 
 export function extractIdsFromPattern(pattern: es.Pattern) {
@@ -71,6 +51,11 @@ export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: boolean)
   return rawIds
 }
 
+/**
+ * Since Variable declarations in Source programs must be initialized and are guaranteed to only
+ * have 1 declarator, this function unwraps variable declarations and its single declarator
+ * into its id and init
+ */
 export function getSourceVariableDeclaration(decl: es.VariableDeclaration) {
   assert(
     decl.declarations.length === 1,
@@ -124,4 +109,41 @@ export const speciferToString = (
       return `${spec.local.name} as ${spec.exported.name}`
     }
   }
+}
+
+type BlockBody = (es.Program | es.BlockStatement)['body'][number]
+type BlocKBodyWithoutDeclarations = Exclude<BlockBody, es.Declaration>
+
+/**
+ * Returns true if the array of statements doesn't contain any declarations
+ */
+export function hasNoDeclarations(stmt: BlockBody[]): stmt is BlocKBodyWithoutDeclarations[] {
+  return !stmt.some(isDeclaration)
+}
+
+type BlockBodyWithoutImports = Exclude<BlockBody, es.ImportDeclaration>
+/**
+ * Returns true if the array of statements doesn't contain any import declarations
+ */
+export function hasNoImportDeclarations(stmt: BlockBody[]): stmt is BlockBodyWithoutImports[] {
+  return !stmt.some(isImportDeclaration)
+}
+
+/**
+ * Filters out all import declarations from a program, and sorts them by
+ * the module they import from
+ */
+export function filterImportDeclarations({
+  body
+}: es.Program): [ArrayMap<string, es.ImportDeclaration>, BlockBodyWithoutImports[]] {
+  return body.reduce<[ArrayMap<string, es.ImportDeclaration>, BlockBodyWithoutImports[]]>(
+    ([importNodes, otherNodes], node) => {
+      if (!isImportDeclaration(node)) return [importNodes, [...otherNodes, node]]
+
+      const moduleName = getModuleDeclarationSource(node)
+      importNodes.add(moduleName, node)
+      return [importNodes, otherNodes]
+    },
+    [new ArrayMap(), []]
+  )
 }

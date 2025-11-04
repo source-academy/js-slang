@@ -2,7 +2,7 @@ import { type NullableMappedPosition, type RawSourceMap, SourceMapConsumer } fro
 
 import { UNKNOWN_LOCATION } from '../constants'
 import { ConstAssignment, ExceptionError, UndefinedVariable } from '../errors/errors'
-import type { SourceError } from '../types'
+import type { SourceError } from '../errors/base'
 import { locationDummyNode } from '../utils/ast/astCreator'
 
 enum BrowserType {
@@ -72,7 +72,7 @@ function getErrorLocation(
   const errorLocator: EvalErrorLocator | undefined = EVAL_LOCATORS.find(
     locator => locator.browser === browser
   )
-  const errorStack: string | undefined = error.stack!
+  const errorStack: string | undefined = error.stack
 
   if (errorStack && errorLocator) {
     return extractErrorLocation(errorStack, lineOffset, errorLocator)

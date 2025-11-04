@@ -1,4 +1,4 @@
-import {
+import type {
   ArrowFunctionExpression,
   BlockStatement,
   ForStatement,
@@ -9,15 +9,15 @@ import {
   VariableDeclarator
 } from 'estree'
 
-import { Context, Node } from './types'
+import type { Context, Node } from './types'
 import {
   ancestor,
   base,
   findNodeAt,
-  FullWalkerCallback,
   recursive,
-  WalkerCallback
-} from './utils/walkers'
+  type FullWalkerCallback,
+  type WalkerCallback
+} from './utils/ast/walkers'
 
 // Finds the innermost node that matches the given location
 export function findIdentifierNode(
@@ -90,7 +90,7 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
         }
       },
       ImportSpecifier(node: ImportSpecifier, _state: any, _callback: WalkerCallback<any>) {
-        if ((node.imported as Identifier).name === identifier.name) {
+        if (node.imported.name === identifier.name) {
           declarations.push(node.imported)
         }
       }

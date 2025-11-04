@@ -1,4 +1,4 @@
-import { StepperExpression } from '../nodes'
+import type { StepperExpression } from '../nodes'
 import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
 import { StepperIdentifier } from '../nodes/Expression/Identifier'
 import { StepperLiteral } from '../nodes/Expression/Literal'
@@ -73,8 +73,7 @@ export const miscBuiltinFunctions = {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperLiteral(
         args[0] instanceof StepperArrowFunctionExpression ||
-          (args[0] instanceof StepperIdentifier &&
-            isBuiltinFunction((args[0] as StepperIdentifier).name))
+          (args[0] instanceof StepperIdentifier && isBuiltinFunction(args[0].name))
       )
     },
     arity: 1

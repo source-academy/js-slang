@@ -1,12 +1,12 @@
-import type fslib from 'fs/promises'
-import { resolve } from 'path'
-import { start } from 'repl'
+import fs from 'fs/promises'
+import pathlib from 'path'
+import replLib from 'repl'
 import { Command } from '@commander-js/extra-typings'
 
 import { createContext, type IOptions } from '..'
 import { setModulesStaticURL } from '../modules/loader'
-import { Chapter, type RecursivePartial, Variant } from '../types'
-import { objectValues } from '../utils/misc'
+import type { RecursivePartial } from '../types'
+import { Chapter, isSupportedLanguageCombo, Variant } from '../langs'
 import { runCodeInSource, sourceFilesRunner } from '../runner'
 import type { FileGetter } from '../modules/moduleTypes'
 import {
@@ -14,14 +14,13 @@ import {
   getChapterOption,
   getLanguageOption,
   getVariantOption,
-  handleResult,
-  validChapterVariant
+  handleResult
 } from './utils'
 
 export const getReplCommand = () =>
   new Command('run')
     .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
-    .addOption(getVariantOption(Variant.DEFAULT, objectValues(Variant)))
+    .addOption(getVariantOption(Variant.DEFAULT, Object.values(Variant)))
     .addOption(getLanguageOption())
     .option('-v, --verbose', 'Enable verbose errors')
     .option('--modulesBackend <backend>')
@@ -29,12 +28,10 @@ export const getReplCommand = () =>
     .option('--optionsFile <file>', 'Specify a JSON file to read options from')
     .argument('[filename]')
     .action(async (filename, { modulesBackend, optionsFile, repl, verbose, ...lang }) => {
-      if (!validChapterVariant(lang)) {
+      if (!isSupportedLanguageCombo(lang)) {
         console.log('Invalid language combination!')
         return
       }
-
-      const fs: typeof fslib = require('fs/promises')
 
       const context = createContext(lang.chapter, lang.variant, lang.languageOptions)
 
@@ -59,7 +56,7 @@ export const getReplCommand = () =>
       }
 
       if (filename !== undefined) {
-        const entrypointFilePath = resolve(filename)
+        const entrypointFilePath = pathlib.resolve(filename)
         const { result, verboseErrors } = await sourceFilesRunner(
           fileGetter,
           entrypointFilePath,
@@ -76,7 +73,7 @@ export const getReplCommand = () =>
         if (!repl) return
       }
 
-      start(
+      replLib.start(
         // the object being passed as argument fits the interface ReplOptions in the repl module.
         {
           eval: (cmd, unusedContext, unusedFilename, callback) => {

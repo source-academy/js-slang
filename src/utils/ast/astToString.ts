@@ -1,6 +1,6 @@
 import * as astring from 'astring'
 
-import { Node } from '../../types'
+import type { Node } from '../../types'
 
 /**
  * Writes into `state` the `text` string reindented with the provided `indent`.
@@ -57,7 +57,7 @@ export const sourceGen = Object.assign({}, astring.GENERATOR, {
           formatComments(state, statement.comments, indent, lineEnd)
         }
         state.write(indent)
-        this[statement.type](statement, state)
+        this[statement.type as keyof typeof this](statement, state)
         state.write(lineEnd)
       }
       state.write(indent)

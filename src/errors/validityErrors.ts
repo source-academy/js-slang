@@ -1,7 +1,7 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, SourceError } from '../types'
+import { ErrorSeverity, ErrorType, type SourceError } from './base'
 
 export class NoAssignmentToForVariable implements SourceError {
   public type = ErrorType.SYNTAX

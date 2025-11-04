@@ -1,12 +1,11 @@
-import { BlockStatement, SourceLocation } from 'estree'
-import { StepperBaseNode } from '../../interface'
-import { StepperExpression, StepperPattern, undefinedNode } from '..'
+import type { BlockStatement, SourceLocation } from 'estree'
+import type { StepperBaseNode } from '../../interface'
+import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
 import { convert } from '../../generator'
 import { redex } from '../..'
 import { StepperVariableDeclaration } from '../Statement/VariableDeclaration'
 import { assignMuTerms, getFreshName } from '../../utils'
-import { StepperReturnStatement } from '../Statement/ReturnStatement'
-import { StepperStatement } from '../Statement'
+import type { StepperStatement } from '../Statement'
 import { StepperFunctionDeclaration } from '../Statement/FunctionDeclaration'
 
 // TODO: add docs, because this is a block expression, not a block statement, and this does not follow official estree spec
@@ -60,7 +59,7 @@ export class StepperBlockExpression implements StepperBaseNode {
     }
 
     if (this.body[0].type === 'ReturnStatement') {
-      const returnStmt = this.body[0] as StepperReturnStatement
+      const returnStmt = this.body[0]
       returnStmt.contract()
       return returnStmt.argument || undefinedNode
     }
@@ -108,7 +107,7 @@ export class StepperBlockExpression implements StepperBaseNode {
                 statement.substitute(declarator.id, declarator.init!) as StepperStatement,
               current
             )
-        ) as StepperStatement[]
+        )
       const substitutedProgram = new StepperBlockExpression(
         afterSubstitutedScope,
         this.innerComments,
@@ -124,15 +123,13 @@ export class StepperBlockExpression implements StepperBaseNode {
 
     // If the first statement is function declaration, also gracefully handle it!
     if (this.body[0].type == 'FunctionDeclaration') {
-      const arrowFunction = (
-        this.body[0] as StepperFunctionDeclaration
-      ).getArrowFunctionExpression()
-      const functionIdentifier = (this.body[0] as StepperFunctionDeclaration).id
+      const arrowFunction = this.body[0].getArrowFunctionExpression()
+      const functionIdentifier = this.body[0].id
       const afterSubstitutedScope = this.body
         .slice(1)
         .map(
           statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
-        ) as StepperStatement[]
+        )
       const substitutedProgram = new StepperBlockExpression(
         afterSubstitutedScope,
         this.innerComments,
@@ -205,7 +202,7 @@ export class StepperBlockExpression implements StepperBaseNode {
                 statement.substitute(declarator.id, declarator.init!) as StepperStatement,
               current
             )
-        ) as StepperStatement[]
+        )
       const substitutedProgram = new StepperBlockExpression(
         [firstValueStatement, afterSubstitutedScope].flat(),
         this.innerComments,
@@ -221,15 +218,13 @@ export class StepperBlockExpression implements StepperBaseNode {
 
     // If the second statement is function declaration, also gracefully handle it!
     if (this.body.length >= 2 && this.body[1].type == 'FunctionDeclaration') {
-      const arrowFunction = (
-        this.body[1] as StepperFunctionDeclaration
-      ).getArrowFunctionExpression()
-      const functionIdentifier = (this.body[1] as StepperFunctionDeclaration).id
+      const arrowFunction = this.body[1].getArrowFunctionExpression()
+      const functionIdentifier = this.body[1].id
       const afterSubstitutedScope = this.body
         .slice(2)
         .map(
           statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
-        ) as StepperStatement[]
+        )
       const substitutedProgram = new StepperBlockExpression(
         [firstValueStatement, afterSubstitutedScope].flat(),
         this.innerComments,
@@ -266,7 +261,7 @@ export class StepperBlockExpression implements StepperBaseNode {
 
     const currentBlockExpression = newNames.reduce(
       (current: StepperBlockExpression, name: string, index: number) =>
-        current.rename(repeatedNames[index], name) as StepperBlockExpression,
+        current.rename(repeatedNames[index], name),
       this
     )
 
@@ -293,7 +288,7 @@ export class StepperBlockExpression implements StepperBaseNode {
           return ast.declarations.map(ast => ast.id.name)
         } else {
           // Function Declaration
-          return [(ast as StepperFunctionDeclaration).id.name]
+          return [ast.id.name]
         }
       })
   }

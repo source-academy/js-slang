@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import type fslib from 'fs/promises'
-import { resolve } from 'path'
+import fs from 'fs/promises'
+import pathlib from 'path'
 import { Command } from '@commander-js/extra-typings'
 import { generate } from 'astring'
 
@@ -8,14 +8,8 @@ import { createContext, parseError } from '../index'
 import defaultBundler from '../modules/preprocessor/bundler'
 import parseProgramsAndConstructImportGraph from '../modules/preprocessor/linker'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, Variant } from '../types'
-import {
-  chapterParser,
-  getChapterOption,
-  getLanguageOption,
-  getVariantOption,
-  validateChapterAndVariantCombo
-} from './utils'
+import { Chapter, isSourceLanguage, Variant } from '../langs'
+import { chapterParser, getChapterOption, getLanguageOption, getVariantOption } from './utils'
 
 export const getTranspilerCommand = () =>
   new Command('transpiler')
@@ -29,14 +23,13 @@ export const getTranspilerCommand = () =>
     .option('-o, --out <outFile>', 'Specify a file to write to')
     .argument('<filename>')
     .action(async (fileName, opts) => {
-      if (!validateChapterAndVariantCombo(opts)) {
+      if (!isSourceLanguage(opts)) {
         console.log('Invalid language combination!')
         return
       }
 
-      const fs: typeof fslib = require('fs/promises')
       const context = createContext(opts.chapter, opts.variant, opts.languageOptions)
-      const entrypointFilePath = resolve(fileName)
+      const entrypointFilePath = pathlib.resolve(fileName)
 
       const linkerResult = await parseProgramsAndConstructImportGraph(
         async p => {

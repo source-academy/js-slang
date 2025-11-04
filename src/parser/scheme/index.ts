@@ -1,8 +1,9 @@
-import { Program } from 'estree'
+import type { Program } from 'estree'
 import { schemeParse } from '../../alt-langs/scheme/scm-slang/src'
-import { Chapter, Context } from '../../types'
+import type { Context } from '../../types'
+import { Chapter } from '../../langs'
 import { FatalSyntaxError } from '../errors'
-import { AcornOptions, Parser } from '../types'
+import type { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
 
 export class SchemeParser implements Parser<AcornOptions> {
@@ -18,8 +19,7 @@ export class SchemeParser implements Parser<AcornOptions> {
   ): Program | null {
     try {
       // parse the scheme code
-      const estree = schemeParse(programStr, this.chapter, true)
-      return estree as Program
+      return schemeParse(programStr, this.chapter, true)
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())

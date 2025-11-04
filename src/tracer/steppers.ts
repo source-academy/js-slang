@@ -1,14 +1,14 @@
-import * as es from 'estree'
-import { Context, IOptions } from '..'
+import type es from 'estree'
+import type { Context, IOptions } from '..'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
 import { UndefinedVariable } from '../errors/errors'
-import { StepperBaseNode } from './interface'
+import type { StepperBaseNode } from './interface'
 import { explain } from './generator'
-import { StepperProgram } from './nodes/Program'
+import type { StepperProgram } from './nodes/Program'
 import { undefinedNode } from './nodes'
 import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
 import { prelude } from './builtins'
-import { IStepperPropContents, Marker, redex } from '.'
+import { type IStepperPropContents, type Marker, redex } from '.'
 
 export function getSteps(
   inputNode: es.BaseNode,
@@ -32,7 +32,7 @@ export function getSteps(
         if (redex) {
           const explanations: string[] = redex.preRedex.map(explain)
           const beforeMarkers: Marker[] = redex.preRedex.map((redex, index) => ({
-            redex: redex,
+            redex,
             redexType: 'beforeMarker',
             explanation: explanations[index]
           }))
@@ -47,7 +47,7 @@ export function getSteps(
           const afterMarkers: Marker[] =
             redex.postRedex.length > 0
               ? redex.postRedex.map((redex, index) => ({
-                  redex: redex,
+                  redex,
                   redexType: 'afterMarker',
                   explanation: explanations[index]
                 }))

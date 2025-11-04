@@ -30,16 +30,14 @@
   "bin": "dist/repl/index.js",
   "dependencies": {
     "@babel/parser": "^7.19.4",
-    "@commander-js/extra-typings": "^12.0.1",
-    "@joeychenofficial/alt-ergo-modified": "^2.4.0",
+    "@commander-js/extra-typings": "^14.0.0",
     "@ts-morph/bootstrap": "^0.18.0",
-    "@types/estree": "^1.0.5",
     "acorn": "^8.8.2",
     "acorn-class-fields": "^1.0.0",
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
-    "commander": "^12.0.0",
+    "commander": "^14.0.0",
     "js-base64": "^3.7.5",
     "lodash": "^4.17.21",
     "source-map": "0.7.6"
@@ -47,43 +45,38 @@
   "scripts": {
     "build": "yarn docs && yarn build:slang",
     "build:slang": "tsc --project tsconfig.prod.json",
-    "eslint": "eslint src",
+    "eslint": "eslint --concurrency=auto src scripts",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
-    "test": "node ./scripts/run_jest.mjs",
+    "test": "vitest",
     "test-coverage": "yarn test --coverage",
     "docs": "node ./scripts/docs.mjs docs",
     "jsdoc": "node ./scripts/docs.mjs",
     "autocomplete": "node ./scripts/docs.mjs autocomplete",
     "build_sicp_package": "yarn build && node ./scripts/build_sicp_package.mjs",
     "publish_sicp_package": "./scripts/publish_sicp_package.sh",
-    "benchmark": "node ./scripts/run_jest.mjs --runInBand --testPathPattern='.*benchmark.*' --testPathIgnorePatterns='/dist/'",
+    "benchmark": "vitest benchmark",
     "prepare": "husky"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.10",
-    "@babel/preset-env": "^7.23.2",
-    "@types/babel__core": "^7",
-    "@types/jest": "^29.0.0",
+    "@types/estree": "^1.0.5",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.0.0",
-    "@types/offscreencanvas": "^2019.7.0",
+    "@vitest/coverage-v8": "^4.0.4",
+    "@vitest/eslint-plugin": "^1.3.4",
+    "@vitest/ui": "^4.0.4",
     "ace-builds": "~1.17.0",
     "coveralls": "^3.1.0",
-    "escodegen": "^2.0.0",
-    "eslint": "^9.0.0",
-    "eslint-plugin-import": "^2.29.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-import": "^2.32.0",
     "globals": "^16.0.0",
     "husky": "^9.0.0",
-    "jest": "^29.0.0",
-    "jest-environment-jsdom": "^29.0.0",
-    "jest-html-reporter": "^3.2.0",
     "jsdoc": "3.6.11",
     "jsdom": "^19.0.0",
     "prettier": "^3.6.2",
-    "ts-jest": "^29.0.0",
-    "typescript": "^4.0.3",
-    "typescript-eslint": "^8.8.1"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.3",
+    "vitest": "^4.0.4"
   },
   "devEngines": {
     "packageManager": {
@@ -92,47 +85,5 @@
       "onFail": "error"
     }
   },
-  "packageManager": "yarn@4.6.0",
-  "jest": {
-    "snapshotFormat": {
-      "escapeString": true,
-      "printBasicPrototype": true
-    },
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "transform": {
-      "\\.ts$": "ts-jest",
-      "\\.js$": "babel-jest"
-    },
-    "testEnvironment": "jsdom",
-    "testRegex": "/__tests__/.*\\.ts$",
-    "testPathIgnorePatterns": [
-      "/dist/",
-      "/src/alt-langs/scheme/scm-slang",
-      ".*benchmark.*",
-      "/__tests__/(.*/)?utils\\.ts"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/dist/",
-      "/node_modules/",
-      "/src/typings/",
-      "/src/utils/testing.ts",
-      "/src/alt-langs/scheme/scm-slang",
-      "/src/py-slang/"
-    ],
-    "reporters": [
-      "default",
-      [
-        "./node_modules/jest-html-reporter",
-        {
-          "pageTitle": "Test Report",
-          "includeFailureMsg": true,
-          "includeConsoleLog": true
-        }
-      ]
-    ],
-    "prettierPath": null
-  }
+  "packageManager": "yarn@4.6.0"
 }
