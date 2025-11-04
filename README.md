@@ -20,9 +20,10 @@ Open-source implementations of the programming language _Source_. Source is a se
 
 ## Prerequisites
 
-- NodeJS v20
+- NodeJS v22
 - Python: On MacBook Pro with chip Apple M1 Pro, use python 3.10.12. Here is [the correct way to set Python 3 as default on a Mac](https://opensource.com/article/19/5/python-3-default-mac).
 - yarn: use the version specified in `package.json`. On macos, you may need to run `corepack enable`.
+
 ## Usage
 
 To build,
