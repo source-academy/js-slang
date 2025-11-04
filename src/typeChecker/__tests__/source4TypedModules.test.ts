@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { mockContext } from '../../utils/testing/mocks'
-import { Chapter, Variant } from '../../langs'
-import { parse } from '../../parser/parser'
 import { parseError } from '../../index'
+import { parse } from '../../parser/parser'
+import { Chapter, Variant } from '../../langs'
+import { mockContext } from '../../utils/testing/mocks'
 
 function getContext() {
   const context = mockContext(Chapter.SOURCE_4, Variant.TYPED)
@@ -15,6 +15,8 @@ function getContext() {
         class Test1 {}
         class Test2 {}
         class Test3 {}
+        type Test4 = (arg: Test1) => Test2;
+        const Test4 = (arg: Test1) => Test2;
       `,
       x: 'const x: string = "hello"',
       y: 'const y: number = 42',
@@ -180,7 +182,7 @@ describe('Typed module tests', () => {
         const a: string = functionError(10);
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 6: Type 'number' is not assignable to type 'string'."`
+        `"Line 8: Type 'number' is not assignable to type 'string'."`
       )
     })
 
@@ -261,5 +263,24 @@ describe('Typed module tests', () => {
         `"Line 3: Type 'Test3' is not assignable to type 'boolean'."`
       )
     })
+  })
+
+  /* TEST CASES FOR THE 'Test4' TYPE */
+  it('should allow calling Test4 with a valid Test1 object', () => {
+    const code = `
+      import { test2 } from 'exampleModule';
+      const result: Test4 = (arg: Test1) => test2;
+    `
+    expect(testParseError(code)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('should error when calling Test4 with a string argument', () => {
+    const code = `
+      import { test1 } from 'exampleModule';
+      const result: Test4 = (arg: Test1) => test1;
+    `
+    expect(testParseError(code)).toMatchInlineSnapshot(
+      `"Line 3: Type '(Test1) => Test1' is not assignable to type 'Test4'."`
+    )
   })
 })
