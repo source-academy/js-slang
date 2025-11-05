@@ -1,7 +1,7 @@
 import type { ExportNamedDeclaration } from 'estree'
-import type { Rule } from '../../types'
-import { RuleError } from '../../errors'
 import { speciferToString } from '../../../utils/ast/helpers'
+import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class NoExportNamedDeclarationWithSourceError extends RuleError<ExportNamedDeclaration> {
   public explain() {

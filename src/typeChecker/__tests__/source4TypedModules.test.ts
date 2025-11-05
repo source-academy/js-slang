@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { parseError } from '../../index'
-import { parse } from '../../parser/parser'
 import { Chapter, Variant } from '../../langs'
+import { parse } from '../../parser/parser'
 import { mockContext } from '../../utils/testing/mocks'
 
 function getContext() {

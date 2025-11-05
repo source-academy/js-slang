@@ -1,8 +1,8 @@
 import type { Identifier, VariableDeclaration } from 'estree'
-import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
-import { RuleError } from '../../errors'
 import { mapAndFilter } from '../../../utils/misc'
+import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class NoImplicitDeclareUndefinedError extends RuleError<Identifier> {
   public explain() {

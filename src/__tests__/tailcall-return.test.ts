@@ -1,6 +1,6 @@
 import { test } from 'vitest'
 import { stripIndent } from '../utils/formatters'
-import { expectParsedError, expectFinishedResult } from '../utils/testing'
+import { expectFinishedResult, expectParsedError } from '../utils/testing'
 
 test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
   return expectParsedError(stripIndent`

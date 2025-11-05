@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'vitest'
-import { mockContext } from '../../../../utils/testing/mocks'
-import { parse } from '../../../../parser/parser'
 import { Chapter } from '../../../../langs'
-import hoistAndMergeImports from '../../transformers/hoistAndMergeImports'
+import { parse } from '../../../../parser/parser'
+import { mockContext } from '../../../../utils/testing/mocks'
 import { sanitizeAST } from '../../../../utils/testing/sanitizer'
+import hoistAndMergeImports from '../../transformers/hoistAndMergeImports'
 
 describe(hoistAndMergeImports, () => {
   const assertASTsAreEqual = (actualCode: string, expectedCode: string) => {

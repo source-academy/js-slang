@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
-import { mockContext } from '../../../utils/testing/mocks'
 import { Chapter, Variant } from '../../../langs'
+import { mockContext } from '../../../utils/testing/mocks'
 import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
+import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
 import * as importers from '../importers'
 import {
   loadModuleBundleAsync,
@@ -9,7 +10,6 @@ import {
   memoizedGetModuleDocsAsync,
   memoizedGetModuleManifestAsync
 } from '../loaders'
-import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
 
 const moduleMocker = vi.fn()
 

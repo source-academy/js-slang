@@ -1,6 +1,6 @@
 import type { FunctionDeclaration } from 'estree'
-import type { Rule } from '../../types'
 import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class NoFunctionDeclarationWithoutIdentifierError extends RuleError<FunctionDeclaration> {
   public explain() {

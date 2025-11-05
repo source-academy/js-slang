@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest'
-import { mockContext } from '../../../../utils/testing/mocks'
+import { Chapter } from '../../../../langs'
 import { parse } from '../../../../parser/parser'
 import type { Context } from '../../../../types'
-import { Chapter } from '../../../../langs'
-import removeExports from '../../transformers/removeExports'
+import { mockContext } from '../../../../utils/testing/mocks'
 import { sanitizeAST } from '../../../../utils/testing/sanitizer'
+import removeExports from '../../transformers/removeExports'
 
 type TestCase = [description: string, inputCode: string, expectedCode: string]
 

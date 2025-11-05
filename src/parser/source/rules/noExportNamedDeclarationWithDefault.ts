@@ -1,9 +1,9 @@
 import type { ExportNamedDeclaration } from 'estree'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
+import { mapAndFilter } from '../../../utils/misc'
+import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
-import { RuleError } from '../../errors'
-import { mapAndFilter } from '../../../utils/misc'
 
 export class NoExportNamedDeclarationWithDefaultError extends RuleError<ExportNamedDeclaration> {
   public explain() {

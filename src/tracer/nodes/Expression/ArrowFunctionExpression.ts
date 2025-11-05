@@ -1,7 +1,7 @@
 import type { ArrowFunctionExpression, Comment, SourceLocation } from 'estree'
-import type { StepperBaseNode } from '../../interface'
 import type { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
+import type { StepperBaseNode } from '../../interface'
 import { getFreshName } from '../../utils'
 import { StepperBlockStatement } from '../Statement/BlockStatement'
 

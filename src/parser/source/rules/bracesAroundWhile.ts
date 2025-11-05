@@ -1,7 +1,7 @@
 import { generate } from 'astring'
 import type { WhileStatement } from 'estree'
-import type { Rule } from '../../types'
 import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class BracesAroundWhileError extends RuleError<WhileStatement> {
   public explain() {
