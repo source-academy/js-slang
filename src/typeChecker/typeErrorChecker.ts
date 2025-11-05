@@ -20,6 +20,7 @@ import {
   TypeParameterNameNotAllowedError,
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
+import { Chapter } from '../langs'
 import {
   type BindableType,
   type Context,
@@ -34,7 +35,6 @@ import {
   type TypeEnvironment,
   type Variable
 } from '../types'
-import { Chapter } from '../langs'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import type * as tsEs from './tsESTree'

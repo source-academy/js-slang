@@ -1,11 +1,11 @@
 import * as es from 'estree'
+import { convert } from '../generator'
 import { StepperExpression } from '../nodes'
 import { StepperIdentifier } from '../nodes/Expression/Identifier'
 import { StepperLiteral } from '../nodes/Expression/Literal'
-import { convert } from '../generator'
+import { auxiliaryBuiltinFunctions } from './auxiliary'
 import { listBuiltinFunctions } from './lists'
 import { miscBuiltinFunctions } from './misc'
-import { auxiliaryBuiltinFunctions } from './auxiliary'
 
 const builtinFunctions = {
   ...listBuiltinFunctions,

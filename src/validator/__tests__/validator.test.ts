@@ -1,15 +1,15 @@
-import { expect, test } from 'vitest'
 import type es from 'estree'
+import { expect, test } from 'vitest'
 
-import { mockContext } from '../../utils/testing/mocks'
+import { Chapter } from '../../langs'
 import { parse } from '../../parser/parser'
 import type { NodeWithInferredType } from '../../types'
-import { Chapter } from '../../langs'
+import { getSourceVariableDeclaration } from '../../utils/ast/helpers'
+import { simple } from '../../utils/ast/walkers'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
-import { simple } from '../../utils/ast/walkers'
+import { mockContext } from '../../utils/testing/mocks'
 import { validateAndAnnotate } from '../validator'
-import { getSourceVariableDeclaration } from '../../utils/ast/helpers'
 
 function toValidatedAst(code: string) {
   const context = mockContext(Chapter.SOURCE_1)
