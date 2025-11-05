@@ -5,10 +5,10 @@ import { Command } from '@commander-js/extra-typings'
 import { generate } from 'astring'
 
 import { createContext, parseError } from '../index'
+import { Chapter, isSourceLanguage, Variant } from '../langs'
 import defaultBundler from '../modules/preprocessor/bundler'
 import parseProgramsAndConstructImportGraph from '../modules/preprocessor/linker'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, isSourceLanguage, Variant } from '../langs'
 import { chapterParser, getChapterOption, getLanguageOption, getVariantOption } from './utils'
 
 export const getTranspilerCommand = () =>

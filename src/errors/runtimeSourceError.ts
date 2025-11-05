@@ -2,7 +2,7 @@ import type es from 'estree'
 import type { Node } from '../types'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorType, ErrorSeverity, type SourceError } from './base'
+import { ErrorSeverity, ErrorType, type SourceError } from './base'
 
 export class RuntimeSourceError implements SourceError {
   public type = ErrorType.RUNTIME
