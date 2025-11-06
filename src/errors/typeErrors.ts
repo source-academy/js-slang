@@ -1,18 +1,13 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
+
 import { UNKNOWN_LOCATION } from '../constants'
-import * as tsEs from '../typeChecker/tsESTree'
-import {
-  ErrorSeverity,
-  ErrorType,
-  type Node,
-  type NodeWithInferredType,
-  type SArray,
-  type SourceError,
-  type Type
-} from '../types'
+import type * as tsEs from '../typeChecker/tsESTree'
+import type { Node, NodeWithInferredType, SArray, Type } from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
+import { getSourceVariableDeclaration } from '../utils/ast/helpers'
+import { ErrorType, ErrorSeverity, type SourceError } from './base'
 
 // tslint:disable:max-classes-per-file
 
@@ -139,13 +134,20 @@ export class CyclicReferenceError implements SourceError {
 }
 
 function stringifyNode(node: NodeWithInferredType<Node>): string {
-  return ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type)
-    ? node.type === 'VariableDeclaration'
-      ? (node.declarations[0].id as es.Identifier).name
-      : (node as NodeWithInferredType<es.FunctionDeclaration>).id?.name!
-    : node.type === 'Identifier'
-      ? node.name
-      : JSON.stringify(node) // might not be a good idea
+  switch (node.type) {
+    case 'VariableDeclaration': {
+      const {
+        id: { name }
+      } = getSourceVariableDeclaration(node)
+      return name
+    }
+    case 'FunctionDeclaration':
+      return node.id?.name!
+    case 'Identifier':
+      return node.name
+    default:
+      return JSON.stringify(node) // might not be a good idea
+  }
 }
 
 export class DifferentNumberArgumentsError implements SourceError {

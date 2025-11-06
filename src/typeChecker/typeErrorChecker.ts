@@ -1,5 +1,5 @@
 import { parse as babelParse } from '@babel/parser'
-import * as es from 'estree'
+import type es from 'estree'
 import { cloneDeep, isEqual } from 'lodash'
 import {
   ConstNotAssignableTypeError,
@@ -21,7 +21,6 @@ import {
 } from '../errors/typeErrors'
 import {
   type BindableType,
-  Chapter,
   type Context,
   disallowedTypes,
   type Pair,
@@ -34,9 +33,10 @@ import {
   type TypeEnvironment,
   type Variable
 } from '../types'
+import { Chapter } from '../langs'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
-import * as tsEs from './tsESTree'
+import type * as tsEs from './tsESTree'
 import {
   formatTypeString,
   getTypeOverrides,
@@ -741,7 +741,7 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         if (bodyNode.declarations[0].id.type !== 'Identifier') {
           throw new TypecheckError(bodyNode, 'Variable declaration ID should be an identifier')
         }
-        const id = bodyNode.declarations[0].id as tsEs.Identifier
+        const id = bodyNode.declarations[0].id
         const expectedType = getTypeAnnotationType(id.typeAnnotation)
 
         // Save variable type and decl kind in type env

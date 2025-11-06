@@ -1,13 +1,13 @@
-import * as es from 'estree'
+import type es from 'estree'
 import type { Context, IOptions } from '..'
-import { UndefinedVariable } from '../errors/errors'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
-import { prelude } from './builtins'
-import { explain } from './generator'
+import { UndefinedVariable } from '../errors/errors'
 import type { StepperBaseNode } from './interface'
+import { explain } from './generator'
+import type { StepperProgram } from './nodes/Program'
 import { undefinedNode } from './nodes'
-import { StepperProgram } from './nodes/Program'
 import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
+import { prelude } from './builtins'
 import { type IStepperPropContents, type Marker, redex } from '.'
 
 export function getSteps(
@@ -20,13 +20,8 @@ export function getSteps(
   const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
   let hasError = false
 
-  let numSteps = 0
+  let numSteps = 1
   function evaluate(node: StepperBaseNode): StepperBaseNode {
-    numSteps += 1
-    if (numSteps >= limit) {
-      return node
-    }
-
     try {
       const isOneStepPossible = node.isOneStepPossible()
       if (isOneStepPossible) {
@@ -37,10 +32,14 @@ export function getSteps(
         if (redex) {
           const explanations: string[] = redex.preRedex.map(explain)
           const beforeMarkers: Marker[] = redex.preRedex.map((redex, index) => ({
-            redex: redex,
+            redex,
             redexType: 'beforeMarker',
             explanation: explanations[index]
           }))
+          numSteps += 1
+          if (numSteps >= limit) {
+            return node
+          }
           steps.push({
             ast: oldNode,
             markers: beforeMarkers
@@ -48,7 +47,7 @@ export function getSteps(
           const afterMarkers: Marker[] =
             redex.postRedex.length > 0
               ? redex.postRedex.map((redex, index) => ({
-                  redex: redex,
+                  redex,
                   redexType: 'afterMarker',
                   explanation: explanations[index]
                 }))
@@ -58,6 +57,10 @@ export function getSteps(
                     explanation: explanations[0] // use explanation based on preRedex
                   }
                 ]
+          numSteps += 1
+          if (numSteps >= limit) {
+            return node
+          }
           steps.push({
             ast: newNode,
             markers: afterMarkers
@@ -125,6 +128,7 @@ export function getSteps(
         }
       ]
     })
+    return steps
   }
   // If the program does not return anything, return undefined
   if (result.type === 'Program' && (result as StepperProgram).body.length === 0) {

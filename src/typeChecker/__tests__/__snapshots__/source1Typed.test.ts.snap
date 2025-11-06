@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`type aliases TSTypeAliasDeclaration nodes should be removed from program at end of typechecking 1`] = `
+exports[`type aliases > TSTypeAliasDeclaration nodes should be removed from program at end of typechecking 1`] = `
 Node {
   "body": Array [
     Node {
@@ -106,7 +106,7 @@ Node {
 }
 `;
 
-exports[`typecasting TSAsExpression nodes should be removed from program at end of typechecking 1`] = `
+exports[`typecasting > TSAsExpression nodes should be removed from program at end of typechecking 1`] = `
 Node {
   "body": Array [
     Node {

@@ -19,7 +19,7 @@ export const auxiliaryBuiltinFunctions = {
             }
         `,
         { ecmaVersion: 10 }
-      )!
+      )
       const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
       const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
       return new StepperFunctionApplication(
@@ -48,7 +48,7 @@ export const auxiliaryBuiltinFunctions = {
             }
         `,
         { ecmaVersion: 10 }
-      )!
+      )
       const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
       const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
       return new StepperFunctionApplication(

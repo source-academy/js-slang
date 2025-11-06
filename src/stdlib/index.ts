@@ -1,5 +1,6 @@
 import createContext from '../createContext'
-import { Chapter, type Value } from '../types'
+import type { Value } from '../types'
+import { Chapter } from '../langs'
 import * as list from './list'
 import * as misc from './misc'
 import * as parser from './parser'
@@ -16,9 +17,9 @@ export const chapter_1 = {
   parse_int: misc.parse_int,
   char_at: misc.char_at,
   arity: misc.arity,
-  undefined: undefined,
-  NaN: NaN,
-  Infinity: Infinity
+  undefined,
+  NaN,
+  Infinity
 }
 
 export const chapter_2 = {

@@ -1,4 +1,4 @@
-import type { Comment, ExpressionStatement, SourceLocation } from 'estree'
+import type { Comment, SourceLocation, ExpressionStatement } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'

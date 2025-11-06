@@ -2,25 +2,25 @@
 // Helper functions/constants for type checker and type error checker
 // =======================================
 
-import {
-  type AllowedDeclarations,
-  type BindableType,
-  Chapter,
-  type ForAll,
-  type FunctionType,
-  type List,
-  type LiteralType,
-  type Pair,
-  type PredicateType,
-  type Primitive,
-  type SArray,
-  type TSBasicType,
-  type Type,
-  type TypeEnvironment,
-  type UnionType,
-  type Variable
+import type {
+  AllowedDeclarations,
+  BindableType,
+  ForAll,
+  FunctionType,
+  List,
+  LiteralType,
+  Pair,
+  PredicateType,
+  Primitive,
+  SArray,
+  TSBasicType,
+  Type,
+  TypeEnvironment,
+  UnionType,
+  Variable
 } from '../types'
-import * as tsEs from './tsESTree'
+import { Chapter } from '../langs'
+import type * as tsEs from './tsESTree'
 
 // Name of Unary negative builtin operator
 export const NEGATIVE_OP = '-_1'

@@ -4,7 +4,7 @@ import type { Program } from 'estree'
 import { SourceParser } from '..'
 import type { Context } from '../../..'
 import { DEFAULT_ECMA_VERSION } from '../../../constants'
-import * as TypedES from '../../../typeChecker/tsESTree'
+import type * as TypedES from '../../../typeChecker/tsESTree'
 import { checkForTypeErrors } from '../../../typeChecker/typeErrorChecker'
 import { FatalSyntaxError } from '../../errors'
 import {
@@ -192,7 +192,7 @@ function checkForAnyDeclaration(program: TypedES.Program, context: Context) {
         break
       }
       case 'TSTypeAnnotation': {
-        const annotation = node as TypedES.TSTypeAnnotation
+        const annotation = node
         // If it's a function type annotation, check params and return
         if (annotation.typeAnnotation?.type === 'TSFunctionType') {
           annotation.typeAnnotation.parameters?.forEach(param => {
@@ -207,7 +207,7 @@ function checkForAnyDeclaration(program: TypedES.Program, context: Context) {
               checkTSNode(param.typeAnnotation)
             }
           })
-          const returnAnno = (annotation.typeAnnotation as TypedES.TSFunctionType).typeAnnotation
+          const returnAnno = annotation.typeAnnotation.typeAnnotation
           if (!config.allowAnyInTypeAnnotationReturnType && isAnyType(returnAnno)) {
             pushAnyUsageError(
               'Usage of "any" in type annotation\'s function return type is not allowed.',

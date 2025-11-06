@@ -364,9 +364,9 @@ export function valueToStringDag(value: Value): StringDag {
     const result: StringDag = {
       type: 'arraylike',
       elems: converted.map(c => c[0]),
-      prefix: prefix,
-      suffix: suffix,
-      length: length
+      prefix,
+      suffix,
+      length
     }
     if (!isCircular) {
       memo.set(value, result)
@@ -402,7 +402,7 @@ export function valueToStringDag(value: Value): StringDag {
       elems: kvpairs,
       prefix: '{',
       suffix: '}',
-      length: length
+      length
     }
     if (!isCircular) {
       memo.set(value, result)
@@ -428,7 +428,7 @@ export function valueToStringDag(value: Value): StringDag {
       return convertRepr(v.toString())
     } else if (typeof v === 'string') {
       const str = JSON.stringify(v)
-      return [{ type: 'terminal', str: str, length: str.length }, false]
+      return [{ type: 'terminal', str, length: str.length }, false]
     } else if (typeof v !== 'object') {
       return convertRepr(v.toString())
     } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {

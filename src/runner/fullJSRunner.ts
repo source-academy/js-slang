@@ -15,7 +15,6 @@ import * as create from '../utils/ast/astCreator'
 import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
 import type { Runner } from './types'
-import { resolvedErrorPromise } from './utils'
 
 function fullJSEval(code: string, nativeStorage: NativeStorage): any {
   if (nativeStorage.evaller) {
@@ -48,7 +47,7 @@ const fullJSRunner: Runner = async (program, context) => {
   // only process builtins and preludes if it is a fresh eval context
   const prelude = preparePrelude(context)
   if (prelude === undefined) {
-    return resolvedErrorPromise
+    return { status: 'error', context }
   }
   const preludeAndBuiltins: es.Statement[] = containsPrevEval(context)
     ? []
@@ -81,7 +80,7 @@ const fullJSRunner: Runner = async (program, context) => {
     context.errors.push(
       error instanceof RuntimeSourceError ? error : await toSourceError(error, sourceMapJson)
     )
-    return resolvedErrorPromise
+    return { status: 'error', context }
   }
 }
 

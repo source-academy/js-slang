@@ -7,22 +7,19 @@ import { findDeclarationNode, findIdentifierNode } from './finder'
 import { looseParse, parseWithComments } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
-import {
-  Chapter,
-  type Context,
-  type ExecutionMethod,
-  type Finished,
-  type ModuleContext,
-  type RecursivePartial,
-  type Result,
-  type Error as ResultError,
-  type SourceError,
-  type SVMProgram,
-  type Variant
+import type {
+  Context,
+  Error as ResultError,
+  ExecutionMethod,
+  Finished,
+  ModuleContext,
+  RecursivePartial,
+  Result,
+  SVMProgram
 } from './types'
+import { Chapter, type Variant } from './langs'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
-export { SourceDocumentation } from './editors/ace/docTooltip'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { ModuleNotFoundError } from './modules/errors'
@@ -30,7 +27,10 @@ import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
-import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
+import { htmlRunner, sourceFilesRunner } from './runner'
+import type { SourceError } from './errors/base'
+
+export { SourceDocumentation } from './editors/ace/docTooltip'
 
 export interface IOptions {
   steps: number
@@ -220,7 +220,7 @@ export async function runFilesInContext(
     const filePathError = validateFilePath(filePath)
     if (filePathError !== null) {
       context.errors.push(filePathError)
-      return resolvedErrorPromise
+      return { status: 'error', context }
     }
   }
 
@@ -229,7 +229,7 @@ export async function runFilesInContext(
     const code = files[entrypointFilePath]
     if (code === undefined) {
       context.errors.push(new ModuleNotFoundError(entrypointFilePath))
-      return resolvedErrorPromise
+      return { status: 'error', context }
     }
     result = await htmlRunner(code, context, options)
   } else {

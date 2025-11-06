@@ -1,8 +1,9 @@
 import { parse as babelParse } from '@babel/parser'
 import { createProjectSync, ts } from '@ts-morph/bootstrap'
 import type { Program } from 'estree'
+
 import type { Context } from '../..'
-import * as TypedES from '../../typeChecker/tsESTree'
+import type * as TypedES from '../../typeChecker/tsESTree'
 import { removeTSNodes } from '../../typeChecker/typeErrorChecker'
 import { FatalSyntaxError } from '../errors'
 import { transformBabelASTToESTreeCompliantAST } from '../source/typed/utils'

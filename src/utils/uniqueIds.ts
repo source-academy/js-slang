@@ -1,8 +1,8 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import type { NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { simple } from '../utils/walkers'
+import { simple } from './ast/walkers'
 
 const globalIdNames = [
   'native',

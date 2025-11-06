@@ -1,12 +1,13 @@
-import * as es from 'estree'
-import type { Context } from '..'
-import { encode } from '../alt-langs/scheme/scm-slang/src'
-import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
-import { is_number, type SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
+import type es from 'estree'
 import * as errors from '../errors/errors'
 import type { List } from '../stdlib/list'
-import { popInstr } from './instrCreator'
-import { Control, Stash } from './interpreter'
+import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { is_number, type SchemeNumber } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
+import type { Context } from '../types'
+import { encode } from '../alt-langs/scheme/scm-slang/src'
+import type { Control, Stash } from './interpreter'
+import { currentTransformers, getVariable, handleRuntimeError } from './utils'
+import { Transformer, macro_transform, match } from './patterns'
 import {
   arrayToImproperList,
   arrayToList,
@@ -15,9 +16,8 @@ import {
   isImproperList,
   isList
 } from './macro-utils'
-import { Transformer, macro_transform, match } from './patterns'
 import type { ControlItem } from './types'
-import { currentTransformers, getVariable, handleRuntimeError } from './utils'
+import { popInstr } from './instrCreator'
 
 // this needs to be better but for now it's fine
 export type SchemeControlItems = List | _Symbol | SchemeNumber | boolean | string
@@ -126,7 +126,7 @@ export function schemeEval(
       // if it does, then apply the corresponding rule.
       if (transformers.hasPattern(elem.sym)) {
         // get the relevant transformers
-        const transformerList: Transformer[] = transformers.getPattern(elem.sym)
+        const transformerList = transformers.getPattern(elem.sym)
 
         // find the first matching transformer
         for (const transformer of transformerList) {
@@ -138,7 +138,7 @@ export function schemeEval(
               control.push(transformedMacro as ControlItem)
               return
             }
-          } catch (e) {
+          } catch {
             return handleRuntimeError(
               context,
               new errors.ExceptionError(
@@ -250,7 +250,7 @@ export function schemeEval(
           // estree ArrowFunctionExpression
           const lambda = {
             type: 'ArrowFunctionExpression',
-            params: params,
+            params,
             body: convertToEvalExpression(body)
           }
 
@@ -660,6 +660,6 @@ export function convertToEvalExpression(expression: SchemeControlItems): es.Call
       type: 'Identifier',
       name: encode('eval')
     },
-    arguments: [convertToEstreeExpression(expression) as es.Expression]
+    arguments: [convertToEstreeExpression(expression)]
   }
 }

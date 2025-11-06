@@ -1,5 +1,6 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
+
 import {
   currentEnvironment,
   currentTransformers,

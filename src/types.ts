@@ -3,15 +3,15 @@
 	error-related classes).
 */
 
-/* tslint:disable:max-classes-per-file */
+import type es from 'estree'
 
-import type { SourceLocation } from 'acorn'
-import * as es from 'estree'
-import { Representation } from './alt-langs/mapper'
-import { EnvTree } from './createContext'
-import Heap from './cse-machine/heap'
-import { Control, Stash, Transformers } from './cse-machine/interpreter'
+import type { EnvTree } from './createContext'
+import type Heap from './cse-machine/heap'
+import type { Control, Stash, Transformers } from './cse-machine/interpreter'
 import type { ModuleFunctions } from './modules/moduleTypes'
+import type { Representation } from './alt-langs/mapper'
+import type { Chapter, LanguageOptions, Variant } from './langs'
+import type { SourceError } from './errors/base'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -25,88 +25,7 @@ export interface CustomBuiltIns {
   visualiseList: (list: any, externalContext: any) => void
 }
 
-export enum ErrorType {
-  IMPORT = 'Import',
-  RUNTIME = 'Runtime',
-  SYNTAX = 'Syntax',
-  TYPE = 'Type'
-}
-
-export enum ErrorSeverity {
-  WARNING = 'Warning',
-  ERROR = 'Error'
-}
-
-// any and all errors ultimately implement this interface. as such, changes to this will affect every type of error.
-export interface SourceError {
-  type: ErrorType
-  severity: ErrorSeverity
-  location: es.SourceLocation
-  explain(): string
-  elaborate(): string
-}
-
-export interface Comment {
-  type: 'Line' | 'Block'
-  value: string
-  start: number
-  end: number
-  loc: SourceLocation | undefined
-}
-
 export type ExecutionMethod = 'native' | 'auto' | 'cse-machine'
-
-export enum Chapter {
-  SOURCE_1 = 1,
-  SOURCE_2 = 2,
-  SOURCE_3 = 3,
-  SOURCE_4 = 4,
-  FULL_JS = -1,
-  HTML = -2,
-  FULL_TS = -3,
-  PYTHON_1 = -4,
-  PYTHON_2 = -5,
-  PYTHON_3 = -6,
-  PYTHON_4 = -7,
-  FULL_PYTHON = -8,
-  SCHEME_1 = -9,
-  SCHEME_2 = -10,
-  SCHEME_3 = -11,
-  SCHEME_4 = -12,
-  FULL_SCHEME = -13,
-  FULL_C = -14,
-  FULL_JAVA = -15,
-  LIBRARY_PARSER = 100
-}
-
-export enum Variant {
-  DEFAULT = 'default',
-  TYPED = 'typed',
-  NATIVE = 'native',
-  WASM = 'wasm',
-  EXPLICIT_CONTROL = 'explicit-control'
-}
-
-export type LanguageOptions = Record<string, string>
-
-export interface Language {
-  chapter: Chapter
-  variant: Variant
-  languageOptions?: LanguageOptions
-}
-
-export type ValueWrapper = LetWrapper | ConstWrapper
-
-export interface LetWrapper {
-  kind: 'let'
-  getValue: () => Value
-  assignNewValue: <T>(newValue: T) => T
-}
-
-export interface ConstWrapper {
-  kind: 'const'
-  getValue: () => Value
-}
 
 export interface NativeStorage {
   builtins: Map<string, Value>
@@ -215,7 +134,7 @@ export interface Context<T = any> {
   shouldIncreaseEvaluationTimeout: boolean
 }
 
-export type ModuleContext = {
+export interface ModuleContext {
   state: null | any
   tabs: null | any[]
 }
@@ -256,10 +175,17 @@ export interface Environment {
   thisContext?: Value
 }
 
+/**
+ * Represents an evaluation that resulted in an error
+ */
 export interface Error {
   status: 'error'
+  context: Context
 }
 
+/**
+ * Represents an evaluation that finished successfully
+ */
 export interface Finished {
   status: 'finished'
   context: Context
@@ -270,15 +196,22 @@ export interface Finished {
   // field instead
 }
 
+/**
+ * Represents an evaluation that has been suspended. Only possible when the `cse-machine`
+ * is being used.
+ */
 export interface SuspendedCseEval {
   status: 'suspended-cse-eval'
   context: Context
 }
 
+/**
+ * Represents the result of an evaluation
+ */
 export type Result = Finished | Error | SuspendedCseEval
 
 /**
- * StatementSequence : A sequence of statements not surrounded by braces.
+ * StatementSequence: A sequence of statements not surrounded by braces.
  * It is *not* a block, and thus does not trigger environment creation when evaluated.
  *
  * The current ESTree specification does not have this node type, so we define it here.
@@ -308,33 +241,12 @@ export interface Directive extends es.ExpressionStatement {
   directive: string
 }
 
-/** For use in the substituter, to differentiate between a function declaration in the expression position,
- * which has an id, as opposed to function expressions.
- */
-export interface FunctionDeclarationExpression extends es.FunctionExpression {
-  id: es.Identifier
-  body: es.BlockStatement
-}
-
-/**
- * For use in the substituter: call expressions can be reduced into an expression if the block
- * only contains a single return statement; or a block, but has to be in the expression position.
- * This is NOT compliant with the ES specifications, just as an intermediate step during substitutions.
- */
-export interface BlockExpression extends es.BaseExpression {
-  type: 'BlockExpression'
-  body: es.Statement[]
-}
-
-export type substituterNodes = Node | BlockExpression
-
 export type {
+  Instruction as SVMInstruction,
+  Program as SVMProgram,
   Address as SVMAddress,
   Argument as SVMArgument,
   SVMFunction,
-  Instruction as SVMInstruction,
-  Offset as SVMOffset,
-  Program as SVMProgram
 } from './vm/svml-compiler'
 
 export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>
@@ -497,4 +409,8 @@ export type RecursivePartial<T> =
         }>
       : T
 
+/**
+ * Utility type for selecting extracting the specific Node type when provided
+ * the type string.
+ */
 export type NodeTypeToNode<T extends Node['type']> = Extract<Node, { type: T }>

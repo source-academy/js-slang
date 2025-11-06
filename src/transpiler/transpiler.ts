@@ -2,10 +2,15 @@ import { generate } from 'astring'
 import type es from 'estree'
 import { type RawSourceMap, SourceMapGenerator } from 'source-map'
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
-import { Chapter, type Context, type NativeStorage, type Node, Variant } from '../types'
+import type { Context, NativeStorage, Node } from '../types'
+import { Chapter, Variant } from '../langs'
 import * as create from '../utils/ast/astCreator'
-import { filterImportDeclarations, getImportedName } from '../utils/ast/helpers'
-import { isNamespaceSpecifier } from '../utils/ast/typeGuards'
+import {
+  filterImportDeclarations,
+  getImportedName,
+  getSourceVariableDeclaration
+} from '../utils/ast/helpers'
+import { isNamespaceSpecifier, isVariableDeclaration } from '../utils/ast/typeGuards'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -14,7 +19,7 @@ import {
   getUniqueId,
   type NativeIds
 } from '../utils/uniqueIds'
-import { simple } from '../utils/walkers'
+import { simple } from '../utils/ast/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'
 
 /**
@@ -45,16 +50,12 @@ export function transformImportDeclarations(
 }
 
 export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
-  return program.body
-    .filter(statement => statement.type === 'VariableDeclaration')
-    .map(
-      ({
-        declarations: {
-          0: { id }
-        },
-        kind
-      }: es.VariableDeclaration) => (id as es.Identifier).name
-    )
+  return program.body.filter(isVariableDeclaration).map(decl => {
+    const {
+      id: { name }
+    } = getSourceVariableDeclaration(decl)
+    return name
+  })
 }
 
 export function getBuiltins(nativeStorage: NativeStorage): es.Statement[] {
@@ -117,7 +118,7 @@ function transformFunctionDeclarationsToArrowFunctions(
       node.declarations = [
         {
           type: 'VariableDeclarator',
-          id: id as es.Identifier,
+          id,
           init: asArrowFunction
         }
       ]
@@ -298,7 +299,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
     UnaryExpression(node: es.UnaryExpression) {
       const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
       const source = node.loc?.source ?? null
-      const { operator, argument } = node as es.UnaryExpression
+      const { operator, argument } = node
       create.mutateToCallExpression(node, globalIds.unaryOp, [
         create.literal(operator),
         argument,

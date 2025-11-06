@@ -97,7 +97,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     }
 
     return new StepperIfStatement(
-      this.test.oneStep() as StepperExpression,
+      this.test.oneStep(),
       this.consequent,
       this.alternate,
       this.leadingComments,
@@ -109,7 +109,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperIfStatement(
-      this.test.substitute(id, value) as StepperExpression,
+      this.test.substitute(id, value),
       this.consequent.substitute(id, value) as StepperStatement,
       this.alternate ? (this.alternate.substitute(id, value) as StepperStatement) : null,
       this.leadingComments,
@@ -144,7 +144,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
 
   rename(before: string, after: string): StepperIfStatement {
     return new StepperIfStatement(
-      this.test.rename(before, after) as StepperExpression,
+      this.test.rename(before, after),
       this.consequent.rename(before, after) as StepperStatement,
       this.alternate ? (this.alternate.rename(before, after) as StepperStatement) : null,
       this.leadingComments,

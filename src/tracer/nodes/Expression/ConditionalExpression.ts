@@ -1,6 +1,6 @@
-import type { Comment, ConditionalExpression, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
+import type { ConditionalExpression, Comment, SourceLocation } from 'estree'
 import { redex } from '../..'
+import type { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
 import { type StepperBaseNode } from '../../interface'
 

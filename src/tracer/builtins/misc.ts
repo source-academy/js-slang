@@ -73,8 +73,7 @@ export const miscBuiltinFunctions = {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperLiteral(
         args[0] instanceof StepperArrowFunctionExpression ||
-          (args[0] instanceof StepperIdentifier &&
-            isBuiltinFunction((args[0] as StepperIdentifier).name))
+          (args[0] instanceof StepperIdentifier && isBuiltinFunction(args[0].name))
       )
     },
     arity: 1

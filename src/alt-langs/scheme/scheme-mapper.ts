@@ -1,10 +1,11 @@
-import { ArrowFunctionExpression, Identifier, RestElement } from "estree"
+import type { ArrowFunctionExpression, Identifier, RestElement } from "estree"
 import Closure from "../../cse-machine/closure"
 import { decode, estreeDecode } from "./scm-slang/src"
 import { boolean$63$, car, cdr, circular$45$list$63$, cons, dotted$45$list$63$, last$45$pair, list$45$tail, null$63$, number$63$, pair$63$, proper$45$list$63$, set$45$cdr$33$, vector$63$ } from "./scm-slang/src/stdlib/source-scheme-library"
-import { ErrorType, Result, SourceError } from "../../types"
-import { List, Pair } from "../../stdlib/list"
+import { ErrorType, type SourceError } from "../../errors/base"
+import type { List, Pair } from "../../stdlib/list"
 import { Representation } from "../mapper"
+import type { Result } from "../../types"
 
 export function mapResultToScheme(res: Result): Result {
   if (res.status === "finished") {

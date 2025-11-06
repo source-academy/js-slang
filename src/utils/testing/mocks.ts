@@ -2,9 +2,10 @@ import type es from 'estree'
 
 import createContext, { EnvTree } from '../../createContext'
 import Closure from '../../cse-machine/closure'
-import { Chapter, type Context, type Environment, type LanguageOptions, Variant } from '../../types'
+import { Chapter, type LanguageOptions, Variant } from '../../langs'
 import { Transformers } from '../../cse-machine/interpreter'
 import { createBlockEnvironment } from '../../cse-machine/utils'
+import type { Context, Environment } from '../../types'
 
 export function mockContext(
   chapter: Chapter = Chapter.SOURCE_1,

@@ -1,8 +1,8 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { isInLoc } from './finder'
 import type { BlockFrame, DefinitionNode, Node } from './types'
-import { simple } from './utils/walkers'
+import { simple } from './utils/ast/walkers'
 
 /**
  * This file parses the original AST Tree into another tree with a similar structure
@@ -51,7 +51,7 @@ export function scopeVariables(
   const whileStatements = getWhileStatements(program.body)
   const variableStatements = definitionStatements.filter(statement =>
     isVariableDeclaration(statement)
-  ) as es.VariableDeclaration[]
+  )
 
   const arrowFunctions: es.ArrowFunctionExpression[] = []
   simple(program, {
@@ -391,7 +391,7 @@ export function getAllIdentifiers(program: es.Program, target: string): es.Ident
 
 // Helper functions to filter nodes
 function getBlockStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.BlockStatement[] {
-  return nodes.filter(statement => statement.type === 'BlockStatement') as es.BlockStatement[]
+  return nodes.filter(statement => statement.type === 'BlockStatement')
 }
 
 function getDefinitionStatements(
@@ -400,19 +400,19 @@ function getDefinitionStatements(
   return nodes.filter(
     statement =>
       statement.type === 'FunctionDeclaration' || statement.type === 'VariableDeclaration'
-  ) as (es.FunctionDeclaration | es.VariableDeclaration)[]
+  )
 }
 
 function getIfStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.IfStatement[] {
-  return nodes.filter(statement => statement.type === 'IfStatement') as es.IfStatement[]
+  return nodes.filter(statement => statement.type === 'IfStatement')
 }
 
 function getForStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.ForStatement[] {
-  return nodes.filter(statement => statement.type === 'ForStatement') as es.ForStatement[]
+  return nodes.filter(statement => statement.type === 'ForStatement')
 }
 
 function getWhileStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.WhileStatement[] {
-  return nodes.filter(statement => statement.type === 'WhileStatement') as es.WhileStatement[]
+  return nodes.filter(statement => statement.type === 'WhileStatement')
 }
 
 // Type Guards

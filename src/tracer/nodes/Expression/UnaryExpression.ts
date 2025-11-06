@@ -1,8 +1,8 @@
 import type { Comment, Literal, SourceLocation, UnaryExpression, UnaryOperator } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
+import type { StepperBaseNode } from '../../interface'
 import { redex } from '../..'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import type { StepperExpression, StepperPattern } from '..'
 import { StepperLiteral } from './Literal'
 
 export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode {

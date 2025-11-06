@@ -168,11 +168,7 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
       const ast = this.declarations[i]
       if (ast.isOneStepPossible()) {
         return new StepperVariableDeclaration(
-          [
-            this.declarations.slice(0, i),
-            ast.oneStep() as StepperVariableDeclarator,
-            this.declarations.slice(i + 1)
-          ].flat(),
+          [this.declarations.slice(0, i), ast.oneStep(), this.declarations.slice(i + 1)].flat(),
           this.kind,
           this.leadingComments,
           this.trailingComments,
@@ -208,9 +204,7 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
 
   rename(before: string, after: string): StepperVariableDeclaration {
     return new StepperVariableDeclaration(
-      this.declarations.map(
-        declaration => declaration.rename(before, after) as StepperVariableDeclarator
-      ),
+      this.declarations.map(declaration => declaration.rename(before, after)),
       this.kind,
       this.leadingComments,
       this.trailingComments,

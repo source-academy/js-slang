@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Builtins work as expected 1 1`] = `"Line 1: Error: \\"error!\\""`;
+
+exports[`Builtins work as expected 40 1`] = `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered null"`;
+
+exports[`Builtins work as expected 41 1`] = `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered null"`;
+
+exports[`Builtins work as expected 42 1`] = `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered 1"`;
+
+exports[`Builtins work as expected 43 1`] = `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
+
+exports[`Builtins work as expected 45 1`] = `"Line 33: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;

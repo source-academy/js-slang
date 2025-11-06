@@ -1,7 +1,8 @@
+import type { Node } from '../types'
 import type { StepperExpression, StepperPattern } from './nodes'
 
 export interface StepperBaseNode {
-  type: string
+  type: Node['type']
   isContractible(): boolean
   isOneStepPossible(): boolean
   contract(): StepperBaseNode

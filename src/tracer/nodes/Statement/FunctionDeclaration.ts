@@ -109,7 +109,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
           return ast.declarations.map(ast => ast.id.name)
         } else {
           // Function Declaration
-          return [(ast as StepperFunctionDeclaration).id.name]
+          return [ast.id.name]
         }
       })
     return [...paramNames, ...bodyDeclarations]
@@ -131,7 +131,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
 
     const currentFunction = newNames.reduce(
       (current: StepperFunctionDeclaration, name: string, index: number) =>
-        current.rename(repeatedNames[index], name) as StepperFunctionDeclaration,
+        current.rename(repeatedNames[index], name),
       this
     )
 

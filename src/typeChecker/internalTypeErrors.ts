@@ -1,14 +1,8 @@
 import { UNKNOWN_LOCATION } from '../constants'
-import {
-  ErrorSeverity,
-  ErrorType,
-  type Node,
-  type NodeWithInferredType,
-  type SourceError,
-  type Type
-} from '../types'
+import { ErrorSeverity, ErrorType, type SourceError } from '../errors/base'
+import type { Node, NodeWithInferredType, Type } from '../types'
 import { typeToString } from '../utils/stringify'
-import * as tsEs from './tsESTree'
+import type * as tsEs from './tsESTree'
 
 // tslint:disable:max-classes-per-file
 export class TypeError implements SourceError {

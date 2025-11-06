@@ -1,10 +1,11 @@
 import { Option } from '@commander-js/extra-typings'
-import { parseError, type Context } from '..'
-import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
-import Closure from '../cse-machine/closure'
-import { Chapter, Variant, type Language, type LanguageOptions, type Result } from '../types'
-import { objectKeys } from '../utils/misc'
+
 import { stringify } from '../utils/stringify'
+import Closure from '../cse-machine/closure'
+import { parseError } from '..'
+import type { Context, Result } from '../types'
+import { objectKeys } from '../utils/misc'
+import { Chapter, type LanguageOptions, Variant } from '../langs'
 
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined
@@ -48,32 +49,6 @@ export const getLanguageOption = <T extends LanguageOptions>() => {
       })
       return Object.assign({}, ...languageOptions)
     })
-}
-
-export function validateChapterAndVariantCombo(language: Language) {
-  for (const { chapter, variant } of sourceLanguages) {
-    if (language.chapter === chapter && language.variant === variant) return true
-  }
-  return false
-}
-
-/**
- * Returns true iff the given chapter and variant combination is supported.
- */
-export function validChapterVariant(language: Language) {
-  const { chapter, variant } = language
-
-  for (const lang of sourceLanguages) {
-    if (lang.chapter === chapter && lang.variant === variant) return true
-  }
-  for (const lang of scmLanguages) {
-    if (lang.chapter === chapter && lang.variant === variant) return true
-  }
-  for (const lang of pyLanguages) {
-    if (lang.chapter === chapter && lang.variant === variant) return true
-  }
-
-  return false
 }
 
 export function handleResult(result: Result, context: Context, verboseErrors: boolean) {

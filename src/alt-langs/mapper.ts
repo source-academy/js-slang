@@ -3,8 +3,9 @@
  * If required, maps the final result produced by js-slang to
  * the required representation for the language.
  */
-import type { Context, Result } from ".."
-import { Chapter } from "../types"
+
+import type { Context, Result } from "../types"
+import { Chapter } from "../langs"
 import { mapErrorToScheme, mapResultToScheme } from "./scheme/scheme-mapper"
 
 /**

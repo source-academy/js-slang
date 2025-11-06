@@ -1,4 +1,4 @@
-import type { Comment, Identifier, SourceLocation } from 'estree'
+import type { Identifier, Comment, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { isBuiltinFunction } from '../../builtins'

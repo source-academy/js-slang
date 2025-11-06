@@ -24,16 +24,8 @@ import {
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils'
-import {
-  Chapter,
-  type Context,
-  type CustomBuiltIns,
-  type Environment,
-  type LanguageOptions,
-  type NativeStorage,
-  type Value,
-  Variant
-} from './types'
+import type { Context, CustomBuiltIns, Environment, NativeStorage, Value } from './types'
+import { Chapter, Variant, type LanguageOptions } from './langs'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 

@@ -1,9 +1,10 @@
 import type { BinaryExpression, BinaryOperator, Comment, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
+import type { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
 import type { StepperBaseNode } from '../../interface'
 import { StepperLiteral } from './Literal'
+
 export class StepperBinaryExpression implements BinaryExpression, StepperBaseNode {
   type: 'BinaryExpression'
   operator: BinaryOperator
@@ -130,9 +131,9 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
         : op === '||'
           ? left || right
           : op === '+' && typeof left === 'number' && typeof right === 'number'
-            ? (left as number) + (right as number)
+            ? left + right
             : op === '+' && typeof left === 'string' && typeof right === 'string'
-              ? (left as string) + (right as string)
+              ? left + right
               : op === '-'
                 ? (left as number) - (right as number)
                 : op === '*'

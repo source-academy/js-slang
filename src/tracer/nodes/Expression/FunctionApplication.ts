@@ -1,14 +1,13 @@
+import type { SimpleCallExpression, Comment, SourceLocation } from 'estree'
 import * as astring from 'astring'
-import type { Comment, SimpleCallExpression, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
-import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
-import { convert } from '../../generator'
 import type { StepperBaseNode } from '../../interface'
+import { redex } from '../..'
+import type { StepperExpression, StepperPattern } from '..'
+import { convert } from '../../generator'
 import { StepperBlockStatement } from '../Statement/BlockStatement'
-import { StepperReturnStatement } from '../Statement/ReturnStatement'
-import { StepperArrowFunctionExpression } from './ArrowFunctionExpression'
+import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
 import { StepperBlockExpression } from './BlockExpression'
+
 export class StepperFunctionApplication implements SimpleCallExpression, StepperBaseNode {
   type: 'CallExpression'
   callee: StepperExpression
@@ -71,7 +70,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     }
 
     if (this.callee.type === 'ArrowFunctionExpression') {
-      const arrowFunction = this.callee as StepperArrowFunctionExpression
+      const arrowFunction = this.callee
       if (arrowFunction.params.length !== this.arguments.length) {
         throw new Error(
           `Line ${this.loc?.start.line || 0}: Expected ${
@@ -118,12 +117,12 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
         result = new StepperBlockExpression([])
       } else if (blockStatement.body[0].type === 'ReturnStatement') {
         // (x => {return 2 + 3;})(3) -> 2 + 3;
-        result = (blockStatement.body[0] as StepperReturnStatement).argument!
+        result = blockStatement.body[0].argument!
       } else {
         result = new StepperBlockExpression(blockStatement.body)
       }
     } else {
-      result = lambda.body as StepperExpression
+      result = lambda.body
     }
     if (lambda.name && !this.callee.scanAllDeclarationNames().includes(lambda.name)) {
       result = result.substitute(
@@ -133,7 +132,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     }
 
     lambda.params.forEach((param, i) => {
-      result = result.substitute(param as StepperPattern, args[i])
+      result = result.substitute(param, args[i])
     })
 
     redex.postRedex = [result]

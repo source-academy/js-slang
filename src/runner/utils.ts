@@ -1,9 +1,10 @@
 import type { Program } from 'estree'
 
-import type { IOptions, Result } from '..'
+import type { IOptions } from '..'
+import type { Variant } from '../langs'
 import { areBreakpointsSet } from '../stdlib/inspector'
-import type { Context, RecursivePartial, Variant } from '../types'
-import { simple } from '../utils/walkers'
+import type { Context, RecursivePartial } from '../types'
+import { simple } from '../utils/ast/walkers'
 
 // Context Utils
 
@@ -57,7 +58,3 @@ export function determineExecutionMethod(
 
   context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine'
 }
-
-// AST Utils
-
-export const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)

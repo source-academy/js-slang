@@ -1,25 +1,29 @@
+import type acorn from 'acorn'
 import type es from 'estree'
 
-import { simple } from '../walkers'
+import { simple } from '../ast/walkers'
 
 const locationKeys = ['loc', 'start', 'end']
 
 // Certain properties on each type of node are only present sometimes
 // For our purposes, those properties aren't important, so we can
 // remove them from the corresponding node
+
+// The AST produced by acorn differs slightly from the specification provided
+// by estree. We need to consider the properties that acorn introduces, hence
+// its node type is in use here.
 const propertiesToDelete: {
-  [K in es.Node['type']]?: (keyof Extract<es.Node, { type: K }>)[]
+  [K in acorn.AnyNode['type']]?: (keyof Extract<acorn.AnyNode, { type: K }>)[]
 } = {
   CallExpression: ['optional'],
-  // Honestly not sure where the 'expression' property comes from
-  FunctionDeclaration: ['expression' as any, 'generator'],
+  FunctionDeclaration: ['expression', 'generator'],
   Literal: ['raw']
 }
 
 const sanitizers = Object.entries(propertiesToDelete).reduce(
   (res, [nodeType, props]) => ({
     ...res,
-    [nodeType](node: es.Node) {
+    [nodeType](node: acorn.AnyNode) {
       for (const prop of props) {
         delete node[prop as keyof typeof node]
       }

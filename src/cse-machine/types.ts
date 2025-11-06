@@ -1,8 +1,9 @@
-import * as es from 'estree'
+import type es from 'estree'
+
 import type { Environment, Node } from '../types'
-import Closure from './closure'
-import { Transformers } from './interpreter'
+import type Closure from './closure'
 import type { SchemeControlItems } from './scheme-macros'
+import type { Transformers } from './interpreter'
 
 export enum InstrType {
   RESET = 'Reset',
@@ -27,70 +28,78 @@ export enum InstrType {
   SPREAD = 'Spread'
 }
 
-interface BaseInstr {
-  instrType: InstrType
-  srcNode: Node
+interface BaseInstr<T extends InstrType = InstrType, U extends Node = Node> {
+  instrType: T
+  srcNode: U
   isEnvDependent?: boolean
 }
 
-export interface WhileInstr extends BaseInstr {
+export interface WhileInstr extends BaseInstr<InstrType.WHILE> {
   test: es.Expression
   body: es.Statement
 }
 
-export interface ForInstr extends BaseInstr {
+export interface ForInstr extends BaseInstr<InstrType.FOR> {
   init: es.VariableDeclaration | es.Expression
   test: es.Expression
   update: es.Expression
   body: es.Statement
 }
 
-export interface AssmtInstr extends BaseInstr {
+export interface DeclAssmtInstr extends BaseInstr<InstrType.ASSIGNMENT, es.VariableDeclaration> {
   symbol: string
   constant: boolean
-  declaration: boolean
+  declaration: true
 }
 
-export interface UnOpInstr extends BaseInstr {
+export interface RegularAssmtInstr
+  extends BaseInstr<InstrType.ASSIGNMENT, es.AssignmentExpression> {
+  declaration: false
+  symbol: string
+}
+
+export type AssmtInstr = DeclAssmtInstr | RegularAssmtInstr
+
+export interface UnOpInstr extends BaseInstr<InstrType.UNARY_OP, es.UnaryExpression> {
   symbol: es.UnaryOperator
 }
 
-export interface BinOpInstr extends BaseInstr {
+export interface BinOpInstr extends BaseInstr<InstrType.BINARY_OP> {
   symbol: es.BinaryOperator
 }
 
-export interface AppInstr extends BaseInstr {
+export interface AppInstr extends BaseInstr<InstrType.APPLICATION, es.CallExpression> {
   numOfArgs: number
-  srcNode: es.CallExpression
 }
 
-export interface BranchInstr extends BaseInstr {
+export interface BranchInstr extends BaseInstr<InstrType.BRANCH> {
   consequent: es.Expression | es.Statement
   alternate: es.Expression | es.Statement | null | undefined
 }
 
-export interface EnvInstr extends BaseInstr {
+export interface EnvInstr extends BaseInstr<InstrType.ENVIRONMENT> {
   env: Environment
   transformers: Transformers
 }
 
-export interface ArrLitInstr extends BaseInstr {
+export interface ArrLitInstr extends BaseInstr<InstrType.ARRAY_LITERAL> {
   arity: number
 }
 
-export interface SpreadInstr extends BaseInstr {
-  symbol: es.SpreadElement
-}
-
 export type Instr =
-  | BaseInstr
-  | WhileInstr
-  | AssmtInstr
   | AppInstr
+  | ArrLitInstr
+  | AssmtInstr
+  | BaseInstr
+  | BinOpInstr
   | BranchInstr
   | EnvInstr
-  | ArrLitInstr
-  | SpreadInstr
+  | ForInstr
+  | UnOpInstr
+  | WhileInstr
+
+export type InstrTypeToInstr<T extends InstrType> =
+  Extract<Instr, { instrType: T }> extends never ? BaseInstr : Extract<Instr, { instrType: T }>
 
 export type ControlItem = (Node | Instr | SchemeControlItems) & {
   isEnvDependent?: boolean

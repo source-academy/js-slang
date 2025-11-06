@@ -1,12 +1,13 @@
 import type { Comment, Program, SourceLocation } from 'estree'
-import { redex } from '..'
-import { convert } from '../generator'
 import type { StepperBaseNode } from '../interface'
+
+import { redex } from '..'
 import { assignMuTerms } from '../utils'
+import type { StepperVariableDeclaration } from './Statement/VariableDeclaration'
 import type { StepperStatement } from './Statement'
-import { StepperFunctionDeclaration } from './Statement/FunctionDeclaration'
-import { StepperVariableDeclaration } from './Statement/VariableDeclaration'
+import type { StepperFunctionDeclaration } from './Statement/FunctionDeclaration'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '.'
+import { convert } from '../generator'
 
 export class StepperProgram implements Program, StepperBaseNode {
   type: 'Program'
@@ -62,7 +63,7 @@ export class StepperProgram implements Program, StepperBaseNode {
                 statement.substitute(declarator.id, declarator.init!) as StepperStatement,
               current
             )
-        ) as StepperStatement[]
+        )
       const substitutedProgram = new StepperProgram(afterSubstitutedScope)
       redex.preRedex = [this.body[0]]
       redex.postRedex = afterSubstitutedScope
@@ -71,15 +72,13 @@ export class StepperProgram implements Program, StepperBaseNode {
 
     // If the first statement is function declaration, also gracefully handle it!
     if (this.body[0].type == 'FunctionDeclaration') {
-      const arrowFunction = (
-        this.body[0] as StepperFunctionDeclaration
-      ).getArrowFunctionExpression()
-      const functionIdentifier = (this.body[0] as StepperFunctionDeclaration).id
+      const arrowFunction = this.body[0].getArrowFunctionExpression()
+      const functionIdentifier = this.body[0].id
       const afterSubstitutedScope = this.body
         .slice(1)
         .map(
           statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
-        ) as StepperStatement[]
+        )
       const substitutedProgram = new StepperProgram(afterSubstitutedScope)
       redex.preRedex = [this.body[0]]
       redex.postRedex = afterSubstitutedScope
@@ -116,7 +115,7 @@ export class StepperProgram implements Program, StepperBaseNode {
                 statement.substitute(declarator.id, declarator.init!) as StepperStatement,
               current
             )
-        ) as StepperStatement[]
+        )
       const substitutedProgram = new StepperProgram(
         [firstValueStatement, afterSubstitutedScope].flat()
       )
@@ -127,15 +126,13 @@ export class StepperProgram implements Program, StepperBaseNode {
 
     // If the second statement is function declaration, also gracefully handle it!
     if (this.body.length >= 2 && this.body[1].type == 'FunctionDeclaration') {
-      const arrowFunction = (
-        this.body[1] as StepperFunctionDeclaration
-      ).getArrowFunctionExpression()
-      const functionIdentifier = (this.body[1] as StepperFunctionDeclaration).id
+      const arrowFunction = this.body[1].getArrowFunctionExpression()
+      const functionIdentifier = this.body[1].id
       const afterSubstitutedScope = this.body
         .slice(2)
         .map(
           statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
-        ) as StepperStatement[]
+        )
       const substitutedProgram = new StepperProgram(
         [firstValueStatement, afterSubstitutedScope].flat()
       )
@@ -191,7 +188,7 @@ export class StepperProgram implements Program, StepperBaseNode {
           return ast.declarations.map(ast => ast.id.name)
         } else {
           // Function Declaration
-          return [(ast as StepperFunctionDeclaration).id.name]
+          return [ast.id.name]
         }
       })
   }

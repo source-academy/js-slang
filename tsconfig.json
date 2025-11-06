@@ -1,33 +1,35 @@
 {
   "compilerOptions": {
-    "module": "es2022",
-    "declaration": true,
-    "target": "es2020",
-    "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
-    "sourceMap": true,
     "allowJs": false,
-    "removeComments": false,
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "rootDir": "src",
+    "declaration": true,
     "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
+    "module": "es2022",
+    "moduleResolution": "node",
     "noEmit": true,
+    "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
     "noUnusedLocals": true,
-    "incremental": true,
+    "target": "es2020",
+    "resolveJsonModule": true,
+    "sourceMap": true,
     "skipLibCheck": true,
+    "strictNullChecks": true,
     "verbatimModuleSyntax": true
+    // "isolatedModules": true, Temporarily disabled
   },
+  "include": ["src", "vitest.config.ts"],
   "exclude": [
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",
+    "src/alt-langs/scheme/scm-slang/**/__tests__",
+    "src/py-slang/src/tests",
     "node_modules",
     "dist",
     "sicp_publish"
   ],
-  "types": ["typePatches", "jest"]
+  "types": ["typePatches"]
 }

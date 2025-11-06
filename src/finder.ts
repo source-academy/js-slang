@@ -13,10 +13,10 @@ import {
   ancestor,
   base,
   findNodeAt,
-  type FullWalkerCallback,
   recursive,
+  type FullWalkerCallback,
   type WalkerCallback
-} from './utils/walkers'
+} from './utils/ast/walkers'
 
 // Finds the innermost node that matches the given location
 export function findIdentifierNode(
@@ -89,7 +89,7 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
         }
       },
       ImportSpecifier(node: ImportSpecifier, _state: any, _callback: WalkerCallback<any>) {
-        if ((node.imported as Identifier).name === identifier.name) {
+        if (node.imported.name === identifier.name) {
           declarations.push(node.imported)
         }
       }

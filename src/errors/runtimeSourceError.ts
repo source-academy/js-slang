@@ -1,6 +1,8 @@
-import * as es from 'estree'
+import type es from 'estree'
+import type { Node } from '../types'
+
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, type Node, type SourceError } from '../types'
+import { ErrorType, ErrorSeverity, type SourceError } from './base'
 
 export class RuntimeSourceError implements SourceError {
   public type = ErrorType.RUNTIME
