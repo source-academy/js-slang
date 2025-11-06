@@ -828,5 +828,5 @@ export function isEnvDependent(item: ControlItem | null | undefined): boolean {
     }
   }
 
-  return item.isEnvDependent!
+  return item.isEnvDependent
 }

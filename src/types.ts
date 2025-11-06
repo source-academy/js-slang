@@ -246,7 +246,7 @@ export type {
   Program as SVMProgram,
   Address as SVMAddress,
   Argument as SVMArgument,
-  SVMFunction,
+  SVMFunction
 } from './vm/svml-compiler'
 
 export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>

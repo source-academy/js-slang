@@ -3,11 +3,11 @@ import type { StepperBaseNode } from '../interface'
 
 import { redex } from '..'
 import { assignMuTerms } from '../utils'
+import { convert } from '../generator'
 import type { StepperVariableDeclaration } from './Statement/VariableDeclaration'
 import type { StepperStatement } from './Statement'
 import type { StepperFunctionDeclaration } from './Statement/FunctionDeclaration'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '.'
-import { convert } from '../generator'
 
 export class StepperProgram implements Program, StepperBaseNode {
   type: 'Program'

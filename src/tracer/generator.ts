@@ -32,7 +32,6 @@ import {
   StepperVariableDeclarator
 } from './nodes/Statement/VariableDeclaration'
 
-
 const undefinedNode = new StepperLiteral('undefined')
 
 const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {

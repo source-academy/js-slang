@@ -34,6 +34,7 @@ import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/oper
 import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
+import { isSchemeLanguage } from '../langs'
 import Closure from './closure'
 import {
   Continuation,
@@ -85,7 +86,6 @@ import {
   setVariable,
   valueProducing
 } from './utils'
-import { isSchemeLanguage } from '../langs'
 
 /**
  * The control is a list of commands that still needs to be executed by the machine.
@@ -944,7 +944,7 @@ const cmdEvaluators: CommandEvaluators = {
         (next &&
           !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
           !control.canAvoidEnvInstr()) ||
-          isSchemeLanguage(context)
+        isSchemeLanguage(context)
       ) {
         control.push(
           instr.envInstr(currentEnvironment(context), currentTransformers(context), command.srcNode)

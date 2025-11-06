@@ -5,8 +5,8 @@ import { convert } from '../../generator'
 import type { StepperBaseNode } from '../../interface'
 import { assignMuTerms, getFreshName } from '../../utils'
 import { StepperFunctionDeclaration } from './FunctionDeclaration'
-import type { StepperStatement } from '.'
 import type { StepperVariableDeclaration } from './VariableDeclaration'
+import type { StepperStatement } from '.'
 
 export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   type: 'BlockStatement'
