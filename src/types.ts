@@ -2,16 +2,14 @@
 	This file contains definitions of some interfaces and classes that are used in Source (such as
 	error-related classes).
 */
-
 import type es from 'estree'
-
+import type { Representation } from './alt-langs/mapper'
 import type { EnvTree } from './createContext'
 import type Heap from './cse-machine/heap'
 import type { Control, Stash, Transformers } from './cse-machine/interpreter'
-import type { ModuleFunctions } from './modules/moduleTypes'
-import type { Representation } from './alt-langs/mapper'
-import type { Chapter, LanguageOptions, Variant } from './langs'
 import type { SourceError } from './errors/base'
+import type { Chapter, LanguageOptions, Variant } from './langs'
+import type { ModuleFunctions } from './modules/moduleTypes'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -156,12 +154,10 @@ export interface DefinitionNode {
   loc?: es.SourceLocation | null
 }
 
-// tslint:disable:no-any
 export interface Frame {
   [name: string]: any
 }
 export type Value = any
-// tslint:enable:no-any
 
 export type AllowedDeclarations = 'const' | 'let'
 
@@ -242,12 +238,12 @@ export interface Directive extends es.ExpressionStatement {
 }
 
 export type {
-  Instruction as SVMInstruction,
-  Program as SVMProgram,
   Address as SVMAddress,
   Argument as SVMArgument,
+  SVMFunction,
+  Instruction as SVMInstruction,
   Offset as SVMOffset,
-  SVMFunction
+  Program as SVMProgram
 } from './vm/svml-compiler'
 
 export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>

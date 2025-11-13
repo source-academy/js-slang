@@ -1,12 +1,12 @@
-import { test } from 'vitest'
 import { parse } from 'acorn'
 import * as astring from 'astring'
-import { getSteps } from '../steppers'
-import { convert } from '../generator'
-import type { Context } from '../../types'
-import type { StepperBaseNode } from '../interface'
+import { test } from 'vitest'
 import type { IStepperPropContents } from '..'
 import createContext from '../../createContext'
+import type { Context } from '../../types'
+import { convert } from '../generator'
+import type { StepperBaseNode } from '../interface'
+import { getSteps } from '../steppers'
 
 const stringify = (ast: StepperBaseNode) => {
   if (ast === undefined || ast.type === undefined) {

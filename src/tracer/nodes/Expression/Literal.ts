@@ -1,6 +1,6 @@
 import type { Comment, SimpleLiteral, SourceLocation } from 'estree'
-import type { StepperBaseNode } from '../../interface'
 import type { StepperExpression, StepperPattern } from '..'
+import type { StepperBaseNode } from '../../interface'
 
 /**
  * This class represents a literal node in the stepper's AST (Abstract Syntax Tree).

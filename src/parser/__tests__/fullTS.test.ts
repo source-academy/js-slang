@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { parseError } from '../..'
-import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../langs'
+import { mockContext } from '../../utils/testing/mocks'
 import { FullTSParser } from '../fullTS'
 
 const parser = new FullTSParser()

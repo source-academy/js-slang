@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 import { schemeVisualise } from "../scheme-mapper"
-import { make_number } from "../scm-slang/src/stdlib/core-math"
 import { circular$45$list, cons, cons$42$, list } from "../scm-slang/src/stdlib/base"
+import { make_number } from "../scm-slang/src/stdlib/core-math"
 
 test("schemeVisualise: should visualise null properly", () => {
   expect(schemeVisualise(null).toString()).toEqual("()")

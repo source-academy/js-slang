@@ -5,7 +5,7 @@
 
 import { test } from 'vitest'
 import { Chapter, Variant } from '../../langs'
-import { expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { expectFinishedResult, expectParsedError } from '../../utils/testing'
 
 const optionEC = { variant: Variant.EXPLICIT_CONTROL }
 const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }

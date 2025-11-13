@@ -1,8 +1,8 @@
-import type { VariableDeclaration } from 'estree'
 import { generate } from 'astring'
-import type { Rule } from '../../types'
-import { RuleError } from '../../errors'
+import type { VariableDeclaration } from 'estree'
 import { getSourceVariableDeclaration } from '../../../utils/ast/helpers'
+import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class NoVarError extends RuleError<VariableDeclaration> {
   public explain() {

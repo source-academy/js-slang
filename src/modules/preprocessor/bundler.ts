@@ -1,22 +1,22 @@
 import { posix as posixPath } from 'path'
 import type es from 'estree'
-import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
+import type { Context } from '../..'
 import assert from '../../utils/assert'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
+import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
 import { isSourceModule } from '../utils'
-import type { Context } from '../..'
+import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
+import {
+  transformFilePathToValidFunctionName,
+  transformFunctionNameToInvokedFunctionResultVariableName
+} from './filePaths'
+import hoistAndMergeImports from './transformers/hoistAndMergeImports'
+import removeExports from './transformers/removeExports'
 import {
   createAccessImportStatements,
   getInvokedFunctionResultVariableNameToImportSpecifiersMap,
   transformProgramToFunctionDeclaration
 } from './transformers/transformProgramToFunctionDeclaration'
-import {
-  transformFilePathToValidFunctionName,
-  transformFunctionNameToInvokedFunctionResultVariableName
-} from './filePaths'
-import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
-import hoistAndMergeImports from './transformers/hoistAndMergeImports'
-import removeExports from './transformers/removeExports'
 
 /**
  * A function that converts multiple programs into a single program

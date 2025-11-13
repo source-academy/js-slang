@@ -1,8 +1,8 @@
-import type { Comment, SourceLocation, ReturnStatement } from 'estree'
-import type { StepperBaseNode } from '../../interface'
-import { convert } from '../../generator'
+import type { Comment, ReturnStatement, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
+import { convert } from '../../generator'
+import type { StepperBaseNode } from '../../interface'
 
 export class StepperReturnStatement implements ReturnStatement, StepperBaseNode {
   type: 'ReturnStatement'

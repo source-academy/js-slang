@@ -1,7 +1,7 @@
 import type { Program } from 'estree'
 
-import type { Context } from '../types'
 import { Chapter, Variant } from '../langs'
+import type { Context } from '../types'
 import { FullJSParser } from './fullJS'
 import { FullTSParser } from './fullTS'
 import { PythonParser } from './python'

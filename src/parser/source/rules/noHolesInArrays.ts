@@ -1,7 +1,7 @@
 import type { ArrayExpression } from 'estree'
-import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class NoHolesInArrays extends RuleError<ArrayExpression> {
   public explain() {

@@ -1,9 +1,9 @@
 import {
+  parse as acornParse,
+  parseExpressionAt as acornParseAt,
   type Comment,
   ecmaVersion,
   type Node,
-  parse as acornParse,
-  parseExpressionAt as acornParseAt,
   type Position
 } from 'acorn'
 import { parse as acornLooseParse } from 'acorn-loose'

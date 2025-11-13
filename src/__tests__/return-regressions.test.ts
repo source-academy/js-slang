@@ -5,7 +5,7 @@
 
 import { test } from 'vitest'
 import { Chapter } from '../langs'
-import { expectParsedError, expectFinishedResult } from '../utils/testing'
+import { expectFinishedResult, expectParsedError } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('Calling unreachable results in error', () => {

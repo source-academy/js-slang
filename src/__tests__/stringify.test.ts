@@ -97,7 +97,6 @@ test('Correctly handles circular structures with multiple entry points', async (
 })
 
 // The interpreter runs into a MaximumStackLimitExceeded error on 1000, so reduced it to 100.
-// tslint:disable:max-line-length
 test('String representation of huge lists are nice', async () => {
   const {
     result: { value }
@@ -194,7 +193,6 @@ test('String representation of huge lists are nice', async () => {
             [89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
           `)
 })
-// tslint:enable:max-line-length
 
 test('String representation of huge arrays are nice', async () => {
   const {
@@ -432,7 +430,6 @@ test('String representation of undefined is nice', () => {
   return expectFinishedResult(`stringify(undefined);`).toEqual('undefined')
 })
 
-// tslint:disable:max-line-length
 test('String representation with no indent', async () => {
   const {
     result: { value }

@@ -1,7 +1,7 @@
 // @vitest-environment node
 
-import { describe, test, expect, vi } from 'vitest'
 import type { Command } from '@commander-js/extra-typings'
+import { describe, expect, test, vi } from 'vitest'
 import { getMainCommand } from '../main'
 
 vi.spyOn(process, 'exit').mockImplementation(code => {

@@ -1,15 +1,12 @@
 import { generate } from 'astring'
 import type es from 'estree'
-
 import { UNKNOWN_LOCATION } from '../constants'
 import type * as tsEs from '../typeChecker/tsESTree'
 import type { Node, NodeWithInferredType, SArray, Type } from '../types'
+import { getSourceVariableDeclaration } from '../utils/ast/helpers'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
-import { getSourceVariableDeclaration } from '../utils/ast/helpers'
-import { ErrorType, ErrorSeverity, type SourceError } from './base'
-
-// tslint:disable:max-classes-per-file
+import { ErrorSeverity, ErrorType, type SourceError } from './base'
 
 export class InvalidArrayIndexType implements SourceError {
   public type = ErrorType.TYPE

@@ -1,12 +1,12 @@
 import type { BlockStatement, SourceLocation } from 'estree'
-import type { StepperBaseNode } from '../../interface'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
-import { convert } from '../../generator'
 import { redex } from '../..'
-import { StepperVariableDeclaration } from '../Statement/VariableDeclaration'
+import { convert } from '../../generator'
+import type { StepperBaseNode } from '../../interface'
 import { assignMuTerms, getFreshName } from '../../utils'
 import type { StepperStatement } from '../Statement'
 import { StepperFunctionDeclaration } from '../Statement/FunctionDeclaration'
+import { StepperVariableDeclaration } from '../Statement/VariableDeclaration'
 
 // TODO: add docs, because this is a block expression, not a block statement, and this does not follow official estree spec
 export class StepperBlockExpression implements StepperBaseNode {

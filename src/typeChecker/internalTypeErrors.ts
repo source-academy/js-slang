@@ -4,7 +4,6 @@ import type { Node, NodeWithInferredType, Type } from '../types'
 import { typeToString } from '../utils/stringify'
 import type * as tsEs from './tsESTree'
 
-// tslint:disable:max-classes-per-file
 export class TypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING

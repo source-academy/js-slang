@@ -5,11 +5,11 @@
  * and the legacy interpreter
  */
 
-/* tslint:disable:max-classes-per-file */
 import type es from 'estree'
 import { isArray } from 'lodash'
 
 import type { IOptions } from '..'
+import { isSchemeLanguage } from '../alt-langs/mapper'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -17,11 +17,11 @@ import { checkEditorBreakpoints } from '../stdlib/inspector'
 import type {
   Context,
   ContiguousArrayElements,
-  Result,
-  Value,
-  StatementSequence,
   Node,
-  NodeTypeToNode
+  NodeTypeToNode,
+  Result,
+  StatementSequence,
+  Value
 } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import {
@@ -34,7 +34,6 @@ import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/oper
 import * as rttc from '../utils/rttc'
 import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
-import { isSchemeLanguage } from '../alt-langs/mapper'
 import Closure from './closure'
 import {
   Continuation,
@@ -42,6 +41,9 @@ import {
   makeDummyContCallExpression
 } from './continuations'
 import * as instr from './instrCreator'
+import { flattenList, isList } from './macro-utils'
+import { Transformer } from './patterns'
+import { isApply, isEval, schemeEval } from './scheme-macros'
 import { Stack } from './stack'
 import {
   type AppInstr,
@@ -83,9 +85,6 @@ import {
   setVariable,
   valueProducing
 } from './utils'
-import { isApply, isEval, schemeEval } from './scheme-macros'
-import { Transformer } from './patterns'
-import { flattenList, isList } from './macro-utils'
 
 /**
  * The control is a list of commands that still needs to be executed by the machine.

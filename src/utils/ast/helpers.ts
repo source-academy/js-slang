@@ -2,13 +2,13 @@ import type es from 'estree'
 
 import assert from '../assert'
 import { ArrayMap } from '../dict'
-import { simple } from './walkers'
 import {
   isDeclaration,
   isIdentifier,
   isImportDeclaration,
   isVariableDeclaration
 } from './typeGuards'
+import { simple } from './walkers'
 
 export function getModuleDeclarationSource(
   node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>

@@ -1,4 +1,3 @@
-/* tslint:disable:max-classes-per-file */
 import { JSSLANG_PROPERTIES } from '../constants'
 import type { Node } from '../types'
 import { stripIndent } from '../utils/formatters'

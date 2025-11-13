@@ -4,11 +4,11 @@ import replLib from 'repl'
 import { Command } from '@commander-js/extra-typings'
 
 import { createContext, type IOptions } from '..'
-import { setModulesStaticURL } from '../modules/loader'
-import type { RecursivePartial } from '../types'
 import { Chapter, isSupportedLanguageCombo, Variant } from '../langs'
-import { runCodeInSource, sourceFilesRunner } from '../runner'
+import { setModulesStaticURL } from '../modules/loader'
 import type { FileGetter } from '../modules/moduleTypes'
+import { runCodeInSource, sourceFilesRunner } from '../runner'
+import type { RecursivePartial } from '../types'
 import {
   chapterParser,
   getChapterOption,
