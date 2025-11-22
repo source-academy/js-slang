@@ -1,19 +1,19 @@
 import { describe, expect, it, test } from 'vitest'
 import { parseError, runInContext } from '../..'
-import { UndefinedVariable } from '../../errors/errors'
-import { mockContext } from '../../utils/testing/mocks'
-import { FatalSyntaxError } from '../../parser/errors'
 import type { SourceError } from '../../errors/base'
+import { UndefinedVariable } from '../../errors/errors'
 import { Chapter, Variant } from '../../langs'
+import { FatalSyntaxError } from '../../parser/errors'
 import { locationDummyNode } from '../../utils/ast/astCreator'
-import { htmlErrorHandlingScript } from '../htmlRunner'
 import {
-  expectParsedError,
   expectFinishedResult,
+  expectParsedError,
   testFailure,
   testSuccess
 } from '../../utils/testing'
 import { assertFinishedResultValue, testWithChapters } from '../../utils/testing/misc'
+import { mockContext } from '../../utils/testing/mocks'
+import { htmlErrorHandlingScript } from '../htmlRunner'
 
 interface CodeSnippetTestCase {
   name: string

@@ -6,10 +6,10 @@ import {
   testFailure,
   testSuccess
 } from '..'
+import * as main from '../../..'
 import { Chapter, Variant } from '../../../langs'
 import { processTestOptions } from '../misc'
 import type { TestOptions } from '../types'
-import * as main from '../../..'
 
 const mockedRunInContext = vi.spyOn(main, 'runInContext')
 

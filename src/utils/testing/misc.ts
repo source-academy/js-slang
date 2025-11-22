@@ -1,7 +1,7 @@
 import { describe, expect, test, type TestContext as VitestTestContext } from 'vitest'
 import type { Result } from '../..'
-import type { Finished, Value, Node, NodeTypeToNode } from '../../types'
 import { Chapter } from '../../langs'
+import type { Finished, Node, NodeTypeToNode, Value } from '../../types'
 import { getChapterName } from '../misc'
 import type { TestBuiltins, TestOptions } from './types'
 
@@ -166,6 +166,5 @@ export function evalWithBuiltins(code: string, testBuiltins: TestBuiltins = {}) 
   const builtins = Object.keys(testBuiltins).map(key => `const ${key} = testBuiltins.${key};`)
   const evalstring = builtins.join('\n') + code
 
-  // tslint:disable-next-line:no-eval
   return eval(evalstring + code)
 }

@@ -1,7 +1,7 @@
 import { test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectFinishedResult } from '../../utils/testing'
+import { expectFinishedResult, expectParsedError } from '../../utils/testing'
 
 test('parse_int with valid args is ok, radix 2', () => {
   return expectFinishedResult(`parse_int('1100101010101', 2);`, Chapter.SOURCE_1).toBe(

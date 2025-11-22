@@ -3,8 +3,8 @@
 import fs from 'fs/promises'
 import repl from 'repl'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
-import type { SourceFiles } from '../../modules/moduleTypes'
 import { Chapter } from '../../langs'
+import type { SourceFiles } from '../../modules/moduleTypes'
 import { getReplCommand } from '../repl'
 import { chapterParser } from '../utils'
 

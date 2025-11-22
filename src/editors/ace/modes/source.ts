@@ -1,8 +1,6 @@
 import { Variant } from '../../../langs'
 import { SourceDocumentation } from '../docTooltip'
 
-/* tslint:disable */
-
 /**
  * Source Mode for Ace Editor
  * (Modified from javascript mode in default brace package)
@@ -10,7 +8,7 @@ import { SourceDocumentation } from '../docTooltip'
  * https://github.com/ajaxorg/ace-builds/blob/master/src/mode-javascript.js
  *
  * Changes includes:
- * 1) change code styles so that it passes tslint test
+ * 1) change code styles
  * 2) refactor some code to ES2015 class syntax
  * 3) Encapsulate the orginal mode and higlightrules in two selectors so as to change according to source chapter
  * 4) changed regex to mark certain operators in pink

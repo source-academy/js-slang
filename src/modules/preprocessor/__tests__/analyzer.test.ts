@@ -1,20 +1,20 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
 import type { Program } from 'estree'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { Chapter } from '../../../langs'
+import { parse } from '../../../parser/parser'
+import { stripIndent } from '../../../utils/formatters'
+import { objectKeys } from '../../../utils/misc'
+import { mockContext } from '../../../utils/testing/mocks'
 import {
   DuplicateImportNameError,
   UndefinedDefaultImportError,
   UndefinedImportError,
   UndefinedNamespaceImportError
 } from '../../errors'
-import { Chapter } from '../../../langs'
-import { stripIndent } from '../../../utils/formatters'
-import parseProgramsAndConstructImportGraph from '../linker'
-import analyzeImportsAndExports from '../analyzer'
-import { parse } from '../../../parser/parser'
-import { mockContext } from '../../../utils/testing/mocks'
 import loadSourceModules from '../../loader'
 import type { SourceFiles as Files } from '../../moduleTypes'
-import { objectKeys } from '../../../utils/misc'
+import analyzeImportsAndExports from '../analyzer'
+import parseProgramsAndConstructImportGraph from '../linker'
 
 vi.mock(import('../../loader/loaders'))
 

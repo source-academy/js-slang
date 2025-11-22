@@ -1,13 +1,13 @@
 import type es from 'estree'
 import { expect, test } from 'vitest'
 import type { IOptions } from '../..'
-import { mockContext } from '../../utils/testing/mocks'
+import { Chapter } from '../../langs'
 import { parse } from '../../parser/parser'
 import { runCodeInSource } from '../../runner'
 import type { RecursivePartial } from '../../types'
-import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { Control, Transformers, Stash, generateCSEMachineStateStream } from '../interpreter'
+import { mockContext } from '../../utils/testing/mocks'
+import { Control, Stash, Transformers, generateCSEMachineStateStream } from '../interpreter'
 
 const getContextFrom = async (code: string, steps?: number) => {
   const context = mockContext(Chapter.SOURCE_4)

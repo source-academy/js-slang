@@ -1,8 +1,8 @@
 import type { BinaryExpression, BinaryOperator, Comment, SourceLocation } from 'estree'
-import type { StepperBaseNode } from '../../interface'
-import { redex } from '../..'
 import type { StepperExpression, StepperPattern } from '..'
+import { redex } from '../..'
 import { convert } from '../../generator'
+import type { StepperBaseNode } from '../../interface'
 import { StepperLiteral } from './Literal'
 
 export class StepperBinaryExpression implements BinaryExpression, StepperBaseNode {
