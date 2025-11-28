@@ -85,5 +85,5 @@
       "onFail": "error"
     }
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.12.0"
 }
