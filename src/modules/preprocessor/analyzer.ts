@@ -1,6 +1,7 @@
 import type es from 'estree'
 import { partition } from 'lodash'
 
+import type { Context } from '../../types'
 import assert from '../../utils/assert'
 import {
   getIdsFromDeclaration,
@@ -16,7 +17,6 @@ import {
   UndefinedNamespaceImportError
 } from '../errors'
 import { isSourceModule } from '../utils'
-import type { Context } from '../../types'
 
 export const defaultAnalysisOptions: ImportAnalysisOptions = {
   allowUndefinedImports: false,

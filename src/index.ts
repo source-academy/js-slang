@@ -4,31 +4,31 @@ import { SourceMapConsumer } from 'source-map'
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
+import { Chapter, type Variant } from './langs'
 import { looseParse, parseWithComments } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import type {
   Context,
-  Error as ResultError,
   ExecutionMethod,
   Finished,
   ModuleContext,
   RecursivePartial,
   Result,
+  Error as ResultError,
   SVMProgram
 } from './types'
-import { Chapter, type Variant } from './langs'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
+import type { SourceError } from './errors/base'
 import { ModuleNotFoundError } from './modules/errors'
 import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
 import { htmlRunner, sourceFilesRunner } from './runner'
-import type { SourceError } from './errors/base'
 
 export { SourceDocumentation } from './editors/ace/docTooltip'
 
@@ -309,4 +309,4 @@ export async function compileFiles(
   }
 }
 
-export { createContext, Context, ModuleContext, Result, setBreakpointAtLine, assemble }
+export { assemble, Context, createContext, ModuleContext, Result, setBreakpointAtLine }

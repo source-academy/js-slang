@@ -4,9 +4,9 @@ import { parse as sourceParse } from '../parser/parser'
 import { SourceParser } from '../parser/source'
 import { libraryParserLanguage } from '../parser/source/syntax'
 import type { Context, ContiguousArrayElements, Node, NodeTypeToNode, Value } from '../types'
-import { oneLine } from '../utils/formatters'
 import { getSourceVariableDeclaration } from '../utils/ast/helpers'
 import { isDeclaration } from '../utils/ast/typeGuards'
+import { oneLine } from '../utils/formatters'
 import { vector_to_list, type List } from './list'
 
 class ParseError extends Error {
@@ -17,7 +17,6 @@ class ParseError extends Error {
 }
 
 function unreachable() {
-  // tslint:disable-next-line:no-console
   console.error(oneLine`
     UNREACHABLE CODE REACHED!
     Please file an issue at

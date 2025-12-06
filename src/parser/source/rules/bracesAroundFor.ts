@@ -1,7 +1,7 @@
 import { generate } from 'astring'
 import type { ForStatement } from 'estree'
-import type { Rule } from '../../types'
 import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class BracesAroundForError extends RuleError<ForStatement> {
   public explain() {

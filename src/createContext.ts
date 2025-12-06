@@ -7,6 +7,7 @@ import { call_with_current_continuation } from './cse-machine/continuations'
 import Heap from './cse-machine/heap'
 import { Transformers } from './cse-machine/interpreter'
 import { cset_apply, cset_eval } from './cse-machine/scheme-macros'
+import { Chapter, Variant, type LanguageOptions } from './langs'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
@@ -25,7 +26,6 @@ import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils'
 import type { Context, CustomBuiltIns, Environment, NativeStorage, Value } from './types'
-import { Chapter, Variant, type LanguageOptions } from './langs'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 
@@ -366,7 +366,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(
       context,
       'apply_in_underlying_javascript(fun, args)',
-      // tslint:disable-next-line:ban-types
       (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
     )
 
@@ -389,7 +388,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'is_NaN(val)', misc.is_NaN)
     defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
     defineBuiltin(context, 'alert(val)', alert)
-    // tslint:disable-next-line:ban-types
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
       misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
     )

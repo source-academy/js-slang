@@ -4,8 +4,8 @@ import type { ModuleDocumentation, ModuleFunctions, ModuleManifest } from '../mo
 import {
   bundleAndTabImporter,
   docsImporter,
-  MODULES_STATIC_URL,
-  setModulesStaticURL as internalUrlSetter
+  setModulesStaticURL as internalUrlSetter,
+  MODULES_STATIC_URL
 } from './importers'
 import { getRequireProvider } from './requireProvider'
 

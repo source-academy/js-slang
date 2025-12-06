@@ -2,8 +2,8 @@
 
 import fs from 'fs/promises'
 import { beforeEach, describe, expect, it, test, vi } from 'vitest'
-import { compileToChoices, getSVMCCommand } from '../svmc'
 import * as vm from '../../vm/svml-compiler'
+import { compileToChoices, getSVMCCommand } from '../svmc'
 import { expectWritten, getCommandRunner } from './utils'
 
 const mockedReadFile = vi.spyOn(fs, 'readFile')

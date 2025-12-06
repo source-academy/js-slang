@@ -1,7 +1,7 @@
 import { test } from 'vitest'
 import { Chapter, Variant } from '../../langs'
-import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
 import { stripIndent } from '../../utils/formatters'
+import { expectFinishedResult, expectParsedError, testSuccess } from '../../utils/testing'
 // Continuation tests for Source
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 

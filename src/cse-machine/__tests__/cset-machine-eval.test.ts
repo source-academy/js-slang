@@ -1,6 +1,6 @@
 import { test } from 'vitest'
 import { Chapter, Variant } from '../../langs'
-import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
+import { expectFinishedResult, expectParsedError, testSuccess } from '../../utils/testing'
 
 // CSET tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }

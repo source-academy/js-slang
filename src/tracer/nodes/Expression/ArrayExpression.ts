@@ -1,8 +1,8 @@
 import type { ArrayExpression, Comment, SourceLocation } from 'estree'
-import type { StepperBaseNode } from '../../interface'
-import { redex } from '../..'
 import type { StepperExpression, StepperPattern } from '..'
+import { redex } from '../..'
 import { convert } from '../../generator'
+import type { StepperBaseNode } from '../../interface'
 
 export class StepperArrayExpression implements ArrayExpression, StepperBaseNode {
   type: 'ArrayExpression'

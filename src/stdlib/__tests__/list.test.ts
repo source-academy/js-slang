@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
+import { expectFinishedResult, expectParsedError, testSuccess } from '../../utils/testing'
 import * as list from '../list'
 
 test('list creates list', async () => {

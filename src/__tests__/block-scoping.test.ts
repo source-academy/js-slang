@@ -1,7 +1,7 @@
 import { test } from 'vitest'
 import { Chapter } from '../langs'
 import { stripIndent } from '../utils/formatters'
-import { expectParsedError, expectFinishedResult } from '../utils/testing'
+import { expectFinishedResult, expectParsedError } from '../utils/testing'
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {
@@ -145,7 +145,6 @@ test('Error when accessing temporal dead zone', () => {
     `).toEqual("Line 3: ReferenceError: Cannot access 'a' before initialization")
 }, 30000)
 
-// tslint:disable-next-line:max-line-length
 test('In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.', () => {
   return expectParsedError(stripIndent`
       const a = 1;

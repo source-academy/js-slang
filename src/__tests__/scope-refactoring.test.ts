@@ -2,6 +2,7 @@ import { expect, test } from 'vitest'
 
 import { default as createContext } from '../createContext'
 import { getAllOccurrencesInScope } from '../index'
+import { Chapter } from '../langs'
 import { looseParse } from '../parser/utils'
 import {
   getAllIdentifiers,
@@ -12,7 +13,6 @@ import {
   scopeVariables
 } from '../scope-refactoring'
 import type { BlockFrame } from '../types'
-import { Chapter } from '../langs'
 
 class Target {
   public name: string

@@ -1,7 +1,7 @@
 import type { ForStatement } from 'estree'
-import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class NoConstDeclarationInForLoopInit extends RuleError<ForStatement> {
   public explain(): string {

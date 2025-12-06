@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectFinishedResult, testSuccess } from '../../utils/testing'
+import { expectFinishedResult, expectParsedError, testSuccess } from '../../utils/testing'
 
 describe('primitive stream functions', () => {
   test('empty stream is null', () => {

@@ -6,8 +6,8 @@ import * as source_2_typed from './source_2_typed.json'
 import * as source_3 from './source_3.json'
 import * as source_3_typed from './source_3_typed.json'
 import * as source_4 from './source_4.json'
-import * as source_4_typed from './source_4_typed.json'
 import * as source_4_explicit_control from './source_4_explicit-control.json'
+import * as source_4_typed from './source_4_typed.json'
 
 // (18 March 2022)
 // Problem to be fixed in the future:

@@ -1,11 +1,11 @@
-import type { SimpleCallExpression, Comment, SourceLocation } from 'estree'
 import * as astring from 'astring'
-import type { StepperBaseNode } from '../../interface'
-import { redex } from '../..'
+import type { Comment, SimpleCallExpression, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
-import { convert } from '../../generator'
-import { StepperBlockStatement } from '../Statement/BlockStatement'
+import { redex } from '../..'
 import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
+import { convert } from '../../generator'
+import type { StepperBaseNode } from '../../interface'
+import { StepperBlockStatement } from '../Statement/BlockStatement'
 import { StepperBlockExpression } from './BlockExpression'
 
 export class StepperFunctionApplication implements SimpleCallExpression, StepperBaseNode {

@@ -1,11 +1,11 @@
-import { describe, expect, it, test } from 'vitest'
 import type { Node } from 'estree'
+import { describe, expect, it, test } from 'vitest'
 
 import { UnassignedVariable } from '../../../errors/errors'
+import { dummyExpression } from '../../../utils/ast/dummyAstCreator'
+import { decodeValue, mapErrorToScheme } from '../scheme-mapper'
 import { decode, encode } from '../scm-slang/src'
 import { cons, set$45$cdr$33$ } from '../scm-slang/src/stdlib/base'
-import { dummyExpression } from '../../../utils/ast/dummyAstCreator'
-import { mapErrorToScheme, decodeValue } from '../scheme-mapper'
 
 describe('Scheme encoder and decoder', () => {
   describe('encoder and decoder are proper inverses of one another', () => {

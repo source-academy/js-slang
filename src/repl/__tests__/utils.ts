@@ -1,5 +1,5 @@
-import { expect, vi } from 'vitest'
 import type { Command } from '@commander-js/extra-typings'
+import { expect, vi } from 'vitest'
 
 /**
  * Set up the environment for testing the given command. Returns

@@ -1,7 +1,7 @@
 import { generate } from 'astring'
 import type { VariableDeclaration } from 'estree'
-import type { Rule } from '../../types'
 import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
   private readonly fixs: VariableDeclaration[]
