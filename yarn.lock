@@ -1107,8 +1107,8 @@ __metadata:
   linkType: hard
 
 "@vitest/eslint-plugin@npm:^1.3.4":
-  version: 1.4.3
-  resolution: "@vitest/eslint-plugin@npm:1.4.3"
+  version: 1.5.1
+  resolution: "@vitest/eslint-plugin@npm:1.5.1"
   dependencies:
     "@typescript-eslint/scope-manager": "npm:^8.46.1"
     "@typescript-eslint/utils": "npm:^8.46.1"
@@ -1121,7 +1121,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/7fd1843a13c7227d7bb4e1492f4b8c8d8d163c2001cd406e5b6b9d54819b153f8e1270d34c89b3e7bcb4207764823af0879cd7385bfdcd7df6184caf3bdafd05
+  checksum: 10c0/f2158f254e42387d1bbab3190cf83bbc7251d8a74fe786bd893b20b60d4ab889264204ba25f5487f2d3dab8e0b8cd0233be61da56150a04077a9be7d8ac5356d
   languageName: node
   linkType: hard
 
