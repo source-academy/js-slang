@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { compileFiles, parseError, runFilesInContext } from '../../index'
-import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../langs'
+import { mockContext } from '../../utils/testing/mocks'
 
 describe(runFilesInContext, () => {
   let context = mockContext(Chapter.SOURCE_4)

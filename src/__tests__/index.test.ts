@@ -1,23 +1,23 @@
-import { describe, expect, test } from 'vitest'
 import type { Position } from 'acorn/dist/acorn'
 import type { SourceLocation } from 'estree'
+import { describe, expect, test } from 'vitest'
 
 import { findDeclaration, getScope, runInContext } from '../index'
-import { Value } from '../types'
 import { Chapter } from '../langs'
+import { Value } from '../types'
 import { stripIndent } from '../utils/formatters'
 import {
   createTestContext,
-  expectParsedError,
   expectFinishedResult,
+  expectParsedError,
   testSuccess
 } from '../utils/testing'
-import type { TestOptions } from '../utils/testing/types'
 import {
-  evalWithBuiltins,
   assertFinishedResultValue,
+  evalWithBuiltins,
   processTestOptions
 } from '../utils/testing/misc'
+import type { TestOptions } from '../utils/testing/types'
 
 const toString = (x: Value) => '' + x
 

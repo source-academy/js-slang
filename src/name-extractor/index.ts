@@ -8,9 +8,9 @@ import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from '../m
 import type { ModuleDocsEntry } from '../modules/moduleTypes'
 import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
+import type { Context, Node } from '../types'
 import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
 import { isDeclaration, isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
-import type { Context, Node } from '../types'
 
 export enum DeclarationKind {
   KIND_IMPORT = 'import',
@@ -173,7 +173,6 @@ export async function getProgramNames(
 
   while (queue.length > 0) {
     // Workaround due to minification problem
-    // tslint:disable-next-line
     const node = queue.shift()!
     if (isFunction(node)) {
       // This is the only time we want raw identifiers

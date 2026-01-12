@@ -1,9 +1,9 @@
 import { generate } from 'astring'
 import type { IfStatement } from 'estree'
-import type { Rule } from '../../types'
+import { Chapter } from '../../../langs'
 import { stripIndent } from '../../../utils/formatters'
 import { RuleError } from '../../errors'
-import { Chapter } from '../../../langs'
+import type { Rule } from '../../types'
 
 export class NoIfWithoutElseError extends RuleError<IfStatement> {
   public explain() {

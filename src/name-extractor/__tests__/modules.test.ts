@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { DeclarationKind } from '..'
 import { getNames } from '../..'
-import { mockContext } from '../../utils/testing/mocks'
 import { Chapter } from '../../langs'
+import { mockContext } from '../../utils/testing/mocks'
 
+import { ModuleConnectionError } from '../../modules/errors'
 import {
   memoizedGetModuleDocsAsync,
   memoizedGetModuleManifestAsync
 } from '../../modules/loader/loaders'
-import { ModuleConnectionError } from '../../modules/errors'
 
 vi.mock(import('../../modules/loader/loaders'))
 

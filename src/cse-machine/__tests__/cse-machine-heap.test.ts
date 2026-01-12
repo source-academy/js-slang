@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest'
-import { mockClosure, mockContext } from '../../utils/testing/mocks'
-import { runCodeInSource } from '../../runner'
 import { Chapter } from '../../langs'
+import { runCodeInSource } from '../../runner'
 import { stripIndent } from '../../utils/formatters'
+import { mockClosure, mockContext } from '../../utils/testing/mocks'
 import Heap from '../heap'
 import type { EnvArray } from '../types'
 

@@ -1,7 +1,7 @@
 import type { ForStatement } from 'estree'
-import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 import { RuleError } from '../../errors'
+import type { Rule } from '../../types'
 
 type ForStatementParts = keyof ForStatement
 const forStatementParts: ForStatementParts[] = ['init', 'test', 'update']

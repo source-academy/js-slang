@@ -10,7 +10,6 @@ import { stringify } from '../utils/stringify'
  *   any information required for external use (optional).
  */
 export function rawDisplay(value: Value, str: string, _externalContext: any) {
-  // tslint:disable-next-line:no-console
   console.log((str === undefined ? '' : str + ' ') + value.toString())
   return value
 }
@@ -22,7 +21,6 @@ export function error_message(value: Value, ...strs: string[]) {
 
 export function timed(
   context: Context,
-  // tslint:disable-next-line:ban-types
   f: Function,
   externalContext: any,
   displayBuiltin: (value: Value, str: string, externalContext: any) => Value

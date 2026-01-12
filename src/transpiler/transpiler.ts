@@ -3,8 +3,8 @@ import type es from 'estree'
 import { type RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
-import type { Context, NativeStorage, Node } from '../types'
 import { Chapter, Variant } from '../langs'
+import type { Context, NativeStorage, Node } from '../types'
 import * as create from '../utils/ast/astCreator'
 import {
   filterImportDeclarations,
@@ -12,6 +12,7 @@ import {
   getSourceVariableDeclaration
 } from '../utils/ast/helpers'
 import { isNamespaceSpecifier, isVariableDeclaration } from '../utils/ast/typeGuards'
+import { simple } from '../utils/ast/walkers'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -20,7 +21,6 @@ import {
   getUniqueId,
   type NativeIds
 } from '../utils/uniqueIds'
-import { simple } from '../utils/ast/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'
 
 /**

@@ -1,11 +1,11 @@
 import { Option } from '@commander-js/extra-typings'
 
-import { stringify } from '../utils/stringify'
-import Closure from '../cse-machine/closure'
 import { parseError } from '..'
+import Closure from '../cse-machine/closure'
+import { Chapter, LanguageOptions, Variant } from '../langs'
 import type { Context, Result } from '../types'
 import { objectKeys } from '../utils/misc'
-import { Chapter, LanguageOptions, Variant } from '../langs'
+import { stringify } from '../utils/stringify'
 
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined

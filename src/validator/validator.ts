@@ -4,6 +4,8 @@ import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { NoAssignmentToForVariable } from '../errors/validityErrors'
 import { parse } from '../parser/parser'
 import type { Context, Node, NodeWithInferredType } from '../types'
+import { getSourceVariableDeclaration } from '../utils/ast/helpers'
+import { ancestor, base, type FullWalkerCallback } from '../utils/ast/walkers'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -11,8 +13,6 @@ import {
   getNativeIds,
   type NativeIds
 } from '../utils/uniqueIds'
-import { ancestor, base, type FullWalkerCallback } from '../utils/ast/walkers'
-import { getSourceVariableDeclaration } from '../utils/ast/helpers'
 
 class Declaration {
   public accessedBeforeDeclaration: boolean = false

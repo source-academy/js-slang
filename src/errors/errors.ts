@@ -1,12 +1,10 @@
-/* tslint:disable: max-classes-per-file */
-/* tslint:disable:max-line-length */
 import { baseGenerator, generate } from 'astring'
 import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import type { Node, Value } from '../types'
 import { stringify } from '../utils/stringify'
-import { ErrorType, ErrorSeverity, type SourceError } from './base'
+import { ErrorSeverity, ErrorType, type SourceError } from './base'
 import { RuntimeSourceError } from './runtimeSourceError'
 
 //Wrap build-in function error in SourceError

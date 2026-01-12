@@ -1,20 +1,20 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Program } from 'estree'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { parseError, type IOptions } from '../../..'
-import { mockContext } from '../../../utils/testing/mocks'
-import type { RecursivePartial } from '../../../types'
-import { Chapter } from '../../../langs'
-import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
 import preprocessFileImports from '..'
-import { sanitizeAST } from '../../../utils/testing/sanitizer'
+import { parseError, type IOptions } from '../../..'
+import { Chapter } from '../../../langs'
 import { parse } from '../../../parser/parser'
 import {
   accessExportFunctionName,
   defaultExportLookupName
 } from '../../../stdlib/localImport.prelude'
-import type { SourceFiles } from '../../moduleTypes'
+import type { RecursivePartial } from '../../../types'
+import { mockContext } from '../../../utils/testing/mocks'
+import { sanitizeAST } from '../../../utils/testing/sanitizer'
 import { UndefinedImportError } from '../../errors'
+import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
+import type { SourceFiles } from '../../moduleTypes'
 
 vi.mock(import('../../loader/loaders'))
 

@@ -1,7 +1,7 @@
-import { expect, test } from 'vitest'
-import { mockContext } from "../../utils/testing/mocks";
-import { type Finished } from "../../types";
+import { expect, test } from 'vitest';
 import { Chapter } from "../../langs";
+import { type Finished } from "../../types";
+import { mockContext } from "../../utils/testing/mocks";
 import { mapResult } from "../mapper";
 
 test("given source, mapper should do nothing (no mapping needed)", () => {

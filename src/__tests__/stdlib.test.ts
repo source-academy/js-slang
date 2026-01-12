@@ -1,6 +1,6 @@
 import { test } from 'vitest'
-import { Value } from '../types'
 import { Chapter } from '../langs'
+import { Value } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { expectFinishedResult, snapshotFailure } from '../utils/testing'
 

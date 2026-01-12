@@ -6,12 +6,12 @@ import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpr
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
+import { getSteps } from '../tracer/steppers'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { getSteps } from '../tracer/steppers'
 import { toSourceError } from './errors'
-import type { Runner } from './types'
 import fullJSRunner from './fullJSRunner'
+import type { Runner } from './types'
 
 let isPreviousCodeTimeoutError = false
 const runners = {
