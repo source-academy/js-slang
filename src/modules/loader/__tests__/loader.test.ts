@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Chapter, Variant } from '../../../langs'
 import { mockContext } from '../../../utils/testing/mocks'
 import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
-import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
+import type { ModuleDocumentation, ModulesManifest } from '../../moduleTypes'
 import * as importers from '../importers'
 import {
   loadModuleBundleAsync,
@@ -10,6 +10,7 @@ import {
   memoizedGetModuleDocsAsync,
   memoizedGetModuleManifestAsync
 } from '../loaders'
+import { stringify } from '../../../utils/stringify'
 
 const moduleMocker = vi.fn()
 
@@ -46,6 +47,12 @@ describe('bundle loading', () => {
     })
     const mod = await loadModuleBundleAsync('one_module', context)
     expect(mod.foo()).toEqual('foo')
+    expect(stringify(mod.foo)).toMatchInlineSnapshot(`
+      "function foo {
+      	[Function from one_module
+      	Implementation hidden]
+      }"
+    `)
   })
 
   test('Should throw ModuleConnectionError when unable to reach modules server', () => {
@@ -77,13 +84,7 @@ describe('bundle loading', () => {
 
 describe('tab loading', () => {
   test("Load a module's tabs", async () => {
-    mockedDocsImporter.mockResolvedValueOnce({
-      default: {
-        one_module: { tabs: ['tab1', 'tab2'] }
-      }
-    })
-
-    const tabs = await loadModuleTabsAsync('one_module')
+    const tabs = await loadModuleTabsAsync(['tab1', 'tab2'])
 
     expect(tabs[0]({} as any)).toEqual('tab1')
     expect(tabs[1]({} as any)).toEqual('tab2')
@@ -97,7 +98,7 @@ describe('docs loading', () => {
     })
 
     test('manifest is memoized on success', async () => {
-      const mockManifest: ModuleManifest = {
+      const mockManifest: ModulesManifest = {
         one_module: {
           tabs: []
         }
@@ -123,7 +124,7 @@ describe('docs loading', () => {
       const result = memoizedGetModuleManifestAsync()
       await expect(result).rejects.toBe(mockError)
 
-      const mockManifest: ModuleManifest = {
+      const mockManifest: ModulesManifest = {
         one_module: {
           tabs: []
         }

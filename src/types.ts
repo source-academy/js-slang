@@ -9,7 +9,7 @@ import type Heap from './cse-machine/heap'
 import type { Control, Stash, Transformers } from './cse-machine/interpreter'
 import type { SourceError } from './errors/base'
 import type { Chapter, LanguageOptions, Variant } from './langs'
-import type { ModuleFunctions } from './modules/moduleTypes'
+import type { LoadedBundle } from './modules/moduleTypes'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -36,7 +36,7 @@ export interface NativeStorage {
   surrounding scope, so we cannot set evaller to `eval` directly. subsequent assignments to evaller will
   close in the surrounding values, so no problem
    */
-  loadedModules: Record<string, ModuleFunctions>
+  loadedModules: Record<string, LoadedBundle>
   loadedModuleTypes: Record<string, Record<string, string>>
 }
 

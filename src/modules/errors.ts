@@ -4,6 +4,8 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { ErrorSeverity, ErrorType, SourceError } from '../errors/base'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import type { Node } from '../types'
+import type { Chapter } from '../langs'
+import { getChapterName } from '../utils/misc'
 import { nonAlphanumericCharEncoding } from './preprocessor/filePaths'
 
 export class ModuleInternalError extends RuntimeSourceError {
@@ -67,6 +69,31 @@ export class ModuleNotFoundError extends ImportError {
 
   public elaborate() {
     return 'You should check your import declarations, and ensure that all are valid modules.'
+  }
+}
+
+/**
+ * Error thrown when the given module has a chapter restriction and the current
+ * evaluation context is not of a high enough chapter
+ */
+export class WrongChapterError extends ImportError {
+  constructor(
+    public readonly moduleName: string,
+    public readonly required: Chapter,
+    public readonly actual: Chapter,
+    node?: Node
+  ) {
+    super(node)
+  }
+
+  public explain(): string {
+    const reqName = getChapterName(this.required)
+    const actName = getChapterName(this.actual)
+    return `${this.moduleName} needs at least Source chapter ${reqName}, but you are using ${actName}`
+  }
+
+  public elaborate() {
+    return this.explain()
   }
 }
 

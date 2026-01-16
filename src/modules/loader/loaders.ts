@@ -1,6 +1,6 @@
 import type { Context, Node } from '../../types'
-import { ModuleInternalError } from '../errors'
-import type { ModuleDocumentation, ModuleFunctions, ModuleManifest } from '../moduleTypes'
+import { ModuleConnectionError, ModuleInternalError } from '../errors'
+import type { ModuleDocumentation, LoadedBundle, ModulesManifest } from '../moduleTypes'
 import {
   bundleAndTabImporter,
   docsImporter,
@@ -21,7 +21,7 @@ export function setModulesStaticURL(value: string) {
 // lodash's memoize function memoizes on errors. This is undesirable,
 // so we have our own custom memoization that won't memoize on errors
 function getManifestImporter() {
-  let manifest: ModuleManifest | null = null
+  let manifest: ModulesManifest | null = null
 
   async function func() {
     if (manifest !== null) {
@@ -70,12 +70,12 @@ function getMemoizedDocsImporter() {
 export const memoizedGetModuleManifestAsync = getManifestImporter()
 export const memoizedGetModuleDocsAsync = getMemoizedDocsImporter()
 
-export async function loadModuleTabsAsync(moduleName: string) {
-  const manifest = await memoizedGetModuleManifestAsync()
-  const moduleInfo = manifest[moduleName]
-
+/**
+ * Load all the tabs of the given names
+ */
+export async function loadModuleTabsAsync(tabs: string[]) {
   return Promise.all(
-    moduleInfo.tabs.map(async tabName => {
+    tabs.map(async tabName => {
       const { default: result } = await bundleAndTabImporter(
         `${MODULES_STATIC_URL}/tabs/${tabName}.js`
       )
@@ -84,21 +84,34 @@ export async function loadModuleTabsAsync(moduleName: string) {
   )
 }
 
+/**
+ * Load the bundle of the module of the given name. If the `sourceModuleLoader` is provided, use that function
+ * to load the bundle instead of the default bundle loader.
+ *
+ * @param node               Node that triggered the loading of the given bundle
+ * @param sourceModuleLoader Alternate loading function that can be used in place of the default loader
+ */
 export async function loadModuleBundleAsync(
   moduleName: string,
   context: Context,
-  node?: Node
-): Promise<ModuleFunctions> {
-  const { default: result } = await bundleAndTabImporter(
-    `${MODULES_STATIC_URL}/bundles/${moduleName}.js`
-  )
+  node?: Node,
+  sourceModuleLoader?: (name: string, context: Context) => Promise<LoadedBundle>
+): Promise<LoadedBundle> {
+  const loader = sourceModuleLoader
+    ? () => sourceModuleLoader(moduleName, context)
+    : async () => {
+        const { default: result } = await bundleAndTabImporter(
+          `${MODULES_STATIC_URL}/bundles/${moduleName}.js`
+        )
+        return result(getRequireProvider(context))
+      }
+
   try {
-    const loadedModule = result(getRequireProvider(context))
+    const loadedModule = await loader()
     return Object.entries(loadedModule).reduce((res, [name, value]) => {
       if (typeof value === 'function') {
         const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`
-        value[Symbol.toStringTag] = () => repr
-        value.toString = () => repr
+        value.toReplString = () => repr
       }
       return {
         ...res,
@@ -106,6 +119,7 @@ export async function loadModuleBundleAsync(
       }
     }, {})
   } catch (error) {
+    if (error instanceof ModuleConnectionError) throw error
     throw new ModuleInternalError(moduleName, error, node)
   }
 }

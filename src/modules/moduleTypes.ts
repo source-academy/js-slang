@@ -1,16 +1,31 @@
+import type { Node } from '../types'
+import type { Chapter } from '../langs'
 import type { RequireProvider } from './loader/requireProvider'
 import type { ImportAnalysisOptions } from './preprocessor/analyzer'
 import type { LinkerOptions } from './preprocessor/linker'
 
-export type ModuleManifest = {
-  [module: string]: {
-    tabs: string[]
-  }
+/**
+ * Represents the meta information for a Source module
+ */
+export interface ModuleInfo {
+  name: string
+  tabs: string[]
+  version?: string
+  requires?: Chapter
+  node?: Node
 }
 
-export type ModuleBundle = (require: RequireProvider) => ModuleFunctions
+/**
+ * Represents the main modules manifest that contains a ModuleInfo for each
+ * Source module that exists
+ */
+export interface ModulesManifest {
+  [module: string]: Omit<ModuleInfo, 'name'>
+}
 
-export type ModuleFunctions = {
+export type ModuleBundle = (require: RequireProvider) => LoadedBundle
+
+export type LoadedBundle = {
   [name: string]: any
 }
 

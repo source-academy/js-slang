@@ -39,13 +39,13 @@ export type PreprocessResult =
  * @param entrypointFilePath The absolute path of the entrypoint file.
  * @param context            The information associated with the program evaluation.
  */
-const preprocessFileImports = async (
+export default async function preprocessFileImports(
   files: FileGetter,
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {},
   bundler: Bundler = defaultBundler
-): Promise<PreprocessResult> => {
+): Promise<PreprocessResult> {
   if (context.variant === Variant.TYPED) {
     // Load typed source modules into context first to ensure that the type checker has access to all types.
     // TODO: This is a temporary solution, and we should consider a better way to handle this.
@@ -68,7 +68,7 @@ const preprocessFileImports = async (
     options?.importOptions,
     !!options?.shouldAddFileName
   )
-  // Return 'undefined' if there are errors while parsing.
+  // Return if there are errors while parsing.
   if (!linkerResult.ok) {
     return linkerResult
   }
@@ -113,5 +113,3 @@ const preprocessFileImports = async (
     }
   }
 }
-
-export default preprocessFileImports

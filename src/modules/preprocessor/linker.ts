@@ -1,14 +1,13 @@
 import type es from 'estree'
 
-import type { Context } from '../..'
 import { parse } from '../../parser/parser'
 import { parseAt } from '../../parser/utils'
-import type { RecursivePartial } from '../../types'
+import type { Context, RecursivePartial } from '../../types'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isDirective } from '../../utils/ast/typeGuards'
 import { mapAndFilter } from '../../utils/misc'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
-import type { FileGetter } from '../moduleTypes'
+import type { FileGetter, ModuleInfo } from '../moduleTypes'
 import { DirectedGraph } from './directedGraph'
 import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } from './resolver'
 
@@ -30,7 +29,7 @@ export type LinkerResult =
       ok: true
       programs: Record<string, es.Program>
       files: Record<string, string>
-      sourceModulesToImport: Set<string>
+      sourceModulesToImport: Record<string, ModuleInfo>
       topoOrder: string[]
       verboseErrors: boolean
     }
@@ -60,7 +59,7 @@ export default async function parseProgramsAndConstructImportGraph(
   const importGraph = new DirectedGraph()
   const programs: Record<string, es.Program> = {}
   const files: Record<string, string> = {}
-  const sourceModulesToImport = new Set<string>()
+  const sourceModulesToImport: Record<string, ModuleInfo> = {}
 
   // Wrapper around resolve file to make calling it more convenient
   async function resolveDependency(fromPath: string, node: ModuleDeclarationWithSource) {
@@ -77,7 +76,16 @@ export default async function parseProgramsAndConstructImportGraph(
       // 1. Source modules do not depend on one another
       // 2. They will always be loaded first before any local modules
       // Thus it is not necessary to track them in the import graph
-      sourceModulesToImport.add(toPath)
+
+      if (!(toPath in sourceModulesToImport)) {
+        // we save the first node that tried to load this particular module
+        // so we can use it for errors
+        sourceModulesToImport[toPath] = {
+          ...resolveResult,
+          node
+        }
+      }
+
       return
     }
 

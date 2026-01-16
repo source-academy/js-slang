@@ -1,5 +1,3 @@
-import * as _ from 'lodash'
-
 import * as jsslang from '../..'
 import * as interpreter from '../../cse-machine/interpreter'
 import * as parser from '../../parser/parser'
@@ -43,7 +41,6 @@ export const getRequireProvider = (context: Context) => (x: string) => {
       },
       context
     },
-    lodash: _
   }
 
   return recurser(exports, pathSegments)

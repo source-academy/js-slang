@@ -1,19 +1,21 @@
 import type { Context } from '../../types'
-import type { ModuleFunctions } from '../moduleTypes'
+import { WrongChapterError } from '../errors'
+import type { ModuleInfo, LoadedBundle } from '../moduleTypes'
 import { loadModuleBundleAsync, loadModuleTabsAsync } from './loaders'
 
 /**
- * Initialize module contexts and add UI tabs needed for modules to program context
+ * Initialize module contexts and add UI tabs needed for modules to program context. If the tabs
+ * array is not provided or left empty, no tabs are loaded.
  */
-async function initModuleContextAsync(moduleName: string, context: Context, loadTabs: boolean) {
+async function initModuleContextAsync(moduleName: string, context: Context, tabs?: string[]) {
   // Load the module's tabs
   if (!(moduleName in context.moduleContexts)) {
     context.moduleContexts[moduleName] = {
       state: null,
-      tabs: loadTabs ? await loadModuleTabsAsync(moduleName) : null
+      tabs: tabs ? await loadModuleTabsAsync(tabs) : null
     }
-  } else if (context.moduleContexts[moduleName].tabs === null && loadTabs) {
-    context.moduleContexts[moduleName].tabs = await loadModuleTabsAsync(moduleName)
+  } else if (context.moduleContexts[moduleName].tabs === null && tabs) {
+    context.moduleContexts[moduleName].tabs = await loadModuleTabsAsync(tabs)
   }
 }
 
@@ -23,15 +25,20 @@ async function initModuleContextAsync(moduleName: string, context: Context, load
  * property.
  */
 export default async function loadSourceModules(
-  sourceModulesToImport: Set<string>,
+  sourceModulesToImport: Record<string, ModuleInfo>,
   context: Context,
-  loadTabs: boolean
+  loadTabs: boolean,
+  sourceModuleLoader?: (name: string) => Promise<LoadedBundle>
 ) {
   const loadedModules = await Promise.all(
-    [...sourceModulesToImport].map(async moduleName => {
-      await initModuleContextAsync(moduleName, context, loadTabs)
-      const bundle = await loadModuleBundleAsync(moduleName, context)
-      return [moduleName, bundle] as [string, ModuleFunctions]
+    Object.values(sourceModulesToImport).map(async ({ name, tabs, requires, node }) => {
+      if (requires !== undefined && context.chapter < requires) {
+        throw new WrongChapterError(name, requires, context.chapter, node)
+      }
+
+      await initModuleContextAsync(name, context, loadTabs ? tabs : [])
+      const bundle = await loadModuleBundleAsync(name, context, node, sourceModuleLoader)
+      return [name, bundle] as [string, LoadedBundle]
     })
   )
   const loadedObj = Object.fromEntries(loadedModules)
@@ -42,9 +49,9 @@ export default async function loadSourceModules(
 export async function loadSourceModuleTypes(sourceModulesToImport: Set<string>, context: Context) {
   const loadedModules = await Promise.all(
     [...sourceModulesToImport].map(async moduleName => {
-      await initModuleContextAsync(moduleName, context, false)
+      await initModuleContextAsync(moduleName, context)
       const bundle = await loadModuleBundleAsync(moduleName, context)
-      return [moduleName, bundle] as [string, ModuleFunctions]
+      return [moduleName, bundle] as [string, LoadedBundle]
     })
   )
   const loadedObj = Object.fromEntries(loadedModules)
