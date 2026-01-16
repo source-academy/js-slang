@@ -429,12 +429,12 @@ export function valueToStringDag(value: Value): StringDag {
     } else if (typeof v === 'string') {
       const str = JSON.stringify(v)
       return [{ type: 'terminal', str, length: str.length }, false]
+    } else if (typeof v.toReplString === 'function') {
+      return convertRepr(v.toReplString())
     } else if (typeof v !== 'object') {
       return convertRepr(v.toString())
     } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
       return [{ type: 'terminal', str: '...<truncated>', length: 14 }, false]
-    } else if (typeof v.toReplString === 'function') {
-      return convertRepr(v.toReplString())
     } else if (Array.isArray(v)) {
       if (v.length === 2) {
         return convertPair(v)

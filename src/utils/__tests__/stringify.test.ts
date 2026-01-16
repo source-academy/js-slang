@@ -21,4 +21,18 @@ describe(stringify, () => {
       expect(stringify(a)).toMatchInlineSnapshot(`"[undefined, undefined, undefined, []]"`)
     }
   })
+
+  test('toReplString takes precedence over toString for objects', () => {
+    const obj = {
+      toReplString: () => 'str1'
+    }
+    expect(stringify(obj)).toEqual('str1')
+  })
+
+  test('toReplString takes precedence for arrays', () => {
+    const a = [1, 2, 3]
+    ;(a as any).toReplString = () => 'str1'
+
+    expect(stringify(a)).toEqual('str1')
+  })
 })
