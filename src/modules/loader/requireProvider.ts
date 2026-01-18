@@ -40,7 +40,7 @@ export const getRequireProvider = (context: Context) => (x: string) => {
         }
       },
       context
-    },
+    }
   }
 
   return recurser(exports, pathSegments)

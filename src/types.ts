@@ -400,11 +400,15 @@ export type TypeEnvironment = {
 export type RecursivePartial<T> =
   T extends Array<any>
     ? Array<RecursivePartial<T[number]>>
-    : T extends Record<any, any>
-      ? Partial<{
-          [K in keyof T]: RecursivePartial<T[K]>
-        }>
-      : T
+    : // Apparently typescript considers functions assignable
+      // to records?
+      T extends (...args: any[]) => any
+      ? T
+      : T extends Record<any, any>
+        ? Partial<{
+            [K in keyof T]: RecursivePartial<T[K]>
+          }>
+        : T
 
 /**
  * Utility type for selecting extracting the specific Node type when provided

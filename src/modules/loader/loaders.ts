@@ -1,10 +1,18 @@
 import type { Context, Node } from '../../types'
 import { ModuleConnectionError, ModuleInternalError } from '../errors'
-import type { ModuleDocumentation, LoadedBundle, ModulesManifest } from '../moduleTypes'
+import type {
+  ModuleDocumentation,
+  LoadedBundle,
+  ModulesManifest,
+  PartialSourceModule,
+  Importer
+} from '../moduleTypes'
 import {
   bundleAndTabImporter,
+  defaultSourceBundleImporter,
   docsImporter,
   setModulesStaticURL as internalUrlSetter,
+  manifestImporter,
   MODULES_STATIC_URL
 } from './importers'
 import { getRequireProvider } from './requireProvider'
@@ -14,13 +22,13 @@ export function setModulesStaticURL(value: string) {
 
   // Changing the backend url should clear the caches
   // TODO: Do we want to memoize based on backend url?
-  memoizedGetModuleDocsAsync.cache.clear()
-  memoizedGetModuleManifestAsync.reset()
+  memoizedLoadModuleDocsAsync.cache.clear()
+  memoizedLoadModuleManifestAsync.reset()
 }
 
 // lodash's memoize function memoizes on errors. This is undesirable,
 // so we have our own custom memoization that won't memoize on errors
-function getManifestImporter() {
+function getManifestLoader() {
   let manifest: ModulesManifest | null = null
 
   async function func() {
@@ -28,9 +36,9 @@ function getManifestImporter() {
       return manifest
     }
 
-    ;({ default: manifest } = await docsImporter(`${MODULES_STATIC_URL}/modules.json`))
+    ;({ default: manifest } = await manifestImporter(`${MODULES_STATIC_URL}/modules.json`))
 
-    return manifest!
+    return manifest
   }
 
   func.reset = () => {
@@ -40,7 +48,7 @@ function getManifestImporter() {
   return func
 }
 
-function getMemoizedDocsImporter() {
+function getMemoizedDocsLoader() {
   const docs = new Map<string, ModuleDocumentation>()
 
   async function func(moduleName: string, throwOnError: true): Promise<ModuleDocumentation>
@@ -67,8 +75,8 @@ function getMemoizedDocsImporter() {
   return func
 }
 
-export const memoizedGetModuleManifestAsync = getManifestImporter()
-export const memoizedGetModuleDocsAsync = getMemoizedDocsImporter()
+export const memoizedLoadModuleManifestAsync = getManifestLoader()
+export const memoizedLoadModuleDocsAsync = getMemoizedDocsLoader()
 
 /**
  * Load all the tabs of the given names
@@ -85,30 +93,22 @@ export async function loadModuleTabsAsync(tabs: string[]) {
 }
 
 /**
- * Load the bundle of the module of the given name. If the `sourceModuleLoader` is provided, use that function
- * to load the bundle instead of the default bundle loader.
+ * Load the bundle of the module of the given name using the provided bundle loading function
  *
- * @param node               Node that triggered the loading of the given bundle
- * @param sourceModuleLoader Alternate loading function that can be used in place of the default loader
+ * @param node         Node that triggered the loading of the given bundle
+ * @param bundleLoader Bundle loading function
  */
 export async function loadModuleBundleAsync(
   moduleName: string,
   context: Context,
-  node?: Node,
-  sourceModuleLoader?: (name: string, context: Context) => Promise<LoadedBundle>
+  importer: Importer<PartialSourceModule> = defaultSourceBundleImporter,
+  node?: Node
 ): Promise<LoadedBundle> {
-  const loader = sourceModuleLoader
-    ? () => sourceModuleLoader(moduleName, context)
-    : async () => {
-        const { default: result } = await bundleAndTabImporter(
-          `${MODULES_STATIC_URL}/bundles/${moduleName}.js`
-        )
-        return result(getRequireProvider(context))
-      }
-
   try {
-    const loadedModule = await loader()
-    return Object.entries(loadedModule).reduce((res, [name, value]) => {
+    const { default: partialBundle } = await importer(moduleName)
+    const loadedBundle = partialBundle(getRequireProvider(context))
+
+    return Object.entries(loadedBundle).reduce((res, [name, value]) => {
       if (typeof value === 'function') {
         const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`
         value.toReplString = () => repr

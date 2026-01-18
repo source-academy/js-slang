@@ -1,6 +1,13 @@
 import type { Context } from '../../types'
 import { WrongChapterError } from '../errors'
-import type { ModuleInfo, LoadedBundle } from '../moduleTypes'
+import type {
+  ModuleInfo,
+  LoadedBundle,
+  ImportLoadingOptions,
+  PartialSourceModule,
+  Importer
+} from '../moduleTypes'
+import { defaultSourceBundleImporter } from './importers'
 import { loadModuleBundleAsync, loadModuleTabsAsync } from './loaders'
 
 /**
@@ -27,8 +34,10 @@ async function initModuleContextAsync(moduleName: string, context: Context, tabs
 export default async function loadSourceModules(
   sourceModulesToImport: Record<string, ModuleInfo>,
   context: Context,
-  loadTabs: boolean,
-  sourceModuleLoader?: (name: string) => Promise<LoadedBundle>
+  {
+    loadTabs = true,
+    sourceBundleImporter = defaultSourceBundleImporter
+  }: Partial<ImportLoadingOptions> = {}
 ) {
   const loadedModules = await Promise.all(
     Object.values(sourceModulesToImport).map(async ({ name, tabs, requires, node }) => {
@@ -37,7 +46,7 @@ export default async function loadSourceModules(
       }
 
       await initModuleContextAsync(name, context, loadTabs ? tabs : [])
-      const bundle = await loadModuleBundleAsync(name, context, node, sourceModuleLoader)
+      const bundle = await loadModuleBundleAsync(name, context, sourceBundleImporter, node)
       return [name, bundle] as [string, LoadedBundle]
     })
   )
@@ -46,11 +55,15 @@ export default async function loadSourceModules(
   return loadedObj
 }
 
-export async function loadSourceModuleTypes(sourceModulesToImport: Set<string>, context: Context) {
+export async function loadSourceModuleTypes(
+  sourceModulesToImport: Set<string>,
+  context: Context,
+  sourceBundleLoader: Importer<PartialSourceModule> = defaultSourceBundleImporter
+) {
   const loadedModules = await Promise.all(
     [...sourceModulesToImport].map(async moduleName => {
       await initModuleContextAsync(moduleName, context)
-      const bundle = await loadModuleBundleAsync(moduleName, context)
+      const bundle = await loadModuleBundleAsync(moduleName, context, sourceBundleLoader)
       return [moduleName, bundle] as [string, LoadedBundle]
     })
   )
@@ -63,7 +76,7 @@ export async function loadSourceModuleTypes(sourceModulesToImport: Set<string>, 
 export { MODULES_STATIC_URL } from './importers'
 
 export {
-  memoizedGetModuleDocsAsync,
-  memoizedGetModuleManifestAsync,
+  memoizedLoadModuleDocsAsync as memoizedGetModuleDocsAsync,
+  memoizedLoadModuleManifestAsync as memoizedGetModuleManifestAsync,
   setModulesStaticURL
 } from './loaders'

@@ -23,7 +23,7 @@ export interface ModulesManifest {
   [module: string]: Omit<ModuleInfo, 'name'>
 }
 
-export type ModuleBundle = (require: RequireProvider) => LoadedBundle
+export type PartialSourceModule = (require: RequireProvider) => LoadedBundle
 
 export type LoadedBundle = {
   [name: string]: any
@@ -54,10 +54,18 @@ export type ModuleDocumentation = {
   [name: string]: ModuleDocsEntry
 }
 
-export type ImportOptions = {
+export type Importer<T = object> = (name: string) => Promise<{ default: T }>
+
+export interface ImportLoadingOptions {
+  /**
+   * Set to `true` to load tabs when loading a module
+   */
   loadTabs: boolean
-} & ImportAnalysisOptions &
-  LinkerOptions
+
+  sourceBundleImporter: Importer<PartialSourceModule>
+}
+
+export type ImportOptions = ImportLoadingOptions & ImportAnalysisOptions & LinkerOptions
 
 export type SourceFiles = Partial<Record<string, string>>
 export type FileGetter = (p: string) => Promise<string | undefined>

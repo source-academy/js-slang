@@ -5,7 +5,7 @@ import {
   type VariableDocumentation
 } from '../../moduleTypes'
 
-export const memoizedGetModuleDocsAsync = vi.fn((module: string) => {
+export const memoizedLoadModuleDocsAsync = vi.fn((module: string) => {
   const barDocs: FunctionDocumentation = {
     kind: 'function',
     retType: 'void',
@@ -33,7 +33,7 @@ export const memoizedGetModuleDocsAsync = vi.fn((module: string) => {
   )
 })
 
-export const memoizedGetModuleManifestAsync = vi.fn().mockResolvedValue({
+export const memoizedLoadModuleManifestAsync = vi.fn().mockResolvedValue({
   one_module: { tabs: [] },
   another_module: { tabs: [] },
   other_module: { tabs: [] }

@@ -1,5 +1,5 @@
 import { beforeEach, expect, it, test, vi } from 'vitest'
-import { memoizedGetModuleManifestAsync } from '../../loader/loaders'
+import { memoizedLoadModuleManifestAsync } from '../../loader/loaders'
 import resolveFile, { type ImportResolutionOptions, defaultResolutionOptions } from '../resolver'
 
 vi.mock(import('../../loader/loaders'))
@@ -18,7 +18,7 @@ const resolveModule = (
 test('If only local imports are used, the module manifest is not loaded', async () => {
   await resolveModule('/a.js', '/b.js', () => true, defaultResolutionOptions)
 
-  expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(0)
+  expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(0)
 })
 
 it('Returns false and resolved path of source file when resolution fails', () => {
@@ -57,7 +57,7 @@ it('Checks the module manifest when importing source modules', async () => {
     extensions: ['js']
   })
 
-  expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(1)
+  expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(1)
   expect(result).toMatchObject({ type: 'source' })
 })
 
@@ -66,7 +66,7 @@ it('Returns false on failing to resolve a source module', async () => {
     extensions: ['js']
   })
 
-  expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(1)
+  expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(1)
   expect(result).toBeUndefined()
 })
 

@@ -1,9 +1,9 @@
 import type es from 'estree'
 // import * as TypedES from '../../typeChecker/tsESTree'
 
-import type { Context, IOptions } from '../..'
+import type { IOptions } from '../..'
 import { Variant } from '../../langs'
-import { RecursivePartial } from '../../types'
+import type { Context, RecursivePartial } from '../../types'
 import loadSourceModules, { loadSourceModuleTypes } from '../loader'
 import type { FileGetter } from '../moduleTypes'
 import analyzeImportsAndExports from './analyzer'
@@ -76,7 +76,7 @@ export default async function preprocessFileImports(
   const { programs, topoOrder, sourceModulesToImport } = linkerResult
 
   try {
-    await loadSourceModules(sourceModulesToImport, context, options.importOptions?.loadTabs ?? true)
+    await loadSourceModules(sourceModulesToImport, context, options?.importOptions)
     // Run type checking on the programs after loading the source modules and their types.
     const linkerResult = await parseProgramsAndConstructImportGraph(
       files,

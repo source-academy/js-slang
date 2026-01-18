@@ -1,6 +1,11 @@
 import { timeoutPromise } from '../../utils/misc'
 import { ModuleConnectionError } from '../errors'
-import type { ModuleBundle } from '../moduleTypes'
+import type {
+  Importer,
+  ModuleDocumentation,
+  ModulesManifest,
+  PartialSourceModule
+} from '../moduleTypes'
 
 /** Default modules static url. Exported for testing. */
 export let MODULES_STATIC_URL = 'https://source-academy.github.io/modules'
@@ -10,8 +15,8 @@ export function setModulesStaticURL(url: string) {
   MODULES_STATIC_URL = url
 }
 
-function wrapImporter<T>(func: (p: string) => Promise<T>) {
-  return async (p: string): Promise<T> => {
+function wrapImporter<T>(func: Importer<T>): Importer<T> {
+  return async p => {
     try {
       const result = await timeoutPromise(func(p), 10000)
       return result
@@ -34,7 +39,7 @@ function wrapImporter<T>(func: (p: string) => Promise<T>) {
   }
 }
 
-function getDocsImporter(): (p: string) => Promise<{ default: object }> {
+function getDocsImporter(): Importer<object> {
   async function fallbackImporter(p: string) {
     const resp = await fetch(p)
     if (resp.status !== 200 && resp.status !== 304) {
@@ -68,9 +73,11 @@ function getDocsImporter(): (p: string) => Promise<{ default: object }> {
   return fallbackImporter
 }
 
-export const docsImporter = wrapImporter<{ default: any }>(getDocsImporter())
+export const docsImporter = wrapImporter(getDocsImporter()) as Importer<ModuleDocumentation>
 
-function getBundleAndTabImporter(): (p: string) => Promise<{ default: ModuleBundle }> {
+export const manifestImporter = wrapImporter(getDocsImporter()) as Importer<ModulesManifest>
+
+function getBundleAndTabImporter(): Importer<PartialSourceModule> {
   if (process.env.NODE_ENV === 'test') {
     return p => import(p)
   }
@@ -91,3 +98,6 @@ function getBundleAndTabImporter(): (p: string) => Promise<{ default: ModuleBund
   webpack so that webpack doesn't try to compile them away.
 */
 export const bundleAndTabImporter = wrapImporter(getBundleAndTabImporter())
+
+export const defaultSourceBundleImporter: Importer<PartialSourceModule> = moduleName =>
+  bundleAndTabImporter(`${MODULES_STATIC_URL}/bundles/${moduleName}.js`)
