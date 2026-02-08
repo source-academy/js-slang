@@ -946,7 +946,7 @@ test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnu
   ).toEqual('Line 1: Expected number on right hand side of operation, got string.')
 })
 
-test.skip('Cascading js errors work properly 1', () => {
+test.todo('Cascading js errors work properly 1', () => {
   return expectParsedError(
     stripIndent`
     function make_alternating_stream(stream) {
