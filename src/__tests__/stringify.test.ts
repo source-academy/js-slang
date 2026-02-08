@@ -393,7 +393,7 @@ test('String representation of non literal objects in nested object is nice', ()
     data: [1, [2, errorObj], 3]
   }
   return expect(stringify(nestedObj)).toMatchInlineSnapshot(
-    `"{\"data\": [1, [2, Error: This is an error], 3]}"`
+    `"{\\"data\\": [1, [2, Error: This is an error], 3]}"`
   )
 })
 
