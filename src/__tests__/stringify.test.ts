@@ -383,7 +383,7 @@ test('String representation of nested objects (circular) are nice', () => {
 test('String representation of non literal objects is nice', () => {
   const errorMsg: string = 'This is an error'
   const errorObj: Error = new Error(errorMsg)
-  return expect(stringify(errorObj)).toMatchInlineSnapshot(`"${errorObj.toString()}"`)
+  return expect(stringify(errorObj)).toMatchInlineSnapshot(`"Error: This is an error"`)
 })
 
 test('String representation of non literal objects in nested object is nice', () => {
@@ -393,7 +393,7 @@ test('String representation of non literal objects in nested object is nice', ()
     data: [1, [2, errorObj], 3]
   }
   return expect(stringify(nestedObj)).toMatchInlineSnapshot(
-    `"{\\"data\\": [1, [2, ${errorObj.toString()}], 3]}"`
+    `"{\"data\": [1, [2, Error: This is an error], 3]}"`
   )
 })
 
@@ -408,7 +408,7 @@ test('String representation of instances is nice', () => {
     }
   }
   const testClassInst = new TestClass('test1')
-  return expect(stringify(testClassInst)).toMatchInlineSnapshot(`"${testClassInst.toString()}"`)
+  return expect(stringify(testClassInst)).toMatchInlineSnapshot(`"testClass instance: test1"`)
 })
 
 test('Builtins hide their implementation when stringify', async () => {
