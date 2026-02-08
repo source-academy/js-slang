@@ -72,7 +72,7 @@ test('call/cc throws error given >1 argument', () => {
 for now, continuations have variable arity but are unable to check for the "correct"
 number of arguments. we will omit these tests for now
 */
-test.skip('cont throws error given no arguments', () => {
+test.todo('cont throws error given no arguments', () => {
   return expectParsedError(
     `
     (+ 1 2 (call/cc
@@ -83,7 +83,7 @@ test.skip('cont throws error given no arguments', () => {
   ).toEqual('Line 3: Expected 1 arguments, but got 0.')
 })
 
-test.skip('cont throws error given >1 argument', () => {
+test.todo('cont throws error given >1 argument', () => {
   return expectParsedError(
     `
     (+ 1 2 (call/cc
@@ -112,7 +112,7 @@ test('call/cc can be stored as a value', () => {
 
 // both of the following tests generate infinite loops so they are omitted
 
-test.skip('call/cc can be stored as a value and called', () => {
+test.todo('call/cc can be stored as a value and called', () => {
   return expectFinishedResult(
     `
     ;; storing a continuation and calling it
@@ -128,7 +128,7 @@ test.skip('call/cc can be stored as a value and called', () => {
   ).toEqual(21)
 })
 
-test.skip('when stored as a value, calling a continuation should alter the execution flow', () => {
+test.todo('when stored as a value, calling a continuation should alter the execution flow', () => {
   return expectFinishedResult(
     `
     ;; storing a continuation and calling it

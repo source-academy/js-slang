@@ -78,7 +78,7 @@ describe('--internals option', () => {
 })
 
 // TODO: The snapshots just never match for whatever reason
-describe.skip('Test output options', () => {
+describe.todo('Test output options', () => {
   test.each(compileToChoices)('%s', async choice => {
     await expectSuccess('1 + 1;', 'test.js', '-t', choice)
     const [[fileName, contents]] = mockedWriteFile.mock.calls
