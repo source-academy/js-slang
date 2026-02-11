@@ -65,6 +65,7 @@ export interface Context<T = any> {
     envStepsTotal: number
     breakpointSteps: number[]
     changepointSteps: number[]
+    streamBreakpoints: number[]
   }
 
   numberOfOuterEnvironments: number

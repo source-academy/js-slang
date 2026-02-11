@@ -368,6 +368,10 @@ function runCSEMachine(
   return stash.peek()
 }
 
+const generateStreamsBreakPoint = (control: Control): number[] => {
+  
+}
+
 export function* generateCSEMachineStateStream(
   context: Context,
   control: Control,
@@ -376,6 +380,7 @@ export function* generateCSEMachineStateStream(
   stepLimit: number,
   isPrelude: boolean = false
 ) {
+  context.runtime.streamBreakpoints = generateStreamsBreakPoint(control);
   context.runtime.break = false
   context.runtime.nodes = []
 
