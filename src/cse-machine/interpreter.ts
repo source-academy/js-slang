@@ -65,6 +65,7 @@ import {
   declareIdentifier,
   defineVariable,
   envChanging,
+  envChangingStreams,
   getVariable,
   handleArrayCreation,
   handleRuntimeError,
@@ -368,6 +369,12 @@ function runCSEMachine(
   return stash.peek()
 }
 
+// let returnArr = []; 
+// const generateStreamsBreakPoint = (control: Control): number[] => {
+//   let current = control.peek();
+//   return [1];
+// }
+
 export function* generateCSEMachineStateStream(
   context: Context,
   control: Control,
@@ -376,8 +383,10 @@ export function* generateCSEMachineStateStream(
   stepLimit: number,
   isPrelude: boolean = false
 ) {
+  // context.runtime.streamBreakpoints = generateStreamsBreakPoint(control);
   context.runtime.break = false
   context.runtime.nodes = []
+  console.log(control);
 
   // steps: number of steps completed
   let steps = 0
@@ -410,9 +419,11 @@ export function* generateCSEMachineStateStream(
       }
     }
 
-    if (!isPrelude && envChanging(command)) {
+    if (!isPrelude && envChanging(command) && envChangingStreams(command)) {
       // command is evaluated on the next step
       // Hence, next step will change the environment
+      // if(envChangingStreams(command)) console.log("yes");
+
       context.runtime.changepointSteps.push(steps + 1)
     }
 

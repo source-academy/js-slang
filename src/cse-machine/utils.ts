@@ -277,6 +277,19 @@ export const envChanging = (command: ControlItem): boolean => {
   }
 }
 
+export const envChangingStreams = (command: ControlItem): boolean => {
+   if (isInstr(command)) {
+    const type = command.instrType
+    if(type === InstrType.APPLICATION && (command as AppInstr).numOfArgs == 2){
+      const src = (command as AppInstr).srcNode
+      if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
+        if(src.callee.name == "pair") return true;
+      }
+    }
+  } 
+  return false; 
+}
+
 // TODO: This type guard does not seem to be doing what it thinks its doing
 /**
  * To determine if the function is simple.
