@@ -66,7 +66,7 @@ test('Adds CircularImportError and returns undefined when imports are circular',
   expect(error).toBeInstanceOf(CircularImportError)
 })
 
-test.skip('Longer cycle causes also causes CircularImportError', async () => {
+test.todo('Longer cycle causes also causes CircularImportError', async () => {
   const [error] = await expectError(
     {
       '/a.js': `

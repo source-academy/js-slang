@@ -1599,7 +1599,7 @@ describe('Error handling on calling functions', () => {
 })
 
 describe('Test runtime errors', () => {
-  test.skip('Variable used before assigning in program', () => {
+  test.todo('Variable used before assigning in program', () => {
     const code = `
     unassigned_variable;
     const unassigned_variable = "assigned";
@@ -1609,7 +1609,7 @@ describe('Test runtime errors', () => {
     expect(steps[steps.length - 1].includes('Evaluation stuck')).toBe(true)
   })
 
-  test.skip('Variable used before assigning in functions', () => {
+  test.todo('Variable used before assigning in functions', () => {
     const code = `
     function foo() {
       unassigned_variable;

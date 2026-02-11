@@ -30,7 +30,7 @@ const stringifyWithExplanation = (step: IStepperPropContents) => {
   }
 }
 
-test.skip('recursion', () => {
+test.todo('recursion', () => {
   const code = `
   const f = x => x <= 1 ? 1 : f(x - 1) + g(x - 1);
   const g = y => y <= 1 ? 1 : g(y - 1) + h(y - 1);
@@ -45,7 +45,7 @@ test.skip('recursion', () => {
   console.log(output.join('\n'))
 })
 
-test.skip('fact', () => {
+test.todo('fact', () => {
   const code = `
   const fact = n => n === 1 ? 1 : fact(n - 1) * n;
   fact(5); 
@@ -59,7 +59,7 @@ test.skip('fact', () => {
   console.log(output.join('\n'))
 })
 
-test.skip('substitution-block', () => {
+test.todo('substitution-block', () => {
   const code = `
   const x = 3;
   const y = 5;
@@ -78,7 +78,7 @@ test.skip('substitution-block', () => {
   console.log(output.join('\n'))
 })
 
-test.skip('function calling', () => {
+test.todo('function calling', () => {
   const code = `
     const getFirst = xs => head(xs);
     getFirst(list(1, 3, 5));

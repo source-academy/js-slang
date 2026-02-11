@@ -1,4 +1,4 @@
-The default template for JSDoc 3 uses: [the Taffy Database library](http://taffydb.com/) and the [Underscore Template library](http://underscorejs.org/).
+The default template for JSDoc 4 no longer uses [the Taffy Database library](http://taffydb.com/) (see also `@jsdoc/salty`'s [guide on migrating](https://github.com/jsdoc/jsdoc/tree/main/packages/jsdoc-salty#use-salty-in-a-jsdoc-template)).
 
 
 ## Generating Typeface Fonts
