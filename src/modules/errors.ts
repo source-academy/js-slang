@@ -76,7 +76,7 @@ export class ModuleNotFoundError extends ImportError {
  * Error thrown when the given module has a chapter restriction and the current
  * evaluation context is not of a high enough chapter
  */
-export class WrongChapterError extends ImportError {
+export class WrongChapterForModuleError extends ImportError {
   constructor(
     public readonly moduleName: string,
     public readonly required: Chapter,

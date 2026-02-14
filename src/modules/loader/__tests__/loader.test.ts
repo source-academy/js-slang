@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Chapter, Variant } from '../../../langs'
 import { mockContext } from '../../../utils/testing/mocks'
-import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
+import {
+  ModuleConnectionError,
+  ModuleNotFoundError,
+  WrongChapterForModuleError
+} from '../../errors'
 import type { ModuleDocumentation, ModulesManifest } from '../../moduleTypes'
 import * as importers from '../importers'
 import {
@@ -11,6 +15,7 @@ import {
   memoizedLoadModuleManifestAsync
 } from '../loaders'
 import { stringify } from '../../../utils/stringify'
+import loadSourceModules from '..'
 
 const moduleMocker = vi.fn()
 
@@ -54,6 +59,8 @@ describe('bundle loading', () => {
       	Implementation hidden]
       }"
     `)
+
+    expect(moduleMocker).toHaveBeenCalledOnce()
   })
 
   test('Should throw ModuleConnectionError when unable to reach modules server', () => {
@@ -80,6 +87,7 @@ describe('bundle loading', () => {
     const mod = await loadModuleBundleAsync('one_module', context)
     expect(mod.foo()).toEqual('foo')
     expect(mod.foo).toHaveProperty('someprop', true)
+    expect(moduleMocker).toHaveBeenCalledOnce()
   })
 })
 
@@ -195,5 +203,104 @@ describe('docs loading', () => {
 
       expect(importers.docsImporter).toHaveBeenCalledTimes(3)
     })
+  })
+})
+
+describe('module loading', () => {
+  test('throwing error when context chapter is not high enough', async () => {
+    const context = mockContext(Chapter.SOURCE_1)
+    await expect(
+      loadSourceModules(
+        {
+          one_module: {
+            name: 'one_module',
+            tabs: [],
+            requires: Chapter.SOURCE_3
+          }
+        },
+        context
+      )
+    ).rejects.toThrowError(WrongChapterForModuleError)
+    expect(moduleMocker).not.toHaveBeenCalledOnce()
+  })
+
+  test("not throwing error when module doesn't need a specific chapter", async () => {
+    const context = mockContext(Chapter.SOURCE_1)
+    moduleMocker.mockReturnValueOnce({
+      foo() {
+        return this.foo.name
+      },
+      bar: () => 'bar'
+    })
+    await expect(
+      loadSourceModules(
+        {
+          one_module: {
+            name: 'one_module',
+            tabs: []
+          }
+        },
+        context
+      )
+    ).resolves.toMatchObject({
+      one_module: expect.any(Object)
+    })
+
+    expect(moduleMocker).toHaveBeenCalledOnce()
+  })
+
+  test('not throwing error when context chapter is high enough', async () => {
+    const context = mockContext(Chapter.SOURCE_3)
+    moduleMocker.mockReturnValueOnce({
+      foo() {
+        return this.foo.name
+      },
+      bar: () => 'bar'
+    })
+    await expect(
+      loadSourceModules(
+        {
+          one_module: {
+            name: 'one_module',
+            tabs: [],
+            requires: Chapter.SOURCE_3
+          }
+        },
+        context
+      )
+    ).resolves.toMatchObject({
+      one_module: expect.any(Object)
+    })
+
+    expect(moduleMocker).toHaveBeenCalledOnce()
+  })
+
+  test('using a custom bundle importer', async () => {
+    const context = mockContext(Chapter.SOURCE_3)
+    const importer = vi.fn(() =>
+      Promise.resolve({
+        default: () => ({
+          foo: () => 'foo'
+        })
+      })
+    )
+
+    const loadedModules = await loadSourceModules(
+      {
+        one_module: {
+          name: 'one_module',
+          tabs: [],
+          requires: Chapter.SOURCE_3
+        }
+      },
+      context,
+      {
+        sourceBundleImporter: importer
+      }
+    )
+
+    expect(loadedModules).toHaveProperty('one_module')
+    expect(loadedModules.one_module.foo()).toEqual('foo')
+    expect(importer).toHaveBeenCalledOnce()
   })
 })

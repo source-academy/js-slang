@@ -1,5 +1,5 @@
 import type { Context } from '../../types'
-import { WrongChapterError } from '../errors'
+import { WrongChapterForModuleError } from '../errors'
 import type {
   ModuleInfo,
   LoadedBundle,
@@ -42,7 +42,7 @@ export default async function loadSourceModules(
   const loadedModules = await Promise.all(
     Object.values(sourceModulesToImport).map(async ({ name, tabs, requires, node }) => {
       if (requires !== undefined && context.chapter < requires) {
-        throw new WrongChapterError(name, requires, context.chapter, node)
+        throw new WrongChapterForModuleError(name, requires, context.chapter, node)
       }
 
       await initModuleContextAsync(name, context, loadTabs ? tabs : [])
@@ -73,7 +73,7 @@ export async function loadSourceModuleTypes(
   })
 }
 
-export { MODULES_STATIC_URL } from './importers'
+export { MODULES_STATIC_URL, defaultSourceBundleImporter } from './importers'
 
 export {
   memoizedLoadModuleDocsAsync as memoizedGetModuleDocsAsync,
