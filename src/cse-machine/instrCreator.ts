@@ -27,7 +27,7 @@ export const resetInstr = (srcNode: Node): Instr => ({
   srcNode
 })
 
-export const whileInstr = (test: es.Expression, body: es.Statement, srcNode: Node): WhileInstr => ({
+export const whileInstr = (test: es.Expression, body: es.Statement, srcNode: es.WhileStatement): WhileInstr => ({
   instrType: InstrType.WHILE,
   test,
   body,
@@ -79,7 +79,7 @@ export const unOpInstr = (symbol: es.UnaryOperator, srcNode: es.UnaryExpression)
   srcNode
 })
 
-export const binOpInstr = (symbol: es.BinaryOperator, srcNode: Node): BinOpInstr => ({
+export const binOpInstr = (symbol: es.BinaryOperator, srcNode: es.BinaryExpression): BinOpInstr => ({
   instrType: InstrType.BINARY_OP,
   symbol,
   srcNode
