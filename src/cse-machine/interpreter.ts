@@ -386,7 +386,7 @@ export function* generateCSEMachineStateStream(
   // context.runtime.streamBreakpoints = generateStreamsBreakPoint(control);
   context.runtime.break = false
   context.runtime.nodes = []
-  console.log(control);
+  //console.log(control);
 
   // steps: number of steps completed
   let steps = 0
@@ -423,7 +423,6 @@ export function* generateCSEMachineStateStream(
       // command is evaluated on the next step
       // Hence, next step will change the environment
       // if(envChangingStreams(command)) console.log("yes");
-
       context.runtime.changepointSteps.push(steps + 1)
     }
 
@@ -741,6 +740,7 @@ const cmdEvaluators: CommandEvaluators = {
       true,
       isPrelude
     )
+    context.pendingStreamFnId = parseInt(closure.id);
     stash.push(closure)
   },
 

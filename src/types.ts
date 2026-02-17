@@ -50,6 +50,13 @@ export interface Context<T = any> {
   /** All the errors gathered */
   errors: SourceError[]
 
+  /** Stream Visualisation */
+  pendingStreamParentId?: number
+
+  streamLineage: Map<number, number[]>
+
+  pendingStreamFnId?: number
+
   /** Runtime Specific state */
   runtime: {
     transformers?: Transformers

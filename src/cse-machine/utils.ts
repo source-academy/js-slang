@@ -175,6 +175,18 @@ export const handleArrayCreation = (
     // environments of objects need to be modified
     environment: { value: environment, writable: true }
   })
+  
+  // Checking if a streamfn was executed before this
+  if (context.pendingStreamFnId) {
+    if (!context.streamLineage.get(context.pendingStreamFnId)) {
+      context.streamLineage.set(context.pendingStreamFnId, [])
+    }
+    console.log(context.pendingStreamFnId + "just created" + (array as any).id)
+    context.streamLineage.get(context.pendingStreamFnId)?.push((array as any).id)
+    context.pendingStreamFnId = undefined;
+  }
+  console.log(context.streamLineage);
+
   environment.heap.add(array as EnvArray)
 }
 
@@ -280,10 +292,13 @@ export const envChanging = (command: ControlItem): boolean => {
 export const envChangingStreams = (command: ControlItem): boolean => {
    if (isInstr(command)) {
     const type = command.instrType
-    if(type === InstrType.APPLICATION && (command as AppInstr).numOfArgs == 2){
+    if (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs == 2){
       const src = (command as AppInstr).srcNode
       if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
-        if(src.callee.name == "pair") return true;
+        if(src.callee.name == "pair") {
+          console.log((command as AppInstr).srcNode.arguments[1]);
+          return true;
+        }
       }
     }
   } 

@@ -148,6 +148,7 @@ export const createEmptyContext = <T>(
     chapter,
     externalSymbols,
     errors: [],
+    streamLineage: new Map<number, number[]>(),
     externalContext,
     runtime: createEmptyRuntime(),
     numberOfOuterEnvironments: 1,
