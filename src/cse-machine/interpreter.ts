@@ -12,7 +12,7 @@ import type { IOptions } from '..'
 import { isSchemeLanguage } from '../alt-langs/mapper'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { RuntimeSourceError } from '../errors/base'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import type {
   Context,
@@ -287,7 +287,7 @@ function evaluateImports(program: es.Program, context: Context) {
       const functions = context.nativeStorage.loadedModules[moduleName]
       for (const node of nodes) {
         for (const spec of node.specifiers) {
-          declareIdentifier(context, spec.local.name, node, environment)
+          declareIdentifier(context, spec.local.name, spec, environment)
           let obj: any
 
           switch (spec.type) {
@@ -305,7 +305,7 @@ function evaluateImports(program: es.Program, context: Context) {
             }
           }
 
-          defineVariable(context, spec.local.name, obj, true, node)
+          defineVariable(context, spec.local.name, obj, true, spec)
         }
       }
     }
@@ -817,7 +817,7 @@ const cmdEvaluators: CommandEvaluators = {
     const func: Closure | Function = stash.pop()
 
     if (!(func instanceof Closure || func instanceof Function)) {
-      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
+      handleRuntimeError(context, new errors.CallingNonFunctionValueError(func, command.srcNode))
     }
 
     if (isApply(func)) {
