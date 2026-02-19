@@ -16,11 +16,11 @@ export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
     }))
   }
 
-  public explain() {
+  public override explain() {
     return 'Multiple declarations in a single statement.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     const fixs = this.fixs.map(n => '  ' + generate(n)).join('\n')
     return 'Split the variable declaration into multiple lines as follows\n\n' + fixs + '\n'
   }

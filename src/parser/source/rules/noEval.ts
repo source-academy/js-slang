@@ -3,11 +3,11 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class NoEval extends RuleError<Identifier> {
-  public explain() {
+  public override explain() {
     return `eval is not allowed.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     return this.explain()
   }
 }

@@ -4,11 +4,11 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class NoDotAbbreviationError extends RuleError<MemberExpression> {
-  public explain() {
+  public override explain() {
     return 'Dot abbreviations are not allowed.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     return `Source doesn't use object-oriented programming, so you don't need any dots in your code (except decimal \
         points in numbers).`
   }

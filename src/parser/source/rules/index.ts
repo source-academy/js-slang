@@ -1,5 +1,4 @@
-import { Node } from '../../../types'
-import { Rule } from '../../types'
+import type { Rule } from '../../types'
 import bracesAroundFor from './bracesAroundFor'
 import bracesAroundIfElse from './bracesAroundIfElse'
 import bracesAroundWhile from './bracesAroundWhile'
@@ -26,7 +25,7 @@ import noUpdateAssignment from './noUpdateAssignment'
 import noVar from './noVar'
 import singleVariableDeclaration from './singleVariableDeclaration'
 
-const rules: Rule<Node>[] = [
+const rules: Rule<any>[] = [
   bracesAroundFor,
   bracesAroundIfElse,
   bracesAroundWhile,
