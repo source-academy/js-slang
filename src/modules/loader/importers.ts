@@ -16,9 +16,9 @@ export function setModulesStaticURL(url: string) {
 }
 
 function wrapImporter<T>(func: Importer<T>): Importer<T> {
-  return async p => {
+  return async (p, node) => {
     try {
-      const result = await timeoutPromise(func(p), 10000)
+      const result = await timeoutPromise(func(p, node), 10000, node)
       return result
     } catch (error) {
       // Before calling this function, the import analyzer should've been used to make sure
@@ -32,7 +32,7 @@ function wrapImporter<T>(func: Importer<T>): Importer<T> {
         // Thrown specifically by Vitest
         (process.env.NODE_ENV === 'test' && error.code === 'ERR_UNSUPPORTED_ESM_URL_SCHEME')
       ) {
-        throw new ModuleConnectionError()
+        throw new ModuleConnectionError(node)
       }
       throw error
     }
@@ -40,16 +40,6 @@ function wrapImporter<T>(func: Importer<T>): Importer<T> {
 }
 
 function getDocsImporter(): Importer<object> {
-  async function fallbackImporter(p: string) {
-    const resp = await fetch(p)
-    if (resp.status !== 200 && resp.status !== 304) {
-      throw new ModuleConnectionError()
-    }
-
-    const result = await resp.json()
-    return { default: result }
-  }
-
   if (process.env.NODE_ENV === 'test') {
     return async p => {
       // @ts-expect-error This directive is here until js-slang moves to ESM
@@ -70,7 +60,15 @@ function getDocsImporter(): Importer<object> {
     }
   }
 
-  return fallbackImporter
+  return async (p, node) => {
+    const resp = await fetch(p)
+    if (resp.status !== 200 && resp.status !== 304) {
+      throw new ModuleConnectionError(node)
+    }
+
+    const result = await resp.json()
+    return { default: result }
+  }
 }
 
 export const docsImporter = wrapImporter(getDocsImporter()) as Importer<ModuleDocumentation>
@@ -99,5 +97,5 @@ function getBundleAndTabImporter(): Importer<PartialSourceModule> {
 */
 export const bundleAndTabImporter = wrapImporter(getBundleAndTabImporter())
 
-export const defaultSourceBundleImporter: Importer<PartialSourceModule> = moduleName =>
-  bundleAndTabImporter(`${MODULES_STATIC_URL}/bundles/${moduleName}.js`)
+export const defaultSourceBundleImporter: Importer<PartialSourceModule> = (moduleName, node) =>
+  bundleAndTabImporter(`${MODULES_STATIC_URL}/bundles/${moduleName}.js`, node)

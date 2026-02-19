@@ -7,11 +7,9 @@ import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isDirective } from '../../utils/ast/typeGuards'
 import { mapAndFilter } from '../../utils/misc'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
-import type { FileGetter, ModuleInfo } from '../moduleTypes'
+import type { FileGetter, ModuleDeclarationWithSource, ModuleInfo } from '../moduleTypes'
 import { DirectedGraph } from './directedGraph'
 import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } from './resolver'
-
-type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
 
 /**
  * Helper error type. Thrown to cause any Promise.all calls

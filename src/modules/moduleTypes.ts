@@ -1,8 +1,13 @@
-import type { Node } from '../types'
+import type es from 'estree'
 import type { Chapter } from '../langs'
 import type { RequireProvider } from './loader/requireProvider'
 import type { ImportAnalysisOptions } from './preprocessor/analyzer'
 import type { LinkerOptions } from './preprocessor/linker'
+
+export type ModuleDeclarationWithSource =
+  | es.ImportDeclaration
+  | es.ExportNamedDeclaration
+  | es.ExportAllDeclaration
 
 /**
  * Represents the meta information for a Source module
@@ -12,7 +17,7 @@ export interface ModuleInfo {
   tabs: string[]
   version?: string
   requires?: Chapter
-  node?: Node
+  node?: ModuleDeclarationWithSource
 }
 
 /**
@@ -54,7 +59,10 @@ export type ModuleDocumentation = {
   [name: string]: ModuleDocsEntry
 }
 
-export type Importer<T = object> = (name: string) => Promise<{ default: T }>
+export type Importer<T = object> = (
+  name: string,
+  node?: ModuleDeclarationWithSource
+) => Promise<{ default: T }>
 
 export interface ImportLoadingOptions {
   /**

@@ -1,11 +1,12 @@
-import type { Context, Node } from '../../types'
+import type { Context } from '../../types'
 import { ModuleConnectionError, ModuleInternalError } from '../errors'
 import type {
   ModuleDocumentation,
   LoadedBundle,
   ModulesManifest,
   PartialSourceModule,
-  Importer
+  Importer,
+  ModuleDeclarationWithSource
 } from '../moduleTypes'
 import {
   bundleAndTabImporter,
@@ -102,10 +103,10 @@ export async function loadModuleBundleAsync(
   moduleName: string,
   context: Context,
   importer: Importer<PartialSourceModule> = defaultSourceBundleImporter,
-  node?: Node
+  node?: ModuleDeclarationWithSource
 ): Promise<LoadedBundle> {
   try {
-    const { default: partialBundle } = await importer(moduleName)
+    const { default: partialBundle } = await importer(moduleName, node)
     const loadedBundle = partialBundle(getRequireProvider(context))
 
     return Object.entries(loadedBundle).reduce((res, [name, value]) => {
