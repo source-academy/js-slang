@@ -419,11 +419,18 @@ export function* generateCSEMachineStateStream(
       }
     }
 
-    if (!isPrelude && envChanging(command) && envChangingStreams(command)) {
+    if (!isPrelude && envChanging(command)) {
       // command is evaluated on the next step
       // Hence, next step will change the environment
       // if(envChangingStreams(command)) console.log("yes");
       context.runtime.changepointSteps.push(steps + 1)
+    }
+
+    if (!isPrelude && envChangingStreams(command)) {
+      // same as !isPrelude && envChanging(command) check above
+      // but this checks if next instruction on control is a pair() function
+      // Usage: streams visualiser
+      context.runtime.streamsPointSteps.push(steps + 1)
     }
 
     control.pop()
