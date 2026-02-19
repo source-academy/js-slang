@@ -4,61 +4,60 @@ import type es from 'estree'
 import { UNKNOWN_LOCATION } from '../constants'
 import type { Node, Value } from '../types'
 import { stringify } from '../utils/stringify'
-import { ErrorSeverity, ErrorType, type SourceError } from './base'
-import { RuntimeSourceError } from './runtimeSourceError'
+import { getSourceVariableDeclaration } from '../utils/ast/helpers'
+import { RuntimeSourceError } from './base'
 
 //Wrap build-in function error in SourceError
-export class BuiltInFunctionError extends RuntimeSourceError {
-  constructor(private explanation: string) {
+export class BuiltInFunctionError extends RuntimeSourceError<undefined> {
+  constructor(private readonly explanation: string) {
     super(undefined)
     this.explanation = explanation
   }
 
-  public explain() {
+  public override explain() {
     return `${this.explanation}`
   }
 
-  public elaborate() {
+  public override elaborate() {
     return this.explain()
   }
 }
 
-export class InterruptedError extends RuntimeSourceError {
-  constructor(node: Node) {
-    super(node)
-  }
-
-  public explain() {
+export class InterruptedError extends RuntimeSourceError<Node> {
+  public override explain() {
     return 'Execution aborted by user.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     return 'TODO'
   }
 }
 
-export class ExceptionError implements SourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
+export class ExceptionError extends RuntimeSourceError<undefined> {
+  private readonly _location: es.SourceLocation
 
   constructor(
-    public error: Error,
+    public readonly error: Error,
     location?: es.SourceLocation | null
   ) {
-    this.location = location ?? UNKNOWN_LOCATION
+    super(undefined)
+    this._location = location ?? UNKNOWN_LOCATION
   }
 
-  public explain() {
+  public override get location() {
+    return this._location
+  }
+
+  public override explain() {
     return this.error.toString()
   }
 
-  public elaborate() {
+  public override elaborate() {
     return 'TODO'
   }
 }
 
-export class MaximumStackLimitExceeded extends RuntimeSourceError {
+export class MaximumStackLimitExceededError extends RuntimeSourceError<Node> {
   public static MAX_CALLS_TO_SHOW = 3
 
   private customGenerator = {
@@ -74,41 +73,41 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
 
   constructor(
     node: Node,
-    private calls: es.CallExpression[]
+    private readonly calls: es.CallExpression[]
   ) {
     super(node)
   }
 
-  public explain() {
+  public override explain() {
     const repr = (call: es.CallExpression) => generate(call, { generator: this.customGenerator })
     return (
       'Maximum call stack size exceeded\n  ' + this.calls.map(call => repr(call) + '..').join('  ')
     )
   }
 
-  public elaborate() {
+  public override elaborate() {
     return 'TODO'
   }
 }
 
-export class CallingNonFunctionValue extends RuntimeSourceError {
+export class CallingNonFunctionValueError extends RuntimeSourceError<es.CallExpression> {
   constructor(
-    private callee: Value,
-    private node: Node
+    private readonly callee: Value,
+    node: es.CallExpression
   ) {
     super(node)
   }
 
-  public explain() {
+  public override explain() {
     return `Calling non-function value ${stringify(this.callee)}.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     const calleeVal = this.callee
     const calleeStr = stringify(calleeVal)
     let argStr = ''
 
-    const callArgs = (this.node as es.CallExpression).arguments
+    const callArgs = this.node.arguments
 
     argStr = callArgs.map(generate).join(', ')
 
@@ -123,60 +122,60 @@ export class CallingNonFunctionValue extends RuntimeSourceError {
   }
 }
 
-export class UndefinedVariable extends RuntimeSourceError {
+export class UndefinedVariableError extends RuntimeSourceError<Node> {
   constructor(
-    public name: string,
+    public readonly varname: string,
     node: Node
   ) {
     super(node)
   }
 
-  public explain() {
-    return `Name ${this.name} not declared.`
+  public override explain() {
+    return `Name ${this.varname} not declared.`
   }
 
-  public elaborate() {
-    return `Before you can read the value of ${this.name}, you need to declare it as a variable or a constant. You can do this using the let or const keywords.`
+  public override elaborate() {
+    return `Before you can read the value of ${this.varname}, you need to declare it as a variable or a constant. You can do this using the let or const keywords.`
   }
 }
 
-export class UnassignedVariable extends RuntimeSourceError {
+export class UnassignedVariableError extends RuntimeSourceError<Node> {
   constructor(
-    public name: string,
+    public readonly varname: string,
     node: Node
   ) {
     super(node)
   }
 
-  public explain() {
-    return `Name ${this.name} declared later in current scope but not yet assigned`
+  public override explain() {
+    return `Name ${this.varname} declared later in current scope but not yet assigned`
   }
 
-  public elaborate() {
-    return `If you're trying to access the value of ${this.name} from an outer scope, please rename the inner ${this.name}. An easy way to avoid this issue in future would be to avoid declaring any variables or constants with the name ${this.name} in the same scope.`
+  public override elaborate() {
+    return `If you're trying to access the value of ${this.varname} from an outer scope, please rename the inner ${this.varname}. An easy way to avoid this issue in future would be to avoid declaring any variables or constants with the name ${this.name} in the same scope.`
   }
 }
 
-export class InvalidNumberOfArguments extends RuntimeSourceError {
-  private calleeStr: string
+export class InvalidNumberOfArgumentsError extends RuntimeSourceError<es.CallExpression> {
+  private readonly calleeStr: string
 
   constructor(
-    node: Node,
-    private expected: number,
-    private got: number,
-    private hasVarArgs = false
+    node: es.CallExpression,
+    private readonly expected: number,
+    private readonly got: number,
+    private readonly hasVarArgs = false
   ) {
     super(node)
-    this.calleeStr = generate((node as es.CallExpression).callee)
+    this.calleeStr = generate(node.callee)
   }
 
-  public explain() {
+  public override explain() {
     return `Expected ${this.expected} ${this.hasVarArgs ? 'or more ' : ''}arguments, but got ${
       this.got
     }.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     const calleeStr = this.calleeStr
     const pluralS = this.expected === 1 ? '' : 's'
 
@@ -184,113 +183,126 @@ export class InvalidNumberOfArguments extends RuntimeSourceError {
   }
 }
 
-export class VariableRedeclaration extends RuntimeSourceError {
+export class VariableRedeclarationError extends RuntimeSourceError<
+  es.Declaration | es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
+> {
   constructor(
-    private node: Node,
-    private name: string,
-    private writable?: boolean
+    node:
+      | es.Declaration
+      | es.ImportSpecifier
+      | es.ImportDefaultSpecifier
+      | es.ImportNamespaceSpecifier,
+    varname: string,
+    writable: false
+  )
+  constructor(node: es.VariableDeclaration, varname: string, writable: boolean)
+  constructor(
+    node:
+      | es.Declaration
+      | es.ImportSpecifier
+      | es.ImportDefaultSpecifier
+      | es.ImportNamespaceSpecifier,
+    private readonly varname: string,
+    private readonly writable: boolean
   ) {
     super(node)
   }
 
-  public explain() {
-    return `Redeclaring name ${this.name}.`
+  public override explain() {
+    return `Redeclaring name ${this.varname}.`
   }
 
-  public elaborate() {
-    if (this.writable === true) {
-      const elabStr = `Since ${this.name} has already been declared, you can assign a value to it without re-declaring.`
+  public override elaborate() {
+    if (this.writable) {
+      const elabStr = `Since ${this.varname} has already been declared, you can assign a value to it without re-declaring.`
 
       let initStr = ''
-
-      if (this.node.type === 'FunctionDeclaration') {
-        initStr =
-          '(' + (this.node as es.FunctionDeclaration).params.map(generate).join(',') + ') => {...'
-      } else if (this.node.type === 'VariableDeclaration') {
-        initStr = generate((this.node as es.VariableDeclaration).declarations[0].init)
+      switch (this.node.type) {
+        case 'FunctionDeclaration': {
+          initStr = '(' + this.node.params.map(generate).join(',') + ') => {...'
+          break
+        }
+        case 'VariableDeclaration': {
+          const { init } = getSourceVariableDeclaration(this.node)
+          initStr = generate(init)
+          break
+        }
       }
 
-      return `${elabStr} As such, you can just do\n\n\t${this.name} = ${initStr};\n`
-    } else if (this.writable === false) {
-      return `You will need to declare another variable, as ${this.name} is read-only.`
+      return `${elabStr} As such, you can just do\n\n\t${this.varname} = ${initStr};\n`
     } else {
-      return ''
+      return `You will need to declare another variable, as ${this.varname} is read-only.`
     }
   }
 }
 
-export class ConstAssignment extends RuntimeSourceError {
+export class ConstAssignmentError extends RuntimeSourceError<Node> {
   constructor(
     node: Node,
-    private name: string
+    private readonly varname: string
   ) {
     super(node)
   }
 
-  public explain() {
-    return `Cannot assign new value to constant ${this.name}.`
+  public override explain() {
+    return `Cannot assign new value to constant ${this.varname}.`
   }
 
-  public elaborate() {
-    return `As ${this.name} was declared as a constant, its value cannot be changed. You will have to declare a new variable.`
+  public override elaborate() {
+    return `As ${this.varname} was declared as a constant, its value cannot be changed. You will have to declare a new variable.`
   }
 }
 
-export class GetPropertyError extends RuntimeSourceError {
+export class GetPropertyError extends RuntimeSourceError<Node> {
   constructor(
     node: Node,
-    private obj: Value,
-    private prop: string
+    private readonly obj: Value,
+    private readonly prop: string
   ) {
     super(node)
   }
 
-  public explain() {
+  public override explain() {
     return `Cannot read property ${this.prop} of ${stringify(this.obj)}.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     return 'TODO'
   }
 }
 
-export class GetInheritedPropertyError extends RuntimeSourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
-
+export class GetInheritedPropertyError extends RuntimeSourceError<Node> {
   constructor(
     node: Node,
-    private obj: Value,
-    private prop: string
+    private readonly obj: Value,
+    private readonly prop: string
   ) {
     super(node)
-    this.location = node.loc ?? UNKNOWN_LOCATION
   }
 
-  public explain() {
+  public override explain() {
     return `Cannot read inherited property ${this.prop} of ${stringify(this.obj)}.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     return 'TODO'
   }
 }
 
-export class SetPropertyError extends RuntimeSourceError {
+export class SetPropertyError extends RuntimeSourceError<Node> {
   constructor(
     node: Node,
-    private obj: Value,
-    private prop: string
+    private readonly obj: Value,
+    private readonly prop: string
   ) {
     super(node)
   }
 
-  public explain() {
+  public override explain() {
     return `Cannot assign property ${this.prop} of ${stringify(this.obj)}.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     return 'TODO'
   }
 }

@@ -1,23 +1,16 @@
 import type es from 'estree'
 
-import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, type SourceError } from './base'
+import { ErrorSeverity, ErrorType, SourceErrorWithNode } from './base'
 
-export class NoAssignmentToForVariable implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
+export class NoAssignmentToForVariableError extends SourceErrorWithNode<es.AssignmentExpression> {
+  type = ErrorType.SYNTAX
+  severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.AssignmentExpression) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
-  public explain() {
+  public override explain() {
     return 'Assignment to a for loop variable in the for loop is not allowed.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     return this.explain()
   }
 }
