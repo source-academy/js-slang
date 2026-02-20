@@ -61,13 +61,6 @@ const runners = {
         value
       }
     } catch (error) {
-      if (error instanceof RuntimeSourceError) {
-        context.errors.push(error)
-        if (error instanceof TimeoutError) {
-          isPreviousCodeTimeoutError = true
-        }
-        return { status: 'error', context }
-      }
       if (error instanceof ExceptionError) {
         // if we know the location of the error, just throw it
         if (error.location.start.line !== -1) {
@@ -76,6 +69,14 @@ const runners = {
         } else {
           error = error.error // else we try to get the location from source map
         }
+      }
+      
+      if (error instanceof RuntimeSourceError) {
+        context.errors.push(error)
+        if (error instanceof TimeoutError) {
+          isPreviousCodeTimeoutError = true
+        }
+        return { status: 'error', context }
       }
 
       const sourceError = await toSourceError(error, sourceMapJson)
