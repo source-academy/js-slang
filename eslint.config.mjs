@@ -100,6 +100,7 @@ export default tseslint.config(
     rules: {
       'no-empty-pattern': 'off',
       'vitest/expect-expect': 'off', // TODO turn this back on
+      'vitest/no-conditional-expect': 'off',
       'vitest/no-focused-tests': ['warn', { fixable: false }],
       'vitest/prefer-describe-function-title': 'warn',
       'vitest/valid-describe-callback': 'off',

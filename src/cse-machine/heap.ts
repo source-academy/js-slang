@@ -6,8 +6,6 @@ import type { HeapObject } from './types'
 export default class Heap {
   private storage: Set<HeapObject> | null = null
 
-  public constructor() {}
-
   add(...items: HeapObject[]): void {
     this.storage ??= new Set<HeapObject>()
     for (const item of items) {
