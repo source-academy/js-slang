@@ -176,18 +176,20 @@ export const handleArrayCreation = (
     environment: { value: environment, writable: true }
   })
   
-  // Checking if a streamfn was executed before this
-  if (context.pendingStreamFnId) {
-    if (!context.streamLineage.get(context.pendingStreamFnId)) {
-      context.streamLineage.set(context.pendingStreamFnId, [])
+  environment.heap.add(array as EnvArray)
+    // Checking if a nullary function was executed before this (TODO: should somehow check if it creates a pair)
+  if (context.firstStreamPairCreated) {
+    if (!context.streamLineage.get(context.streamFnArr[0])) {
+      context.streamLineage.set(context.streamFnArr[0], [])
     }
-    console.log(context.pendingStreamFnId + "just created" + (array as any).id)
-    context.streamLineage.get(context.pendingStreamFnId)?.push((array as any).id)
-    context.pendingStreamFnId = undefined;
+    console.log(context.streamFnArr[0] + " just created " + (array as any).id)
+    context.streamLineage.get(context.streamFnArr[0])?.push((array as any).id)
+    if (context.streamFnArr[1]) {
+      context.streamFnArr[0] = context.streamFnArr[1]
+    }
   }
   console.log(context.streamLineage);
-
-  environment.heap.add(array as EnvArray)
+  context.firstStreamPairCreated = true;
 }
 
 /**

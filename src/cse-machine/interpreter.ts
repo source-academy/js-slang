@@ -740,7 +740,15 @@ const cmdEvaluators: CommandEvaluators = {
       true,
       isPrelude
     )
-    context.pendingStreamFnId = parseInt(closure.id);
+      
+    if (command.params.length == 0) {
+      if (context.streamFnArr.length == 0) {
+        context.streamFnArr[0] = closure.id
+      } else {
+        context.streamFnArr[1] = closure.id
+      }
+    }
+    
     stash.push(closure)
   },
 
@@ -769,6 +777,13 @@ const cmdEvaluators: CommandEvaluators = {
     for (let index = command.arguments.length - 1; index >= 0; index--) {
       control.push(command.arguments[index])
     }
+    
+    // non nullary function is called, set pendingStreamFnId to undefined so new pairs created wont be associated with it
+    // TODO: Somehow make it change the pendingstreamfnid in the context
+    if (command.arguments.length != 0) {
+      
+    }
+
     control.push(command.callee)
   },
 

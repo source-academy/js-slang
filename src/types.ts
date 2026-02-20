@@ -51,11 +51,13 @@ export interface Context<T = any> {
   errors: SourceError[]
 
   /** Stream Visualisation */
-  pendingStreamParentId?: number
+  firstStreamPairCreated: Boolean
 
-  streamLineage: Map<number, number[]>
+  streamFnArr: string[]
 
-  pendingStreamFnId?: number
+  streamLineage: Map<string, string[]>
+
+  pendingStreamFnId?: string
 
   /** Runtime Specific state */
   runtime: {
