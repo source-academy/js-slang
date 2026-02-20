@@ -12,11 +12,11 @@ export class NoUnspecifiedOperatorError<T extends ExpressionNodeType> extends Ru
     this.unspecifiedOperator = node.operator
   }
 
-  public explain() {
+  public override explain() {
     return `Operator '${this.unspecifiedOperator}' is not allowed.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     return ''
   }
 }
@@ -40,7 +40,7 @@ const noUnspecifiedOperator: Rule<BinaryExpression | UnaryExpression> = {
 
   checkers: {
     BinaryExpression(node) {
-      const permittedOperators = [
+      const permittedOperators: BinaryExpression['operator'][] = [
         '+',
         '-',
         '*',
@@ -51,9 +51,9 @@ const noUnspecifiedOperator: Rule<BinaryExpression | UnaryExpression> = {
         '<',
         '>',
         '<=',
-        '>=',
-        '&&',
-        '||'
+        '>='
+        // '&&',
+        // '||'
       ]
 
       if (node.operator === '!=' || node.operator === '==') {

@@ -4,10 +4,10 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class NoConstDeclarationInForLoopInit extends RuleError<ForStatement> {
-  public explain(): string {
+  public override explain(): string {
     return 'Const declaration in init part of for statement is not allowed.'
   }
-  public elaborate(): string {
+  public override elaborate(): string {
     return stripIndent`
       The init part of this statement cannot contain a const declaration, use a let declaration instead.
     `

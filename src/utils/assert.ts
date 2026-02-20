@@ -4,11 +4,11 @@
  * Plus, we can customize our own assert messages and handling
  */
 
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { RuntimeSourceError } from '../errors/base'
 
-export class AssertionError extends RuntimeSourceError {
+export class AssertionError extends RuntimeSourceError<undefined> {
   constructor(public readonly message: string) {
-    super()
+    super(undefined)
   }
 
   public explain(): string {

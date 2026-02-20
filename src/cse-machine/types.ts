@@ -34,12 +34,12 @@ interface BaseInstr<T extends InstrType = InstrType, U extends Node = Node> {
   isEnvDependent?: boolean
 }
 
-export interface WhileInstr extends BaseInstr<InstrType.WHILE> {
+export interface WhileInstr extends BaseInstr<InstrType.WHILE, es.WhileStatement> {
   test: es.Expression
   body: es.Statement
 }
 
-export interface ForInstr extends BaseInstr<InstrType.FOR> {
+export interface ForInstr extends BaseInstr<InstrType.FOR, es.ForStatement> {
   init: es.VariableDeclaration | es.Expression
   test: es.Expression
   update: es.Expression
@@ -66,7 +66,7 @@ export interface UnOpInstr extends BaseInstr<InstrType.UNARY_OP, es.UnaryExpress
   symbol: es.UnaryOperator
 }
 
-export interface BinOpInstr extends BaseInstr<InstrType.BINARY_OP> {
+export interface BinOpInstr extends BaseInstr<InstrType.BINARY_OP, es.BinaryExpression> {
   symbol: es.BinaryOperator
 }
 

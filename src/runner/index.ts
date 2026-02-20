@@ -1,6 +1,6 @@
 import type { Program } from 'estree'
 import * as _ from 'lodash'
-import type { Context, IOptions, Result } from '..'
+import type { IOptions } from '..'
 import { mapResult } from '../alt-langs/mapper'
 import { Chapter, Variant } from '../langs'
 import type { FileGetter } from '../modules/moduleTypes'
@@ -8,9 +8,10 @@ import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
-import type { RecursivePartial } from '../types'
+import type { Context, Result, RecursivePartial } from '../types'
 import assert from '../utils/assert'
 import { validateAndAnnotate } from '../validator/validator'
+import { defaultSourceBundleImporter } from '../modules/loader/importers'
 import runners from './sourceRunner'
 import { determineExecutionMethod, determineVariant } from './utils'
 
@@ -32,7 +33,8 @@ export const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   importOptions: {
     ...defaultAnalysisOptions,
     ...defaultLinkerOptions,
-    loadTabs: true
+    loadTabs: true,
+    sourceBundleImporter: defaultSourceBundleImporter
   },
   shouldAddFileName: null
 }

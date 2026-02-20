@@ -37,8 +37,7 @@ describe('Unary type combinations:', () => {
     valid.forEach(([operator, value]: [UnaryOperator, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkUnaryExpression(node, operator, value)
-      expect(error).toBeUndefined()
+      expect(() => rttc.checkUnaryExpression(node, operator, value)).not.toThrow()
     })
   })
 
@@ -46,14 +45,19 @@ describe('Unary type combinations:', () => {
     invalid.forEach(([operator, value]: [UnaryOperator, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkUnaryExpression(node, operator, value)
-      expect(error).toBeInstanceOf(rttc.TypeError)
-      expect({
-        operator,
-        value,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
-      }).toMatchSnapshot()
+      try {
+        rttc.checkUnaryExpression(node, operator, value)
+      } catch (error) {
+        expect(error).toBeInstanceOf(rttc.RuntimeTypeError)
+        expect({
+          operator,
+          value,
+          explain: error!.explain(),
+          elaborate: error!.elaborate()
+        }).toMatchSnapshot()
+        return
+      }
+      throw new Error('Expected checkUnaryExpression to throw, did not throw')
     })
   })
 })
@@ -85,8 +89,9 @@ describe('Binary + type combinations:', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
-      expect(error).toBeUndefined()
+      expect(() =>
+        rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right])
+      ).not.toThrow()
     })
   })
 
@@ -94,15 +99,20 @@ describe('Binary + type combinations:', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
-      expect(error).toBeInstanceOf(rttc.TypeError)
-      expect({
-        operator,
-        left,
-        right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
-      }).toMatchSnapshot()
+      try {
+        rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right])
+      } catch (error) {
+        expect(error).toBeInstanceOf(rttc.RuntimeTypeError)
+        expect({
+          operator,
+          left,
+          right,
+          explain: error!.explain(),
+          elaborate: error!.elaborate()
+        }).toMatchSnapshot()
+        return
+      }
+      throw new Error('Expected checkBinaryExpression to throw, did not throw')
     })
   })
 })
@@ -136,8 +146,9 @@ describe('Binary (-|*|/|%) type combinations:', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
-      expect(error).toBeUndefined()
+      expect(() =>
+        rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right])
+      ).not.toThrow()
     })
   })
 
@@ -145,15 +156,20 @@ describe('Binary (-|*|/|%) type combinations:', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
-      expect(error).toBeInstanceOf(rttc.TypeError)
-      expect({
-        operator,
-        left,
-        right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
-      }).toMatchSnapshot()
+      try {
+        rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right])
+      } catch (error) {
+        expect(error).toBeInstanceOf(rttc.RuntimeTypeError)
+        expect({
+          operator,
+          left,
+          right,
+          explain: error!.explain(),
+          elaborate: error!.elaborate()
+        }).toMatchSnapshot()
+        return
+      }
+      throw new Error('Expected checkBinaryExpression to throw, did not throw')
     })
   })
 })
@@ -176,8 +192,9 @@ describe('Binary (===|!==) type combinations:', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
-      expect(error).toBeUndefined()
+      expect(() =>
+        rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right])
+      ).not.toThrow()
     })
   })
 
@@ -185,15 +202,20 @@ describe('Binary (===|!==) type combinations:', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
-      expect(error).toBeInstanceOf(rttc.TypeError)
-      expect({
-        operator,
-        left,
-        right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
-      }).toMatchSnapshot()
+      try {
+        rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right])
+      } catch (error) {
+        expect(error).toBeInstanceOf(rttc.RuntimeTypeError)
+        expect({
+          operator,
+          left,
+          right,
+          explain: error!.explain(),
+          elaborate: error!.elaborate()
+        }).toMatchSnapshot()
+        return
+      }
+      throw new Error('Expected checkBinaryExpression to throw, did not throw')
     })
   })
 })
@@ -231,8 +253,9 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
-      expect(error).toBeUndefined()
+      expect(() =>
+        rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right])
+      ).not.toThrow()
     })
   })
 
@@ -240,15 +263,20 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
-      expect(error).toBeInstanceOf(rttc.TypeError)
-      expect({
-        operator,
-        left,
-        right,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
-      }).toMatchSnapshot()
+      try {
+        rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right])
+      } catch (error) {
+        expect(error).toBeInstanceOf(rttc.RuntimeTypeError)
+        expect({
+          operator,
+          left,
+          right,
+          explain: error!.explain(),
+          elaborate: error!.elaborate()
+        }).toMatchSnapshot()
+        return
+      }
+      throw new Error('Expected checkBinaryExpression to throw error, did not throw error')
     })
   })
 })
@@ -267,8 +295,7 @@ describe('Ternary/if test expression type combinations:', () => {
     valid.forEach((value: Value) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkIfStatement(node, value)
-      expect(error).toBeUndefined()
+      expect(() => rttc.checkIfStatement(node, value)).not.toThrow()
     })
   })
 
@@ -276,13 +303,19 @@ describe('Ternary/if test expression type combinations:', () => {
     invalid.forEach((value: Value) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkIfStatement(node, value)
-      expect(error).toBeInstanceOf(rttc.TypeError)
-      expect({
-        value,
-        explain: error!.explain(),
-        elaborate: error!.elaborate()
-      }).toMatchSnapshot()
+      try {
+        rttc.checkIfStatement(node, value)
+      } catch (error) {
+        expect(error).toBeInstanceOf(rttc.RuntimeTypeError)
+        expect({
+          value,
+          explain: error.explain(),
+          elaborate: error.elaborate()
+        }).toMatchSnapshot()
+        return
+      }
+
+      throw new Error('Expected checkIfStatement to throw, did not get error')
     })
   })
 })
@@ -324,7 +357,7 @@ describe('Member expression type combinations:', () => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
       const error = rttc.checkMemberAccess(node, left, right)
-      expect(error).toBeInstanceOf(rttc.TypeError)
+      expect(error).toBeInstanceOf(rttc.RuntimeTypeError)
       expect({
         left,
         right,

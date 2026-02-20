@@ -8,7 +8,6 @@ import {
   isImportDeclaration,
   isVariableDeclaration
 } from './typeGuards'
-import { simple } from './walkers'
 
 export function getModuleDeclarationSource(
   node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
@@ -20,16 +19,33 @@ export function getModuleDeclarationSource(
   return node.source.value
 }
 
-export function extractIdsFromPattern(pattern: es.Pattern) {
-  const identifiers: es.Identifier[] = []
-
-  simple(pattern, {
-    Identifier: (node: es.Identifier) => {
-      identifiers.push(node)
+/**
+ * Extracts all the identifiers being declared by a VariableDeclaration
+ */
+export function extractDeclarations(decl: es.VariableDeclaration) {
+  function recurser(pattern: es.Pattern): es.Identifier[] {
+    switch (pattern.type) {
+      case 'ArrayPattern':
+        return pattern.elements.flatMap(recurser)
+      case 'AssignmentPattern':
+        return recurser(pattern.left)
+      case 'Identifier':
+        return [pattern]
+      case 'ObjectPattern':
+        return pattern.properties.flatMap(prop => {
+          if (prop.type === 'Property') {
+            return recurser(prop.value)
+          }
+          return recurser(prop)
+        })
+      case 'RestElement':
+        return recurser(pattern.argument)
+      default:
+        throw new Error(`Should not encounter a ${pattern.type} in ${extractDeclarations.name}`)
     }
-  })
+  }
 
-  return identifiers
+  return decl.declarations.flatMap(({ id }) => recurser(id))
 }
 
 export function getIdsFromDeclaration(
@@ -38,9 +54,7 @@ export function getIdsFromDeclaration(
 ): (es.Identifier | null)[]
 export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: false): es.Identifier[]
 export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: boolean) {
-  const rawIds = isVariableDeclaration(decl)
-    ? decl.declarations.flatMap(({ id }) => extractIdsFromPattern(id))
-    : [decl.id]
+  const rawIds = isVariableDeclaration(decl) ? extractDeclarations(decl) : [decl.id]
 
   if (!allowNull) {
     rawIds.forEach(each => {
