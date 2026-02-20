@@ -82,6 +82,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-useless-constructor': 'error',
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/require-await': 'error',
       '@typescript-eslint/restrict-plus-operands': 'off',
