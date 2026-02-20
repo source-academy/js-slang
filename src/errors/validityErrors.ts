@@ -7,7 +7,7 @@ export class NoAssignmentToForVariableError extends SourceErrorWithNode<es.Assig
   severity = ErrorSeverity.ERROR
 
   public override explain() {
-    return 'Assignment to a for loop variable in the for loop is not allowed.'
+    return 'Assignment to a for loop variable within the body of the for loop is not allowed.'
   }
 
   public override elaborate() {

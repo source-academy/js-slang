@@ -1,12 +1,12 @@
 import { generate } from 'astring'
 import type { BaseNode, Comment, SourceLocation } from 'estree'
-import type { Node } from '../types'
+import type { Node, ReplResult } from '../types'
 import type { StepperExpression, StepperPattern } from './nodes'
 
 /**
  * Base type for all Stepper Nodes
  */
-export abstract class StepperBaseNode<T extends Node = Node> implements BaseNode {
+export abstract class StepperBaseNode<T extends Node = Node> implements BaseNode, ReplResult {
   constructor(
     public readonly type: T['type'],
     public readonly leadingComments?: Comment[] | undefined,

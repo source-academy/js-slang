@@ -105,16 +105,14 @@ export class CallingNonFunctionValueError extends RuntimeSourceError<es.CallExpr
   public override elaborate() {
     const calleeVal = this.callee
     const calleeStr = stringify(calleeVal)
-    let argStr = ''
-
     const callArgs = this.node.arguments
 
-    argStr = callArgs.map(generate).join(', ')
+    const argStr = callArgs.map(generate).join(', ')
 
     const elabStr = `Because ${calleeStr} is not a function, you cannot run ${calleeStr}(${argStr}).`
-    const multStr = `If you were planning to perform multiplication by ${calleeStr}, you need to use the * operator.`
-
+    
     if (Number.isFinite(calleeVal)) {
+      const multStr = `If you were planning to perform multiplication by ${calleeStr}, you need to use the * operator.`
       return `${elabStr} ${multStr}`
     } else {
       return elabStr

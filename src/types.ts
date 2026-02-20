@@ -23,6 +23,14 @@ export interface CustomBuiltIns {
   visualiseList: (list: any, externalContext: any) => void
 }
 
+/**
+ * Interface that custom Source objects can implement to override the default
+ * `toString` behaviour
+ */
+export interface ReplResult {
+  toReplString: () => string
+}
+
 export type ExecutionMethod = 'native' | 'auto' | 'cse-machine'
 
 export interface NativeStorage {

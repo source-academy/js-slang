@@ -31,7 +31,7 @@ import {
   StepperVariableDeclaration,
   StepperVariableDeclarator
 } from './nodes/Statement/VariableDeclaration'
-import { StepperNode } from './nodes'
+import type { StepperNode } from './nodes'
 
 const undefinedNode = new StepperLiteral('undefined')
 
@@ -68,7 +68,7 @@ const nodeConverters: {
 const explainers: {
   [K in StepperNode['type']]?: (node: Extract<StepperNode, { type: K }>) => string
 } = {
-  ArrowFunctionExpression: (_node: StepperArrowFunctionExpression) => {
+  ArrowFunctionExpression: () => {
     throw new Error('Not implemented.')
   },
   BinaryExpression(node) {

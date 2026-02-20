@@ -55,6 +55,10 @@ export abstract class RuntimeSourceError<
   severity: ErrorSeverity.ERROR
 }
 
+/**
+ * A concrete instantiation of {@link RuntimeSourceError|RuntimeSourceError} that can
+ * be used when there just aren't any other good Source error classes that can be used
+ */
 export class GeneralRuntimeError extends RuntimeSourceError<Node | undefined> {
   constructor(
     public readonly explanation: string,
