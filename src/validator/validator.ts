@@ -1,7 +1,7 @@
 import type es from 'estree'
 
-import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { NoAssignmentToForVariable } from '../errors/validityErrors'
+import { ConstAssignmentError, UndefinedVariableError } from '../errors/errors'
+import { NoAssignmentToForVariableError } from '../errors/validityErrors'
 import { parse } from '../parser/parser'
 import type { Context, Node, NodeWithInferredType } from '../types'
 import { getSourceVariableDeclaration } from '../utils/ast/helpers'
@@ -83,10 +83,10 @@ export function validateAndAnnotate(
         map.get(name)!.accessedBeforeDeclaration = true
         if (lastAncestor.type === 'AssignmentExpression' && lastAncestor.left === id) {
           if (map.get(name)!.isConstant) {
-            context.errors.push(new ConstAssignment(lastAncestor, name))
+            context.errors.push(new ConstAssignmentError(lastAncestor, name))
           }
           if (a.type === 'ForStatement' && a.init !== lastAncestor && a.update !== lastAncestor) {
-            context.errors.push(new NoAssignmentToForVariable(lastAncestor))
+            context.errors.push(new NoAssignmentToForVariableError(lastAncestor))
           }
         }
         break
@@ -270,7 +270,7 @@ export function checkForUndefinedVariables(
     }
     const isNativeId = nativeInternalNames.has(name)
     if (!isNativeId && !skipUndefined) {
-      throw new UndefinedVariable(name, identifier)
+      throw new UndefinedVariableError(name, identifier)
     }
   }
 }

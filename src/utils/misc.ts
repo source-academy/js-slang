@@ -1,11 +1,20 @@
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { TimeoutError } from '../errors/timeoutErrors'
+import type { Node } from '../types'
 import { Chapter } from '../langs'
 
-export class PromiseTimeoutError extends RuntimeSourceError {}
+export class PromiseTimeoutError extends TimeoutError {
+  public override explain() {
+    return 'An internal operation timed out while executing.'
+  }
 
-export const timeoutPromise = <T>(promise: Promise<T>, timeout: number) =>
+  public override elaborate() {
+    return this.explain()
+  }
+}
+
+export const timeoutPromise = <T>(promise: Promise<T>, timeout: number, node?: Node) =>
   new Promise<T>((resolve, reject) => {
-    const timeoutid = setTimeout(() => reject(new PromiseTimeoutError()), timeout)
+    const timeoutid = setTimeout(() => reject(new PromiseTimeoutError(node)), timeout)
 
     promise
       .then(res => {

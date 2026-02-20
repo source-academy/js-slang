@@ -1,3 +1,4 @@
+import type { ImportDeclaration } from 'estree'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { DeclarationKind } from '..'
 import { getNames } from '../..'
@@ -167,9 +168,18 @@ describe('test name extractor functionality on imports', () => {
     expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(manifestCount)
   })
 
+  const mockImportDecl: ImportDeclaration = {
+    type: 'ImportDeclaration',
+    specifiers: [],
+    source: {
+      type: 'Literal',
+      value: 'nothing'
+    }
+  }
+
   test('Handles errors from memoizedGetModuleManifest gracefully', async () => {
     const mockedManifest = vi.mocked(memoizedLoadModuleManifestAsync)
-    mockedManifest.mockRejectedValueOnce(new ModuleConnectionError())
+    mockedManifest.mockRejectedValueOnce(new ModuleConnectionError(mockImportDecl))
     await testGetNames("import { foo } from 'one_module';", [
       ['foo', "Unable to retrieve documentation for 'one_module'"]
     ])
@@ -179,7 +189,7 @@ describe('test name extractor functionality on imports', () => {
 
   test('Handles errors from memoizedGetModuleDocs gracefully', async () => {
     const mockedDocs = vi.mocked(memoizedLoadModuleDocsAsync)
-    mockedDocs.mockRejectedValueOnce(new ModuleConnectionError())
+    mockedDocs.mockRejectedValueOnce(new ModuleConnectionError(mockImportDecl))
 
     await testGetNames(`import { foo } from 'one_module'; import { bar } from 'another_module';`, [
       ['foo', "Unable to retrieve documentation for 'one_module'"],
