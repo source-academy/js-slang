@@ -110,7 +110,7 @@ export class CallingNonFunctionValueError extends RuntimeSourceError<es.CallExpr
     const argStr = callArgs.map(generate).join(', ')
 
     const elabStr = `Because ${calleeStr} is not a function, you cannot run ${calleeStr}(${argStr}).`
-    
+
     if (Number.isFinite(calleeVal)) {
       const multStr = `If you were planning to perform multiplication by ${calleeStr}, you need to use the * operator.`
       return `${elabStr} ${multStr}`

@@ -70,7 +70,7 @@ const runners = {
           error = error.error // else we try to get the location from source map
         }
       }
-      
+
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
         if (error instanceof TimeoutError) {

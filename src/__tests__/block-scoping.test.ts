@@ -121,7 +121,9 @@ test('Cannot overwrite loop variables within a block', () => {
   test();
   `,
     Chapter.SOURCE_3
-  ).toEqual('Line 4: Assignment to a for loop variable within the body of the for loop is not allowed.')
+  ).toEqual(
+    'Line 4: Assignment to a for loop variable within the body of the for loop is not allowed.'
+  )
 })
 
 test('No hoisting of functions. Only the name is hoisted like let and const', () => {
