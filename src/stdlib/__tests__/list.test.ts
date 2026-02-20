@@ -308,14 +308,14 @@ describe(list.length, () => {
 })
 
 // assoc removed from Source
-test.skip('assoc', () => {
+test.todo('assoc', () => {
   return expectFinishedResult(
     `equal(assoc(3, list(pair(1, 2), pair(3, 4))), pair(3, 4));`,
     Chapter.LIBRARY_PARSER
   ).toEqual(true)
 })
 
-test.skip('assoc not found', () => {
+test.todo('assoc not found', () => {
   return expectFinishedResult(
     `equal(assoc(2, list(pair(1, 2), pair(3, 4))), false);`,
     Chapter.LIBRARY_PARSER
@@ -410,7 +410,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
     )
   })
 
-  test.skip('non-list error assoc', () => {
+  test.todo('non-list error assoc', () => {
     return expectParsedError(`assoc(1, [1, 2, 3]);`, Chapter.LIBRARY_PARSER).toEqual(
       'Line 1: Name assoc not declared.'
     )
@@ -441,14 +441,14 @@ describe('These tests are reporting weird line numbers, as list functions are no
   })
 
   // skipped as implementation does not check types, causing infinite recursion.
-  test.skip('build_list with negative integer', () => {
+  test.todo('build_list with negative integer', () => {
     return expectParsedError(`build_list(x => x, -1);`, Chapter.SOURCE_2).toEqual(
       'Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1'
     )
   })
 
   // skipped as implementation does not check types, causing infinite recursion.
-  test.skip('build_list with float', () => {
+  test.todo('build_list with float', () => {
     return expectParsedError(`build_list(x => x, 1.5); `, Chapter.SOURCE_2).toEqual(
       'Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered 1.5'
     )

@@ -28,9 +28,8 @@ describe('Python parser', () => {
       const code = `print("hello from python")`
 
       const prgm = parserPython1.parse(code, context)
-      if (prgm !== null) {
-        expect(parserPython1.validate(prgm, context, false)).toEqual(true)
-      }
+      expect(prgm).not.toBeNull()
+      expect(parserPython1.validate(prgm!, context, false)).toEqual(true)
       expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
     })
 

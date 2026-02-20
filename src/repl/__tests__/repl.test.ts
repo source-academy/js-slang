@@ -37,7 +37,7 @@ function mockReadFiles(files: SourceFiles) {
 
 const mockedConsoleLog = vi.spyOn(console, 'log')
 
-describe(chapterParser, () =>
+describe(chapterParser, () => {
   test.each([
     ['1', Chapter.SOURCE_1],
     ['SOURCE_1', Chapter.SOURCE_1],
@@ -46,18 +46,16 @@ describe(chapterParser, () =>
     ['3', Chapter.SOURCE_3],
     ['SOURCE_3', Chapter.SOURCE_3],
     ['4', Chapter.SOURCE_4],
-    ['SOURCE_4', Chapter.SOURCE_4],
-    ['random string', undefined],
-    ['525600', undefined]
+    ['SOURCE_4', Chapter.SOURCE_4]
   ])('%#', (value, expected) => {
-    if (!expected) {
-      expect(() => chapterParser(value)).toThrow()
-      return
-    }
-
-    expect(chapterParser(value)).toEqual(expected)
+    const parseFn = () => chapterParser(value)
+    expect(parseFn()).toEqual(expected)
   })
-)
+
+  test.each([['random string'], ['525600']])('%#', value => {
+    expect(() => chapterParser(value)).toThrow()
+  })
+})
 
 describe('Test repl command', () => {
   beforeEach(() => {

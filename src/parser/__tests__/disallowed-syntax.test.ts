@@ -703,6 +703,7 @@ describe('No array expressions in chapter 2 - verbose', () => {
       `,
       chapter
     )
+    // eslint-disable-next-line vitest/no-standalone-expect
     expect(errStr).toMatchInlineSnapshot(`
               "Line 2, Column 0: Array expressions are not allowed
               You are trying to use Array expressions, which is not allowed (yet).
