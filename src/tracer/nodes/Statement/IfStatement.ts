@@ -2,40 +2,23 @@ import type { Comment, IfStatement, SourceLocation } from 'estree'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
 import { StepperLiteral } from '../Expression/Literal'
 import { StepperBlockStatement } from './BlockStatement'
 import { StepperExpressionStatement } from './ExpressionStatement'
 import { StepperStatement } from '.'
 
-export class StepperIfStatement implements IfStatement, StepperBaseNode {
-  type: 'IfStatement'
-  test: StepperExpression
-  consequent: StepperStatement
-  alternate: StepperStatement | null
-
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
-
+export class StepperIfStatement extends StepperBaseNode<IfStatement> implements IfStatement {
   constructor(
-    test: StepperExpression,
-    consequent: StepperStatement,
-    alternate: StepperStatement | null,
+    public readonly test: StepperExpression,
+    public readonly consequent: StepperStatement,
+    public readonly alternate: StepperStatement | null,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined
   ) {
-    this.type = 'IfStatement'
-    this.test = test
-    this.consequent = consequent
-    this.alternate = alternate
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('IfStatement', leadingComments, trailingComments, loc, range)
   }
 
   static create(node: IfStatement) {

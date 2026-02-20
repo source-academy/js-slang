@@ -2,6 +2,7 @@ import type { StepperExpression } from '../nodes'
 import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
 import { StepperIdentifier } from '../nodes/Expression/Identifier'
 import { StepperLiteral } from '../nodes/Expression/Literal'
+import { GeneralRuntimeError } from '../../errors/base'
 import { listBuiltinFunctions } from './lists'
 import { isBuiltinFunction } from '.'
 
@@ -17,22 +18,24 @@ export const miscBuiltinFunctions = {
           // Math builtins
           const func = Math[args[0].name.split('_')[1] as keyof typeof Math]
           if (typeof func !== 'function') {
-            throw new Error('arity expects a function as argument')
+            throw new GeneralRuntimeError('arity expects a function as argument')
           }
           return new StepperLiteral(func.length)
         }
-        if (Object.keys(listBuiltinFunctions).includes(args[0].name)) {
+        if (args[0].name in listBuiltinFunctions) {
           return new StepperLiteral(
             listBuiltinFunctions[args[0].name as keyof typeof listBuiltinFunctions].arity
           )
         }
-        if (Object.keys(miscBuiltinFunctions).includes(args[0].name)) {
+
+        if (args[0].name in miscBuiltinFunctions) {
           return new StepperLiteral(
             miscBuiltinFunctions[args[0].name as keyof typeof miscBuiltinFunctions].arity
           )
         }
       }
-      throw new Error('arity expects a function as argument')
+
+      throw new GeneralRuntimeError('arity expects a function as argument')
     },
     arity: 1
   },

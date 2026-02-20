@@ -2,45 +2,29 @@ import type { Comment, FunctionDeclaration, SourceLocation } from 'estree'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
 import { getFreshName } from '../../utils'
 import { StepperArrowFunctionExpression } from '../Expression/ArrowFunctionExpression'
 import { StepperIdentifier } from '../Expression/Identifier'
 import { StepperBlockStatement } from './BlockStatement'
 import { StepperVariableDeclaration } from './VariableDeclaration'
 
-export class StepperFunctionDeclaration implements FunctionDeclaration, StepperBaseNode {
-  type: 'FunctionDeclaration'
-  id: StepperIdentifier
-  body: StepperBlockStatement
-  params: StepperPattern[]
-  generator?: boolean | undefined
-  async?: boolean | undefined
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
-
+export class StepperFunctionDeclaration
+  extends StepperBaseNode<FunctionDeclaration>
+  implements FunctionDeclaration
+{
   constructor(
-    id: StepperIdentifier,
-    body: StepperBlockStatement,
-    params: StepperPattern[],
-    generator?: boolean | undefined,
-    async?: boolean | undefined,
+    public readonly id: StepperIdentifier,
+    public readonly body: StepperBlockStatement,
+    public readonly params: StepperPattern[],
+    public readonly generator?: boolean | undefined,
+    public readonly async?: boolean | undefined,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined
   ) {
-    this.type = 'FunctionDeclaration'
-    this.id = id
-    this.params = params
-    this.generator = generator
-    this.async = async
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('FunctionDeclaration', leadingComments, trailingComments, loc, range)
 
     /*    
     const repeatedNames = body.scanAllDeclarationNames().filter(name => name === this.id.name);

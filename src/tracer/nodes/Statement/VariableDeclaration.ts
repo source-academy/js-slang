@@ -2,32 +2,21 @@ import type { Comment, SourceLocation, VariableDeclaration, VariableDeclarator }
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
 
-export class StepperVariableDeclarator implements VariableDeclarator, StepperBaseNode {
-  type: 'VariableDeclarator'
-  id: StepperPattern
-  init?: StepperExpression | null | undefined
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
-
+export class StepperVariableDeclarator
+  extends StepperBaseNode<VariableDeclarator>
+  implements VariableDeclarator
+{
   constructor(
-    id: StepperPattern,
-    init: StepperExpression | null | undefined,
+    public readonly id: StepperPattern,
+    public readonly init: StepperExpression | null | undefined,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined
   ) {
-    this.type = 'VariableDeclarator'
-    this.id = id
-    this.init = init
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('VariableDeclarator', leadingComments, trailingComments, loc, range)
   }
 
   static create(node: VariableDeclarator) {
@@ -104,30 +93,19 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
 
 // After all variable declarators have been contracted,
 // StepperVariableDeclaration::contract triggers substitution
-export class StepperVariableDeclaration implements VariableDeclaration, StepperBaseNode {
-  type: 'VariableDeclaration'
-  declarations: StepperVariableDeclarator[]
-  kind: 'var' | 'let' | 'const'
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
-
+export class StepperVariableDeclaration
+  extends StepperBaseNode<VariableDeclaration>
+  implements VariableDeclaration
+{
   constructor(
-    declarations: StepperVariableDeclarator[],
-    kind: 'var' | 'let' | 'const',
+    public readonly declarations: StepperVariableDeclarator[],
+    public readonly kind: VariableDeclaration['kind'],
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined
   ) {
-    this.type = 'VariableDeclaration'
-    this.declarations = declarations
-    this.kind = kind
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('VariableDeclaration', leadingComments, trailingComments, loc, range)
   }
 
   static create(node: VariableDeclaration) {

@@ -18511,7 +18511,7 @@ math_pow(2, 20) || NaN;
 [afterMarker] math_pow runs
 
 1048576 || NaN;
-[beforeMarker] Line 2: Expected boolean on left hand side of operation, got number.
+[beforeMarker] Line 2: Expected boolean as condition, got number.
 
 1048576 || NaN;
 [noMarker] Evaluation stuck
@@ -19321,7 +19321,7 @@ exports[`Test catching errors from built in function > Incorrect number of argum
 [noMarker] Start of evaluation
 
 pair(2);
-[beforeMarker] Expected 2 arguments, but got 1.
+[beforeMarker] Line 1: Expected 2 arguments, but got 1.
 
 pair(2);
 [noMarker] Evaluation stuck
@@ -19333,7 +19333,7 @@ exports[`Test catching errors from built in function > Incorrect type of argumen
 [noMarker] Start of evaluation
 
 math_sin(true);
-[beforeMarker] Math functions must be called with number arguments
+[beforeMarker] Math functions must be called with numbers for arguments
 
 math_sin(true);
 [noMarker] Evaluation stuck
@@ -19393,7 +19393,7 @@ exports[`Test catching undefined variables > Name declared later but not yet ass
 [noMarker] Start of evaluation
 
 x;const x = 1;x;
-[beforeMarker] Name x declared later in current scope but not yet assigned
+[beforeMarker] Line 2: Name x declared later in current scope but not yet assigned
 
 x;const x = 1;x;
 [noMarker] Evaluation stuck
@@ -20095,7 +20095,7 @@ exports[`Test runtime errors > Incompatible types operation 1`] = `
 [afterMarker] Binary expression 2 * 3 evaluated
 
 \\"1\\" + 6;
-[beforeMarker] Line 0: Expected string on right hand side of operation, got number.
+[beforeMarker] Expected string on right hand side of operation, got number.
 
 \\"1\\" + 6;
 [noMarker] Evaluation stuck

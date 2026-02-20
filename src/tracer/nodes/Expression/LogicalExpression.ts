@@ -2,36 +2,25 @@ import type { Comment, LogicalExpression, LogicalOperator, SourceLocation } from
 import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
+import assert from '../../../utils/assert'
+import { checkIfStatement } from '../../../utils/rttc'
 import { StepperLiteral } from './Literal'
 
-export class StepperLogicalExpression implements LogicalExpression, StepperBaseNode {
-  type: 'LogicalExpression'
-  operator: LogicalOperator
-  left: StepperExpression
-  right: StepperExpression
-  leadingComments?: Comment[]
-  trailingComments?: Comment[]
-  loc?: SourceLocation | null
-  range?: [number, number]
-
+export class StepperLogicalExpression
+  extends StepperBaseNode<LogicalExpression>
+  implements LogicalExpression
+{
   constructor(
-    operator: LogicalOperator,
-    left: StepperExpression,
-    right: StepperExpression,
+    public readonly operator: LogicalOperator,
+    public readonly left: StepperExpression,
+    public readonly right: StepperExpression,
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
     range?: [number, number]
   ) {
-    this.type = 'LogicalExpression'
-    this.operator = operator
-    this.left = left
-    this.right = right
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('LogicalExpression', leadingComments, trailingComments, loc, range)
   }
 
   static create(node: LogicalExpression) {
@@ -46,16 +35,11 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     if (this.left.type === 'Literal') {
-      const leftType = typeof this.left.value
-
-      if (leftType !== 'boolean') {
-        throw new Error(
-          `Line ${
-            this.loc?.start.line || 0
-          }: Expected boolean on left hand side of operation, got ${leftType}.`
-        )
+      const error = checkIfStatement(this, this.left.value)
+      if (error) {
+        throw error
       }
 
       redex.preRedex = [this]
@@ -65,15 +49,14 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     return false
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return this.isContractible() || this.left.isOneStepPossible() || this.right.isOneStepPossible()
   }
 
-  contract(): StepperExpression {
+  public override contract(): StepperExpression {
     redex.preRedex = [this]
 
-    if (this.left.type !== 'Literal') throw new Error('Left operand must be a literal to contract')
-
+    assert(this.left.type === 'Literal', 'Left operand must be a literal to contract')
     const leftValue = this.left.value
 
     if (this.operator === '&&' && !leftValue) {
@@ -103,7 +86,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     }
   }
 
-  oneStep(): StepperExpression {
+  public override oneStep(): StepperExpression {
     if (this.isContractible()) {
       return this.contract()
     } else if (this.left.isOneStepPossible()) {
@@ -131,7 +114,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     }
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
     return new StepperLogicalExpression(
       this.operator,
       this.left.substitute(id, value),
@@ -143,15 +126,15 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     )
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()))
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()))
   }
 
-  rename(before: string, after: string): StepperExpression {
+  public override rename(before: string, after: string): StepperExpression {
     return new StepperLogicalExpression(
       this.operator,
       this.left.rename(before, after),

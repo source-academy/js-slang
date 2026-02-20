@@ -2,29 +2,20 @@ import type { Comment, ExpressionStatement, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
 
-export class StepperExpressionStatement implements ExpressionStatement, StepperBaseNode {
-  type: 'ExpressionStatement'
-  expression: StepperExpression
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
-
+export class StepperExpressionStatement
+  extends StepperBaseNode<ExpressionStatement>
+  implements ExpressionStatement
+{
   constructor(
-    expression: StepperExpression,
+    public readonly expression: StepperExpression,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined
   ) {
-    this.type = 'ExpressionStatement'
-    this.expression = expression
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('ExpressionStatement', leadingComments, trailingComments, loc, range)
   }
 
   static create(node: ExpressionStatement) {
