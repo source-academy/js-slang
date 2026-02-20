@@ -49,16 +49,10 @@ export class StepperBinaryExpression
       return true
     }
 
-    const error = checkBinaryExpression(
-      this,
-      this.operator,
-      Chapter.SOURCE_2,
+    checkBinaryExpression(this, this.operator, Chapter.SOURCE_2, [
       this.left.value,
       this.right.value
-    )
-    if (error) {
-      throw error
-    }
+    ])
 
     if (leftType === 'string' && rightType === 'string') {
       if (['+', '===', '!==', '<', '>', '<=', '>='].includes(this.operator)) {

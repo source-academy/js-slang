@@ -62,7 +62,7 @@ const nodeConverters: {
   ReturnStatement: StepperReturnStatement.create,
   UnaryExpression: StepperUnaryExpression.create,
   VariableDeclaration: StepperVariableDeclaration.create,
-  VariableDeclarator: StepperVariableDeclarator.create,
+  VariableDeclarator: StepperVariableDeclarator.create
 }
 
 const explainers: {
@@ -97,8 +97,7 @@ const explainers: {
       const paramDisplay = func.params.map(x => x.name).join(', ')
       const argDisplay: string = node.arguments
         .map(x =>
-          (x.type === 'ArrowFunctionExpression' || x.type === 'Identifier') &&
-          x.name !== undefined
+          (x.type === 'ArrowFunctionExpression' || x.type === 'Identifier') && x.name !== undefined
             ? x.name
             : generate(x)
         )
@@ -166,7 +165,7 @@ const explainers: {
         : 'OR operation evaluated, left of operator is false, continue evaluating right of operator'
     }
 
-    throw new Error(`Invalid operator for LogicalExpression: ${node.operator}`) 
+    throw new Error(`Invalid operator for LogicalExpression: ${node.operator}`)
   },
   ReturnStatement(node) {
     if (!node.argument) {
@@ -201,7 +200,7 @@ const explainers: {
     } else {
       return '...'
     }
-  },
+  }
 }
 
 export function convert(node: es.BaseNode): StepperBaseNode {

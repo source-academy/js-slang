@@ -4,8 +4,6 @@ import { redex } from '../..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
 import { assignMuTerms, getFreshName } from '../../utils'
-import type { StepperFunctionDeclaration } from './FunctionDeclaration'
-import type { StepperVariableDeclaration } from './VariableDeclaration'
 import type { StepperStatement } from '.'
 
 export class StepperBlockStatement
@@ -294,7 +292,7 @@ export class StepperBlockStatement
   scanAllDeclarationNames(): string[] {
     return this.body
       .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
-      .flatMap((ast: StepperVariableDeclaration | StepperFunctionDeclaration) => {
+      .flatMap(ast => {
         if (ast.type === 'VariableDeclaration') {
           return ast.declarations.map(ast => ast.id.name)
         } else {

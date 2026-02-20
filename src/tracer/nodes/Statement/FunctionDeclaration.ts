@@ -5,9 +5,8 @@ import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
 import { getFreshName } from '../../utils'
 import { StepperArrowFunctionExpression } from '../Expression/ArrowFunctionExpression'
-import { StepperIdentifier } from '../Expression/Identifier'
-import { StepperBlockStatement } from './BlockStatement'
-import { StepperVariableDeclaration } from './VariableDeclaration'
+import type { StepperIdentifier } from '../Expression/Identifier'
+import type { StepperBlockStatement } from './BlockStatement'
 
 export class StepperFunctionDeclaration
   extends StepperBaseNode<FunctionDeclaration>
@@ -50,11 +49,11 @@ export class StepperFunctionDeclaration
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return false
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return false
   }
 
@@ -69,7 +68,7 @@ export class StepperFunctionDeclaration
     )
   }
 
-  contract(): typeof undefinedNode {
+  public override contract(): typeof undefinedNode {
     redex.preRedex = [this]
     redex.postRedex = []
     return undefinedNode
@@ -80,7 +79,7 @@ export class StepperFunctionDeclaration
     redex.postRedex = []
   }
 
-  oneStep(): typeof undefinedNode {
+  public override oneStep(): typeof undefinedNode {
     return this.contract()
   }
 
@@ -88,7 +87,7 @@ export class StepperFunctionDeclaration
     const paramNames = this.params.map(param => param.name)
     const bodyDeclarations = this.body.body
       .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
-      .flatMap((ast: StepperVariableDeclaration | StepperFunctionDeclaration) => {
+      .flatMap(ast => {
         if (ast.type === 'VariableDeclaration') {
           return ast.declarations.map(ast => ast.id.name)
         } else {
@@ -99,7 +98,7 @@ export class StepperFunctionDeclaration
     return [...paramNames, ...bodyDeclarations]
   }
 
-  substitute(
+  public override substitute(
     id: StepperPattern,
     value: StepperExpression,
     upperBoundName?: string[]
@@ -113,9 +112,8 @@ export class StepperFunctionDeclaration
     const protectedNames = Array.from(protectedNamesSet)
     const newNames = getFreshName(repeatedNames, protectedNames)
 
-    const currentFunction = newNames.reduce(
-      (current: StepperFunctionDeclaration, name: string, index: number) =>
-        current.rename(repeatedNames[index], name),
+    const currentFunction = newNames.reduce<StepperFunctionDeclaration>(
+      (current, name, index) => current.rename(repeatedNames[index], name),
       this
     )
 
@@ -140,21 +138,21 @@ export class StepperFunctionDeclaration
     )
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     const paramNames = this.params
       .filter(param => param.type === 'Identifier')
       .map(param => param.name)
     return this.body.freeNames().filter(name => !paramNames.includes(name))
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     const paramNames = this.params
       .filter(param => param.type === 'Identifier')
       .map(param => param.name)
     return Array.from(new Set([paramNames, this.body.allNames()].flat()))
   }
 
-  rename(before: string, after: string): StepperFunctionDeclaration {
+  public override rename(before: string, after: string): StepperFunctionDeclaration {
     return new StepperFunctionDeclaration(
       this.id.rename(before, after),
       this.body.rename(before, after) as unknown as StepperBlockStatement,

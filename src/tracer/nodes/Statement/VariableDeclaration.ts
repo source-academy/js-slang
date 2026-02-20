@@ -30,15 +30,15 @@ export class StepperVariableDeclarator
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return this.init ? this.init.isContractible() : false
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return this.init ? this.init.isOneStepPossible() : false
   }
 
-  contract(): StepperVariableDeclarator {
+  public override contract(): StepperVariableDeclarator {
     return new StepperVariableDeclarator(
       this.id,
       this.init!.oneStep(),
@@ -49,7 +49,7 @@ export class StepperVariableDeclarator
     )
   }
 
-  oneStep(): StepperVariableDeclarator {
+  public override oneStep(): StepperVariableDeclarator {
     return new StepperVariableDeclarator(
       this.id,
       this.init!.oneStep(),
@@ -60,7 +60,7 @@ export class StepperVariableDeclarator
     )
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperVariableDeclarator(
       this.id,
       this.init!.substitute(id, value),
@@ -71,11 +71,11 @@ export class StepperVariableDeclarator
     )
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return this.init!.freeNames()
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return this.init!.allNames()
   }
 
@@ -119,17 +119,17 @@ export class StepperVariableDeclaration
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return false
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return this.declarations
       .map(x => x.isOneStepPossible())
       .reduce((acc, next) => acc || next, false)
   }
 
-  contract(): typeof undefinedNode {
+  public override contract(): typeof undefinedNode {
     redex.preRedex = [this]
     redex.postRedex = []
     return undefinedNode
@@ -140,7 +140,7 @@ export class StepperVariableDeclaration
     redex.postRedex = []
   }
 
-  oneStep(): StepperVariableDeclaration | typeof undefinedNode {
+  public override oneStep(): StepperVariableDeclaration | typeof undefinedNode {
     // Find the one that is not contractible.
     for (let i = 0; i < this.declarations.length; i++) {
       const ast = this.declarations[i]
@@ -159,7 +159,7 @@ export class StepperVariableDeclaration
     return this
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperVariableDeclaration(
       this.declarations.map(
         declaration => declaration.substitute(id, value) as StepperVariableDeclarator
@@ -172,11 +172,11 @@ export class StepperVariableDeclaration
     )
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return Array.from(new Set(this.declarations.flatMap(ast => ast.freeNames())))
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return Array.from(new Set(this.declarations.flatMap(ast => ast.allNames())))
   }
 

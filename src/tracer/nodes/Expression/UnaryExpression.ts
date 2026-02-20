@@ -70,10 +70,7 @@ export class StepperUnaryExpression
       return true
     }
 
-    const error = checkUnaryExpression(this, this.operator, this.argument.value)
-    if (error) {
-      throw error
-    }
+    checkUnaryExpression(this, this.operator, this.argument.value)
 
     if (this.operator === '!' && valueType === 'boolean') {
       return markContractible()

@@ -37,11 +37,7 @@ export class StepperLogicalExpression
 
   public override isContractible(): boolean {
     if (this.left.type === 'Literal') {
-      const error = checkIfStatement(this, this.left.value)
-      if (error) {
-        throw error
-      }
-
+      checkIfStatement(this, this.left.value)
       redex.preRedex = [this]
       return true
     }

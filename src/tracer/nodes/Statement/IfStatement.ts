@@ -6,7 +6,7 @@ import { StepperBaseNode } from '../../interface'
 import { StepperLiteral } from '../Expression/Literal'
 import { StepperBlockStatement } from './BlockStatement'
 import { StepperExpressionStatement } from './ExpressionStatement'
-import { StepperStatement } from '.'
+import type { StepperStatement } from '.'
 
 export class StepperIfStatement extends StepperBaseNode<IfStatement> implements IfStatement {
   constructor(
@@ -33,11 +33,11 @@ export class StepperIfStatement extends StepperBaseNode<IfStatement> implements 
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return this.test instanceof StepperLiteral
   }
 
-  contract(): StepperBlockStatement | StepperIfStatement {
+  public override contract(): StepperBlockStatement | StepperIfStatement {
     if (!(this.test instanceof StepperLiteral)) {
       throw new Error('Cannot contract non-literal test')
     }
@@ -66,11 +66,11 @@ export class StepperIfStatement extends StepperBaseNode<IfStatement> implements 
     }
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return this.isContractible() || this.test.isOneStepPossible()
   }
 
-  oneStep(): StepperIfStatement | StepperBlockStatement {
+  public override oneStep(): StepperIfStatement | StepperBlockStatement {
     if (!this.isOneStepPossible()) {
       throw new Error('No step possible in test')
     }
@@ -90,7 +90,7 @@ export class StepperIfStatement extends StepperBaseNode<IfStatement> implements 
     )
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperIfStatement(
       this.test.substitute(id, value),
       this.consequent.substitute(id, value) as StepperStatement,
@@ -107,7 +107,7 @@ export class StepperIfStatement extends StepperBaseNode<IfStatement> implements 
     redex.postRedex = []
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     const names = new Set([
       ...this.test.freeNames(),
       ...this.consequent.freeNames(),
@@ -116,7 +116,7 @@ export class StepperIfStatement extends StepperBaseNode<IfStatement> implements 
     return Array.from(names)
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     const names = new Set([
       ...this.test.allNames(),
       ...this.consequent.allNames(),
@@ -125,7 +125,7 @@ export class StepperIfStatement extends StepperBaseNode<IfStatement> implements 
     return Array.from(names)
   }
 
-  rename(before: string, after: string): StepperIfStatement {
+  public override rename(before: string, after: string): StepperIfStatement {
     return new StepperIfStatement(
       this.test.rename(before, after),
       this.consequent.rename(before, after) as StepperStatement,

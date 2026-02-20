@@ -28,15 +28,15 @@ export class StepperReturnStatement
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return true
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return true
   }
 
-  contract(): StepperExpression {
+  public override contract(): StepperExpression {
     if (!this.argument) {
       throw new Error('Cannot contract return statement without argument')
     }
@@ -50,14 +50,14 @@ export class StepperReturnStatement
     redex.postRedex = []
   }
 
-  oneStep(): StepperExpression {
+  public override oneStep(): StepperExpression {
     if (!this.argument) {
       throw new Error('Cannot step return statement without argument')
     }
     return this.contract()
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperReturnStatement(
       this.argument ? this.argument.substitute(id, value) : null,
       this.leadingComments,
@@ -67,15 +67,15 @@ export class StepperReturnStatement
     )
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return this.argument ? this.argument.freeNames() : []
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return this.argument ? this.argument.allNames() : []
   }
 
-  rename(before: string, after: string): StepperReturnStatement {
+  public override rename(before: string, after: string): StepperReturnStatement {
     return new StepperReturnStatement(
       this.argument ? this.argument.rename(before, after) : null,
       this.leadingComments,

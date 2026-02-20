@@ -5,8 +5,6 @@ import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
 import { assignMuTerms, getFreshName } from '../../utils'
 import type { StepperStatement } from '../Statement'
-import type { StepperFunctionDeclaration } from '../Statement/FunctionDeclaration'
-import type { StepperVariableDeclaration } from '../Statement/VariableDeclaration'
 
 // TODO: add docs, because this is a block expression, not a block statement, and this does not follow official estree spec
 export class StepperBlockExpression extends StepperBaseNode<BlockStatement> {
@@ -269,7 +267,7 @@ export class StepperBlockExpression extends StepperBaseNode<BlockStatement> {
   scanAllDeclarationNames(): string[] {
     return this.body
       .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
-      .flatMap((ast: StepperVariableDeclaration | StepperFunctionDeclaration) => {
+      .flatMap(ast => {
         if (ast.type === 'VariableDeclaration') {
           return ast.declarations.map(ast => ast.id.name)
         } else {

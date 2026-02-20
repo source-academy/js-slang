@@ -3,6 +3,7 @@ import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
+import { checkIfStatement } from '../../../utils/rttc'
 
 export class StepperConditionalExpression
   extends StepperBaseNode<ConditionalExpression>
@@ -35,13 +36,8 @@ export class StepperConditionalExpression
   public override isContractible(): boolean {
     if (this.test.type !== 'Literal') return false
     const test_value = this.test.value
-    if (typeof test_value !== 'boolean') {
-      throw new Error(
-        `Line ${
-          this.loc?.start.line || 0
-        }: Expected boolean as condition, got ${typeof test_value}.`
-      )
-    }
+    checkIfStatement(this, test_value)
+
     redex.preRedex = [this]
     return true
   }

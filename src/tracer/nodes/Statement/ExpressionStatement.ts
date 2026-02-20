@@ -28,13 +28,13 @@ export class StepperExpressionStatement
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return this.expression.isContractible()
   }
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return this.expression.isOneStepPossible()
   }
-  contract(): StepperExpressionStatement {
+  public override contract(): StepperExpressionStatement {
     return new StepperExpressionStatement(
       this.expression.oneStep(),
       this.leadingComments,
@@ -50,7 +50,7 @@ export class StepperExpressionStatement
     redex.postRedex = []
   }
 
-  oneStep(): StepperExpressionStatement {
+  public override oneStep(): StepperExpressionStatement {
     return new StepperExpressionStatement(
       this.expression.oneStep(),
       this.leadingComments,
@@ -60,7 +60,7 @@ export class StepperExpressionStatement
     )
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperExpressionStatement(
       this.expression.substitute(id, value),
       this.leadingComments,
@@ -70,15 +70,15 @@ export class StepperExpressionStatement
     )
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return this.expression.freeNames()
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return this.expression.allNames()
   }
 
-  rename(before: string, after: string): StepperExpressionStatement {
+  public override rename(before: string, after: string): StepperExpressionStatement {
     return new StepperExpressionStatement(
       this.expression.rename(before, after),
       this.leadingComments,
