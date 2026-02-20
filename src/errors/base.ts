@@ -54,3 +54,21 @@ export abstract class RuntimeSourceError<
   type = ErrorType.RUNTIME
   severity: ErrorSeverity.ERROR
 }
+
+export class GeneralRuntimeError extends RuntimeSourceError<Node | undefined> {
+  constructor(
+    public readonly explanation: string,
+    node?: Node,
+    public readonly elaboration?: string
+  ) {
+    super(node)
+  }
+
+  public override explain() {
+    return this.explanation
+  }
+
+  public override elaborate(): string {
+    return this.elaboration ?? this.explanation
+  }
+}

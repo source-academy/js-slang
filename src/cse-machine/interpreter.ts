@@ -1077,16 +1077,12 @@ const cmdEvaluators: CommandEvaluators = {
   [InstrType.BINARY_OP]({ command, context, stash }) {
     const right = stash.pop()
     const left = stash.pop()
-    const error = rttc.checkBinaryExpression(
-      command.srcNode,
-      command.symbol,
-      context.chapter,
-      left,
-      right
-    )
-    if (error) {
+    try {
+      rttc.checkBinaryExpression(command.srcNode, command.symbol, context.chapter, [left, right])
+    } catch (error) {
       handleRuntimeError(context, error)
     }
+
     stash.push(evaluateBinaryExpression(command.symbol, left, right))
   },
 
@@ -1094,8 +1090,9 @@ const cmdEvaluators: CommandEvaluators = {
     const test = stash.pop()
 
     // Check if test condition is a boolean
-    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter)
-    if (error) {
+    try {
+      rttc.checkIfStatement(command.srcNode, test, context.chapter)
+    } catch (error) {
       handleRuntimeError(context, error)
     }
 
@@ -1157,8 +1154,9 @@ const cmdEvaluators: CommandEvaluators = {
     const test = stash.pop()
 
     // Check if test condition is a boolean
-    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter)
-    if (error) {
+    try {
+      rttc.checkIfStatement(command.srcNode, test, context.chapter)
+    } catch (error) {
       handleRuntimeError(context, error)
     }
 
@@ -1219,13 +1217,9 @@ const cmdEvaluators: CommandEvaluators = {
 
   [InstrType.UNARY_OP]({ command, context, stash }) {
     const argument = stash.pop()
-    const error = rttc.checkUnaryExpression(
-      command.srcNode,
-      command.symbol,
-      argument,
-      context.chapter
-    )
-    if (error) {
+    try {
+      rttc.checkUnaryExpression(command.srcNode, command.symbol, argument, context.chapter)
+    } catch (error) {
       handleRuntimeError(context, error)
     }
     stash.push(evaluateUnaryExpression(command.symbol, argument))
@@ -1235,8 +1229,9 @@ const cmdEvaluators: CommandEvaluators = {
     const test = stash.pop()
 
     // Check if test condition is a boolean
-    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter)
-    if (error) {
+    try {
+      rttc.checkIfStatement(command.srcNode, test, context.chapter)
+    } catch (error) {
       handleRuntimeError(context, error)
     }
 
