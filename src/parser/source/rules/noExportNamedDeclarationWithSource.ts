@@ -1,5 +1,5 @@
 import type { ExportNamedDeclaration } from 'estree'
-import { speciferToString } from '../../../utils/ast/helpers'
+import { specifierToString } from '../../../utils/ast/helpers'
 import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
@@ -12,7 +12,7 @@ export class NoExportNamedDeclarationWithSourceError extends RuleError<ExportNam
     const [imports, exps] = this.node.specifiers.reduce(
       ([ins, outs], spec) => [
         [...ins, spec.local.name],
-        [...outs, speciferToString(spec)]
+        [...outs, specifierToString(spec)]
       ],
       [[], []] as [string[], string[]]
     )

@@ -23,7 +23,7 @@ export class Apply extends Function {
     return Apply.instance
   }
 
-  public toString(): string {
+  public override toString(): string {
     return 'apply'
   }
 }
@@ -50,7 +50,7 @@ export class Call_cc extends Function {
     return Call_cc.instance
   }
 
-  public toString(): string {
+  public override toString(): string {
     return 'call/cc'
   }
 }
@@ -111,7 +111,7 @@ export class Continuation extends Function {
     return this.transformers
   }
 
-  public toString(): string {
+  public override toString(): string {
     return 'continuation'
   }
 

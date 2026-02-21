@@ -108,7 +108,7 @@ export class Control extends Stack<ControlItem> {
     return this.numEnvDependentItems
   }
 
-  public pop(): ControlItem | undefined {
+  public override pop(): ControlItem | undefined {
     const item = super.pop()
     if (item !== undefined && isEnvDependent(item)) {
       this.numEnvDependentItems--
@@ -116,7 +116,7 @@ export class Control extends Stack<ControlItem> {
     return item
   }
 
-  public push(...items: ControlItem[]): void {
+  public override push(...items: ControlItem[]): void {
     const itemsNew: ControlItem[] = Control.simplifyBlocksWithoutDeclarations(...items)
     itemsNew.forEach((item: ControlItem) => {
       if (isEnvDependent(item)) {

@@ -7,15 +7,15 @@
 import { RuntimeSourceError } from '../errors/base'
 
 export class AssertionError extends RuntimeSourceError<undefined> {
-  constructor(public readonly message: string) {
+  constructor(public readonly assertion: string) {
     super(undefined)
   }
 
-  public explain(): string {
-    return this.message
+  public override explain(): string {
+    return this.assertion
   }
 
-  public elaborate(): string {
+  public override elaborate(): string {
     return 'Please contact the administrators to let them know that this error has occurred'
   }
 }

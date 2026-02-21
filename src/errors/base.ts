@@ -43,6 +43,10 @@ export abstract class SourceErrorWithNode<T extends Node | undefined>
 
   public abstract explain(): string
   public abstract elaborate(): string
+
+  public override get message() {
+    return this.explain()
+  }
 }
 
 /**

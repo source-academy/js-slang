@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
-import type { ImportDeclaration } from 'estree'
 import { Chapter, Variant } from '../../../langs'
-import { mockContext } from '../../../utils/testing/mocks'
+import { mockContext, mockImportDeclaration } from '../../../utils/testing/mocks'
 import {
   ModuleConnectionError,
   ModuleNotFoundError,
@@ -19,15 +18,6 @@ import { stringify } from '../../../utils/stringify'
 import loadSourceModules from '..'
 
 const moduleMocker = vi.fn()
-
-const mockImportDeclaration: ImportDeclaration = {
-  type: 'ImportDeclaration',
-  specifiers: [],
-  source: {
-    type: 'Literal',
-    value: 'nothing'
-  }
-}
 
 // Using virtual modules, we can pretend the modules with the given
 // import path actually exist
@@ -120,7 +110,7 @@ describe('docs loading', () => {
       const mockManifest: ModulesManifest = {
         one_module: {
           tabs: [],
-          node: mockImportDeclaration
+          node: mockImportDeclaration()
         }
       }
       mockedManifestImporter.mockResolvedValueOnce({ default: mockManifest })
@@ -138,7 +128,7 @@ describe('docs loading', () => {
     })
 
     test('manifest is not memoized on error', async () => {
-      const mockError = new ModuleNotFoundError('one_module', mockImportDeclaration)
+      const mockError = new ModuleNotFoundError('one_module', mockImportDeclaration())
 
       mockedManifestImporter.mockRejectedValueOnce(mockError)
       const result = memoizedLoadModuleManifestAsync()
@@ -147,7 +137,7 @@ describe('docs loading', () => {
       const mockManifest: ModulesManifest = {
         one_module: {
           tabs: [],
-          node: mockImportDeclaration
+          node: mockImportDeclaration()
         }
       }
 
@@ -201,7 +191,7 @@ describe('docs loading', () => {
 
       expect(importers.docsImporter).toHaveBeenCalledTimes(1)
 
-      const mockError = new ModuleNotFoundError('another_module', mockImportDeclaration)
+      const mockError = new ModuleNotFoundError('another_module', mockImportDeclaration())
       mockedDocsImporter.mockRejectedValueOnce(mockError)
       const docs3 = memoizedLoadModuleDocsAsync('another_module', true)
       await expect(docs3).rejects.toBe(mockError)
@@ -228,7 +218,7 @@ describe('module loading', () => {
             name: 'one_module',
             tabs: [],
             requires: Chapter.SOURCE_3,
-            node: mockImportDeclaration
+            node: mockImportDeclaration()
           }
         },
         context
@@ -251,7 +241,7 @@ describe('module loading', () => {
           one_module: {
             name: 'one_module',
             tabs: [],
-            node: mockImportDeclaration
+            node: mockImportDeclaration()
           }
         },
         context
@@ -278,7 +268,7 @@ describe('module loading', () => {
             name: 'one_module',
             tabs: [],
             requires: Chapter.SOURCE_3,
-            node: mockImportDeclaration
+            node: mockImportDeclaration()
           }
         },
         context
@@ -306,7 +296,7 @@ describe('module loading', () => {
           name: 'one_module',
           tabs: [],
           requires: Chapter.SOURCE_3,
-          node: mockImportDeclaration
+          node: mockImportDeclaration()
         }
       },
       context,
