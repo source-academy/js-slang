@@ -749,9 +749,9 @@ const cmdEvaluators: CommandEvaluators = {
     )
 
     if (command.params.length == 0) {
-    // Initialize the array if it doesn't exist yet
+      // Initialize the array if it doesn't exist yet
       if (!context.streamFnArr) {
-        context.streamFnArr = [];
+        context.streamFnArr = []
       }
 
       if (context.streamFnArr.length == 0) {
