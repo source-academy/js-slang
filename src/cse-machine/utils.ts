@@ -182,13 +182,13 @@ export const handleArrayCreation = (
     if (!context.streamLineage.get(context.streamFnArr[0])) {
       context.streamLineage.set(context.streamFnArr[0], [])
     }
-    console.log(context.streamFnArr[0] + ' just created ' + (array as any).id)
+    // console.log(context.streamFnArr[0] + ' just created ' + (array as any).id)
     context.streamLineage.get(context.streamFnArr[0])?.push((array as any).id)
     if (context.streamFnArr[1]) {
       context.streamFnArr[0] = context.streamFnArr[1]
     }
   }
-  console.log(context.streamLineage)
+  // console.log(context.streamLineage)
   context.firstStreamPairCreated = true
 }
 
@@ -298,7 +298,7 @@ export const envChangingStreams = (command: ControlItem): boolean => {
       const src = (command as AppInstr).srcNode
       if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
         if (src.callee.name == 'pair') {
-          console.log((command as AppInstr).srcNode.arguments[1])
+          // console.log((command as AppInstr).srcNode.arguments[1])
           return true
         }
       }
