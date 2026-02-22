@@ -33,6 +33,10 @@ export class InterruptedError extends RuntimeSourceError<Node> {
   }
 }
 
+/**
+ * General Error type to represent RuntimeErrors that aren't thrown by
+ * Source
+ */
 export class ExceptionError extends RuntimeSourceError<undefined> {
   private readonly _location: es.SourceLocation
 
@@ -90,9 +94,20 @@ export class MaximumStackLimitExceededError extends RuntimeSourceError<Node> {
   }
 }
 
+/**
+ * Error thrown when a value that isn't a function is called. Usually thrown by `callIfRightFuncAndArgs`.
+ */
 export class CallingNonFunctionValueError extends RuntimeSourceError<es.CallExpression> {
   constructor(
+    /**
+     * Value being called
+     */
     private readonly callee: Value,
+
+    /**
+     * The {@link es.CallExpression| Call Expression} that is responsible for calling the
+     * non-function value
+     */
     node: es.CallExpression
   ) {
     super(node)
@@ -120,6 +135,9 @@ export class CallingNonFunctionValueError extends RuntimeSourceError<es.CallExpr
   }
 }
 
+/**
+ * Error thrown when an attempt to access an undefined variable is made
+ */
 export class UndefinedVariableError extends RuntimeSourceError<Node> {
   constructor(
     public readonly varname: string,
@@ -137,6 +155,9 @@ export class UndefinedVariableError extends RuntimeSourceError<Node> {
   }
 }
 
+/**
+ * Error thrown when a variable is accessed in the temporal dead zone
+ */
 export class UnassignedVariableError extends RuntimeSourceError<Node> {
   constructor(
     public readonly varname: string,
@@ -154,6 +175,10 @@ export class UnassignedVariableError extends RuntimeSourceError<Node> {
   }
 }
 
+/**
+ * Error thrown when a function is called with the incorrect number of arguments. Usually thrown by
+ * `callIfRightFuncAndArgs`
+ */
 export class InvalidNumberOfArgumentsError extends RuntimeSourceError<es.CallExpression> {
   private readonly calleeStr: string
 
