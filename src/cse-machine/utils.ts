@@ -175,21 +175,21 @@ export const handleArrayCreation = (
     // environments of objects need to be modified
     environment: { value: environment, writable: true }
   })
-  
+
   environment.heap.add(array as EnvArray)
-    // Checking if a nullary function was executed before this (TODO: should somehow check if it creates a pair)
+  // Checking if a nullary function was executed before this (TODO: should somehow check if it creates a pair)
   if (context.firstStreamPairCreated) {
     if (!context.streamLineage.get(context.streamFnArr[0])) {
       context.streamLineage.set(context.streamFnArr[0], [])
     }
-    console.log(context.streamFnArr[0] + " just created " + (array as any).id)
+    console.log(context.streamFnArr[0] + ' just created ' + (array as any).id)
     context.streamLineage.get(context.streamFnArr[0])?.push((array as any).id)
     if (context.streamFnArr[1]) {
       context.streamFnArr[0] = context.streamFnArr[1]
     }
   }
-  console.log(context.streamLineage);
-  context.firstStreamPairCreated = true;
+  console.log(context.streamLineage)
+  context.firstStreamPairCreated = true
 }
 
 /**
@@ -292,19 +292,19 @@ export const envChanging = (command: ControlItem): boolean => {
 }
 
 export const envChangingStreams = (command: ControlItem): boolean => {
-   if (isInstr(command)) {
+  if (isInstr(command)) {
     const type = command.instrType
-    if(type === InstrType.APPLICATION && (command as AppInstr).numOfArgs == 2){
+    if (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs == 2) {
       const src = (command as AppInstr).srcNode
       if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
-        if(src.callee.name == "pair") {
-          console.log((command as AppInstr).srcNode.arguments[1]);
-          return true;
+        if (src.callee.name == 'pair') {
+          console.log((command as AppInstr).srcNode.arguments[1])
+          return true
         }
       }
     }
-  } 
-  return false; 
+  }
+  return false
 }
 
 // TODO: This type guard does not seem to be doing what it thinks its doing
