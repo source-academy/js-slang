@@ -71,6 +71,15 @@ export function isPair(value: any): value is Pair<any, any> {
 }
 
 /**
+ * Check if a value is a pair with nullary.
+ * @param value
+ * @returns
+ */
+export function isPairWithNullary(value: any): value is Pair<any, any> {
+  return Array.isArray(value) && value.length === 2 && typeof value[1] === 'function' && (value[1] as Function).length === 0
+}
+
+/**
  * Convert an improper list into an array and a terminator.
  * @param value
  * @returns

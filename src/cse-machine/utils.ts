@@ -177,18 +177,41 @@ export const handleArrayCreation = (
   })
 
   environment.heap.add(array as EnvArray)
+
   // Checking if a nullary function was executed before this (TODO: should somehow check if it creates a pair)
-  if (context.firstStreamPairCreated) {
-    if (!context.streamLineage.get(context.streamFnArr[0])) {
-      context.streamLineage.set(context.streamFnArr[0], [])
+  if (context.pendingStreamFnId) {
+    if (!context.streamLineage.get(context.pendingStreamFnId)) {
+      context.streamLineage.set(context.pendingStreamFnId, [])
     }
-    // console.log(context.streamFnArr[0] + ' just created ' + (array as any).id)
-    context.streamLineage.get(context.streamFnArr[0])?.push((array as any).id)
-    if (context.streamFnArr[1]) {
-      context.streamFnArr[0] = context.streamFnArr[1]
+    context.streamLineage.get(context.pendingStreamFnId)?.push((array as any).id)
+  }
+
+  if (array.length === 2 && typeof array[1] === 'function' && array[1].length === 0) {
+    const fn = array[1] as any
+    if (!fn.id) {
+      Object.defineProperty(fn, 'id', { value: uniqueId(context), writable: true })
+    }
+    context.pairToStreamFnId.set((array as any).id, fn.id)
+    context.streamFnIdToPairId.set(fn.id, (array as any).id)
+  }
+
+  // Assigning stream id to the pair. Need a better way for this because tthe array 
+  // is created before the assignment so the very first pair wontt be in the stream
+  let streamId: string | undefined = undefined
+
+  if (context.pendingStreamFnId) {
+    const parentPairId = context.streamFnIdToPairId.get(context.pendingStreamFnId)
+    if (parentPairId) {
+      streamId = context.streamPairIdToStreamId.get(parentPairId)
     }
   }
-  // console.log(context.streamLineage)
+
+  if (streamId === undefined) {
+    context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1
+    streamId = context.streamCount.toString()
+  }
+
+  context.streamPairIdToStreamId.set((array as any).id, streamId)
   context.firstStreamPairCreated = true
 }
 

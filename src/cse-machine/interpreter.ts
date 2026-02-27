@@ -527,9 +527,10 @@ const cmdEvaluators: CommandEvaluators = {
         instr.envInstr(
           currentEnvironment(context),
           context.runtime.transformers as Transformers,
-          command
+           command
         )
       )
+      context.pendingStreamFnStack.push(context.pendingStreamFnId)
     }
 
     const environment = createBlockEnvironment(context, 'blockEnvironment')
@@ -748,6 +749,7 @@ const cmdEvaluators: CommandEvaluators = {
       isPrelude
     )
 
+    // TODO: need a better way to detect nullary funcs that produces pairs
     if (command.params.length == 0) {
       // Initialize the array if it doesn't exist yet
       if (!context.streamFnArr) {
@@ -985,6 +987,7 @@ const cmdEvaluators: CommandEvaluators = {
         control.push(
           instr.envInstr(currentEnvironment(context), currentTransformers(context), command.srcNode)
         )
+        context.pendingStreamFnStack.push(context.pendingStreamFnId)
       }
 
       // Create environment for function parameters if the function isn't nullary.
@@ -994,6 +997,12 @@ const cmdEvaluators: CommandEvaluators = {
         pushEnvironment(context, environment)
       } else {
         context.runtime.environments.unshift(func.environment)
+      }
+
+      if (func.node.params.length === 0) {
+        context.pendingStreamFnId = func.id
+      } else {
+        context.pendingStreamFnId = undefined
       }
 
       // Handle special case if function is simple
@@ -1104,10 +1113,11 @@ const cmdEvaluators: CommandEvaluators = {
   },
 
   [InstrType.ASSIGNMENT]({ command, context, stash }) {
+    const value = stash.peek()
     if (command.declaration) {
-      defineVariable(context, command.symbol, stash.peek(), command.constant, command.srcNode)
+      defineVariable(context, command.symbol, value, command.constant, command.srcNode)
     } else {
-      setVariable(context, command.symbol, stash.peek(), command.srcNode)
+      setVariable(context, command.symbol, value, command.srcNode)
     }
   },
 
@@ -1188,6 +1198,10 @@ const cmdEvaluators: CommandEvaluators = {
     }
     // restore transformers environment
     setTransformers(context, command.transformers)
+
+    if (context.pendingStreamFnStack.length > 0) {
+      context.pendingStreamFnId = context.pendingStreamFnStack.pop()
+    }
   },
 
   [InstrType.FOR]({ command, context, control, stash }) {
@@ -1220,9 +1234,12 @@ const cmdEvaluators: CommandEvaluators = {
     stash.pop()
   },
 
-  [InstrType.RESET]({ command, control }) {
+  [InstrType.RESET]({ command, control, context }) {
     // Keep pushing reset instructions until marker is found.
     const cmdNext: ControlItem | undefined = control.pop()
+    if (cmdNext && isInstr(cmdNext) && cmdNext.instrType === InstrType.ENVIRONMENT) {
+      context.pendingStreamFnStack.pop()
+    }
     if (cmdNext && (!isInstr(cmdNext) || cmdNext.instrType !== InstrType.MARKER)) {
       control.push(instr.resetInstr(command.srcNode))
     }

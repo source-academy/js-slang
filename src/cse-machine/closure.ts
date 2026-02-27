@@ -37,12 +37,14 @@ const closureToJS = (value: Closure, context: Context) => {
       }
     }
     newContext.runtime.control = new Control()
+    newContext.pendingStreamFnStack = []
     // Also need the env instruction to return back to the current environment at the end.
     // The call expression won't create one as there is only one item in the control.
     newContext.runtime.control.push(
       envInstr(currentEnvironment(context), currentTransformers(context), node),
       node
     )
+    newContext.pendingStreamFnStack.push(newContext.pendingStreamFnId)
     newContext.runtime.stash = new Stash()
     newContext.runtime.transformers = context.runtime.transformers
     const gen = generateCSEMachineStateStream(

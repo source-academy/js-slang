@@ -57,7 +57,17 @@ export interface Context<T = any> {
 
   streamLineage: Map<string, string[]>
 
+  pairToStreamFnId: Map<string, string>
+
+  streamFnIdToPairId: Map<string, string>
+
   pendingStreamFnId?: string
+
+  pendingStreamFnStack: (string | undefined)[]
+
+  streamCount?: number
+
+  streamPairIdToStreamId: Map<string, string>
 
   /** Runtime Specific state */
   runtime: {
