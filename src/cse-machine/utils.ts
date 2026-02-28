@@ -178,7 +178,8 @@ export const handleArrayCreation = (
 
   environment.heap.add(array as EnvArray)
 
-  // Checking if a nullary function was executed before this (TODO: should somehow check if it creates a pair)
+  // if a streamfn was executed before this pair being created, 
+  // add this pair to that particular stream lineage
   if (context.pendingStreamFnId) {
     if (!context.streamLineage.get(context.pendingStreamFnId)) {
       context.streamLineage.set(context.pendingStreamFnId, [])
@@ -186,6 +187,8 @@ export const handleArrayCreation = (
     context.streamLineage.get(context.pendingStreamFnId)?.push((array as any).id)
   }
 
+  // Checks if its a stream pair and places the pair id and assocciated 
+  // nullary stream function in the tail in the maps below for easier referencing
   if (array.length === 2 && typeof array[1] === 'function' && array[1].length === 0) {
     const fn = array[1] as any
     if (!fn.id) {
@@ -195,8 +198,6 @@ export const handleArrayCreation = (
     context.streamFnIdToPairId.set(fn.id, (array as any).id)
   }
 
-  // Assigning stream id to the pair. Need a better way for this because tthe array 
-  // is created before the assignment so the very first pair wontt be in the stream
   let streamId: string | undefined = undefined
 
   if (context.pendingStreamFnId) {
@@ -207,12 +208,21 @@ export const handleArrayCreation = (
   }
 
   if (streamId === undefined) {
-    context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1
+    // Handling when its a list being created
+    if (typeof array[1] !== 'function') {
+      if (array[1] === null) {
+        context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1
+      } else {
+        context.streamCount = context.streamCount === undefined ? 0 : context.streamCount
+      }
+    } else {
+      context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1
+    }
     streamId = context.streamCount.toString()
   }
 
+  // Link the pairIds to the streamIds through a map
   context.streamPairIdToStreamId.set((array as any).id, streamId)
-  context.firstStreamPairCreated = true
 }
 
 /**

@@ -149,7 +149,6 @@ export const createEmptyContext = <T>(
     chapter,
     externalSymbols,
     errors: [],
-    firstStreamPairCreated: false,
     streamFnArr: [],
     streamLineage: new Map<string, string[]>(),
     pairToStreamFnId: new Map<string, string>(),
