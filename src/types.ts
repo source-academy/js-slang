@@ -51,7 +51,6 @@ export interface Context<T = any> {
   errors: SourceError[]
 
   /** Stream Visualisation */
-  firstStreamPairCreated: boolean
 
   streamFnArr: string[]
 
