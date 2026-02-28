@@ -12,7 +12,7 @@ export class BracesAroundIfElseError extends RuleError<IfStatement> {
     super(node)
   }
 
-  public explain() {
+  public override explain() {
     if (this.branch === 'consequent') {
       return 'Missing curly braces around "if" block.'
     } else {
@@ -20,7 +20,7 @@ export class BracesAroundIfElseError extends RuleError<IfStatement> {
     }
   }
 
-  public elaborate() {
+  public override elaborate() {
     let ifOrElse
     let header
     let body

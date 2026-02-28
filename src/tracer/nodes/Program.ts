@@ -1,6 +1,6 @@
 import type { Comment, Program, SourceLocation } from 'estree'
 import { convert } from '../generator'
-import type { StepperBaseNode } from '../interface'
+import { StepperBaseNode } from '../interface'
 
 import { redex } from '..'
 import { assignMuTerms } from '../utils'
@@ -9,15 +9,20 @@ import type { StepperFunctionDeclaration } from './Statement/FunctionDeclaration
 import type { StepperVariableDeclaration } from './Statement/VariableDeclaration'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '.'
 
-export class StepperProgram implements Program, StepperBaseNode {
-  type: 'Program'
-  sourceType: 'script' | 'module'
-  body: StepperStatement[]
-  comments?: Comment[] | undefined
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
+export class StepperProgram extends StepperBaseNode<Program> implements Program {
+  public readonly sourceType: 'script' | 'module'
+
+  constructor(
+    public readonly body: StepperStatement[], // TODO: Add support for variable declaration
+    public readonly comments?: Comment[] | undefined,
+    leadingComments?: Comment[] | undefined,
+    trailingComments?: Comment[] | undefined,
+    loc?: SourceLocation | null | undefined,
+    range?: [number, number] | undefined
+  ) {
+    super('Program', leadingComments, trailingComments, loc, range)
+    this.sourceType = 'module'
+  }
 
   isContractible(): boolean {
     return false
@@ -154,24 +159,6 @@ export class StepperProgram implements Program, StepperBaseNode {
       node.loc,
       node.range
     )
-  }
-
-  constructor(
-    body: StepperStatement[], // TODO: Add support for variable declaration
-    comments?: Comment[] | undefined,
-    leadingComments?: Comment[] | undefined,
-    trailingComments?: Comment[] | undefined,
-    loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
-  ) {
-    this.type = 'Program'
-    this.sourceType = 'module'
-    this.body = body
-    this.comments = comments
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {

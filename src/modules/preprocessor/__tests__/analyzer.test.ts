@@ -68,7 +68,7 @@ describe('Test throwing import validation errors', () => {
     }
 
     const { programs, topoOrder, sourceModulesToImport } = importGraphResult
-    await loadSourceModules(sourceModulesToImport, context, false)
+    await loadSourceModules(sourceModulesToImport, context, { loadTabs: false })
 
     analyzeImportsAndExports(programs, entrypointFilePath as string, topoOrder, context, {
       allowUndefinedImports,
@@ -715,7 +715,20 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       const context = mockContext(Chapter.FULL_JS)
       const [entrypointFilePath, ...topoOrder] = objectKeys(programs)
 
-      await loadSourceModules(new Set(['one_module', 'another_module']), context, false)
+      await loadSourceModules(
+        {
+          one_module: {
+            name: 'one_module',
+            tabs: []
+          },
+          another_module: {
+            name: 'another_module',
+            tabs: []
+          }
+        },
+        context,
+        { loadTabs: false }
+      )
 
       const runTest = () =>
         analyzeImportsAndExports(programs, entrypointFilePath, topoOrder, context, {

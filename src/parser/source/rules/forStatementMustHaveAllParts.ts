@@ -14,13 +14,13 @@ export class ForStatmentMustHaveAllParts extends RuleError<ForStatement> {
     super(node)
   }
 
-  public explain() {
+  public override explain() {
     return `Missing ${this.missingParts.join(', ')} expression${
       this.missingParts.length === 1 ? '' : 's'
     } in for statement.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     return stripIndent`
       This for statement requires all three parts (initialiser, test, update) to be present.
     `

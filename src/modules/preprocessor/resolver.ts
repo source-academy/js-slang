@@ -1,6 +1,6 @@
 import { posix as posixPath } from 'path'
 import { memoizedGetModuleManifestAsync } from '../loader'
-import type { FileGetter } from '../moduleTypes'
+import type { FileGetter, ModuleInfo } from '../moduleTypes'
 import { isSourceModule } from '../utils'
 
 /**
@@ -24,9 +24,7 @@ export const defaultResolutionOptions: ImportResolutionOptions = {
 }
 
 export type ResolverResult =
-  | {
-      type: 'source'
-    }
+  | ({ type: 'source' } & ModuleInfo)
   | {
       type: 'local'
       absPath: string
@@ -44,7 +42,14 @@ export default async function resolveFile(
 ): Promise<ResolverResult | undefined> {
   if (isSourceModule(toPath)) {
     const manifest = await memoizedGetModuleManifestAsync()
-    return toPath in manifest ? { type: 'source' } : undefined
+    if (!(toPath in manifest)) return undefined
+
+    const info = manifest[toPath]
+    return {
+      type: 'source',
+      name: toPath,
+      ...info
+    }
   }
 
   const absPath = posixPath.resolve(fromPath, '..', toPath)

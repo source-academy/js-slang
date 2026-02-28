@@ -5,11 +5,11 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class NoImplicitDeclareUndefinedError extends RuleError<Identifier> {
-  public explain() {
+  public override explain() {
     return 'Missing value in variable declaration.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     return stripIndent`
       A variable declaration assigns a value to a name.
       For instance, to assign 20 to ${this.node.name}, you can write:

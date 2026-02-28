@@ -156,12 +156,12 @@ export default function analyzeImportsAndExports(
   // import { a as x } from 'one_module'; AND import { b as x } from 'one_module';
   // 2. Two different symbols from different modules are declared with the same name:
   // import { a } from 'one_module'; AND import { b as a } from 'another_module';
-  for (const [localName, moduleToSpecifierMap] of declaredNames) {
+  for (const [, moduleToSpecifierMap] of declaredNames) {
     if (moduleToSpecifierMap.size > 1) {
       // This means that two imports from different modules have the same
       // declared name
       const nodes = moduleToSpecifierMap.flatMap((_, v) => v)
-      throw new DuplicateImportNameError(localName, nodes)
+      throw new DuplicateImportNameError(nodes)
     }
 
     const [[, specifiers]] = moduleToSpecifierMap
@@ -181,7 +181,7 @@ export default function analyzeImportsAndExports(
       // This means that there is more than one unique export being given the same
       // local name
       const specs = [...regularSpecifiers, ...namespaceSpecifiers]
-      throw new DuplicateImportNameError(localName, specs)
+      throw new DuplicateImportNameError(specs)
     }
   }
 }

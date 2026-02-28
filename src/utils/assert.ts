@@ -4,18 +4,18 @@
  * Plus, we can customize our own assert messages and handling
  */
 
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { RuntimeSourceError } from '../errors/base'
 
-export class AssertionError extends RuntimeSourceError {
-  constructor(public readonly message: string) {
-    super()
+export class AssertionError extends RuntimeSourceError<undefined> {
+  constructor(public readonly assertion: string) {
+    super(undefined)
   }
 
-  public explain(): string {
-    return this.message
+  public override explain(): string {
+    return this.assertion
   }
 
-  public elaborate(): string {
+  public override elaborate(): string {
     return 'Please contact the administrators to let them know that this error has occurred'
   }
 }

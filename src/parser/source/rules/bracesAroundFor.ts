@@ -4,11 +4,11 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class BracesAroundForError extends RuleError<ForStatement> {
-  public explain() {
+  public override explain() {
     return 'Missing curly braces around "for" block.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     const initStr = generate(this.node.init)
     const testStr = generate(this.node.test)
     const updateStr = generate(this.node.update)

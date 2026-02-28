@@ -39,7 +39,7 @@ export class Apply extends Function {
     return Apply.instance
   }
 
-  public toString(): string {
+  public override toString(): string {
     return 'apply'
   }
 }
@@ -66,7 +66,7 @@ export class Eval extends Function {
     return Eval.instance
   }
 
-  public toString(): string {
+  public override toString(): string {
     return 'eval'
   }
 }

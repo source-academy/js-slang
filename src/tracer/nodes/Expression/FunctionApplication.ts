@@ -1,40 +1,31 @@
-import * as astring from 'astring'
 import type { Comment, SimpleCallExpression, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
 import { StepperBlockStatement } from '../Statement/BlockStatement'
+import { CallingNonFunctionValueError, InvalidNumberOfArgumentsError } from '../../../errors/errors'
+import { GeneralRuntimeError } from '../../../errors/base'
 import { StepperBlockExpression } from './BlockExpression'
 
-export class StepperFunctionApplication implements SimpleCallExpression, StepperBaseNode {
-  type: 'CallExpression'
-  callee: StepperExpression
-  arguments: StepperExpression[]
-  optional: boolean
-  leadingComments?: Comment[]
-  trailingComments?: Comment[]
-  loc?: SourceLocation | null
-  range?: [number, number]
+export class StepperFunctionApplication
+  extends StepperBaseNode<SimpleCallExpression>
+  implements SimpleCallExpression
+{
+  public readonly arguments: StepperExpression[]
 
   constructor(
-    callee: StepperExpression,
+    public readonly callee: StepperExpression,
     args: StepperExpression[],
-    optional: boolean = false,
+    public readonly optional: boolean = false,
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
     range?: [number, number]
   ) {
-    this.type = 'CallExpression'
-    this.callee = callee
+    super('CallExpression', leadingComments, trailingComments, loc, range)
     this.arguments = args
-    this.optional = optional
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
   }
 
   static create(node: SimpleCallExpression) {
@@ -49,22 +40,18 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     const isValidCallee =
       this.callee.type === 'ArrowFunctionExpression' ||
       (this.callee.type === 'Identifier' && isBuiltinFunction(this.callee.name))
 
     if (!isValidCallee) {
-      // Since the callee can not be proceed further, calling non callables should result to an error.
+      // Since the callee can not proceed further, calling non callables should result to an error.
       if (
         !this.callee.isOneStepPossible() &&
         this.arguments.every(arg => !arg.isOneStepPossible())
       ) {
-        throw new Error(
-          `Line ${this.loc?.start.line || 0}: Calling non-function value ${astring.generate(
-            this.callee
-          )}`
-        )
+        throw new CallingNonFunctionValueError(this.callee, this)
       }
       return false
     }
@@ -72,10 +59,10 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     if (this.callee.type === 'ArrowFunctionExpression') {
       const arrowFunction = this.callee
       if (arrowFunction.params.length !== this.arguments.length) {
-        throw new Error(
-          `Line ${this.loc?.start.line || 0}: Expected ${
-            arrowFunction.params.length
-          } arguments, but got ${this.arguments.length}.`
+        throw new InvalidNumberOfArgumentsError(
+          this,
+          arrowFunction.params.length,
+          this.arguments.length
         )
       }
     }
@@ -83,27 +70,27 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     return this.arguments.every(arg => !arg.isOneStepPossible())
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     if (this.isContractible()) return true
     if (this.callee.isOneStepPossible()) return true
     return this.arguments.some(arg => arg.isOneStepPossible())
   }
 
-  contract(): StepperExpression | StepperBlockExpression {
+  public override contract(): StepperExpression | StepperBlockExpression {
     redex.preRedex = [this]
     if (!this.isContractible()) throw new Error()
     if (this.callee.type === 'Identifier') {
       const functionName = this.callee.name
       if (isBuiltinFunction(functionName)) {
-        const result = getBuiltinFunction(functionName, this.arguments)
+        const result = getBuiltinFunction(functionName, this)
         redex.postRedex = [result]
         return result
       }
-      throw new Error(`Unknown builtin function: ${functionName}`)
+      throw new GeneralRuntimeError(`Unknown builtin function: ${functionName}`, this)
     }
 
     if (this.callee.type !== 'ArrowFunctionExpression') {
-      throw new Error()
+      throw new CallingNonFunctionValueError(this.callee, this)
     }
 
     const lambda = this.callee
@@ -139,7 +126,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     return result
   }
 
-  oneStep(): StepperExpression {
+  public override oneStep(): StepperExpression {
     if (this.isContractible()) {
       // @ts-expect-error: contract can return StepperBlockExpression but it's handled at runtime
       return this.contract()
@@ -176,7 +163,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     throw new Error('No one step possible')
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
     return new StepperFunctionApplication(
       this.callee.substitute(id, value),
       this.arguments.map(arg => arg.substitute(id, value)),
@@ -188,19 +175,19 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     )
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return Array.from(
       new Set([...this.callee.freeNames(), ...this.arguments.flatMap(arg => arg.freeNames())])
     )
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return Array.from(
       new Set([...this.callee.allNames(), ...this.arguments.flatMap(arg => arg.allNames())])
     )
   }
 
-  rename(before: string, after: string): StepperExpression {
+  public override rename(before: string, after: string): StepperExpression {
     return new StepperFunctionApplication(
       this.callee.rename(before, after),
       this.arguments.map(arg => arg.rename(before, after)),

@@ -1,3 +1,4 @@
+import type { ImportDeclaration } from 'estree'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { DeclarationKind } from '..'
 import { getNames } from '../..'
@@ -6,8 +7,8 @@ import { mockContext } from '../../utils/testing/mocks'
 
 import { ModuleConnectionError } from '../../modules/errors'
 import {
-  memoizedGetModuleDocsAsync,
-  memoizedGetModuleManifestAsync
+  memoizedLoadModuleDocsAsync,
+  memoizedLoadModuleManifestAsync
 } from '../../modules/loader/loaders'
 
 vi.mock(import('../../modules/loader/loaders'))
@@ -163,29 +164,38 @@ describe('test name extractor functionality on imports', () => {
 
   test.each(testCases)('%s', async (_, code, expectedNames, manifestCount, docsCount) => {
     await testGetNames(code, expectedNames)
-    expect(memoizedGetModuleDocsAsync).toHaveBeenCalledTimes(docsCount)
-    expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(manifestCount)
+    expect(memoizedLoadModuleDocsAsync).toHaveBeenCalledTimes(docsCount)
+    expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(manifestCount)
   })
 
+  const mockImportDecl: ImportDeclaration = {
+    type: 'ImportDeclaration',
+    specifiers: [],
+    source: {
+      type: 'Literal',
+      value: 'nothing'
+    }
+  }
+
   test('Handles errors from memoizedGetModuleManifest gracefully', async () => {
-    const mockedManifest = vi.mocked(memoizedGetModuleManifestAsync)
-    mockedManifest.mockRejectedValueOnce(new ModuleConnectionError())
+    const mockedManifest = vi.mocked(memoizedLoadModuleManifestAsync)
+    mockedManifest.mockRejectedValueOnce(new ModuleConnectionError(mockImportDecl))
     await testGetNames("import { foo } from 'one_module';", [
       ['foo', "Unable to retrieve documentation for 'one_module'"]
     ])
 
-    expect(memoizedGetModuleDocsAsync).toHaveBeenCalledTimes(0)
+    expect(memoizedLoadModuleDocsAsync).toHaveBeenCalledTimes(0)
   })
 
   test('Handles errors from memoizedGetModuleDocs gracefully', async () => {
-    const mockedDocs = vi.mocked(memoizedGetModuleDocsAsync)
-    mockedDocs.mockRejectedValueOnce(new ModuleConnectionError())
+    const mockedDocs = vi.mocked(memoizedLoadModuleDocsAsync)
+    mockedDocs.mockRejectedValueOnce(new ModuleConnectionError(mockImportDecl))
 
     await testGetNames(`import { foo } from 'one_module'; import { bar } from 'another_module';`, [
       ['foo', "Unable to retrieve documentation for 'one_module'"],
       ['bar', '<div><h4>bar(a: number) → {void}</h4><div class="description">bar</div></div>']
     ])
 
-    expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(2)
+    expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(2)
   })
 })

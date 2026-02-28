@@ -2,36 +2,23 @@ import type { BlockStatement, Comment, SourceLocation } from 'estree'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
 import { assignMuTerms, getFreshName } from '../../utils'
-import { StepperFunctionDeclaration } from './FunctionDeclaration'
-import { StepperVariableDeclaration } from './VariableDeclaration'
-import { StepperStatement } from '.'
+import type { StepperStatement } from '.'
 
-export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
-  type: 'BlockStatement'
-  body: StepperStatement[]
-  innerComments?: Comment[] | undefined
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
-
+export class StepperBlockStatement
+  extends StepperBaseNode<BlockStatement>
+  implements BlockStatement
+{
   constructor(
-    body: StepperStatement[],
-    innerComments?: Comment[] | undefined,
+    public readonly body: StepperStatement[],
+    public readonly innerComments?: Comment[] | undefined,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined
   ) {
-    this.type = 'BlockStatement'
-    this.body = body
-    this.innerComments = innerComments
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('BlockStatement', leadingComments, trailingComments, loc, range)
   }
 
   static create(node: BlockStatement) {
@@ -45,15 +32,15 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return this.body.length === 0 || (this.body.length === 1 && !this.body[0].isContractible())
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return true
   }
 
-  contract(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
+  public override contract(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
     if (this.body.length === 0) {
       redex.preRedex = [this]
       redex.postRedex = []
@@ -74,7 +61,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     redex.postRedex = []
   }
 
-  oneStep(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
+  public override oneStep(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
     if (this.isContractible()) {
       return this.contract()
     }
@@ -264,7 +251,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     )
   }
 
-  substitute(
+  public override substitute(
     id: StepperPattern,
     value: StepperExpression,
     upperBoundName?: string[]
@@ -305,7 +292,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   scanAllDeclarationNames(): string[] {
     return this.body
       .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
-      .flatMap((ast: StepperVariableDeclaration | StepperFunctionDeclaration) => {
+      .flatMap(ast => {
         if (ast.type === 'VariableDeclaration') {
           return ast.declarations.map(ast => ast.id.name)
         } else {
@@ -315,17 +302,17 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       })
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     const names = new Set(this.body.flatMap(ast => ast.freeNames()))
     this.scanAllDeclarationNames().forEach(name => names.delete(name))
     return Array.from(names)
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return Array.from(new Set(this.body.flatMap(ast => ast.allNames())))
   }
 
-  rename(before: string, after: string): StepperBlockStatement {
+  public override rename(before: string, after: string): StepperBlockStatement {
     return new StepperBlockStatement(
       this.body.map(statement => statement.rename(before, after) as StepperStatement),
       this.innerComments,

@@ -4,11 +4,13 @@ import { isFunction } from 'lodash'
 import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
 import * as errors from '../errors/errors'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { RuntimeSourceError } from '../errors/base'
 import { Chapter } from '../langs'
 import type { Context, Environment, Node, NodeTypeToNode, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { isIdentifier, isImportDeclaration } from '../utils/ast/typeGuards'
+import { isIdentifier, isImportDeclaration, isVariableDeclaration } from '../utils/ast/typeGuards'
+import assert from '../utils/assert'
+import { extractDeclarations } from '../utils/ast/helpers'
 import Closure from './closure'
 import { Continuation, isCallWithCurrentContinuation } from './continuations'
 import Heap from './heap'
@@ -375,16 +377,29 @@ const UNASSIGNED_LET = Symbol('let declaration')
 export function declareIdentifier(
   context: Context,
   name: string,
-  node: Node,
+  node:
+    | es.Declaration
+    | es.ImportSpecifier
+    | es.ImportDefaultSpecifier
+    | es.ImportNamespaceSpecifier,
   environment: Environment,
   constant: boolean = false
 ) {
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
 
+    if (isVariableDeclaration(node)) {
+      return handleRuntimeError(
+        context,
+        new errors.VariableRedeclarationError(node, name, !!descriptors[name].writable)
+      )
+    }
+
+    assert(descriptors[name].writable === false, `${node.type} should not be reassignable`)
+
     return handleRuntimeError(
       context,
-      new errors.VariableRedeclaration(node, name, descriptors[name].writable)
+      new errors.VariableRedeclarationError(node, name, descriptors[name].writable)
     )
   }
   environment.head[name] = constant ? UNASSIGNED_CONST : UNASSIGNED_LET
@@ -396,10 +411,10 @@ function declareVariables(
   node: es.VariableDeclaration,
   environment: Environment
 ) {
-  for (const declaration of node.declarations) {
-    // Retrieve declaration type from node
-    const constant = node.kind === 'const'
-    declareIdentifier(context, (declaration.id as es.Identifier).name, node, environment, constant)
+  // Retrieve declaration type from node
+  const constant = node.kind === 'const'
+  for (const id of extractDeclarations(node)) {
+    declareIdentifier(context, id.name, node, environment, constant)
   }
 }
 
@@ -426,7 +441,12 @@ export function defineVariable(
   name: string,
   value: Value,
   constant = false,
-  node: es.VariableDeclaration | es.ImportDeclaration
+  node:
+    | es.VariableDeclaration
+    | es.ImportSpecifier
+    | es.ImportDefaultSpecifier
+    | es.ImportNamespaceSpecifier
+    | es.FunctionDeclaration
 ) {
   const environment = currentEnvironment(context)
 
@@ -436,7 +456,14 @@ export function defineVariable(
     environment.head[name] !== UNASSIGNED_LET &&
     context.chapter !== Chapter.FULL_SCHEME
   ) {
-    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
+    if (isVariableDeclaration(node)) {
+      return handleRuntimeError(
+        context,
+        new errors.VariableRedeclarationError(node, name, !constant)
+      )
+    }
+
+    return handleRuntimeError(context, new errors.VariableRedeclarationError(node, name, false))
   }
 
   if (constant && value instanceof Closure) {
@@ -460,7 +487,7 @@ export const getVariable = (context: Context, name: string, node: es.Identifier)
         environment.head[name] === UNASSIGNED_CONST ||
         environment.head[name] === UNASSIGNED_LET
       ) {
-        return handleRuntimeError(context, new errors.UnassignedVariable(name, node))
+        return handleRuntimeError(context, new errors.UnassignedVariableError(name, node))
       } else {
         return environment.head[name]
       }
@@ -468,7 +495,7 @@ export const getVariable = (context: Context, name: string, node: es.Identifier)
       environment = environment.tail
     }
   }
-  return handleRuntimeError(context, new errors.UndefinedVariable(name, node))
+  return handleRuntimeError(context, new errors.UndefinedVariableError(name, node))
 }
 
 export const setVariable = (
@@ -491,15 +518,15 @@ export const setVariable = (
         environment.head[name] = value
         return undefined
       }
-      return handleRuntimeError(context, new errors.ConstAssignment(node, name))
+      return handleRuntimeError(context, new errors.ConstAssignmentError(node, name))
     } else {
       environment = environment.tail
     }
   }
-  return handleRuntimeError(context, new errors.UndefinedVariable(name, node))
+  return handleRuntimeError(context, new errors.UndefinedVariableError(name, node))
 }
 
-export const handleRuntimeError = (context: Context, error: RuntimeSourceError) => {
+export const handleRuntimeError = (context: Context, error: RuntimeSourceError<any>) => {
   context.errors.push(error)
   throw error
 }
@@ -517,7 +544,7 @@ export const checkNumberOfArguments = (
     if (hasVarArgs ? params.length - 1 > args.length : params.length !== args.length) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(
+        new errors.InvalidNumberOfArgumentsError(
           exp,
           hasVarArgs ? params.length - 1 : params.length,
           args.length,
@@ -530,7 +557,7 @@ export const checkNumberOfArguments = (
     if (args.length !== 1) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+        new errors.InvalidNumberOfArgumentsError(exp, 1, args.length, false)
       )
     }
     return undefined
@@ -539,7 +566,7 @@ export const checkNumberOfArguments = (
     if (args.length !== 1) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+        new errors.InvalidNumberOfArgumentsError(exp, 1, args.length, false)
       )
     }
     return undefined
@@ -548,7 +575,7 @@ export const checkNumberOfArguments = (
     if (args.length < 2) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(exp, 2, args.length, false)
+        new errors.InvalidNumberOfArgumentsError(exp, 2, args.length, false)
       )
     }
     return undefined
@@ -564,7 +591,7 @@ export const checkNumberOfArguments = (
     if (hasVarArgs ? callee.minArgsNeeded > args.length : callee.length !== args.length) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(
+        new errors.InvalidNumberOfArgumentsError(
           exp,
           hasVarArgs ? callee.minArgsNeeded : callee.length,
           args.length,
@@ -588,7 +615,7 @@ export const checkStackOverFlow = (context: Context, control: Control) => {
     let counter = 0
     for (
       let i = 0;
-      counter < errors.MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW &&
+      counter < errors.MaximumStackLimitExceededError.MAX_CALLS_TO_SHOW &&
       i < context.runtime.environments.length;
       i++
     ) {
@@ -599,7 +626,7 @@ export const checkStackOverFlow = (context: Context, control: Control) => {
     }
     handleRuntimeError(
       context,
-      new errors.MaximumStackLimitExceeded(context.runtime.nodes[0], stacks)
+      new errors.MaximumStackLimitExceededError(context.runtime.nodes[0], stacks)
     )
   }
 }

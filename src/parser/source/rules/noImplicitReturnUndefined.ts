@@ -4,11 +4,11 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class NoImplicitReturnUndefinedError extends RuleError<ReturnStatement> {
-  public explain() {
+  public override explain() {
     return 'Missing value in return statement.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     return stripIndent`
       This return statement is missing a value.
       For instance, to return the value 42, you can write

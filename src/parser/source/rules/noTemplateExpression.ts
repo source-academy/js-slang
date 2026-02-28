@@ -3,11 +3,11 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class NoTemplateExpressionError extends RuleError<TemplateLiteral> {
-  public explain() {
+  public override explain() {
     return 'Expressions are not allowed in template literals (`multiline strings`)'
   }
 
-  public elaborate() {
+  public override elaborate() {
     return this.explain()
   }
 }

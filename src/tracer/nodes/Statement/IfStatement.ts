@@ -2,40 +2,23 @@ import type { Comment, IfStatement, SourceLocation } from 'estree'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
 import { StepperLiteral } from '../Expression/Literal'
 import { StepperBlockStatement } from './BlockStatement'
 import { StepperExpressionStatement } from './ExpressionStatement'
-import { StepperStatement } from '.'
+import type { StepperStatement } from '.'
 
-export class StepperIfStatement implements IfStatement, StepperBaseNode {
-  type: 'IfStatement'
-  test: StepperExpression
-  consequent: StepperStatement
-  alternate: StepperStatement | null
-
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
-
+export class StepperIfStatement extends StepperBaseNode<IfStatement> implements IfStatement {
   constructor(
-    test: StepperExpression,
-    consequent: StepperStatement,
-    alternate: StepperStatement | null,
+    public readonly test: StepperExpression,
+    public readonly consequent: StepperStatement,
+    public readonly alternate: StepperStatement | null,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined
   ) {
-    this.type = 'IfStatement'
-    this.test = test
-    this.consequent = consequent
-    this.alternate = alternate
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('IfStatement', leadingComments, trailingComments, loc, range)
   }
 
   static create(node: IfStatement) {
@@ -50,11 +33,11 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return this.test instanceof StepperLiteral
   }
 
-  contract(): StepperBlockStatement | StepperIfStatement {
+  public override contract(): StepperBlockStatement | StepperIfStatement {
     if (!(this.test instanceof StepperLiteral)) {
       throw new Error('Cannot contract non-literal test')
     }
@@ -83,11 +66,11 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     }
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return this.isContractible() || this.test.isOneStepPossible()
   }
 
-  oneStep(): StepperIfStatement | StepperBlockStatement {
+  public override oneStep(): StepperIfStatement | StepperBlockStatement {
     if (!this.isOneStepPossible()) {
       throw new Error('No step possible in test')
     }
@@ -107,7 +90,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     )
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperIfStatement(
       this.test.substitute(id, value),
       this.consequent.substitute(id, value) as StepperStatement,
@@ -124,7 +107,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     redex.postRedex = []
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     const names = new Set([
       ...this.test.freeNames(),
       ...this.consequent.freeNames(),
@@ -133,7 +116,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     return Array.from(names)
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     const names = new Set([
       ...this.test.allNames(),
       ...this.consequent.allNames(),
@@ -142,7 +125,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     return Array.from(names)
   }
 
-  rename(before: string, after: string): StepperIfStatement {
+  public override rename(before: string, after: string): StepperIfStatement {
     return new StepperIfStatement(
       this.test.rename(before, after),
       this.consequent.rename(before, after) as StepperStatement,

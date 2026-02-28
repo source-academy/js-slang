@@ -2,7 +2,7 @@ import { type NullableMappedPosition, type RawSourceMap, SourceMapConsumer } fro
 
 import { UNKNOWN_LOCATION } from '../constants'
 import type { SourceError } from '../errors/base'
-import { ConstAssignment, ExceptionError, UndefinedVariable } from '../errors/errors'
+import { ConstAssignmentError, ExceptionError, UndefinedVariableError } from '../errors/errors'
 import { locationDummyNode } from '../utils/ast/astCreator'
 
 enum BrowserType {
@@ -121,9 +121,9 @@ export async function toSourceError(error: Error, sourceMap?: RawSourceMap): Pro
     possibleMessages.some(possibleMessage => errorMessage.includes(possibleMessage))
 
   if (errorMessageContains(ASSIGNMENT_TO_CONST_ERROR_MESSAGES)) {
-    return new ConstAssignment(locationDummyNode(line, column, source), identifier)
+    return new ConstAssignmentError(locationDummyNode(line, column, source), identifier)
   } else if (errorMessageContains(UNDEFINED_VARIABLE_MESSAGES)) {
-    return new UndefinedVariable(identifier, locationDummyNode(line, column, source))
+    return new UndefinedVariableError(identifier, locationDummyNode(line, column, source))
   } else {
     const location =
       line === -1 || column === -1
