@@ -1001,9 +1001,10 @@ const cmdEvaluators: CommandEvaluators = {
 
       if (func.node.params.length === 0) {
         context.pendingStreamFnId = func.id
-      } else {
-        context.pendingStreamFnId = undefined
-      }
+      } 
+      // else {
+      //   context.pendingStreamFnId = undefined
+      // }
 
       // Handle special case if function is simple
       if (isSimpleFunction(func.node)) {
