@@ -59,6 +59,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@jsdoc/salty": "^0.2.9",
     "@types/estree": "^1.0.5",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.0.0",

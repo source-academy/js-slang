@@ -50,6 +50,24 @@ export interface Context<T = any> {
   /** All the errors gathered */
   errors: SourceError[]
 
+  /** Stream Visualisation */
+
+  streamFnArr: string[]
+
+  streamLineage: Map<string, string[]>
+
+  pairToStreamFnId: Map<string, string>
+
+  streamFnIdToPairId: Map<string, string>
+
+  pendingStreamFnId?: string
+
+  pendingStreamFnStack: (string | undefined)[]
+
+  streamCount?: number
+
+  streamPairIdToStreamId: Map<string, string>
+
   /** Runtime Specific state */
   runtime: {
     transformers?: Transformers
@@ -65,6 +83,7 @@ export interface Context<T = any> {
     envStepsTotal: number
     breakpointSteps: number[]
     changepointSteps: number[]
+    streamsPointSteps: number[]
   }
 
   numberOfOuterEnvironments: number

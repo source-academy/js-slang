@@ -175,7 +175,54 @@ export const handleArrayCreation = (
     // environments of objects need to be modified
     environment: { value: environment, writable: true }
   })
+
   environment.heap.add(array as EnvArray)
+
+  // if a streamfn was executed before this pair being created, 
+  // add this pair to that particular stream lineage
+  if (context.pendingStreamFnId) {
+    if (!context.streamLineage.get(context.pendingStreamFnId)) {
+      context.streamLineage.set(context.pendingStreamFnId, [])
+    }
+    context.streamLineage.get(context.pendingStreamFnId)?.push((array as any).id)
+  }
+
+  // Checks if its a stream pair and places the pair id and assocciated 
+  // nullary stream function in the tail in the maps below for easier referencing
+  if (array.length === 2 && typeof array[1] === 'function' && array[1].length === 0) {
+    const fn = array[1] as any
+    if (!fn.id) {
+      Object.defineProperty(fn, 'id', { value: uniqueId(context), writable: true })
+    }
+    context.pairToStreamFnId.set((array as any).id, fn.id)
+    context.streamFnIdToPairId.set(fn.id, (array as any).id)
+  }
+
+  let streamId: string | undefined = undefined
+
+  if (context.pendingStreamFnId) {
+    const parentPairId = context.streamFnIdToPairId.get(context.pendingStreamFnId)
+    if (parentPairId) {
+      streamId = context.streamPairIdToStreamId.get(parentPairId)
+    }
+  }
+
+  if (streamId === undefined) {
+    // Handling when its a list being created
+    if (typeof array[1] !== 'function') {
+      if (array[1] === null) {
+        context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1
+      } else {
+        context.streamCount = context.streamCount === undefined ? 0 : context.streamCount
+      }
+    } else {
+      context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1
+    }
+    streamId = context.streamCount.toString()
+  }
+
+  // Link the pairIds to the streamIds through a map
+  context.streamPairIdToStreamId.set((array as any).id, streamId)
 }
 
 /**
@@ -275,6 +322,22 @@ export const envChanging = (command: ControlItem): boolean => {
     // for scheme control items :P
     return true
   }
+}
+
+export const envChangingStreams = (command: ControlItem): boolean => {
+  if (isInstr(command)) {
+    const type = command.instrType
+    if (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs == 2) {
+      const src = (command as AppInstr).srcNode
+      if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
+        if (src.callee.name == 'pair') {
+          // console.log((command as AppInstr).srcNode.arguments[1])
+          return true
+        }
+      }
+    }
+  }
+  return false
 }
 
 // TODO: This type guard does not seem to be doing what it thinks its doing
