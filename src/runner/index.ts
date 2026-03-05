@@ -1,7 +1,6 @@
 import type { Program } from 'estree'
 import * as _ from 'lodash'
 import type { Context, IOptions, Result } from '..'
-import { mapResult } from '../alt-langs/mapper'
 import { Chapter, Variant } from '../langs'
 import type { FileGetter } from '../modules/moduleTypes'
 import preprocessFileImports from '../modules/preprocessor'
@@ -150,10 +149,9 @@ export async function sourceFilesRunner(
   context.previousPrograms.unshift(preprocessedProgram)
 
   const result = await sourceRunner(preprocessedProgram, context, verboseErrors, options)
-  const resultMapper = mapResult(context)
 
   return {
-    result: resultMapper(result),
+    result,
     verboseErrors
   }
 }

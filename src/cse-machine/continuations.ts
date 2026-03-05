@@ -1,38 +1,8 @@
 import type es from 'estree'
 
 import type { Context, Environment } from '../types'
-import type { Control, Stash, Transformers } from './interpreter'
+import type { Control, Stash } from './interpreter'
 import { uniqueId } from './utils'
-
-/**
- * A dummy function used to detect for the apply function object.
- * If the interpreter sees this specific function, it applies the function
- * with the given arguments to apply.
- *
- * We need this to be a metaprocedure so that it can properly handle
- * the arguments passed to it, even if they are continuations.
- */
-export class Apply extends Function {
-  private static instance: Apply = new Apply()
-
-  private constructor() {
-    super()
-  }
-
-  public static get(): Apply {
-    return Apply.instance
-  }
-
-  public toString(): string {
-    return 'apply'
-  }
-}
-
-export const apply = Apply.get()
-
-export function isApply(value: any): boolean {
-  return value === apply
-}
 
 /**
  * A dummy function used to detect for the call/cc function object.
@@ -73,23 +43,15 @@ export class Continuation extends Function {
   private control: Control
   private stash: Stash
   private env: Environment[]
-  private transformers: Transformers
 
   /** Unique ID defined for continuation */
   public readonly id: string
 
-  constructor(
-    context: Context,
-    control: Control,
-    stash: Stash,
-    env: Environment[],
-    transformers: Transformers
-  ) {
+  constructor(context: Context, control: Control, stash: Stash, env: Environment[]) {
     super()
     this.control = control.copy()
     this.stash = stash.copy()
     this.env = [...env]
-    this.transformers = transformers
     this.id = uniqueId(context)
   }
 
@@ -105,10 +67,6 @@ export class Continuation extends Function {
 
   public getEnv(): Environment[] {
     return [...this.env]
-  }
-
-  public getTransformers(): Transformers {
-    return this.transformers
   }
 
   public toString(): string {
