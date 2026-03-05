@@ -77,3 +77,23 @@ export type ImportOptions = ImportLoadingOptions & ImportAnalysisOptions & Linke
 
 export type SourceFiles = Partial<Record<string, string>>
 export type FileGetter = (p: string) => Promise<string | undefined>
+
+/**
+ * Represents a module context, which is used to store the state of a module and the tabs that it has loaded
+ * within the evaluation context
+ */
+export interface ModuleContext<TState = any> {
+  /**
+   * Whatever state the module wishes to store. If the state is set to `null`, it means that the module has not
+   * been loaded yet.
+   */
+  state: null | TState
+
+  /**
+   * The tabs that the module has loaded. If the tabs are set to `null`, it means that the module has not tried to
+   * load its tabs yet.
+   *
+   * This array will be empty if the module does not have any tabs to load
+   */
+  tabs: null | any[]
+}

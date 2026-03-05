@@ -12,12 +12,12 @@ import type {
   Context,
   ExecutionMethod,
   Finished,
-  ModuleContext,
   RecursivePartial,
   Result,
   Error as ResultError,
   SVMProgram
 } from './types'
+import type { ModuleContext } from './modules/moduleTypes'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 

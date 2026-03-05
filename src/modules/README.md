@@ -25,3 +25,8 @@ anything to the loading process, but causes the browser not to cache the importe
 the modules when we choose (e.g. when a new version becomes available).
 
 1. During testing, Vitest allows for ESM syntax, but for our mocked imports to be stable, the query parameter is not attached.
+
+### Loaders
+
+Loaders are what convert the raw Javascript into the fully loaded bundle, usually by passing the current evaluation context to the partially loaded bundle.
+There are also other things that a loader does. For example, the default loader ensures that all top level functions have proper `toReplString` representations.

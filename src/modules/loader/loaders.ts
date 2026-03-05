@@ -110,7 +110,8 @@ export async function loadModuleBundleAsync(
     const loadedBundle = partialBundle(getRequireProvider(context))
 
     return Object.entries(loadedBundle).reduce((res, [name, value]) => {
-      if (typeof value === 'function') {
+      if (typeof value === 'function' && typeof value.toReplString !== 'function') {
+        // Don't override toReplString if it already exists
         const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`
         value.toReplString = () => repr
       }
@@ -121,6 +122,7 @@ export async function loadModuleBundleAsync(
     }, {})
   } catch (error) {
     if (error instanceof ModuleConnectionError) throw error
+    console.error(`Internal error while loading module ${moduleName}:`, error)
     throw new ModuleInternalError(moduleName, error, node)
   }
 }
