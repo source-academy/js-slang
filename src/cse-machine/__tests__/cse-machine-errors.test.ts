@@ -1008,7 +1008,9 @@ test('Cannot overwrite loop variables within a block', () => {
   test();
   `,
     optionEC3
-  ).toEqual('Line 4: Assignment to a for loop variable within the body of the for loop is not allowed.')
+  ).toEqual(
+    'Line 4: Assignment to a for loop variable within the body of the for loop is not allowed.'
+  )
 })
 
 test(
