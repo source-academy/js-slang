@@ -10,7 +10,7 @@ import Closure from './closure'
 import { Continuation, isCallWithCurrentContinuation } from './continuations'
 import Heap from './heap'
 import * as instr from './instrCreator'
-import { type Control } from './interpreter'
+import type { Control } from './interpreter'
 import {
   type AppInstr,
   type ControlItem,
@@ -391,10 +391,7 @@ export function defineVariable(
 ) {
   const environment = currentEnvironment(context)
 
-  if (
-    environment.head[name] !== UNASSIGNED_CONST &&
-    environment.head[name] !== UNASSIGNED_LET
-  ) {
+  if (environment.head[name] !== UNASSIGNED_CONST && environment.head[name] !== UNASSIGNED_LET) {
     return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
   }
 

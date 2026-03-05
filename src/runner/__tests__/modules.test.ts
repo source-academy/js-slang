@@ -38,7 +38,7 @@ const describeCases: DescribeCase[] = [
     from one_module import foo
     foo()
     `
-  ],
+  ]
 ]
 
 describe.each(describeCases)(

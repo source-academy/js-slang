@@ -47,12 +47,7 @@ export class Continuation extends Function {
   /** Unique ID defined for continuation */
   public readonly id: string
 
-  constructor(
-    context: Context,
-    control: Control,
-    stash: Stash,
-    env: Environment[]
-  ) {
+  constructor(context: Context, control: Control, stash: Stash, env: Environment[]) {
     super()
     this.control = control.copy()
     this.stash = stash.copy()
