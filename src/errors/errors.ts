@@ -11,11 +11,10 @@ import { RuntimeSourceError } from './base'
 export class BuiltInFunctionError extends RuntimeSourceError<undefined> {
   constructor(private readonly explanation: string) {
     super(undefined)
-    this.explanation = explanation
   }
 
   public override explain() {
-    return `${this.explanation}`
+    return this.explanation
   }
 
   public override elaborate() {
