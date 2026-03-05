@@ -3,10 +3,9 @@
 	error-related classes).
 */
 import type es from 'estree'
-import type { Representation } from './alt-langs/mapper'
 import type { EnvTree } from './createContext'
 import type Heap from './cse-machine/heap'
-import type { Control, Stash, Transformers } from './cse-machine/interpreter'
+import type { Control, Stash } from './cse-machine/interpreter'
 import type { SourceError } from './errors/base'
 import type { Chapter, LanguageOptions, Variant } from './langs'
 import type { LoadedBundle } from './modules/moduleTypes'
@@ -60,7 +59,6 @@ export interface Context<T = any> {
 
   /** Runtime Specific state */
   runtime: {
-    transformers?: Transformers
     break: boolean
     debuggerOn: boolean
     isRunning: boolean
@@ -194,10 +192,6 @@ export interface Finished {
   status: 'finished'
   context: Context
   value: Value
-  representation?: Representation // if the returned value needs a unique representation,
-  // (for example if the language used is not JS),
-  // the display of the result will use the representation
-  // field instead
 }
 
 /**

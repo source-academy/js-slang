@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 import { mockContext } from '../../utils/testing/mocks'
 import { Call_cc, Continuation, isCallWithCurrentContinuation } from '../continuations'
-import { Control, Stash, Transformers } from '../interpreter'
+import { Control, Stash } from '../interpreter'
 
 test('call/cc is a singleton', () => {
   expect(Call_cc.get()).toBe(Call_cc.get())
@@ -17,6 +17,6 @@ test('isCallWithCurrentContinuation works on call/cc only', () => {
 })
 
 test('Continuation toString', () => {
-  const cont = new Continuation(mockContext(), new Control(), new Stash(), [], new Transformers())
+  const cont = new Continuation(mockContext(), new Control(), new Stash(), [])
   expect(cont.toString()).toBe('continuation')
 })

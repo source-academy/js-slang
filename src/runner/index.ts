@@ -1,17 +1,16 @@
 import type { Program } from 'estree'
 import * as _ from 'lodash'
-import type { IOptions } from '..'
-import { mapResult } from '../alt-langs/mapper'
+import type { Context, IOptions, Result } from '..'
 import { Chapter, Variant } from '../langs'
 import type { FileGetter } from '../modules/moduleTypes'
 import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
-import type { Context, Result, RecursivePartial } from '../types'
 import assert from '../utils/assert'
 import { validateAndAnnotate } from '../validator/validator'
 import { defaultSourceBundleImporter } from '../modules/loader/importers'
+import type { RecursivePartial } from '../types'
 import runners from './sourceRunner'
 import { determineExecutionMethod, determineVariant } from './utils'
 
@@ -152,10 +151,9 @@ export async function sourceFilesRunner(
   context.previousPrograms.unshift(preprocessedProgram)
 
   const result = await sourceRunner(preprocessedProgram, context, verboseErrors, options)
-  const resultMapper = mapResult(context)
 
   return {
-    result: resultMapper(result),
+    result,
     verboseErrors
   }
 }

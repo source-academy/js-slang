@@ -2,8 +2,6 @@ import type es from 'estree'
 
 import type { Environment, Node } from '../types'
 import type Closure from './closure'
-import type { Transformers } from './interpreter'
-import type { SchemeControlItems } from './scheme-macros'
 
 export enum InstrType {
   RESET = 'Reset',
@@ -81,7 +79,6 @@ export interface BranchInstr extends BaseInstr<InstrType.BRANCH> {
 
 export interface EnvInstr extends BaseInstr<InstrType.ENVIRONMENT> {
   env: Environment
-  transformers: Transformers
 }
 
 export interface ArrLitInstr extends BaseInstr<InstrType.ARRAY_LITERAL> {
@@ -103,7 +100,7 @@ export type Instr =
 export type InstrTypeToInstr<T extends InstrType> =
   Extract<Instr, { instrType: T }> extends never ? BaseInstr : Extract<Instr, { instrType: T }>
 
-export type ControlItem = (Node | Instr | SchemeControlItems) & {
+export type ControlItem = (Node | Instr) & {
   isEnvDependent?: boolean
 }
 

@@ -5,7 +5,6 @@
 import type es from 'estree'
 
 import type { Environment, Node } from '../types'
-import { Transformers } from './interpreter'
 import {
   type AppInstr,
   type ArrLitInstr,
@@ -111,14 +110,9 @@ export const branchInstr = (
   srcNode
 })
 
-export const envInstr = (
-  env: Environment,
-  transformers: Transformers,
-  srcNode: Node
-): EnvInstr => ({
+export const envInstr = (env: Environment, srcNode: Node): EnvInstr => ({
   instrType: InstrType.ENVIRONMENT,
   env,
-  transformers,
   srcNode
 })
 
