@@ -39,18 +39,6 @@ const describeCases: DescribeCase[] = [
     foo()
     `
   ],
-  [
-    'scheme',
-    [Chapter.SCHEME_1, Chapter.SCHEME_2, Chapter.SCHEME_3, Chapter.SCHEME_4, Chapter.FULL_SCHEME],
-    [
-      Variant.EXPLICIT_CONTROL,
-      Variant.EXPLICIT_CONTROL,
-      Variant.EXPLICIT_CONTROL,
-      Variant.EXPLICIT_CONTROL,
-      Variant.EXPLICIT_CONTROL
-    ],
-    '(import "one_module" (foo)) (foo)'
-  ]
 ]
 
 describe.each(describeCases)(

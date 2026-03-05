@@ -11,11 +11,6 @@ export enum Chapter {
   PYTHON_3 = -6,
   PYTHON_4 = -7,
   FULL_PYTHON = -8,
-  SCHEME_1 = -9,
-  SCHEME_2 = -10,
-  SCHEME_3 = -11,
-  SCHEME_4 = -12,
-  FULL_SCHEME = -13,
   FULL_C = -14,
   FULL_JAVA = -15,
   LIBRARY_PARSER = 100
@@ -63,16 +58,6 @@ export const { languages: sourceLanguages, typeguard: isSourceLanguage } = defin
 
 export type SourceLanguages = (typeof sourceLanguages)[number]
 
-export const { languages: scmLanguages, typeguard: isSchemeLanguage } = defineLanguages([
-  { chapter: Chapter.SCHEME_1, variant: Variant.EXPLICIT_CONTROL },
-  { chapter: Chapter.SCHEME_2, variant: Variant.EXPLICIT_CONTROL },
-  { chapter: Chapter.SCHEME_3, variant: Variant.EXPLICIT_CONTROL },
-  { chapter: Chapter.SCHEME_4, variant: Variant.EXPLICIT_CONTROL },
-  { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
-])
-
-export type SchemeLanguages = (typeof scmLanguages)[number]
-
 export const { languages: pyLanguages, typeguard: isPythonLanguage } = defineLanguages([
   { chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT }
 ])
@@ -80,5 +65,5 @@ export const { languages: pyLanguages, typeguard: isPythonLanguage } = defineLan
 export type PythonLanguages = (typeof pyLanguages)[number]
 
 export function isSupportedLanguageCombo(lang: Language) {
-  return isSourceLanguage(lang) || isPythonLanguage(lang) || isSchemeLanguage(lang)
+  return isSourceLanguage(lang) || isPythonLanguage(lang)
 }

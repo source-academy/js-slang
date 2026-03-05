@@ -2,7 +2,6 @@ import type es from 'estree'
 
 import createContext, { EnvTree } from '../../createContext'
 import Closure from '../../cse-machine/closure'
-import { Transformers } from '../../cse-machine/interpreter'
 import { createBlockEnvironment } from '../../cse-machine/utils'
 import { Chapter, type LanguageOptions, Variant } from '../../langs'
 import type { Context, Environment } from '../../types'
@@ -80,15 +79,10 @@ export function mockClosure(): Closure {
       }
     } as es.ArrowFunctionExpression,
     mockEnvironment(context),
-    mockTransformers(),
     context
   )
 }
 
 export function mockEnvironment(context: Context, name = 'blockEnvironment'): Environment {
   return createBlockEnvironment(context, name)
-}
-
-export function mockTransformers(): any {
-  return new Transformers()
 }

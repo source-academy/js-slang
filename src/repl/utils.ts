@@ -53,10 +53,6 @@ export const getLanguageOption = <T extends LanguageOptions>() => {
 
 export function handleResult(result: Result, context: Context, verboseErrors: boolean) {
   if (result.status === 'finished') {
-    if (result.representation !== undefined) {
-      return result.representation
-    }
-
     if (result.value instanceof Closure || typeof result.value === 'function') {
       return result.value.toString()
     }
