@@ -2,29 +2,20 @@ import type { ArrayExpression, Comment, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
 
-export class StepperArrayExpression implements ArrayExpression, StepperBaseNode {
-  type: 'ArrayExpression'
-  elements: (StepperExpression | null)[]
-  leadingComments?: Comment[]
-  trailingComments?: Comment[]
-  loc?: SourceLocation | null
-  range?: [number, number]
-
+export class StepperArrayExpression
+  extends StepperBaseNode<ArrayExpression>
+  implements ArrayExpression
+{
   constructor(
-    elements: (StepperExpression | null)[],
+    public readonly elements: (StepperExpression | null)[],
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
     range?: [number, number]
   ) {
-    this.type = 'ArrayExpression'
-    this.elements = elements
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('ArrayExpression', leadingComments, trailingComments, loc, range)
   }
 
   static create(node: ArrayExpression) {
@@ -37,20 +28,20 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return false
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return this.elements.some(element => element && element.isOneStepPossible())
   }
 
-  contract(): StepperExpression {
+  public override contract(): StepperExpression {
     redex.preRedex = [this]
     throw new Error('Array expressions cannot be contracted')
   }
 
-  oneStep(): StepperExpression {
+  public override oneStep(): StepperExpression {
     if (this.isContractible()) {
       return this.contract()
     }
@@ -73,7 +64,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
     throw new Error('No one step possible')
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
     return new StepperArrayExpression(
       this.elements.map(element => (element ? element.substitute(id, value) : null)),
       this.leadingComments,
@@ -83,7 +74,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
     )
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     const names = this.elements
       .filter(element => element !== null)
       .map(element => element.freeNames())
@@ -91,7 +82,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
     return Array.from(new Set(names))
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     const names = this.elements
       .filter(element => element !== null)
       .map(element => element.allNames())
@@ -99,7 +90,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
     return Array.from(new Set(names))
   }
 
-  rename(before: string, after: string): StepperExpression {
+  public override rename(before: string, after: string): StepperExpression {
     return new StepperArrayExpression(
       this.elements.map(element => (element ? element.rename(before, after) : null)),
       this.leadingComments,

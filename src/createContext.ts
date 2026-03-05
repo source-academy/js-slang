@@ -4,6 +4,7 @@ import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
 import Heap from './cse-machine/heap'
 import { Chapter, Variant, type LanguageOptions } from './langs'
+import { createEmptyModuleContexts } from './modules/utils'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
@@ -145,7 +146,7 @@ export const createEmptyContext = <T>(
     executionMethod: 'auto',
     variant,
     languageOptions,
-    moduleContexts: {},
+    moduleContexts: createEmptyModuleContexts(),
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
     previousPrograms: [],

@@ -1,16 +1,36 @@
+import type es from 'estree'
+import type { Chapter } from '../langs'
 import type { RequireProvider } from './loader/requireProvider'
 import type { ImportAnalysisOptions } from './preprocessor/analyzer'
 import type { LinkerOptions } from './preprocessor/linker'
 
-export type ModuleManifest = {
-  [module: string]: {
-    tabs: string[]
-  }
+export type ModuleDeclarationWithSource =
+  | es.ImportDeclaration
+  | es.ExportNamedDeclaration
+  | es.ExportAllDeclaration
+
+/**
+ * Represents the meta information for a Source module
+ */
+export interface ModuleInfo {
+  name: string
+  tabs: string[]
+  version?: string
+  requires?: Chapter
+  node?: ModuleDeclarationWithSource
 }
 
-export type ModuleBundle = (require: RequireProvider) => ModuleFunctions
+/**
+ * Represents the main modules manifest that contains a ModuleInfo for each
+ * Source module that exists
+ */
+export interface ModulesManifest {
+  [module: string]: Omit<ModuleInfo, 'name'>
+}
 
-export type ModuleFunctions = {
+export type PartialSourceModule = (require: RequireProvider) => LoadedBundle
+
+export type LoadedBundle = {
   [name: string]: any
 }
 
@@ -39,10 +59,41 @@ export type ModuleDocumentation = {
   [name: string]: ModuleDocsEntry
 }
 
-export type ImportOptions = {
+export type Importer<T = object> = (
+  name: string,
+  node?: ModuleDeclarationWithSource
+) => Promise<{ default: T }>
+
+export interface ImportLoadingOptions {
+  /**
+   * Set to `true` to load tabs when loading a module
+   */
   loadTabs: boolean
-} & ImportAnalysisOptions &
-  LinkerOptions
+
+  sourceBundleImporter: Importer<PartialSourceModule>
+}
+
+export type ImportOptions = ImportLoadingOptions & ImportAnalysisOptions & LinkerOptions
 
 export type SourceFiles = Partial<Record<string, string>>
 export type FileGetter = (p: string) => Promise<string | undefined>
+
+/**
+ * Represents a module context, which is used to store the state of a module and the tabs that it has loaded
+ * within the evaluation context
+ */
+export interface ModuleContext<TState = any> {
+  /**
+   * Whatever state the module wishes to store. If the state is set to `null`, it means that the module has not
+   * been loaded yet.
+   */
+  state: null | TState
+
+  /**
+   * The tabs that the module has loaded. If the tabs are set to `null`, it means that the module has not tried to
+   * load its tabs yet.
+   *
+   * This array will be empty if the module does not have any tabs to load
+   */
+  tabs: null | any[]
+}

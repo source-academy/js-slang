@@ -157,7 +157,7 @@ export default class Closure extends Callable {
     this.predefined = isPredefined ?? false
   }
 
-  public toString(): string {
+  public override toString(): string {
     return generate(this.originalNode)
   }
 }

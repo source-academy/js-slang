@@ -1,28 +1,26 @@
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, type SourceError } from '../errors/base'
+import { ErrorSeverity, ErrorType, SourceErrorWithNode, type SourceError } from '../errors/base'
 import type { Node, NodeWithInferredType, Type } from '../types'
 import { typeToString } from '../utils/stringify'
 import type * as tsEs from './tsESTree'
 
-export class TypeError implements SourceError {
+export class SourceTypeError<T extends Node> extends SourceErrorWithNode<NodeWithInferredType<T>> {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: NodeWithInferredType<Node>,
-    public message: string
+    node: NodeWithInferredType<Node>,
+    public readonly errMsg: string
   ) {
+    super(node)
     node.typability = 'Untypable'
   }
 
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
+  public override explain() {
+    return this.errMsg
   }
-  public explain() {
-    return this.message
-  }
-  public elaborate() {
-    return this.message
+  public override elaborate() {
+    return this.errMsg
   }
 }
 
@@ -34,15 +32,15 @@ export class InternalTypeError extends Error {
   // constructor(public message: string, ...params: any[]) {
   //   super(...params)
   // }
-  constructor(public message: string) {
+  constructor(public readonly errMsg: string) {
     super()
   }
 }
 
 export class UnifyError extends InternalTypeError {
   constructor(
-    public LHS: Type,
-    public RHS: Type
+    public readonly LHS: Type,
+    public readonly RHS: Type
   ) {
     super(`Failed to unify LHS: ${typeToString(LHS)}, RHS: ${typeToString(RHS)}`)
   }
@@ -50,15 +48,15 @@ export class UnifyError extends InternalTypeError {
 
 export class InternalDifferentNumberArgumentsError extends InternalTypeError {
   constructor(
-    public numExpectedArgs: number,
-    public numReceived: number
+    public readonly numExpectedArgs: number,
+    public readonly numReceived: number
   ) {
     super(`Expected ${numExpectedArgs} args, got ${numReceived}`)
   }
 }
 
 export class InternalCyclicReferenceError extends InternalTypeError {
-  constructor(public name: string) {
+  constructor(public readonly symbol: string) {
     super(`contains a cyclic reference to itself`)
   }
 }

@@ -17,7 +17,7 @@ import TypeParser from './typeParser'
 import { transformBabelASTToESTreeCompliantAST } from './utils'
 
 export class SourceTypedParser extends SourceParser {
-  parse(
+  override parse(
     programStr: string,
     context: Context,
     options?: Partial<AcornOptions>,
@@ -77,7 +77,7 @@ export class SourceTypedParser extends SourceParser {
     return typedCheckedProgram
   }
 
-  toString(): string {
+  override toString(): string {
     return 'SourceTypedParser'
   }
 }

@@ -2,17 +2,10 @@ import type es from 'estree'
 
 import assert from '../assert'
 import { ArrayMap } from '../dict'
-import {
-  isDeclaration,
-  isIdentifier,
-  isImportDeclaration,
-  isVariableDeclaration
-} from './typeGuards'
-import { simple } from './walkers'
+import type { ModuleDeclarationWithSource } from '../../modules/moduleTypes'
+import { isDeclaration, isIdentifier, isImportDeclaration } from './typeGuards'
 
-export function getModuleDeclarationSource(
-  node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
-): string {
+export function getModuleDeclarationSource(node: ModuleDeclarationWithSource): string {
   assert(
     typeof node.source?.value === 'string',
     `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`
@@ -20,35 +13,62 @@ export function getModuleDeclarationSource(
   return node.source.value
 }
 
-export function extractIdsFromPattern(pattern: es.Pattern) {
-  const identifiers: es.Identifier[] = []
-
-  simple(pattern, {
-    Identifier: (node: es.Identifier) => {
-      identifiers.push(node)
+/**
+ * Extracts all the identifiers being declared by a VariableDeclaration
+ */
+export function extractDeclarations(decl: es.VariableDeclaration) {
+  function recurser(pattern: es.Pattern): es.Identifier[] {
+    switch (pattern.type) {
+      case 'ArrayPattern':
+        return pattern.elements.flatMap(recurser)
+      case 'AssignmentPattern':
+        return recurser(pattern.left)
+      case 'Identifier':
+        return [pattern]
+      case 'ObjectPattern':
+        return pattern.properties.flatMap(prop => {
+          if (prop.type === 'Property') {
+            return recurser(prop.value)
+          }
+          return recurser(prop)
+        })
+      case 'RestElement':
+        return recurser(pattern.argument)
+      default:
+        throw new Error(`Should not encounter a ${pattern.type} in ${extractDeclarations.name}`)
     }
-  })
-
-  return identifiers
-}
-
-export function getIdsFromDeclaration(
-  decl: es.Declaration,
-  allowNull: true
-): (es.Identifier | null)[]
-export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: false): es.Identifier[]
-export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: boolean) {
-  const rawIds = isVariableDeclaration(decl)
-    ? decl.declarations.flatMap(({ id }) => extractIdsFromPattern(id))
-    : [decl.id]
-
-  if (!allowNull) {
-    rawIds.forEach(each => {
-      assert(each !== null, 'Encountered a null identifier!')
-    })
   }
 
-  return rawIds
+  return decl.declarations.flatMap(({ id }) => recurser(id))
+}
+
+/**
+ * Gets all the identifiers introduced by a declaration node
+ */
+export function getIdsFromDeclaration(
+  decl: es.Declaration | es.ModuleDeclaration
+): es.Identifier[] {
+  switch (decl.type) {
+    case 'ExportAllDeclaration':
+      return []
+    case 'ExportDefaultDeclaration': {
+      switch (decl.declaration.type) {
+        case 'ClassDeclaration':
+        case 'FunctionDeclaration':
+          return decl.declaration.id ? [decl.declaration.id] : []
+      }
+      return []
+    }
+    case 'ExportNamedDeclaration':
+      return decl.declaration ? getIdsFromDeclaration(decl.declaration) : []
+    case 'ImportDeclaration':
+      return decl.specifiers.flatMap(spec => spec.local)
+    case 'ClassDeclaration':
+    case 'FunctionDeclaration':
+      return [decl.id]
+    case 'VariableDeclaration':
+      return extractDeclarations(decl)
+  }
 }
 
 /**
@@ -90,7 +110,7 @@ export const getImportedName = (
   }
 }
 
-export const speciferToString = (
+export const specifierToString = (
   spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
 ) => {
   switch (spec.type) {
