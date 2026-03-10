@@ -107,10 +107,20 @@ const configs = {
       'mce.js'
     ]
   },
-  AUXILLARY: {
+  AUXILIARY: {
     readme: 'README_AUXILIARY.md',
     dst: 'AUXILIARY/',
     libs: ['auxiliary.js']
+  },
+  MATH: {
+    readme: 'README_MATH.md',
+    dst: 'MATH/',
+    libs: ['math.js']
+  },
+  MISC: {
+    readme: 'README_MISC.md',
+    dst: 'MISC/',
+    libs: ['misc.js']
   },
   LIST: {
     readme: 'README_LISTS.md',
@@ -127,7 +137,7 @@ const configs = {
     dst: 'ARRAYS/',
     libs: ['array.js']
   },
-  PAIRMUTATIONS: {
+  PAIRMUTATORS: {
     readme: 'README_PAIRMUTATORS.md',
     dst: 'PAIRMUTATORS/',
     libs: ['pairmutator.js']
