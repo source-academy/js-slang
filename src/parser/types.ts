@@ -1,8 +1,8 @@
 import type { Program } from 'estree'
 
-import type { SourceError } from '../errors/base'
 import { Chapter, Variant } from '../langs'
-import type { Context, Node } from '../types'
+import type { Context, Node, NodeTypeToNode } from '../types'
+import type { RuleError } from './errors'
 
 export type { ParserOptions as BabelOptions } from '@babel/parser'
 export type { Options as AcornOptions } from 'acorn'
@@ -22,6 +22,6 @@ export interface Rule<T extends Node> {
   disableFromChapter?: Chapter
   disableForVariants?: Variant[]
   checkers: {
-    [name: string]: (node: T, ancestors: Node[]) => SourceError[]
+    [K in T['type']]: (node: NodeTypeToNode<K>, ancestors: Node[]) => RuleError<Node>[]
   }
 }

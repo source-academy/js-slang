@@ -4,11 +4,11 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class NoHolesInArrays extends RuleError<ArrayExpression> {
-  public explain() {
+  public override explain() {
     return `No holes are allowed in array literals.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     return stripIndent`
       No holes (empty slots with no content inside) are allowed in array literals.
       You probably have an extra comma, which creates a hole.

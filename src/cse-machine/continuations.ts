@@ -20,7 +20,7 @@ export class Call_cc extends Function {
     return Call_cc.instance
   }
 
-  public toString(): string {
+  public override toString(): string {
     return 'call/cc'
   }
 }
@@ -69,7 +69,7 @@ export class Continuation extends Function {
     return [...this.env]
   }
 
-  public toString(): string {
+  public override toString(): string {
     return 'continuation'
   }
 

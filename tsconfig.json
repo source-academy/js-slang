@@ -11,6 +11,7 @@
     // "isolatedModules": true, Temporarily disabled
     "noEmit": true,
     "noImplicitAny": true,
+    "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,

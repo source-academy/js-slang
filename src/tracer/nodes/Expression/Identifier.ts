@@ -2,29 +2,18 @@ import type { Comment, Identifier, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { isBuiltinFunction } from '../../builtins'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
+import { UnassignedVariableError } from '../../../errors/errors'
 
-export class StepperIdentifier implements Identifier, StepperBaseNode {
-  type: 'Identifier'
-  name: string
-  leadingComments?: Comment[]
-  trailingComments?: Comment[]
-  loc?: SourceLocation | null
-  range?: [number, number]
-
+export class StepperIdentifier extends StepperBaseNode<Identifier> implements Identifier {
   constructor(
-    name: string,
+    public readonly name: string,
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
     range?: [number, number]
   ) {
-    this.type = 'Identifier'
-    this.name = name
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('Identifier', leadingComments, trailingComments, loc, range)
   }
 
   static create(node: Identifier) {
@@ -37,28 +26,30 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     // catch undeclared variables
-    if (this.name !== 'undefined' && !isBuiltinFunction(this.name))
-      throw new Error(`Name ${this.name} declared later in current scope but not yet assigned`)
+    if (this.name !== 'undefined' && !isBuiltinFunction(this.name)) {
+      throw new UnassignedVariableError(this.name, this)
+    }
     return false
   }
 
-  isOneStepPossible(): boolean {
-    if (this.name !== 'undefined' && !isBuiltinFunction(this.name))
-      throw new Error(`Name ${this.name} declared later in current scope but not yet assigned`)
+  public override isOneStepPossible(): boolean {
+    if (this.name !== 'undefined' && !isBuiltinFunction(this.name)) {
+      throw new UnassignedVariableError(this.name, this)
+    }
     return false
   }
 
-  contract(): StepperIdentifier {
+  public override contract(): StepperIdentifier {
     throw new Error('Method not implemented.')
   }
 
-  oneStep(): StepperIdentifier {
+  public override oneStep(): StepperIdentifier {
     throw new Error('Method not implemented.')
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
     if (id.name === this.name) {
       redex.postRedex.push(value)
       return value
@@ -67,15 +58,15 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
     }
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return [this.name]
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return [this.name]
   }
 
-  rename(before: string, after: string) {
+  public override rename(before: string, after: string) {
     return before === this.name
       ? new StepperIdentifier(
           after,

@@ -5,11 +5,11 @@ import type { Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
 
 export class NoImportSpecifierWithDefaultError extends RuleError<ImportSpecifier> {
-  public explain() {
+  public override explain() {
     return 'Import default specifiers are not allowed.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     return 'You are trying to use an import default specifier, which is not allowed (yet).'
   }
 }

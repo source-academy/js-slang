@@ -6,11 +6,11 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class NoIfWithoutElseError extends RuleError<IfStatement> {
-  public explain() {
+  public override explain() {
     return 'Missing "else" in "if-else" statement.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     return stripIndent`
       This "if" block requires corresponding "else" block which will be
       evaluated when ${generate(this.node.test)} expression evaluates to false.

@@ -6,11 +6,11 @@ import type { Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
 
 export class NoExportNamedDeclarationWithDefaultError extends RuleError<ExportNamedDeclaration> {
-  public explain() {
+  public override explain() {
     return 'Export default declarations are not allowed.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     return 'You are trying to use an export default declaration, which is not allowed (yet).'
   }
 }

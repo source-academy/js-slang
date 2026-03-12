@@ -1,76 +1,383 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, it, test, vi } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResult, expectParsedError, testSuccess } from '../../utils/testing'
 import * as list from '../list'
 
-test('list creates list', async () => {
-  const {
-    result: { value }
-  } = await testSuccess(
-    stripIndent`
-      function f() { return 1; }
-      list(1, 'a string ""', () => f, f, true, 3.14);
-    `,
-    Chapter.SOURCE_2
-  )
+describe(list.accumulate, () => {
+  describe('javascript', () => {
+    it('works properly', () => {
+      expect(list.accumulate((curr, acc) => curr + acc, 0, list.list(2, 3, 4, 1))).toEqual(10)
+    })
 
-  expect(value).toMatchInlineSnapshot(`
-    Array [
-      1,
-      Array [
-        "a string \\"\\"",
-        Array [
-          [Function],
-          Array [
-            [Function],
-            Array [
-              true,
-              Array [
-                3.14,
-                null,
-              ],
-            ],
-          ],
-        ],
-      ],
-    ]
-  `)
+    it('works from right to left', () => {
+      expect(list.accumulate((curr, acc) => curr + acc, '1', list.list('4', '3', '2'))).toEqual(
+        '4321'
+      )
+    })
+  })
+
+  describe('source', () => {
+    it('works properly', () => {
+      return expectFinishedResult(
+        `accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));`,
+        Chapter.SOURCE_2
+      ).toEqual(10)
+    })
+
+    it('works from right to left', () => {
+      return expectFinishedResult(
+        `accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));`,
+        Chapter.SOURCE_2
+      ).toEqual('4321')
+    })
+  })
 })
 
-describe(list.pair, () => {
-  test('pair creates pair', async () => {
-    const {
-      result: { value }
-    } = await testSuccess(`pair(1, 'a string ""');`, Chapter.SOURCE_2)
+describe(list.append, () => {
+  describe('javascript', () => {
+    const xs = list.list(1, 2, 3, 4)
+    const ys = list.list(5, 6, 7)
 
-    expect(value).toMatchInlineSnapshot(`
-      Array [
-        1,
-        "a string \\"\\"",
-      ]
-    `)
+    it('works with two populated lists', () => {
+      expect(list.append(xs, ys)).toEqual([1, [2, [3, [4, [5, [6, [7, null]]]]]]])
+
+      expect(list.append(ys, xs)).toEqual([5, [6, [7, [1, [2, [3, [4, null]]]]]]])
+    })
+
+    test('appending empty list to populated list', () => {
+      expect(list.append(ys, null)).toEqual([5, [6, [7, null]]])
+    })
+
+    test('appending populated list to empty list', () => {
+      expect(list.append(null, ys)).toEqual([5, [6, [7, null]]])
+    })
+
+    test('appending empty list to empty list', () => {
+      expect(list.append(null, null)).toBeNull()
+    })
+  })
+
+  describe('source', () => {
+    test('append', () => {
+      return expectFinishedResult(
+        `equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));`,
+        Chapter.SOURCE_2
+      ).toEqual(true)
+    })
+  })
+})
+
+describe(list.filter, () => {
+  describe('javascript', () => {
+    it('works on populated list', () => {
+      const xs = list.list(1, 2, 3, 4, 5)
+      expect(list.filter(x => x % 2 === 0, xs)).toEqual([2, [4, null]])
+    })
+
+    it('works on empty list', () => {
+      expect(list.filter(_x => true, list.list())).toBeNull()
+    })
+  })
+
+  describe('source', () => {
+    it('works', () => {
+      return expectFinishedResult(
+        stripIndent`
+        equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));
+      `,
+        Chapter.SOURCE_2
+      ).toEqual(true)
+    })
+  })
+})
+
+describe(list.for_each, () => {
+  describe('source', () => {
+    it('works', () => {
+      return expectFinishedResult(
+        stripIndent`
+        let sum = 0;
+        for_each(x => {
+          sum = sum + x;
+        }, list(1, 2, 3));
+        sum;
+      `,
+        Chapter.SOURCE_3
+      ).toEqual(6)
+    })
+  })
+
+  describe('javascript', () => {
+    it('works on populated list', () => {
+      const op = vi.fn(x => x)
+      const xs = list.list(1, 2, 3)
+
+      expect(list.for_each(op, xs)).toEqual(true)
+      expect(op).toHaveBeenCalledTimes(3)
+
+      for (let i = 0; i < op.mock.calls.length; i++) {
+        const [arg] = op.mock.calls[i]
+        expect(arg).toEqual(i + 1)
+      }
+    })
+
+    it('works on empty lists', () => {
+      const op = vi.fn(x => x)
+      expect(list.for_each(op, null)).toEqual(true)
+      expect(op).not.toHaveBeenCalled()
+    })
   })
 })
 
 describe(list.head, () => {
-  it('throws an error when argument is not a pair (in Javascript)', () => {
-    expect(() => list.head(0 as unknown)).toThrowError(
-      'head(xs) expects a pair as argument xs, but encountered 0'
+  describe('javascript', () => {
+    it('throws an error when argument is not a pair', () => {
+      expect(() => list.head(0 as unknown)).toThrowError(
+        'head(xs) expects a pair as argument xs, but encountered 0'
+      )
+    })
+  })
+
+  describe('source', () => {
+    test('non-list error head (in Source)', () => {
+      return expectParsedError(
+        stripIndent`
+      head([1, 2, 3]);
+    `,
+        Chapter.SOURCE_3
+      ).toEqual('Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]')
+    })
+
+    it('works', () => {
+      return expectFinishedResult(`head(pair(1, 'a string ""'));`, Chapter.SOURCE_2).toEqual(1)
+    })
+  })
+})
+
+describe(list.is_pair, () => {
+  describe('javascript', () => {
+    it('returns true when argument is pair', () => {
+      expect(list.is_pair([1, 2])).toEqual(true)
+      expect(list.is_pair([1, [2, null]])).toEqual(true)
+    })
+
+    it('returns false when argument is not pair', () => {
+      expect(list.is_pair([1, 2, 3])).toEqual(false)
+      expect(list.is_pair([])).toEqual(false)
+    })
+  })
+})
+
+describe(list.length, () => {
+  describe('source', () => {
+    it('works with populated lists', () => {
+      return expectFinishedResult(
+        stripIndent`
+          const xs = list(1,2,3,4);
+          length(xs);
+        `,
+        Chapter.SOURCE_2
+      ).toEqual(4)
+    })
+
+    it('works with empty lists', () => {
+      return expectFinishedResult(
+        stripIndent`
+          const xs = list();
+          length(xs);
+        `,
+        Chapter.SOURCE_2
+      ).toEqual(0)
+    })
+  })
+
+  describe('javascript', () => {
+    it('works with populated lists', () => {
+      expect(list.length(list.list(1, 2, 3, 4))).toEqual(4)
+    })
+
+    it('works with empty list', () => {
+      expect(list.length(list.list())).toEqual(0)
+    })
+  })
+})
+
+describe(list.list, () => {
+  describe('source', () => {
+    it('creates list', async () => {
+      const {
+        result: { value }
+      } = await testSuccess(
+        stripIndent`
+          function f() { return 1; }
+          list(1, 'a string ""', () => f, f, true, 3.14);
+        `,
+        Chapter.SOURCE_2
+      )
+
+      expect(value).toMatchInlineSnapshot(`
+        Array [
+          1,
+          Array [
+            "a string \\"\\"",
+            Array [
+              [Function],
+              Array [
+                [Function],
+                Array [
+                  true,
+                  Array [
+                    3.14,
+                    null,
+                  ],
+                ],
+              ],
+            ],
+          ],
+        ]
+      `)
+    })
+
+    test('empty list is null', () => {
+      return expectFinishedResult(`list();`, Chapter.SOURCE_2).toBeNull()
+    })
+  })
+
+  describe('javascript', () => {
+    it('creates list', () => {
+      expect(list.list(1, 2, 3)).toEqual([1, [2, [3, null]]])
+    })
+
+    it('returns empty list when called with no arguments', () => {
+      expect(list.list()).toBeNull()
+    })
+  })
+})
+
+describe(list.list_ref, () => {
+  describe('javascript', () => {
+    it('works', () => {
+      expect(list.list_ref(list.list(1, 2, 3), 0)).toEqual(1)
+    })
+
+    it('throws error when given empty list', () => {
+      expect(() => list.list_ref(null, 0)).toThrowError('list_ref(xs, n): Index 0 is out of bounds')
+    })
+
+    test('throwing out of bounds for populated list', () => {
+      expect(() => list.list_ref(list.list(1, 2), 2)).toThrowError(
+        'list_ref(xs, n): Index 2 is out of bounds'
+      )
+    })
+  })
+
+  describe('source', () => {
+    test('list_ref', () => {
+      return expectFinishedResult(`list_ref(list(1, 2, 3, "4", 4), 4);`, Chapter.SOURCE_2).toEqual(
+        4
+      )
+    })
+  })
+})
+
+describe(list.list_to_vector, () => {
+  describe('javascript', () => {
+    it('preserves element order', () => {
+      const xs = list.list(1, 2, 3, 4)
+      expect(list.list_to_vector(xs)).toEqual([1, 2, 3, 4])
+    })
+  })
+})
+
+describe(list.map, () => {
+  describe('source', () => {
+    it('works', () => {
+      return expectFinishedResult(
+        stripIndent`
+        equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));
+      `,
+        Chapter.SOURCE_2
+      ).toEqual(true)
+    })
+  })
+
+  describe('javascript', () => {
+    it('works with populated lists', () => {
+      const xs = list.list(1, 2, 3)
+      expect(list.map(x => `${x}`, xs)).toEqual(['1', ['2', ['3', null]]])
+    })
+
+    it('works with empty lists', () => {
+      expect(list.map(x => x + 1, list.list<number>())).toBeNull()
+    })
+  })
+})
+
+describe(list.pair, () => {
+  describe('source', () => {
+    it('creates pair', async () => {
+      const {
+        result: { value }
+      } = await testSuccess(`pair(1, 'a string ""');`, Chapter.SOURCE_2)
+
+      expect(value).toMatchInlineSnapshot(`
+        Array [
+          1,
+          "a string \\"\\"",
+        ]
+      `)
+    })
+  })
+
+  describe('javascript', () => {
+    it('creates pair', () => {
+      expect(list.pair(1, 2)).toEqual([1, 2])
+    })
+  })
+})
+
+describe(list.set_head, () => {
+  describe('javascript', () => {
+    it('throws when the argument is not a pair', () => {
+      expect(() => list.set_head(0 as unknown, 0)).toThrowError(
+        'set_head(xs,x) expects a pair as argument xs, but encountered 0'
+      )
+    })
+  })
+
+  describe('source', () => {
+    it('works', () => {
+      return expectFinishedResult(
+        stripIndent`
+        let p = pair(1, 2);
+        const q = p;
+        set_head(p, 3);
+        p === q && equal(p, pair(3, 2));
+      `,
+        Chapter.SOURCE_3
+      ).toEqual(true)
+    })
+  })
+})
+
+describe(list.set_tail, () => {
+  it('throws when the argument is not a pair', () => {
+    expect(() => list.set_tail(0 as unknown, 0)).toThrowError(
+      'set_tail(xs,x) expects a pair as argument xs, but encountered 0'
     )
   })
 
-  test('non-list error head (in Source)', () => {
-    return expectParsedError(
-      stripIndent`
-    head([1, 2, 3]);
-  `,
-      Chapter.SOURCE_3
-    ).toEqual('Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]')
-  })
-
   it('works', () => {
-    return expectFinishedResult(`head(pair(1, 'a string ""'));`, Chapter.SOURCE_2).toEqual(1)
+    return expectFinishedResult(
+      stripIndent`
+      let p = pair(1, 2);
+      const q = p;
+      set_tail(p, 3);
+      p === q && equal(p, pair(1, 3));
+    `,
+      Chapter.SOURCE_3
+    ).toEqual(true)
   })
 })
 
@@ -101,45 +408,25 @@ describe(list.tail, () => {
   })
 })
 
-test('empty list is null', () => {
-  return expectFinishedResult(`list();`, Chapter.SOURCE_2).toBeNull()
+describe(list.vector_to_list, () => {
+  describe('javascript', () => {
+    it('preserves element order', () => {
+      let xs = list.vector_to_list([1, 2, 3])
+
+      for (let i = 1; i < 4; i++) {
+        expect(list.head(xs)).toEqual(i)
+        xs = list.tail(xs) as list.List<number>
+      }
+
+      expect(xs).toBeNull()
+    })
+  })
 })
 
 test('equal', () => {
   return expectFinishedResult(`!equal(1, x => x) && !equal(x => x, 1);`, Chapter.SOURCE_2).toEqual(
     true
   )
-})
-
-test('for_each', () => {
-  return expectFinishedResult(
-    stripIndent`
-    let sum = 0;
-    for_each(x => {
-      sum = sum + x;
-    }, list(1, 2, 3));
-    sum;
-  `,
-    Chapter.SOURCE_3
-  ).toEqual(6)
-})
-
-test('map', () => {
-  return expectFinishedResult(
-    stripIndent`
-    equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));
-  `,
-    Chapter.SOURCE_2
-  ).toEqual(true)
-})
-
-test('filter', () => {
-  return expectFinishedResult(
-    stripIndent`
-    equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));
-  `,
-    Chapter.SOURCE_2
-  ).toEqual(true)
 })
 
 test('build_list', () => {
@@ -154,13 +441,6 @@ test('build_list', () => {
 test('reverse', () => {
   return expectFinishedResult(
     `equal(reverse(list("string", "null", "undefined", "null", 123)), list(123, "null", "undefined", "null", "string")); `,
-    Chapter.SOURCE_2
-  ).toEqual(true)
-})
-
-test('append', () => {
-  return expectFinishedResult(
-    `equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));`,
     Chapter.SOURCE_2
   ).toEqual(true)
 })
@@ -225,86 +505,10 @@ test('enum_list with floats', () => {
   ).toEqual(true)
 })
 
-test('list_ref', () => {
-  return expectFinishedResult(`list_ref(list(1, 2, 3, "4", 4), 4);`, Chapter.SOURCE_2).toEqual(4)
-})
-
 test('list_to_string', () => {
   return expectFinishedResult(`list_to_string(list(1, 2, 3));`, Chapter.SOURCE_2).toEqual(
     '[1,[2,[3,null]]]'
   )
-})
-
-describe(list.accumulate, () => {
-  describe('in Javascript', () => {
-    test('works properly', () => {
-      expect(list.accumulate((curr, acc) => curr + acc, 0, list.list(2, 3, 4, 1))).toEqual(10)
-    })
-
-    it('works from right to left', () => {
-      expect(list.accumulate((curr, acc) => curr + acc, '1', list.list('4', '3', '2'))).toEqual(
-        '4321'
-      )
-    })
-  })
-
-  describe('in source', () => {
-    test('works properly', () => {
-      return expectFinishedResult(
-        `accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));`,
-        Chapter.SOURCE_2
-      ).toEqual(10)
-    })
-
-    it('works from right to left', () => {
-      return expectFinishedResult(
-        `accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));`,
-        Chapter.SOURCE_2
-      ).toEqual('4321')
-    })
-  })
-})
-
-describe(list.vector_to_list, () => {
-  it('preserves element order', () => {
-    let xs = list.vector_to_list([1, 2, 3])
-
-    for (let i = 1; i < 4; i++) {
-      expect(list.head(xs)).toEqual(i)
-      xs = list.tail(xs) as list.List<number>
-    }
-
-    expect(xs).toBeNull()
-  })
-})
-
-describe(list.list_to_vector, () => {
-  it('preserves element order', () => {
-    const xs = list.list(1, 2, 3, 4)
-    expect(list.list_to_vector(xs)).toEqual([1, 2, 3, 4])
-  })
-})
-
-describe(list.length, () => {
-  test('works with populated lists', () => {
-    return expectFinishedResult(
-      stripIndent`
-        const xs = list(1,2,3,4);
-        length(xs);
-      `,
-      Chapter.SOURCE_2
-    ).toEqual(4)
-  })
-
-  test('works with empty lists', () => {
-    return expectFinishedResult(
-      stripIndent`
-        const xs = list();
-        length(xs);
-      `,
-      Chapter.SOURCE_2
-    ).toEqual(0)
-  })
 })
 
 // assoc removed from Source
@@ -320,45 +524,6 @@ test.todo('assoc not found', () => {
     `equal(assoc(2, list(pair(1, 2), pair(3, 4))), false);`,
     Chapter.LIBRARY_PARSER
   ).toEqual(true)
-})
-
-describe(list.set_head, () => {
-  it('throws when the argument is not a pair', () => {
-    expect(() => list.set_head(0 as unknown, 0)).toThrowError(
-      'set_head(xs,x) expects a pair as argument xs, but encountered 0'
-    )
-  })
-
-  it('works', () => {
-    return expectFinishedResult(
-      stripIndent`
-      let p = pair(1, 2);
-      const q = p;
-      set_head(p, 3);
-      p === q && equal(p, pair(3, 2));
-    `,
-      Chapter.SOURCE_3
-    ).toEqual(true)
-  })
-})
-
-describe(list.set_tail, () => {
-  it('throws when the argument is not a pair', () => {
-    expect(() => list.set_tail(0 as unknown, 0)).toThrowError(
-      'set_tail(xs,x) expects a pair as argument xs, but encountered 0'
-    )
-  })
-  it('works', () => {
-    return expectFinishedResult(
-      stripIndent`
-      let p = pair(1, 2);
-      const q = p;
-      set_tail(p, 3);
-      p === q && equal(p, pair(1, 3));
-    `,
-      Chapter.SOURCE_3
-    ).toEqual(true)
-  })
 })
 
 describe('These tests are reporting weird line numbers, as list functions are now implemented in Source.', () => {

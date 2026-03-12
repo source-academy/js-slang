@@ -2,36 +2,26 @@ import type { BinaryExpression, BinaryOperator, Comment, SourceLocation } from '
 import type { StepperExpression, StepperPattern } from '..'
 import { redex } from '../..'
 import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import { StepperBaseNode } from '../../interface'
+import { checkBinaryExpression } from '../../../utils/rttc'
+import { Chapter } from '../../../langs'
+import assert from '../../../utils/assert'
 import { StepperLiteral } from './Literal'
 
-export class StepperBinaryExpression implements BinaryExpression, StepperBaseNode {
-  type: 'BinaryExpression'
-  operator: BinaryOperator
-  left: StepperExpression
-  right: StepperExpression
-  leadingComments?: Comment[]
-  trailingComments?: Comment[]
-  loc?: SourceLocation | null
-  range?: [number, number]
-
+export class StepperBinaryExpression
+  extends StepperBaseNode<BinaryExpression>
+  implements BinaryExpression
+{
   constructor(
-    operator: BinaryOperator,
-    left: StepperExpression,
-    right: StepperExpression,
+    public readonly operator: BinaryOperator,
+    public readonly left: StepperExpression,
+    public readonly right: StepperExpression,
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
     range?: [number, number]
   ) {
-    this.type = 'BinaryExpression'
-    this.operator = operator
-    this.left = left
-    this.right = right
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    super('BinaryExpression', leadingComments, trailingComments, loc, range)
   }
 
   static create(node: BinaryExpression) {
@@ -46,7 +36,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     if (this.left.type !== 'Literal' || this.right.type !== 'Literal') {
       return false
     }
@@ -59,39 +49,14 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       return true
     }
 
-    if (leftType === 'boolean') {
-      throw new Error(
-        `Line ${
-          this.loc?.start.line || 0
-        }: Expected number or string on left hand side of operation, got ${leftType}.`
-      )
-    }
+    checkBinaryExpression(this, this.operator, Chapter.SOURCE_2, [
+      this.left.value,
+      this.right.value
+    ])
 
     if (leftType === 'string' && rightType === 'string') {
       if (['+', '===', '!==', '<', '>', '<=', '>='].includes(this.operator)) {
         return markContractible()
-      } else {
-        throw new Error(
-          `Line ${
-            this.loc?.start.line || 0
-          }: Expected number on left hand side of operation, got ${leftType}.`
-        )
-      }
-    }
-
-    if (leftType === 'string') {
-      if (['+', '===', '!==', '<', '>', '<=', '>='].includes(this.operator)) {
-        throw new Error(
-          `Line ${
-            this.loc?.start.line || 0
-          }: Expected string on right hand side of operation, got ${rightType}.`
-        )
-      } else {
-        throw new Error(
-          `Line ${
-            this.loc?.start.line || 0
-          }: Expected number on left hand side of operation, got ${leftType}.`
-        )
       }
     }
 
@@ -101,24 +66,19 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       }
     }
 
-    if (leftType === 'number') {
-      throw new Error(
-        `Line ${
-          this.loc?.start.line || 0
-        }: Expected number on right hand side of operation, got ${rightType}.`
-      )
-    }
-
     return false
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return this.isContractible() || this.left.isOneStepPossible() || this.right.isOneStepPossible()
   }
 
-  contract(): StepperExpression {
+  public override contract(): StepperExpression {
     redex.preRedex = [this]
-    if (this.left.type !== 'Literal' || this.right.type !== 'Literal') throw new Error()
+    assert(
+      this.left.type === 'Literal' && this.right.type === 'Literal',
+      'BinaryExpression cannot be contracted unless both sides are Literals'
+    )
 
     const left = this.left.value
     const right = this.right.value
@@ -166,7 +126,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
     return ret
   }
 
-  oneStep(): StepperExpression {
+  public override oneStep(): StepperExpression {
     return this.isContractible()
       ? this.contract()
       : this.left.isOneStepPossible()
@@ -174,7 +134,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
         : new StepperBinaryExpression(this.operator, this.left, this.right.oneStep())
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
     return new StepperBinaryExpression(
       this.operator,
       this.left.substitute(id, value),
@@ -186,15 +146,15 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
     )
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()))
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()))
   }
 
-  rename(before: string, after: string): StepperExpression {
+  public override rename(before: string, after: string): StepperExpression {
     return new StepperBinaryExpression(
       this.operator,
       this.left.rename(before, after),

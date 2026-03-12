@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'vitest'
 import { parseError, runInContext } from '../..'
 import type { SourceError } from '../../errors/base'
-import { UndefinedVariable } from '../../errors/errors'
+import { UndefinedVariableError } from '../../errors/errors'
 import { Chapter, Variant } from '../../langs'
 import { FatalSyntaxError } from '../../parser/errors'
 import { locationDummyNode } from '../../utils/ast/astCreator'
@@ -92,7 +92,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
           const a = b;
           `,
     value: undefined,
-    errors: [new UndefinedVariable('b', locationDummyNode(2, 20, 'source'))]
+    errors: [new UndefinedVariableError('b', locationDummyNode(2, 20, 'source'))]
   },
   {
     name: 'SYNTAX ERROR',
@@ -114,7 +114,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
             h();
             `,
     value: undefined,
-    errors: [new UndefinedVariable('g', locationDummyNode(3, 14, 'source'))]
+    errors: [new UndefinedVariableError('g', locationDummyNode(3, 14, 'source'))]
   }
 ]
 
