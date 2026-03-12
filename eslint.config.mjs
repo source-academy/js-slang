@@ -1,11 +1,12 @@
 // @ts-check
 
 import vitestPlugin from '@vitest/eslint-plugin'
+import { defineConfig } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 import globals from 'globals'
 import * as importPlugin from 'eslint-plugin-import'
 
-export default tseslint.config(
+export default defineConfig(
   {
     // global ignores
     ignores: ['dist', 'src/alt-langs', 'src/py-slang', 'src/__tests__/sicp', '**/*.snap']
