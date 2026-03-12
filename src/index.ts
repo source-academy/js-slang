@@ -17,14 +17,13 @@ import type {
   Error as ResultError,
   SVMProgram
 } from './types'
-import type { ModuleContext } from './modules/moduleTypes'
+import type { ModuleContext, ImportOptions } from './modules/moduleTypes'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import type { SourceError } from './errors/base'
 import { ModuleNotFoundError } from './modules/errors'
-import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
