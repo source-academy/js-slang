@@ -67,7 +67,7 @@
     "@vitest/ui": "^4.0.4",
     "ace-builds": "~1.17.0",
     "coveralls": "^3.1.0",
-    "eslint": "^9.39.1",
+    "eslint": "^10.0.0",
     "eslint-plugin-import": "^2.32.0",
     "globals": "^17.0.0",
     "husky": "^9.0.0",
