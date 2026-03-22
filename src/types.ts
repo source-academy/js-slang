@@ -66,7 +66,11 @@ export interface Context<T = any> {
 
   streamCount?: number
 
+  mostRecentPair?: string
+
   streamPairIdToStreamId: Map<string, string>
+
+  streemPairIdToParentCount: Map<string, number>
 
   /** Runtime Specific state */
   runtime: {

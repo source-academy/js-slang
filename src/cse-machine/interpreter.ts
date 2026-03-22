@@ -846,11 +846,19 @@ const cmdEvaluators: CommandEvaluators = {
    */
   [InstrType.APPLICATION]({ command, context, control, stash }) {
     checkStackOverFlow(context, control)
-    // Get function arguments from the stash
+    // Get function arguments from the 
+      const src = (command as AppInstr).srcNode
+
     const args: Value[] = []
     for (let index = 0; index < command.numOfArgs; index++) {
       args.unshift(stash.pop())
     }
+
+      if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
+        if (src.callee.name == "stream_tail") {
+          context.mostRecentPair = args[0].id;
+        }
+      }
 
     // Get function from the stash
     const func: Closure | Function = stash.pop()

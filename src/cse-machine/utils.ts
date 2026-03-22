@@ -199,6 +199,7 @@ export const handleArrayCreation = (
   }
 
   let streamId: string | undefined = undefined
+  let parents: number = 0
 
   if (context.pendingStreamFnId) {
     const parentPairId = context.streamFnIdToPairId.get(context.pendingStreamFnId)
@@ -207,7 +208,15 @@ export const handleArrayCreation = (
     }
   }
 
-  if (streamId === undefined) {
+  if (context.mostRecentPair !== undefined) {
+    const prevPairId = context.mostRecentPair;
+    streamId = context.streamPairIdToStreamId.get(prevPairId)
+    const prevParents = context.streemPairIdToParentCount.get(prevPairId)
+    if (prevParents != undefined) {
+      parents = prevParents + 1
+    }
+    context.mostRecentPair = undefined;
+  } else if (streamId === undefined) {
     // Handling when its a list being created
     if (typeof array[1] !== 'function') {
       if (array[1] === null) {
@@ -222,7 +231,8 @@ export const handleArrayCreation = (
   }
 
   // Link the pairIds to the streamIds through a map
-  context.streamPairIdToStreamId.set((array as any).id, streamId)
+  context.streamPairIdToStreamId.set((array as any).id, (streamId as string))
+  context.streemPairIdToParentCount.set((array as any).id, parents)
 }
 
 /**
@@ -805,7 +815,7 @@ const envCalculators: EnvCalculators = {
 
   //Instruction
   [InstrType.APPLICATION]: true,
-  [InstrType.ARRAY_ACCESS]: true,
+  [InstrType.ARRAY_ACCESS]: false,
   [InstrType.ARRAY_ASSIGNMENT]: false,
   [InstrType.ARRAY_LITERAL]: true,
   [InstrType.ASSIGNMENT]: true,

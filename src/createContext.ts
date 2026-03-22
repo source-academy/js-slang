@@ -154,6 +154,7 @@ export const createEmptyContext = <T>(
     pairToStreamFnId: new Map<string, string>(),
     streamFnIdToPairId: new Map<string, string>(),
     streamPairIdToStreamId: new Map<string, string>(),
+    streemPairIdToParentCount: new Map<string, number>(),
     pendingStreamFnStack: [],
     externalContext,
     runtime: createEmptyRuntime(),
