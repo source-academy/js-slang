@@ -1074,6 +1074,7 @@ const cmdEvaluators: CommandEvaluators = {
   [InstrType.ARRAY_ACCESS]({ command, context, stash }) {
     const index = stash.pop()
     const array = stash.pop()
+    console.log("accessing array: ");
 
     //Check if the index is legal
     const indexRangeError = rttc.checkoutofRange(command.srcNode, index, context.chapter)

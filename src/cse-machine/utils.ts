@@ -805,7 +805,7 @@ const envCalculators: EnvCalculators = {
 
   //Instruction
   [InstrType.APPLICATION]: true,
-  [InstrType.ARRAY_ACCESS]: false,
+  [InstrType.ARRAY_ACCESS]: true,
   [InstrType.ARRAY_ASSIGNMENT]: false,
   [InstrType.ARRAY_LITERAL]: true,
   [InstrType.ASSIGNMENT]: true,
