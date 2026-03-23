@@ -1,4 +1,4 @@
-import { describe, expect, it, test, vi } from 'vitest'
+import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
 import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import { expectFinishedResult, expectParsedError, testSuccess } from '../../utils/testing'
@@ -64,6 +64,30 @@ describe(list.append, () => {
         `equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));`,
         Chapter.SOURCE_2
       ).toEqual(true)
+    })
+  })
+})
+
+describe(list.build_list, () => {
+  describe('source', () => {
+    it('works', () => {
+      return expectFinishedResult(
+        stripIndent`
+        equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));
+      `,
+        Chapter.SOURCE_2
+      ).toEqual(true)
+    })
+  })
+
+  describe('javascript', () => {
+    it('works with n elements', () => {
+      expect(list.build_list(x => x + 1, 3)).toEqual([1, [2, [3, null]]])
+    })
+
+    it('works when n less than or equal to 0', () => {
+      expect(list.build_list(x => x, 0)).toBeNull()
+      expect(list.build_list(x => x, -1)).toBeNull()
     })
   })
 })
@@ -406,6 +430,11 @@ describe(list.tail, () => {
       Chapter.SOURCE_3
     ).toEqual('Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]')
   })
+
+  it('correctly narrows types', () => {
+    expectTypeOf(list.tail(list.list(1, 2))).toExtend<list.NonEmptyList<number>>()
+    expectTypeOf(list.tail(list.pair(1, 2))).toExtend<number>()
+  })
 })
 
 describe(list.vector_to_list, () => {
@@ -427,15 +456,6 @@ test('equal', () => {
   return expectFinishedResult(`!equal(1, x => x) && !equal(x => x, 1);`, Chapter.SOURCE_2).toEqual(
     true
   )
-})
-
-test('build_list', () => {
-  return expectFinishedResult(
-    stripIndent`
-    equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));
-  `,
-    Chapter.SOURCE_2
-  ).toEqual(true)
 })
 
 test('reverse', () => {
@@ -512,14 +532,14 @@ test('list_to_string', () => {
 })
 
 // assoc removed from Source
-test.todo('assoc', () => {
+test.skip('assoc', () => {
   return expectFinishedResult(
     `equal(assoc(3, list(pair(1, 2), pair(3, 4))), pair(3, 4));`,
     Chapter.LIBRARY_PARSER
   ).toEqual(true)
 })
 
-test.todo('assoc not found', () => {
+test.skip('assoc not found', () => {
   return expectFinishedResult(
     `equal(assoc(2, list(pair(1, 2), pair(3, 4))), false);`,
     Chapter.LIBRARY_PARSER

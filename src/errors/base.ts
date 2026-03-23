@@ -16,8 +16,8 @@ export enum ErrorSeverity {
 
 // any and all errors ultimately implement this interface. as such, changes to this will affect every type of error.
 export interface SourceError {
-  type: ErrorType
-  severity: ErrorSeverity
+  readonly type: ErrorType
+  readonly severity: ErrorSeverity
   location: es.SourceLocation
   explain(): string
   elaborate(): string
