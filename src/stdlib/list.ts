@@ -11,7 +11,7 @@ import { type ArrayLike, stringify } from '../utils/stringify'
 
 export type Pair<H, T> = [H, T]
 export type List<T = unknown> = null | NonEmptyList<T>
-export type NonEmptyList<T> = Pair<T, any>
+type NonEmptyList<T> = Pair<T, any>
 
 // array test works differently for Rhino and
 // the Firefox environment (especially Web Console)
@@ -45,11 +45,12 @@ export function is_pair(x: unknown): x is Pair<unknown, unknown> {
  * @throws an exception if the argument is not a pair
  */
 export function head<T>(xs: Pair<T, unknown> | NonEmptyList<T>): T
+export function head(xs: unknown): unknown
 export function head(xs: unknown) {
   if (is_pair(xs)) {
     return xs[0]
   } else {
-    throw new GeneralRuntimeError(
+    throw new Error(
       `${head.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`
     )
   }
@@ -60,13 +61,14 @@ export function head(xs: unknown) {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  * @throws an exception if the argument is not a pair
  */
-export function tail<T>(xs: Pair<unknown, T>): T
 export function tail<T>(xs: NonEmptyList<T>): List<T>
+export function tail<T>(xs: Pair<unknown, T>): T
+export function tail(xs: unknown): unknown
 export function tail(xs: unknown) {
   if (is_pair(xs)) {
     return xs[1]
   } else {
-    throw new GeneralRuntimeError(
+    throw new Error(
       `${tail.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`
     )
   }
@@ -77,11 +79,11 @@ export function tail(xs: unknown) {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  * @throws an exception if the argument is not a pair
  */
-export function set_head(xs: Pair<any, any>, x: any): void {
+export function set_head(xs: unknown, x: any): void {
   if (is_pair(xs)) {
     xs[0] = x
   } else {
-    throw new GeneralRuntimeError(
+    throw new Error(
       `${set_head.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
     )
   }
@@ -92,11 +94,11 @@ export function set_head(xs: Pair<any, any>, x: any): void {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  * @throws an exception if the argument is not a pair
  */
-export function set_tail(xs: Pair<any, any>, x: any): void {
+export function set_tail(xs: unknown, x: any): void {
   if (is_pair(xs)) {
     xs[1] = x
   } else {
-    throw new GeneralRuntimeError(
+    throw new Error(
       `${set_tail.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
     )
   }
@@ -114,8 +116,6 @@ export function is_null(xs: unknown): xs is null {
  * makes a list out of its arguments\
  * LOW-LEVEL FUNCTION, NOT SOURCE
  */
-export function list<T>(...elements: T[]): NonEmptyList<T>
-export function list<T>(): List<T>
 export function list<T>(...elements: T[]): List<T> {
   let theList = null
   for (let i = elements.length - 1; i >= 0; i -= 1) {
@@ -158,21 +158,6 @@ export function list_to_vector<T>(lst: List<T>): T[] {
  */
 export function vector_to_list<T>(vector: T[]): List<T> {
   return list(...vector)
-}
-
-/**
- * build_list returns a list of n elements, that results from
- * applying the provided to the numbers from 0 to n-1.
- *
- * @param f Function to apply
- * @param n Number of elements
- */
-export function build_list<T>(f: (n: number) => T, n: number): List<T> {
-  function $build_list(i: number, already_built: List<T>): List<T> {
-    return i < 0 ? already_built : $build_list(i - 1, pair(f(i), already_built))
-  }
-
-  return $build_list(n - 1, null)
 }
 
 /**
@@ -233,22 +218,35 @@ export function for_each<T>(op: (arg: T) => void, xs: List<T>): true {
 /**
  * Returns the element at the `n`th index in the provided list
  */
-export function list_ref<T>(xs: List<T>, n: number): T {
-  for (let i = 0; i < n && !is_null(xs); i++) {
-    xs = tail(xs)
-  }
-
+export function list_ref<T>(xs: List<T>, n: number) {
   if (is_null(xs)) {
     throw new GeneralRuntimeError(`${list_ref.name}(xs, n): Index ${n} is out of bounds.`)
   }
 
-  return head(xs)
+  let res: NonEmptyList<T> = xs
+  let i = n
+  while (i > 0) {
+    const temp = tail(res)
+
+    if (is_null(temp)) {
+      throw new GeneralRuntimeError(`${list_ref.name}(xs, n): Index ${n} is out of bounds.`)
+    }
+
+    res = temp
+    i--
+  }
+
+  return head(res)
 }
 
 /**
- * Returns the length of a List xs. Throws an exception if xs is not a List
+ * returns the length of a List xs. Throws an exception if xs is not a List
  */
-export function length(xs: List<any>): number {
+export function length(xs: unknown): number {
+  if (!is_list(xs)) {
+    throw new GeneralRuntimeError(`${length.name}(xs) expects a list`)
+  }
+
   return accumulate((_, total) => total + 1, 0, xs)
 }
 
@@ -269,8 +267,11 @@ export function rawDisplayList(display: any, xs: Value, prepend: string) {
       }
       return result
     }
+    listNode: List
 
-    constructor(public listNode: NonEmptyList<any>) {}
+    constructor(listNode: List) {
+      this.listNode = listNode
+    }
   }
   function getListObject(curXs: Value): Value {
     return asListObjects.get(curXs) || curXs
