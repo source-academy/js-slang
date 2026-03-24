@@ -170,7 +170,7 @@ export class UnassignedVariableError extends RuntimeSourceError<Node> {
   }
 
   public override elaborate() {
-    return `If you're trying to access the value of ${this.varname} from an outer scope, please rename the inner ${this.varname}. An easy way to avoid this issue in future would be to avoid declaring any variables or constants with the name ${this.name} in the same scope.`
+    return `If you're trying to access the value of ${this.varname} from an outer scope, please rename the inner ${this.varname}. An easy way to avoid this issue in future would be to avoid declaring any variables or constants with the name ${this.varname} in the same scope.`
   }
 }
 
