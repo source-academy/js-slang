@@ -216,7 +216,7 @@ export const handleArrayCreation = (
       parents = prevParents + 1
     }
     context.mostRecentPair = undefined;
-  } else if (streamId === undefined) {
+  } else {
     // Handling when its a list being created
     if (typeof array[1] !== 'function') {
       if (array[1] === null) {
