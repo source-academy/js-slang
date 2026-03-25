@@ -850,13 +850,17 @@ const cmdEvaluators: CommandEvaluators = {
       const src = (command as AppInstr).srcNode
 
     const args: Value[] = []
-    for (let index = 0; index < command.numOfArgs; index++) {
+    for (let index = 0; index < command
+      .numOfArgs; index++) {
       args.unshift(stash.pop())
     }
 
       if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
         if (src.callee.name == "stream_tail") {
-          context.mostRecentPair = args[0].id;
+          if(context.mostRecentPair == undefined) context.mostRecentPair = [];
+          context.mostRecentPair?.push(args[0].id);
+          console.log("saved: " + context.mostRecentPair);
+
         }
       }
 

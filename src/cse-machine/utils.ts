@@ -154,6 +154,38 @@ export const isStreamFn = (item: any, result?: any): result is [any, () => any] 
   )
 }
 
+
+function getStreamMaxWidth(
+  targetStreamId: string,
+  streamPairIdToStreamId: Map<string, string>,
+  streemPairIdToParentCount: Map<string, number>
+): number {
+  // This map will store: { depthLevel -> numberOfNodes }
+  const nodesAtDepth = new Map<number, number>();
+  let maxWidth = 0;
+
+  // 1. Iterate through all pairs to find ones belonging to the target stream
+  for (const [pairId, streamId] of streamPairIdToStreamId.entries()) {
+    if (streamId === targetStreamId) {
+      
+      // 2. Get the depth (parentCount) of this specific pair
+      const depth = streemPairIdToParentCount.get(pairId) ?? 0;
+
+      // 3. Increment the count of nodes at this depth
+      const currentCount = nodesAtDepth.get(depth) ?? 0;
+      const newCount = currentCount + 1;
+      nodesAtDepth.set(depth, newCount);
+
+      // 4. Update the maxWidth if this depth now has the most nodes
+      if (newCount > maxWidth) {
+        maxWidth = newCount;
+      }
+    }
+  }
+
+  return maxWidth;
+}
+
 /**
  * Adds the properties `id` and `environment` to the given array, and adds the array to the
  * current environment's heap. Adds the array to the heap of `envOverride` instead if it's defined.
@@ -207,17 +239,33 @@ export const handleArrayCreation = (
       streamId = context.streamPairIdToStreamId.get(parentPairId)
     }
   }
-
-  if (context.mostRecentPair !== undefined) {
-    const prevPairId = context.mostRecentPair;
-    streamId = context.streamPairIdToStreamId.get(prevPairId)
-    const prevParents = context.streemPairIdToParentCount.get(prevPairId)
-    if (prevParents != undefined) {
-      parents = prevParents + 1
+    
+  if (context.mostRecentPair !== undefined && context.mostRecentPair?.length != 0) {
+    const prevPairId = context.mostRecentPair?.at(-1);
+    if (prevPairId != null) {    
+      streamId = context.streamPairIdToStreamId.get(prevPairId)
+      console.log(context.streamPairIdToStreamId);
+      console.log("Pair Id: " + (array as any).id + " parent Id: " + prevPairId + " streamId: "+streamId);
+      const prevParents = context.streemPairIdToParentCount.get(prevPairId)
+      if (prevParents != undefined) {
+        parents = prevParents + 1
+      }
+      context.mostRecentPair?.pop();
+      console.log("deleted: " + context.mostRecentPair);
     }
-    context.mostRecentPair = undefined;
   } else {
     // Handling when its a list being created
+    // if (typeof array[1] !== 'function') {
+    //   if (array[1] === null) {
+    //     context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1
+    //   } else {
+    //     context.streamCount = context.streamCount === undefined ? 0 : context.streamCount
+    //   }
+    // } else {
+    //   context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1;
+    //   streamId = String(context.streamCount); 
+    //   console.log((array as any).id + " is first pair in stream. Stream id: "+ streamId);
+    // }
     if (typeof array[1] !== 'function') {
       if (array[1] === null) {
         context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1
@@ -225,14 +273,22 @@ export const handleArrayCreation = (
         context.streamCount = context.streamCount === undefined ? 0 : context.streamCount
       }
     } else {
-      context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1
+      context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1;
+      streamId = String(context.streamCount); 
+      console.log((array as any).id + " is first pair in stream. Stream id: "+ streamId);
     }
-    streamId = context.streamCount.toString()
+      
   }
 
   // Link the pairIds to the streamIds through a map
   context.streamPairIdToStreamId.set((array as any).id, (streamId as string))
   context.streemPairIdToParentCount.set((array as any).id, parents)
+
+  if(streamId != undefined) {
+    let maxHeight: number = getStreamMaxWidth(streamId, context.streamPairIdToStreamId, context.streemPairIdToParentCount);
+    context.streamIdToHeight.set(streamId, String(maxHeight));
+  }
+  console.log("HEIGHT MAP: ", context.streamIdToHeight);
 }
 
 /**

@@ -60,13 +60,15 @@ export interface Context<T = any> {
 
   streamFnIdToPairId: Map<string, string>
 
+  streamIdToHeight: Map<string, string>
+
   pendingStreamFnId?: string
 
   pendingStreamFnStack: (string | undefined)[]
 
   streamCount?: number
 
-  mostRecentPair?: string
+  mostRecentPair?: string[]
 
   streamPairIdToStreamId: Map<string, string>
 
