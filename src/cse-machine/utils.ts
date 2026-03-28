@@ -15,6 +15,7 @@ import Heap from './heap'
 import * as instr from './instrCreator'
 import { type Control, Transformers } from './interpreter'
 import { isApply, isEval } from './scheme-macros'
+import { isPair } from './macro-utils'
 import {
   type AppInstr,
   type ControlItem,
@@ -212,12 +213,12 @@ export const handleArrayCreation = (
 
   // if a streamfn was executed before this pair being created, 
   // add this pair to that particular stream lineage
-  if (context.pendingStreamFnId) {
-    if (!context.streamLineage.get(context.pendingStreamFnId)) {
-      context.streamLineage.set(context.pendingStreamFnId, [])
-    }
-    context.streamLineage.get(context.pendingStreamFnId)?.push((array as any).id)
-  }
+  // if (context.pendingStreamFnId) {
+  //   if (!context.streamLineage.get(context.pendingStreamFnId)) {
+  //     context.streamLineage.set(context.pendingStreamFnId, [])
+  //   }
+  //   context.streamLineage.get(context.pendingStreamFnId)?.push((array as any).id)
+  // }
 
   // Checks if its a stream pair and places the pair id and assocciated 
   // nullary stream function in the tail in the maps below for easier referencing
@@ -226,8 +227,8 @@ export const handleArrayCreation = (
     if (!fn.id) {
       Object.defineProperty(fn, 'id', { value: uniqueId(context), writable: true })
     }
-    context.pairToStreamFnId.set((array as any).id, fn.id)
-    context.streamFnIdToPairId.set(fn.id, (array as any).id)
+    // context.pairToStreamFnId.set((array as any).id, fn.id)
+    // context.streamFnIdToPairId.set(fn.id, (array as any).id)
   }
 
   let streamId: string | undefined = undefined
@@ -244,14 +245,14 @@ export const handleArrayCreation = (
     const prevPairId = context.mostRecentPair?.at(-1);
     if (prevPairId != null) {    
       streamId = context.streamPairIdToStreamId.get(prevPairId)
-      console.log(context.streamPairIdToStreamId);
-      console.log("Pair Id: " + (array as any).id + " parent Id: " + prevPairId + " streamId: "+streamId);
+      // console.log(context.streamPairIdToStreamId);
+      // console.log("Pair Id: " + (array as any).id + " parent Id: " + prevPairId + " streamId: "+streamId);
       const prevParents = context.streemPairIdToParentCount.get(prevPairId)
       if (prevParents != undefined) {
         parents = prevParents + 1
       }
       context.mostRecentPair?.pop();
-      console.log("deleted: " + context.mostRecentPair);
+      // console.log("deleted: " + context.mostRecentPair);
     }
   } else {
     // Handling when its a list being created
@@ -275,7 +276,7 @@ export const handleArrayCreation = (
     } else {
       context.streamCount = context.streamCount === undefined ? 0 : context.streamCount + 1;
       streamId = String(context.streamCount); 
-      console.log((array as any).id + " is first pair in stream. Stream id: "+ streamId);
+      // console.log((array as any).id + " is first pair in stream. Stream id: "+ streamId);
     }
       
   }
@@ -288,7 +289,7 @@ export const handleArrayCreation = (
     let maxHeight: number = getStreamMaxWidth(streamId, context.streamPairIdToStreamId, context.streemPairIdToParentCount);
     context.streamIdToHeight.set(streamId, String(maxHeight));
   }
-  console.log("HEIGHT MAP: ", context.streamIdToHeight);
+  // console.log("HEIGHT MAP: ", context.streamIdToHeight);
 }
 
 /**
@@ -390,17 +391,25 @@ export const envChanging = (command: ControlItem): boolean => {
   }
 }
 
-export const envChangingStreams = (command: ControlItem): boolean => {
+export const envChangingStreams = (command: ControlItem, context: Context): boolean => {
+  // if (isInstr(command)) {
+  //   const type = command.instrType
+  //   if (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs == 2) {
+  //     const src = (command as AppInstr).srcNode
+  //     if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
+  //       if (src.callee.name == 'pair') {
+  //         // console.log((command as AppInstr).srcNode.arguments[1])
+  //         return true
+  //       }
+  //     }
+  //   }
+  // }
+  // return falseinstead of c
+
   if (isInstr(command)) {
     const type = command.instrType
-    if (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs == 2) {
-      const src = (command as AppInstr).srcNode
-      if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
-        if (src.callee.name == 'pair') {
-          // console.log((command as AppInstr).srcNode.arguments[1])
-          return true
-        }
-      }
+    if (type === InstrType.ENVIRONMENT && isPair(context.runtime.stash?.peek())) {
+      return true
     }
   }
   return false

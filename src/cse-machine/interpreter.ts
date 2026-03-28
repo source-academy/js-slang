@@ -41,7 +41,7 @@ import {
   makeDummyContCallExpression
 } from './continuations'
 import * as instr from './instrCreator'
-import { flattenList, isList } from './macro-utils'
+import { flattenList, isList, isPair } from './macro-utils'
 import { Transformer } from './patterns'
 import { isApply, isEval, schemeEval } from './scheme-macros'
 import { Stack } from './stack'
@@ -426,7 +426,7 @@ export function* generateCSEMachineStateStream(
       context.runtime.changepointSteps.push(steps + 1)
     }
 
-    if (!isPrelude && envChangingStreams(command)) {
+    if (!isPrelude && envChangingStreams(command, context)) {
       // same as !isPrelude && envChanging(command) check above
       // but this checks if next instruction on control is a pair() function
       // Usage: streams visualiser
@@ -530,7 +530,7 @@ const cmdEvaluators: CommandEvaluators = {
            command
         )
       )
-      context.pendingStreamFnStack.push(context.pendingStreamFnId)
+      // context.pendingStreamFnStack.push(context.pendingStreamFnId)
     }
 
     const environment = createBlockEnvironment(context, 'blockEnvironment')
@@ -855,14 +855,14 @@ const cmdEvaluators: CommandEvaluators = {
       args.unshift(stash.pop())
     }
 
-      if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
-        if (src.callee.name == "stream_tail") {
-          if(context.mostRecentPair == undefined) context.mostRecentPair = [];
-          context.mostRecentPair?.push(args[0].id);
-          console.log("saved: " + context.mostRecentPair);
+    if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
+      if (src.callee.name == "stream_tail") {
+        if(context.mostRecentPair == undefined) context.mostRecentPair = [];
+        context.mostRecentPair?.push(args[0].id);
+        console.log("saved: " + context.mostRecentPair);
 
-        }
       }
+    }
 
     // Get function from the stash
     const func: Closure | Function = stash.pop()
@@ -999,7 +999,7 @@ const cmdEvaluators: CommandEvaluators = {
         control.push(
           instr.envInstr(currentEnvironment(context), currentTransformers(context), command.srcNode)
         )
-        context.pendingStreamFnStack.push(context.pendingStreamFnId)
+        // context.pendingStreamFnStack.push(context.pendingStreamFnId)
       }
 
       // Create environment for function parameters if the function isn't nullary.
@@ -1013,6 +1013,8 @@ const cmdEvaluators: CommandEvaluators = {
 
       if (func.node.params.length === 0) {
         context.pendingStreamFnId = func.id
+        context.pendingStreamFnStack.push(func.id)
+        console.log("pendingStreamFnStack push: "+context.pendingStreamFnStack)
       } 
       // else {
       //   context.pendingStreamFnId = undefined
@@ -1213,9 +1215,32 @@ const cmdEvaluators: CommandEvaluators = {
     // restore transformers environment
     setTransformers(context, command.transformers)
 
-    if (context.pendingStreamFnStack.length > 0) {
-      context.pendingStreamFnId = context.pendingStreamFnStack.pop()
-    }
+    const evalResult = context.runtime.stash?.peek();
+    // console.log(evalResult);
+    // console.log(context.pendingStreamFnStack.pop());
+
+    if(isPair(evalResult)) {
+      const mostRecentNullaryFnId = context.pendingStreamFnStack.pop()
+      console.log("pendingStreamFnStack pop: "+context.pendingStreamFnStack)
+      if (mostRecentNullaryFnId != undefined){
+        context.pairToStreamFnId.set((evalResult as any).id, mostRecentNullaryFnId)
+        context.streamFnIdToPairId.set(mostRecentNullaryFnId, (evalResult as any).id)
+
+        if (!context.streamLineage.get(mostRecentNullaryFnId)) {
+          context.streamLineage.set(mostRecentNullaryFnId, [])
+        }
+        context.streamLineage.get(mostRecentNullaryFnId)?.push((evalResult as any).id)
+      }
+
+      console.log(context.streamLineage)
+      console.log(context.pairToStreamFnId)
+      console.log(context.streamFnIdToPairId)
+
+    } 
+
+    // if (context.pendingStreamFnStack.length > 0) {
+    //   context.pendingStreamFnId = context.pendingStreamFnStack.pop()
+    // }
   },
 
   [InstrType.FOR]({ command, context, control, stash }) {
@@ -1252,7 +1277,7 @@ const cmdEvaluators: CommandEvaluators = {
     // Keep pushing reset instructions until marker is found.
     const cmdNext: ControlItem | undefined = control.pop()
     if (cmdNext && isInstr(cmdNext) && cmdNext.instrType === InstrType.ENVIRONMENT) {
-      context.pendingStreamFnStack.pop()
+      // context.pendingStreamFnStack.pop()
     }
     if (cmdNext && (!isInstr(cmdNext) || cmdNext.instrType !== InstrType.MARKER)) {
       control.push(instr.resetInstr(command.srcNode))
