@@ -64,7 +64,7 @@ const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {
   },
   BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node),
   IfStatement: (node: es.IfStatement) => StepperIfStatement.create(node),
-  DebuggerStatement: (node: es.DebuggerStatement) => StepperDebuggerStatement.create(node),
+  DebuggerStatement: (node: es.DebuggerStatement) => StepperDebuggerStatement.create(node)
 }
 
 export function convert(node: es.BaseNode): StepperBaseNode {

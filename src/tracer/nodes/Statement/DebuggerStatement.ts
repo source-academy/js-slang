@@ -1,5 +1,5 @@
 import type { Comment, DebuggerStatement, SourceLocation } from 'estree'
-import { StepperExpression, StepperPattern, undefinedNode} from '..'
+import { StepperExpression, StepperPattern, undefinedNode } from '..'
 import { redex } from '../..'
 import type { StepperBaseNode } from '../../interface'
 
@@ -24,49 +24,49 @@ export class StepperDebuggerStatement implements DebuggerStatement, StepperBaseN
   }
 
   static create(node: DebuggerStatement) {
-        return new StepperDebuggerStatement(
-            node.leadingComments,
-            node.trailingComments,
-            node.loc,
-            node.range
-        )
-    }
+    return new StepperDebuggerStatement(
+      node.leadingComments,
+      node.trailingComments,
+      node.loc,
+      node.range
+    )
+  }
 
-    isContractible(): boolean {
-        return true;
-    }
+  isContractible(): boolean {
+    return true
+  }
 
-    isOneStepPossible(): boolean {
-        return true;
-    }
+  isOneStepPossible(): boolean {
+    return true
+  }
 
-    contractEmpty() {
-        redex.preRedex = [this]
-        redex.postRedex = []
-    }
+  contractEmpty() {
+    redex.preRedex = [this]
+    redex.postRedex = []
+  }
 
-    contract(): typeof undefinedNode {
-        return undefinedNode
-    }
-    
-    oneStep(): typeof undefinedNode {
-        this.contractEmpty()
-        return undefinedNode
-    }
+  contract(): typeof undefinedNode {
+    return undefinedNode
+  }
 
-    substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
-        return this
-    }
+  oneStep(): typeof undefinedNode {
+    this.contractEmpty()
+    return undefinedNode
+  }
 
-    freeNames(): string[] {
-        return []
-    }
+  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+    return this
+  }
 
-    allNames(): string[] {
-        return []
-    }
+  freeNames(): string[] {
+    return []
+  }
 
-    rename(before: string, after: string): StepperBaseNode {
-        return this
-    }
+  allNames(): string[] {
+    return []
+  }
+
+  rename(before: string, after: string): StepperBaseNode {
+    return this
+  }
 }
