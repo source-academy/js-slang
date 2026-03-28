@@ -14,8 +14,6 @@ export class Stack<T> implements IStack<T> {
   // Bottom of the array is at index 0
   private storage: T[] = []
 
-  public constructor() {}
-
   public push(...items: T[]): void {
     for (const item of items) {
       this.storage.push(item)

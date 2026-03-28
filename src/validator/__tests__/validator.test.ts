@@ -25,7 +25,7 @@ test('for loop variable cannot be reassigned', () => {
     }
   `
   return expectParsedError(code, { chapter: Chapter.SOURCE_4 }).toEqual(
-    'Line 2: Assignment to a for loop variable in the for loop is not allowed.'
+    'Line 2: Assignment to a for loop variable within the body of the for loop is not allowed.'
   )
 })
 
@@ -38,7 +38,7 @@ test('for loop variable cannot be reassigned in closure', () => {
     }
   `
   return expectParsedError(code, { chapter: Chapter.SOURCE_4 }).toEqual(
-    'Line 3: Assignment to a for loop variable in the for loop is not allowed.'
+    'Line 3: Assignment to a for loop variable within the body of the for loop is not allowed.'
   )
 })
 

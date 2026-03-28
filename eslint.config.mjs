@@ -1,11 +1,12 @@
 // @ts-check
 
 import vitestPlugin from '@vitest/eslint-plugin'
+import { defineConfig } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 import globals from 'globals'
 import * as importPlugin from 'eslint-plugin-import'
 
-export default tseslint.config(
+export default defineConfig(
   {
     // global ignores
     ignores: ['dist', 'src/alt-langs', 'src/py-slang', 'src/__tests__/sicp', '**/*.snap']
@@ -82,6 +83,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-useless-constructor': 'error',
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/require-await': 'error',
       '@typescript-eslint/restrict-plus-operands': 'off',
@@ -99,6 +101,8 @@ export default tseslint.config(
     rules: {
       'no-empty-pattern': 'off',
       'vitest/expect-expect': 'off', // TODO turn this back on
+      'vitest/no-conditional-expect': 'off',
+      'vitest/no-disabled-tests': 'off',
       'vitest/no-focused-tests': ['warn', { fixable: false }],
       'vitest/prefer-describe-function-title': 'warn',
       'vitest/valid-describe-callback': 'off',

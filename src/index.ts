@@ -12,19 +12,18 @@ import type {
   Context,
   ExecutionMethod,
   Finished,
-  ModuleContext,
   RecursivePartial,
   Result,
   Error as ResultError,
   SVMProgram
 } from './types'
+import type { ModuleContext, ImportOptions } from './modules/moduleTypes'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import type { SourceError } from './errors/base'
 import { ModuleNotFoundError } from './modules/errors'
-import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
@@ -68,21 +67,19 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
   const errorMessagesArr = errors.map(error => {
     // FIXME: Either refactor the parser to output an ESTree-compliant AST, or modify the ESTree types.
     const filePath = error.location?.source ? `[${error.location.source}] ` : ''
-    const line = error.location ? error.location.start.line : '<unknown>'
-    const column = error.location ? error.location.start.column : '<unknown>'
+    const line = error.location?.start?.line ?? -1
+    const column = error.location?.start?.column ?? -1
     const explanation = error.explain()
 
     if (verbose) {
       // TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
       // way to display it.
       const elaboration = error.elaborate()
-      return typeof line === 'number' && line < 1
+      return line < 1
         ? `${filePath}${explanation}\n${elaboration}\n`
         : `${filePath}Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
-      return typeof line === 'number' && line < 1
-        ? explanation
-        : `${filePath}Line ${line}: ${explanation}`
+      return line < 1 ? explanation : `${filePath}Line ${line}: ${explanation}`
     }
   })
   return errorMessagesArr.join('\n')

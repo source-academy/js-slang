@@ -79,6 +79,7 @@ export class SourceParser implements Parser<AcornOptions> {
       .flat()
       .forEach(([syntaxNodeName, checker]) => {
         const langWalker: AncestorWalkerFn<any> = (node: Node, _state: any, ancestors: Node[]) => {
+          // @ts-expect-error Node parameter gets narrowed to never
           const errors = checker(node, ancestors)
 
           if (throwOnError && errors.length > 0) throw errors[0]

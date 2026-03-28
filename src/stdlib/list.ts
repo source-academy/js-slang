@@ -5,6 +5,7 @@
  * Translated to TypeScript by Evan Sebastian
  */
 
+import { GeneralRuntimeError } from '../errors/base'
 import type { Value } from '../types'
 import { type ArrayLike, stringify } from '../utils/stringify'
 
@@ -74,6 +75,36 @@ export function tail(xs: unknown) {
 }
 
 /**
+ * changes the head of given pair xs to be x\
+ * LOW-LEVEL FUNCTION, NOT SOURCE
+ * @throws an exception if the argument is not a pair
+ */
+export function set_head(xs: unknown, x: any): void {
+  if (is_pair(xs)) {
+    xs[0] = x
+  } else {
+    throw new Error(
+      `${set_head.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
+    )
+  }
+}
+
+/**
+ * changes the tail of given pair xs to be x\
+ * LOW-LEVEL FUNCTION, NOT SOURCE
+ * @throws an exception if the argument is not a pair
+ */
+export function set_tail(xs: unknown, x: any): void {
+  if (is_pair(xs)) {
+    xs[1] = x
+  } else {
+    throw new Error(
+      `${set_tail.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
+    )
+  }
+}
+
+/**
  * returns true if arg is exactly null\
  * LOW-LEVEL FUNCTION, NOT SOURCE
  */
@@ -97,7 +128,7 @@ export function list<T>(...elements: T[]): List<T> {
  * recurses down the list and checks that it ends with the empty list null\
  * LOW-LEVEL FUNCTION, NOT SOURCE
  */
-export function is_list(xs: unknown): xs is List {
+export function is_list(xs: unknown): xs is List<unknown> {
   while (is_pair(xs)) {
     xs = tail(xs)
   }
@@ -130,36 +161,6 @@ export function vector_to_list<T>(vector: T[]): List<T> {
 }
 
 /**
- * changes the head of given pair xs to be x\
- * LOW-LEVEL FUNCTION, NOT SOURCE
- * @throws an exception if the argument is not a pair
- */
-export function set_head(xs: unknown, x: any): void {
-  if (is_pair(xs)) {
-    xs[0] = x
-  } else {
-    throw new Error(
-      `${set_head.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
-    )
-  }
-}
-
-/**
- * changes the tail of given pair xs to be x\
- * LOW-LEVEL FUNCTION, NOT SOURCE
- * @throws an exception if the argument is not a pair
- */
-export function set_tail(xs: unknown, x: any): void {
-  if (is_pair(xs)) {
-    xs[1] = x
-  } else {
-    throw new Error(
-      `${set_tail.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
-    )
-  }
-}
-
-/**
  * Accumulate applies given operation op to elements of a list
  * in a right-to-left order, first apply op to the last element
  * and an initial element, resulting in r1, then to the second-last
@@ -176,11 +177,74 @@ export function accumulate<T, U>(op: (each: T, result: U) => U, initial: U, sequ
 }
 
 /**
+ * Appends the list `ys` to the end of list `xs` and returns the
+ * resulting list
+ */
+export function append<T>(xs: List<T>, ys: List<T>): List<T> {
+  function $append(xs: List<T>, ys: List<T>, cont: (res: List<T>) => List<T>): List<T> {
+    return is_null(xs) ? cont(ys) : $append(tail(xs), ys, zs => cont(pair(head(xs), zs)))
+  }
+
+  return $append(xs, ys, xs => xs)
+}
+
+/**
+ * Calls the provided function on each element of the provides list, and returns
+ * a new list containing the results
+ */
+export function map<T, U>(op: (each: T) => U, sequence: List<T>): List<U> {
+  return accumulate((each, result) => pair(op(each), result), list(), sequence)
+}
+
+/**
+ * Returns a new list that only contains elements that the predicate function returned `true`
+ * for
+ */
+export function filter<T, U extends T>(pred: (arg: T) => arg is U, xs: List<T>): List<U>
+export function filter<T>(pred: (arg: T) => boolean, xs: List<T>): List<T>
+export function filter<T>(pred: (arg: T) => boolean, xs: List<T>): List<T> {
+  return accumulate((each, result) => (pred(each) ? pair(each, result) : result), list(), xs)
+}
+
+/**
+ * Applies the provided function to each element in the list. Returns `true`.
+ */
+export function for_each<T>(op: (arg: T) => void, xs: List<T>): true {
+  if (is_null(xs)) return true
+  op(head(xs))
+  return for_each(op, tail(xs))
+}
+
+/**
+ * Returns the element at the `n`th index in the provided list
+ */
+export function list_ref<T>(xs: List<T>, n: number) {
+  if (is_null(xs)) {
+    throw new GeneralRuntimeError(`${list_ref.name}(xs, n): Index ${n} is out of bounds.`)
+  }
+
+  let res: NonEmptyList<T> = xs
+  let i = n
+  while (i > 0) {
+    const temp = tail(res)
+
+    if (is_null(temp)) {
+      throw new GeneralRuntimeError(`${list_ref.name}(xs, n): Index ${n} is out of bounds.`)
+    }
+
+    res = temp
+    i--
+  }
+
+  return head(res)
+}
+
+/**
  * returns the length of a List xs. Throws an exception if xs is not a List
  */
 export function length(xs: unknown): number {
   if (!is_list(xs)) {
-    throw new Error(`${length.name}(xs) expects a list`)
+    throw new GeneralRuntimeError(`${length.name}(xs) expects a list`)
   }
 
   return accumulate((_, total) => total + 1, 0, xs)

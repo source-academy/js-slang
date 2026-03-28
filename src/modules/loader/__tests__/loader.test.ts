@@ -1,15 +1,21 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Chapter, Variant } from '../../../langs'
-import { mockContext } from '../../../utils/testing/mocks'
-import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
-import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
+import { mockContext, mockImportDeclaration } from '../../../utils/testing/mocks'
+import {
+  ModuleConnectionError,
+  ModuleNotFoundError,
+  WrongChapterForModuleError
+} from '../../errors'
+import type { ModuleDocumentation, ModulesManifest } from '../../moduleTypes'
 import * as importers from '../importers'
 import {
   loadModuleBundleAsync,
   loadModuleTabsAsync,
-  memoizedGetModuleDocsAsync,
-  memoizedGetModuleManifestAsync
+  memoizedLoadModuleDocsAsync,
+  memoizedLoadModuleManifestAsync
 } from '../loaders'
+import { stringify } from '../../../utils/stringify'
+import loadSourceModules from '..'
 
 const moduleMocker = vi.fn()
 
@@ -30,6 +36,7 @@ vi.doMock(`${importers.MODULES_STATIC_URL}/tabs/tab2.js`, () => ({
 }))
 
 const mockedDocsImporter = vi.spyOn(importers, 'docsImporter')
+const mockedManifestImporter = vi.spyOn(importers, 'manifestImporter')
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -46,6 +53,14 @@ describe('bundle loading', () => {
     })
     const mod = await loadModuleBundleAsync('one_module', context)
     expect(mod.foo()).toEqual('foo')
+    expect(stringify(mod.foo)).toMatchInlineSnapshot(`
+      "function foo {
+      	[Function from one_module
+      	Implementation hidden]
+      }"
+    `)
+
+    expect(moduleMocker).toHaveBeenCalledOnce()
   })
 
   test('Should throw ModuleConnectionError when unable to reach modules server', () => {
@@ -71,19 +86,14 @@ describe('bundle loading', () => {
 
     const mod = await loadModuleBundleAsync('one_module', context)
     expect(mod.foo()).toEqual('foo')
-    expect('someprop' in mod.foo).toEqual(true)
+    expect(mod.foo).toHaveProperty('someprop', true)
+    expect(moduleMocker).toHaveBeenCalledOnce()
   })
 })
 
 describe('tab loading', () => {
   test("Load a module's tabs", async () => {
-    mockedDocsImporter.mockResolvedValueOnce({
-      default: {
-        one_module: { tabs: ['tab1', 'tab2'] }
-      }
-    })
-
-    const tabs = await loadModuleTabsAsync('one_module')
+    const tabs = await loadModuleTabsAsync(['tab1', 'tab2'])
 
     expect(tabs[0]({} as any)).toEqual('tab1')
     expect(tabs[1]({} as any)).toEqual('tab2')
@@ -91,55 +101,57 @@ describe('tab loading', () => {
 })
 
 describe('docs loading', () => {
-  describe(memoizedGetModuleManifestAsync, () => {
+  describe(memoizedLoadModuleManifestAsync, () => {
     beforeEach(() => {
-      memoizedGetModuleManifestAsync.reset()
+      memoizedLoadModuleManifestAsync.reset()
     })
 
     test('manifest is memoized on success', async () => {
-      const mockManifest: ModuleManifest = {
+      const mockManifest: ModulesManifest = {
         one_module: {
-          tabs: []
+          tabs: [],
+          node: mockImportDeclaration()
         }
       }
-      mockedDocsImporter.mockResolvedValueOnce({ default: mockManifest })
+      mockedManifestImporter.mockResolvedValueOnce({ default: mockManifest })
 
-      const result = await memoizedGetModuleManifestAsync()
+      const result = await memoizedLoadModuleManifestAsync()
       expect(result).toMatchObject(mockManifest)
 
-      const result2 = await memoizedGetModuleManifestAsync()
+      const result2 = await memoizedLoadModuleManifestAsync()
       expect(result2).toMatchObject(mockManifest)
 
-      const result3 = await memoizedGetModuleManifestAsync()
+      const result3 = await memoizedLoadModuleManifestAsync()
       expect(result3).toMatchObject(mockManifest)
 
-      expect(importers.docsImporter).toHaveBeenCalledTimes(1)
+      expect(importers.manifestImporter).toHaveBeenCalledTimes(1)
     })
 
     test('manifest is not memoized on error', async () => {
-      const mockError = new ModuleNotFoundError('one_module')
+      const mockError = new ModuleNotFoundError('one_module', mockImportDeclaration())
 
-      mockedDocsImporter.mockRejectedValueOnce(mockError)
-      const result = memoizedGetModuleManifestAsync()
+      mockedManifestImporter.mockRejectedValueOnce(mockError)
+      const result = memoizedLoadModuleManifestAsync()
       await expect(result).rejects.toBe(mockError)
 
-      const mockManifest: ModuleManifest = {
+      const mockManifest: ModulesManifest = {
         one_module: {
-          tabs: []
+          tabs: [],
+          node: mockImportDeclaration()
         }
       }
 
-      mockedDocsImporter.mockResolvedValueOnce({ default: mockManifest })
-      const result2 = await memoizedGetModuleManifestAsync()
+      mockedManifestImporter.mockResolvedValueOnce({ default: mockManifest })
+      const result2 = await memoizedLoadModuleManifestAsync()
       expect(result2).toMatchObject(mockManifest)
 
-      expect(importers.docsImporter).toHaveBeenCalledTimes(2)
+      expect(importers.manifestImporter).toHaveBeenCalledTimes(2)
     })
   })
 
-  describe(memoizedGetModuleDocsAsync, () => {
+  describe(memoizedLoadModuleDocsAsync, () => {
     beforeEach(() => {
-      memoizedGetModuleDocsAsync.cache.clear()
+      memoizedLoadModuleDocsAsync.cache.clear()
     })
 
     test('docs are memoized on success', async () => {
@@ -148,18 +160,18 @@ describe('docs loading', () => {
       }
 
       mockedDocsImporter.mockResolvedValue({ default: mockDocs })
-      const docs = await memoizedGetModuleDocsAsync('one_module')
+      const docs = await memoizedLoadModuleDocsAsync('one_module')
       expect(docs).toMatchObject(mockDocs)
 
-      const docs2 = await memoizedGetModuleDocsAsync('one_module')
+      const docs2 = await memoizedLoadModuleDocsAsync('one_module')
       expect(docs2).toMatchObject(mockDocs)
 
       expect(importers.docsImporter).toHaveBeenCalledTimes(1)
 
-      const docs3 = await memoizedGetModuleDocsAsync('another_module')
+      const docs3 = await memoizedLoadModuleDocsAsync('another_module')
       expect(docs3).toMatchObject(mockDocs)
 
-      const docs4 = await memoizedGetModuleDocsAsync('another_module')
+      const docs4 = await memoizedLoadModuleDocsAsync('another_module')
       expect(docs4).toMatchObject(mockDocs)
 
       expect(importers.docsImporter).toHaveBeenCalledTimes(2)
@@ -171,27 +183,130 @@ describe('docs loading', () => {
       }
 
       mockedDocsImporter.mockResolvedValueOnce({ default: mockDocs })
-      const docs = await memoizedGetModuleDocsAsync('one_module')
+      const docs = await memoizedLoadModuleDocsAsync('one_module')
       expect(docs).toMatchObject(mockDocs)
 
-      const docs2 = await memoizedGetModuleDocsAsync('one_module')
+      const docs2 = await memoizedLoadModuleDocsAsync('one_module')
       expect(docs2).toMatchObject(mockDocs)
 
       expect(importers.docsImporter).toHaveBeenCalledTimes(1)
 
-      const mockError = new ModuleNotFoundError('another_module')
+      const mockError = new ModuleNotFoundError('another_module', mockImportDeclaration())
       mockedDocsImporter.mockRejectedValueOnce(mockError)
-      const docs3 = memoizedGetModuleDocsAsync('another_module', true)
+      const docs3 = memoizedLoadModuleDocsAsync('another_module', true)
       await expect(docs3).rejects.toBe(mockError)
 
       mockedDocsImporter.mockResolvedValueOnce({ default: mockDocs })
-      const docs4 = await memoizedGetModuleDocsAsync('another_module')
+      const docs4 = await memoizedLoadModuleDocsAsync('another_module')
       expect(docs4).toMatchObject(mockDocs)
 
-      const docs5 = await memoizedGetModuleDocsAsync('another_module')
+      const docs5 = await memoizedLoadModuleDocsAsync('another_module')
       expect(docs5).toMatchObject(mockDocs)
 
       expect(importers.docsImporter).toHaveBeenCalledTimes(3)
     })
+  })
+})
+
+describe('module loading', () => {
+  test('throwing error when context chapter is not high enough', async () => {
+    const context = mockContext(Chapter.SOURCE_1)
+    await expect(
+      loadSourceModules(
+        {
+          one_module: {
+            name: 'one_module',
+            tabs: [],
+            requires: Chapter.SOURCE_3,
+            node: mockImportDeclaration()
+          }
+        },
+        context
+      )
+    ).rejects.toThrowError(WrongChapterForModuleError)
+    expect(moduleMocker).not.toHaveBeenCalledOnce()
+  })
+
+  test("not throwing error when module doesn't need a specific chapter", async () => {
+    const context = mockContext(Chapter.SOURCE_1)
+    moduleMocker.mockReturnValueOnce({
+      foo() {
+        return this.foo.name
+      },
+      bar: () => 'bar'
+    })
+    await expect(
+      loadSourceModules(
+        {
+          one_module: {
+            name: 'one_module',
+            tabs: [],
+            node: mockImportDeclaration()
+          }
+        },
+        context
+      )
+    ).resolves.toMatchObject({
+      one_module: expect.any(Object)
+    })
+
+    expect(moduleMocker).toHaveBeenCalledOnce()
+  })
+
+  test('not throwing error when context chapter is high enough', async () => {
+    const context = mockContext(Chapter.SOURCE_3)
+    moduleMocker.mockReturnValueOnce({
+      foo() {
+        return this.foo.name
+      },
+      bar: () => 'bar'
+    })
+    await expect(
+      loadSourceModules(
+        {
+          one_module: {
+            name: 'one_module',
+            tabs: [],
+            requires: Chapter.SOURCE_3,
+            node: mockImportDeclaration()
+          }
+        },
+        context
+      )
+    ).resolves.toMatchObject({
+      one_module: expect.any(Object)
+    })
+
+    expect(moduleMocker).toHaveBeenCalledOnce()
+  })
+
+  test('using a custom bundle importer', async () => {
+    const context = mockContext(Chapter.SOURCE_3)
+    const importer = vi.fn(() =>
+      Promise.resolve({
+        default: () => ({
+          foo: () => 'foo'
+        })
+      })
+    )
+
+    const loadedModules = await loadSourceModules(
+      {
+        one_module: {
+          name: 'one_module',
+          tabs: [],
+          requires: Chapter.SOURCE_3,
+          node: mockImportDeclaration()
+        }
+      },
+      context,
+      {
+        sourceBundleImporter: importer
+      }
+    )
+
+    expect(loadedModules).toHaveProperty('one_module')
+    expect(loadedModules.one_module.foo()).toEqual('foo')
+    expect(importer).toHaveBeenCalledOnce()
   })
 })

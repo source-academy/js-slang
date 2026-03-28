@@ -11,7 +11,7 @@ import { isArray } from 'lodash'
 import type { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { RuntimeSourceError } from '../errors/base'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import type {
   Context,
@@ -102,7 +102,7 @@ export class Control extends Stack<ControlItem> {
     return this.numEnvDependentItems
   }
 
-  public pop(): ControlItem | undefined {
+  public override pop(): ControlItem | undefined {
     const item = super.pop()
     if (item !== undefined && isEnvDependent(item)) {
       this.numEnvDependentItems--
@@ -110,7 +110,7 @@ export class Control extends Stack<ControlItem> {
     return item
   }
 
-  public push(...items: ControlItem[]): void {
+  public override push(...items: ControlItem[]): void {
     const itemsNew: ControlItem[] = Control.simplifyBlocksWithoutDeclarations(...items)
     itemsNew.forEach((item: ControlItem) => {
       if (isEnvDependent(item)) {
@@ -230,7 +230,7 @@ function evaluateImports(program: es.Program, context: Context) {
       const functions = context.nativeStorage.loadedModules[moduleName]
       for (const node of nodes) {
         for (const spec of node.specifiers) {
-          declareIdentifier(context, spec.local.name, node, environment)
+          declareIdentifier(context, spec.local.name, spec, environment)
           let obj: any
 
           switch (spec.type) {
@@ -248,7 +248,7 @@ function evaluateImports(program: es.Program, context: Context) {
             }
           }
 
-          defineVariable(context, spec.local.name, obj, true, node)
+          defineVariable(context, spec.local.name, obj, true, spec)
         }
       }
     }
@@ -750,7 +750,7 @@ const cmdEvaluators: CommandEvaluators = {
     const func: Closure | Function = stash.pop()
 
     if (!(func instanceof Closure || func instanceof Function)) {
-      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
+      handleRuntimeError(context, new errors.CallingNonFunctionValueError(func, command.srcNode))
     }
 
     if (isCallWithCurrentContinuation(func)) {
@@ -949,16 +949,12 @@ const cmdEvaluators: CommandEvaluators = {
   [InstrType.BINARY_OP]({ command, context, stash }) {
     const right = stash.pop()
     const left = stash.pop()
-    const error = rttc.checkBinaryExpression(
-      command.srcNode,
-      command.symbol,
-      context.chapter,
-      left,
-      right
-    )
-    if (error) {
+    try {
+      rttc.checkBinaryExpression(command.srcNode, command.symbol, context.chapter, [left, right])
+    } catch (error) {
       handleRuntimeError(context, error)
     }
+
     stash.push(evaluateBinaryExpression(command.symbol, left, right))
   },
 
@@ -966,8 +962,9 @@ const cmdEvaluators: CommandEvaluators = {
     const test = stash.pop()
 
     // Check if test condition is a boolean
-    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter)
-    if (error) {
+    try {
+      rttc.checkIfStatement(command.srcNode, test, context.chapter)
+    } catch (error) {
       handleRuntimeError(context, error)
     }
 
@@ -1027,8 +1024,9 @@ const cmdEvaluators: CommandEvaluators = {
     const test = stash.pop()
 
     // Check if test condition is a boolean
-    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter)
-    if (error) {
+    try {
+      rttc.checkIfStatement(command.srcNode, test, context.chapter)
+    } catch (error) {
       handleRuntimeError(context, error)
     }
 
@@ -1089,13 +1087,9 @@ const cmdEvaluators: CommandEvaluators = {
 
   [InstrType.UNARY_OP]({ command, context, stash }) {
     const argument = stash.pop()
-    const error = rttc.checkUnaryExpression(
-      command.srcNode,
-      command.symbol,
-      argument,
-      context.chapter
-    )
-    if (error) {
+    try {
+      rttc.checkUnaryExpression(command.srcNode, command.symbol, argument, context.chapter)
+    } catch (error) {
       handleRuntimeError(context, error)
     }
     stash.push(evaluateUnaryExpression(command.symbol, argument))
@@ -1105,8 +1099,9 @@ const cmdEvaluators: CommandEvaluators = {
     const test = stash.pop()
 
     // Check if test condition is a boolean
-    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter)
-    if (error) {
+    try {
+      rttc.checkIfStatement(command.srcNode, test, context.chapter)
+    } catch (error) {
       handleRuntimeError(context, error)
     }
 

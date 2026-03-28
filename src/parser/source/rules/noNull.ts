@@ -4,11 +4,11 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class NoNullError extends RuleError<Literal> {
-  public explain() {
+  public override explain() {
     return `null literals are not allowed.`
   }
 
-  public elaborate() {
+  public override elaborate() {
     return "They're not part of the Source §1 specs."
   }
 }

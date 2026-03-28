@@ -1,7 +1,7 @@
 import es, { type BinaryExpression, type UnaryExpression } from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import { ConstAssignment, UndefinedVariable } from '../errors/errors'
+import { ConstAssignmentError, UndefinedVariableError } from '../errors/errors'
 import { parse } from '../parser/parser'
 import {
   CONSTANT_PRIMITIVES,
@@ -155,7 +155,7 @@ function indexOf(indexTable: Map<string, EnvEntry>[], node: es.Identifier) {
       return { envLevel, index, isVar, type }
     }
   }
-  throw new UndefinedVariable(name, node)
+  throw new UndefinedVariableError(name, node)
 }
 
 // a small complication: the toplevel function
@@ -546,7 +546,7 @@ const compilers: Compilers = {
     if (node.left.type === 'Identifier') {
       const { envLevel, index, isVar } = indexOf(indexTable, node.left)
       if (!isVar) {
-        throw new ConstAssignment(node.left, node.left.name)
+        throw new ConstAssignmentError(node, node.left.name)
       }
       const { maxStackSize } = compile(node.right, indexTable, false)
       if (envLevel === 0) {

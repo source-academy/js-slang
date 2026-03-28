@@ -1,12 +1,12 @@
 import type { BinaryOperator, UnaryOperator } from 'estree'
 
 import {
-  CallingNonFunctionValue,
+  CallingNonFunctionValueError,
   ExceptionError,
   GetInheritedPropertyError,
-  InvalidNumberOfArguments
+  InvalidNumberOfArgumentsError
 } from '../errors/errors'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { RuntimeSourceError } from '../errors/base'
 import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
@@ -55,7 +55,7 @@ export function callIfFuncAndRightArgs(
     const receivedLength = args.length
     const hasVarArgs = candidate.minArgsNeeded !== undefined
     if (hasVarArgs ? candidate.minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
-      throw new InvalidNumberOfArguments(
+      throw new InvalidNumberOfArgumentsError(
         dummy,
         hasVarArgs ? candidate.minArgsNeeded : expectedLength,
         receivedLength,
@@ -73,17 +73,13 @@ export function callIfFuncAndRightArgs(
       }
     }
   } else {
-    throw new CallingNonFunctionValue(candidate, dummy)
+    throw new CallingNonFunctionValueError(candidate, dummy)
   }
 }
 
 export function boolOrErr(candidate: any, line: number, column: number, source: string | null) {
-  const error = rttc.checkIfStatement(create.locationDummyNode(line, column, source), candidate)
-  if (error === undefined) {
-    return candidate
-  } else {
-    throw error
-  }
+  rttc.checkIfStatement(create.locationDummyNode(line, column, source), candidate)
+  return candidate
 }
 
 export function unaryOp(
@@ -93,16 +89,9 @@ export function unaryOp(
   column: number,
   source: string | null
 ) {
-  const error = rttc.checkUnaryExpression(
-    create.locationDummyNode(line, column, source),
-    operator,
-    argument
-  )
-  if (error === undefined) {
-    return evaluateUnaryExpression(operator, argument)
-  } else {
-    throw error
-  }
+  rttc.checkUnaryExpression(create.locationDummyNode(line, column, source), operator, argument)
+
+  return evaluateUnaryExpression(operator, argument)
 }
 
 export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
@@ -126,18 +115,12 @@ export function binaryOp(
   column: number,
   source: string | null
 ) {
-  const error = rttc.checkBinaryExpression(
-    create.locationDummyNode(line, column, source),
-    operator,
-    chapter,
+  rttc.checkBinaryExpression(create.locationDummyNode(line, column, source), operator, chapter, [
     left,
     right
-  )
-  if (error === undefined) {
-    return evaluateBinaryExpression(operator, left, right)
-  } else {
-    throw error
-  }
+  ])
+
+  return evaluateBinaryExpression(operator, left, right)
 }
 
 export function evaluateBinaryExpression(operator: BinaryOperator, left: any, right: any) {
@@ -192,7 +175,7 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
       const receivedLength = args.length
       const hasVarArgs = f.minArgsNeeded !== undefined
       if (hasVarArgs ? f.minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
-        throw new InvalidNumberOfArguments(
+        throw new InvalidNumberOfArgumentsError(
           callExpression(dummy, args, {
             start: { line, column },
             end: { line, column },
@@ -204,7 +187,14 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
         )
       }
     } else {
-      throw new CallingNonFunctionValue(f, dummy)
+      throw new CallingNonFunctionValueError(
+        f,
+        callExpression(dummy, args, {
+          start: { line, column },
+          end: { line, column },
+          source
+        })
+      )
     }
     let res
     try {
@@ -244,7 +234,7 @@ export const wrap = (
   nativeStorage: NativeStorage
 ) => {
   if (hasVarArgs) {
-    // @ts-ignore
+    // @ts-expect-error Ignore the fact that minArgsNeeded is an unknown property
     f.minArgsNeeded = f.length
   }
   const wrapped = (...args: any[]) => callIteratively(f, nativeStorage, ...args)

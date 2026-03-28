@@ -5,11 +5,11 @@ import { RuleError } from '../../errors'
 import type { Rule } from '../../types'
 
 export class NoVarError extends RuleError<VariableDeclaration> {
-  public explain() {
+  public override explain() {
     return 'Variable declaration using "var" is not allowed.'
   }
 
-  public elaborate() {
+  public override elaborate() {
     const {
       id: { name },
       init

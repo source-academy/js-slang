@@ -2,8 +2,7 @@ import { JSSLANG_PROPERTIES } from '../constants'
 import type { Node } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { stringify } from '../utils/stringify'
-import { ErrorSeverity, ErrorType } from './base'
-import { RuntimeSourceError } from './runtimeSourceError'
+import { RuntimeSourceError } from './base'
 
 function getWarningMessage(maxExecTime: number) {
   const from = maxExecTime / 1000
@@ -13,15 +12,12 @@ function getWarningMessage(maxExecTime: number) {
       This page may be unresponsive for up to ${to} seconds if you do so.`
 }
 
-export class TimeoutError extends RuntimeSourceError {}
+export abstract class TimeoutError extends RuntimeSourceError<Node | undefined> {}
 
 export class PotentialInfiniteLoopError extends TimeoutError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-
   constructor(
     node: Node,
-    private maxExecTime: number
+    private readonly maxExecTime: number
   ) {
     super(node)
   }
@@ -37,13 +33,10 @@ export class PotentialInfiniteLoopError extends TimeoutError {
 }
 
 export class PotentialInfiniteRecursionError extends TimeoutError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-
   constructor(
     node: Node,
-    private calls: [string, any[]][],
-    private maxExecTime: number
+    private readonly calls: [string, any[]][],
+    private readonly maxExecTime: number
   ) {
     super(node)
     this.calls = this.calls.slice(-3)

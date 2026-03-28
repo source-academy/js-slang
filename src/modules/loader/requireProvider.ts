@@ -1,5 +1,3 @@
-import * as _ from 'lodash'
-
 import * as jsslang from '../..'
 import * as interpreter from '../../cse-machine/interpreter'
 import * as parser from '../../parser/parser'
@@ -8,6 +6,8 @@ import type { Context } from '../../types'
 import * as types from '../../types'
 import * as assert from '../../utils/assert'
 import * as stringify from '../../utils/stringify'
+import * as errorBase from '../../errors/base'
+import * as errors from '../../errors/errors'
 
 /**
  * Returns a function that simulates the job of Node's `require`. The require
@@ -28,22 +28,25 @@ export const getRequireProvider = (context: Context) => (x: string) => {
     'js-slang': {
       ...jsslang,
       dist: {
+        'cse-machine': {
+          interpreter
+        },
+        errors: {
+          base: errorBase,
+          errors
+        },
+        parser: {
+          parser
+        },
         stdlib,
         types,
         utils: {
           assert,
           stringify
-        },
-        parser: {
-          parser
-        },
-        'cse-machine': {
-          interpreter
         }
       },
       context
-    },
-    lodash: _
+    }
   }
 
   return recurser(exports, pathSegments)

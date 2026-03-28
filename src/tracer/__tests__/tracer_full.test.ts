@@ -50,6 +50,7 @@ describe('Expressions', () => {
     const steps = codify(acornParser(code))
     expect(steps.join('')).toMatchSnapshot()
   })
+
   test('Extra step for UnaryExpression', () => {
     const code = `
     - (1 - 5);
@@ -665,11 +666,13 @@ describe('List operations', () => {
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1]).toEqual('true;\n[noMarker] Evaluation complete\n')
   })
+
   test('Append on list of null', () => {
     const code = 'const a = list(null); append(a, a);'
     const steps = codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
   })
+
   test('map on list', () => {
     const code = 'equal(map(x => 2 * x, list(1, 2, 3)), list(2, 4, 6))'
     const steps = codify(acornParser(code))
@@ -1560,17 +1563,57 @@ describe('Error handling on calling functions', () => {
     1(2);
     `
     const steps = codify(acornParser(code))
-    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps.join('\n')).toMatchInlineSnapshot(`
+      "(1)(2);
+      [noMarker] Start of evaluation
+
+      (1)(2);
+      [beforeMarker] Line 2: Calling non-function value 1.
+
+      (1)(2);
+      [noMarker] Evaluation stuck
+      "
+    `)
     expect(steps[steps.length - 1]).toEqual('(1)(2);\n[noMarker] Evaluation stuck\n')
   })
+
   test('Literal function should error 2', () => {
     const code = `
       (1 * 3)(2 * 3 + 10);
       `
     const steps = codify(acornParser(code))
-    expect(steps.join('\n')).toMatchSnapshot()
+    expect(steps.join('\n')).toMatchInlineSnapshot(`
+      "(1 * 3)(2 * 3 + 10);
+      [noMarker] Start of evaluation
+
+      (1 * 3)(2 * 3 + 10);
+      [beforeMarker] Binary expression 1 * 3 evaluated
+
+      (3)(2 * 3 + 10);
+      [afterMarker] Binary expression 1 * 3 evaluated
+
+      (3)(2 * 3 + 10);
+      [beforeMarker] Binary expression 2 * 3 evaluated
+
+      (3)(6 + 10);
+      [afterMarker] Binary expression 2 * 3 evaluated
+
+      (3)(6 + 10);
+      [beforeMarker] Binary expression 6 + 10 evaluated
+
+      (3)(16);
+      [afterMarker] Binary expression 6 + 10 evaluated
+
+      (3)(16);
+      [beforeMarker] Line 2: Calling non-function value 3.
+
+      (3)(16);
+      [noMarker] Evaluation stuck
+      "
+    `)
     expect(steps[steps.length - 1]).toEqual('(3)(16);\n[noMarker] Evaluation stuck\n')
   })
+
   test('Incorrect number of argument (less)', () => {
     const code = `
     function foo(a) {
