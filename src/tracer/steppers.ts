@@ -14,7 +14,7 @@ export function getSteps(
   inputNode: es.BaseNode,
   context: Context,
   { stepLimit }: Pick<IOptions, 'stepLimit'>
-): IStepperPropContents[] {
+): IStepperPropContents[] { 
   const node: StepperBaseNode = prelude(inputNode)
   const steps: IStepperPropContents[] = []
   const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
