@@ -14,9 +14,6 @@ const builtinFunctions = {
 }
 
 export function prelude(node: es.BaseNode) {
-  node = node.type === 'Program' ? removeDebuggerStatements(node as es.Program) : node
-  // check program for undefined variables
-  // checkProgramForUndefinedVariables(node as es.Program, createContext());
   let inputNode = convert(node)
   // Substitute math constant
   Object.getOwnPropertyNames(Math)
@@ -28,27 +25,6 @@ export function prelude(node: es.BaseNode) {
       )
     })
   return inputNode
-}
-
-function removeDebuggerStatements(program: es.Program): es.Program {
-  // recursively detect and remove debugger statements
-  function remove(removee: es.Program | es.Statement | es.Expression) {
-    if (removee.type === 'BlockStatement' || removee.type === 'Program') {
-      removee.body = removee.body.filter(s => s.type !== 'DebuggerStatement')
-      removee.body.forEach(s => remove(s as es.Statement))
-    } else if (removee.type === 'VariableDeclaration') {
-      removee.declarations.forEach(s => remove(s.init as es.Expression))
-    } else if (removee.type === 'FunctionDeclaration') {
-      remove(removee.body)
-    } else if (removee.type === 'IfStatement') {
-      remove(removee.consequent)
-      remove(removee.alternate as es.Statement)
-    } else if (removee.type === 'ArrowFunctionExpression') {
-      remove(removee.body)
-    }
-  }
-  remove(program)
-  return program
 }
 
 export function getBuiltinFunction(name: string, args: StepperExpression[]): StepperExpression {

@@ -31,6 +31,7 @@ import {
   StepperVariableDeclaration,
   StepperVariableDeclarator
 } from './nodes/Statement/VariableDeclaration'
+import { StepperDebuggerStatement } from './nodes/Statement/DebuggerStatement'
 
 const undefinedNode = new StepperLiteral('undefined')
 
@@ -62,7 +63,8 @@ const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {
     }
   },
   BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node),
-  IfStatement: (node: es.IfStatement) => StepperIfStatement.create(node)
+  IfStatement: (node: es.IfStatement) => StepperIfStatement.create(node),
+  DebuggerStatement: (node: es.DebuggerStatement) => StepperDebuggerStatement.create(node)
 }
 
 export function convert(node: es.BaseNode): StepperBaseNode {
@@ -209,6 +211,9 @@ export function explain(redex: StepperBaseNode): string {
       } else {
         throw new Error('Not implemented')
       }
+    },
+    DebuggerStatement: (node: StepperDebuggerStatement) => {
+      return 'Debugger statement reached'
     },
     Default: (_: StepperBaseNode) => {
       return '...'
