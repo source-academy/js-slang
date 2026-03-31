@@ -9,7 +9,7 @@ import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
 import assert from '../utils/assert'
 import { validateAndAnnotate } from '../validator/validator'
-import { defaultSourceBundleImporter } from '../modules/loader/importers'
+import { defaultDocsImporter, defaultSourceBundleImporter, defaultSourceTabImporter } from '../modules/loader/importers'
 import type { RecursivePartial } from '../types'
 import runners from './sourceRunner'
 import { determineExecutionMethod, determineVariant } from './utils'
@@ -33,7 +33,9 @@ export const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
     ...defaultAnalysisOptions,
     ...defaultLinkerOptions,
     loadTabs: true,
-    sourceBundleImporter: defaultSourceBundleImporter
+    sourceBundleImporter: defaultSourceBundleImporter,
+    sourceTabImporter: defaultSourceTabImporter,
+    docsImporter: defaultDocsImporter,
   },
   shouldAddFileName: null
 }

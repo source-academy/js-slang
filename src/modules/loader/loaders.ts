@@ -6,15 +6,15 @@ import type {
   ModulesManifest,
   PartialSourceModule,
   Importer,
-  ModuleDeclarationWithSource
+  ModuleDeclarationWithSource,
+  ManifestImporter
 } from '../moduleTypes'
 import {
-  bundleAndTabImporter,
   defaultSourceBundleImporter,
-  docsImporter,
+  defaultDocsImporter,
   setModulesStaticURL as internalUrlSetter,
-  manifestImporter,
-  MODULES_STATIC_URL
+  defaultManifestImporter,
+  defaultSourceTabImporter
 } from './importers'
 import { getRequireProvider } from './requireProvider'
 
@@ -31,13 +31,23 @@ export function setModulesStaticURL(value: string) {
 // so we have our own custom memoization that won't memoize on errors
 function getManifestLoader() {
   let manifest: ModulesManifest | null = null
+  let storedImporter: ManifestImporter | undefined = undefined
 
-  async function func() {
+  async function func(importer: ManifestImporter = defaultManifestImporter) {
+    if (storedImporter !== undefined) {
+      if (storedImporter !== importer) {
+        storedImporter = importer
+        manifest = null
+      }
+    } else {
+      storedImporter = importer
+    }
+
     if (manifest !== null) {
       return manifest
     }
 
-    ;({ default: manifest } = await manifestImporter(`${MODULES_STATIC_URL}/modules.json`))
+    ;({ default: manifest } = await importer())
 
     return manifest
   }
@@ -51,18 +61,37 @@ function getManifestLoader() {
 
 function getMemoizedDocsLoader() {
   const docs = new Map<string, ModuleDocumentation>()
+  let storedImporter: Importer<ModuleDocumentation> | undefined = undefined
 
-  async function func(moduleName: string, throwOnError: true): Promise<ModuleDocumentation>
-  async function func(moduleName: string, throwOnError?: false): Promise<ModuleDocumentation | null>
-  async function func(moduleName: string, throwOnError?: boolean) {
+  async function func(
+    moduleName: string,
+    throwOnError: true,
+    importer?: Importer<ModuleDocumentation>
+  ): Promise<ModuleDocumentation>
+  async function func(
+    moduleName: string,
+    throwOnError?: false,
+    importer?: Importer<ModuleDocumentation>
+  ): Promise<ModuleDocumentation | null>
+  async function func(
+    moduleName: string,
+    throwOnError?: boolean,
+    importer: Importer<ModuleDocumentation> = defaultDocsImporter
+  ): Promise<ModuleDocumentation | null> {
+    if (storedImporter === undefined) {
+      storedImporter = importer
+    } else if (storedImporter !== importer) {
+      storedImporter = importer
+      // Reset the cache if a different importer is used,
+      docs.clear()
+    }
+
     if (docs.has(moduleName)) {
       return docs.get(moduleName)!
     }
 
     try {
-      const { default: loadedDocs } = await docsImporter(
-        `${MODULES_STATIC_URL}/jsons/${moduleName}.json`
-      )
+      const { default: loadedDocs } = await importer(moduleName)
       docs.set(moduleName, loadedDocs)
       return loadedDocs
     } catch (error) {
@@ -82,12 +111,13 @@ export const memoizedLoadModuleDocsAsync = getMemoizedDocsLoader()
 /**
  * Load all the tabs of the given names
  */
-export async function loadModuleTabsAsync(tabs: string[]) {
+export async function loadModuleTabsAsync(
+  tabs: string[],
+  importer: Importer<PartialSourceModule> = defaultSourceTabImporter
+): Promise<any[]> {
   return Promise.all(
     tabs.map(async tabName => {
-      const { default: result } = await bundleAndTabImporter(
-        `${MODULES_STATIC_URL}/tabs/${tabName}.js`
-      )
+      const { default: result } = await importer(tabName)
       return result
     })
   )

@@ -1,4 +1,5 @@
 import * as jsslang from '../..'
+import * as createContext from '../../createContext'
 import * as interpreter from '../../cse-machine/interpreter'
 import * as parser from '../../parser/parser'
 import * as stdlib from '../../stdlib'
@@ -14,20 +15,13 @@ import * as errors from '../../errors/errors'
  * provider is then used by Source modules to access the context and js-slang standard
  * library
  */
-export const getRequireProvider = (context: Context) => (x: string) => {
-  const pathSegments = x.split('/')
 
-  const recurser = (obj: Record<string, any>, segments: string[]): any => {
-    if (segments.length === 0) return obj
-    const currObj = obj[segments[0]]
-    if (currObj !== undefined) return recurser(currObj, segments.splice(1))
-    throw new Error(`Dynamic require of ${x} is not supported`)
-  }
-
+export const getRequireProvider = (context: Context) => {
   const exports = {
     'js-slang': {
       ...jsslang,
       dist: {
+        createContext,
         'cse-machine': {
           interpreter
         },
@@ -49,7 +43,18 @@ export const getRequireProvider = (context: Context) => (x: string) => {
     }
   }
 
-  return recurser(exports, pathSegments)
+  return (x: string) => {
+    const pathSegments = x.split('/')
+
+    const recurser = (obj: Record<string, any>, segments: string[]): any => {
+      if (segments.length === 0) return obj
+      const currObj = obj[segments[0]]
+      if (currObj !== undefined) return recurser(currObj, segments.splice(1))
+      throw new Error(`Dynamic require of ${x} is not supported`)
+    }
+
+    return recurser(exports, pathSegments)
+  }
 }
 
 export type RequireProvider = ReturnType<typeof getRequireProvider>

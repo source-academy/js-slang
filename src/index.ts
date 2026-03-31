@@ -26,7 +26,7 @@ import type { SourceError } from './errors/base'
 import { ModuleNotFoundError } from './modules/errors'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
-import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
+import { getKeywords, getProgramNames, type GetProgramNamesOptions, type NameDeclaration } from './name-extractor'
 import { htmlRunner, sourceFilesRunner } from './runner'
 
 export { SourceDocumentation } from './editors/ace/docTooltip'
@@ -179,7 +179,8 @@ export async function getNames(
   code: string,
   line: number,
   col: number,
-  context: Context
+  context: Context,
+  options: Partial<GetProgramNamesOptions> = {}
 ): Promise<[NameDeclaration[], boolean]> {
   const [program, comments] = parseWithComments(code)
 
@@ -188,7 +189,7 @@ export async function getNames(
   }
   const cursorLoc: es.Position = { line, column: col }
 
-  const [progNames, displaySuggestions] = await getProgramNames(program, comments, cursorLoc)
+  const [progNames, displaySuggestions] = await getProgramNames(program, comments, cursorLoc, options)
   const keywords = getKeywords(program, cursorLoc, context)
   return [progNames.concat(keywords), displaySuggestions]
 }
@@ -213,6 +214,8 @@ export async function runFilesInContext(
   context: Context,
   options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
+  console.log('manifest importer?', options?.importOptions?.resolverOptions?.manifestImporter);
+
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
     if (filePathError !== null) {

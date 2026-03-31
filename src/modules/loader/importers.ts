@@ -2,6 +2,7 @@ import { timeoutPromise } from '../../utils/misc'
 import { ModuleConnectionError } from '../errors'
 import type {
   Importer,
+  ManifestImporter,
   ModuleDocumentation,
   ModulesManifest,
   PartialSourceModule
@@ -71,9 +72,15 @@ function getDocsImporter(): Importer<object> {
   }
 }
 
-export const docsImporter = wrapImporter(getDocsImporter()) as Importer<ModuleDocumentation>
+const docsImporter = wrapImporter(getDocsImporter())
+export const defaultDocsImporter: Importer<ModuleDocumentation> = (moduleName, node) =>
+  docsImporter(`${MODULES_STATIC_URL}/jsons/${moduleName}.json`, node) as Promise<{
+    default: ModuleDocumentation
+  }>
 
-export const manifestImporter = wrapImporter(getDocsImporter()) as Importer<ModulesManifest>
+const manifestImporter = wrapImporter(getDocsImporter())
+export const defaultManifestImporter: ManifestImporter = () =>
+  manifestImporter(`${MODULES_STATIC_URL}/modules.json`) as Promise<{ default: ModulesManifest }>
 
 function getBundleAndTabImporter(): Importer<PartialSourceModule> {
   if (process.env.NODE_ENV === 'test') {
@@ -99,3 +106,6 @@ export const bundleAndTabImporter = wrapImporter(getBundleAndTabImporter())
 
 export const defaultSourceBundleImporter: Importer<PartialSourceModule> = (moduleName, node) =>
   bundleAndTabImporter(`${MODULES_STATIC_URL}/bundles/${moduleName}.js`, node)
+
+export const defaultSourceTabImporter: Importer<PartialSourceModule> = (tabName, node) =>
+  bundleAndTabImporter(`${MODULES_STATIC_URL}/tabs/${tabName}.js`, node)

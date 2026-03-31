@@ -64,6 +64,8 @@ export type Importer<T = object> = (
   node?: ModuleDeclarationWithSource
 ) => Promise<{ default: T }>
 
+export type ManifestImporter = () => Promise<{ default: ModulesManifest }>
+
 export interface ImportLoadingOptions {
   /**
    * Set to `true` to load tabs when loading a module
@@ -71,6 +73,8 @@ export interface ImportLoadingOptions {
   loadTabs: boolean
 
   sourceBundleImporter: Importer<PartialSourceModule>
+  sourceTabImporter: Importer<PartialSourceModule>
+  docsImporter: Importer<ModuleDocumentation>
 }
 
 export type ImportOptions = ImportLoadingOptions & ImportAnalysisOptions & LinkerOptions

@@ -1,5 +1,5 @@
 import type es from 'estree'
-import { partition } from 'lodash'
+import { mapValues, partition } from 'lodash'
 
 import type { Context } from '../../types'
 import assert from '../../utils/assert'
@@ -57,9 +57,7 @@ export default function analyzeImportsAndExports(
     ArrayMap<string, es.ImportDeclaration['specifiers'][number]>
   >()
 
-  const moduleDocs: Record<string, Set<string>> = Object.fromEntries(
-    Object.entries(loadedModules).map(([name, obj]) => [name, new Set(Object.keys(obj))])
-  )
+  const moduleDocs = mapValues(loadedModules, obj => new Set(Object.keys(obj)))
 
   for (const sourceModule of [...topoOrder, entrypointFilePath]) {
     const program = programs[sourceModule]

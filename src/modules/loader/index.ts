@@ -7,7 +7,6 @@ import type {
   PartialSourceModule,
   Importer
 } from '../moduleTypes'
-import { defaultSourceBundleImporter } from './importers'
 import { loadModuleBundleAsync, loadModuleTabsAsync } from './loaders'
 
 /**
@@ -36,7 +35,7 @@ export default async function loadSourceModules(
   context: Context,
   {
     loadTabs = true,
-    sourceBundleImporter = defaultSourceBundleImporter
+    sourceBundleImporter
   }: Partial<ImportLoadingOptions> = {}
 ) {
   const loadedModules = await Promise.all(
@@ -58,12 +57,12 @@ export default async function loadSourceModules(
 export async function loadSourceModuleTypes(
   sourceModulesToImport: Set<string>,
   context: Context,
-  sourceBundleLoader: Importer<PartialSourceModule> = defaultSourceBundleImporter
+  sourceBundleImporter?: Importer<PartialSourceModule>
 ) {
   const loadedModules = await Promise.all(
     [...sourceModulesToImport].map(async moduleName => {
       await initModuleContextAsync(moduleName, context)
-      const bundle = await loadModuleBundleAsync(moduleName, context, sourceBundleLoader)
+      const bundle = await loadModuleBundleAsync(moduleName, context, sourceBundleImporter)
       return [moduleName, bundle] as [string, LoadedBundle]
     })
   )
