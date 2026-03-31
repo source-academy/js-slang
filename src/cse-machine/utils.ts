@@ -392,23 +392,10 @@ export const envChanging = (command: ControlItem): boolean => {
 }
 
 export const envChangingStreams = (command: ControlItem, context: Context): boolean => {
-  // if (isInstr(command)) {
-  //   const type = command.instrType
-  //   if (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs == 2) {
-  //     const src = (command as AppInstr).srcNode
-  //     if (isNode(src) && src.type === 'CallExpression' && src.callee.type === 'Identifier') {
-  //       if (src.callee.name == 'pair') {
-  //         // console.log((command as AppInstr).srcNode.arguments[1])
-  //         return true
-  //       }
-  //     }
-  //   }
-  // }
-  // return falseinstead of c
-
   if (isInstr(command)) {
-    const type = command.instrType
-    if (type === InstrType.ENVIRONMENT && isPair(context.runtime.stash?.peek())) {
+    const evalResult = context.runtime.stash?.peek();
+    const mostRecentControlHeight = context.pendingStreamFnStack.at(-1)?.[1]
+    if (isPair(evalResult) && mostRecentControlHeight != undefined && context.runtime.control?.size() == parseInt(mostRecentControlHeight) - 1) {
       return true
     }
   }

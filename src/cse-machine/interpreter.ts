@@ -432,6 +432,29 @@ export function* generateCSEMachineStateStream(
       // Usage: streams visualiser
       context.runtime.streamsPointSteps.push(steps + 1)
     }
+    const evalResult = context.runtime.stash?.peek();
+    const mostRecentControlHeight = context.pendingStreamFnStack.at(-1)?.[1]   
+    console.log(mostRecentControlHeight);
+
+    if(isPair(evalResult) && mostRecentControlHeight != undefined && context.runtime.control?.size() == parseInt(mostRecentControlHeight) - 1) {
+      const mostRecentNullaryFnId = context.pendingStreamFnStack.pop()?.[0]
+      console.log("pendingStreamFnStack pop: " + context.pendingStreamFnStack)
+      if (mostRecentNullaryFnId != undefined){
+        context.pairToStreamFnId.set((evalResult as any).id, mostRecentNullaryFnId)
+        context.streamFnIdToPairId.set(mostRecentNullaryFnId, (evalResult as any).id)
+
+        if (!context.streamLineage.get(mostRecentNullaryFnId)) {
+          context.streamLineage.set(mostRecentNullaryFnId, [])
+        }
+        context.streamLineage.get(mostRecentNullaryFnId)?.push((evalResult as any).id)
+      }
+
+      console.log(context.streamLineage)
+      console.log(context.pairToStreamFnId)
+      console.log(context.streamFnIdToPairId)
+
+    } 
+
 
     control.pop()
     if (isNode(command)) {
@@ -860,7 +883,6 @@ const cmdEvaluators: CommandEvaluators = {
         if(context.mostRecentPair == undefined) context.mostRecentPair = [];
         context.mostRecentPair?.push(args[0].id);
         console.log("saved: " + context.mostRecentPair);
-
       }
     }
 
@@ -1011,9 +1033,10 @@ const cmdEvaluators: CommandEvaluators = {
         context.runtime.environments.unshift(func.environment)
       }
 
+      // Streams
       if (func.node.params.length === 0) {
         context.pendingStreamFnId = func.id
-        context.pendingStreamFnStack.push(func.id)
+        context.pendingStreamFnStack.push([func.id, context.runtime.control !== null ? context.runtime.control.size().toString() : "0"])
         console.log("pendingStreamFnStack push: "+context.pendingStreamFnStack)
       } 
       // else {
@@ -1215,28 +1238,12 @@ const cmdEvaluators: CommandEvaluators = {
     // restore transformers environment
     setTransformers(context, command.transformers)
 
-    const evalResult = context.runtime.stash?.peek();
+    // const evalResult = context.runtime.stash?.peek();
     // console.log(evalResult);
     // console.log(context.pendingStreamFnStack.pop());
 
-    if(isPair(evalResult)) {
-      const mostRecentNullaryFnId = context.pendingStreamFnStack.pop()
-      console.log("pendingStreamFnStack pop: "+context.pendingStreamFnStack)
-      if (mostRecentNullaryFnId != undefined){
-        context.pairToStreamFnId.set((evalResult as any).id, mostRecentNullaryFnId)
-        context.streamFnIdToPairId.set(mostRecentNullaryFnId, (evalResult as any).id)
-
-        if (!context.streamLineage.get(mostRecentNullaryFnId)) {
-          context.streamLineage.set(mostRecentNullaryFnId, [])
-        }
-        context.streamLineage.get(mostRecentNullaryFnId)?.push((evalResult as any).id)
-      }
-
-      console.log(context.streamLineage)
-      console.log(context.pairToStreamFnId)
-      console.log(context.streamFnIdToPairId)
-
-    } 
+     
+    
 
     // if (context.pendingStreamFnStack.length > 0) {
     //   context.pendingStreamFnId = context.pendingStreamFnStack.pop()

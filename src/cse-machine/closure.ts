@@ -44,7 +44,7 @@ const closureToJS = (value: Closure, context: Context) => {
       envInstr(currentEnvironment(context), currentTransformers(context), node),
       node
     )
-    newContext.pendingStreamFnStack.push(newContext.pendingStreamFnId)
+    //newContext.pendingStreamFnStack.push(newContext.pendingStreamFnId)
     newContext.runtime.stash = new Stash()
     newContext.runtime.transformers = context.runtime.transformers
     const gen = generateCSEMachineStateStream(
