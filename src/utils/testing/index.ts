@@ -36,20 +36,28 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
   }
 
   const customBuiltIns: CustomBuiltIns = {
-    rawDisplay(str1, str2, _externalContext) {
-      otherTestResults.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
-      return str1
-    },
-    prompt(str, _externalContext) {
-      otherTestResults.promptResult.push(str)
-      return null
-    },
-    alert(str, _externalContext) {
-      otherTestResults.alertResult.push(str)
-    },
-    visualiseList(value) {
-      otherTestResults.visualiseListResult.push(value)
-    }
+    rawDisplay:
+      testBuiltins?.rawDisplay ??
+      ((str1, str2, _externalContext) => {
+        otherTestResults.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
+        return str1
+      }),
+    prompt:
+      testBuiltins?.prompt ??
+      ((str, _externalContext) => {
+        otherTestResults.promptResult.push(str)
+        return null
+      }),
+    alert:
+      testBuiltins?.alert ??
+      ((str, _externalContext) => {
+        otherTestResults.alertResult.push(str)
+      }),
+    visualiseList:
+      testBuiltins?.visualiseList ??
+      (value => {
+        otherTestResults.visualiseListResult.push(value)
+      })
   }
 
   const evalContext = createContext(

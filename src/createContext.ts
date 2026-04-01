@@ -171,13 +171,17 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   }
 }
 
-export const defineSymbol = (context: Context, name: string, value: Value) => {
+export function defineSymbol(context: Context, name: string, value: Value) {
   const globalEnvironment = context.runtime.environments[0]
-  Object.defineProperty(globalEnvironment.head, name, {
-    value,
-    writable: false,
-    enumerable: true
-  })
+
+  if (!(name in globalEnvironment.head)) {
+    Object.defineProperty(globalEnvironment.head, name, {
+      value,
+      writable: false,
+      enumerable: true
+    })
+  }
+
   context.nativeStorage.builtins.set(name, value)
   const typeEnv = context.typeEnvironment[0]
   // if the global type env doesn't already have the imported symbol,
@@ -250,35 +254,44 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 /**
  * Imports builtins from standard and external libraries.
  */
-export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
+export function importBuiltins(context: Context, externalBuiltIns: Partial<CustomBuiltIns> = {}) {
   ensureGlobalEnvironmentExist(context)
   const rawDisplay = (v: Value, ...s: string[]) =>
-    externalBuiltIns.rawDisplay(v, s[0], context.externalContext)
+    (externalBuiltIns.rawDisplay ?? defaultBuiltIns.rawDisplay)(v, s[0], context.externalContext)
+
   const display = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
       throw new TypeError('display expects the second argument to be a string')
     }
-    return (rawDisplay(stringify(v), s[0]), v)
+
+    rawDisplay(stringify(v), s[0])
+    return v
   }
+
   const displayList = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
       throw new TypeError('display_list expects the second argument to be a string')
     }
     return list.rawDisplayList(display, v, s[0])
   }
+
   const prompt = (v: Value) => {
     const start = Date.now()
-    const promptResult = externalBuiltIns.prompt(v, '', context.externalContext)
+    const promptResult = (externalBuiltIns.prompt ?? defaultBuiltIns.prompt)(
+      v,
+      '',
+      context.externalContext
+    )
     context.nativeStorage.maxExecTime += Date.now() - start
     return promptResult
   }
   const alert = (v: Value) => {
     const start = Date.now()
-    externalBuiltIns.alert(v, '', context.externalContext)
+    ;(externalBuiltIns.alert ?? defaultBuiltIns.alert)(v, '', context.externalContext)
     context.nativeStorage.maxExecTime += Date.now() - start
   }
   const visualiseList = (...v: Value) => {
-    externalBuiltIns.visualiseList(v, context.externalContext)
+    ;(externalBuiltIns.visualiseList ?? defaultBuiltIns.visualiseList)(v, context.externalContext)
     return v[0]
   }
 
@@ -365,7 +378,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         'call_cc(f)',
         context.variant === Variant.EXPLICIT_CONTROL
           ? call_with_current_continuation
-          : (f: any) => {
+          : (_f: any) => {
               throw new Error('call_cc is only available in Explicit-Control variant')
             }
       )
@@ -378,7 +391,12 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
     defineBuiltin(context, 'alert(val)', alert)
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
-      misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
+      misc.timed(
+        context,
+        f,
+        context.externalContext,
+        externalBuiltIns.rawDisplay ?? defaultBuiltIns.rawDisplay
+      )
     )
   }
 
@@ -476,7 +494,7 @@ function importPrelude(context: Context) {
   }
 }
 
-const defaultBuiltIns: CustomBuiltIns = {
+export const defaultBuiltIns: CustomBuiltIns = {
   rawDisplay: misc.rawDisplay,
   // See issue #5
   prompt: misc.rawDisplay,
@@ -493,7 +511,7 @@ const createContext = <T>(
   languageOptions: LanguageOptions = {},
   externalSymbols: string[] = [],
   externalContext?: T,
-  externalBuiltIns: CustomBuiltIns = defaultBuiltIns
+  externalBuiltIns: Partial<CustomBuiltIns> = {}
 ): Context => {
   if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS) {
     // fullJS will include all builtins and preludes of source 4
@@ -509,6 +527,7 @@ const createContext = <T>(
       chapter
     } as Context
   }
+
   const context = createEmptyContext(
     chapter,
     variant,
