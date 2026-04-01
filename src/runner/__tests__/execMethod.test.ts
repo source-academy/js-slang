@@ -135,12 +135,12 @@ type TestObject = {
 }
 
 function expectCalls(count: number, expected: RunnerTypes) {
-  const unexpectedRunner = objectKeys(runners).find(runner => {
+  const calledRunner = objectKeys(runners).find(runner => {
     const { calls } = vi.mocked(runners[runner]).mock
     return calls.length > 0
   })
 
-  switch (unexpectedRunner) {
+  switch (calledRunner) {
     case undefined:
       throw new Error(
         `Expected ${expected} to be called ${count} times, but no runners were called`
@@ -150,9 +150,9 @@ function expectCalls(count: number, expected: RunnerTypes) {
       return vi.mocked(runners[expected]).mock.calls
     }
     default: {
-      const callCount = vi.mocked(runners[unexpectedRunner]).mock.calls.length
+      const callCount = vi.mocked(runners[calledRunner]).mock.calls.length
       throw new Error(
-        `Expected ${expected} to be called ${count} times, but ${unexpectedRunner} was called ${callCount} times`
+        `Expected ${expected} to be called ${count} times, but ${calledRunner} was called ${callCount} times`
       )
     }
   }

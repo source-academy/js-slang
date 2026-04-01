@@ -31,9 +31,7 @@ import {
   StepperVariableDeclaration,
   StepperVariableDeclarator
 } from './nodes/Statement/VariableDeclaration'
-import type { StepperNode } from './nodes'
-
-const undefinedNode = new StepperLiteral('undefined')
+import { undefinedNode, type StepperNode } from './nodes'
 
 const nodeConverters: {
   [K in Node['type']]?: (node: NodeTypeToNode<K>) => StepperBaseNode
