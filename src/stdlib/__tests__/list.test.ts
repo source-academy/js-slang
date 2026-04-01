@@ -133,7 +133,7 @@ describe(list.for_each, () => {
 describe(list.head, () => {
   describe('javascript', () => {
     it('throws an error when argument is not a pair', () => {
-      expect(() => list.head(0 as unknown)).toThrowError(
+      expect(() => list.head(0 as any)).toThrowError(
         'head(xs) expects a pair as argument xs, but encountered 0'
       )
     })
@@ -340,7 +340,7 @@ describe(list.pair, () => {
 describe(list.set_head, () => {
   describe('javascript', () => {
     it('throws when the argument is not a pair', () => {
-      expect(() => list.set_head(0 as unknown, 0)).toThrowError(
+      expect(() => list.set_head(0 as any, 0)).toThrowError(
         'set_head(xs,x) expects a pair as argument xs, but encountered 0'
       )
     })
@@ -363,7 +363,7 @@ describe(list.set_head, () => {
 
 describe(list.set_tail, () => {
   it('throws when the argument is not a pair', () => {
-    expect(() => list.set_tail(0 as unknown, 0)).toThrowError(
+    expect(() => list.set_tail(0 as any, 0)).toThrowError(
       'set_tail(xs,x) expects a pair as argument xs, but encountered 0'
     )
   })
@@ -383,7 +383,7 @@ describe(list.set_tail, () => {
 
 describe(list.tail, () => {
   it('throws an error when argument is not a pair (in Javascript)', () => {
-    expect(() => list.tail(0 as unknown)).toThrowError(
+    expect(() => list.tail(0 as any)).toThrowError(
       'tail(xs) expects a pair as argument xs, but encountered 0'
     )
   })
@@ -411,11 +411,11 @@ describe(list.tail, () => {
 describe(list.vector_to_list, () => {
   describe('javascript', () => {
     it('preserves element order', () => {
-      let xs = list.vector_to_list([1, 2, 3])
+      let xs = list.vector_to_list([1, 2, 3]) as list.NonEmptyList<number>
 
       for (let i = 1; i < 4; i++) {
         expect(list.head(xs)).toEqual(i)
-        xs = list.tail(xs) as list.List<number>
+        xs = list.tail(xs) as list.NonEmptyList<number>
       }
 
       expect(xs).toBeNull()
