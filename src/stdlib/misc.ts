@@ -1,6 +1,7 @@
 import Closure from '../cse-machine/closure'
 import type { Context, Value } from '../types'
 import { stringify } from '../utils/stringify'
+import * as list from './list'
 
 /**
  * A function that displays to console.log by default (for a REPL).
@@ -127,6 +128,32 @@ export function arity(f: Function) {
   }
 }
 
+/**
+ * Gets the current time as returned by `new Date().getTime()`
+ */
 export function get_time() {
   return new Date().getTime()
+}
+
+/**
+ * Compute structural equality for the two provided arguments.
+ */
+export function equal(xs: any, ys: any): boolean {
+  return list.is_pair(xs)
+    ? list.is_pair(ys) && equal(list.head(xs), list.head(ys)) && equal(list.tail(xs), list.tail(ys))
+    : list.is_null(xs)
+      ? list.is_null(ys)
+      : is_number(xs)
+        ? is_number(ys) && xs === ys
+        : is_boolean(xs)
+          ? is_boolean(ys) && ((xs && ys) || (!xs && !ys))
+          : is_string(xs)
+            ? is_string(ys) && xs === ys
+            : is_undefined(xs)
+              ? is_undefined(ys)
+              : is_function(xs)
+                ? // we know now that xs is a function,
+                  // but we use an if check anyway to make use of the type predicate
+                  is_function(ys) && xs === ys
+                : false
 }
