@@ -79,7 +79,7 @@ export class StepperBlockStatement
       const afterSubstitutedScope = this.body.slice(1)
       if (firstStatementOneStep === undefinedNode) {
         return new StepperBlockStatement(
-          [afterSubstitutedScope].flat(),
+          afterSubstitutedScope,
           this.innerComments,
           this.leadingComments,
           this.trailingComments,
@@ -125,7 +125,7 @@ export class StepperBlockStatement
     }
 
     // If the first statement is function declaration, also gracefully handle it!
-    if (this.body[0].type == 'FunctionDeclaration') {
+    if (this.body[0].type === 'FunctionDeclaration') {
       const arrowFunction = this.body[0].getArrowFunctionExpression()
       const functionIdentifier = this.body[0].id
       const afterSubstitutedScope = this.body

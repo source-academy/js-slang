@@ -60,7 +60,7 @@ export class StepperBlockExpression extends StepperBaseNode<BlockStatement> {
       const afterSubstitutedScope = this.body.slice(1)
       if (firstStatementOneStep === undefinedNode) {
         return new StepperBlockExpression(
-          [afterSubstitutedScope].flat(),
+          afterSubstitutedScope,
           this.innerComments,
           this.leadingComments,
           this.trailingComments,

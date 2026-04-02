@@ -77,16 +77,14 @@ export class StepperArrayExpression
   public override freeNames(): string[] {
     const names = this.elements
       .filter(element => element !== null)
-      .map(element => element.freeNames())
-      .flat()
+      .flatMap(element => element.freeNames())
     return Array.from(new Set(names))
   }
 
   public override allNames(): string[] {
     const names = this.elements
       .filter(element => element !== null)
-      .map(element => element.allNames())
-      .flat()
+      .flatMap(element => element.allNames())
     return Array.from(new Set(names))
   }
 

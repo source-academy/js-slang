@@ -15,7 +15,14 @@ export abstract class StepperBaseNode<T extends Node = Node> implements BaseNode
     public readonly range?: [number, number] | undefined
   ) {}
 
+ /**
+  * Indicates whether this node can be contracted
+  */
   public abstract isContractible(): boolean
+
+  /**
+   * Indicates whether a single step evaluation is possible.
+   */
   public abstract isOneStepPossible(): boolean
   public abstract contract(): StepperBaseNode
   public abstract oneStep(): StepperBaseNode

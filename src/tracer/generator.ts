@@ -9,7 +9,6 @@ Every class should have the following properties
 
 import { generate } from 'astring'
 import type es from 'estree'
-import type { Node, NodeTypeToNode } from '../types'
 import { isBuiltinFunction } from './builtins'
 import type { StepperBaseNode } from './interface'
 import { StepperArrayExpression } from './nodes/Expression/ArrayExpression'
@@ -32,19 +31,27 @@ import {
   StepperVariableDeclarator
 } from './nodes/Statement/VariableDeclaration'
 import { undefinedNode, type StepperNode } from './nodes'
+import { StepperDebuggerStatement } from './nodes/Statement/DebuggerStatement'
 
-const nodeConverters: {
-  [K in Node['type']]?: (node: NodeTypeToNode<K>) => StepperBaseNode
-} = {
-  ArrayExpression: StepperArrayExpression.create,
-  ArrowFunctionExpression: StepperArrowFunctionExpression.create,
-  BinaryExpression: StepperBinaryExpression.create,
-  BlockStatement: StepperBlockStatement.create,
-  CallExpression: StepperFunctionApplication.create,
-  ConditionalExpression: StepperConditionalExpression.create,
-  ExpressionStatement: StepperExpressionStatement.create,
-  FunctionDeclaration: StepperFunctionDeclaration.create,
-  Identifier(node) {
+const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {
+  Literal: (node: es.SimpleLiteral) => StepperLiteral.create(node),
+  UnaryExpression: (node: es.UnaryExpression) => StepperUnaryExpression.create(node),
+  BinaryExpression: (node: es.BinaryExpression) => StepperBinaryExpression.create(node),
+  LogicalExpression: (node: es.LogicalExpression) => StepperLogicalExpression.create(node),
+  FunctionDeclaration: (node: es.FunctionDeclaration) => StepperFunctionDeclaration.create(node),
+  ExpressionStatement: (node: es.ExpressionStatement) => StepperExpressionStatement.create(node),
+  ConditionalExpression: (node: es.ConditionalExpression) =>
+    StepperConditionalExpression.create(node),
+  ArrowFunctionExpression: (node: es.ArrowFunctionExpression) =>
+    StepperArrowFunctionExpression.create(node),
+  ArrayExpression: (node: es.ArrayExpression) => StepperArrayExpression.create(node),
+  CallExpression: (node: es.CallExpression) =>
+    StepperFunctionApplication.create(node as es.SimpleCallExpression),
+  ReturnStatement: (node: es.ReturnStatement) => StepperReturnStatement.create(node),
+  Program: (node: es.Program) => StepperProgram.create(node),
+  VariableDeclaration: (node: es.VariableDeclaration) => StepperVariableDeclaration.create(node),
+  VariableDeclarator: (node: es.VariableDeclarator) => StepperVariableDeclarator.create(node),
+  Identifier: (node: es.Identifier) => {
     if (node.name === 'NaN') {
       return new StepperLiteral(NaN, 'NaN')
     } else if (node.name === 'Infinity') {
@@ -53,14 +60,9 @@ const nodeConverters: {
       return StepperIdentifier.create(node)
     }
   },
-  IfStatement: StepperIfStatement.create,
-  Literal: StepperLiteral.create,
-  LogicalExpression: StepperLogicalExpression.create,
-  Program: StepperProgram.create,
-  ReturnStatement: StepperReturnStatement.create,
-  UnaryExpression: StepperUnaryExpression.create,
-  VariableDeclaration: StepperVariableDeclaration.create,
-  VariableDeclarator: StepperVariableDeclarator.create
+  BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node),
+  IfStatement: (node: es.IfStatement) => StepperIfStatement.create(node),
+  DebuggerStatement: (node: es.DebuggerStatement) => StepperDebuggerStatement.create(node)
 }
 
 const explainers: {
@@ -132,6 +134,9 @@ const explainers: {
     } else {
       return 'Conditional expression evaluated, condition is false, alternate evaluated'
     }
+  },
+  DebuggerStatement: () => {
+    return 'Debugger statement reached'
   },
   ExpressionStatement(node) {
     return `${generate(node.expression)} finished evaluating`
@@ -208,10 +213,7 @@ export function convert(node: es.BaseNode): StepperBaseNode {
 
 // Explanation generator
 export function explain(redex: StepperBaseNode): string {
-  if (redex.type in explainers) {
-    // @ts-expect-error Parameter type gets narrowed to never
-    return explainers[redex.type](redex)
-  }
-
-  return '...'
+  return redex.type in explainers
+    ? explainers[redex.type as keyof typeof explainers]!(redex as any)
+    : '...'
 }
