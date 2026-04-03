@@ -33,10 +33,7 @@ async function initModuleContextAsync(moduleName: string, context: Context, tabs
 export default async function loadSourceModules(
   sourceModulesToImport: Record<string, ModuleInfo>,
   context: Context,
-  {
-    loadTabs = true,
-    sourceBundleImporter
-  }: Partial<ImportLoadingOptions> = {}
+  { loadTabs = true, sourceBundleImporter }: Partial<ImportLoadingOptions> = {}
 ) {
   const loadedModules = await Promise.all(
     Object.values(sourceModulesToImport).map(async ({ name, tabs, requires, node }) => {

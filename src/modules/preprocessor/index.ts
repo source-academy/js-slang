@@ -46,13 +46,17 @@ export default async function preprocessFileImports(
   options: RecursivePartial<IOptions> = {},
   bundler: Bundler = defaultBundler
 ): Promise<PreprocessResult> {
-  const importOptions = options?.importOptions;
+  const importOptions = options?.importOptions
 
   if (context.variant === Variant.TYPED) {
     // Load typed source modules into context first to ensure that the type checker has access to all types.
     // TODO: This is a temporary solution, and we should consider a better way to handle this.
     try {
-      await loadSourceModuleTypes(new Set<string>(['rune', 'curve']), context, importOptions?.sourceBundleImporter)
+      await loadSourceModuleTypes(
+        new Set<string>(['rune', 'curve']),
+        context,
+        importOptions?.sourceBundleImporter
+      )
     } catch (error) {
       context.errors.push(error)
       return {
@@ -92,13 +96,7 @@ export default async function preprocessFileImports(
       return linkerResult
     }
 
-    analyzeImportsAndExports(
-      programs,
-      entrypointFilePath,
-      topoOrder,
-      context,
-      importOptions
-    )
+    analyzeImportsAndExports(programs, entrypointFilePath, topoOrder, context, importOptions)
 
     const program = bundler(programs, entrypointFilePath, topoOrder, context)
     return {

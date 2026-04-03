@@ -5,7 +5,12 @@ import { partition } from 'lodash'
 import { UNKNOWN_LOCATION } from '../constants'
 import { findAncestors, findIdentifierNode } from '../finder'
 import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from '../modules/loader'
-import type { Importer, ManifestImporter, ModuleDocsEntry, ModuleDocumentation } from '../modules/moduleTypes'
+import type {
+  Importer,
+  ManifestImporter,
+  ModuleDocsEntry,
+  ModuleDocumentation
+} from '../modules/moduleTypes'
 import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
 import type { Context, Node } from '../types'
@@ -349,7 +354,11 @@ function docsToHtml(
  * is located within the node, false otherwise
  * @returns List of found names
  */
-async function getNames(node: Node, locTest: (node: Node) => boolean, options: Partial<GetProgramNamesOptions> = {}): Promise<NameDeclaration[]> {
+async function getNames(
+  node: Node,
+  locTest: (node: Node) => boolean,
+  options: Partial<GetProgramNamesOptions> = {}
+): Promise<NameDeclaration[]> {
   switch (node.type) {
     case 'ImportDeclaration':
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))

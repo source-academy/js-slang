@@ -21,7 +21,7 @@ export interface ImportResolutionOptions {
   /**
    * Custom importer for the modules manifest. Set to `undefined` to use the default importer.
    */
-  manifestImporter?: ManifestImporter;
+  manifestImporter?: ManifestImporter
 }
 
 export const defaultResolutionOptions: ImportResolutionOptions = {
