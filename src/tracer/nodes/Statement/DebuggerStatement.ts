@@ -3,7 +3,10 @@ import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
 import { redex } from '../..'
 import { StepperBaseNode } from '../../interface'
 
-export class StepperDebuggerStatement extends StepperBaseNode<DebuggerStatement> implements DebuggerStatement {
+export class StepperDebuggerStatement
+  extends StepperBaseNode<DebuggerStatement>
+  implements DebuggerStatement
+{
   constructor(
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,

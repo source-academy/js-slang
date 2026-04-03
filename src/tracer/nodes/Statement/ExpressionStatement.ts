@@ -31,9 +31,11 @@ export class StepperExpressionStatement
   public override isContractible(): boolean {
     return this.expression.isContractible()
   }
+
   public override isOneStepPossible(): boolean {
     return this.expression.isOneStepPossible()
   }
+
   public override contract(): StepperExpressionStatement {
     return new StepperExpressionStatement(
       this.expression.oneStep(),

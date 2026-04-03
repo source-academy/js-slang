@@ -15,9 +15,9 @@ export abstract class StepperBaseNode<T extends Node = Node> implements BaseNode
     public readonly range?: [number, number] | undefined
   ) {}
 
- /**
-  * Indicates whether this node can be contracted
-  */
+  /**
+   * Indicates whether this node can be contracted
+   */
   public abstract isContractible(): boolean
 
   /**
