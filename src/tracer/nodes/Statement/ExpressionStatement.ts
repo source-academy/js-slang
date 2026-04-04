@@ -20,7 +20,7 @@ export class StepperExpressionStatement
 
   static create(node: ExpressionStatement) {
     return new StepperExpressionStatement(
-      convert(node.expression) as StepperExpression,
+      convert(node.expression),
       node.leadingComments,
       node.trailingComments,
       node.loc,

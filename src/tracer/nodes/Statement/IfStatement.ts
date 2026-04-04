@@ -24,7 +24,7 @@ export class StepperIfStatement extends StepperBaseNode<IfStatement> implements 
 
   static create(node: IfStatement) {
     return new StepperIfStatement(
-      convert(node.test) as StepperExpression,
+      convert(node.test),
       convert(node.consequent) as StepperBlockStatement,
       node.alternate ? (convert(node.alternate) as StepperBlockStatement) : null,
       node.leadingComments,

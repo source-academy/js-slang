@@ -38,9 +38,9 @@ describe(StepperBlockStatement, () => {
     })
 
     test('isContractible if body has 1 statement that is not contractible', ({ redex }) => {
-      const exprStmt = StepperExpressionStatement.create(ast.expressionStatement(
-        ast.arrayExpression([])
-      ))
+      const exprStmt = StepperExpressionStatement.create(
+        ast.expressionStatement(ast.arrayExpression([]))
+      )
       const statement = new StepperBlockStatement([exprStmt])
 
       expect(statement.isContractible(redex)).toBeTruthy()
@@ -63,7 +63,6 @@ describe(StepperBlockStatement, () => {
       )
     })
   })
-
 
   describe.todo('oneStep', () => {})
 })

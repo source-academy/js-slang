@@ -39,7 +39,7 @@ export class StepperFunctionDeclaration
     return new StepperFunctionDeclaration(
       convert(node.id) as StepperIdentifier,
       convert(node.body) as StepperBlockStatement,
-      node.params.map(param => convert(param) as StepperPattern),
+      node.params.map(param => convert(param)),
       node.generator,
       node.async,
       node.leadingComments,

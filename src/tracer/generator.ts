@@ -30,7 +30,7 @@ import {
   StepperVariableDeclaration,
   StepperVariableDeclarator
 } from './nodes/Statement/VariableDeclaration'
-import { undefinedNode, type StepperNode } from './nodes'
+import { type StepperExpression, type StepperPattern, type StepperStatement, undefinedNode, type StepperNode } from './nodes'
 import { StepperDebuggerStatement } from './nodes/Statement/DebuggerStatement'
 
 const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {
@@ -206,6 +206,10 @@ const explainers: {
   }
 }
 
+export function convert(node: es.Expression): StepperExpression
+export function convert(node: es.Pattern): StepperPattern
+export function convert(node: es.Statement): StepperStatement
+export function convert(node: es.BaseNode): StepperBaseNode
 export function convert(node: es.BaseNode): StepperBaseNode {
   const converter = nodeConverters[node.type as keyof typeof nodeConverters]
   return converter ? converter(node as any) : undefinedNode

@@ -53,7 +53,7 @@ export class StepperUnaryExpression
     }
     return new StepperUnaryExpression(
       node.operator,
-      convert(node.argument) as StepperExpression,
+      convert(node.argument),
       node.leadingComments,
       node.trailingComments,
       node.loc,

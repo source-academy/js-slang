@@ -2,7 +2,7 @@ import type { Comment, SourceLocation, VariableDeclaration, VariableDeclarator }
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
-import { RedexInfo } from '../..'
+import type { RedexInfo } from '../..'
 
 export class StepperVariableDeclarator
   extends StepperBaseNode<VariableDeclarator>
@@ -21,8 +21,8 @@ export class StepperVariableDeclarator
 
   static create(node: VariableDeclarator) {
     return new StepperVariableDeclarator(
-      convert(node.id) as StepperPattern,
-      node.init ? (convert(node.init) as StepperExpression) : node.init,
+      convert(node.id),
+      node.init ? (convert(node.init)) : node.init,
       node.leadingComments,
       node.trailingComments,
       node.loc,
@@ -114,7 +114,7 @@ export class StepperVariableDeclaration
 
   static create(node: VariableDeclaration) {
     return new StepperVariableDeclaration(
-      node.declarations.map(node => convert(node) as StepperVariableDeclarator),
+      node.declarations.map(StepperVariableDeclarator.create),
       node.kind,
       node.leadingComments,
       node.trailingComments,

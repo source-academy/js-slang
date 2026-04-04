@@ -24,7 +24,7 @@ export class StepperBlockStatement
 
   static create(node: BlockStatement) {
     return new StepperBlockStatement(
-      node.body.map(ast => convert(ast) as StepperStatement),
+      node.body.map(node => convert(node)),
       node.innerComments,
       node.leadingComments,
       node.trailingComments,

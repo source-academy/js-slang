@@ -1,14 +1,14 @@
-import type { Comment, Program, SourceLocation } from 'estree'
+import type { Comment, Program, SourceLocation, Statement } from 'estree'
 import { convert } from '../generator'
 import { StepperBaseNode } from '../interface'
 
 import { assignMuTerms } from '../utils'
+import type { RedexInfo } from '..'
+import { InternalRuntimeError } from '../../errors/runtimeErrors'
 import { StepperStatement } from './Statement'
 import type { StepperFunctionDeclaration } from './Statement/FunctionDeclaration'
 import type { StepperVariableDeclaration } from './Statement/VariableDeclaration'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '.'
-import type { RedexInfo } from '..'
-import { InternalRuntimeError } from '../../errors/runtimeErrors'
 
 export class StepperProgram extends StepperBaseNode<Program> implements Program {
   public readonly sourceType: 'script' | 'module'
@@ -155,7 +155,7 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
 
   static create(node: Program) {
     return new StepperProgram(
-      node.body.map(ast => convert(ast) as StepperStatement),
+      node.body.map(ast => convert(ast as Statement)),
       node.comments,
       node.leadingComments,
       node.trailingComments,

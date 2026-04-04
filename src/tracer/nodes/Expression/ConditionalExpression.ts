@@ -24,9 +24,9 @@ export class StepperConditionalExpression
 
   static create(node: ConditionalExpression) {
     return new StepperConditionalExpression(
-      convert(node.test) as StepperExpression,
-      convert(node.consequent) as StepperExpression,
-      convert(node.alternate) as StepperExpression,
+      convert(node.test),
+      convert(node.consequent),
+      convert(node.alternate),
       node.leadingComments,
       node.trailingComments,
       node.loc,

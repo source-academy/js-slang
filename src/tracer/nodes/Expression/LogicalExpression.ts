@@ -27,8 +27,8 @@ export class StepperLogicalExpression
   static create(node: LogicalExpression) {
     return new StepperLogicalExpression(
       node.operator,
-      convert(node.left) as StepperExpression,
-      convert(node.right) as StepperExpression,
+      convert(node.left),
+      convert(node.right),
       node.leadingComments,
       node.trailingComments,
       node.loc,

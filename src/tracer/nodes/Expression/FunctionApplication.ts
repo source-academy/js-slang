@@ -1,4 +1,4 @@
-import type { Comment, SimpleCallExpression, SourceLocation } from 'estree'
+import type { Comment, Expression, SimpleCallExpression, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
 import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
 import { convert } from '../../generator'
@@ -30,8 +30,8 @@ export class StepperFunctionApplication
 
   static create(node: SimpleCallExpression) {
     return new StepperFunctionApplication(
-      convert(node.callee) as StepperExpression,
-      node.arguments.map(arg => convert(arg) as StepperExpression),
+      convert(node.callee as Expression),
+      node.arguments.map(arg => convert(arg as Expression)),
       node.optional,
       node.leadingComments,
       node.trailingComments,

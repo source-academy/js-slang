@@ -1,4 +1,4 @@
-import type { ArrowFunctionExpression, Comment, SourceLocation } from 'estree'
+import type { ArrowFunctionExpression, Comment, Expression, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
@@ -6,6 +6,8 @@ import { getFreshName } from '../../utils'
 import type { StepperBlockStatement } from '../Statement/BlockStatement'
 import { InternalRuntimeError } from '../../../errors/runtimeErrors'
 import type { RedexInfo } from '../..'
+import { mapAndFilter } from '../../../utils/misc'
+import { isIdentifier } from '../../../utils/ast/typeGuards'
 
 export class StepperArrowFunctionExpression
   extends StepperBaseNode<ArrowFunctionExpression>
@@ -28,8 +30,8 @@ export class StepperArrowFunctionExpression
 
   static create(node: ArrowFunctionExpression) {
     return new StepperArrowFunctionExpression(
-      node.params.map(param => convert(param) as StepperPattern),
-      convert(node.body) as StepperExpression,
+      node.params.map(param => convert(param)),
+      convert(node.body as Expression),
       undefined,
       node.expression,
       node.generator,
@@ -131,16 +133,12 @@ export class StepperArrowFunctionExpression
   }
 
   public override freeNames(): string[] {
-    const paramNames = this.params
-      .filter(param => param.type === 'Identifier')
-      .map(param => param.name)
+    const paramNames = mapAndFilter(this.params, param => isIdentifier(param) ? param.name : undefined)
     return this.body.freeNames().filter(name => !paramNames.includes(name))
   }
 
   public override allNames(): string[] {
-    const paramNames = this.params
-      .filter(param => param.type === 'Identifier')
-      .map(param => param.name)
+    const paramNames = mapAndFilter(this.params, param => isIdentifier(param) ? param.name : undefined)
     return Array.from(new Set([paramNames, this.body.allNames()].flat()))
   }
 

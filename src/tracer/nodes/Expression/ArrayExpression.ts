@@ -1,4 +1,4 @@
-import type { ArrayExpression, Comment, SourceLocation } from 'estree'
+import type { ArrayExpression, Comment, Expression, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
@@ -21,7 +21,7 @@ export class StepperArrayExpression
 
   static create(node: ArrayExpression) {
     return new StepperArrayExpression(
-      node.elements.map(element => (element ? (convert(element) as StepperExpression) : null)),
+      node.elements.map(element => (element ? convert(element as Expression) : null)),
       node.leadingComments,
       node.trailingComments,
       node.loc,
@@ -49,7 +49,7 @@ export class StepperArrayExpression
 
     for (let i = 0; i < this.elements.length; i++) {
       const element = this.elements[i]
-      if (element && element.isOneStepPossible(redex)) {
+      if (element?.isOneStepPossible(redex)) {
         const newElements = [...this.elements]
         newElements[i] = element.oneStep(redex)
         return new StepperArrayExpression(

@@ -21,7 +21,7 @@ export class StepperBlockExpression extends StepperBaseNode<BlockStatement> {
   }
 
   static create(node: BlockStatement) {
-    return new StepperBlockExpression(node.body.map(ast => convert(ast) as StepperStatement))
+    return new StepperBlockExpression(node.body.map(node => convert(node)))
   }
 
   public override isContractible(redex: RedexInfo): boolean {
@@ -252,7 +252,7 @@ export class StepperBlockExpression extends StepperBaseNode<BlockStatement> {
     const valueFreeNames = value.freeNames()
     const scopeNames = this.scanAllDeclarationNames()
     const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
-    let protectedNamesSet = new Set(this.allNames())
+    const protectedNamesSet = new Set(this.allNames())
     repeatedNames.forEach(name => protectedNamesSet.delete(name))
     const protectedNames = Array.from(protectedNamesSet)
     const newNames = getFreshName(repeatedNames, protectedNames)
@@ -280,13 +280,14 @@ export class StepperBlockExpression extends StepperBaseNode<BlockStatement> {
 
   scanAllDeclarationNames(): string[] {
     return this.body
-      .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
       .flatMap(ast => {
-        if (ast.type === 'VariableDeclaration') {
-          return ast.declarations.map(ast => ast.id.name)
-        } else {
-          // Function Declaration
-          return [ast.id.name]
+        switch (ast.type) {
+          case 'VariableDeclaration':
+            return ast.declarations.map(ast => ast.id.name)
+          case 'FunctionDeclaration':
+            return [ast.id.name]
+          default:
+            return []
         }
       })
   }

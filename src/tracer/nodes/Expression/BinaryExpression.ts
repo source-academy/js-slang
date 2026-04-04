@@ -27,8 +27,8 @@ export class StepperBinaryExpression
   static create(node: BinaryExpression) {
     return new StepperBinaryExpression(
       node.operator,
-      convert(node.left) as StepperExpression,
-      convert(node.right) as StepperExpression,
+      convert(node.left),
+      convert(node.right),
       node.leadingComments,
       node.trailingComments,
       node.loc,
@@ -90,7 +90,7 @@ export class StepperBinaryExpression
     const op = this.operator as string
 
     const value =
-      (this.operator as string) === '&&'
+      op === '&&'
         ? left && right
         : op === '||'
           ? left || right

@@ -21,7 +21,7 @@ export class StepperReturnStatement
 
   static create(node: ReturnStatement) {
     return new StepperReturnStatement(
-      node.argument ? (convert(node.argument) as StepperExpression) : null,
+      node.argument ? (convert(node.argument)) : null,
       node.leadingComments,
       node.trailingComments,
       node.loc,
