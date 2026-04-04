@@ -1,8 +1,8 @@
 import type { Comment, ExpressionStatement, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
+import type { RedexInfo } from '../..'
 
 export class StepperExpressionStatement
   extends StepperBaseNode<ExpressionStatement>
@@ -28,17 +28,17 @@ export class StepperExpressionStatement
     )
   }
 
-  public override isContractible(): boolean {
-    return this.expression.isContractible()
+  public override isContractible(redex: RedexInfo): boolean {
+    return this.expression.isContractible(redex)
   }
 
-  public override isOneStepPossible(): boolean {
-    return this.expression.isOneStepPossible()
+  public override isOneStepPossible(redex: RedexInfo): boolean {
+    return this.expression.isOneStepPossible(redex)
   }
 
-  public override contract(): StepperExpressionStatement {
+  public override contract(redex: RedexInfo): StepperExpressionStatement {
     return new StepperExpressionStatement(
-      this.expression.oneStep(),
+      this.expression.oneStep(redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -46,15 +46,15 @@ export class StepperExpressionStatement
     )
   }
 
-  contractEmpty() {
+  contractEmpty(redex: RedexInfo) {
     // Handle cases such as 1; 2; -> 2;
     redex.preRedex = [this]
     redex.postRedex = []
   }
 
-  public override oneStep(): StepperExpressionStatement {
+  public override oneStep(redex: RedexInfo): StepperExpressionStatement {
     return new StepperExpressionStatement(
-      this.expression.oneStep(),
+      this.expression.oneStep(redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -62,9 +62,13 @@ export class StepperExpressionStatement
     )
   }
 
-  public override substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperBaseNode {
     return new StepperExpressionStatement(
-      this.expression.substitute(id, value),
+      this.expression.substitute(id, value, redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,

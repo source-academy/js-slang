@@ -1,7 +1,7 @@
 import type { Comment, DebuggerStatement, SourceLocation } from 'estree'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
-import { redex } from '../..'
 import { StepperBaseNode } from '../../interface'
+import type { RedexInfo } from '../..'
 
 export class StepperDebuggerStatement
   extends StepperBaseNode<DebuggerStatement>
@@ -25,41 +25,41 @@ export class StepperDebuggerStatement
     )
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return true
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return true
   }
 
-  contractEmpty() {
+  contractEmpty(redex: RedexInfo) {
     redex.preRedex = [this]
     redex.postRedex = []
   }
 
-  contract(): typeof undefinedNode {
+  public override contract(): typeof undefinedNode {
     return undefinedNode
   }
 
-  oneStep(): typeof undefinedNode {
-    this.contractEmpty()
+  public override oneStep(redex: RedexInfo): typeof undefinedNode {
+    this.contractEmpty(redex)
     return undefinedNode
   }
 
-  substitute(_id: StepperPattern, _value: StepperExpression): StepperBaseNode {
+  public override substitute(_id: StepperPattern, _value: StepperExpression): StepperBaseNode {
     return this
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return []
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return []
   }
 
-  rename(_before: string, _after: string): StepperBaseNode {
+  public override rename(_before: string, _after: string): StepperBaseNode {
     return this
   }
 }

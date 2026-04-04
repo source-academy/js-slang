@@ -1,10 +1,11 @@
 import type { Comment, LogicalExpression, LogicalOperator, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
+import type { RedexInfo } from '../..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
 import assert from '../../../utils/assert'
 import { checkIfStatement } from '../../../utils/rttc'
+import { InternalRuntimeError } from '../../../errors/runtimeErrors'
 import { StepperLiteral } from './Literal'
 
 export class StepperLogicalExpression
@@ -35,7 +36,7 @@ export class StepperLogicalExpression
     )
   }
 
-  public override isContractible(): boolean {
+  public override isContractible(redex: RedexInfo): boolean {
     if (this.left.type === 'Literal') {
       checkIfStatement(this, this.left.value)
       redex.preRedex = [this]
@@ -45,11 +46,15 @@ export class StepperLogicalExpression
     return false
   }
 
-  public override isOneStepPossible(): boolean {
-    return this.isContractible() || this.left.isOneStepPossible() || this.right.isOneStepPossible()
+  public override isOneStepPossible(redex: RedexInfo): boolean {
+    return (
+      this.isContractible(redex) ||
+      this.left.isOneStepPossible(redex) ||
+      this.right.isOneStepPossible(redex)
+    )
   }
 
-  public override contract(): StepperExpression {
+  public override contract(redex: RedexInfo): StepperExpression {
     redex.preRedex = [this]
 
     assert(this.left.type === 'Literal', 'Left operand must be a literal to contract')
@@ -82,39 +87,43 @@ export class StepperLogicalExpression
     }
   }
 
-  public override oneStep(): StepperExpression {
-    if (this.isContractible()) {
-      return this.contract()
-    } else if (this.left.isOneStepPossible()) {
+  public override oneStep(redex: RedexInfo): StepperExpression {
+    if (this.isContractible(redex)) {
+      return this.contract(redex)
+    } else if (this.left.isOneStepPossible(redex)) {
       return new StepperLogicalExpression(
         this.operator,
-        this.left.oneStep(),
+        this.left.oneStep(redex),
         this.right,
         this.leadingComments,
         this.trailingComments,
         this.loc,
         this.range
       )
-    } else if (this.right.isOneStepPossible()) {
+    } else if (this.right.isOneStepPossible(redex)) {
       return new StepperLogicalExpression(
         this.operator,
         this.left,
-        this.right.oneStep(),
+        this.right.oneStep(redex),
         this.leadingComments,
         this.trailingComments,
         this.loc,
         this.range
       )
-    } else {
-      throw new Error('No step possible')
     }
+
+    throw new InternalRuntimeError('Cannot oneStep ineligible LogicalExpression', this)
   }
 
-  public override substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperExpression {
     return new StepperLogicalExpression(
       this.operator,
-      this.left.substitute(id, value),
-      this.right.substitute(id, value),
+      this.left.substitute(id, value, redex),
+      this.right.substitute(id, value, redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,

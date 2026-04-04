@@ -1,8 +1,8 @@
 import type { Comment, SourceLocation, VariableDeclaration, VariableDeclarator } from 'estree'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
-import { redex } from '../..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
+import { RedexInfo } from '../..'
 
 export class StepperVariableDeclarator
   extends StepperBaseNode<VariableDeclarator>
@@ -30,18 +30,18 @@ export class StepperVariableDeclarator
     )
   }
 
-  public override isContractible(): boolean {
-    return this.init ? this.init.isContractible() : false
+  public override isContractible(redex: RedexInfo): boolean {
+    return this.init ? this.init.isContractible(redex) : false
   }
 
-  public override isOneStepPossible(): boolean {
-    return this.init ? this.init.isOneStepPossible() : false
+  public override isOneStepPossible(redex: RedexInfo): boolean {
+    return this.init ? this.init.isOneStepPossible(redex) : false
   }
 
-  public override contract(): StepperVariableDeclarator {
+  public override contract(redex: RedexInfo): StepperVariableDeclarator {
     return new StepperVariableDeclarator(
       this.id,
-      this.init!.oneStep(),
+      this.init!.oneStep(redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -49,10 +49,10 @@ export class StepperVariableDeclarator
     )
   }
 
-  public override oneStep(): StepperVariableDeclarator {
+  public override oneStep(redex: RedexInfo): StepperVariableDeclarator {
     return new StepperVariableDeclarator(
       this.id,
-      this.init!.oneStep(),
+      this.init!.oneStep(redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -60,10 +60,14 @@ export class StepperVariableDeclarator
     )
   }
 
-  public override substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperBaseNode {
     return new StepperVariableDeclarator(
       this.id,
-      this.init!.substitute(id, value),
+      this.init!.substitute(id, value, redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -79,7 +83,7 @@ export class StepperVariableDeclarator
     return this.init!.allNames()
   }
 
-  rename(before: string, after: string): StepperVariableDeclarator {
+  public override rename(before: string, after: string): StepperVariableDeclarator {
     return new StepperVariableDeclarator(
       this.id.rename(before, after),
       this.init!.rename(before, after),
@@ -123,30 +127,34 @@ export class StepperVariableDeclaration
     return false
   }
 
-  public override isOneStepPossible(): boolean {
+  public override isOneStepPossible(redex: RedexInfo): boolean {
     return this.declarations
-      .map(x => x.isOneStepPossible())
+      .map(x => x.isOneStepPossible(redex))
       .reduce((acc, next) => acc || next, false)
   }
 
-  public override contract(): typeof undefinedNode {
+  public override contract(redex: RedexInfo): typeof undefinedNode {
     redex.preRedex = [this]
     redex.postRedex = []
     return undefinedNode
   }
 
-  contractEmpty() {
+  contractEmpty(redex: RedexInfo) {
     redex.preRedex = [this]
     redex.postRedex = []
   }
 
-  public override oneStep(): StepperVariableDeclaration | typeof undefinedNode {
+  public override oneStep(redex: RedexInfo): StepperVariableDeclaration | typeof undefinedNode {
     // Find the one that is not contractible.
     for (let i = 0; i < this.declarations.length; i++) {
       const ast = this.declarations[i]
-      if (ast.isOneStepPossible()) {
+      if (ast.isOneStepPossible(redex)) {
         return new StepperVariableDeclaration(
-          [this.declarations.slice(0, i), ast.oneStep(), this.declarations.slice(i + 1)].flat(),
+          [
+            this.declarations.slice(0, i),
+            ast.oneStep(redex),
+            this.declarations.slice(i + 1)
+          ].flat(),
           this.kind,
           this.leadingComments,
           this.trailingComments,
@@ -159,10 +167,14 @@ export class StepperVariableDeclaration
     return this
   }
 
-  public override substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperBaseNode {
     return new StepperVariableDeclaration(
       this.declarations.map(
-        declaration => declaration.substitute(id, value) as StepperVariableDeclarator
+        declaration => declaration.substitute(id, value, redex) as StepperVariableDeclarator
       ),
       this.kind,
       this.leadingComments,

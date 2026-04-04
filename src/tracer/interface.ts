@@ -2,6 +2,7 @@ import { generate } from 'astring'
 import type { BaseNode, Comment, SourceLocation } from 'estree'
 import type { Node, ReplResult } from '../types'
 import type { StepperExpression, StepperPattern } from './nodes'
+import type { RedexInfo } from '.'
 
 /**
  * Base type for all Stepper Nodes
@@ -18,15 +19,19 @@ export abstract class StepperBaseNode<T extends Node = Node> implements BaseNode
   /**
    * Indicates whether this node can be contracted
    */
-  public abstract isContractible(): boolean
+  public abstract isContractible(redex: RedexInfo): boolean
 
   /**
    * Indicates whether a single step evaluation is possible.
    */
-  public abstract isOneStepPossible(): boolean
-  public abstract contract(): StepperBaseNode
-  public abstract oneStep(): StepperBaseNode
-  public abstract substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode
+  public abstract isOneStepPossible(redex: RedexInfo): boolean
+  public abstract contract(redex: RedexInfo): StepperBaseNode
+  public abstract oneStep(redex: RedexInfo): StepperBaseNode
+  public abstract substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperBaseNode
   public abstract freeNames(): string[]
   public abstract allNames(): string[]
   public abstract rename(before: string, after: string): StepperBaseNode

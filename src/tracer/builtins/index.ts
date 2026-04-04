@@ -5,7 +5,8 @@ import { StepperIdentifier } from '../nodes/Expression/Identifier'
 import { StepperLiteral } from '../nodes/Expression/Literal'
 import { InvalidNumberOfArgumentsError } from '../../errors/errors'
 import type { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication'
-import { GeneralRuntimeError } from '../../errors/base'
+import { GeneralRuntimeError } from '../../errors/runtimeErrors'
+import type { RedexInfo } from '..'
 import { auxiliaryBuiltinFunctions } from './auxiliary'
 import { listBuiltinFunctions } from './lists'
 import { miscBuiltinFunctions } from './misc'
@@ -16,7 +17,7 @@ const builtinFunctions = {
   ...auxiliaryBuiltinFunctions
 }
 
-export function prelude(node: es.BaseNode) {
+export function prelude(node: es.BaseNode, redex: RedexInfo) {
   let inputNode = convert(node)
 
   // Substitute math constant
@@ -25,7 +26,8 @@ export function prelude(node: es.BaseNode) {
     .forEach(name => {
       inputNode = inputNode.substitute(
         new StepperIdentifier('math_' + name),
-        new StepperLiteral(Math[name as keyof typeof Math] as number)
+        new StepperLiteral(Math[name as keyof typeof Math] as number),
+        redex
       )
     })
   return inputNode

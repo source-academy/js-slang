@@ -1,11 +1,11 @@
 import type { Comment, FunctionDeclaration, SourceLocation } from 'estree'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
-import { redex } from '../..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
 import { getFreshName } from '../../utils'
 import { StepperArrowFunctionExpression } from '../Expression/ArrowFunctionExpression'
 import type { StepperIdentifier } from '../Expression/Identifier'
+import type { RedexInfo } from '../..'
 import type { StepperBlockStatement } from './BlockStatement'
 
 export class StepperFunctionDeclaration
@@ -68,19 +68,19 @@ export class StepperFunctionDeclaration
     )
   }
 
-  public override contract(): typeof undefinedNode {
+  public override contract(redex: RedexInfo): typeof undefinedNode {
     redex.preRedex = [this]
     redex.postRedex = []
     return undefinedNode
   }
 
-  contractEmpty() {
+  contractEmpty(redex: RedexInfo) {
     redex.preRedex = [this]
     redex.postRedex = []
   }
 
-  public override oneStep(): typeof undefinedNode {
-    return this.contract()
+  public override oneStep(redex: RedexInfo): typeof undefinedNode {
+    return this.contract(redex)
   }
 
   scanAllDeclarationNames(): string[] {
@@ -101,6 +101,7 @@ export class StepperFunctionDeclaration
   public override substitute(
     id: StepperPattern,
     value: StepperExpression,
+    redex: RedexInfo,
     upperBoundName?: string[]
   ): StepperBaseNode {
     const valueFreeNames = value.freeNames()
@@ -126,6 +127,7 @@ export class StepperFunctionDeclaration
       currentFunction.body.substitute(
         id,
         value,
+        redex,
         currentFunction.params.flatMap(p => p.allNames())
       ) as unknown as StepperBlockStatement,
       currentFunction.params,

@@ -1,8 +1,9 @@
 import type { Comment, ReturnStatement, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
+import type { RedexInfo } from '../..'
+import assert from '../../../utils/assert'
 
 export class StepperReturnStatement
   extends StepperBaseNode<ReturnStatement>
@@ -36,30 +37,31 @@ export class StepperReturnStatement
     return true
   }
 
-  public override contract(): StepperExpression {
-    if (!this.argument) {
-      throw new Error('Cannot contract return statement without argument')
-    }
+  public override contract(redex: RedexInfo): StepperExpression {
+    assert(!!this.argument, 'Cannot contract return statement without argument', this)
+
     redex.preRedex = [this]
     redex.postRedex = [this.argument]
     return this.argument
   }
 
-  contractEmpty() {
+  contractEmpty(redex: RedexInfo) {
     redex.preRedex = [this]
     redex.postRedex = []
   }
 
-  public override oneStep(): StepperExpression {
-    if (!this.argument) {
-      throw new Error('Cannot step return statement without argument')
-    }
-    return this.contract()
+  public override oneStep(redex: RedexInfo): StepperExpression {
+    assert(!!this.argument, 'Cannot step return statement without argument', this)
+    return this.contract(redex)
   }
 
-  public override substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperBaseNode {
     return new StepperReturnStatement(
-      this.argument ? this.argument.substitute(id, value) : null,
+      this.argument ? this.argument.substitute(id, value, redex) : null,
       this.leadingComments,
       this.trailingComments,
       this.loc,

@@ -1,12 +1,12 @@
 import type { Comment, SimpleCallExpression, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
 import { getBuiltinFunction, isBuiltinFunction } from '../../builtins'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
 import { StepperBlockStatement } from '../Statement/BlockStatement'
 import { CallingNonFunctionValueError, InvalidNumberOfArgumentsError } from '../../../errors/errors'
-import { GeneralRuntimeError } from '../../../errors/base'
+import { GeneralRuntimeError, InternalRuntimeError } from '../../../errors/runtimeErrors'
+import type { RedexInfo } from '../..'
 import { StepperBlockExpression } from './BlockExpression'
 
 export class StepperFunctionApplication
@@ -40,7 +40,7 @@ export class StepperFunctionApplication
     )
   }
 
-  public override isContractible(): boolean {
+  public override isContractible(redex: RedexInfo): boolean {
     const isValidCallee =
       this.callee.type === 'ArrowFunctionExpression' ||
       (this.callee.type === 'Identifier' && isBuiltinFunction(this.callee.name))
@@ -48,8 +48,8 @@ export class StepperFunctionApplication
     if (!isValidCallee) {
       // Since the callee can not proceed further, calling non callables should result to an error.
       if (
-        !this.callee.isOneStepPossible() &&
-        this.arguments.every(arg => !arg.isOneStepPossible())
+        !this.callee.isOneStepPossible(redex) &&
+        this.arguments.every(arg => !arg.isOneStepPossible(redex))
       ) {
         throw new CallingNonFunctionValueError(this.callee, this)
       }
@@ -67,18 +67,19 @@ export class StepperFunctionApplication
       }
     }
 
-    return this.arguments.every(arg => !arg.isOneStepPossible())
+    return this.arguments.every(arg => !arg.isOneStepPossible(redex))
   }
 
-  public override isOneStepPossible(): boolean {
-    if (this.isContractible()) return true
-    if (this.callee.isOneStepPossible()) return true
-    return this.arguments.some(arg => arg.isOneStepPossible())
+  public override isOneStepPossible(redex: RedexInfo): boolean {
+    if (this.isContractible(redex)) return true
+    if (this.callee.isOneStepPossible(redex)) return true
+    return this.arguments.some(arg => arg.isOneStepPossible(redex))
   }
 
-  public override contract(): StepperExpression | StepperBlockExpression {
+  public override contract(redex: RedexInfo): StepperExpression | StepperBlockExpression {
     redex.preRedex = [this]
-    if (!this.isContractible()) throw new Error()
+    if (!this.isContractible(redex))
+      throw new InternalRuntimeError('Trying to contract ineliglble CallExpression', this)
     if (this.callee.type === 'Identifier') {
       const functionName = this.callee.name
       if (isBuiltinFunction(functionName)) {
@@ -114,27 +115,28 @@ export class StepperFunctionApplication
     if (lambda.name && !this.callee.scanAllDeclarationNames().includes(lambda.name)) {
       result = result.substitute(
         { type: 'Identifier', name: lambda.name } as StepperPattern,
-        lambda
+        lambda,
+        redex
       )
     }
 
     lambda.params.forEach((param, i) => {
-      result = result.substitute(param, args[i])
+      result = result.substitute(param, args[i], redex)
     })
 
     redex.postRedex = [result]
     return result
   }
 
-  public override oneStep(): StepperExpression {
-    if (this.isContractible()) {
+  public override oneStep(redex: RedexInfo): StepperExpression {
+    if (this.isContractible(redex)) {
       // @ts-expect-error: contract can return StepperBlockExpression but it's handled at runtime
-      return this.contract()
+      return this.contract(redex)
     }
 
-    if (this.callee.isOneStepPossible()) {
+    if (this.callee.isOneStepPossible(redex)) {
       return new StepperFunctionApplication(
-        this.callee.oneStep(),
+        this.callee.oneStep(redex),
         this.arguments,
         this.optional,
         this.leadingComments,
@@ -145,9 +147,9 @@ export class StepperFunctionApplication
     }
 
     for (let i = 0; i < this.arguments.length; i++) {
-      if (this.arguments[i].isOneStepPossible()) {
+      if (this.arguments[i].isOneStepPossible(redex)) {
         const newArgs = [...this.arguments]
-        newArgs[i] = this.arguments[i].oneStep()
+        newArgs[i] = this.arguments[i].oneStep(redex)
         return new StepperFunctionApplication(
           this.callee,
           newArgs,
@@ -160,13 +162,17 @@ export class StepperFunctionApplication
       }
     }
 
-    throw new Error('No one step possible')
+    throw new InternalRuntimeError('No one step possible for CallExpression', this)
   }
 
-  public override substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperExpression {
     return new StepperFunctionApplication(
-      this.callee.substitute(id, value),
-      this.arguments.map(arg => arg.substitute(id, value)),
+      this.callee.substitute(id, value, redex),
+      this.arguments.map(arg => arg.substitute(id, value, redex)),
       this.optional,
       this.leadingComments,
       this.trailingComments,

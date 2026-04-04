@@ -1,6 +1,7 @@
 import type { Comment, SimpleLiteral, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
+import type { StepperExpression } from '..'
 import { StepperBaseNode } from '../../interface'
+import { InternalRuntimeError } from '../../../errors/runtimeErrors'
 
 /**
  * This class represents a literal node in the stepper's AST (Abstract Syntax Tree).
@@ -45,14 +46,14 @@ export class StepperLiteral extends StepperBaseNode<SimpleLiteral> implements Si
   }
 
   public override contract(): StepperLiteral {
-    throw new Error('Method not implemented.')
+    throw new InternalRuntimeError('Cannot contract Literal', this)
   }
 
   public override oneStep(): StepperLiteral {
-    throw new Error('Method not implemented.')
+    throw new InternalRuntimeError('Cannot oneStep Literal', this)
   }
 
-  public override substitute(_id: StepperPattern, _value: StepperExpression): StepperLiteral {
+  public override substitute(): StepperLiteral {
     return this
   }
 

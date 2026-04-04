@@ -1,9 +1,10 @@
 import type { BlockStatement, Comment, SourceLocation } from 'estree'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
-import { redex } from '../..'
+import type { RedexInfo } from '../..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
 import { assignMuTerms, getFreshName } from '../../utils'
+import { InternalRuntimeError } from '../../../errors/runtimeErrors'
 import type { StepperStatement } from '.'
 
 export class StepperBlockStatement
@@ -32,15 +33,17 @@ export class StepperBlockStatement
     )
   }
 
-  public override isContractible(): boolean {
-    return this.body.length === 0 || (this.body.length === 1 && !this.body[0].isContractible())
+  public override isContractible(redex: RedexInfo): boolean {
+    return this.body.length === 0 || (this.body.length === 1 && !this.body[0].isContractible(redex))
   }
 
   public override isOneStepPossible(): boolean {
     return true
   }
 
-  public override contract(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
+  public override contract(
+    redex: RedexInfo
+  ): StepperBlockStatement | StepperStatement | typeof undefinedNode {
     if (this.body.length === 0) {
       redex.preRedex = [this]
       redex.postRedex = []
@@ -53,17 +56,19 @@ export class StepperBlockStatement
       return this.body[0]
     }
 
-    throw new Error('Not implemented')
+    throw new InternalRuntimeError('Cannot contract BlockStatement with body length > 1', this)
   }
 
-  contractEmpty() {
+  contractEmpty(redex: RedexInfo) {
     redex.preRedex = [this]
     redex.postRedex = []
   }
 
-  public override oneStep(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
-    if (this.isContractible()) {
-      return this.contract()
+  public override oneStep(
+    redex: RedexInfo
+  ): StepperBlockStatement | StepperStatement | typeof undefinedNode {
+    if (this.isContractible(redex)) {
+      return this.contract(redex)
     }
 
     if (this.body[0].type === 'ReturnStatement') {
@@ -74,8 +79,8 @@ export class StepperBlockStatement
     }
 
     // reduce the first statement
-    if (this.body[0].isOneStepPossible()) {
-      const firstStatementOneStep = this.body[0].oneStep()
+    if (this.body[0].isOneStepPossible(redex)) {
+      const firstStatementOneStep = this.body[0].oneStep(redex)
       const afterSubstitutedScope = this.body.slice(1)
       if (firstStatementOneStep === undefinedNode) {
         return new StepperBlockStatement(
@@ -107,7 +112,7 @@ export class StepperBlockStatement
             .filter(declarator => declarator.init)
             .reduce(
               (statement, declarator) =>
-                statement.substitute(declarator.id, declarator.init!) as StepperStatement,
+                statement.substitute(declarator.id, declarator.init!, redex) as StepperStatement,
               current
             )
         )
@@ -131,7 +136,8 @@ export class StepperBlockStatement
       const afterSubstitutedScope = this.body
         .slice(1)
         .map(
-          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
+          statement =>
+            statement.substitute(functionIdentifier, arrowFunction, redex) as StepperStatement
         )
       const substitutedProgram = new StepperBlockStatement(
         afterSubstitutedScope,
@@ -163,8 +169,8 @@ export class StepperBlockStatement
       )
     }
 
-    if (this.body.length >= 2 && this.body[1].isOneStepPossible()) {
-      const secondStatementOneStep = this.body[1].oneStep()
+    if (this.body.length >= 2 && this.body[1].isOneStepPossible(redex)) {
+      const secondStatementOneStep = this.body[1].oneStep(redex)
       const afterSubstitutedScope = this.body.slice(2)
       if (secondStatementOneStep === undefinedNode) {
         return new StepperBlockStatement(
@@ -200,7 +206,7 @@ export class StepperBlockStatement
             .filter(declarator => declarator.init)
             .reduce(
               (statement, declarator) =>
-                statement.substitute(declarator.id, declarator.init!) as StepperStatement,
+                statement.substitute(declarator.id, declarator.init!, redex) as StepperStatement,
               current
             )
         )
@@ -224,7 +230,8 @@ export class StepperBlockStatement
       const afterSubstitutedScope = this.body
         .slice(2)
         .map(
-          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
+          statement =>
+            statement.substitute(functionIdentifier, arrowFunction, redex) as StepperStatement
         )
       const substitutedProgram = new StepperBlockStatement(
         [firstValueStatement, afterSubstitutedScope].flat(),
@@ -240,7 +247,7 @@ export class StepperBlockStatement
     }
 
     // After this stage, we have two value inducing statement. Remove the first one.
-    this.body[0].contractEmpty() // update the contracted statement onto redex
+    this.body[0].contractEmpty(redex) // update the contracted statement onto redex
     return new StepperBlockStatement(
       this.body.slice(1),
       this.innerComments,
@@ -254,6 +261,7 @@ export class StepperBlockStatement
   public override substitute(
     id: StepperPattern,
     value: StepperExpression,
+    redex: RedexInfo,
     upperBoundName?: string[]
   ): StepperBaseNode {
     // Alpha renaming
@@ -279,7 +287,7 @@ export class StepperBlockStatement
     }
     return new StepperBlockStatement(
       currentBlockStatement.body.map(
-        statement => statement.substitute(id, value) as StepperStatement
+        statement => statement.substitute(id, value, redex) as StepperStatement
       ),
       this.innerComments,
       this.leadingComments,

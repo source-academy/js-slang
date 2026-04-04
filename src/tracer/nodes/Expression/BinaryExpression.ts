@@ -1,11 +1,11 @@
 import type { BinaryExpression, BinaryOperator, Comment, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
 import { checkBinaryExpression } from '../../../utils/rttc'
 import { Chapter } from '../../../langs'
 import assert from '../../../utils/assert'
+import type { RedexInfo } from '../..'
 import { StepperLiteral } from './Literal'
 
 export class StepperBinaryExpression
@@ -36,7 +36,7 @@ export class StepperBinaryExpression
     )
   }
 
-  public override isContractible(): boolean {
+  public override isContractible(redex: RedexInfo): boolean {
     if (this.left.type !== 'Literal' || this.right.type !== 'Literal') {
       return false
     }
@@ -69,11 +69,15 @@ export class StepperBinaryExpression
     return false
   }
 
-  public override isOneStepPossible(): boolean {
-    return this.isContractible() || this.left.isOneStepPossible() || this.right.isOneStepPossible()
+  public override isOneStepPossible(redex: RedexInfo): boolean {
+    return (
+      this.isContractible(redex) ||
+      this.left.isOneStepPossible(redex) ||
+      this.right.isOneStepPossible(redex)
+    )
   }
 
-  public override contract(): StepperExpression {
+  public override contract(redex: RedexInfo): StepperExpression {
     redex.preRedex = [this]
     assert(
       this.left.type === 'Literal' && this.right.type === 'Literal',
@@ -126,19 +130,23 @@ export class StepperBinaryExpression
     return ret
   }
 
-  public override oneStep(): StepperExpression {
-    return this.isContractible()
-      ? this.contract()
-      : this.left.isOneStepPossible()
-        ? new StepperBinaryExpression(this.operator, this.left.oneStep(), this.right)
-        : new StepperBinaryExpression(this.operator, this.left, this.right.oneStep())
+  public override oneStep(redex: RedexInfo): StepperExpression {
+    return this.isContractible(redex)
+      ? this.contract(redex)
+      : this.left.isOneStepPossible(redex)
+        ? new StepperBinaryExpression(this.operator, this.left.oneStep(redex), this.right)
+        : new StepperBinaryExpression(this.operator, this.left, this.right.oneStep(redex))
   }
 
-  public override substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperExpression {
     return new StepperBinaryExpression(
       this.operator,
-      this.left.substitute(id, value),
-      this.right.substitute(id, value),
+      this.left.substitute(id, value, redex),
+      this.right.substitute(id, value, redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,

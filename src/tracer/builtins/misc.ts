@@ -2,7 +2,7 @@ import type { StepperExpression } from '../nodes'
 import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
 import { StepperIdentifier } from '../nodes/Expression/Identifier'
 import { StepperLiteral } from '../nodes/Expression/Literal'
-import { GeneralRuntimeError } from '../../errors/base'
+import { GeneralRuntimeError } from '../../errors/runtimeErrors'
 import { listBuiltinFunctions } from './lists'
 import { isBuiltinFunction } from '.'
 

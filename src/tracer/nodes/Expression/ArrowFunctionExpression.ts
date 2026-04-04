@@ -4,6 +4,8 @@ import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
 import { getFreshName } from '../../utils'
 import type { StepperBlockStatement } from '../Statement/BlockStatement'
+import { InternalRuntimeError } from '../../../errors/runtimeErrors'
+import type { RedexInfo } from '../..'
 
 export class StepperArrowFunctionExpression
   extends StepperBaseNode<ArrowFunctionExpression>
@@ -48,11 +50,11 @@ export class StepperArrowFunctionExpression
   }
 
   public override contract(): StepperExpression {
-    throw new Error('Cannot contract an arrow function expression')
+    throw new InternalRuntimeError('Cannot contract an arrow function expression', this)
   }
 
   public override oneStep(): StepperExpression {
-    throw new Error('Cannot step an arrow function expression')
+    throw new InternalRuntimeError('Cannot step an arrow function expression', this)
   }
 
   assignName(name: string): StepperArrowFunctionExpression {
@@ -89,6 +91,7 @@ export class StepperArrowFunctionExpression
   public override substitute(
     id: StepperPattern,
     value: StepperExpression,
+    redex: RedexInfo,
     upperBoundName?: string[]
   ): StepperExpression {
     const valueFreeNames = value.freeNames()
@@ -113,6 +116,7 @@ export class StepperArrowFunctionExpression
       currentArrowFunction.body.substitute(
         id,
         value,
+        redex,
         currentArrowFunction.params.flatMap(p => p.allNames())
       ),
       currentArrowFunction.name,

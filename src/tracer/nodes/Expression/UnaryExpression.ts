@@ -1,11 +1,11 @@
 import type { Comment, SourceLocation, UnaryExpression, UnaryOperator } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
 import { convert } from '../../generator'
 import { StepperBaseNode } from '../../interface'
 import { checkUnaryExpression } from '../../../utils/rttc'
 import assert from '../../../utils/assert'
-import { GeneralRuntimeError } from '../../../errors/base'
+import { GeneralRuntimeError } from '../../../errors/runtimeErrors'
+import type { RedexInfo } from '../..'
 import { StepperLiteral } from './Literal'
 
 export class StepperUnaryExpression
@@ -61,7 +61,7 @@ export class StepperUnaryExpression
     )
   }
 
-  public override isContractible(): boolean {
+  public override isContractible(redex: RedexInfo): boolean {
     if (this.argument.type !== 'Literal') return false
 
     const valueType = typeof this.argument.value
@@ -83,11 +83,11 @@ export class StepperUnaryExpression
     return false
   }
 
-  public override isOneStepPossible(): boolean {
-    return this.isContractible() || this.argument.isOneStepPossible()
+  public override isOneStepPossible(redex: RedexInfo): boolean {
+    return this.isContractible(redex) || this.argument.isOneStepPossible(redex)
   }
 
-  public override contract(): StepperLiteral {
+  public override contract(redex: RedexInfo): StepperLiteral {
     redex.preRedex = [this]
 
     assert(
@@ -140,13 +140,13 @@ export class StepperUnaryExpression
     }
   }
 
-  public override oneStep(): StepperExpression {
-    if (this.isContractible()) {
-      return this.contract()
+  public override oneStep(redex: RedexInfo): StepperExpression {
+    if (this.isContractible(redex)) {
+      return this.contract(redex)
     }
     const res = new StepperUnaryExpression(
       this.operator,
-      this.argument.oneStep(),
+      this.argument.oneStep(redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -156,10 +156,14 @@ export class StepperUnaryExpression
     return literal ? literal : res
   }
 
-  public override substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperExpression {
     const res = new StepperUnaryExpression(
       this.operator,
-      this.argument.substitute(id, value),
+      this.argument.substitute(id, value, redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,

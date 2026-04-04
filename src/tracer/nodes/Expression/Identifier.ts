@@ -1,9 +1,10 @@
 import type { Comment, Identifier, SourceLocation } from 'estree'
 import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
 import { isBuiltinFunction } from '../../builtins'
 import { StepperBaseNode } from '../../interface'
 import { UnassignedVariableError } from '../../../errors/errors'
+import type { RedexInfo } from '../..'
+import { InternalRuntimeError } from '../../../errors/runtimeErrors'
 
 export class StepperIdentifier extends StepperBaseNode<Identifier> implements Identifier {
   constructor(
@@ -42,14 +43,18 @@ export class StepperIdentifier extends StepperBaseNode<Identifier> implements Id
   }
 
   public override contract(): StepperIdentifier {
-    throw new Error('Method not implemented.')
+    throw new InternalRuntimeError('Cannot contract Identifier', this)
   }
 
   public override oneStep(): StepperIdentifier {
-    throw new Error('Method not implemented.')
+    throw new InternalRuntimeError('Cannot oneStep Identifier', this)
   }
 
-  public override substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperExpression {
     if (id.name === this.name) {
       redex.postRedex.push(value)
       return value

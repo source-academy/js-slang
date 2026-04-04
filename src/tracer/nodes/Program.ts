@@ -2,12 +2,13 @@ import type { Comment, Program, SourceLocation } from 'estree'
 import { convert } from '../generator'
 import { StepperBaseNode } from '../interface'
 
-import { redex } from '..'
 import { assignMuTerms } from '../utils'
 import { StepperStatement } from './Statement'
 import type { StepperFunctionDeclaration } from './Statement/FunctionDeclaration'
 import type { StepperVariableDeclaration } from './Statement/VariableDeclaration'
 import { type StepperExpression, type StepperPattern, undefinedNode } from '.'
+import type { RedexInfo } from '..'
+import { InternalRuntimeError } from '../../errors/runtimeErrors'
 
 export class StepperProgram extends StepperBaseNode<Program> implements Program {
   public readonly sourceType: 'script' | 'module'
@@ -24,28 +25,28 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
     this.sourceType = 'module'
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return false
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(redex: RedexInfo): boolean {
     return this.body.length === 0
       ? false // unlike BlockStatement
-      : this.body[0].isOneStepPossible() ||
+      : this.body[0].isOneStepPossible(redex) ||
           this.body.length >= 2 ||
           (this.body.length == 1 &&
             (this.body[0].type == 'VariableDeclaration' ||
               this.body[0].type == 'FunctionDeclaration'))
   }
 
-  contract(): StepperProgram {
-    throw new Error('not implemented')
+  public override contract(): StepperProgram {
+    throw new InternalRuntimeError('contract not implemented for Program', this)
   }
 
-  oneStep(): StepperProgram {
+  public override oneStep(redex: RedexInfo): StepperProgram {
     // reduce the first statement
-    if (this.body[0].isOneStepPossible()) {
-      const firstStatementOneStep = this.body[0].oneStep()
+    if (this.body[0].isOneStepPossible(redex)) {
+      const firstStatementOneStep = this.body[0].oneStep(redex)
       const afterSubstitutedScope = this.body.slice(1)
       if (firstStatementOneStep === undefinedNode) {
         return new StepperProgram([afterSubstitutedScope].flat())
@@ -65,7 +66,7 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
             .filter(declarator => declarator.init)
             .reduce(
               (statement, declarator) =>
-                statement.substitute(declarator.id, declarator.init!) as StepperStatement,
+                statement.substitute(declarator.id, declarator.init!, redex) as StepperStatement,
               current
             )
         )
@@ -82,7 +83,8 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
       const afterSubstitutedScope = this.body
         .slice(1)
         .map(
-          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
+          statement =>
+            statement.substitute(functionIdentifier, arrowFunction, redex) as StepperStatement
         )
       const substitutedProgram = new StepperProgram(afterSubstitutedScope)
       redex.preRedex = [this.body[0]]
@@ -92,8 +94,8 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
 
     const firstValueStatement = this.body[0]
     // After this stage, the first statement is a value statement. Now, proceed until getting the second value statement.
-    if (this.body.length >= 2 && this.body[1].isOneStepPossible()) {
-      const secondStatementOneStep = this.body[1].oneStep()
+    if (this.body.length >= 2 && this.body[1].isOneStepPossible(redex)) {
+      const secondStatementOneStep = this.body[1].oneStep(redex)
       const afterSubstitutedScope = this.body.slice(2)
       if (secondStatementOneStep === undefinedNode) {
         return new StepperProgram([firstValueStatement, afterSubstitutedScope].flat())
@@ -117,7 +119,7 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
             .filter(declarator => declarator.init)
             .reduce(
               (statement, declarator) =>
-                statement.substitute(declarator.id, declarator.init!) as StepperStatement,
+                statement.substitute(declarator.id, declarator.init!, redex) as StepperStatement,
               current
             )
         )
@@ -136,7 +138,8 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
       const afterSubstitutedScope = this.body
         .slice(2)
         .map(
-          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
+          statement =>
+            statement.substitute(functionIdentifier, arrowFunction, redex) as StepperStatement
         )
       const substitutedProgram = new StepperProgram(
         [firstValueStatement, afterSubstitutedScope].flat()
@@ -146,7 +149,7 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
       return substitutedProgram
     }
 
-    this.body[0].contractEmpty() // update the contracted statement onto redex
+    this.body[0].contractEmpty(redex) // update the contracted statement onto redex
     return new StepperProgram(this.body.slice(1))
   }
 
@@ -161,9 +164,13 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
     )
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo
+  ): StepperBaseNode {
     return new StepperProgram(
-      this.body.map(statement => statement.substitute(id, value) as StepperStatement)
+      this.body.map(statement => statement.substitute(id, value, redex) as StepperStatement)
     )
   }
 
@@ -180,17 +187,17 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
       })
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     const names = new Set(this.body.flatMap(ast => ast.freeNames()))
     this.scanAllDeclarationNames().forEach(name => names.delete(name))
     return Array.from(names)
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return Array.from(new Set(this.body.flatMap(ast => ast.allNames())))
   }
 
-  rename(before: string, after: string): StepperProgram {
+  public override rename(before: string, after: string): StepperProgram {
     return new StepperProgram(
       this.body.map(statement => statement.rename(before, after) as StepperStatement)
     )
