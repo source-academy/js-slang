@@ -7,7 +7,7 @@
     "incremental": true,
     "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
     "module": "commonjs",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     // "isolatedModules": true, Temporarily disabled
     "noEmit": true,
     "noImplicitAny": true,
@@ -18,8 +18,9 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
+    "strict": false,
     "strictNullChecks": true,
-    "target": "es2020",
+    "target": "es2020"
   },
   "include": ["src", "vitest.config.ts"],
   "exclude": [
