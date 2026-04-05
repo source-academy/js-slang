@@ -1,27 +1,27 @@
-import { describe, expect, test } from 'vitest'
-import { Chapter } from '../../../../langs'
-import { parse } from '../../../../parser/parser'
-import { mockContext } from '../../../../utils/testing/mocks'
-import { sanitizeAST } from '../../../../utils/testing/sanitizer'
-import hoistAndMergeImports from '../../transformers/hoistAndMergeImports'
+import { describe, expect, test } from 'vitest';
+import { Chapter } from '../../../../langs';
+import { parse } from '../../../../parser/parser';
+import { mockContext } from '../../../../utils/testing/mocks';
+import { sanitizeAST } from '../../../../utils/testing/sanitizer';
+import hoistAndMergeImports from '../../transformers/hoistAndMergeImports';
 
 describe(hoistAndMergeImports, () => {
   const assertASTsAreEqual = (actualCode: string, expectedCode: string) => {
-    const actualContext = mockContext(Chapter.LIBRARY_PARSER)
-    const expectedContext = mockContext(Chapter.LIBRARY_PARSER)
+    const actualContext = mockContext(Chapter.LIBRARY_PARSER);
+    const expectedContext = mockContext(Chapter.LIBRARY_PARSER);
 
-    const actualProgram = parse(actualCode, actualContext)
-    const expectedProgram = parse(expectedCode, expectedContext)
+    const actualProgram = parse(actualCode, actualContext);
+    const expectedProgram = parse(expectedCode, expectedContext);
 
     if (!actualProgram || !expectedProgram) {
       // console.log(actualContext.errors)
-      throw new Error('Failed to parse expected code or actual code')
+      throw new Error('Failed to parse expected code or actual code');
     }
 
-    hoistAndMergeImports(actualProgram)
+    hoistAndMergeImports(actualProgram);
 
-    expect(sanitizeAST(actualProgram)).toMatchObject(sanitizeAST(expectedProgram))
-  }
+    expect(sanitizeAST(actualProgram)).toMatchObject(sanitizeAST(expectedProgram));
+  };
 
   test.each([
     [
@@ -88,5 +88,5 @@ describe(hoistAndMergeImports, () => {
       import { b } from 'one_module';
       `,
     ],
-  ])('%#', (actualCode, expectedCode) => assertASTsAreEqual(actualCode, expectedCode))
-})
+  ])('%#', (actualCode, expectedCode) => assertASTsAreEqual(actualCode, expectedCode));
+});

@@ -1,13 +1,13 @@
-import { test, vi } from 'vitest'
-import { Chapter, Variant } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult, testSuccess } from '../../utils/testing'
+import { test, vi } from 'vitest';
+import { Chapter, Variant } from '../../langs';
+import { stripIndent } from '../../utils/formatters';
+import { expectFinishedResult, testSuccess } from '../../utils/testing';
 
-vi.mock(import('../../modules/loader/loaders'))
+vi.mock(import('../../modules/loader/loaders'));
 
-const optionEC = { variant: Variant.EXPLICIT_CONTROL }
-const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
-const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
+const optionEC = { variant: Variant.EXPLICIT_CONTROL };
+const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL };
+const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL };
 
 test('Simple tail call returns work', () => {
   return expectFinishedResult(
@@ -22,8 +22,8 @@ test('Simple tail call returns work', () => {
     f(5000, 5000);
   `,
     optionEC,
-  ).toEqual(10000)
-})
+  ).toEqual(10000);
+});
 
 test('Tail call in conditional expressions work', () => {
   return expectFinishedResult(
@@ -34,8 +34,8 @@ test('Tail call in conditional expressions work', () => {
     f(5000, 5000);
   `,
     optionEC,
-  ).toEqual(10000)
-})
+  ).toEqual(10000);
+});
 
 test('Tail call in boolean operators work', () => {
   return expectFinishedResult(
@@ -50,8 +50,8 @@ test('Tail call in boolean operators work', () => {
     f(5000, 5000);
   `,
     optionEC,
-  ).toEqual(10000)
-})
+  ).toEqual(10000);
+});
 
 test('Tail call in nested mix of conditional expressions boolean operators work', () => {
   return expectFinishedResult(
@@ -62,8 +62,8 @@ test('Tail call in nested mix of conditional expressions boolean operators work'
     f(5000, 5000);
   `,
     optionEC,
-  ).toEqual(10000)
-})
+  ).toEqual(10000);
+});
 
 test('Tail calls in arrow functions work', () => {
   return expectFinishedResult(
@@ -72,8 +72,8 @@ test('Tail calls in arrow functions work', () => {
     f(5000, 5000);
   `,
     optionEC,
-  ).toEqual(10000)
-})
+  ).toEqual(10000);
+});
 
 test('Tail calls in arrow block functions work', () => {
   return expectFinishedResult(
@@ -88,8 +88,8 @@ test('Tail calls in arrow block functions work', () => {
     f(5000, 5000);
   `,
     optionEC,
-  ).toEqual(10000)
-})
+  ).toEqual(10000);
+});
 
 test('Tail calls in mutual recursion work', () => {
   return expectFinishedResult(
@@ -111,8 +111,8 @@ test('Tail calls in mutual recursion work', () => {
     f(5000, 5000);
   `,
     optionEC,
-  ).toEqual(10000)
-})
+  ).toEqual(10000);
+});
 
 test('Tail calls in mutual recursion with arrow functions work', () => {
   return expectFinishedResult(
@@ -122,8 +122,8 @@ test('Tail calls in mutual recursion with arrow functions work', () => {
     f(5000, 5000);
   `,
     optionEC,
-  ).toEqual(10000)
-})
+  ).toEqual(10000);
+});
 
 test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
   return expectFinishedResult(
@@ -138,8 +138,8 @@ test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
     f(5000, 5000, 2);
   `,
     optionEC,
-  ).toEqual(15000)
-})
+  ).toEqual(15000);
+});
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {
@@ -155,8 +155,8 @@ test('standalone block statements', () => {
     test();
   `,
     optionEC,
-  ).toEqual(true)
-})
+  ).toEqual(true);
+});
 
 // This is bad practice. Don't do this!
 test('const uses block scoping instead of function scoping', () => {
@@ -174,8 +174,8 @@ test('const uses block scoping instead of function scoping', () => {
     test();
   `,
     optionEC,
-  ).toEqual(true)
-})
+  ).toEqual(true);
+});
 
 // This is bad practice. Don't do this!
 test('let uses block scoping instead of function scoping', () => {
@@ -193,8 +193,8 @@ test('let uses block scoping instead of function scoping', () => {
     test();
   `,
     optionEC3,
-  ).toEqual(true)
-})
+  ).toEqual(true);
+});
 
 test('for loops use block scoping instead of function scoping', () => {
   return expectFinishedResult(
@@ -208,8 +208,8 @@ test('for loops use block scoping instead of function scoping', () => {
     test();
   `,
     optionEC3,
-  ).toEqual(true)
-})
+  ).toEqual(true);
+});
 
 test('while loops use block scoping instead of function scoping', () => {
   return expectFinishedResult(
@@ -225,8 +225,8 @@ test('while loops use block scoping instead of function scoping', () => {
     test();
   `,
     optionEC4,
-  ).toEqual(true)
-})
+  ).toEqual(true);
+});
 
 test('continue in while loops are working as intended', () => {
   return expectFinishedResult(
@@ -248,8 +248,8 @@ test('continue in while loops are working as intended', () => {
     test();
   `,
     optionEC4,
-  ).toEqual(true)
-})
+  ).toEqual(true);
+});
 
 // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
 // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
@@ -266,8 +266,8 @@ test('for loop `let` variables are copied into the block scope', () => {
     test();
     `,
     optionEC4,
-  ).toEqual(1)
-})
+  ).toEqual(1);
+});
 
 test('streams and its pre-defined/pre-built functions are working as intended', () => {
   return expectFinishedResult(
@@ -286,8 +286,8 @@ test('streams and its pre-defined/pre-built functions are working as intended', 
     list_ref(eval_stream(make_alternating_stream(enum_stream(1, 9)), 9), 8);
     `,
     optionEC4,
-  ).toEqual(9)
-})
+  ).toEqual(9);
+});
 
 test('streams can be created and functions with no return statements are still evaluated properly', () => {
   return expectFinishedResult(
@@ -298,8 +298,8 @@ test('streams can be created and functions with no return statements are still e
     stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;
     `,
     optionEC4,
-  ).toEqual(false)
-})
+  ).toEqual(false);
+});
 
 test('Conditional statements are value producing always', () => {
   return expectFinishedResult(
@@ -325,8 +325,8 @@ test('Conditional statements are value producing always', () => {
     fact(5);
     `,
     optionEC3,
-  ).toEqual(120)
-})
+  ).toEqual(120);
+});
 
 test('Nullary functions properly restore environment 1', () => {
   return expectFinishedResult(
@@ -341,8 +341,8 @@ test('Nullary functions properly restore environment 1', () => {
     h(100);
     `,
     optionEC3,
-  ).toEqual(0)
-})
+  ).toEqual(0);
+});
 
 test('Nullary functions properly restore environment 2', () => {
   return expectFinishedResult(
@@ -355,8 +355,8 @@ test('Nullary functions properly restore environment 2', () => {
     a;
     `,
     optionEC3,
-  ).toEqual(1)
-})
+  ).toEqual(1);
+});
 
 test('Array literals work as expected', async ({ expect }) => {
   const {
@@ -367,15 +367,15 @@ test('Array literals work as expected', async ({ expect }) => {
     c;
     `,
     optionEC3,
-  )
+  );
   expect(value).toMatchInlineSnapshot(`
     Array [
       1,
       2,
       3,
     ]
-  `)
-})
+  `);
+});
 
 test('Array literals are unpacked in the correct order', () => {
   return expectFinishedResult(
@@ -385,8 +385,8 @@ test('Array literals are unpacked in the correct order', () => {
     d;
     `,
     optionEC3,
-  ).toEqual(123)
-})
+  ).toEqual(123);
+});
 
 test('Breaks, continues and returns are detected properly inside loops', () => {
   return expectFinishedResult(
@@ -414,8 +414,8 @@ test('Breaks, continues and returns are detected properly inside loops', () => {
     f();
     `,
     optionEC3,
-  ).toEqual(3)
-})
+  ).toEqual(3);
+});
 
 test('Environment reset is inserted when only instructions are in control stack', () => {
   return expectFinishedResult(
@@ -423,8 +423,8 @@ test('Environment reset is inserted when only instructions are in control stack'
     const a = (v => v)(0);
     `,
     optionEC3,
-  ).toEqual(undefined)
-})
+  ).toEqual(undefined);
+});
 
 test('breaks, continues are properly detected in child blocks 1', () => {
   return expectFinishedResult(
@@ -448,8 +448,8 @@ test('breaks, continues are properly detected in child blocks 1', () => {
     i;
     `,
     optionEC3,
-  ).toEqual(2)
-})
+  ).toEqual(2);
+});
 
 test('breaks, continues are properly detected in child blocks 2', () => {
   return expectFinishedResult(
@@ -475,5 +475,5 @@ test('breaks, continues are properly detected in child blocks 2', () => {
     a;
     `,
     optionEC3,
-  ).toEqual(2)
-})
+  ).toEqual(2);
+});

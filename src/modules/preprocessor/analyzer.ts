@@ -1,27 +1,27 @@
-import type es from 'estree'
-import { partition } from 'lodash'
+import type es from 'estree';
+import { partition } from 'lodash';
 
-import type { Context } from '../../types'
-import assert from '../../utils/assert'
+import type { Context } from '../../types';
+import assert from '../../utils/assert';
 import {
   getIdsFromDeclaration,
   getImportedName,
   getModuleDeclarationSource,
-} from '../../utils/ast/helpers'
-import { isModuleDeclaration, isNamespaceSpecifier } from '../../utils/ast/typeGuards'
-import Dict, { ArrayMap } from '../../utils/dict'
+} from '../../utils/ast/helpers';
+import { isModuleDeclaration, isNamespaceSpecifier } from '../../utils/ast/typeGuards';
+import Dict, { ArrayMap } from '../../utils/dict';
 import {
   DuplicateImportNameError,
   UndefinedDefaultImportError,
   UndefinedImportError,
   UndefinedNamespaceImportError,
-} from '../errors'
-import { isSourceModule } from '../utils'
+} from '../errors';
+import { isSourceModule } from '../utils';
 
 export const defaultAnalysisOptions: ImportAnalysisOptions = {
   allowUndefinedImports: false,
   throwOnDuplicateNames: true,
-}
+};
 
 /**
  * Options to configure import analysis
@@ -31,14 +31,14 @@ export type ImportAnalysisOptions = {
    * Set to true to allow trying to import symbols that aren't exported by
    * the module being imported
    */
-  allowUndefinedImports: boolean
+  allowUndefinedImports: boolean;
 
   /**
    * Set to true to throw errors when different imported symbols are given
    * the same declared name
    */
-  throwOnDuplicateNames: boolean
-}
+  throwOnDuplicateNames: boolean;
+};
 
 /**
  * Import and Export analyzer:
@@ -55,15 +55,15 @@ export default function analyzeImportsAndExports(
   const declaredNames = new Dict<
     string,
     ArrayMap<string, es.ImportDeclaration['specifiers'][number]>
-  >()
+  >();
 
   const moduleDocs: Record<string, Set<string>> = Object.fromEntries(
     Object.entries(loadedModules).map(([name, obj]) => [name, new Set(Object.keys(obj))]),
-  )
+  );
 
   for (const sourceModule of [...topoOrder, entrypointFilePath]) {
-    const program = programs[sourceModule]
-    moduleDocs[sourceModule] = new Set()
+    const program = programs[sourceModule];
+    moduleDocs[sourceModule] = new Set();
 
     for (const node of program.body) {
       if (node.type === 'ExportDefaultDeclaration') {
@@ -71,53 +71,53 @@ export default function analyzeImportsAndExports(
           assert(
             !moduleDocs[sourceModule].has('default'),
             "Multiple default exports should've been caught by the parser",
-          )
-          moduleDocs[sourceModule].add('default')
+          );
+          moduleDocs[sourceModule].add('default');
         }
-        continue
+        continue;
       }
 
       if (node.type === 'ExportNamedDeclaration') {
         if (node.declaration) {
           if (!options.allowUndefinedImports) {
-            const ids = getIdsFromDeclaration(node.declaration)
+            const ids = getIdsFromDeclaration(node.declaration);
             ids.forEach(id => {
-              moduleDocs[sourceModule].add(id.name)
-            })
+              moduleDocs[sourceModule].add(id.name);
+            });
           }
-          continue
+          continue;
         }
 
         for (const spec of node.specifiers) {
-          moduleDocs[sourceModule].add(spec.exported.name)
+          moduleDocs[sourceModule].add(spec.exported.name);
         }
 
-        if (!node.source) continue
+        if (!node.source) continue;
       } else if (!isModuleDeclaration(node)) {
-        continue
+        continue;
       }
 
-      const dstModule = getModuleDeclarationSource(node)
-      const dstModuleDocs = moduleDocs[dstModule]
+      const dstModule = getModuleDeclarationSource(node);
+      const dstModuleDocs = moduleDocs[dstModule];
 
       if (node.type === 'ExportAllDeclaration') {
         if (!options.allowUndefinedImports) {
-          if (dstModuleDocs.size === 0) throw new UndefinedNamespaceImportError(dstModule, node)
+          if (dstModuleDocs.size === 0) throw new UndefinedNamespaceImportError(dstModule, node);
 
           if (node.exported) {
-            moduleDocs[sourceModule].add(node.exported.name)
+            moduleDocs[sourceModule].add(node.exported.name);
           } else {
             for (const each of dstModuleDocs) {
               if (each === 'default') {
                 // ExportAllDeclarations do not implicitly reexport default exports
-                continue
+                continue;
               }
 
-              moduleDocs[sourceModule].add(each)
+              moduleDocs[sourceModule].add(each);
             }
           }
         }
-        continue
+        continue;
       }
 
       for (const spec of node.specifiers) {
@@ -126,28 +126,28 @@ export default function analyzeImportsAndExports(
           spec.type !== 'ExportSpecifier' &&
           isSourceModule(dstModule)
         ) {
-          const declaredName = spec.local.name
-          declaredNames.setdefault(declaredName, new ArrayMap()).add(dstModule, spec)
+          const declaredName = spec.local.name;
+          declaredNames.setdefault(declaredName, new ArrayMap()).add(dstModule, spec);
         }
 
-        if (options.allowUndefinedImports) continue
+        if (options.allowUndefinedImports) continue;
 
         if (spec.type === 'ImportNamespaceSpecifier') {
-          if (dstModuleDocs.size === 0) throw new UndefinedNamespaceImportError(dstModule, spec)
-          continue
+          if (dstModuleDocs.size === 0) throw new UndefinedNamespaceImportError(dstModule, spec);
+          continue;
         }
 
-        const importedName = getImportedName(spec)
+        const importedName = getImportedName(spec);
 
         if (!dstModuleDocs.has(importedName)) {
-          if (importedName === 'default') throw new UndefinedDefaultImportError(dstModule, spec)
-          throw new UndefinedImportError(importedName, dstModule, spec)
+          if (importedName === 'default') throw new UndefinedDefaultImportError(dstModule, spec);
+          throw new UndefinedImportError(importedName, dstModule, spec);
         }
       }
     }
   }
 
-  if (!options.throwOnDuplicateNames) return
+  if (!options.throwOnDuplicateNames) return;
 
   // Because of the way the preprocessor works, different imports with the same declared name
   // will cause errors
@@ -160,19 +160,19 @@ export default function analyzeImportsAndExports(
     if (moduleToSpecifierMap.size > 1) {
       // This means that two imports from different modules have the same
       // declared name
-      const nodes = moduleToSpecifierMap.flatMap((_, v) => v)
-      throw new DuplicateImportNameError(localName, nodes)
+      const nodes = moduleToSpecifierMap.flatMap((_, v) => v);
+      throw new DuplicateImportNameError(localName, nodes);
     }
 
-    const [[, specifiers]] = moduleToSpecifierMap
+    const [[, specifiers]] = moduleToSpecifierMap;
     const [namespaceSpecifiers, regularSpecifiers] = partition<
       es.ImportDeclaration['specifiers'][number],
       es.ImportNamespaceSpecifier
-    >(specifiers, isNamespaceSpecifier)
+    >(specifiers, isNamespaceSpecifier);
 
     // For the given local name, it can only represent one imported name from
     // the module. Collect specifiers referring to the same export.
-    const importedNames = new Set(regularSpecifiers.map(getImportedName))
+    const importedNames = new Set(regularSpecifiers.map(getImportedName));
 
     if (
       (namespaceSpecifiers.length > 0 && regularSpecifiers.length > 0) ||
@@ -180,8 +180,8 @@ export default function analyzeImportsAndExports(
     ) {
       // This means that there is more than one unique export being given the same
       // local name
-      const specs = [...regularSpecifiers, ...namespaceSpecifiers]
-      throw new DuplicateImportNameError(localName, specs)
+      const specs = [...regularSpecifiers, ...namespaceSpecifiers];
+      throw new DuplicateImportNameError(localName, specs);
     }
   }
 }

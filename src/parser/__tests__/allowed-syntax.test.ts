@@ -1,13 +1,13 @@
-import { describe, expect, test, vi } from 'vitest'
-import { parseError } from '../..'
-import { Chapter, Variant } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult, testSuccess } from '../../utils/testing'
-import { assertFinishedResultValue } from '../../utils/testing/misc'
-import { mockContext } from '../../utils/testing/mocks'
-import { parse } from '../parser'
+import { describe, expect, test, vi } from 'vitest';
+import { parseError } from '../..';
+import { Chapter, Variant } from '../../langs';
+import { stripIndent } from '../../utils/formatters';
+import { expectFinishedResult, testSuccess } from '../../utils/testing';
+import { assertFinishedResultValue } from '../../utils/testing/misc';
+import { mockContext } from '../../utils/testing/mocks';
+import { parse } from '../parser';
 
-vi.mock(import('../../modules/loader/loaders'))
+vi.mock(import('../../modules/loader/loaders'));
 
 describe.each([
   [Chapter.SOURCE_1, ''],
@@ -332,37 +332,37 @@ describe.each([
 ] as [Chapter, string, boolean | undefined][])(
   'Syntaxes are allowed in the chapter they are introduced %#',
   (chapter: Chapter, snippet: string, skipSuccessTests: boolean = false) => {
-    snippet = stripIndent(snippet)
+    snippet = stripIndent(snippet);
 
     if (!skipSuccessTests) {
       test('Test regular parser', () => {
-        const context = mockContext(chapter)
-        const result = parse(snippet, context)
-        expect(result).not.toBeNull()
-        expect(result).toMatchSnapshot()
-      })
+        const context = mockContext(chapter);
+        const result = parse(snippet, context);
+        expect(result).not.toBeNull();
+        expect(result).toMatchSnapshot();
+      });
 
       test('Test stdlib parser', () => {
-        const parseSnippet = `parse(${JSON.stringify(snippet)});`
+        const parseSnippet = `parse(${JSON.stringify(snippet)});`;
         return expectFinishedResult(
           parseSnippet,
           Math.max(Chapter.SOURCE_4, chapter),
-        ).toMatchSnapshot()
-      })
+        ).toMatchSnapshot();
+      });
     }
 
     if (chapter > 1) {
       test('Test 1 chapter below', () => {
-        const context = mockContext(chapter - 1)
-        const result = parse(snippet, context)
-        expect(result).toBeNull()
-        expect(parseError(context.errors)).toMatchSnapshot()
-      })
+        const context = mockContext(chapter - 1);
+        const result = parse(snippet, context);
+        expect(result).toBeNull();
+        expect(parseError(context.errors)).toMatchSnapshot();
+      });
     }
   },
-)
+);
 
 test('typeof operator is allowed in typed variant', async () => {
-  const { result } = await testSuccess(`typeof "0";`, { variant: Variant.TYPED })
-  assertFinishedResultValue(result, 'string')
-})
+  const { result } = await testSuccess(`typeof "0";`, { variant: Variant.TYPED });
+  assertFinishedResultValue(result, 'string');
+});

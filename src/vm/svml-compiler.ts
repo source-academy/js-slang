@@ -1,25 +1,25 @@
-import es, { type BinaryExpression, type UnaryExpression } from 'estree'
+import es, { type BinaryExpression, type UnaryExpression } from 'estree';
 
-import { UNKNOWN_LOCATION } from '../constants'
-import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { parse } from '../parser/parser'
+import { UNKNOWN_LOCATION } from '../constants';
+import { ConstAssignment, UndefinedVariable } from '../errors/errors';
+import { parse } from '../parser/parser';
 import {
   CONSTANT_PRIMITIVES,
   generatePrimitiveFunctionCode,
   INTERNAL_FUNCTIONS,
   PRIMITIVE_FUNCTION_NAMES,
   vmPrelude,
-} from '../stdlib/vm.prelude'
-import type { Context, ContiguousArrayElements, Node, NodeTypeToNode } from '../types'
-import * as create from '../utils/ast/astCreator'
-import { getSourceVariableDeclaration } from '../utils/ast/helpers'
-import { recursive, simple } from '../utils/ast/walkers'
-import OpCodes from './opcodes'
+} from '../stdlib/vm.prelude';
+import type { Context, ContiguousArrayElements, Node, NodeTypeToNode } from '../types';
+import * as create from '../utils/ast/astCreator';
+import { getSourceVariableDeclaration } from '../utils/ast/helpers';
+import { recursive, simple } from '../utils/ast/walkers';
+import OpCodes from './opcodes';
 
 const VALID_UNARY_OPERATORS: { [op in UnaryExpression['operator']]?: OpCodes } = {
   '!': OpCodes.NOTG,
   '-': OpCodes.NEGG,
-}
+};
 
 const VALID_BINARY_OPERATORS: { [op in BinaryExpression['operator']]?: OpCodes } = {
   '+': OpCodes.ADDG,
@@ -33,65 +33,65 @@ const VALID_BINARY_OPERATORS: { [op in BinaryExpression['operator']]?: OpCodes }
   '>=': OpCodes.GEG,
   '===': OpCodes.EQG,
   '!==': OpCodes.NEQG,
-}
+};
 
-export type Offset = number // instructions to skip
+export type Offset = number; // instructions to skip
 export type Address = [
   number, // function index
   number?, // instruction index within function; optional
-]
-export type Instruction = [OpCodes, Argument?, Argument?]
-export type Argument = number | boolean | string | Offset | Address
+];
+export type Instruction = [OpCodes, Argument?, Argument?];
+export type Argument = number | boolean | string | Offset | Address;
 export type SVMFunction = [
   number, // stack size
   number, // environment size
   number, // number of arguments
   Instruction[], // code
-]
+];
 export type Program = [
   number, // index of entry point function
   SVMFunction[],
-]
+];
 
 // Array of function headers in the compiled program
-let SVMFunctions: SVMFunction[] = []
+let SVMFunctions: SVMFunction[] = [];
 function updateFunction(index: number, stackSize: number, ins: Instruction[]) {
-  const f = SVMFunctions[index]
-  f[0] = stackSize
-  f[3] = ins
+  const f = SVMFunctions[index];
+  f[0] = stackSize;
+  f[3] = ins;
 }
 
 // Individual function's machine code
-let functionCode: Instruction[] = []
+let functionCode: Instruction[] = [];
 // three insert functions (nullary, unary, binary)
 function addNullaryInstruction(opCode: OpCodes) {
-  const ins: Instruction = [opCode]
-  functionCode.push(ins)
+  const ins: Instruction = [opCode];
+  functionCode.push(ins);
 }
 
 function addUnaryInstruction(opCode: OpCodes, arg1: Argument) {
-  const ins: Instruction = [opCode, arg1]
-  functionCode.push(ins)
+  const ins: Instruction = [opCode, arg1];
+  functionCode.push(ins);
 }
 
 function addBinaryInstruction(opCode: OpCodes, arg1: Argument, arg2: Argument) {
-  const ins: Instruction = [opCode, arg1, arg2]
-  functionCode.push(ins)
+  const ins: Instruction = [opCode, arg1, arg2];
+  functionCode.push(ins);
 }
 
-type CompileTask = [es.BlockStatement | es.Program, Address, Map<string, EnvEntry>[]]
+type CompileTask = [es.BlockStatement | es.Program, Address, Map<string, EnvEntry>[]];
 // toCompile stack keeps track of remaining compiler work:
 // these are function bodies that still need to be compiled
-let toCompile: CompileTask[] = []
+let toCompile: CompileTask[] = [];
 function popToCompile(): CompileTask {
-  const next = toCompile.pop()
+  const next = toCompile.pop();
   if (!next) {
-    throw new Error('Unable to compile')
+    throw new Error('Unable to compile');
   }
-  return next
+  return next;
 }
 function pushToCompile(task: CompileTask) {
-  toCompile.push(task)
+  toCompile.push(task);
 }
 
 // to compile a function body, we need an index table
@@ -110,57 +110,57 @@ function makeToCompileTask(
   functionAddress: Address,
   indexTable: Map<string, EnvEntry>[],
 ): CompileTask {
-  return [body, functionAddress, indexTable]
+  return [body, functionAddress, indexTable];
 }
 function toCompileTaskBody(toCompileTask: CompileTask): es.BlockStatement | es.Program {
-  return toCompileTask[0]
+  return toCompileTask[0];
 }
 function toCompileTaskFunctionAddress(toCompileTask: CompileTask): Address {
-  return toCompileTask[1]
+  return toCompileTask[1];
 }
 function toCompileTaskIndexTable(toCompileTask: CompileTask): Map<string, EnvEntry>[] {
-  return toCompileTask[2]
+  return toCompileTask[2];
 }
 
 // indexTable keeps track of environment addresses
 // assigned to names
 function makeEmptyIndexTable(): Map<string, EnvEntry>[] {
-  return []
+  return [];
 }
 function makeIndexTableWithPrimitivesAndInternals(
   vmInternalFunctions?: string[],
 ): Map<string, EnvEntry>[] {
-  const names = new Map<string, EnvEntry>()
+  const names = new Map<string, EnvEntry>();
   for (let i = 0; i < PRIMITIVE_FUNCTION_NAMES.length; i++) {
-    const name = PRIMITIVE_FUNCTION_NAMES[i]
-    names.set(name, { index: i, isVar: false, type: 'primitive' })
+    const name = PRIMITIVE_FUNCTION_NAMES[i];
+    names.set(name, { index: i, isVar: false, type: 'primitive' });
   }
   if (vmInternalFunctions) {
     for (let i = 0; i < vmInternalFunctions.length; i++) {
-      const name = vmInternalFunctions[i]
-      names.set(name, { index: i, isVar: false, type: 'internal' })
+      const name = vmInternalFunctions[i];
+      names.set(name, { index: i, isVar: false, type: 'internal' });
     }
   }
-  return extendIndexTable(makeEmptyIndexTable(), names)
+  return extendIndexTable(makeEmptyIndexTable(), names);
 }
 function extendIndexTable(indexTable: Map<string, EnvEntry>[], names: Map<string, EnvEntry>) {
-  return indexTable.concat([names])
+  return indexTable.concat([names]);
 }
 function indexOf(indexTable: Map<string, EnvEntry>[], node: es.Identifier) {
-  const name = node.name
+  const name = node.name;
   for (let i = indexTable.length - 1; i >= 0; i--) {
     if (indexTable[i].has(name)) {
-      const envLevel = indexTable.length - 1 - i
-      const { index, isVar, type } = indexTable[i].get(name)!
-      return { envLevel, index, isVar, type }
+      const envLevel = indexTable.length - 1 - i;
+      const { index, isVar, type } = indexTable[i].get(name)!;
+      return { envLevel, index, isVar, type };
     }
   }
-  throw new UndefinedVariable(name, node)
+  throw new UndefinedVariable(name, node);
 }
 
 // a small complication: the toplevel function
 // needs to return the value of the last statement
-let toplevel = true
+let toplevel = true;
 
 const toplevelReturnNodes = new Set([
   'Literal',
@@ -175,27 +175,27 @@ const toplevelReturnNodes = new Set([
   'ArrowFunctionExpression',
   'IfStatement',
   'VariableDeclaration',
-])
+]);
 
 function continueToCompile() {
   while (toCompile.length !== 0) {
-    const nextToCompile = popToCompile()
-    const functionAddress = toCompileTaskFunctionAddress(nextToCompile)
-    const indexTable = toCompileTaskIndexTable(nextToCompile)
-    const body = toCompileTaskBody(nextToCompile) as TaggedBlockStatement
-    body.isFunctionBlock = true
-    const { maxStackSize } = compile(body, indexTable, true)
+    const nextToCompile = popToCompile();
+    const functionAddress = toCompileTaskFunctionAddress(nextToCompile);
+    const indexTable = toCompileTaskIndexTable(nextToCompile);
+    const body = toCompileTaskBody(nextToCompile) as TaggedBlockStatement;
+    body.isFunctionBlock = true;
+    const { maxStackSize } = compile(body, indexTable, true);
 
-    const functionIndex = functionAddress[0]
-    updateFunction(functionIndex, maxStackSize, functionCode)
-    functionCode = []
-    toplevel = false
+    const functionIndex = functionAddress[0];
+    updateFunction(functionIndex, maxStackSize, functionCode);
+    functionCode = [];
+    toplevel = false;
   }
 }
 interface EnvEntry {
-  index: number
-  isVar: boolean
-  type?: 'primitive' | 'internal' // for functions
+  index: number;
+  isVar: boolean;
+  type?: 'primitive' | 'internal'; // for functions
 }
 
 // extracts all name declarations within a function or block,
@@ -210,70 +210,70 @@ function extractAndRenameNames(
   rename: boolean = true,
 ) {
   // get all declared names of current scope and keep track of names to rename
-  const namesToRename = new Map<string, string>()
+  const namesToRename = new Map<string, string>();
   for (const stmt of baseNode.body) {
     if (stmt.type === 'VariableDeclaration') {
       let {
         id: { name },
-      } = getSourceVariableDeclaration(stmt)
+      } = getSourceVariableDeclaration(stmt);
 
       if (rename) {
-        const loc = (stmt.loc ?? UNKNOWN_LOCATION).start
-        const oldName = name
+        const loc = (stmt.loc ?? UNKNOWN_LOCATION).start;
+        const oldName = name;
         do {
-          name = `${name}-${loc.line}-${loc.column}`
-        } while (names.has(name))
-        namesToRename.set(oldName, name)
+          name = `${name}-${loc.line}-${loc.column}`;
+        } while (names.has(name));
+        namesToRename.set(oldName, name);
       }
-      const isVar = stmt.kind === 'let'
-      const index = names.size
-      names.set(name, { index, isVar })
+      const isVar = stmt.kind === 'let';
+      const index = names.size;
+      names.set(name, { index, isVar });
     } else if (stmt.type === 'FunctionDeclaration') {
-      const node = stmt
+      const node = stmt;
       if (node.id === null) {
         throw new Error(
           'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
-        )
+        );
       }
-      let name = node.id.name
+      let name = node.id.name;
       if (rename) {
-        const loc = (node.loc ?? UNKNOWN_LOCATION).start
-        const oldName = name
+        const loc = (node.loc ?? UNKNOWN_LOCATION).start;
+        const oldName = name;
         do {
-          name = `${name}-${loc.line}-${loc.column}`
-        } while (names.has(name))
-        namesToRename.set(oldName, name)
+          name = `${name}-${loc.line}-${loc.column}`;
+        } while (names.has(name));
+        namesToRename.set(oldName, name);
       }
-      const isVar = false
-      const index = names.size
-      names.set(name, { index, isVar })
+      const isVar = false;
+      const index = names.size;
+      names.set(name, { index, isVar });
     }
   }
 
   // rename all references within blocks if nested block does not redeclare name
-  renameVariables(baseNode, namesToRename)
+  renameVariables(baseNode, namesToRename);
 
   // recurse for blocks. Need to manually add all cases to recurse
   for (const stmt of baseNode.body) {
     if (stmt.type === 'BlockStatement') {
-      extractAndRenameNames(stmt, names, true)
+      extractAndRenameNames(stmt, names, true);
     }
     if (stmt.type === 'IfStatement') {
-      let nextAlt = stmt as es.IfStatement | es.BlockStatement
+      let nextAlt = stmt as es.IfStatement | es.BlockStatement;
       while (nextAlt.type === 'IfStatement') {
         // if else if...
-        const { consequent, alternate } = nextAlt
-        extractAndRenameNames(consequent as es.BlockStatement, names, true)
+        const { consequent, alternate } = nextAlt;
+        extractAndRenameNames(consequent as es.BlockStatement, names, true);
         // Source spec must have alternate
-        nextAlt = alternate as es.IfStatement | es.BlockStatement
+        nextAlt = alternate as es.IfStatement | es.BlockStatement;
       }
-      extractAndRenameNames(nextAlt, names, true)
+      extractAndRenameNames(nextAlt, names, true);
     }
     if (stmt.type === 'WhileStatement') {
-      extractAndRenameNames(stmt.body as es.BlockStatement, names, true)
+      extractAndRenameNames(stmt.body as es.BlockStatement, names, true);
     }
   }
-  return names
+  return names;
 }
 
 // rename variables if nested scope does not redeclare names
@@ -282,8 +282,8 @@ function renameVariables(
   baseNode: es.BlockStatement | es.Program,
   namesToRename: Map<string, string>,
 ) {
-  if (namesToRename.size === 0) return
-  let baseScope = true
+  if (namesToRename.size === 0) return;
+  let baseScope = true;
 
   function recurseBlock(
     node: es.BlockStatement,
@@ -291,132 +291,132 @@ function renameVariables(
     c: (node: Node, state: Set<string>) => void,
   ) {
     // get names in current scope
-    const locals = getLocalsInScope(node)
+    const locals = getLocalsInScope(node);
     // add names to state
-    const oldActive = new Set(inactive)
+    const oldActive = new Set(inactive);
     for (const name of locals) {
-      inactive.add(name)
+      inactive.add(name);
     }
     // recurse
     for (const stmt of node.body) {
-      c(stmt, inactive)
+      c(stmt, inactive);
     }
     // reset state to normal
     for (const name of locals) {
       if (oldActive.has(name)) {
-        continue
+        continue;
       }
-      inactive.delete(name) // delete if not in old scope
+      inactive.delete(name); // delete if not in old scope
     }
   }
 
   recursive(baseNode, new Set<string>(), {
     VariablePattern(node: es.Identifier, inactive, _c) {
       // for declarations
-      const name = node.name
+      const name = node.name;
       if (inactive.has(name)) {
-        return
+        return;
       }
       if (namesToRename.has(name)) {
-        node.name = namesToRename.get(name)!
+        node.name = namesToRename.get(name)!;
       }
     },
     Identifier(node: es.Identifier, inactive, _c) {
       // for lone references
-      const name = node.name
+      const name = node.name;
       if (inactive.has(name)) {
-        return
+        return;
       }
       if (namesToRename.has(name)) {
-        node.name = namesToRename.get(name)!
+        node.name = namesToRename.get(name)!;
       }
     },
     BlockStatement(node: es.BlockStatement, inactive, c) {
       if (baseScope) {
-        baseScope = false
+        baseScope = false;
         for (const stmt of node.body) {
-          c(stmt, inactive)
+          c(stmt, inactive);
         }
       } else {
-        recurseBlock(node, inactive, c)
+        recurseBlock(node, inactive, c);
       }
     },
     IfStatement(node: es.IfStatement, inactive, c) {
-      c(node.test, inactive)
-      let nextAlt = node as es.IfStatement | es.BlockStatement
+      c(node.test, inactive);
+      let nextAlt = node as es.IfStatement | es.BlockStatement;
       while (nextAlt.type === 'IfStatement') {
-        const { consequent, alternate } = nextAlt
-        recurseBlock(consequent as es.BlockStatement, inactive, c)
-        c(nextAlt.test, inactive)
-        nextAlt = alternate as es.IfStatement | es.BlockStatement
+        const { consequent, alternate } = nextAlt;
+        recurseBlock(consequent as es.BlockStatement, inactive, c);
+        c(nextAlt.test, inactive);
+        nextAlt = alternate as es.IfStatement | es.BlockStatement;
       }
-      recurseBlock(nextAlt, inactive, c)
+      recurseBlock(nextAlt, inactive, c);
     },
     Function(node: es.Function, inactive, c) {
       if (node.type === 'FunctionDeclaration') {
         if (node.id === null) {
           throw new Error(
             'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
-          )
+          );
         }
-        c(node.id, inactive)
+        c(node.id, inactive);
       }
-      const oldActive = new Set(inactive)
-      const locals = new Set<string>()
+      const oldActive = new Set(inactive);
+      const locals = new Set<string>();
       for (const param of node.params) {
-        const id = param as es.Identifier
-        locals.add(id.name)
+        const id = param as es.Identifier;
+        locals.add(id.name);
       }
       for (const name of locals) {
-        inactive.add(name)
+        inactive.add(name);
       }
       c(
         node.body,
         inactive,
         node.type === 'ArrowFunctionExpression' && node.expression ? 'Expression' : 'Statement',
-      )
+      );
       for (const name of locals) {
         if (oldActive.has(name)) {
-          continue
+          continue;
         }
-        inactive.delete(name) // delete if not in old scope
+        inactive.delete(name); // delete if not in old scope
       }
     },
     WhileStatement(node: es.WhileStatement, inactive, c) {
-      c(node.test, inactive)
-      recurseBlock(node.body as es.BlockStatement, inactive, c)
+      c(node.test, inactive);
+      recurseBlock(node.body as es.BlockStatement, inactive, c);
     },
-  })
+  });
 }
 
 function getLocalsInScope(node: es.BlockStatement | es.Program) {
-  const locals = new Set<string>()
+  const locals = new Set<string>();
   for (const stmt of node.body) {
     if (stmt.type === 'VariableDeclaration') {
       const {
         id: { name },
-      } = getSourceVariableDeclaration(stmt)
-      locals.add(name)
+      } = getSourceVariableDeclaration(stmt);
+      locals.add(name);
     } else if (stmt.type === 'FunctionDeclaration') {
       if (stmt.id === null) {
         throw new Error(
           'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
-        )
+        );
       }
-      const name = stmt.id.name
-      locals.add(name)
+      const name = stmt.id.name;
+      locals.add(name);
     }
   }
-  return locals
+  return locals;
 }
 
 function compileArguments(exprs: Node[], indexTable: Map<string, EnvEntry>[]) {
-  let maxStackSize = 0
+  let maxStackSize = 0;
   for (let i = 0; i < exprs.length; i++) {
-    const { maxStackSize: curExpSize } = compile(exprs[i], indexTable, false)
-    maxStackSize = Math.max(i + curExpSize, maxStackSize)
+    const { maxStackSize: curExpSize } = compile(exprs[i], indexTable, false);
+    maxStackSize = Math.max(i + curExpSize, maxStackSize);
   }
-  return maxStackSize
+  return maxStackSize;
 }
 
 // tuple of loop type, breaks, continues and continueDestinationIndex
@@ -429,13 +429,13 @@ function compileArguments(exprs: Node[], indexTable: Map<string, EnvEntry>[]) {
 // This works because of the way a for loop is transformed to a while loop.
 // If the loop is a for loop, the last statement in the while loop block
 // is always the assignment expression
-let loopTracker: ['for' | 'while', number[], number[], number][] = []
-const LOOP_TYPE = 0
-const BREAK_INDEX = 1
-const CONT_INDEX = 2
-const CONT_DEST_INDEX = 3
+let loopTracker: ['for' | 'while', number[], number[], number][] = [];
+const LOOP_TYPE = 0;
+const BREAK_INDEX = 1;
+const CONT_INDEX = 2;
+const CONT_DEST_INDEX = 3;
 
-type TaggedWhileStatement = es.WhileStatement & { isFor?: boolean }
+type TaggedWhileStatement = es.WhileStatement & { isFor?: boolean };
 
 // tag loop blocks when compiling. Untagged (i.e. undefined) would mean
 // the block is not a loop block.
@@ -445,9 +445,9 @@ type TaggedWhileStatement = es.WhileStatement & { isFor?: boolean }
 // need to detect function blocks due to compilation issues with empty blocks.
 // compiler does not know when to return
 type TaggedBlockStatement = (es.Program | es.BlockStatement) & {
-  isLoopBlock?: boolean
-  isFunctionBlock?: boolean
-}
+  isLoopBlock?: boolean;
+  isFunctionBlock?: boolean;
+};
 
 // used to compile block bodies
 function compileStatements(
@@ -455,34 +455,34 @@ function compileStatements(
   indexTable: Map<string, EnvEntry>[],
   insertFlag: boolean,
 ) {
-  const statements = node.body
-  let maxStackSize = 0
+  const statements = node.body;
+  let maxStackSize = 0;
   for (let i = 0; i < statements.length; i++) {
     if (
       node.isLoopBlock &&
       i === statements.length - 1 &&
       loopTracker[loopTracker.length - 1][LOOP_TYPE] === 'for'
     ) {
-      loopTracker[loopTracker.length - 1][CONT_DEST_INDEX] = functionCode.length
+      loopTracker[loopTracker.length - 1][CONT_DEST_INDEX] = functionCode.length;
     }
     const { maxStackSize: curExprSize } = compile(
       statements[i],
       indexTable,
       i === statements.length - 1 ? insertFlag : false,
-    )
+    );
     if (i !== statements.length - 1 || node.isLoopBlock) {
-      addNullaryInstruction(OpCodes.POPG)
+      addNullaryInstruction(OpCodes.POPG);
     }
-    maxStackSize = Math.max(maxStackSize, curExprSize)
+    maxStackSize = Math.max(maxStackSize, curExprSize);
   }
   if (statements.length === 0 && !node.isLoopBlock) {
-    addNullaryInstruction(OpCodes.LGCU)
+    addNullaryInstruction(OpCodes.LGCU);
     if (insertFlag || node.isFunctionBlock) {
-      addNullaryInstruction(OpCodes.RETG)
+      addNullaryInstruction(OpCodes.RETG);
     }
-    maxStackSize++
+    maxStackSize++;
   }
-  return { maxStackSize, insertFlag: false }
+  return { maxStackSize, insertFlag: false };
 }
 
 type NodeCompiler<T extends Node> = (
@@ -490,186 +490,186 @@ type NodeCompiler<T extends Node> = (
   indexTable: Map<string, EnvEntry>[],
   insertFlag: boolean,
   isTailCallPosition?: boolean,
-) => ReturnType<typeof compileStatements>
+) => ReturnType<typeof compileStatements>;
 
 type Compilers = {
-  [K in Node['type']]?: NodeCompiler<NodeTypeToNode<K>>
-}
+  [K in Node['type']]?: NodeCompiler<NodeTypeToNode<K>>;
+};
 
 // each compiler should return a maxStackSize
 const compilers: Compilers = {
   // array declarations
   ArrayExpression(node, indexTable, insertFlag) {
-    addNullaryInstruction(OpCodes.NEWA)
-    const elements = node.elements as ContiguousArrayElements
-    let maxStackSize = 1
+    addNullaryInstruction(OpCodes.NEWA);
+    const elements = node.elements as ContiguousArrayElements;
+    let maxStackSize = 1;
     for (let i = 0; i < elements.length; i++) {
       // special case when element wasnt specified
       // i.e. [,]. Treat as undefined element
       if (elements[i] === null) {
-        continue
+        continue;
       }
       // keep the array in the stack
-      addNullaryInstruction(OpCodes.DUP)
-      addUnaryInstruction(OpCodes.LGCI, i)
-      const { maxStackSize: m1 } = compile(elements[i], indexTable, false)
-      addNullaryInstruction(OpCodes.STAG)
-      maxStackSize = Math.max(1 + 2 + m1, maxStackSize)
+      addNullaryInstruction(OpCodes.DUP);
+      addUnaryInstruction(OpCodes.LGCI, i);
+      const { maxStackSize: m1 } = compile(elements[i], indexTable, false);
+      addNullaryInstruction(OpCodes.STAG);
+      maxStackSize = Math.max(1 + 2 + m1, maxStackSize);
     }
-    return { maxStackSize, insertFlag }
+    return { maxStackSize, insertFlag };
   },
   ArrowFunctionExpression(node, indexTable, insertFlag) {
     // node.body is either a block statement or a single node to return
     const bodyNode =
       node.body.type === 'BlockStatement'
         ? node.body
-        : create.blockStatement([create.returnStatement(node.body)])
-    const names = new Map<string, EnvEntry>()
+        : create.blockStatement([create.returnStatement(node.body)]);
+    const names = new Map<string, EnvEntry>();
     for (let param of node.params) {
-      param = param as es.Identifier
-      const index = names.size
-      names.set(param.name, { index, isVar: true })
+      param = param as es.Identifier;
+      const index = names.size;
+      names.set(param.name, { index, isVar: true });
     }
-    extractAndRenameNames(bodyNode, names)
-    const extendedIndexTable = extendIndexTable(indexTable, names)
+    extractAndRenameNames(bodyNode, names);
+    const extendedIndexTable = extendIndexTable(indexTable, names);
 
-    const newSVMFunction: SVMFunction = [NaN, names.size, node.params.length, []]
-    const functionIndex = SVMFunctions.length
-    SVMFunctions.push(newSVMFunction)
-    pushToCompile(makeToCompileTask(bodyNode, [functionIndex], extendedIndexTable))
+    const newSVMFunction: SVMFunction = [NaN, names.size, node.params.length, []];
+    const functionIndex = SVMFunctions.length;
+    SVMFunctions.push(newSVMFunction);
+    pushToCompile(makeToCompileTask(bodyNode, [functionIndex], extendedIndexTable));
 
-    addUnaryInstruction(OpCodes.NEWC, [functionIndex])
+    addUnaryInstruction(OpCodes.NEWC, [functionIndex]);
 
-    return { maxStackSize: 1, insertFlag }
+    return { maxStackSize: 1, insertFlag };
   },
   AssignmentExpression(node, indexTable, insertFlag) {
     if (node.left.type === 'Identifier') {
-      const { envLevel, index, isVar } = indexOf(indexTable, node.left)
+      const { envLevel, index, isVar } = indexOf(indexTable, node.left);
       if (!isVar) {
-        throw new ConstAssignment(node.left, node.left.name)
+        throw new ConstAssignment(node.left, node.left.name);
       }
-      const { maxStackSize } = compile(node.right, indexTable, false)
+      const { maxStackSize } = compile(node.right, indexTable, false);
       if (envLevel === 0) {
-        addUnaryInstruction(OpCodes.STLG, index)
+        addUnaryInstruction(OpCodes.STLG, index);
       } else {
-        addBinaryInstruction(OpCodes.STPG, index, envLevel)
+        addBinaryInstruction(OpCodes.STPG, index, envLevel);
       }
-      addNullaryInstruction(OpCodes.LGCU)
-      return { maxStackSize, insertFlag }
+      addNullaryInstruction(OpCodes.LGCU);
+      return { maxStackSize, insertFlag };
     } else if (node.left.type === 'MemberExpression' && node.left.computed === true) {
       // case for array member assignment
-      const { maxStackSize: m1 } = compile(node.left.object, indexTable, false)
-      const { maxStackSize: m2 } = compile(node.left.property, indexTable, false)
-      const { maxStackSize: m3 } = compile(node.right, indexTable, false)
-      addNullaryInstruction(OpCodes.STAG)
-      addNullaryInstruction(OpCodes.LGCU)
-      return { maxStackSize: Math.max(m1, 1 + m2, 2 + m3), insertFlag }
+      const { maxStackSize: m1 } = compile(node.left.object, indexTable, false);
+      const { maxStackSize: m2 } = compile(node.left.property, indexTable, false);
+      const { maxStackSize: m3 } = compile(node.right, indexTable, false);
+      addNullaryInstruction(OpCodes.STAG);
+      addNullaryInstruction(OpCodes.LGCU);
+      return { maxStackSize: Math.max(m1, 1 + m2, 2 + m3), insertFlag };
     }
     // property assignments are not supported
-    throw new Error('Property assignments are not supported')
+    throw new Error('Property assignments are not supported');
   },
   BinaryExpression(node, indexTable, insertFlag) {
-    const opCode = VALID_BINARY_OPERATORS[node.operator]
+    const opCode = VALID_BINARY_OPERATORS[node.operator];
     if (opCode !== undefined) {
-      const { maxStackSize: m1 } = compile(node.left, indexTable, false)
-      const { maxStackSize: m2 } = compile(node.right, indexTable, false)
-      addNullaryInstruction(opCode)
-      return { maxStackSize: Math.max(m1, 1 + m2), insertFlag }
+      const { maxStackSize: m1 } = compile(node.left, indexTable, false);
+      const { maxStackSize: m2 } = compile(node.right, indexTable, false);
+      addNullaryInstruction(opCode);
+      return { maxStackSize: Math.max(m1, 1 + m2), insertFlag };
     }
-    throw new Error(`Unsupported operator for BinaryExpression: ${node.operator}`)
+    throw new Error(`Unsupported operator for BinaryExpression: ${node.operator}`);
   },
   BlockStatement: compileStatements,
   BreakStatement(node, indexTable, insertFlag) {
     // keep track of break instruction
-    addNullaryInstruction(OpCodes.POPENV)
-    loopTracker[loopTracker.length - 1][BREAK_INDEX].push(functionCode.length)
-    addUnaryInstruction(OpCodes.BR, NaN)
-    return { maxStackSize: 0, insertFlag }
+    addNullaryInstruction(OpCodes.POPENV);
+    loopTracker[loopTracker.length - 1][BREAK_INDEX].push(functionCode.length);
+    addUnaryInstruction(OpCodes.BR, NaN);
+    return { maxStackSize: 0, insertFlag };
   },
   // Three types of calls, normal function calls declared by the Source program,
   // primitive function calls that are predefined, and internal calls.
   // We differentiate them with callType.
   CallExpression(node, indexTable, insertFlag, isTailCallPosition = false) {
-    let maxStackOperator = 0
-    let callType: 'normal' | 'primitive' | 'internal' = 'normal'
-    let callValue: any = NaN
+    let maxStackOperator = 0;
+    let callType: 'normal' | 'primitive' | 'internal' = 'normal';
+    let callValue: any = NaN;
     if (node.callee.type === 'Identifier') {
-      const callee = node.callee
-      const { envLevel, index, type } = indexOf(indexTable, callee)
+      const callee = node.callee;
+      const { envLevel, index, type } = indexOf(indexTable, callee);
       if (type === 'primitive' || type === 'internal') {
-        callType = type
-        callValue = index
+        callType = type;
+        callValue = index;
       } else if (envLevel === 0) {
-        addUnaryInstruction(OpCodes.LDLG, index)
+        addUnaryInstruction(OpCodes.LDLG, index);
       } else {
-        addBinaryInstruction(OpCodes.LDPG, index, envLevel)
+        addBinaryInstruction(OpCodes.LDPG, index, envLevel);
       }
     } else {
-      ;({ maxStackSize: maxStackOperator } = compile(node.callee, indexTable, false))
+      ({ maxStackSize: maxStackOperator } = compile(node.callee, indexTable, false));
     }
 
-    let maxStackOperands = compileArguments(node.arguments, indexTable)
+    let maxStackOperands = compileArguments(node.arguments, indexTable);
 
     if (callType === 'primitive') {
       addBinaryInstruction(
         isTailCallPosition ? OpCodes.CALLTP : OpCodes.CALLP,
         callValue,
         node.arguments.length,
-      )
+      );
     } else if (callType === 'internal') {
       addBinaryInstruction(
         isTailCallPosition ? OpCodes.CALLTV : OpCodes.CALLV,
         callValue,
         node.arguments.length,
-      )
+      );
     } else {
       // normal call. only normal function calls have the function on the stack
-      addUnaryInstruction(isTailCallPosition ? OpCodes.CALLT : OpCodes.CALL, node.arguments.length)
-      maxStackOperands++
+      addUnaryInstruction(isTailCallPosition ? OpCodes.CALLT : OpCodes.CALL, node.arguments.length);
+      maxStackOperands++;
     }
     // need at least 1 stack slot for the return value!
-    return { maxStackSize: Math.max(maxStackOperator, maxStackOperands, 1), insertFlag }
+    return { maxStackSize: Math.max(maxStackOperator, maxStackOperands, 1), insertFlag };
   },
   ConditionalExpression(node, indexTable, insertFlag, isTailCallPosition = false) {
-    const { test, consequent, alternate } = node
-    const { maxStackSize: m1 } = compile(test, indexTable, false)
-    addUnaryInstruction(OpCodes.BRF, NaN)
-    const BRFIndex = functionCode.length - 1
-    const { maxStackSize: m2 } = compile(consequent, indexTable, insertFlag, isTailCallPosition)
-    let BRIndex = NaN
+    const { test, consequent, alternate } = node;
+    const { maxStackSize: m1 } = compile(test, indexTable, false);
+    addUnaryInstruction(OpCodes.BRF, NaN);
+    const BRFIndex = functionCode.length - 1;
+    const { maxStackSize: m2 } = compile(consequent, indexTable, insertFlag, isTailCallPosition);
+    let BRIndex = NaN;
     if (!insertFlag) {
-      addUnaryInstruction(OpCodes.BR, NaN)
-      BRIndex = functionCode.length - 1
+      addUnaryInstruction(OpCodes.BR, NaN);
+      BRIndex = functionCode.length - 1;
     }
-    functionCode[BRFIndex][1] = functionCode.length - BRFIndex
-    const { maxStackSize: m3 } = compile(alternate, indexTable, insertFlag, isTailCallPosition)
+    functionCode[BRFIndex][1] = functionCode.length - BRFIndex;
+    const { maxStackSize: m3 } = compile(alternate, indexTable, insertFlag, isTailCallPosition);
     if (!insertFlag) {
-      functionCode[BRIndex][1] = functionCode.length - BRIndex
+      functionCode[BRIndex][1] = functionCode.length - BRIndex;
     }
-    const maxStackSize = Math.max(m1, m2, m3)
-    return { maxStackSize, insertFlag: false }
+    const maxStackSize = Math.max(m1, m2, m3);
+    return { maxStackSize, insertFlag: false };
   },
   ContinueStatement(node, indexTable, insertFlag) {
     // keep track of continue instruction
     // no need to POPENV as continue will go to the end of the while loop
-    loopTracker[loopTracker.length - 1][CONT_INDEX].push(functionCode.length)
-    addUnaryInstruction(OpCodes.BR, NaN)
-    return { maxStackSize: 0, insertFlag }
+    loopTracker[loopTracker.length - 1][CONT_INDEX].push(functionCode.length);
+    addUnaryInstruction(OpCodes.BR, NaN);
+    return { maxStackSize: 0, insertFlag };
   },
   DebuggerStatement() {
-    throw new Error('DebuggerStatements are not supported')
+    throw new Error('DebuggerStatements are not supported');
   },
   ExpressionStatement: ({ expression }, indexTable, insertFlag) =>
     compile(expression, indexTable, insertFlag),
   ForStatement() {
-    throw new Error('ForStatements are not supported')
+    throw new Error('ForStatements are not supported');
   },
   // wrapper, compile as an arrow function expression instead
   FunctionDeclaration(node, indexTable, insertFlag) {
     if (node.id === null) {
       throw new Error(
         'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
-      )
+      );
     }
     return compile(
       create.constantDeclaration(
@@ -678,83 +678,83 @@ const compilers: Compilers = {
       ),
       indexTable,
       insertFlag,
-    )
+    );
   },
   Identifier(node, indexTable, insertFlag) {
-    let envLevel
-    let index
-    let type
+    let envLevel;
+    let index;
+    let type;
     try {
-      ;({ envLevel, index, type } = indexOf(indexTable, node))
+      ({ envLevel, index, type } = indexOf(indexTable, node));
       if (type === 'primitive') {
-        addUnaryInstruction(OpCodes.NEWCP, index)
+        addUnaryInstruction(OpCodes.NEWCP, index);
       } else if (type === 'internal') {
-        addUnaryInstruction(OpCodes.NEWCV, index)
+        addUnaryInstruction(OpCodes.NEWCV, index);
       } else if (envLevel === 0) {
-        addUnaryInstruction(OpCodes.LDLG, index)
+        addUnaryInstruction(OpCodes.LDLG, index);
       } else {
-        addBinaryInstruction(OpCodes.LDPG, index, envLevel)
+        addBinaryInstruction(OpCodes.LDPG, index, envLevel);
       }
     } catch (error) {
       // only possible to have UndefinedVariable error
-      const matches = CONSTANT_PRIMITIVES.filter(f => f[0] === error.name)
+      const matches = CONSTANT_PRIMITIVES.filter(f => f[0] === error.name);
       if (matches.length === 0) {
-        throw error
+        throw error;
       }
       if (typeof matches[0][1] === 'number') {
         // for NaN and Infinity
-        addUnaryInstruction(OpCodes.LGCF32, matches[0][1])
+        addUnaryInstruction(OpCodes.LGCF32, matches[0][1]);
       } else if (matches[0][1] === undefined) {
-        addNullaryInstruction(OpCodes.LGCU)
+        addNullaryInstruction(OpCodes.LGCU);
       } else {
-        throw new Error('Unknown primitive constant')
+        throw new Error('Unknown primitive constant');
       }
     }
-    return { maxStackSize: 1, insertFlag }
+    return { maxStackSize: 1, insertFlag };
   },
   IfStatement({ test, consequent, alternate }, indexTable, insertFlag) {
-    const { maxStackSize: m1 } = compile(test, indexTable, false)
-    addUnaryInstruction(OpCodes.BRF, NaN)
-    const BRFIndex = functionCode.length - 1
-    const { maxStackSize: m2 } = compile(consequent, indexTable, false)
-    addUnaryInstruction(OpCodes.BR, NaN)
-    const BRIndex = functionCode.length - 1
-    functionCode[BRFIndex][1] = functionCode.length - BRFIndex
+    const { maxStackSize: m1 } = compile(test, indexTable, false);
+    addUnaryInstruction(OpCodes.BRF, NaN);
+    const BRFIndex = functionCode.length - 1;
+    const { maxStackSize: m2 } = compile(consequent, indexTable, false);
+    addUnaryInstruction(OpCodes.BR, NaN);
+    const BRIndex = functionCode.length - 1;
+    functionCode[BRFIndex][1] = functionCode.length - BRFIndex;
     // source spec: must have alternate
-    const { maxStackSize: m3 } = compile(alternate!, indexTable, false)
-    functionCode[BRIndex][1] = functionCode.length - BRIndex
-    const maxStackSize = Math.max(m1, m2, m3)
-    return { maxStackSize, insertFlag }
+    const { maxStackSize: m3 } = compile(alternate!, indexTable, false);
+    functionCode[BRIndex][1] = functionCode.length - BRIndex;
+    const maxStackSize = Math.max(m1, m2, m3);
+    return { maxStackSize, insertFlag };
   },
   // string, boolean, number or null
   Literal({ value }, indexTable, insertFlag) {
     if (value === null) {
-      addNullaryInstruction(OpCodes.LGCN)
+      addNullaryInstruction(OpCodes.LGCN);
     } else {
       switch (typeof value) {
         case 'boolean':
           if (value) {
-            addNullaryInstruction(OpCodes.LGCB1)
+            addNullaryInstruction(OpCodes.LGCB1);
           } else {
-            addNullaryInstruction(OpCodes.LGCB0)
+            addNullaryInstruction(OpCodes.LGCB0);
           }
-          break
+          break;
         case 'number': // need to adjust depending on target
           // LGCI takes a signed 32-bit integer operand (hence the range)
           if (Number.isInteger(value) && -2_147_483_648 <= value && value <= 2_147_483_647) {
-            addUnaryInstruction(OpCodes.LGCI, value)
+            addUnaryInstruction(OpCodes.LGCI, value);
           } else {
-            addUnaryInstruction(OpCodes.LGCF64, value)
+            addUnaryInstruction(OpCodes.LGCF64, value);
           }
-          break
+          break;
         case 'string':
-          addUnaryInstruction(OpCodes.LGCS, value)
-          break
+          addUnaryInstruction(OpCodes.LGCS, value);
+          break;
         default:
-          throw new Error(`Unsupported literal: ${value}`)
+          throw new Error(`Unsupported literal: ${value}`);
       }
     }
-    return { maxStackSize: 1, insertFlag }
+    return { maxStackSize: 1, insertFlag };
   },
   // convert logical expressions to conditional expressions
   LogicalExpression(node, indexTable, insertFlag, isTailCallPosition = false) {
@@ -764,124 +764,124 @@ const compilers: Compilers = {
         indexTable,
         false,
         isTailCallPosition,
-      )
-      return { maxStackSize, insertFlag }
+      );
+      return { maxStackSize, insertFlag };
     } else if (node.operator === '||') {
       const { maxStackSize } = compile(
         create.conditionalExpression(node.left, create.literal(true), node.right),
         indexTable,
         false,
         isTailCallPosition,
-      )
-      return { maxStackSize, insertFlag }
+      );
+      return { maxStackSize, insertFlag };
     }
-    throw new Error(`Unsupported operation in LogicalExpression ${node.operator}`)
+    throw new Error(`Unsupported operation in LogicalExpression ${node.operator}`);
   },
   MemberExpression(node, indexTable, insertFlag) {
     if (node.computed) {
-      const { maxStackSize: m1 } = compile(node.object, indexTable, false)
-      const { maxStackSize: m2 } = compile(node.property, indexTable, false)
-      addNullaryInstruction(OpCodes.LDAG)
-      return { maxStackSize: Math.max(m1, 1 + m2), insertFlag }
+      const { maxStackSize: m1 } = compile(node.object, indexTable, false);
+      const { maxStackSize: m2 } = compile(node.property, indexTable, false);
+      addNullaryInstruction(OpCodes.LDAG);
+      return { maxStackSize: Math.max(m1, 1 + m2), insertFlag };
     }
     // properties are not supported
-    throw new Error('Property accesses on MemberExpressions are not supported')
+    throw new Error('Property accesses on MemberExpressions are not supported');
   },
   ObjectExpression() {
-    throw new Error('ObjectExpressions are unsupported')
+    throw new Error('ObjectExpressions are unsupported');
   },
   Program: compileStatements,
   Property() {
-    throw new Error('Properties are not supported')
+    throw new Error('Properties are not supported');
   },
   // handled by insertFlag in compile function
   ReturnStatement(node, indexTable) {
     if (loopTracker.length > 0) {
-      throw new Error('return not allowed in loops')
+      throw new Error('return not allowed in loops');
     }
-    const { maxStackSize } = compile(node.argument!, indexTable, false, true)
-    return { maxStackSize, insertFlag: true }
+    const { maxStackSize } = compile(node.argument!, indexTable, false, true);
+    return { maxStackSize, insertFlag: true };
   },
   UnaryExpression(node, indexTable, insertFlag) {
-    const opCode = VALID_UNARY_OPERATORS[node.operator]
+    const opCode = VALID_UNARY_OPERATORS[node.operator];
     if (opCode !== undefined) {
-      const { maxStackSize } = compile(node.argument, indexTable, false)
-      addNullaryInstruction(opCode)
-      return { maxStackSize, insertFlag }
+      const { maxStackSize } = compile(node.argument, indexTable, false);
+      addNullaryInstruction(opCode);
+      return { maxStackSize, insertFlag };
     }
-    throw new Error(`Unsupported UnaryExpression operator ${node.operator}`)
+    throw new Error(`Unsupported UnaryExpression operator ${node.operator}`);
   },
   VariableDeclaration(node, indexTable, insertFlag) {
     // only supports const / let
     if (node.kind === 'const' || node.kind === 'let') {
       // assumes left side can only be name
       // source spec: only 1 declaration at a time
-      const { id, init } = getSourceVariableDeclaration(node)
+      const { id, init } = getSourceVariableDeclaration(node);
 
-      const { envLevel, index } = indexOf(indexTable, id)
-      const { maxStackSize } = compile(init, indexTable, false)
+      const { envLevel, index } = indexOf(indexTable, id);
+      const { maxStackSize } = compile(init, indexTable, false);
       if (envLevel === 0) {
-        addUnaryInstruction(OpCodes.STLG, index)
+        addUnaryInstruction(OpCodes.STLG, index);
       } else {
         // this should never happen
-        addBinaryInstruction(OpCodes.STPG, index, envLevel)
+        addBinaryInstruction(OpCodes.STPG, index, envLevel);
       }
-      addNullaryInstruction(OpCodes.LGCU)
-      return { maxStackSize, insertFlag }
+      addNullaryInstruction(OpCodes.LGCU);
+      return { maxStackSize, insertFlag };
     }
-    throw new Error('var VariableDeclarations not supported')
+    throw new Error('var VariableDeclarations not supported');
   },
   // Loops need to have their own environment due to closures
   WhileStatement(rawNode, indexTable, insertFlag) {
-    const node = rawNode as TaggedWhileStatement
-    const isFor = node.isFor
-    const condIndex = functionCode.length
-    const { maxStackSize: m1 } = compile(node.test, indexTable, false)
-    addUnaryInstruction(OpCodes.BRF, NaN)
-    const BRFIndex = functionCode.length - 1
-    loopTracker.push([isFor ? 'for' : 'while', [], [], NaN])
+    const node = rawNode as TaggedWhileStatement;
+    const isFor = node.isFor;
+    const condIndex = functionCode.length;
+    const { maxStackSize: m1 } = compile(node.test, indexTable, false);
+    addUnaryInstruction(OpCodes.BRF, NaN);
+    const BRFIndex = functionCode.length - 1;
+    loopTracker.push([isFor ? 'for' : 'while', [], [], NaN]);
 
     // Add environment for loop and run in new environment
-    const locals = extractAndRenameNames(node.body as es.BlockStatement, new Map())
-    addUnaryInstruction(OpCodes.NEWENV, locals.size)
-    const extendedIndexTable = extendIndexTable(indexTable, locals)
-    const body = node.body as TaggedBlockStatement
-    body.isLoopBlock = true
-    const { maxStackSize: m2 } = compile(body, extendedIndexTable, false)
+    const locals = extractAndRenameNames(node.body as es.BlockStatement, new Map());
+    addUnaryInstruction(OpCodes.NEWENV, locals.size);
+    const extendedIndexTable = extendIndexTable(indexTable, locals);
+    const body = node.body as TaggedBlockStatement;
+    body.isLoopBlock = true;
+    const { maxStackSize: m2 } = compile(body, extendedIndexTable, false);
     if (!isFor) {
       // for while loops, the `continue` statement should branch here
-      loopTracker[loopTracker.length - 1][CONT_DEST_INDEX] = functionCode.length
+      loopTracker[loopTracker.length - 1][CONT_DEST_INDEX] = functionCode.length;
     }
-    addNullaryInstruction(OpCodes.POPENV)
-    const endLoopIndex = functionCode.length
-    addUnaryInstruction(OpCodes.BR, condIndex - endLoopIndex)
-    functionCode[BRFIndex][1] = functionCode.length - BRFIndex
+    addNullaryInstruction(OpCodes.POPENV);
+    const endLoopIndex = functionCode.length;
+    addUnaryInstruction(OpCodes.BR, condIndex - endLoopIndex);
+    functionCode[BRFIndex][1] = functionCode.length - BRFIndex;
 
     // update BR instructions within loop
-    const curLoop = loopTracker.pop()!
+    const curLoop = loopTracker.pop()!;
     for (const b of curLoop[BREAK_INDEX]) {
-      functionCode[b][1] = functionCode.length - b
+      functionCode[b][1] = functionCode.length - b;
     }
     for (const c of curLoop[CONT_INDEX]) {
-      functionCode[c][1] = curLoop[CONT_DEST_INDEX] - c
+      functionCode[c][1] = curLoop[CONT_DEST_INDEX] - c;
     }
-    addNullaryInstruction(OpCodes.LGCU)
-    return { maxStackSize: Math.max(m1, m2), insertFlag }
+    addNullaryInstruction(OpCodes.LGCU);
+    return { maxStackSize: Math.max(m1, m2), insertFlag };
   },
-}
+};
 
 const compile: NodeCompiler<Node> = (expr, indexTable, insertFlag, isTailCallPosition = false) => {
-  const compiler = compilers[expr.type] as NodeCompiler<Node>
+  const compiler = compilers[expr.type] as NodeCompiler<Node>;
   if (!compiler) {
-    throw new Error(`${expr.type}s are not supported`)
+    throw new Error(`${expr.type}s are not supported`);
   }
   const { maxStackSize: temp, insertFlag: newInsertFlag } = compiler(
     expr,
     indexTable,
     insertFlag,
     isTailCallPosition,
-  )
-  let maxStackSize = temp
+  );
+  let maxStackSize = temp;
 
   // insertFlag decides whether we need to introduce a RETG instruction. For some functions
   // where return is not specified, there is an implicit "return undefined", which we do here.
@@ -891,10 +891,10 @@ const compile: NodeCompiler<Node> = (expr, indexTable, insertFlag, isTailCallPos
   // TODO: Source programs should return last evaluated statement.
   if (newInsertFlag) {
     if (expr.type === 'ReturnStatement') {
-      addNullaryInstruction(OpCodes.RETG)
+      addNullaryInstruction(OpCodes.RETG);
     } else if (toplevel && toplevelReturnNodes.has(expr.type)) {
       // conditional expressions already handled
-      addNullaryInstruction(OpCodes.RETG)
+      addNullaryInstruction(OpCodes.RETG);
     } else if (
       expr.type === 'Program' ||
       expr.type === 'ExpressionStatement' ||
@@ -903,43 +903,43 @@ const compile: NodeCompiler<Node> = (expr, indexTable, insertFlag, isTailCallPos
     ) {
       // do nothing for wrapper nodes
     } else {
-      maxStackSize += 1
-      addNullaryInstruction(OpCodes.LGCU)
-      addNullaryInstruction(OpCodes.RETG)
+      maxStackSize += 1;
+      addNullaryInstruction(OpCodes.LGCU);
+      addNullaryInstruction(OpCodes.RETG);
     }
   }
 
-  return { maxStackSize, insertFlag: newInsertFlag }
-}
+  return { maxStackSize, insertFlag: newInsertFlag };
+};
 
 export function compileForConcurrent(program: es.Program, context: Context) {
   // assume vmPrelude is always a correct program
-  const prelude = compilePreludeToIns(parse(vmPrelude, context)!)
-  generatePrimitiveFunctionCode(prelude)
-  const vmInternalFunctions = INTERNAL_FUNCTIONS.map(([name]) => name)
+  const prelude = compilePreludeToIns(parse(vmPrelude, context)!);
+  generatePrimitiveFunctionCode(prelude);
+  const vmInternalFunctions = INTERNAL_FUNCTIONS.map(([name]) => name);
 
-  return compileToIns(program, prelude, vmInternalFunctions)
+  return compileToIns(program, prelude, vmInternalFunctions);
 }
 
 export function compilePreludeToIns(program: es.Program): Program {
   // reset variables
-  SVMFunctions = []
-  functionCode = []
-  toCompile = []
-  loopTracker = []
-  toplevel = true
+  SVMFunctions = [];
+  functionCode = [];
+  toCompile = [];
+  loopTracker = [];
+  toplevel = true;
 
-  transformForLoopsToWhileLoops(program)
+  transformForLoopsToWhileLoops(program);
   // don't rename names at the top level, because we need them for linking
-  const locals = extractAndRenameNames(program, new Map<string, EnvEntry>(), false)
-  const topFunction: SVMFunction = [NaN, locals.size, 0, []]
-  const topFunctionIndex = 0 // GE + # primitive func
-  SVMFunctions[topFunctionIndex] = topFunction
+  const locals = extractAndRenameNames(program, new Map<string, EnvEntry>(), false);
+  const topFunction: SVMFunction = [NaN, locals.size, 0, []];
+  const topFunctionIndex = 0; // GE + # primitive func
+  SVMFunctions[topFunctionIndex] = topFunction;
 
-  const extendedTable = extendIndexTable(makeIndexTableWithPrimitivesAndInternals(), locals)
-  pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
-  continueToCompile()
-  return [0, SVMFunctions]
+  const extendedTable = extendIndexTable(makeIndexTableWithPrimitivesAndInternals(), locals);
+  pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable));
+  continueToCompile();
+  return [0, SVMFunctions];
 }
 
 export function compileToIns(
@@ -948,70 +948,70 @@ export function compileToIns(
   vmInternalFunctions?: string[],
 ): Program {
   // reset variables
-  SVMFunctions = []
-  functionCode = []
-  toCompile = []
-  loopTracker = []
-  toplevel = true
+  SVMFunctions = [];
+  functionCode = [];
+  toCompile = [];
+  loopTracker = [];
+  toplevel = true;
 
-  transformForLoopsToWhileLoops(program)
-  insertEmptyElseBlocks(program)
-  const locals = extractAndRenameNames(program, new Map<string, EnvEntry>())
-  const topFunction: SVMFunction = [NaN, locals.size, 0, []]
+  transformForLoopsToWhileLoops(program);
+  insertEmptyElseBlocks(program);
+  const locals = extractAndRenameNames(program, new Map<string, EnvEntry>());
+  const topFunction: SVMFunction = [NaN, locals.size, 0, []];
   if (prelude) {
-    SVMFunctions.push(...prelude[1])
+    SVMFunctions.push(...prelude[1]);
   }
-  const topFunctionIndex = prelude ? PRIMITIVE_FUNCTION_NAMES.length + 1 : 0 // GE + # primitive func
-  SVMFunctions[topFunctionIndex] = topFunction
+  const topFunctionIndex = prelude ? PRIMITIVE_FUNCTION_NAMES.length + 1 : 0; // GE + # primitive func
+  SVMFunctions[topFunctionIndex] = topFunction;
 
   const extendedTable = extendIndexTable(
     makeIndexTableWithPrimitivesAndInternals(vmInternalFunctions),
     locals,
-  )
-  pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
-  continueToCompile()
-  return [0, SVMFunctions]
+  );
+  pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable));
+  continueToCompile();
+  return [0, SVMFunctions];
 }
 
 // transform according to Source 3 spec. Refer to spec for the way of transformation
 function transformForLoopsToWhileLoops(program: es.Program) {
   simple(program, {
     ForStatement(node) {
-      const { test, body, init, update } = node as es.ForStatement
-      let forLoopBody = body
+      const { test, body, init, update } = node as es.ForStatement;
+      let forLoopBody = body;
       // Source spec: init must be present
       if (init!.type === 'VariableDeclaration') {
         const {
           id: { name: loopVarName },
-        } = getSourceVariableDeclaration(init)
+        } = getSourceVariableDeclaration(init);
 
         // loc is used for renaming. It doesn't matter if we use the same location, as the
         // renaming function will notice that they are the same, and rename it further so that
         // there aren't any clashes.
-        const copyOfLoopVarName = 'copy-of-' + loopVarName
+        const copyOfLoopVarName = 'copy-of-' + loopVarName;
         const innerBlock = create.blockStatement([
           create.constantDeclaration(loopVarName, create.identifier(copyOfLoopVarName), init.loc),
           body,
-        ])
+        ]);
         forLoopBody = create.blockStatement([
           create.constantDeclaration(copyOfLoopVarName, create.identifier(loopVarName), init.loc),
           innerBlock,
-        ])
+        ]);
       }
       const assignment1 =
         init && init.type === 'VariableDeclaration'
           ? init
-          : create.expressionStatement(init as es.Expression)
-      const assignment2 = create.expressionStatement(update!)
-      const newLoopBody = create.blockStatement([forLoopBody, assignment2])
-      const newLoop = create.whileStatement(newLoopBody, test!) as TaggedWhileStatement
-      newLoop.isFor = true
-      const newBlockBody = [assignment1, newLoop]
-      node = node as es.BlockStatement
-      node.body = newBlockBody
-      node.type = 'BlockStatement'
+          : create.expressionStatement(init as es.Expression);
+      const assignment2 = create.expressionStatement(update!);
+      const newLoopBody = create.blockStatement([forLoopBody, assignment2]);
+      const newLoop = create.whileStatement(newLoopBody, test!) as TaggedWhileStatement;
+      newLoop.isFor = true;
+      const newBlockBody = [assignment1, newLoop];
+      node = node as es.BlockStatement;
+      node.body = newBlockBody;
+      node.type = 'BlockStatement';
     },
-  })
+  });
 }
 
 function insertEmptyElseBlocks(program: es.Program) {
@@ -1020,7 +1020,7 @@ function insertEmptyElseBlocks(program: es.Program) {
       node.alternate ??= {
         type: 'BlockStatement',
         body: [],
-      }
+      };
     },
-  })
+  });
 }

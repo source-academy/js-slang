@@ -1,14 +1,14 @@
-import type { Comment, DebuggerStatement, SourceLocation } from 'estree'
-import { StepperExpression, StepperPattern, undefinedNode } from '..'
-import { redex } from '../..'
-import type { StepperBaseNode } from '../../interface'
+import type { Comment, DebuggerStatement, SourceLocation } from 'estree';
+import { StepperExpression, StepperPattern, undefinedNode } from '..';
+import { redex } from '../..';
+import type { StepperBaseNode } from '../../interface';
 
 export class StepperDebuggerStatement implements DebuggerStatement, StepperBaseNode {
-  type: 'DebuggerStatement'
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
+  type: 'DebuggerStatement';
+  leadingComments?: Comment[] | undefined;
+  trailingComments?: Comment[] | undefined;
+  loc?: SourceLocation | null | undefined;
+  range?: [number, number] | undefined;
 
   constructor(
     leadingComments?: Comment[] | undefined,
@@ -16,11 +16,11 @@ export class StepperDebuggerStatement implements DebuggerStatement, StepperBaseN
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined,
   ) {
-    this.type = 'DebuggerStatement'
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    this.type = 'DebuggerStatement';
+    this.leadingComments = leadingComments;
+    this.trailingComments = trailingComments;
+    this.loc = loc;
+    this.range = range;
   }
 
   static create(node: DebuggerStatement) {
@@ -29,44 +29,44 @@ export class StepperDebuggerStatement implements DebuggerStatement, StepperBaseN
       node.trailingComments,
       node.loc,
       node.range,
-    )
+    );
   }
 
   isContractible(): boolean {
-    return true
+    return true;
   }
 
   isOneStepPossible(): boolean {
-    return true
+    return true;
   }
 
   contractEmpty() {
-    redex.preRedex = [this]
-    redex.postRedex = []
+    redex.preRedex = [this];
+    redex.postRedex = [];
   }
 
   contract(): typeof undefinedNode {
-    return undefinedNode
+    return undefinedNode;
   }
 
   oneStep(): typeof undefinedNode {
-    this.contractEmpty()
-    return undefinedNode
+    this.contractEmpty();
+    return undefinedNode;
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
-    return this
+    return this;
   }
 
   freeNames(): string[] {
-    return []
+    return [];
   }
 
   allNames(): string[] {
-    return []
+    return [];
   }
 
   rename(before: string, after: string): StepperBaseNode {
-    return this
+    return this;
   }
 }

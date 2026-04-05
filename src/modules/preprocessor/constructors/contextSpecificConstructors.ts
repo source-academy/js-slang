@@ -1,7 +1,7 @@
-import type es from 'estree'
+import type es from 'estree';
 
-import { accessExportFunctionName } from '../../../stdlib/localImport.prelude'
-import * as create from '../../../utils/ast/astCreator'
+import { accessExportFunctionName } from '../../../stdlib/localImport.prelude';
+import * as create from '../../../utils/ast/astCreator';
 
 /**
  * Constructs a call to the `pair` function.
@@ -12,7 +12,7 @@ import * as create from '../../../utils/ast/astCreator'
 export const createPairCallExpression = (
   head: es.Expression | es.SpreadElement,
   tail: es.Expression | es.SpreadElement,
-): es.CallExpression => create.callExpression(create.identifier('pair'), [head, tail])
+): es.CallExpression => create.callExpression(create.identifier('pair'), [head, tail]);
 
 /**
  * Constructs a call to the `list` function.
@@ -21,7 +21,7 @@ export const createPairCallExpression = (
  */
 export const createListCallExpression = (
   listElements: Array<es.Expression | es.SpreadElement>,
-): es.CallExpression => create.callExpression(create.identifier('list'), listElements)
+): es.CallExpression => create.callExpression(create.identifier('list'), listElements);
 
 /**
  * Constructs the AST equivalent of:
@@ -39,10 +39,10 @@ export const createImportedNameDeclaration = (
   const callExpression = create.callExpression(create.identifier(accessExportFunctionName), [
     create.identifier(functionName),
     create.literal(lookupName),
-  ])
+  ]);
 
-  return create.constantDeclaration(importedName.name, callExpression)
-}
+  return create.constantDeclaration(importedName.name, callExpression);
+};
 
 /**
  * Constructs the AST equivalent of:
@@ -57,9 +57,9 @@ export const createInvokedFunctionResultVariableDeclaration = (
   variableName: string,
   functionArgs: es.Identifier[],
 ): es.VariableDeclaration => {
-  const callExpression = create.callExpression(create.identifier(functionName), functionArgs)
-  return create.constantDeclaration(variableName, callExpression)
-}
+  const callExpression = create.callExpression(create.identifier(functionName), functionArgs);
+  return create.constantDeclaration(variableName, callExpression);
+};
 
 /**
  * Clones the import specifier, but only the properties
@@ -79,16 +79,16 @@ export const cloneAndStripImportSpecifier = (
         type: 'ImportSpecifier',
         local: create.identifier(importSpecifier.local.name),
         imported: create.identifier(importSpecifier.imported.name),
-      }
+      };
     case 'ImportDefaultSpecifier':
       return {
         type: 'ImportDefaultSpecifier',
         local: create.identifier(importSpecifier.local.name),
-      }
+      };
     case 'ImportNamespaceSpecifier':
       return {
         type: 'ImportNamespaceSpecifier',
         local: create.identifier(importSpecifier.local.name),
-      }
+      };
   }
-}
+};

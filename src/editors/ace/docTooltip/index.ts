@@ -1,13 +1,13 @@
-import * as ext_lib from './External libraries.json'
-import * as source_1 from './source_1.json'
-import * as source_1_typed from './source_1_typed.json'
-import * as source_2 from './source_2.json'
-import * as source_2_typed from './source_2_typed.json'
-import * as source_3 from './source_3.json'
-import * as source_3_typed from './source_3_typed.json'
-import * as source_4 from './source_4.json'
-import * as source_4_explicit_control from './source_4_explicit-control.json'
-import * as source_4_typed from './source_4_typed.json'
+import * as ext_lib from './External libraries.json';
+import * as source_1 from './source_1.json';
+import * as source_1_typed from './source_1_typed.json';
+import * as source_2 from './source_2.json';
+import * as source_2_typed from './source_2_typed.json';
+import * as source_3 from './source_3.json';
+import * as source_3_typed from './source_3_typed.json';
+import * as source_4 from './source_4.json';
+import * as source_4_explicit_control from './source_4_explicit-control.json';
+import * as source_4_typed from './source_4_typed.json';
 
 // (18 March 2022)
 // Problem to be fixed in the future:
@@ -31,9 +31,9 @@ function resolveImportInconsistency(json: any) {
   // `json` doesn't inherit from `Object`?
   // Can't use hasOwnProperty for some reason.
   if ('default' in json) {
-    return json.default
+    return json.default;
   } else {
-    return json
+    return json;
   }
 }
 
@@ -50,4 +50,4 @@ export const SourceDocumentation = {
     '4_explicit-control': resolveImportInconsistency(source_4_explicit_control),
   },
   ext_lib,
-}
+};

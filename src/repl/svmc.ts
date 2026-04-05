@@ -1,18 +1,18 @@
-import fs from 'fs/promises'
-import { basename, extname } from 'path'
+import fs from 'fs/promises';
+import { basename, extname } from 'path';
 
-import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings'
-import { parseError } from '..'
-import { createEmptyContext } from '../createContext'
-import { Chapter, Variant } from '../langs'
-import { parse } from '../parser/parser'
-import { stripIndent } from '../utils/formatters'
-import { assemble } from '../vm/svml-assembler'
-import { compileToIns } from '../vm/svml-compiler'
-import { stringifyProgram } from '../vm/util'
-import { chapterParser, getChapterOption } from './utils'
+import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings';
+import { parseError } from '..';
+import { createEmptyContext } from '../createContext';
+import { Chapter, Variant } from '../langs';
+import { parse } from '../parser/parser';
+import { stripIndent } from '../utils/formatters';
+import { assemble } from '../vm/svml-assembler';
+import { compileToIns } from '../vm/svml-compiler';
+import { stringifyProgram } from '../vm/util';
+import { chapterParser, getChapterOption } from './utils';
 
-export const compileToChoices = ['ast', 'binary', 'debug', 'json'] as const
+export const compileToChoices = ['ast', 'binary', 'debug', 'json'] as const;
 
 export const getSVMCCommand = () =>
   new Command('svmc')
@@ -44,61 +44,61 @@ export const getSVMCCommand = () =>
 strings containing the names of the VM-internal functions.`,
       )
         .argParser(value => {
-          const parsed = JSON.parse(value)
+          const parsed = JSON.parse(value);
           if (!Array.isArray(parsed)) {
-            throw new InvalidArgumentError('Expected a JSON array of strings!')
+            throw new InvalidArgumentError('Expected a JSON array of strings!');
           }
 
           for (const each of parsed) {
             if (typeof each !== 'string') {
-              throw new InvalidArgumentError('Expected a JSON array of strings!')
+              throw new InvalidArgumentError('Expected a JSON array of strings!');
             }
           }
-          return parsed as string[]
+          return parsed as string[];
         })
         .default([] as string[]),
     )
     .action(async (inputFile, opts) => {
-      const vmInternalFunctions = opts.internals || []
+      const vmInternalFunctions = opts.internals || [];
 
-      const source = await fs.readFile(inputFile, 'utf-8')
-      const context = createEmptyContext(opts.chapter, Variant.DEFAULT, undefined, [], null)
-      const program = parse(source, context)
+      const source = await fs.readFile(inputFile, 'utf-8');
+      const context = createEmptyContext(opts.chapter, Variant.DEFAULT, undefined, [], null);
+      const program = parse(source, context);
       if (program === null) {
-        process.stderr.write(parseError(context.errors))
-        process.exit(1)
+        process.stderr.write(parseError(context.errors));
+        process.exit(1);
       }
 
-      let output: string | Uint8Array
-      let ext: string
+      let output: string | Uint8Array;
+      let ext: string;
 
       if (opts.compileTo === 'ast') {
-        output = JSON.stringify(program, undefined, 2)
-        ext = '.json'
+        output = JSON.stringify(program, undefined, 2);
+        ext = '.json';
       } else {
-        const compiled = compileToIns(program, undefined, vmInternalFunctions)
+        const compiled = compileToIns(program, undefined, vmInternalFunctions);
         switch (opts.compileTo) {
           case 'debug': {
-            output = stringifyProgram(compiled).trimEnd()
-            ext = '.svm'
-            break
+            output = stringifyProgram(compiled).trimEnd();
+            ext = '.svm';
+            break;
           }
           case 'json': {
-            output = JSON.stringify(compiled)
-            ext = '.json'
-            break
+            output = JSON.stringify(compiled);
+            ext = '.json';
+            break;
           }
           case 'binary': {
-            output = assemble(compiled)
-            ext = '.svm'
-            break
+            output = assemble(compiled);
+            ext = '.svm';
+            break;
           }
         }
       }
 
-      const extToRemove = extname(inputFile)
+      const extToRemove = extname(inputFile);
 
-      const outputFileName = opts.out ?? `${basename(inputFile, extToRemove)}${ext}`
-      await fs.writeFile(outputFileName, output)
-      console.log(`Output written to ${outputFileName}`)
-    })
+      const outputFileName = opts.out ?? `${basename(inputFile, extToRemove)}${ext}`;
+      await fs.writeFile(outputFileName, output);
+      console.log(`Output written to ${outputFileName}`);
+    });

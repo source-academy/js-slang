@@ -1,19 +1,19 @@
 // TODO: Convert to actual benchmark
 
-import { test } from 'vitest'
-import { Chapter } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult } from '../../utils/testing'
-import * as list from '../list'
+import { test } from 'vitest';
+import { Chapter } from '../../langs';
+import { stripIndent } from '../../utils/formatters';
+import { expectFinishedResult } from '../../utils/testing';
+import * as list from '../list';
 
 test('display_list is linear runtime', { timeout: 1_000_000 }, () => {
-  const placeholder = Symbol('placeholder')
+  const placeholder = Symbol('placeholder');
   const noDisplayList = (v: any, s: any = placeholder) => {
     if (s !== placeholder && typeof s !== 'string') {
-      throw new TypeError('display_list expects the second argument to be a string')
+      throw new TypeError('display_list expects the second argument to be a string');
     }
-    return list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s)
-  }
+    return list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s);
+  };
 
   return expectFinishedResult(
     stripIndent`
@@ -111,8 +111,8 @@ test('display_list is linear runtime', { timeout: 1_000_000 }, () => {
         no_display_list: noDisplayList,
       },
     },
-  ).toBeLessThan(1.2)
+  ).toBeLessThan(1.2);
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?
-})
+});

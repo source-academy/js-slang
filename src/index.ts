@@ -1,13 +1,13 @@
-import type es from 'estree'
-import { SourceMapConsumer } from 'source-map'
+import type es from 'estree';
+import { SourceMapConsumer } from 'source-map';
 
-import createContext from './createContext'
-import { InterruptedError } from './errors/errors'
-import { findDeclarationNode, findIdentifierNode } from './finder'
-import { Chapter, type Variant } from './langs'
-import { looseParse, parseWithComments } from './parser/utils'
-import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
-import { setBreakpointAtLine } from './stdlib/inspector'
+import createContext from './createContext';
+import { InterruptedError } from './errors/errors';
+import { findDeclarationNode, findIdentifierNode } from './finder';
+import { Chapter, type Variant } from './langs';
+import { looseParse, parseWithComments } from './parser/utils';
+import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring';
+import { setBreakpointAtLine } from './stdlib/inspector';
 import type {
   Context,
   ExecutionMethod,
@@ -17,33 +17,33 @@ import type {
   Result,
   Error as ResultError,
   SVMProgram,
-} from './types'
-import { assemble } from './vm/svml-assembler'
-import { compileToIns } from './vm/svml-compiler'
+} from './types';
+import { assemble } from './vm/svml-assembler';
+import { compileToIns } from './vm/svml-compiler';
 
-import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
-import type { SourceError } from './errors/base'
-import { ModuleNotFoundError } from './modules/errors'
-import type { ImportOptions } from './modules/moduleTypes'
-import preprocessFileImports from './modules/preprocessor'
-import { validateFilePath } from './modules/preprocessor/filePaths'
-import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor'
-import { htmlRunner, sourceFilesRunner } from './runner'
+import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter';
+import type { SourceError } from './errors/base';
+import { ModuleNotFoundError } from './modules/errors';
+import type { ImportOptions } from './modules/moduleTypes';
+import preprocessFileImports from './modules/preprocessor';
+import { validateFilePath } from './modules/preprocessor/filePaths';
+import { getKeywords, getProgramNames, type NameDeclaration } from './name-extractor';
+import { htmlRunner, sourceFilesRunner } from './runner';
 
-export { SourceDocumentation } from './editors/ace/docTooltip'
+export { SourceDocumentation } from './editors/ace/docTooltip';
 
 export interface IOptions {
-  steps: number
-  stepLimit: number
-  executionMethod: ExecutionMethod
-  variant: Variant
-  originalMaxExecTime: number
-  useSubst: boolean
-  isPrelude: boolean
-  throwInfiniteLoops: boolean
-  envSteps: number
+  steps: number;
+  stepLimit: number;
+  executionMethod: ExecutionMethod;
+  variant: Variant;
+  originalMaxExecTime: number;
+  useSubst: boolean;
+  isPrelude: boolean;
+  throwInfiniteLoops: boolean;
+  envSteps: number;
 
-  importOptions: ImportOptions
+  importOptions: ImportOptions;
 
   /**
    * Set this to true if source file information should be
@@ -51,7 +51,7 @@ export interface IOptions {
    *
    * Set to null to let js-slang decide automatically
    */
-  shouldAddFileName: boolean | null
+  shouldAddFileName: boolean | null;
 }
 
 // needed to work on browsers
@@ -59,33 +59,33 @@ if (typeof window !== 'undefined') {
   // @ts-expect-error Initialize doesn't exist on SourceMapConsumer
   SourceMapConsumer.initialize({
     'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm',
-  })
+  });
 }
 
-let verboseErrors: boolean = false
+let verboseErrors: boolean = false;
 
 export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
     // FIXME: Either refactor the parser to output an ESTree-compliant AST, or modify the ESTree types.
-    const filePath = error.location?.source ? `[${error.location.source}] ` : ''
-    const line = error.location ? error.location.start.line : '<unknown>'
-    const column = error.location ? error.location.start.column : '<unknown>'
-    const explanation = error.explain()
+    const filePath = error.location?.source ? `[${error.location.source}] ` : '';
+    const line = error.location ? error.location.start.line : '<unknown>';
+    const column = error.location ? error.location.start.column : '<unknown>';
+    const explanation = error.explain();
 
     if (verbose) {
       // TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
       // way to display it.
-      const elaboration = error.elaborate()
+      const elaboration = error.elaborate();
       return typeof line === 'number' && line < 1
         ? `${filePath}${explanation}\n${elaboration}\n`
-        : `${filePath}Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
+        : `${filePath}Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`;
     } else {
       return typeof line === 'number' && line < 1
         ? explanation
-        : `${filePath}Line ${line}: ${explanation}`
+        : `${filePath}Line ${line}: ${explanation}`;
     }
-  })
-  return errorMessagesArr.join('\n')
+  });
+  return errorMessagesArr.join('\n');
 }
 
 export function findDeclaration(
@@ -93,19 +93,19 @@ export function findDeclaration(
   context: Context,
   loc: { line: number; column: number },
 ): es.SourceLocation | null | undefined {
-  const program = looseParse(code, context)
+  const program = looseParse(code, context);
   if (!program) {
-    return null
+    return null;
   }
-  const identifierNode = findIdentifierNode(program, context, loc)
+  const identifierNode = findIdentifierNode(program, context, loc);
   if (!identifierNode) {
-    return null
+    return null;
   }
-  const declarationNode = findDeclarationNode(program, identifierNode)
+  const declarationNode = findDeclarationNode(program, identifierNode);
   if (!declarationNode || identifierNode === declarationNode) {
-    return null
+    return null;
   }
-  return declarationNode.loc
+  return declarationNode.loc;
 }
 
 export function getScope(
@@ -113,20 +113,20 @@ export function getScope(
   context: Context,
   loc: { line: number; column: number },
 ): es.SourceLocation[] {
-  const program = looseParse(code, context)
+  const program = looseParse(code, context);
   if (!program) {
-    return []
+    return [];
   }
-  const identifierNode = findIdentifierNode(program, context, loc)
+  const identifierNode = findIdentifierNode(program, context, loc);
   if (!identifierNode) {
-    return []
+    return [];
   }
-  const declarationNode = findDeclarationNode(program, identifierNode)
+  const declarationNode = findDeclarationNode(program, identifierNode);
   if (!declarationNode || declarationNode.loc == null || identifierNode !== declarationNode) {
-    return []
+    return [];
   }
 
-  return getScopeHelper(declarationNode.loc, program, identifierNode.name)
+  return getScopeHelper(declarationNode.loc, program, identifierNode.name);
 }
 
 export function getAllOccurrencesInScope(
@@ -134,19 +134,19 @@ export function getAllOccurrencesInScope(
   context: Context,
   loc: { line: number; column: number },
 ): es.SourceLocation[] {
-  const program = looseParse(code, context)
+  const program = looseParse(code, context);
   if (!program) {
-    return []
+    return [];
   }
-  const identifierNode = findIdentifierNode(program, context, loc)
+  const identifierNode = findIdentifierNode(program, context, loc);
   if (!identifierNode) {
-    return []
+    return [];
   }
-  const declarationNode = findDeclarationNode(program, identifierNode)
+  const declarationNode = findDeclarationNode(program, identifierNode);
   if (declarationNode == null || declarationNode.loc == null) {
-    return []
+    return [];
   }
-  return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name)
+  return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name);
 }
 
 export function hasDeclaration(
@@ -154,20 +154,20 @@ export function hasDeclaration(
   context: Context,
   loc: { line: number; column: number },
 ): boolean {
-  const program = looseParse(code, context)
+  const program = looseParse(code, context);
   if (!program) {
-    return false
+    return false;
   }
-  const identifierNode = findIdentifierNode(program, context, loc)
+  const identifierNode = findIdentifierNode(program, context, loc);
   if (!identifierNode) {
-    return false
+    return false;
   }
-  const declarationNode = findDeclarationNode(program, identifierNode)
+  const declarationNode = findDeclarationNode(program, identifierNode);
   if (declarationNode == null || declarationNode.loc == null) {
-    return false
+    return false;
   }
 
-  return true
+  return true;
 }
 
 /**
@@ -184,16 +184,16 @@ export async function getNames(
   col: number,
   context: Context,
 ): Promise<[NameDeclaration[], boolean]> {
-  const [program, comments] = parseWithComments(code)
+  const [program, comments] = parseWithComments(code);
 
   if (!program) {
-    return [[], false]
+    return [[], false];
   }
-  const cursorLoc: es.Position = { line, column: col }
+  const cursorLoc: es.Position = { line, column: col };
 
-  const [progNames, displaySuggestions] = await getProgramNames(program, comments, cursorLoc)
-  const keywords = getKeywords(program, cursorLoc, context)
-  return [progNames.concat(keywords), displaySuggestions]
+  const [progNames, displaySuggestions] = await getProgramNames(program, comments, cursorLoc);
+  const keywords = getKeywords(program, cursorLoc, context);
+  return [progNames.concat(keywords), displaySuggestions];
 }
 
 export async function runInContext(
@@ -201,10 +201,10 @@ export async function runInContext(
   context: Context,
   options: RecursivePartial<IOptions> = {},
 ): Promise<Result> {
-  const defaultFilePath = '/default.js'
-  const files: Partial<Record<string, string>> = {}
-  files[defaultFilePath] = code
-  return runFilesInContext(files, defaultFilePath, context, options)
+  const defaultFilePath = '/default.js';
+  const files: Partial<Record<string, string>> = {};
+  files[defaultFilePath] = code;
+  return runFilesInContext(files, defaultFilePath, context, options);
 }
 
 // this is the first entrypoint for all source files.
@@ -217,26 +217,26 @@ export async function runFilesInContext(
   options: RecursivePartial<IOptions> = {},
 ): Promise<Result> {
   for (const filePath in files) {
-    const filePathError = validateFilePath(filePath)
+    const filePathError = validateFilePath(filePath);
     if (filePathError !== null) {
-      context.errors.push(filePathError)
-      return { status: 'error', context }
+      context.errors.push(filePathError);
+      return { status: 'error', context };
     }
   }
 
-  let result: Result
+  let result: Result;
   if (context.chapter === Chapter.HTML) {
-    const code = files[entrypointFilePath]
+    const code = files[entrypointFilePath];
     if (code === undefined) {
-      context.errors.push(new ModuleNotFoundError(entrypointFilePath))
-      return { status: 'error', context }
+      context.errors.push(new ModuleNotFoundError(entrypointFilePath));
+      return { status: 'error', context };
     }
-    result = await htmlRunner(code, context, options)
+    result = await htmlRunner(code, context, options);
   } else {
     // FIXME: Clean up state management so that the `parseError` function is pure.
     //        This is not a huge priority, but it would be good not to make use of
     //        global state.
-    ;({ result, verboseErrors } = await sourceFilesRunner(
+    ({ result, verboseErrors } = await sourceFilesRunner(
       p => Promise.resolve(files[p]),
       entrypointFilePath,
       context,
@@ -244,25 +244,25 @@ export async function runFilesInContext(
         ...options,
         shouldAddFileName: options.shouldAddFileName ?? Object.keys(files).length > 1,
       },
-    ))
+    ));
   }
 
-  return result
+  return result;
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
   if (result.status === 'finished' || result.status === 'error') {
-    return result
+    return result;
   }
-  const value = resumeEvaluate(result.context)
-  return CSEResultPromise(result.context, value)
+  const value = resumeEvaluate(result.context);
+  return CSEResultPromise(result.context, value);
 }
 
 export function interrupt(context: Context) {
-  const globalEnvironment = context.runtime.environments[context.runtime.environments.length - 1]
-  context.runtime.environments = [globalEnvironment]
-  context.runtime.isRunning = false
-  context.errors.push(new InterruptedError(context.runtime.nodes[0]))
+  const globalEnvironment = context.runtime.environments[context.runtime.environments.length - 1];
+  context.runtime.environments = [globalEnvironment];
+  context.runtime.isRunning = false;
+  context.errors.push(new InterruptedError(context.runtime.nodes[0]));
 }
 
 export function compile(
@@ -270,10 +270,10 @@ export function compile(
   context: Context,
   vmInternalFunctions?: string[],
 ): Promise<SVMProgram | undefined> {
-  const defaultFilePath = '/default.js'
-  const files: Partial<Record<string, string>> = {}
-  files[defaultFilePath] = code
-  return compileFiles(files, defaultFilePath, context, vmInternalFunctions)
+  const defaultFilePath = '/default.js';
+  const files: Partial<Record<string, string>> = {};
+  files[defaultFilePath] = code;
+  return compileFiles(files, defaultFilePath, context, vmInternalFunctions);
 }
 
 export async function compileFiles(
@@ -283,10 +283,10 @@ export async function compileFiles(
   vmInternalFunctions?: string[],
 ): Promise<SVMProgram | undefined> {
   for (const filePath in files) {
-    const filePathError = validateFilePath(filePath)
+    const filePathError = validateFilePath(filePath);
     if (filePathError !== null) {
-      context.errors.push(filePathError)
-      return undefined
+      context.errors.push(filePathError);
+      return undefined;
     }
   }
 
@@ -295,18 +295,18 @@ export async function compileFiles(
     entrypointFilePath,
     context,
     { shouldAddFileName: Object.keys(files).length > 1 },
-  )
+  );
 
   if (!preprocessResult.ok) {
-    return undefined
+    return undefined;
   }
 
   try {
-    return compileToIns(preprocessResult.program, undefined, vmInternalFunctions)
+    return compileToIns(preprocessResult.program, undefined, vmInternalFunctions);
   } catch (error) {
-    context.errors.push(error)
-    return undefined
+    context.errors.push(error);
+    return undefined;
   }
 }
 
-export { assemble, Context, createContext, ModuleContext, Result, setBreakpointAtLine }
+export { assemble, Context, createContext, ModuleContext, Result, setBreakpointAtLine };

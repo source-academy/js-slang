@@ -1,8 +1,8 @@
-import type es from 'estree'
+import type es from 'estree';
 
-import { isInLoc } from './finder'
-import type { BlockFrame, DefinitionNode, Node } from './types'
-import { simple } from './utils/ast/walkers'
+import { isInLoc } from './finder';
+import type { BlockFrame, DefinitionNode, Node } from './types';
+import { simple } from './utils/ast/walkers';
 
 /**
  * This file parses the original AST Tree into another tree with a similar structure
@@ -29,7 +29,7 @@ export function scopeVariables(
 ): BlockFrame {
   // If program is undefined due to parsing error, throw an error
   if (program === undefined) {
-    throw new Error('Program to scope was undefined')
+    throw new Error('Program to scope was undefined');
   }
 
   const block: BlockFrame = {
@@ -38,45 +38,45 @@ export function scopeVariables(
     // By default, set enclosingLoc to be the same as loc
     enclosingLoc: enclosingLoc === undefined ? program.loc : enclosingLoc,
     children: [],
-  }
+  };
 
   if (program.body == null) {
-    return block
+    return block;
   }
 
-  const definitionStatements = getDefinitionStatements(program.body)
-  const blockStatements = getBlockStatements(program.body)
-  const forStatements = getForStatements(program.body)
-  const ifStatements = getIfStatements(program.body)
-  const whileStatements = getWhileStatements(program.body)
+  const definitionStatements = getDefinitionStatements(program.body);
+  const blockStatements = getBlockStatements(program.body);
+  const forStatements = getForStatements(program.body);
+  const ifStatements = getIfStatements(program.body);
+  const whileStatements = getWhileStatements(program.body);
   const variableStatements = definitionStatements.filter(statement =>
     isVariableDeclaration(statement),
-  )
+  );
 
-  const arrowFunctions: es.ArrowFunctionExpression[] = []
+  const arrowFunctions: es.ArrowFunctionExpression[] = [];
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
       if (node.loc != null) {
-        arrowFunctions.push(node)
+        arrowFunctions.push(node);
       }
     },
-  })
+  });
 
-  const ifStatementNodes = scopeIfStatements(ifStatements)
-  const whileStatementNodes = scopeWhileStatements(whileStatements)
-  const forStatementNodes = forStatements.map(statement => scopeForStatement(statement))
+  const ifStatementNodes = scopeIfStatements(ifStatements);
+  const whileStatementNodes = scopeWhileStatements(whileStatements);
+  const forStatementNodes = forStatements.map(statement => scopeForStatement(statement));
 
   const functionDeclarations = definitionStatements
     .filter(statement => !isVariableDeclaration(statement))
-    .map((statement: es.FunctionDeclaration) => scopeFunctionDeclaration(statement))
-  const functionDefinitionNodes = functionDeclarations.map(declaration => declaration.definition)
-  const functionBodyNodes = functionDeclarations.map(declaration => declaration.body)
+    .map((statement: es.FunctionDeclaration) => scopeFunctionDeclaration(statement));
+  const functionDefinitionNodes = functionDeclarations.map(declaration => declaration.definition);
+  const functionBodyNodes = functionDeclarations.map(declaration => declaration.body);
 
   const variableDefinitionNodes = variableStatements.map(statement =>
     scopeVariableDeclaration(statement),
-  )
-  const blockNodes = blockStatements.map(statement => scopeVariables(statement))
-  let arrowFunctionNodes = arrowFunctions.map(statement => scopeArrowFunction(statement))
+  );
+  const blockNodes = blockStatements.map(statement => scopeVariables(statement));
+  let arrowFunctionNodes = arrowFunctions.map(statement => scopeArrowFunction(statement));
   // Arrow functions are found via parsing the global ast tree. However, we only want
   // the arrow functions which are not part of any child block at any point in time
   // Hence, the arrowFunctionNodes are the arrow functions which are declared in this block's scope
@@ -91,7 +91,7 @@ export function scopeVariables(
       ...functionBodyNodes,
       ...arrowFunctionNodes,
     ],
-  )
+  );
 
   block.children = [
     ...variableDefinitionNodes,
@@ -102,10 +102,10 @@ export function scopeVariables(
     ...whileStatementNodes,
     ...forStatementNodes,
     ...blockNodes,
-  ]
-  block.children.sort(sortByLoc)
+  ];
+  block.children.sort(sortByLoc);
 
-  return block
+  return block;
 }
 
 export function scopeVariableDeclaration(node: es.VariableDeclaration): DefinitionNode {
@@ -114,7 +114,7 @@ export function scopeVariableDeclaration(node: es.VariableDeclaration): Definiti
     type: 'DefinitionNode',
     // Assume that only one variable can be declared per line
     loc: node.declarations[0].id.loc,
-  }
+  };
 }
 
 /**
@@ -126,30 +126,30 @@ export function scopeVariableDeclaration(node: es.VariableDeclaration): Definiti
  * we treat it as if it is not in there.
  */
 function scopeFunctionDeclaration(node: es.FunctionDeclaration): {
-  definition: DefinitionNode
-  body: BlockFrame
+  definition: DefinitionNode;
+  body: BlockFrame;
 } {
   if (node.id === null) {
     throw new Error(
       'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
-    )
+    );
   }
   const definition = {
     name: node.id.name,
     type: 'DefinitionNode',
     loc: node.id.loc,
-  }
+  };
   const parameters = node.params.map((param: es.Identifier) => ({
     name: param.name,
     type: 'DefinitionNode',
     loc: param.loc,
-  }))
+  }));
   // node.loc refers to the loc of the entire function definition, not just its body
-  const body = scopeVariables(node.body, node.loc)
+  const body = scopeVariables(node.body, node.loc);
 
-  body.children = [...parameters, ...body.children]
+  body.children = [...parameters, ...body.children];
   // Treat function parameters as definitions in the function body, since their scope is limited to the body.
-  return { definition, body }
+  return { definition, body };
 }
 
 function scopeArrowFunction(node: es.ArrowFunctionExpression): BlockFrame {
@@ -157,7 +157,7 @@ function scopeArrowFunction(node: es.ArrowFunctionExpression): BlockFrame {
     name: (param as es.Identifier).name,
     type: 'DefinitionNode',
     loc: param.loc,
-  }))
+  }));
   // arrowFunctionBodies may not contain curly braces on the RHS of the arrow
   // For ease of processing, we treat the code on the RHS as a single expression being enclosed in {}
   // eg. map(x => x + 1) becomes map(x => {x + 1}) in the scopedVariableTree
@@ -171,45 +171,45 @@ function scopeArrowFunction(node: es.ArrowFunctionExpression): BlockFrame {
             body: [{ type: 'ExpressionStatement', expression: node.body }],
           },
           node.loc,
-        )
+        );
   // Treat function parameters as definitions in the function body, since their scope is limited to the body.
-  body.children = [...params, ...body.children]
-  return body
+  body.children = [...params, ...body.children];
+  return body;
 }
 
 function scopeIfStatements(nodes: es.IfStatement[]): BlockFrame[] {
-  const nestedBlocks = nodes.map(node => scopeIfStatement(node))
-  return nestedBlocks.reduce((x, y) => [...x, ...y], [])
+  const nestedBlocks = nodes.map(node => scopeIfStatement(node));
+  return nestedBlocks.reduce((x, y) => [...x, ...y], []);
 }
 
 function scopeIfStatement(node: es.IfStatement): BlockFrame[] {
-  const block = node.consequent as es.BlockStatement
+  const block = node.consequent as es.BlockStatement;
   if (node.alternate == null) {
-    return [scopeVariables(block)]
+    return [scopeVariables(block)];
   } else {
     return node.alternate.type === 'BlockStatement'
       ? [scopeVariables(block), scopeVariables(node.alternate)]
-      : [scopeVariables(block), ...scopeIfStatement(node.alternate as es.IfStatement)]
+      : [scopeVariables(block), ...scopeIfStatement(node.alternate as es.IfStatement)];
   }
 }
 
 function scopeWhileStatements(nodes: es.WhileStatement[]): BlockFrame[] {
-  return nodes.map(node => scopeVariables(node.body as es.BlockStatement))
+  return nodes.map(node => scopeVariables(node.body as es.BlockStatement));
 }
 
 // For statements may declare new variables whose scope is limited to the loop body
 function scopeForStatement(node: es.ForStatement): BlockFrame {
-  const declarations = (node.init as es.VariableDeclaration)?.declarations || []
+  const declarations = (node.init as es.VariableDeclaration)?.declarations || [];
   const variables = declarations.map((dec: es.VariableDeclarator) => ({
     type: 'DefinitionNode',
     name: (dec.id as es.Identifier).name,
     loc: (dec.id as es.Identifier).loc,
-  }))
-  const block = scopeVariables(node.body as es.BlockStatement, node.loc)
+  }));
+  const block = scopeVariables(node.body as es.BlockStatement, node.loc);
   // Any variable declared at the start of the for loop is inserted into the body
   // since its scope is limited to the body
-  block.children = [...variables, ...block.children]
-  return block
+  block.children = [...variables, ...block.children];
+  return block;
 }
 
 /*
@@ -221,35 +221,35 @@ export function getScopeHelper(
   program: es.Program,
   target: string,
 ): es.SourceLocation[] {
-  const lookupTree = scopeVariables(program)
+  const lookupTree = scopeVariables(program);
 
   // Find closest ancestor of node.
-  const block = getBlockFromLoc(definitionLocation, lookupTree)
-  const parentRange = block.loc
+  const block = getBlockFromLoc(definitionLocation, lookupTree);
+  const parentRange = block.loc;
 
   // Recurse on the children to find other
   // definitions of the same identifier
-  const childBlocks = block.children.filter(isBlockFrame)
+  const childBlocks = block.children.filter(isBlockFrame);
   const childBlocksWithDefinitions = childBlocks
     .map(child => getChildBlocksWithDefinitions(child, target))
-    .reduce((x, y) => [...x, ...y], [])
+    .reduce((x, y) => [...x, ...y], []);
 
-  const rangesToExclude = childBlocksWithDefinitions.map(b => b.enclosingLoc)
+  const rangesToExclude = childBlocksWithDefinitions.map(b => b.enclosingLoc);
 
   if (parentRange && rangesToExclude.length === 0) {
-    return [parentRange]
+    return [parentRange];
   }
 
-  const ranges: es.SourceLocation[] = []
-  let prevRange = rangesToExclude.shift()
-  ranges.push({ start: (parentRange as any).start, end: (prevRange as any).start })
+  const ranges: es.SourceLocation[] = [];
+  let prevRange = rangesToExclude.shift();
+  ranges.push({ start: (parentRange as any).start, end: (prevRange as any).start });
   rangesToExclude.map(range => {
-    ranges.push({ start: (prevRange as any).end, end: (range as any).start })
-    prevRange = range
-  })
-  ranges.push({ start: (prevRange as any).end, end: (parentRange as any).end })
+    ranges.push({ start: (prevRange as any).end, end: (range as any).start });
+    prevRange = range;
+  });
+  ranges.push({ start: (prevRange as any).end, end: (parentRange as any).end });
 
-  return ranges
+  return ranges;
 }
 
 // Returns a list of the definitions of the
@@ -257,18 +257,18 @@ export function getScopeHelper(
 function getChildBlocksWithDefinitions(block: BlockFrame, target: string): BlockFrame[] {
   const definitionNodes = block.children
     .filter(isDefinitionNode)
-    .filter(node => node.name === target)
+    .filter(node => node.name === target);
 
   if (definitionNodes.length !== 0) {
-    return [block]
+    return [block];
   }
 
-  const childBlocks = block.children.filter(isBlockFrame)
+  const childBlocks = block.children.filter(isBlockFrame);
   const childBlocksWithDefinitions = childBlocks.map(child =>
     getChildBlocksWithDefinitions(child, target),
-  )
+  );
 
-  return childBlocksWithDefinitions.reduce((x, y) => [...x, ...y], [])
+  return childBlocksWithDefinitions.reduce((x, y) => [...x, ...y], []);
 }
 
 /**
@@ -284,21 +284,21 @@ export function getAllOccurrencesInScopeHelper(
   program: es.Program,
   target: string,
 ): es.SourceLocation[] {
-  const lookupTree = scopeVariables(program)
+  const lookupTree = scopeVariables(program);
   // Find closest declaration of node.
-  const block = getBlockFromLoc(definitionLocation, lookupTree)
-  const identifiers = getAllIdentifiers(program, target)
+  const block = getBlockFromLoc(definitionLocation, lookupTree);
+  const identifiers = getAllIdentifiers(program, target);
   // Recurse on the children
-  const nestedBlocks = block.children.filter(isBlockFrame)
+  const nestedBlocks = block.children.filter(isBlockFrame);
   const occurences = getNodeLocsInCurrentBlockFrame(
     identifiers,
     block.enclosingLoc as es.SourceLocation,
     nestedBlocks,
-  )
+  );
   const occurencesInChildScopes = nestedBlocks.map(child =>
     getAllOccurencesInChildScopes(target, child, identifiers),
-  )
-  return [...occurences, ...occurencesInChildScopes.reduce((x, y) => [...x, ...y], [])]
+  );
+  return [...occurences, ...occurencesInChildScopes.reduce((x, y) => [...x, ...y], [])];
 }
 
 function getAllOccurencesInChildScopes(
@@ -311,39 +311,39 @@ function getAllOccurencesInChildScopes(
   // and all subsequent child nodes
   const definitionNodes = block.children
     .filter(isDefinitionNode)
-    .filter(node => node.name === target)
+    .filter(node => node.name === target);
   if (definitionNodes.length !== 0) {
-    return []
+    return [];
   }
 
   // Only get identifiers that are not in another nested block
-  const nestedBlocks = block.children.filter(isBlockFrame)
+  const nestedBlocks = block.children.filter(isBlockFrame);
   const occurences = getNodeLocsInCurrentBlockFrame(
     identifiers,
     block.enclosingLoc as es.SourceLocation,
     nestedBlocks,
-  )
+  );
   const occurencesInChildScopes = nestedBlocks.map(child =>
     getAllOccurencesInChildScopes(target, child, identifiers),
-  )
-  return [...occurences, ...occurencesInChildScopes.reduce((x, y) => [...x, ...y], [])]
+  );
+  return [...occurences, ...occurencesInChildScopes.reduce((x, y) => [...x, ...y], [])];
 }
 
 // Gets the enclosing block of a node.
 export function getBlockFromLoc(loc: es.SourceLocation, block: BlockFrame): BlockFrame {
-  let parent: BlockFrame | null = null
-  let childBlocks = block.children.filter(isBlockFrame)
+  let parent: BlockFrame | null = null;
+  let childBlocks = block.children.filter(isBlockFrame);
   let isPartOfChildBlock = childBlocks.some(node =>
     isPartOf(loc, node.enclosingLoc as es.SourceLocation),
-  )
+  );
   while (isPartOfChildBlock) {
     // A block containing the loc must necessarily exist by the earlier check
-    parent = block
-    block = childBlocks.filter(node => isPartOf(loc, node.enclosingLoc as es.SourceLocation))[0]
-    childBlocks = block.children.filter(isBlockFrame)
+    parent = block;
+    block = childBlocks.filter(node => isPartOf(loc, node.enclosingLoc as es.SourceLocation))[0];
+    childBlocks = block.children.filter(isBlockFrame);
     isPartOfChildBlock = childBlocks.some(node =>
       isPartOf(loc, node.enclosingLoc as es.SourceLocation),
-    )
+    );
   }
   // We check if the parent block contains the target loc.
   // This deals with the edge case of function definitions, as it is within the enclosing loc of the function
@@ -355,43 +355,43 @@ export function getBlockFromLoc(loc: es.SourceLocation, block: BlockFrame): Bloc
       .filter(node => notEmpty(node.loc))
       .filter(node => areLocsEqual(node.loc as es.SourceLocation, loc)).length !== 0
   ) {
-    return parent
+    return parent;
   }
-  return block
+  return block;
 }
 
 // Adapted from src/transpiler.ts L345
 // acorn-walk does not return all identifiers, so this is a workaround
 export function getAllIdentifiers(program: es.Program, target: string): es.Identifier[] {
-  const identifiers: es.Identifier[] = []
+  const identifiers: es.Identifier[] = [];
 
   simple(program, {
     Identifier(node: es.Identifier) {
       if (notEmpty(node.loc) && node.name === target) {
-        identifiers.push(node)
+        identifiers.push(node);
       }
     },
     Pattern(node: es.Pattern) {
       if (node.type === 'Identifier') {
         if (node.name === target) {
-          identifiers.push(node)
+          identifiers.push(node);
         }
       } else if (node.type === 'MemberExpression') {
         if (node.object.type === 'Identifier') {
           if (node.object.name === target) {
-            identifiers.push(node.object)
+            identifiers.push(node.object);
           }
         }
       }
     },
-  })
+  });
 
-  return identifiers
+  return identifiers;
 }
 
 // Helper functions to filter nodes
 function getBlockStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.BlockStatement[] {
-  return nodes.filter(statement => statement.type === 'BlockStatement')
+  return nodes.filter(statement => statement.type === 'BlockStatement');
 }
 
 function getDefinitionStatements(
@@ -400,57 +400,57 @@ function getDefinitionStatements(
   return nodes.filter(
     statement =>
       statement.type === 'FunctionDeclaration' || statement.type === 'VariableDeclaration',
-  )
+  );
 }
 
 function getIfStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.IfStatement[] {
-  return nodes.filter(statement => statement.type === 'IfStatement')
+  return nodes.filter(statement => statement.type === 'IfStatement');
 }
 
 function getForStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.ForStatement[] {
-  return nodes.filter(statement => statement.type === 'ForStatement')
+  return nodes.filter(statement => statement.type === 'ForStatement');
 }
 
 function getWhileStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.WhileStatement[] {
-  return nodes.filter(statement => statement.type === 'WhileStatement')
+  return nodes.filter(statement => statement.type === 'WhileStatement');
 }
 
 // Type Guards
 function isVariableDeclaration(
   statement: es.VariableDeclaration | es.FunctionDeclaration,
 ): statement is es.VariableDeclaration {
-  return statement.type === 'VariableDeclaration'
+  return statement.type === 'VariableDeclaration';
 }
 
 function isBlockFrame(node: DefinitionNode | BlockFrame): node is BlockFrame {
-  return node.type === 'BlockFrame'
+  return node.type === 'BlockFrame';
 }
 
 function isDefinitionNode(node: DefinitionNode | BlockFrame): node is DefinitionNode {
-  return node.type === 'DefinitionNode'
+  return node.type === 'DefinitionNode';
 }
 
 function notEmpty<T>(value: T | null | undefined): value is T {
-  return value !== null && value !== undefined
+  return value !== null && value !== undefined;
 }
 
 // Helper functions
 // sortByLoc is a comparator function that sorts the nodes by their row and column.
 function sortByLoc(x: DefinitionNode | BlockFrame, y: DefinitionNode | BlockFrame): number {
   if (x.loc == null && y.loc == null) {
-    return 0
+    return 0;
   } else if (x.loc == null) {
-    return -1
+    return -1;
   } else if (y.loc == null) {
-    return 1
+    return 1;
   }
 
   if (x.loc.start.line > y.loc.start.line) {
-    return 1
+    return 1;
   } else if (x.loc.start.line < y.loc.start.line) {
-    return -1
+    return -1;
   } else {
-    return x.loc.start.column - y.loc.start.column
+    return x.loc.start.column - y.loc.start.column;
   }
 }
 
@@ -459,7 +459,7 @@ function isPartOf(curr: es.SourceLocation, enclosing: es.SourceLocation): boolea
   return (
     isInLoc(curr.start.line, curr.start.column, enclosing) &&
     isInLoc(curr.end.line, curr.end.column, enclosing)
-  )
+  );
 }
 
 // Returns all nodes that are not part of any child BlockFrame.
@@ -472,7 +472,7 @@ export function getNodeLocsInCurrentBlockFrame<E extends Node>(
   const filteredLocs: es.SourceLocation[] = nodes
     .map(node => node.loc)
     .filter(notEmpty)
-    .filter(loc => isPartOf(loc, currentLoc))
+    .filter(loc => isPartOf(loc, currentLoc));
   return filteredLocs.filter(
     loc =>
       !blocks
@@ -480,7 +480,7 @@ export function getNodeLocsInCurrentBlockFrame<E extends Node>(
         .filter(notEmpty)
         .map(blockLoc => isPartOf(loc, blockLoc))
         .some(el => el === true),
-  )
+  );
 }
 
 /**
@@ -495,7 +495,7 @@ export function getBlockFramesInCurrentBlockFrame(
 ): BlockFrame[] {
   const filteredNodes = nodes
     .filter(node => notEmpty(node.enclosingLoc))
-    .filter(node => isPartOf(node.enclosingLoc as es.SourceLocation, currentLoc))
+    .filter(node => isPartOf(node.enclosingLoc as es.SourceLocation, currentLoc));
   return filteredNodes.filter(
     node =>
       !blocks
@@ -507,7 +507,7 @@ export function getBlockFramesInCurrentBlockFrame(
             !areLocsEqual(node.enclosingLoc as es.SourceLocation, blockLoc),
         )
         .some(el => el === true),
-  )
+  );
 }
 
 function areLocsEqual(loc1: es.SourceLocation, loc2: es.SourceLocation): boolean {
@@ -516,5 +516,5 @@ function areLocsEqual(loc1: es.SourceLocation, loc2: es.SourceLocation): boolean
     loc1.start.column === loc2.start.column &&
     loc1.end.line === loc2.end.line &&
     loc1.end.column === loc2.end.column
-  )
+  );
 }

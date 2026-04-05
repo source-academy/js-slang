@@ -1,11 +1,11 @@
-import { pick } from 'lodash'
-import { expect, test, vi } from 'vitest'
-import { createContext } from '../..'
-import { getNames } from '../../index'
-import { Chapter } from '../../langs'
-import { DeclarationKind, type NameDeclaration } from '../index'
+import { pick } from 'lodash';
+import { expect, test, vi } from 'vitest';
+import { createContext } from '../..';
+import { getNames } from '../../index';
+import { Chapter } from '../../langs';
+import { DeclarationKind, type NameDeclaration } from '../index';
 
-vi.mock(import('../../modules/loader/loaders'))
+vi.mock(import('../../modules/loader/loaders'));
 
 function matchExpectedNames(
   extractedNames: NameDeclaration[],
@@ -13,11 +13,11 @@ function matchExpectedNames(
   unexpectedNames: NameDeclaration[],
 ) {
   for (const expectedName of expectedNames) {
-    expect(extractedNames).toContainEqual(expectedName)
+    expect(extractedNames).toContainEqual(expectedName);
   }
 
   for (const unexpectedName of unexpectedNames) {
-    expect(extractedNames).not.toContainEqual(unexpectedName)
+    expect(extractedNames).not.toContainEqual(unexpectedName);
   }
 }
 
@@ -30,19 +30,19 @@ type TestCaseWithoutUnexpectedNames = [
   line: number,
   col: number,
   expectedNames: NameDeclaration[],
-]
+];
 
 /**
  * If there are names that should not be returned that we want to explicitly
  * test for, provide an array of those declarations
  */
-type TestCaseWithUnexpectedNames = [...TestCaseWithoutUnexpectedNames, NameDeclaration[]]
+type TestCaseWithUnexpectedNames = [...TestCaseWithoutUnexpectedNames, NameDeclaration[]];
 
 /**
  * For test cases that require a specific context, provide the chapter number
  */
-type TestCaseWithChapter = [...TestCaseWithUnexpectedNames, Chapter]
-type TestCase = TestCaseWithUnexpectedNames | TestCaseWithoutUnexpectedNames | TestCaseWithChapter
+type TestCaseWithChapter = [...TestCaseWithUnexpectedNames, Chapter];
+type TestCase = TestCaseWithUnexpectedNames | TestCaseWithoutUnexpectedNames | TestCaseWithChapter;
 
 const testCases: TestCase[] = [
   [`Test empty program does not generate names`, `f`, 1, 1, []],
@@ -499,7 +499,7 @@ const testCases: TestCase[] = [
     1,
     [{ name: 'foo', meta: DeclarationKind.KIND_IMPORT, score: 0 }],
   ],
-]
+];
 
 test.each(
   testCases.map(tc => {
@@ -507,19 +507,19 @@ test.each(
     // 0 as chapter value if none was provided
     switch (tc.length) {
       case 5:
-        return [...tc, [], 0 as any]
+        return [...tc, [], 0 as any];
       case 6:
-        return [...tc, 0 as any]
+        return [...tc, 0 as any];
       case 7:
-        return tc
+        return tc;
     }
   }),
 )('%#. %s', async (_, code, line, col, expectedNames, unexpectedNames, chapter) => {
-  const context = createContext(chapter)
-  const [extractedNames] = await getNames(code, line, col, context)
+  const context = createContext(chapter);
+  const [extractedNames] = await getNames(code, line, col, context);
 
   // Sometimes the declarations come with extra properties that we don't need to
   // compare, so we only pick the ones that we want to compare
-  const sanitized = extractedNames.map(each => pick(each, 'name', 'meta', 'score'))
-  matchExpectedNames(sanitized, expectedNames, unexpectedNames)
-})
+  const sanitized = extractedNames.map(each => pick(each, 'name', 'meta', 'score'));
+  matchExpectedNames(sanitized, expectedNames, unexpectedNames);
+});

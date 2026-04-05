@@ -1,13 +1,13 @@
 // @vitest-environment node
 
-import fs from 'fs/promises'
-import { beforeEach, expect, test, vi } from 'vitest'
-import { getTranspilerCommand } from '../transpiler'
-import { expectWritten, getCommandRunner } from './utils'
+import fs from 'fs/promises';
+import { beforeEach, expect, test, vi } from 'vitest';
+import { getTranspilerCommand } from '../transpiler';
+import { expectWritten, getCommandRunner } from './utils';
 
 vi.mock(import('path'), async importOriginal => {
-  const { posix, ...originalPath } = await importOriginal()
-  const newResolve = (...args: string[]) => posix.resolve('/', ...args)
+  const { posix, ...originalPath } = await importOriginal();
+  const newResolve = (...args: string[]) => posix.resolve('/', ...args);
 
   return {
     default: {
@@ -15,63 +15,63 @@ vi.mock(import('path'), async importOriginal => {
       resolve: newResolve,
     },
     posix,
-  }
-})
+  };
+});
 
 beforeEach(() => {
-  vi.clearAllMocks()
-})
+  vi.clearAllMocks();
+});
 
-const mockedWriteFile = vi.spyOn(fs, 'writeFile').mockResolvedValue()
-const mockedReadFile = vi.spyOn(fs, 'readFile')
+const mockedWriteFile = vi.spyOn(fs, 'writeFile').mockResolvedValue();
+const mockedReadFile = vi.spyOn(fs, 'readFile');
 
-const { expectError, expectSuccess } = getCommandRunner(getTranspilerCommand)
+const { expectError, expectSuccess } = getCommandRunner(getTranspilerCommand);
 
 test('Nothing should be written if the program has parser errors', async () => {
-  mockedReadFile.mockResolvedValueOnce('1+1')
-  await expectError('/test.js')
-  expect(fs.writeFile).toHaveBeenCalledTimes(0)
+  mockedReadFile.mockResolvedValueOnce('1+1');
+  await expectError('/test.js');
+  expect(fs.writeFile).toHaveBeenCalledTimes(0);
 
   expectWritten(process.stderr.write).toMatchInlineSnapshot(
     `"[/test.js] Line 1: Missing semicolon at the end of statement"`,
-  )
-})
+  );
+});
 
 test('Nothing should be written if the program has transpiler errors', async () => {
-  mockedReadFile.mockResolvedValueOnce('a;')
-  await expectError('/test.js')
-  expect(fs.writeFile).toHaveBeenCalledTimes(0)
+  mockedReadFile.mockResolvedValueOnce('a;');
+  await expectError('/test.js');
+  expect(fs.writeFile).toHaveBeenCalledTimes(0);
 
   expectWritten(process.stderr.write).toMatchInlineSnapshot(
     `"[/test.js] Line 1: Name a not declared."`,
-  )
-})
+  );
+});
 
 test('Nothing should be written to disk if no output file was specified', async () => {
-  mockedReadFile.mockResolvedValueOnce('1+1;')
-  await expectSuccess('test.js')
-  expect(fs.writeFile).toHaveBeenCalledTimes(0)
+  mockedReadFile.mockResolvedValueOnce('1+1;');
+  await expectSuccess('test.js');
+  expect(fs.writeFile).toHaveBeenCalledTimes(0);
 
   // Code should have been written to stdout
-  expectWritten(process.stdout.write).toMatchSnapshot()
-})
+  expectWritten(process.stdout.write).toMatchSnapshot();
+});
 
 test('Writing to file', async () => {
-  mockedReadFile.mockResolvedValueOnce('1+1;')
-  await expectSuccess('test.js', '-o', 'out.js')
-  expect(fs.writeFile).toHaveBeenCalledTimes(1)
+  mockedReadFile.mockResolvedValueOnce('1+1;');
+  await expectSuccess('test.js', '-o', 'out.js');
+  expect(fs.writeFile).toHaveBeenCalledTimes(1);
 
-  const [[fileName, contents]] = mockedWriteFile.mock.calls
-  expect(fileName).toEqual('out.js')
-  expect(contents).toMatchSnapshot()
-})
+  const [[fileName, contents]] = mockedWriteFile.mock.calls;
+  expect(fileName).toEqual('out.js');
+  expect(contents).toMatchSnapshot();
+});
 
 test('pretranspile option', async () => {
-  mockedReadFile.mockResolvedValueOnce('1+1;')
-  await expectSuccess('test.js', '-o', 'out.js', '-p')
-  expect(fs.writeFile).toHaveBeenCalledTimes(1)
+  mockedReadFile.mockResolvedValueOnce('1+1;');
+  await expectSuccess('test.js', '-o', 'out.js', '-p');
+  expect(fs.writeFile).toHaveBeenCalledTimes(1);
 
-  const [[fileName, contents]] = mockedWriteFile.mock.calls
-  expect(fileName).toEqual('out.js')
-  expect(contents).toEqual('1 + 1;\n')
-})
+  const [[fileName, contents]] = mockedWriteFile.mock.calls;
+  expect(fileName).toEqual('out.js');
+  expect(contents).toEqual('1 + 1;\n');
+});

@@ -1,8 +1,8 @@
-import type es from 'estree'
+import type es from 'estree';
 
-import type { NativeStorage } from '../types'
-import * as create from '../utils/ast/astCreator'
-import { simple } from './ast/walkers'
+import type { NativeStorage } from '../types';
+import * as create from '../utils/ast/astCreator';
+import { simple } from './ast/walkers';
 
 const globalIdNames = [
   'native',
@@ -15,68 +15,68 @@ const globalIdNames = [
   'setProp',
   'getProp',
   'builtins',
-] as const
+] as const;
 
-export type NativeIds = Record<(typeof globalIdNames)[number], es.Identifier>
+export type NativeIds = Record<(typeof globalIdNames)[number], es.Identifier>;
 
 export function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): NativeIds {
-  const globalIds: Partial<NativeIds> = {}
+  const globalIds: Partial<NativeIds> = {};
   for (const identifier of globalIdNames) {
-    globalIds[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier))
+    globalIds[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier));
   }
-  return globalIds as NativeIds
+  return globalIds as NativeIds;
 }
 
 export function getUniqueId(usedIdentifiers: Set<string>, uniqueId = 'unique') {
   while (usedIdentifiers.has(uniqueId)) {
-    const start = uniqueId.slice(0, -1)
-    const end = uniqueId[uniqueId.length - 1]
-    const endToDigit = Number(end)
+    const start = uniqueId.slice(0, -1);
+    const end = uniqueId[uniqueId.length - 1];
+    const endToDigit = Number(end);
     if (Number.isNaN(endToDigit) || endToDigit === 9) {
-      uniqueId += '0'
+      uniqueId += '0';
     } else {
-      uniqueId = start + String(endToDigit + 1)
+      uniqueId = start + String(endToDigit + 1);
     }
   }
-  usedIdentifiers.add(uniqueId)
-  return uniqueId
+  usedIdentifiers.add(uniqueId);
+  return uniqueId;
 }
 
 export function getIdentifiersInNativeStorage(nativeStorage: NativeStorage) {
-  const used = new Set(...nativeStorage.builtins.keys())
-  nativeStorage.previousProgramsIdentifiers.forEach(id => used.add(id))
-  return used
+  const used = new Set(...nativeStorage.builtins.keys());
+  nativeStorage.previousProgramsIdentifiers.forEach(id => used.add(id));
+  return used;
 }
 
 export function getIdentifiersInProgram(program: es.Program) {
-  const identifiers = new Set<string>()
+  const identifiers = new Set<string>();
   simple(program, {
     Identifier(node: es.Identifier) {
-      identifiers.add(node.name)
+      identifiers.add(node.name);
     },
     Pattern(node: es.Pattern) {
       if (node.type === 'Identifier') {
-        identifiers.add(node.name)
+        identifiers.add(node.name);
       } else if (node.type === 'MemberExpression') {
         if (node.object.type === 'Identifier') {
-          identifiers.add(node.object.name)
+          identifiers.add(node.object.name);
         }
       }
     },
-  })
-  return identifiers
+  });
+  return identifiers;
 }
 
 export function getFunctionDeclarationNamesInProgram(program: es.Program): Set<string> {
-  const functionNames = new Set<string>()
+  const functionNames = new Set<string>();
 
   simple(program, {
     FunctionDeclaration(node: es.FunctionDeclaration) {
       if (node.id && node.id.type === 'Identifier') {
-        functionNames.add(node.id.name)
+        functionNames.add(node.id.name);
       }
     },
-  })
+  });
 
-  return functionNames
+  return functionNames;
 }

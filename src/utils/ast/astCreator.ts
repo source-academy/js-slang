@@ -1,15 +1,15 @@
-import type es from 'estree'
+import type es from 'estree';
 
-import type { AllowedDeclarations, Node, StatementSequence } from '../../types'
+import type { AllowedDeclarations, Node, StatementSequence } from '../../types';
 
 export const locationDummyNode = (line: number, column: number, source: string | null) =>
-  literal('Dummy', { start: { line, column }, end: { line, column }, source })
+  literal('Dummy', { start: { line, column }, end: { line, column }, source });
 
 export const identifier = (name: string, loc?: es.SourceLocation | null): es.Identifier => ({
   type: 'Identifier',
   name,
   loc,
-})
+});
 
 export const importDeclaration = (
   source: string,
@@ -20,7 +20,7 @@ export const importDeclaration = (
   source: literal(source),
   specifiers,
   loc,
-})
+});
 
 export const importSpecifier = (
   importedName: string,
@@ -31,7 +31,7 @@ export const importSpecifier = (
   imported: identifier(importedName),
   local: identifier(localName),
   loc,
-})
+});
 
 export const importDefaultSpecifier = (
   localName: string,
@@ -40,7 +40,7 @@ export const importDefaultSpecifier = (
   type: 'ImportDefaultSpecifier',
   local: identifier(localName),
   loc,
-})
+});
 
 export const importNamespaceSpecifier = (
   localName: string,
@@ -49,7 +49,7 @@ export const importNamespaceSpecifier = (
   type: 'ImportNamespaceSpecifier',
   local: identifier(localName),
   loc,
-})
+});
 
 export const literal = (
   value: string | number | boolean | null,
@@ -58,7 +58,7 @@ export const literal = (
   type: 'Literal',
   value,
   loc,
-})
+});
 
 export const memberExpression = (
   object: es.Expression,
@@ -69,7 +69,7 @@ export const memberExpression = (
   computed: typeof property === 'number',
   optional: false,
   property: typeof property === 'number' ? literal(property) : identifier(property),
-})
+});
 
 export const declaration = (
   name: string,
@@ -87,13 +87,13 @@ export const declaration = (
     ],
     kind,
     loc,
-  )
+  );
 
 export const constantDeclaration = (
   name: string,
   init: es.Expression,
   loc?: es.SourceLocation | null,
-) => declaration(name, 'const', init, loc)
+) => declaration(name, 'const', init, loc);
 
 export const callExpression = (
   callee: es.Expression,
@@ -105,12 +105,12 @@ export const callExpression = (
   arguments: args,
   optional: false,
   loc,
-})
+});
 
 export const expressionStatement = (expression: es.Expression): es.ExpressionStatement => ({
   type: 'ExpressionStatement',
   expression,
-})
+});
 
 export const blockArrowFunction = (
   params: es.Identifier[],
@@ -123,7 +123,7 @@ export const blockArrowFunction = (
   params,
   body: Array.isArray(body) ? blockStatement(body) : body,
   loc,
-})
+});
 
 export const functionExpression = (
   params: es.Pattern[],
@@ -138,7 +138,7 @@ export const functionExpression = (
   params,
   body: Array.isArray(body) ? blockStatement(body) : body,
   loc,
-})
+});
 
 export const blockStatement = (
   body: es.Statement[],
@@ -147,7 +147,7 @@ export const blockStatement = (
   type: 'BlockStatement',
   body,
   loc,
-})
+});
 
 export const statementSequence = (
   body: es.Statement[],
@@ -156,13 +156,13 @@ export const statementSequence = (
   type: 'StatementSequence',
   body,
   loc,
-})
+});
 
 export const program = (body: es.Statement[]): es.Program => ({
   type: 'Program',
   sourceType: 'module',
   body,
-})
+});
 
 export const returnStatement = (
   argument: es.Expression,
@@ -171,7 +171,7 @@ export const returnStatement = (
   type: 'ReturnStatement',
   argument,
   loc,
-})
+});
 
 export const property = (key: string, value: es.Expression): es.Property => ({
   type: 'Property',
@@ -181,55 +181,55 @@ export const property = (key: string, value: es.Expression): es.Property => ({
   key: identifier(key),
   value,
   kind: 'init',
-})
+});
 
 export const objectExpression = (properties: es.Property[]): es.ObjectExpression => ({
   type: 'ObjectExpression',
   properties,
-})
+});
 
 export const mutateToCallExpression = (
   node: Node,
   callee: es.Expression,
   args: es.Expression[],
 ) => {
-  node.type = 'CallExpression'
-  node = node as es.CallExpression
-  node.callee = callee
-  node.arguments = args
-}
+  node.type = 'CallExpression';
+  node = node as es.CallExpression;
+  node.callee = callee;
+  node.arguments = args;
+};
 
 export const mutateToAssignmentExpression = (
   node: Node,
   left: es.Pattern,
   right: es.Expression,
 ) => {
-  node.type = 'AssignmentExpression'
-  node = node as es.AssignmentExpression
-  node.operator = '='
-  node.left = left
-  node.right = right
-}
+  node.type = 'AssignmentExpression';
+  node = node as es.AssignmentExpression;
+  node.operator = '=';
+  node.left = left;
+  node.right = right;
+};
 
 export const mutateToExpressionStatement = (node: Node, expr: es.Expression) => {
-  node.type = 'ExpressionStatement'
-  node = node as es.ExpressionStatement
-  node.expression = expr
-}
+  node.type = 'ExpressionStatement';
+  node = node as es.ExpressionStatement;
+  node.expression = expr;
+};
 
 export const mutateToReturnStatement = (node: Node, expr: es.Expression) => {
-  node.type = 'ReturnStatement'
-  node = node as es.ReturnStatement
-  node.argument = expr
-}
+  node.type = 'ReturnStatement';
+  node = node as es.ReturnStatement;
+  node.argument = expr;
+};
 
 export const mutateToMemberExpression = (node: Node, obj: es.Expression, prop: es.Expression) => {
-  node.type = 'MemberExpression'
-  node = node as es.MemberExpression
-  node.object = obj
-  node.property = prop
-  node.computed = false
-}
+  node.type = 'MemberExpression';
+  node = node as es.MemberExpression;
+  node.object = obj;
+  node.property = prop;
+  node.computed = false;
+};
 
 export const logicalExpression = (
   operator: es.LogicalOperator,
@@ -242,7 +242,7 @@ export const logicalExpression = (
   left,
   right,
   loc,
-})
+});
 
 export const mutateToConditionalExpression = (
   node: Node,
@@ -250,12 +250,12 @@ export const mutateToConditionalExpression = (
   consequent: es.Expression,
   alternate: es.Expression,
 ) => {
-  node.type = 'ConditionalExpression'
-  node = node as es.ConditionalExpression
-  node.test = test
-  node.consequent = consequent
-  node.alternate = alternate
-}
+  node.type = 'ConditionalExpression';
+  node = node as es.ConditionalExpression;
+  node.test = test;
+  node.consequent = consequent;
+  node.alternate = alternate;
+};
 
 export const conditionalExpression = (
   test: es.Expression,
@@ -268,12 +268,12 @@ export const conditionalExpression = (
   consequent,
   alternate,
   loc,
-})
+});
 
 export const arrayExpression = (elements: es.Expression[]): es.ArrayExpression => ({
   type: 'ArrayExpression',
   elements,
-})
+});
 
 export const assignmentExpression = (
   left: es.Identifier | es.MemberExpression,
@@ -285,7 +285,7 @@ export const assignmentExpression = (
   left,
   right,
   loc,
-})
+});
 
 export const binaryExpression = (
   operator: es.BinaryOperator,
@@ -298,7 +298,7 @@ export const binaryExpression = (
   left,
   right,
   loc,
-})
+});
 
 export const unaryExpression = (
   operator: es.UnaryOperator,
@@ -310,12 +310,12 @@ export const unaryExpression = (
   prefix: true,
   argument,
   loc,
-})
+});
 
 // primitive: undefined is a possible value
 export const primitive = (value: any): es.Expression => {
-  return value === undefined ? identifier('undefined') : literal(value)
-}
+  return value === undefined ? identifier('undefined') : literal(value);
+};
 
 export const functionDeclaration = (
   id: es.Identifier,
@@ -328,7 +328,7 @@ export const functionDeclaration = (
   params,
   body,
   loc,
-})
+});
 
 export const arrowFunctionExpression = (
   params: es.Pattern[],
@@ -341,7 +341,7 @@ export const arrowFunctionExpression = (
   params,
   body,
   loc,
-})
+});
 
 export const variableDeclaration = (
   declarations: es.VariableDeclarator[],
@@ -352,7 +352,7 @@ export const variableDeclaration = (
   kind,
   declarations,
   loc,
-})
+});
 
 export const variableDeclarator = (
   id: es.Pattern,
@@ -363,7 +363,7 @@ export const variableDeclarator = (
   id,
   init,
   loc,
-})
+});
 
 export const ifStatement = (
   test: es.Expression,
@@ -376,7 +376,7 @@ export const ifStatement = (
   consequent,
   alternate,
   loc,
-})
+});
 
 export const whileStatement = (
   body: es.BlockStatement,
@@ -387,7 +387,7 @@ export const whileStatement = (
   test,
   body,
   loc,
-})
+});
 
 export const forStatement = (
   init: es.VariableDeclaration | es.Expression,
@@ -402,4 +402,4 @@ export const forStatement = (
   update,
   body,
   loc,
-})
+});

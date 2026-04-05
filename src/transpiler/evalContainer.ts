@@ -1,7 +1,7 @@
-import { NATIVE_STORAGE_ID } from '../constants'
-import type { NativeStorage } from '../types'
+import { NATIVE_STORAGE_ID } from '../constants';
+import type { NativeStorage } from '../types';
 
-type Evaler = (code: string, nativeStorage: NativeStorage) => any
+type Evaler = (code: string, nativeStorage: NativeStorage) => any;
 
 /*
   We need to use new Function here to ensure that the parameter names do not get
@@ -18,4 +18,4 @@ export const sandboxedEval: Evaler = new Function(
     return ${NATIVE_STORAGE_ID}.evaller(code);
   }
 `,
-) as Evaler
+) as Evaler;

@@ -1,8 +1,8 @@
-import { parse } from 'acorn'
-import type { ArrowFunctionExpression, ExpressionStatement } from 'estree'
-import type { StepperExpression } from '../nodes'
-import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
-import { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication'
+import { parse } from 'acorn';
+import type { ArrowFunctionExpression, ExpressionStatement } from 'estree';
+import type { StepperExpression } from '../nodes';
+import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression';
+import { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication';
 
 export const auxiliaryBuiltinFunctions = {
   __access_export__: {
@@ -19,13 +19,13 @@ export const auxiliaryBuiltinFunctions = {
             }
         `,
         { ecmaVersion: 10 },
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
         args,
-      )
+      );
     },
     arity: 2,
   },
@@ -48,14 +48,14 @@ export const auxiliaryBuiltinFunctions = {
             }
         `,
         { ecmaVersion: 10 },
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
         args,
-      )
+      );
     },
     arity: 2,
   },
-}
+};

@@ -1,25 +1,25 @@
-import { expect, test } from 'vitest'
-import { Chapter } from '../langs'
-import { stripIndent } from '../utils/formatters'
+import { expect, test } from 'vitest';
+import { Chapter } from '../langs';
+import { stripIndent } from '../utils/formatters';
 import {
   lineTreeToString,
   stringDagToLineTree,
   stringify,
   valueToStringDag,
-} from '../utils/stringify'
-import { expectFinishedResult, testSuccess } from '../utils/testing'
+} from '../utils/stringify';
+import { expectFinishedResult, testSuccess } from '../utils/testing';
 
 test('String representation of numbers are nice', () => {
-  return expectFinishedResult(`stringify(0); `).toEqual('0')
-})
+  return expectFinishedResult(`stringify(0); `).toEqual('0');
+});
 
 test('String representation of strings are nice', () => {
-  return expectFinishedResult(`stringify('a string');`).toEqual('"a string"')
-})
+  return expectFinishedResult(`stringify('a string');`).toEqual('"a string"');
+});
 
 test('String representation of booleans are nice', () => {
-  return expectFinishedResult(`stringify(true);`).toEqual('true')
-})
+  return expectFinishedResult(`stringify(true);`).toEqual('true');
+});
 
 test('String representation of functions are nice', async () => {
   const {
@@ -31,14 +31,14 @@ test('String representation of functions are nice', async () => {
   }
   stringify(f);
   `,
-  )
+  );
 
   expect(value).toMatchInlineSnapshot(`
     "function f(x, y) {
       return x;
     }"
-  `)
-})
+  `);
+});
 
 test('String representation of arrow functions are nice', () => {
   return expectFinishedResult(
@@ -46,8 +46,8 @@ test('String representation of arrow functions are nice', () => {
       const f = (x, y) => x;
       stringify(f);
     `,
-  ).toEqual('(x, y) => x')
-})
+  ).toEqual('(x, y) => x');
+});
 
 test('String representation of arrays are nice', () => {
   return expectFinishedResult(
@@ -56,8 +56,8 @@ test('String representation of arrays are nice', () => {
   stringify(xs);
   `,
     Chapter.SOURCE_3,
-  ).toEqual('[1, "true", true, () => 1]')
-})
+  ).toEqual('[1, "true", true, () => 1]');
+});
 
 test('String representation of multidimensional arrays are nice', () => {
   return expectFinishedResult(
@@ -66,18 +66,18 @@ test('String representation of multidimensional arrays are nice', () => {
   stringify(xs);
   `,
     Chapter.SOURCE_3,
-  ).toEqual('[1, "true", [true, () => 1, [[]]]]')
-})
+  ).toEqual('[1, "true", [true, () => 1, [[]]]]');
+});
 
 test('String representation of empty arrays are nice', () => {
-  return expectFinishedResult(`stringify([]); `, Chapter.SOURCE_3).toEqual('[]')
-})
+  return expectFinishedResult(`stringify([]); `, Chapter.SOURCE_3).toEqual('[]');
+});
 
 test('String representation of lists are nice', () => {
   return expectFinishedResult(`stringify(enum_list(1, 10));`, Chapter.SOURCE_2).toEqual(
     '[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]',
-  )
-})
+  );
+});
 
 test('Correctly handles circular structures with multiple entry points', async () => {
   const {
@@ -89,18 +89,18 @@ test('Correctly handles circular structures with multiple entry points', async (
   stringify(list(x, tail(x), tail(tail(x))));
   `,
     Chapter.SOURCE_3,
-  )
+  );
   expect(value).toMatchInlineSnapshot(`
             "[ [1, [2, [3, ...<circular>]]],
             [[2, [3, [1, ...<circular>]]], [[3, [1, [2, ...<circular>]]], null]]]"
-          `)
-})
+          `);
+});
 
 // The interpreter runs into a MaximumStackLimitExceeded error on 1000, so reduced it to 100.
 test('String representation of huge lists are nice', async () => {
   const {
     result: { value },
-  } = await testSuccess(`stringify(enum_list(1, 100));`, Chapter.SOURCE_2)
+  } = await testSuccess(`stringify(enum_list(1, 100));`, Chapter.SOURCE_2);
   expect(value).toMatchInlineSnapshot(`
             "[ 1,
             [ 2,
@@ -191,8 +191,8 @@ test('String representation of huge lists are nice', async () => {
             [ 87,
             [ 88,
             [89, [90, [91, [92, [93, [94, [95, [96, [97, [98, [99, [100, null]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
-          `)
-})
+          `);
+});
 
 test('String representation of huge arrays are nice', async () => {
   const {
@@ -206,7 +206,7 @@ test('String representation of huge arrays are nice', async () => {
   stringify(arr);
   `,
     Chapter.SOURCE_3,
-  )
+  );
 
   expect(value).toMatchInlineSnapshot(`
             "[ 0,
@@ -309,8 +309,8 @@ test('String representation of huge arrays are nice', async () => {
               97,
               98,
               99]"
-          `)
-})
+          `);
+});
 
 test('String representation of objects are nice', () => {
   return expectFinishedResult(
@@ -319,8 +319,8 @@ test('String representation of objects are nice', () => {
   stringify(o);
   `,
     Chapter.LIBRARY_PARSER,
-  ).toEqual(`{"a": 1, "b": true, "c": () => 1}`)
-})
+  ).toEqual(`{"a": 1, "b": true, "c": () => 1}`);
+});
 
 test('String representation of objects with toReplString member calls toReplString', () => {
   return expectFinishedResult(
@@ -329,8 +329,8 @@ test('String representation of objects with toReplString member calls toReplStri
   stringify(o);
   `,
     Chapter.LIBRARY_PARSER,
-  ).toEqual('<RUNE>')
-})
+  ).toEqual('<RUNE>');
+});
 
 test('String representation of nested objects are nice', () => {
   return expectFinishedResult(
@@ -339,8 +339,8 @@ test('String representation of nested objects are nice', () => {
   stringify(o);
   `,
     Chapter.LIBRARY_PARSER,
-  ).toEqual(`{"a": 1, "b": true, "c": () => 1, "d": {"e": 5, "f": 6}}`)
-})
+  ).toEqual(`{"a": 1, "b": true, "c": () => 1, "d": {"e": 5, "f": 6}}`);
+});
 
 test('String representation of big objects are nice', async () => {
   const {
@@ -351,7 +351,7 @@ test('String representation of big objects are nice', async () => {
   stringify(o);
   `,
     Chapter.LIBRARY_PARSER,
-  )
+  );
 
   expect(value).toMatchInlineSnapshot(`
     "{ \\"a\\": 1,
@@ -366,8 +366,8 @@ test('String representation of big objects are nice', async () => {
       \\"l\\": 0,
       \\"m\\": 0,
       \\"n\\": 0}"
-  `)
-})
+  `);
+});
 
 test('String representation of nested objects (circular) are nice', () => {
   return expectFinishedResult(
@@ -377,102 +377,102 @@ test('String representation of nested objects (circular) are nice', () => {
   stringify(o);
   `,
     Chapter.LIBRARY_PARSER,
-  ).toEqual(`{"o": ...<circular>}`)
-})
+  ).toEqual(`{"o": ...<circular>}`);
+});
 
 test('String representation of non literal objects is nice', () => {
-  const errorMsg: string = 'This is an error'
-  const errorObj: Error = new Error(errorMsg)
-  return expect(stringify(errorObj)).toMatchInlineSnapshot(`"Error: This is an error"`)
-})
+  const errorMsg: string = 'This is an error';
+  const errorObj: Error = new Error(errorMsg);
+  return expect(stringify(errorObj)).toMatchInlineSnapshot(`"Error: This is an error"`);
+});
 
 test('String representation of non literal objects in nested object is nice', () => {
-  const errorMsg: string = 'This is an error'
-  const errorObj: Error = new Error(errorMsg)
+  const errorMsg: string = 'This is an error';
+  const errorObj: Error = new Error(errorMsg);
   const nestedObj = {
     data: [1, [2, errorObj], 3],
-  }
+  };
   return expect(stringify(nestedObj)).toMatchInlineSnapshot(
     `"{\\"data\\": [1, [2, Error: This is an error], 3]}"`,
-  )
-})
+  );
+});
 
 test('String representation of instances is nice', () => {
   class TestClass {
-    data: string
+    data: string;
     constructor(data: string) {
-      this.data = data
+      this.data = data;
     }
     toString() {
-      return `testClass instance: ${this.data}`
+      return `testClass instance: ${this.data}`;
     }
   }
-  const testClassInst = new TestClass('test1')
-  return expect(stringify(testClassInst)).toMatchInlineSnapshot(`"testClass instance: test1"`)
-})
+  const testClassInst = new TestClass('test1');
+  return expect(stringify(testClassInst)).toMatchInlineSnapshot(`"testClass instance: test1"`);
+});
 
 test('Builtins hide their implementation when stringify', async () => {
   const {
     result: { value },
-  } = await testSuccess('stringify(pair);', Chapter.SOURCE_2)
+  } = await testSuccess('stringify(pair);', Chapter.SOURCE_2);
   return expect(value).toMatchInlineSnapshot(`
     "function pair(left, right) {
     	[implementation hidden]
     }"
-  `)
-})
+  `);
+});
 
 test('String representation of null is nice', () => {
-  return expectFinishedResult(`stringify(null); `, Chapter.SOURCE_2).toEqual('null')
-})
+  return expectFinishedResult(`stringify(null); `, Chapter.SOURCE_2).toEqual('null');
+});
 
 test('String representation of undefined is nice', () => {
-  return expectFinishedResult(`stringify(undefined);`).toEqual('undefined')
-})
+  return expectFinishedResult(`stringify(undefined);`).toEqual('undefined');
+});
 
 test('String representation with no indent', async () => {
   const {
     result: { value },
-  } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 0);`, Chapter.SOURCE_4)
+  } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 0);`, Chapter.SOURCE_4);
   expect(value).toMatchInlineSnapshot(`
             "[\\"lambda_expression\\",
             [[[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
-          `)
-})
+          `);
+});
 
 test('String representation with 1 space indent', async () => {
   const {
     result: { value },
-  } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 1);`, Chapter.SOURCE_4)
+  } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 1);`, Chapter.SOURCE_4);
   expect(value).toMatchInlineSnapshot(`
             "[\\"lambda_expression\\",
             [[[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
-          `)
-})
+          `);
+});
 
 test('String representation with default (2 space) indent', async () => {
   const {
     result: { value },
-  } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 1);`, Chapter.SOURCE_4)
+  } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 1);`, Chapter.SOURCE_4);
   expect(value).toMatchInlineSnapshot(`
     "[\\"lambda_expression\\",
     [[[\\"name\\", [\\"x\\", null]], null],
     [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
-  `)
-})
+  `);
+});
 
 test('String representation with more than 10 space indent should trim to 10 space indent', async () => {
   const {
     result: { value },
-  } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 100);`, Chapter.SOURCE_4)
+  } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 100);`, Chapter.SOURCE_4);
   expect(value).toMatchInlineSnapshot(`
             "[         \\"lambda_expression\\",
             [         [[\\"name\\", [\\"x\\", null]], null],
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
-          `)
-})
+          `);
+});
 
 test('lineTreeToString', () => {
   return expect(
@@ -503,8 +503,8 @@ test('lineTreeToString', () => {
                 hello ],
               there,
               sethbling here ]"
-          `)
-})
+          `);
+});
 
 test('stringDagToLineTree', () => {
   return expect(
@@ -525,8 +525,8 @@ test('stringDagToLineTree', () => {
             it's a
               multiline
             string!"
-          `)
-})
+          `);
+});
 
 test('stringDagToLineTree part 2', () => {
   return expect(
@@ -572,8 +572,8 @@ test('stringDagToLineTree part 2', () => {
               },
               "type": "line",
             }
-          `)
-})
+          `);
+});
 
 test('stringDagToLineTree part 3', () => {
   return expect(
@@ -594,8 +594,8 @@ test('stringDagToLineTree part 3', () => {
         80,
       ),
     ),
-  ).toMatchInlineSnapshot(`"[42, [69, null]]"`)
-})
+  ).toMatchInlineSnapshot(`"[42, [69, null]]"`);
+});
 
 test('stringDagToLineTree part 4', () => {
   return expect(
@@ -619,8 +619,8 @@ test('stringDagToLineTree part 4', () => {
   ).toMatchInlineSnapshot(`
             "[ 42,
             [69, null]]"
-          `)
-})
+          `);
+});
 
 test('value to StringDag', () => {
   return expect(
@@ -664,5 +664,5 @@ test('value to StringDag', () => {
             [ 6,
             [ 7,
             [8, [9, [10, [11, [12, [13, [14, [15, [16, [17, [18, [19, [20, null]]]]]]]]]]]]]]]]]]]]"
-          `)
-})
+          `);
+});

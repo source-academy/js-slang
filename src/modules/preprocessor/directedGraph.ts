@@ -1,4 +1,4 @@
-import assert from '../../utils/assert'
+import assert from '../../utils/assert';
 
 /**
  * The result of attempting to find a topological ordering
@@ -6,27 +6,27 @@ import assert from '../../utils/assert'
  */
 export type TopologicalOrderResult =
   | {
-      isValidTopologicalOrderFound: true
-      topologicalOrder: string[]
-      firstCycleFound: null
+      isValidTopologicalOrderFound: true;
+      topologicalOrder: string[];
+      firstCycleFound: null;
     }
   | {
-      isValidTopologicalOrderFound: false
-      topologicalOrder: null
-      firstCycleFound: string[]
-    }
+      isValidTopologicalOrderFound: false;
+      topologicalOrder: null;
+      firstCycleFound: string[];
+    };
 
 /**
  * Represents a directed graph which disallows self-loops.
  */
 export class DirectedGraph {
-  private readonly adjacencyList: Map<string, Set<string>>
+  private readonly adjacencyList: Map<string, Set<string>>;
   private readonly differentKeysError = new Error(
     'The keys of the adjacency list & the in-degree maps are not the same. This should never occur.',
-  )
+  );
 
   constructor() {
-    this.adjacencyList = new Map()
+    this.adjacencyList = new Map();
   }
 
   /**
@@ -38,18 +38,18 @@ export class DirectedGraph {
    */
   public addEdge(sourceNode: string, destinationNode: string): void {
     if (sourceNode === destinationNode) {
-      throw new Error('Edges that connect a node to itself are not allowed.')
+      throw new Error('Edges that connect a node to itself are not allowed.');
     }
 
-    const neighbours = this.adjacencyList.get(sourceNode) ?? new Set()
-    neighbours.add(destinationNode)
-    this.adjacencyList.set(sourceNode, neighbours)
+    const neighbours = this.adjacencyList.get(sourceNode) ?? new Set();
+    neighbours.add(destinationNode);
+    this.adjacencyList.set(sourceNode, neighbours);
 
     // Create an entry for the destination node if it does not exist
     // in the adjacency list. This is so that the set of keys of the
     // adjacency list is the same as the set of nodes in the graph.
     if (!this.adjacencyList.has(destinationNode)) {
-      this.adjacencyList.set(destinationNode, new Set())
+      this.adjacencyList.set(destinationNode, new Set());
     }
   }
 
@@ -62,11 +62,11 @@ export class DirectedGraph {
    */
   public hasEdge(sourceNode: string, destinationNode: string): boolean {
     if (sourceNode === destinationNode) {
-      throw new Error('Edges that connect a node to itself are not allowed.')
+      throw new Error('Edges that connect a node to itself are not allowed.');
     }
 
-    const neighbours = this.adjacencyList.get(sourceNode) ?? new Set()
-    return neighbours.has(destinationNode)
+    const neighbours = this.adjacencyList.get(sourceNode) ?? new Set();
+    return neighbours.has(destinationNode);
   }
 
   /**
@@ -76,20 +76,20 @@ export class DirectedGraph {
    * the node.
    */
   private calculateInDegrees(): Map<string, number> {
-    const inDegrees = new Map()
+    const inDegrees = new Map();
     for (const neighbours of this.adjacencyList.values()) {
       for (const neighbour of neighbours) {
-        const inDegree = inDegrees.get(neighbour) ?? 0
-        inDegrees.set(neighbour, inDegree + 1)
+        const inDegree = inDegrees.get(neighbour) ?? 0;
+        inDegrees.set(neighbour, inDegree + 1);
       }
     }
     // Handle nodes which have an in-degree of 0.
     for (const node of this.adjacencyList.keys()) {
       if (!inDegrees.has(node)) {
-        inDegrees.set(node, 0)
+        inDegrees.set(node, 0);
       }
     }
-    return inDegrees
+    return inDegrees;
   }
 
   /**
@@ -103,11 +103,11 @@ export class DirectedGraph {
   private findCycle(inDegrees: Map<string, number>): string[] {
     // First, we pick any arbitrary node that is part of a cycle as our
     // starting node.
-    let startingNodeInCycle: string | null = null
+    let startingNodeInCycle: string | null = null;
     for (const [node, inDegree] of inDegrees) {
       if (inDegree !== 0) {
-        startingNodeInCycle = node
-        break
+        startingNodeInCycle = node;
+        break;
       }
     }
     // By the invariant stated above, it is impossible that the starting
@@ -118,17 +118,17 @@ export class DirectedGraph {
     assert(
       startingNodeInCycle !== null,
       'There are no cycles in this graph. This should never happen.',
-    )
+    );
 
-    const cycle = [startingNodeInCycle]
+    const cycle = [startingNodeInCycle];
     // Then, we keep picking arbitrary nodes with non-zero in-degrees until
     // we pick a node that has already been picked.
     while (true) {
-      const currentNode = cycle[cycle.length - 1]
+      const currentNode = cycle[cycle.length - 1];
 
-      const neighbours = this.adjacencyList.get(currentNode)
+      const neighbours = this.adjacencyList.get(currentNode);
       if (neighbours === undefined) {
-        throw this.differentKeysError
+        throw this.differentKeysError;
       }
       // By the invariant stated above, it is impossible that any node
       // on the cycle has an in-degree of 0 after running Kahn's algorithm.
@@ -138,13 +138,13 @@ export class DirectedGraph {
       assert(
         neighbours.size > 0,
         `Node '${currentNode}' has no incoming edges. This should never happen.`,
-      )
+      );
 
-      let nextNodeInCycle: string | null = null
+      let nextNodeInCycle: string | null = null;
       for (const neighbour of neighbours) {
         if (inDegrees.get(neighbour) !== 0) {
-          nextNodeInCycle = neighbour
-          break
+          nextNodeInCycle = neighbour;
+          break;
         }
       }
       // By the invariant stated above, if the current node is part of a cycle,
@@ -153,16 +153,16 @@ export class DirectedGraph {
       assert(
         nextNodeInCycle !== null,
         `None of the neighbours of node '${currentNode}' are part of the same cycle. This should never happen.`,
-      )
+      );
 
       // If the next node we pick is already part of the cycle,
       // we drop all elements before the first instance of the
       // next node and return the cycle.
-      const nextNodeIndex = cycle.indexOf(nextNodeInCycle)
-      const isNodeAlreadyInCycle = nextNodeIndex !== -1
-      cycle.push(nextNodeInCycle)
+      const nextNodeIndex = cycle.indexOf(nextNodeInCycle);
+      const isNodeAlreadyInCycle = nextNodeIndex !== -1;
+      cycle.push(nextNodeInCycle);
       if (isNodeAlreadyInCycle) {
-        return cycle.slice(nextNodeIndex)
+        return cycle.slice(nextNodeIndex);
       }
     }
   }
@@ -174,40 +174,40 @@ export class DirectedGraph {
    * To get the topological ordering, Kahn's algorithm is used.
    */
   public getTopologicalOrder(): TopologicalOrderResult {
-    let numOfVisitedNodes = 0
-    const inDegrees = this.calculateInDegrees()
-    const topologicalOrder: string[] = []
+    let numOfVisitedNodes = 0;
+    const inDegrees = this.calculateInDegrees();
+    const topologicalOrder: string[] = [];
 
-    const queue: string[] = []
+    const queue: string[] = [];
     for (const [node, inDegree] of inDegrees) {
       if (inDegree === 0) {
-        queue.push(node)
+        queue.push(node);
       }
     }
 
     while (true) {
-      const node = queue.shift()
+      const node = queue.shift();
       // 'node' is 'undefined' when the queue is empty.
       if (node === undefined) {
-        break
+        break;
       }
 
-      numOfVisitedNodes++
-      topologicalOrder.push(node)
+      numOfVisitedNodes++;
+      topologicalOrder.push(node);
 
-      const neighbours = this.adjacencyList.get(node)
+      const neighbours = this.adjacencyList.get(node);
       if (neighbours === undefined) {
-        throw this.differentKeysError
+        throw this.differentKeysError;
       }
       for (const neighbour of neighbours) {
-        const inDegree = inDegrees.get(neighbour)
+        const inDegree = inDegrees.get(neighbour);
         if (inDegree === undefined) {
-          throw this.differentKeysError
+          throw this.differentKeysError;
         }
-        inDegrees.set(neighbour, inDegree - 1)
+        inDegrees.set(neighbour, inDegree - 1);
 
         if (inDegrees.get(neighbour) === 0) {
-          queue.push(neighbour)
+          queue.push(neighbour);
         }
       }
     }
@@ -216,18 +216,18 @@ export class DirectedGraph {
     // cycle exists in the graph and a topological ordering
     // cannot be found.
     if (numOfVisitedNodes !== this.adjacencyList.size) {
-      const firstCycleFound = this.findCycle(inDegrees)
+      const firstCycleFound = this.findCycle(inDegrees);
       return {
         isValidTopologicalOrderFound: false,
         topologicalOrder: null,
         firstCycleFound,
-      }
+      };
     }
 
     return {
       isValidTopologicalOrderFound: true,
       topologicalOrder,
       firstCycleFound: null,
-    }
+    };
   }
 }

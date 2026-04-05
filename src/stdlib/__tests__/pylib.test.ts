@@ -1,7 +1,7 @@
-import { test } from 'vitest'
-import { Chapter } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult, expectParsedError } from '../../utils/testing'
+import { test } from 'vitest';
+import { Chapter } from '../../langs';
+import { stripIndent } from '../../utils/formatters';
+import { expectFinishedResult, expectParsedError } from '../../utils/testing';
 
 test('adding two integers is ok', () => {
   return expectFinishedResult(
@@ -9,8 +9,8 @@ test('adding two integers is ok', () => {
     1 + 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual(3n)
-})
+  ).toEqual(3n);
+});
 
 test('adding two floats is ok', () => {
   return expectFinishedResult(
@@ -18,8 +18,8 @@ test('adding two floats is ok', () => {
     1.0 + 2.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(3)
-})
+  ).toEqual(3);
+});
 
 test('adding an integer and a float is ok', () => {
   return expectFinishedResult(
@@ -27,8 +27,8 @@ test('adding an integer and a float is ok', () => {
     1.0 + 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual(3)
-})
+  ).toEqual(3);
+});
 
 test('adding a string and an integer is ok', () => {
   return expectFinishedResult(
@@ -36,8 +36,8 @@ test('adding a string and an integer is ok', () => {
     "a" + 1
   `,
     Chapter.PYTHON_1,
-  ).toEqual('a1')
-})
+  ).toEqual('a1');
+});
 
 test('minusing two integers is ok', () => {
   return expectFinishedResult(
@@ -45,8 +45,8 @@ test('minusing two integers is ok', () => {
     1 - 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual(-1n)
-})
+  ).toEqual(-1n);
+});
 
 test('minusing two floats is ok', () => {
   return expectFinishedResult(
@@ -54,8 +54,8 @@ test('minusing two floats is ok', () => {
     1.0 - 2.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(-1)
-})
+  ).toEqual(-1);
+});
 
 test('minusing an integer from a float is ok', () => {
   return expectFinishedResult(
@@ -63,8 +63,8 @@ test('minusing an integer from a float is ok', () => {
     1.0 - 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual(-1)
-})
+  ).toEqual(-1);
+});
 
 test('multiplying integer and float is ok', () => {
   return expectFinishedResult(
@@ -72,8 +72,8 @@ test('multiplying integer and float is ok', () => {
     1.0 * 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual(2)
-})
+  ).toEqual(2);
+});
 
 test('multiplying integer and integer is ok', () => {
   return expectFinishedResult(
@@ -81,8 +81,8 @@ test('multiplying integer and integer is ok', () => {
     1 * 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual(2n)
-})
+  ).toEqual(2n);
+});
 
 test('multiplying float and float is ok', () => {
   return expectFinishedResult(
@@ -90,8 +90,8 @@ test('multiplying float and float is ok', () => {
     1.0 * 2.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(2)
-})
+  ).toEqual(2);
+});
 
 test('cannot multiply non-number values', () => {
   return expectParsedError(
@@ -99,8 +99,8 @@ test('cannot multiply non-number values', () => {
     True * 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual('Line 1: Error: Invalid types for multiply operation: boolean, bigint')
-})
+  ).toEqual('Line 1: Error: Invalid types for multiply operation: boolean, bigint');
+});
 
 test('dividing integer and float is ok', () => {
   return expectFinishedResult(
@@ -108,8 +108,8 @@ test('dividing integer and float is ok', () => {
     2 / 1.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(2)
-})
+  ).toEqual(2);
+});
 
 test('dividing integer and integer is ok', () => {
   return expectFinishedResult(
@@ -117,8 +117,8 @@ test('dividing integer and integer is ok', () => {
     1 / 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual(0.5)
-})
+  ).toEqual(0.5);
+});
 
 test('dividing float and float is ok', () => {
   return expectFinishedResult(
@@ -126,8 +126,8 @@ test('dividing float and float is ok', () => {
     1.0 / 2.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(0.5)
-})
+  ).toEqual(0.5);
+});
 
 test('cannot divide non-number values', () => {
   return expectParsedError(
@@ -135,8 +135,8 @@ test('cannot divide non-number values', () => {
     "a" / 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.')
-})
+  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.');
+});
 
 test('modding integer and float is ok', () => {
   return expectFinishedResult(
@@ -144,8 +144,8 @@ test('modding integer and float is ok', () => {
     2 % 1.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(0)
-})
+  ).toEqual(0);
+});
 
 test('modding integer and integer is ok', () => {
   return expectFinishedResult(
@@ -153,8 +153,8 @@ test('modding integer and integer is ok', () => {
     2 % 1
   `,
     Chapter.PYTHON_1,
-  ).toEqual(0n)
-})
+  ).toEqual(0n);
+});
 
 test('modding float and float is ok', () => {
   return expectFinishedResult(
@@ -162,8 +162,8 @@ test('modding float and float is ok', () => {
     1.0 % 2.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(1.0)
-})
+  ).toEqual(1.0);
+});
 
 test('cannot mod non-number values', () => {
   return expectParsedError(
@@ -171,8 +171,8 @@ test('cannot mod non-number values', () => {
     "a" % 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.')
-})
+  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.');
+});
 
 test('powering integer and float is ok', () => {
   return expectFinishedResult(
@@ -180,8 +180,8 @@ test('powering integer and float is ok', () => {
     2 ** 1.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(2.0)
-})
+  ).toEqual(2.0);
+});
 
 test('powering integer and integer is ok', () => {
   return expectFinishedResult(
@@ -189,8 +189,8 @@ test('powering integer and integer is ok', () => {
     2 ** 1
   `,
     Chapter.PYTHON_1,
-  ).toEqual(2n)
-})
+  ).toEqual(2n);
+});
 
 test('powering float and float is ok', () => {
   return expectFinishedResult(
@@ -198,8 +198,8 @@ test('powering float and float is ok', () => {
     1.0 ** 2.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(1.0)
-})
+  ).toEqual(1.0);
+});
 
 test('cannot power non-number values', () => {
   return expectParsedError(
@@ -207,8 +207,8 @@ test('cannot power non-number values', () => {
     "a" ** 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.')
-})
+  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.');
+});
 
 test('flooring integer and float is ok', () => {
   return expectFinishedResult(
@@ -216,8 +216,8 @@ test('flooring integer and float is ok', () => {
     2 // 1.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(2n)
-})
+  ).toEqual(2n);
+});
 
 test('flooring integer and integer is ok', () => {
   return expectFinishedResult(
@@ -225,8 +225,8 @@ test('flooring integer and integer is ok', () => {
     2 // 1
   `,
     Chapter.PYTHON_1,
-  ).toEqual(2n)
-})
+  ).toEqual(2n);
+});
 
 test('flooring float and float is ok', () => {
   return expectFinishedResult(
@@ -234,8 +234,8 @@ test('flooring float and float is ok', () => {
     1.0 // 2.0
   `,
     Chapter.PYTHON_1,
-  ).toEqual(0n)
-})
+  ).toEqual(0n);
+});
 
 test('cannot floor non-number values', () => {
   return expectParsedError(
@@ -243,5 +243,5 @@ test('cannot floor non-number values', () => {
     "a" // 2
   `,
     Chapter.PYTHON_1,
-  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.')
-})
+  ).toEqual('Line 1: Error: Expected number on left hand side of operation, got string.');
+});

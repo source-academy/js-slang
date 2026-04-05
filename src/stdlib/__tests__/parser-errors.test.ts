@@ -1,7 +1,7 @@
-import { test } from 'vitest'
-import { Chapter } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
-import { expectParsedError } from '../../utils/testing'
+import { test } from 'vitest';
+import { Chapter } from '../../langs';
+import { stripIndent } from '../../utils/formatters';
+import { expectParsedError } from '../../utils/testing';
 
 test('Blatant syntax error', () => {
   return expectParsedError(
@@ -9,8 +9,8 @@ test('Blatant syntax error', () => {
     stringify(parse("'"), undefined, 2);
     `,
     { chapter: Chapter.SOURCE_4 },
-  ).toEqual('Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)')
-})
+  ).toEqual('Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)');
+});
 
 test('Blacklisted syntax', () => {
   return expectParsedError(
@@ -18,5 +18,5 @@ test('Blacklisted syntax', () => {
     stringify(parse("function* f() { yield 1; } f();"), undefined, 2);
     `,
     { chapter: Chapter.SOURCE_4 },
-  ).toEqual('Line 1: ParseError: Yield expressions are not allowed')
-})
+  ).toEqual('Line 1: ParseError: Yield expressions are not allowed');
+});

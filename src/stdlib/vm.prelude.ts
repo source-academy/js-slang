@@ -1,6 +1,6 @@
-import OpCodes from '../vm/opcodes'
-import type { Program, SVMFunction } from '../vm/svml-compiler'
-import { char_at, get_time, parse_int } from './misc'
+import OpCodes from '../vm/opcodes';
+import type { Program, SVMFunction } from '../vm/svml-compiler';
+import { char_at, get_time, parse_int } from './misc';
 
 // functions should be sorted in alphabetical order. Refer to SVML spec on wiki
 // placeholders should be manually replaced with the correct machine code.
@@ -577,7 +577,7 @@ function _arity(f) {}
 
 // hack to make the call to Program easier, just replace the index 95 (number of primitive functions + 2)
 (() => 0)();
-`
+`;
 
 // list of all primitive functions in alphabetical order. This determines the index
 // of the function in the program array.
@@ -679,16 +679,16 @@ export const PRIMITIVE_FUNCTION_NAMES = [
   'display_list',
   'char_at',
   'arity',
-]
+];
 
-export const VARARGS_NUM_ARGS = -1
+export const VARARGS_NUM_ARGS = -1;
 
 // name, opcode, number of arguments, has return value
 export const INTERNAL_FUNCTIONS: [string, OpCodes, number, boolean][] = [
   ['test_and_set', OpCodes.TEST_AND_SET, 1, true],
   ['clear', OpCodes.CLEAR, 1, false],
   ['concurrent_execute', OpCodes.EXECUTE, VARARGS_NUM_ARGS, false],
-]
+];
 
 // for each function, replace a specified opcode with another opcode
 const VARARG_PRIMITIVES: [string, number?, number?][] = [
@@ -702,13 +702,13 @@ const VARARG_PRIMITIVES: [string, number?, number?][] = [
   ['stream'],
   ['prompt', OpCodes.NOTG, OpCodes.PROMPT],
   ['display_list', OpCodes.MODG, OpCodes.DISPLAY_LIST],
-]
+];
 
 // primitives without a function should be manually implemented
 export const NULLARY_PRIMITIVES: [string, number, any?][] = [
   ['math_random', OpCodes.MATH_RANDOM, Math.random],
   ['get_time', OpCodes.RUNTIME, get_time],
-]
+];
 
 export const UNARY_PRIMITIVES: [string, number, any?][] = [
   ['array_length', OpCodes.ARRAY_LEN],
@@ -749,7 +749,7 @@ export const UNARY_PRIMITIVES: [string, number, any?][] = [
   ['math_trunc', OpCodes.MATH_TRUNC, Math.trunc],
   ['stringify', OpCodes.STRINGIFY],
   ['arity', OpCodes.ARITY],
-]
+];
 
 export const BINARY_PRIMITIVES: [string, number, any?][] = [
   ['math_atan2', OpCodes.MATH_ATAN2, Math.atan2],
@@ -757,7 +757,7 @@ export const BINARY_PRIMITIVES: [string, number, any?][] = [
   ['math_pow', OpCodes.MATH_POW, Math.pow],
   ['parse_int', OpCodes.PARSE_INT, parse_int],
   ['char_at', OpCodes.CHAR_AT, char_at],
-]
+];
 
 export const EXTERNAL_PRIMITIVES: [string, number][] = [
   ['display', OpCodes.DISPLAY],
@@ -765,7 +765,7 @@ export const EXTERNAL_PRIMITIVES: [string, number][] = [
   ['error', OpCodes.ERROR],
   ['prompt', OpCodes.PROMPT],
   ['display_list', OpCodes.DISPLAY_LIST],
-]
+];
 
 export const CONSTANT_PRIMITIVES: [string, any][] = [
   ['undefined', undefined],
@@ -779,60 +779,60 @@ export const CONSTANT_PRIMITIVES: [string, any][] = [
   ['math_PI', Math.PI],
   ['math_SQRT1_2', Math.SQRT1_2],
   ['math_SQRT2', Math.SQRT2],
-]
+];
 
 // helper functions to generate machine code
 function generateNullaryPrimitive(index: number, opcode: number): [number, SVMFunction] {
-  return [index, [1, 0, 0, [[opcode], [OpCodes.RETG]]]]
+  return [index, [1, 0, 0, [[opcode], [OpCodes.RETG]]]];
 }
 
 function generateUnaryPrimitive(index: number, opcode: number): [number, SVMFunction] {
-  return [index, [1, 1, 1, [[OpCodes.LDLG, 0], [opcode], [OpCodes.RETG]]]]
+  return [index, [1, 1, 1, [[OpCodes.LDLG, 0], [opcode], [OpCodes.RETG]]]];
 }
 
 function generateBinaryPrimitive(index: number, opcode: number): [number, SVMFunction] {
-  return [index, [2, 2, 2, [[OpCodes.LDLG, 0], [OpCodes.LDLG, 1], [opcode], [OpCodes.RETG]]]]
+  return [index, [2, 2, 2, [[OpCodes.LDLG, 0], [OpCodes.LDLG, 1], [opcode], [OpCodes.RETG]]]];
 }
 
 // replaces prelude SVMFunction array with generated instructions
 export function generatePrimitiveFunctionCode(prelude: Program) {
-  const preludeFunctions = prelude[1]
-  const functions: [number, SVMFunction][] = []
-  const nameToIndexMap = new Map<string, number>()
+  const preludeFunctions = prelude[1];
+  const functions: [number, SVMFunction][] = [];
+  const nameToIndexMap = new Map<string, number>();
   function convertPrimitiveVarArgs() {
     VARARG_PRIMITIVES.forEach(f => {
-      const index = nameToIndexMap.get(f[0])!
-      const opcodeToReplace = f[1]
-      const opcodeToUse = f[2]
+      const index = nameToIndexMap.get(f[0])!;
+      const opcodeToReplace = f[1];
+      const opcodeToUse = f[2];
       // replace function's numargs to VARARGS_NUM_ARGS as indicator
-      preludeFunctions[index + 1][2] = VARARGS_NUM_ARGS
+      preludeFunctions[index + 1][2] = VARARGS_NUM_ARGS;
       // replace opcode with corresponding opcode
       if (opcodeToReplace !== undefined && opcodeToUse !== undefined) {
-        const instructions = preludeFunctions[index + 1][3]
+        const instructions = preludeFunctions[index + 1][3];
         instructions.forEach(ins => {
-          if (ins[0] === opcodeToReplace) ins[0] = opcodeToUse
-        })
+          if (ins[0] === opcodeToReplace) ins[0] = opcodeToUse;
+        });
       }
-    })
+    });
   }
 
   PRIMITIVE_FUNCTION_NAMES.forEach((name, index) => {
-    nameToIndexMap.set(name, index)
-  })
+    nameToIndexMap.set(name, index);
+  });
   NULLARY_PRIMITIVES.forEach(f =>
     functions.push(generateNullaryPrimitive(nameToIndexMap.get(f[0])!, f[1])),
-  )
+  );
   UNARY_PRIMITIVES.forEach(f =>
     functions.push(generateUnaryPrimitive(nameToIndexMap.get(f[0])!, f[1])),
-  )
+  );
   BINARY_PRIMITIVES.forEach(f =>
     functions.push(generateBinaryPrimitive(nameToIndexMap.get(f[0])!, f[1])),
-  )
+  );
 
   functions.forEach(func => {
-    const newFunc = func[1]
-    const indexToReplace = func[0] + 1 // + 1 due to global env
-    preludeFunctions[indexToReplace] = newFunc
-  })
-  convertPrimitiveVarArgs()
+    const newFunc = func[1];
+    const indexToReplace = func[0] + 1; // + 1 due to global env
+    preludeFunctions[indexToReplace] = newFunc;
+  });
+  convertPrimitiveVarArgs();
 }

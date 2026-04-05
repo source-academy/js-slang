@@ -1,10 +1,10 @@
-import type { Program } from 'estree'
+import type { Program } from 'estree';
 
-import type { IOptions } from '..'
-import type { Variant } from '../langs'
-import { areBreakpointsSet } from '../stdlib/inspector'
-import type { Context, RecursivePartial } from '../types'
-import { simple } from '../utils/ast/walkers'
+import type { IOptions } from '..';
+import type { Variant } from '../langs';
+import { areBreakpointsSet } from '../stdlib/inspector';
+import type { Context, RecursivePartial } from '../types';
+import { simple } from '../utils/ast/walkers';
 
 // Context Utils
 
@@ -22,9 +22,9 @@ import { simple } from '../utils/ast/walkers'
  */
 export function determineVariant(context: Context, options: RecursivePartial<IOptions>): Variant {
   if (options.variant) {
-    return options.variant
+    return options.variant;
   } else {
-    return context.variant
+    return context.variant;
   }
 }
 
@@ -35,26 +35,26 @@ export function determineExecutionMethod(
   verboseErrors: boolean,
 ): void {
   if (theOptions.executionMethod !== 'auto') {
-    context.executionMethod = theOptions.executionMethod
-    return
+    context.executionMethod = theOptions.executionMethod;
+    return;
   }
 
   if (context.executionMethod !== 'auto') {
-    return
+    return;
   }
 
-  let isNativeRunnable
+  let isNativeRunnable;
   if (verboseErrors || areBreakpointsSet()) {
-    isNativeRunnable = false
+    isNativeRunnable = false;
   } else {
-    let hasDebuggerStatement = false
+    let hasDebuggerStatement = false;
     simple(program, {
       DebuggerStatement() {
-        hasDebuggerStatement = true
+        hasDebuggerStatement = true;
       },
-    })
-    isNativeRunnable = !hasDebuggerStatement
+    });
+    isNativeRunnable = !hasDebuggerStatement;
   }
 
-  context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine'
+  context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine';
 }

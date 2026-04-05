@@ -1,18 +1,18 @@
-import type { Comment, ConditionalExpression, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
-import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import type { Comment, ConditionalExpression, SourceLocation } from 'estree';
+import type { StepperExpression, StepperPattern } from '..';
+import { redex } from '../..';
+import { convert } from '../../generator';
+import type { StepperBaseNode } from '../../interface';
 
 export class StepperConditionalExpression implements ConditionalExpression, StepperBaseNode {
-  type: 'ConditionalExpression'
-  test: StepperExpression
-  consequent: StepperExpression
-  alternate: StepperExpression
-  leadingComments?: Comment[]
-  trailingComments?: Comment[]
-  loc?: SourceLocation | null
-  range?: [number, number]
+  type: 'ConditionalExpression';
+  test: StepperExpression;
+  consequent: StepperExpression;
+  alternate: StepperExpression;
+  leadingComments?: Comment[];
+  trailingComments?: Comment[];
+  loc?: SourceLocation | null;
+  range?: [number, number];
 
   constructor(
     test: StepperExpression,
@@ -23,14 +23,14 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
     loc?: SourceLocation | null,
     range?: [number, number],
   ) {
-    this.type = 'ConditionalExpression'
-    this.test = test
-    this.consequent = consequent
-    this.alternate = alternate
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    this.type = 'ConditionalExpression';
+    this.test = test;
+    this.consequent = consequent;
+    this.alternate = alternate;
+    this.leadingComments = leadingComments;
+    this.trailingComments = trailingComments;
+    this.loc = loc;
+    this.range = range;
   }
 
   static create(node: ConditionalExpression) {
@@ -42,41 +42,41 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       node.trailingComments,
       node.loc,
       node.range,
-    )
+    );
   }
 
   isContractible(): boolean {
-    if (this.test.type !== 'Literal') return false
-    const test_value = this.test.value
+    if (this.test.type !== 'Literal') return false;
+    const test_value = this.test.value;
     if (typeof test_value !== 'boolean') {
       throw new Error(
         `Line ${
           this.loc?.start.line || 0
         }: Expected boolean as condition, got ${typeof test_value}.`,
-      )
+      );
     }
-    redex.preRedex = [this]
-    return true
+    redex.preRedex = [this];
+    return true;
   }
 
   isOneStepPossible(): boolean {
-    return this.isContractible() || this.test.isOneStepPossible()
+    return this.isContractible() || this.test.isOneStepPossible();
   }
 
   contract(): StepperExpression {
-    redex.preRedex = [this]
+    redex.preRedex = [this];
     if (this.test.type !== 'Literal' || typeof this.test.value !== 'boolean') {
-      throw new Error('Cannot contract non-boolean literal test')
+      throw new Error('Cannot contract non-boolean literal test');
     }
 
-    const result = this.test.value ? this.consequent : this.alternate
-    redex.postRedex = [result]
-    return result
+    const result = this.test.value ? this.consequent : this.alternate;
+    redex.postRedex = [result];
+    return result;
   }
 
   oneStep(): StepperExpression {
     if (this.isContractible()) {
-      return this.contract()
+      return this.contract();
     }
 
     return new StepperConditionalExpression(
@@ -87,7 +87,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
@@ -99,7 +99,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 
   freeNames(): string[] {
@@ -109,7 +109,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
         ...this.consequent.freeNames(),
         ...this.alternate.freeNames(),
       ]),
-    )
+    );
   }
 
   allNames(): string[] {
@@ -119,7 +119,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
         ...this.consequent.allNames(),
         ...this.alternate.allNames(),
       ]),
-    )
+    );
   }
 
   rename(before: string, after: string): StepperExpression {
@@ -131,6 +131,6 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 }

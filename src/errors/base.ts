@@ -1,4 +1,4 @@
-import type { SourceLocation } from 'estree'
+import type { SourceLocation } from 'estree';
 
 export enum ErrorType {
   IMPORT = 'Import',
@@ -14,9 +14,9 @@ export enum ErrorSeverity {
 
 // any and all errors ultimately implement this interface. as such, changes to this will affect every type of error.
 export interface SourceError {
-  type: ErrorType
-  severity: ErrorSeverity
-  location: SourceLocation
-  explain(): string
-  elaborate(): string
+  type: ErrorType;
+  severity: ErrorSeverity;
+  location: SourceLocation;
+  explain(): string;
+  elaborate(): string;
 }

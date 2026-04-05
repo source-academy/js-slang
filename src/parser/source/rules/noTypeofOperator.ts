@@ -1,7 +1,7 @@
-import type { UnaryExpression } from 'estree'
-import { Variant } from '../../../langs'
-import type { Rule } from '../../types'
-import { NoUnspecifiedOperatorError } from './noUnspecifiedOperator'
+import type { UnaryExpression } from 'estree';
+import { Variant } from '../../../langs';
+import type { Rule } from '../../types';
+import { NoUnspecifiedOperatorError } from './noUnspecifiedOperator';
 
 const noTypeofOperator: Rule<UnaryExpression> = {
   name: 'no-typeof-operator',
@@ -10,12 +10,12 @@ const noTypeofOperator: Rule<UnaryExpression> = {
   checkers: {
     UnaryExpression(node) {
       if (node.operator === 'typeof') {
-        return [new NoUnspecifiedOperatorError(node)]
+        return [new NoUnspecifiedOperatorError(node)];
       } else {
-        return []
+        return [];
       }
     },
   },
-}
+};
 
-export default noTypeofOperator
+export default noTypeofOperator;

@@ -1,8 +1,8 @@
-import { test } from 'vitest'
-import { Chapter, Variant } from '../../langs'
-import type { Value } from '../../types'
-import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult, snapshotFailure } from '../../utils/testing'
+import { test } from 'vitest';
+import { Chapter, Variant } from '../../langs';
+import type { Value } from '../../types';
+import { stripIndent } from '../../utils/formatters';
+import { expectFinishedResult, snapshotFailure } from '../../utils/testing';
 
 test.each([
   [
@@ -436,9 +436,9 @@ test.each([
       await expectFinishedResult(stripIndent(snippet), {
         chapter,
         variant: Variant.EXPLICIT_CONTROL,
-      }).toEqual(returnValue)
+      }).toEqual(returnValue);
     } else {
-      await snapshotFailure(stripIndent(snippet), { chapter, variant: Variant.EXPLICIT_CONTROL })
+      await snapshotFailure(stripIndent(snippet), { chapter, variant: Variant.EXPLICIT_CONTROL });
     }
   },
-)
+);

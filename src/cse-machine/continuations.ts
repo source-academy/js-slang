@@ -1,8 +1,8 @@
-import type es from 'estree'
+import type es from 'estree';
 
-import type { Context, Environment } from '../types'
-import type { Control, Stash } from './interpreter'
-import { uniqueId } from './utils'
+import type { Context, Environment } from '../types';
+import type { Control, Stash } from './interpreter';
+import { uniqueId } from './utils';
 
 /**
  * A dummy function used to detect for the call/cc function object.
@@ -10,25 +10,25 @@ import { uniqueId } from './utils'
  * point of evaluation is executed instead of a regular function call.
  */
 export class Call_cc extends Function {
-  private static instance: Call_cc = new Call_cc()
+  private static instance: Call_cc = new Call_cc();
 
   private constructor() {
-    super()
+    super();
   }
 
   public static get(): Call_cc {
-    return Call_cc.instance
+    return Call_cc.instance;
   }
 
   public toString(): string {
-    return 'call/cc'
+    return 'call/cc';
   }
 }
 
-export const call_with_current_continuation = Call_cc.get()
+export const call_with_current_continuation = Call_cc.get();
 
 export function isCallWithCurrentContinuation(value: any): boolean {
-  return value === call_with_current_continuation
+  return value === call_with_current_continuation;
 }
 
 /**
@@ -40,41 +40,41 @@ export function isCallWithCurrentContinuation(value: any): boolean {
  * the typechecker so that they can be first-class values.
  */
 export class Continuation extends Function {
-  private control: Control
-  private stash: Stash
-  private env: Environment[]
+  private control: Control;
+  private stash: Stash;
+  private env: Environment[];
 
   /** Unique ID defined for continuation */
-  public readonly id: string
+  public readonly id: string;
 
   constructor(context: Context, control: Control, stash: Stash, env: Environment[]) {
-    super()
-    this.control = control.copy()
-    this.stash = stash.copy()
-    this.env = [...env]
-    this.id = uniqueId(context)
+    super();
+    this.control = control.copy();
+    this.stash = stash.copy();
+    this.env = [...env];
+    this.id = uniqueId(context);
   }
 
   // As the continuation needs to be immutable (we can call it several times)
   // we need to copy its elements whenever we access them
   public getControl(): Control {
-    return this.control.copy()
+    return this.control.copy();
   }
 
   public getStash(): Stash {
-    return this.stash.copy()
+    return this.stash.copy();
   }
 
   public getEnv(): Environment[] {
-    return [...this.env]
+    return [...this.env];
   }
 
   public toString(): string {
-    return 'continuation'
+    return 'continuation';
   }
 
   public equals(other: Continuation): boolean {
-    return this === other
+    return this === other;
   }
 }
 
@@ -97,5 +97,5 @@ export function makeDummyContCallExpression(callee: string, argument: string): e
         name: argument,
       },
     ],
-  }
+  };
 }

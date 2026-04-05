@@ -1,23 +1,23 @@
-import type { Comment, IfStatement, SourceLocation } from 'estree'
-import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
-import { redex } from '../..'
-import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
-import { StepperLiteral } from '../Expression/Literal'
-import { StepperBlockStatement } from './BlockStatement'
-import { StepperExpressionStatement } from './ExpressionStatement'
-import { StepperStatement } from '.'
+import type { Comment, IfStatement, SourceLocation } from 'estree';
+import { type StepperExpression, type StepperPattern, undefinedNode } from '..';
+import { redex } from '../..';
+import { convert } from '../../generator';
+import type { StepperBaseNode } from '../../interface';
+import { StepperLiteral } from '../Expression/Literal';
+import { StepperBlockStatement } from './BlockStatement';
+import { StepperExpressionStatement } from './ExpressionStatement';
+import { StepperStatement } from '.';
 
 export class StepperIfStatement implements IfStatement, StepperBaseNode {
-  type: 'IfStatement'
-  test: StepperExpression
-  consequent: StepperStatement
-  alternate: StepperStatement | null
+  type: 'IfStatement';
+  test: StepperExpression;
+  consequent: StepperStatement;
+  alternate: StepperStatement | null;
 
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
+  leadingComments?: Comment[] | undefined;
+  trailingComments?: Comment[] | undefined;
+  loc?: SourceLocation | null | undefined;
+  range?: [number, number] | undefined;
 
   constructor(
     test: StepperExpression,
@@ -28,14 +28,14 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined,
   ) {
-    this.type = 'IfStatement'
-    this.test = test
-    this.consequent = consequent
-    this.alternate = alternate
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    this.type = 'IfStatement';
+    this.test = test;
+    this.consequent = consequent;
+    this.alternate = alternate;
+    this.leadingComments = leadingComments;
+    this.trailingComments = trailingComments;
+    this.loc = loc;
+    this.range = range;
   }
 
   static create(node: IfStatement) {
@@ -47,23 +47,23 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       node.trailingComments,
       node.loc,
       node.range,
-    )
+    );
   }
 
   isContractible(): boolean {
-    return this.test instanceof StepperLiteral
+    return this.test instanceof StepperLiteral;
   }
 
   contract(): StepperBlockStatement | StepperIfStatement {
     if (!(this.test instanceof StepperLiteral)) {
-      throw new Error('Cannot contract non-literal test')
+      throw new Error('Cannot contract non-literal test');
     }
 
-    redex.preRedex = [this]
-    const result = this.test.value ? this.consequent : this.alternate || undefinedNode
+    redex.preRedex = [this];
+    const result = this.test.value ? this.consequent : this.alternate || undefinedNode;
 
     if (result instanceof StepperBlockStatement) {
-      redex.postRedex = [result]
+      redex.postRedex = [result];
       return new StepperBlockStatement(
         [
           new StepperExpressionStatement(undefinedNode, undefined, undefined, this.loc, this.range),
@@ -74,26 +74,26 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
         this.trailingComments,
         this.loc,
         this.range,
-      )
+      );
     } else if (result instanceof StepperIfStatement) {
       // else if statement
-      return result
+      return result;
     } else {
-      throw new Error('Cannot contract to non-block statement')
+      throw new Error('Cannot contract to non-block statement');
     }
   }
 
   isOneStepPossible(): boolean {
-    return this.isContractible() || this.test.isOneStepPossible()
+    return this.isContractible() || this.test.isOneStepPossible();
   }
 
   oneStep(): StepperIfStatement | StepperBlockStatement {
     if (!this.isOneStepPossible()) {
-      throw new Error('No step possible in test')
+      throw new Error('No step possible in test');
     }
 
     if (this.isContractible()) {
-      return this.contract()
+      return this.contract();
     }
 
     return new StepperIfStatement(
@@ -104,7 +104,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
@@ -116,12 +116,12 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 
   contractEmpty() {
-    redex.preRedex = [this]
-    redex.postRedex = []
+    redex.preRedex = [this];
+    redex.postRedex = [];
   }
 
   freeNames(): string[] {
@@ -129,8 +129,8 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       ...this.test.freeNames(),
       ...this.consequent.freeNames(),
       ...(this.alternate ? this.alternate.freeNames() : []),
-    ])
-    return Array.from(names)
+    ]);
+    return Array.from(names);
   }
 
   allNames(): string[] {
@@ -138,8 +138,8 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       ...this.test.allNames(),
       ...this.consequent.allNames(),
       ...(this.alternate ? this.alternate.allNames() : []),
-    ])
-    return Array.from(names)
+    ]);
+    return Array.from(names);
   }
 
   rename(before: string, after: string): StepperIfStatement {
@@ -151,6 +151,6 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 }

@@ -1,10 +1,10 @@
-import { parse } from 'acorn'
-import type { BlockStatement } from 'estree'
-import { describe, expect, test } from 'vitest'
-import { ACORN_PARSE_OPTIONS } from '../../constants'
-import { hasBreakStatement, hasContinueStatement, hasReturnStatement } from '../utils'
+import { parse } from 'acorn';
+import type { BlockStatement } from 'estree';
+import { describe, expect, test } from 'vitest';
+import { ACORN_PARSE_OPTIONS } from '../../constants';
+import { hasBreakStatement, hasContinueStatement, hasReturnStatement } from '../utils';
 
-type TestCase = [desc: string, code: string, expected: boolean]
+type TestCase = [desc: string, code: string, expected: boolean];
 
 describe(hasBreakStatement, () => {
   // If statements
@@ -15,7 +15,7 @@ describe(hasBreakStatement, () => {
     ['If statement with consequent missing break', 'if (true) { } else { break; }', true],
     ['If statement with both missing break', 'if (true) { } else { }', false],
     ['If statement with consequent only and missing break', 'if (true) { }', false],
-  ]
+  ];
 
   const blockCases: TestCase[] = [
     ['Simple block', 'break', true],
@@ -27,7 +27,7 @@ describe(hasBreakStatement, () => {
       }`,
       expected,
     ]),
-  ]
+  ];
 
   test.each([...ifCases, ...blockCases])('%#. %s', (_, code, expected) => {
     const parsed = parse(
@@ -35,17 +35,17 @@ describe(hasBreakStatement, () => {
       ${code}  
     }`,
       ACORN_PARSE_OPTIONS,
-    )
+    );
 
     const {
       body: [statement],
-    } = parsed
+    } = parsed;
 
     if (statement.type !== 'WhileStatement' || statement.body.type !== 'BlockStatement')
-      throw new Error()
-    expect(hasBreakStatement(statement.body as BlockStatement)).toEqual(expected)
-  })
-})
+      throw new Error();
+    expect(hasBreakStatement(statement.body as BlockStatement)).toEqual(expected);
+  });
+});
 
 describe(hasContinueStatement, () => {
   // If statements
@@ -56,7 +56,7 @@ describe(hasContinueStatement, () => {
     ['If statement with consequent missing continue', 'if (true) { } else { continue; }', true],
     ['If statement with both missing continue', 'if (true) { } else { }', false],
     ['If statement with consequent only and missing continue', 'if (true) { }', false],
-  ]
+  ];
 
   const blockCases: TestCase[] = [
     ['Simple block', 'continue', true],
@@ -68,7 +68,7 @@ describe(hasContinueStatement, () => {
       }`,
       expected,
     ]),
-  ]
+  ];
 
   test.each([
     ...ifCases,
@@ -91,17 +91,17 @@ describe(hasContinueStatement, () => {
       ${code}  
     }`,
       ACORN_PARSE_OPTIONS,
-    )
+    );
 
     const {
       body: [statement],
-    } = parsed
+    } = parsed;
 
     if (statement.type !== 'WhileStatement' || statement.body.type !== 'BlockStatement')
-      throw new Error()
-    expect(hasContinueStatement(statement.body as BlockStatement)).toEqual(expected)
-  })
-})
+      throw new Error();
+    expect(hasContinueStatement(statement.body as BlockStatement)).toEqual(expected);
+  });
+});
 
 describe(hasReturnStatement, () => {
   const ifCases: TestCase[] = [
@@ -111,7 +111,7 @@ describe(hasReturnStatement, () => {
     ['If consequent has return, alternative has no return', 'if (true) { return } else {}', false],
     ['If consequent no return, alternate has return', 'if (true) {} else { return }', false],
     ['If consequent and alternative with returns', 'if (true) { return } else { return }', true],
-  ]
+  ];
 
   test.each([
     ...ifCases,
@@ -122,13 +122,13 @@ describe(hasReturnStatement, () => {
       ${code}  
     }`,
       ACORN_PARSE_OPTIONS,
-    )
+    );
 
     const {
       body: [statement],
-    } = parsed
+    } = parsed;
 
-    if (statement.type !== 'FunctionDeclaration') throw new Error()
-    expect(hasReturnStatement(statement.body as BlockStatement)).toEqual(expected)
-  })
-})
+    if (statement.type !== 'FunctionDeclaration') throw new Error();
+    expect(hasReturnStatement(statement.body as BlockStatement)).toEqual(expected);
+  });
+});

@@ -1,14 +1,14 @@
-import type { Identifier } from 'estree'
-import { RuleError } from '../../errors'
-import type { Rule } from '../../types'
+import type { Identifier } from 'estree';
+import { RuleError } from '../../errors';
+import type { Rule } from '../../types';
 
 export class NoEval extends RuleError<Identifier> {
   public explain() {
-    return `eval is not allowed.`
+    return `eval is not allowed.`;
   }
 
   public elaborate() {
-    return this.explain()
+    return this.explain();
   }
 }
 
@@ -18,12 +18,12 @@ const noEval: Rule<Identifier> = {
   checkers: {
     Identifier(node) {
       if (node.name === 'eval') {
-        return [new NoEval(node)]
+        return [new NoEval(node)];
       } else {
-        return []
+        return [];
       }
     },
   },
-}
+};
 
-export default noEval
+export default noEval;

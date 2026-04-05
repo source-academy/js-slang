@@ -1,5 +1,5 @@
-import { Variant } from '../../../langs'
-import { SourceDocumentation } from '../docTooltip'
+import { Variant } from '../../../langs';
+import { SourceDocumentation } from '../docTooltip';
 
 /**
  * Source Mode for Ace Editor
@@ -22,100 +22,100 @@ export function HighlightRulesSelector(
   external: string = 'NONE',
   externalLibraries: (
     | {
-        caption: string
-        value: string
-        meta: any
-        docHTML: any
+        caption: string;
+        value: string;
+        meta: any;
+        docHTML: any;
       }
     | {
-        caption: string
-        value: string
-        meta: string
-        docHTML?: undefined
+        caption: string;
+        value: string;
+        meta: string;
+        docHTML?: undefined;
       }
   )[] = [],
 ) {
   // @ts-expect-error implicit any
   function _SourceHighlightRules(acequire, exports, _module) {
-    'use strict'
+    'use strict';
 
-    const oop = acequire('../lib/oop')
+    const oop = acequire('../lib/oop');
     const DocCommentHighlightRules = acequire(
       './doc_comment_highlight_rules',
-    ).DocCommentHighlightRules
-    const TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules
-    const identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
+    ).DocCommentHighlightRules;
+    const TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules;
+    const identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*';
 
-    const chapter = variant === Variant.DEFAULT ? id.toString() : id.toString() + '_' + variant
+    const chapter = variant === Variant.DEFAULT ? id.toString() : id.toString() + '_' + variant;
     const builtin_lib =
-      SourceDocumentation.builtins[chapter as keyof typeof SourceDocumentation.builtins]
+      SourceDocumentation.builtins[chapter as keyof typeof SourceDocumentation.builtins];
 
     function addFromBuiltinLibrary(meta: string) {
       if (builtin_lib === null) {
-        return ''
+        return '';
       }
-      let func = ''
+      let func = '';
       for (const name in builtin_lib) {
         if (builtin_lib[name]['meta'] === meta) {
-          func += '|' + name
+          func += '|' + name;
         }
       }
-      return func
+      return func;
     }
 
     function addFromExternalLibrary(meta: string) {
       if (externalLibraries === null) {
-        return ''
+        return '';
       }
-      let func = ''
+      let func = '';
       externalLibraries.forEach(node => {
         if (node.meta === meta) {
-          func += '|' + node.caption
+          func += '|' + node.caption;
         }
-      })
-      return func
+      });
+      return func;
     }
 
     function getAllNames(meta: string) {
-      const concat = addFromBuiltinLibrary(meta) + addFromExternalLibrary(meta)
-      return concat.substr(1)
+      const concat = addFromBuiltinLibrary(meta) + addFromExternalLibrary(meta);
+      return concat.substr(1);
     }
 
     const ChapterKeywordSelector = () => {
-      const output = []
+      const output = [];
       if (id >= 1) {
-        output.push('import', 'const', 'else', 'if', 'return', 'function', 'debugger')
+        output.push('import', 'const', 'else', 'if', 'return', 'function', 'debugger');
       }
       if (id >= 2) {
-        output.push('export')
+        output.push('export');
       }
       if (id >= 3) {
-        output.push('while', 'for', 'break', 'continue', 'let')
+        output.push('while', 'for', 'break', 'continue', 'let');
       }
-      return output.join('|')
-    }
+      return output.join('|');
+    };
 
     const ChapterAndVariantForbiddenWordSelector = () => {
-      const forbiddenWords = []
+      const forbiddenWords = [];
       if (id < 2) {
-        forbiddenWords.push('export')
+        forbiddenWords.push('export');
       }
       if (id < 3) {
-        forbiddenWords.push('while', 'for', 'break', 'continue', 'let')
+        forbiddenWords.push('while', 'for', 'break', 'continue', 'let');
       }
       if (variant !== Variant.TYPED) {
-        forbiddenWords.push('typeof', 'void')
+        forbiddenWords.push('typeof', 'void');
       }
-      return forbiddenWords.join('|')
-    }
+      return forbiddenWords.join('|');
+    };
 
     const VariantForbiddenRegexSelector = () => {
       if (variant === Variant.TYPED) {
         // Removes the part of the regex that highlights singular |, since Typed variant uses union types
-        return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|(?<!&)&(?!&)/
+        return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|(?<!&)&(?!&)/;
       }
-      return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|(?<!&)&(?!&)|(?<!\|)\|(?!\|)/
-    }
+      return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|(?<!&)&(?!&)|(?<!\|)\|(?!\|)/;
+    };
 
     // Documentation for token types:
     // https://github.com/ajaxorg/ace/wiki/Creating-or-Extending-an-Edit-Mode#common-tokens
@@ -144,10 +144,10 @@ export function HighlightRulesSelector(
             ChapterAndVariantForbiddenWordSelector(),
         },
         'identifier',
-      )
+      );
 
       // original keywordBeforeRegex = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
-      const keywordBeforeRegex = 'else|return'
+      const keywordBeforeRegex = 'else|return';
 
       const escapedRegex =
         '\\\\(?:x[0-9a-fA-F]{2}|' + // hex
@@ -156,7 +156,7 @@ export function HighlightRulesSelector(
         '[0-2][0-7]{0,2}|' + // oct
         '3[0-7][0-7]?|' + // oct
         '[4-7][0-7]?|' + //oct
-        '.)'
+        '.)';
 
       // @ts-ignore
       this.$rules = {
@@ -518,7 +518,7 @@ export function HighlightRulesSelector(
             defaultToken: 'string',
           },
         ],
-      }
+      };
 
       if (!options || !options.noES6) {
         // @ts-ignore
@@ -527,16 +527,16 @@ export function HighlightRulesSelector(
             regex: '[{}]',
             // @ts-ignore
             onMatch: function (val, state, stack) {
-              this.next = val == '{' ? this.nextState : ''
+              this.next = val == '{' ? this.nextState : '';
               if (val == '{' && stack.length) {
-                stack.unshift('start', state)
+                stack.unshift('start', state);
               } else if (val == '}' && stack.length) {
-                stack.shift()
-                this.next = stack.shift()
+                stack.shift();
+                this.next = stack.shift();
                 if (this.next.indexOf('string') != -1 || this.next.indexOf('jsx') != -1)
-                  return 'paren.quasi.end'
+                  return 'paren.quasi.end';
               }
-              return val == '{' ? 'paren.lparen' : 'paren.rparen'
+              return val == '{' ? 'paren.lparen' : 'paren.rparen';
             },
             nextState: 'start',
           },
@@ -563,11 +563,11 @@ export function HighlightRulesSelector(
               },
             ],
           },
-        )
+        );
 
         if (!options || options.jsx != false)
           // @ts-ignore
-          JSX.call(this)
+          JSX.call(this);
 
         // Adding of highlight rules for Source Typed
         // Code referenced from https://github.com/ajaxorg/ace-builds/blob/master/src/mode-typescript.js
@@ -586,35 +586,35 @@ export function HighlightRulesSelector(
               token: 'keyword',
               regex: '\\b(?:typeof)\\b',
             },
-          )
+          );
         }
       }
       // @ts-ignore
       this.embedRules(DocCommentHighlightRules, 'doc-', [
         DocCommentHighlightRules.getEndRule('no_regex'),
-      ])
+      ]);
       // @ts-ignore
-      this.normalizeRules()
-    }
+      this.normalizeRules();
+    };
 
-    oop.inherits(SourceHighlightRules, TextHighlightRules)
+    oop.inherits(SourceHighlightRules, TextHighlightRules);
 
     function JSX() {
-      const tagRegex = identifierRegex.replace('\\d', '\\d\\-')
+      const tagRegex = identifierRegex.replace('\\d', '\\d\\-');
       const jsxTag = {
         // @ts-ignore
         onMatch: function (val, state, stack) {
-          const offset = val.charAt(1) == '/' ? 2 : 1
+          const offset = val.charAt(1) == '/' ? 2 : 1;
           if (offset == 1) {
-            if (state != this.nextState) stack.unshift(this.next, this.nextState, 0)
-            else stack.unshift(this.next)
-            stack[2]++
+            if (state != this.nextState) stack.unshift(this.next, this.nextState, 0);
+            else stack.unshift(this.next);
+            stack[2]++;
           } else if (offset == 2) {
             if (state == this.nextState) {
-              stack[1]--
+              stack[1]--;
               if (!stack[1] || stack[1] < 0) {
-                stack.shift()
-                stack.shift()
+                stack.shift();
+                stack.shift();
               }
             }
           }
@@ -627,21 +627,21 @@ export function HighlightRulesSelector(
               type: 'meta.tag.tag-name.xml',
               value: val.substr(offset),
             },
-          ]
+          ];
         },
         regex: '</?' + tagRegex + '',
         next: 'jsxAttributes',
         nextState: 'jsx',
-      }
+      };
       // @ts-ignore
-      this.$rules.start.unshift(jsxTag)
+      this.$rules.start.unshift(jsxTag);
       const jsxJsRule = {
         regex: '{',
         token: 'paren.quasi.start',
         push: 'start',
-      }
+      };
       // @ts-ignore
-      this.$rules.jsx = [jsxJsRule, jsxTag, { include: 'reference' }, { defaultToken: 'string' }]
+      this.$rules.jsx = [jsxJsRule, jsxTag, { include: 'reference' }, { defaultToken: 'string' }];
       // @ts-ignore
       this.$rules.jsxAttributes = [
         {
@@ -649,16 +649,16 @@ export function HighlightRulesSelector(
           regex: '/?>',
           // @ts-ignore
           onMatch: function (value, currentState, stack) {
-            if (currentState == stack[0]) stack.shift()
+            if (currentState == stack[0]) stack.shift();
             if (value.length == 2) {
-              if (stack[0] == this.nextState) stack[1]--
+              if (stack[0] == this.nextState) stack[1]--;
               if (!stack[1] || stack[1] < 0) {
-                stack.splice(0, 2)
+                stack.splice(0, 2);
               }
             }
             // @ts-ignore
-            this.next = stack[0] || 'start'
-            return [{ type: this.token, value }]
+            this.next = stack[0] || 'start';
+            return [{ type: this.token, value }];
           },
           nextState: 'jsx',
         },
@@ -697,14 +697,14 @@ export function HighlightRulesSelector(
           ],
         },
         jsxTag,
-      ]
+      ];
       // @ts-ignore
       this.$rules.reference = [
         {
           token: 'constant.language.escape.reference.xml',
           regex: '(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)',
         },
-      ]
+      ];
     }
 
     // @ts-ignore
@@ -728,12 +728,12 @@ export function HighlightRulesSelector(
             { defaultToken: 'comment', caseInsensitive: true },
           ],
         },
-      ]
+      ];
     }
-    exports.SourceHighlightRules = SourceHighlightRules
+    exports.SourceHighlightRules = SourceHighlightRules;
   }
 
-  const name = id.toString() + variant + external
+  const name = id.toString() + variant + external;
 
   // @ts-ignore
   ace.define(
@@ -747,7 +747,7 @@ export function HighlightRulesSelector(
       'ace/mode/text_highlight_rules',
     ],
     _SourceHighlightRules,
-  )
+  );
 }
 
 //source mode
@@ -756,82 +756,82 @@ export function ModeSelector(
   variant: Variant = Variant.DEFAULT,
   external: string = 'NONE',
 ) {
-  const name = id.toString() + variant + external
+  const name = id.toString() + variant + external;
 
   // @ts-ignore
   function _Mode(acequire, exports, _module) {
-    'use strict'
+    'use strict';
 
-    const oop = acequire('../lib/oop')
-    const TextMode = acequire('./text').Mode
-    const SourceHighlightRules = acequire('./source_highlight_rules' + name).SourceHighlightRules
-    const MatchingBraceOutdent = acequire('./matching_brace_outdent').MatchingBraceOutdent
+    const oop = acequire('../lib/oop');
+    const TextMode = acequire('./text').Mode;
+    const SourceHighlightRules = acequire('./source_highlight_rules' + name).SourceHighlightRules;
+    const MatchingBraceOutdent = acequire('./matching_brace_outdent').MatchingBraceOutdent;
     // For JSHint background worker
     // const WorkerClient = acequire('../worker/worker_client').WorkerClient
-    const CstyleBehaviour = acequire('./behaviour/cstyle').CstyleBehaviour
-    const CStyleFoldMode = acequire('./folding/cstyle').FoldMode
+    const CstyleBehaviour = acequire('./behaviour/cstyle').CstyleBehaviour;
+    const CStyleFoldMode = acequire('./folding/cstyle').FoldMode;
 
     const Mode = function () {
       // @ts-ignore
-      this.HighlightRules = SourceHighlightRules
+      this.HighlightRules = SourceHighlightRules;
       // @ts-ignore
-      this.$outdent = new MatchingBraceOutdent()
+      this.$outdent = new MatchingBraceOutdent();
       // @ts-ignore
-      this.$behaviour = new CstyleBehaviour()
+      this.$behaviour = new CstyleBehaviour();
       // @ts-ignore
-      this.foldingRules = new CStyleFoldMode()
-    }
-    oop.inherits(Mode, TextMode)
-    ;(function () {
+      this.foldingRules = new CStyleFoldMode();
+    };
+    oop.inherits(Mode, TextMode);
+    (function () {
       // @ts-ignore
-      this.lineCommentStart = '//'
+      this.lineCommentStart = '//';
       // @ts-ignore
-      this.blockComment = { start: '/*', end: '*/' }
+      this.blockComment = { start: '/*', end: '*/' };
       // @ts-ignore
-      this.$quotes = { '"': '"', "'": "'", '`': '`' }
+      this.$quotes = { '"': '"', "'": "'", '`': '`' };
 
       // @ts-ignore
       this.getNextLineIndent = function (state, line, tab) {
-        let indent = this.$getIndent(line)
+        let indent = this.$getIndent(line);
 
-        const tokenizedLine = this.getTokenizer().getLineTokens(line, state)
-        const tokens = tokenizedLine.tokens
-        const endState = tokenizedLine.state
+        const tokenizedLine = this.getTokenizer().getLineTokens(line, state);
+        const tokens = tokenizedLine.tokens;
+        const endState = tokenizedLine.state;
 
         if (tokens.length && tokens[tokens.length - 1].type == 'comment') {
-          return indent
+          return indent;
         }
 
         if (state == 'start' || state == 'no_regex') {
-          const match = line.match(/^.*(?:\bcase\b.*:|[\{\(\[])\s*$/)
+          const match = line.match(/^.*(?:\bcase\b.*:|[\{\(\[])\s*$/);
           if (match) {
-            indent += tab
+            indent += tab;
           }
         } else if (state == 'doc-start') {
           if (endState == 'start' || endState == 'no_regex') {
-            return ''
+            return '';
           }
-          const match = line.match(/^\s*(\/?)\*/)
+          const match = line.match(/^\s*(\/?)\*/);
           if (match) {
             if (match[1]) {
-              indent += ' '
+              indent += ' ';
             }
-            indent += '* '
+            indent += '* ';
           }
         }
 
-        return indent
-      }
+        return indent;
+      };
 
       // @ts-ignore
       this.checkOutdent = function (state, line, input) {
-        return this.$outdent.checkOutdent(line, input)
-      }
+        return this.$outdent.checkOutdent(line, input);
+      };
 
       // @ts-ignore
       this.autoOutdent = function (state, doc, row) {
-        this.$outdent.autoOutdent(doc, row)
-      }
+        this.$outdent.autoOutdent(doc, row);
+      };
 
       // This is the JSHint background worker. Disabled because it is of little
       // utility to Source, and produced many false positives.
@@ -861,10 +861,10 @@ export function ModeSelector(
       // }
 
       // @ts-ignore
-      this.$id = 'ace/mode/source' + name
-    }).call(Mode.prototype)
+      this.$id = 'ace/mode/source' + name;
+    }).call(Mode.prototype);
 
-    exports.Mode = Mode
+    exports.Mode = Mode;
   }
   // @ts-ignore
   ace.define(
@@ -882,5 +882,5 @@ export function ModeSelector(
       'ace/mode/folding/cstyle',
     ],
     _Mode,
-  )
+  );
 }

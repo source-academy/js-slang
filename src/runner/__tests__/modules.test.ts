@@ -1,12 +1,12 @@
-import { describe, test, vi } from 'vitest'
-import { Chapter, Variant } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
-import { getChapterName } from '../../utils/misc'
-import { expectFinishedResult } from '../../utils/testing'
+import { describe, test, vi } from 'vitest';
+import { Chapter, Variant } from '../../langs';
+import { stripIndent } from '../../utils/formatters';
+import { getChapterName } from '../../utils/misc';
+import { expectFinishedResult } from '../../utils/testing';
 
-vi.mock(import('../../modules/loader/loaders'))
+vi.mock(import('../../modules/loader/loaders'));
 
-type DescribeCase = [string, Chapter[], Variant[], string]
+type DescribeCase = [string, Chapter[], Variant[], string];
 const describeCases: DescribeCase[] = [
   [
     'javascript',
@@ -39,23 +39,23 @@ const describeCases: DescribeCase[] = [
     foo()
     `,
   ],
-]
+];
 
 describe.each(describeCases)(
   'Ensuring that %s chapters are able to load modules',
   (_, chapters, variants, code) => {
     const chapterCases = chapters.map((chapterVal, index) => {
-      const chapterName = getChapterName(chapterVal)
-      const variant = variants[index]
-      return [`Testing ${chapterName}`, chapterVal, variant] as [string, Chapter, Variant]
-    })
+      const chapterName = getChapterName(chapterVal);
+      const variant = variants[index];
+      return [`Testing ${chapterName}`, chapterVal, variant] as [string, Chapter, Variant];
+    });
 
     test.each(chapterCases)(
       '%s',
       { timeout: process.env.GITHUB_ACTIONS ? 20_000 : 10_000 },
       (_, chapter, variant) => {
-        return expectFinishedResult(code, { chapter, variant }).toEqual('foo')
+        return expectFinishedResult(code, { chapter, variant }).toEqual('foo');
       },
-    )
+    );
   },
-)
+);

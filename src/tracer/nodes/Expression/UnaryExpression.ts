@@ -1,19 +1,19 @@
-import type { Comment, Literal, SourceLocation, UnaryExpression, UnaryOperator } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
-import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
-import { StepperLiteral } from './Literal'
+import type { Comment, Literal, SourceLocation, UnaryExpression, UnaryOperator } from 'estree';
+import type { StepperExpression, StepperPattern } from '..';
+import { redex } from '../..';
+import { convert } from '../../generator';
+import type { StepperBaseNode } from '../../interface';
+import { StepperLiteral } from './Literal';
 
 export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode {
-  type: 'UnaryExpression'
-  operator: UnaryOperator
-  prefix: true
-  argument: StepperExpression
-  leadingComments?: Comment[]
-  trailingComments?: Comment[]
-  loc?: SourceLocation | null
-  range?: [number, number]
+  type: 'UnaryExpression';
+  operator: UnaryOperator;
+  prefix: true;
+  argument: StepperExpression;
+  leadingComments?: Comment[];
+  trailingComments?: Comment[];
+  loc?: SourceLocation | null;
+  range?: [number, number];
 
   constructor(
     operator: UnaryOperator,
@@ -23,14 +23,14 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
     loc?: SourceLocation | null,
     range?: [number, number],
   ) {
-    this.type = 'UnaryExpression'
-    this.operator = operator
-    this.prefix = true
-    this.argument = argument
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    this.type = 'UnaryExpression';
+    this.operator = operator;
+    this.prefix = true;
+    this.argument = argument;
+    this.leadingComments = leadingComments;
+    this.trailingComments = trailingComments;
+    this.loc = loc;
+    this.range = range;
   }
 
   static createLiteral(node: StepperUnaryExpression | UnaryExpression): StepperLiteral | undefined {
@@ -48,15 +48,15 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
         node.trailingComments,
         node.loc,
         node.range,
-      )
+      );
     }
-    return undefined
+    return undefined;
   }
 
   static create(node: UnaryExpression) {
-    const literal = StepperUnaryExpression.createLiteral(node)
+    const literal = StepperUnaryExpression.createLiteral(node);
     if (literal) {
-      return literal
+      return literal;
     }
     return new StepperUnaryExpression(
       node.operator,
@@ -65,45 +65,45 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       node.trailingComments,
       node.loc,
       node.range,
-    )
+    );
   }
 
   isContractible(): boolean {
-    if (this.argument.type !== 'Literal') return false
+    if (this.argument.type !== 'Literal') return false;
 
-    const valueType = typeof this.argument.value
+    const valueType = typeof this.argument.value;
     const markContractible = () => {
-      redex.preRedex = [this]
-      return true
-    }
+      redex.preRedex = [this];
+      return true;
+    };
 
     switch (this.operator) {
       case '!':
         if (valueType === 'boolean') {
-          return markContractible()
+          return markContractible();
         } else {
-          throw new Error(`Line ${this.loc?.start.line || 0}: Expected boolean, got ${valueType}.`)
+          throw new Error(`Line ${this.loc?.start.line || 0}: Expected boolean, got ${valueType}.`);
         }
       case '-':
         if (valueType === 'number') {
-          return markContractible()
+          return markContractible();
         } else {
-          throw new Error(`Line ${this.loc?.start.line || 0}: Expected number, got ${valueType}.`)
+          throw new Error(`Line ${this.loc?.start.line || 0}: Expected number, got ${valueType}.`);
         }
       default:
-        return false
+        return false;
     }
   }
 
   isOneStepPossible(): boolean {
-    return this.isContractible() || this.argument.isOneStepPossible()
+    return this.isContractible() || this.argument.isOneStepPossible();
   }
 
   contract(): StepperLiteral {
-    redex.preRedex = [this]
-    if (this.argument.type !== 'Literal') throw new Error()
+    redex.preRedex = [this];
+    if (this.argument.type !== 'Literal') throw new Error();
 
-    const operand = this.argument.value
+    const operand = this.argument.value;
     if (this.operator === '!') {
       const ret = new StepperLiteral(
         !operand,
@@ -112,9 +112,9 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
         this.trailingComments,
         this.loc,
         this.range,
-      )
-      redex.postRedex = [ret]
-      return ret
+      );
+      redex.postRedex = [ret];
+      return ret;
     } else if (this.operator === '-') {
       const ret = new StepperLiteral(
         -(operand as number),
@@ -123,17 +123,17 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
         this.trailingComments,
         this.loc,
         this.range,
-      )
-      redex.postRedex = [ret]
-      return ret
+      );
+      redex.postRedex = [ret];
+      return ret;
     }
 
-    throw new Error()
+    throw new Error();
   }
 
   oneStep(): StepperExpression {
     if (this.isContractible()) {
-      return this.contract()
+      return this.contract();
     }
     const res = new StepperUnaryExpression(
       this.operator,
@@ -142,9 +142,9 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       this.trailingComments,
       this.loc,
       this.range,
-    )
-    const literal = StepperUnaryExpression.createLiteral(res)
-    return literal ? literal : res
+    );
+    const literal = StepperUnaryExpression.createLiteral(res);
+    return literal ? literal : res;
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
@@ -155,17 +155,17 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       this.trailingComments,
       this.loc,
       this.range,
-    )
-    const literal = StepperUnaryExpression.createLiteral(res)
-    return literal ? literal : res
+    );
+    const literal = StepperUnaryExpression.createLiteral(res);
+    return literal ? literal : res;
   }
 
   freeNames(): string[] {
-    return this.argument.freeNames()
+    return this.argument.freeNames();
   }
 
   allNames(): string[] {
-    return this.argument.allNames()
+    return this.argument.allNames();
   }
 
   rename(before: string, after: string): StepperExpression {
@@ -176,6 +176,6 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 }

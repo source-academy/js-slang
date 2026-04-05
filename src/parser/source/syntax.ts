@@ -1,4 +1,4 @@
-export const libraryParserLanguage = 100
+export const libraryParserLanguage = 100;
 
 const syntaxBlacklist: { [nodeName: string]: number } = {
   // List of all node types taken from
@@ -88,6 +88,6 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   SequenceExpression: Infinity,
   AssignmentPattern: Infinity,
   TaggedTemplateExpression: Infinity,
-}
+};
 
-export default syntaxBlacklist
+export default syntaxBlacklist;

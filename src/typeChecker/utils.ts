@@ -2,7 +2,7 @@
 // Helper functions/constants for type checker and type error checker
 // =======================================
 
-import { Chapter } from '../langs'
+import { Chapter } from '../langs';
 import type {
   AllowedDeclarations,
   BindableType,
@@ -19,14 +19,14 @@ import type {
   TypeEnvironment,
   UnionType,
   Variable,
-} from '../types'
-import * as tsEs from './tsESTree'
+} from '../types';
+import * as tsEs from './tsESTree';
 
 // Name of Unary negative builtin operator
-export const NEGATIVE_OP = '-_1'
+export const NEGATIVE_OP = '-_1';
 
 // Special name used for saving return type in type environment
-export const RETURN_TYPE_IDENTIFIER = '//RETURN_TYPE'
+export const RETURN_TYPE_IDENTIFIER = '//RETURN_TYPE';
 
 export const typeAnnotationKeywordToBasicTypeMap: Record<tsEs.TSTypeKeyword, TSBasicType> = {
   TSAnyKeyword: 'any',
@@ -41,16 +41,16 @@ export const typeAnnotationKeywordToBasicTypeMap: Record<tsEs.TSTypeKeyword, TSB
   TSUndefinedKeyword: 'undefined',
   TSUnknownKeyword: 'unknown',
   TSVoidKeyword: 'void',
-}
+};
 
 // Helper functions for dealing with type environment
 export function lookupType(name: string, env: TypeEnvironment): BindableType | undefined {
   for (let i = env.length - 1; i >= 0; i--) {
     if (env[i].typeMap.has(name)) {
-      return env[i].typeMap.get(name)
+      return env[i].typeMap.get(name);
     }
   }
-  return undefined
+  return undefined;
 }
 
 export function lookupDeclKind(
@@ -59,84 +59,84 @@ export function lookupDeclKind(
 ): AllowedDeclarations | undefined {
   for (let i = env.length - 1; i >= 0; i--) {
     if (env[i].declKindMap.has(name)) {
-      return env[i].declKindMap.get(name)
+      return env[i].declKindMap.get(name);
     }
   }
-  return undefined
+  return undefined;
 }
 
 export function lookupTypeAlias(name: string, env: TypeEnvironment): Type | ForAll | undefined {
   for (let i = env.length - 1; i >= 0; i--) {
     if (env[i].typeAliasMap.has(name)) {
-      return env[i].typeAliasMap.get(name)
+      return env[i].typeAliasMap.get(name);
     }
   }
-  return undefined
+  return undefined;
 }
 
 export function setType(name: string, type: BindableType, env: TypeEnvironment): void {
-  env[env.length - 1].typeMap.set(name, type)
+  env[env.length - 1].typeMap.set(name, type);
 }
 
 export function setDeclKind(name: string, kind: AllowedDeclarations, env: TypeEnvironment): void {
-  env[env.length - 1].declKindMap.set(name, kind)
+  env[env.length - 1].declKindMap.set(name, kind);
 }
 
 export function setTypeAlias(name: string, type: Type | ForAll, env: TypeEnvironment): void {
-  env[env.length - 1].typeAliasMap.set(name, type)
+  env[env.length - 1].typeAliasMap.set(name, type);
 }
 
 export function pushEnv(env: TypeEnvironment): void {
-  env.push({ typeMap: new Map(), declKindMap: new Map(), typeAliasMap: new Map() })
+  env.push({ typeMap: new Map(), declKindMap: new Map(), typeAliasMap: new Map() });
 }
 
 // Helper functions for formatting types
 export function formatTypeString(type: Type, formatAsLiteral?: boolean): string {
   switch (type.kind) {
     case 'function':
-      const paramTypes = type.parameterTypes
+      const paramTypes = type.parameterTypes;
       const paramTypeString = paramTypes
         .map(type => formatTypeString(type, formatAsLiteral))
-        .join(', ')
-      return `(${paramTypeString}) => ${formatTypeString(type.returnType, formatAsLiteral)}`
+        .join(', ');
+      return `(${paramTypeString}) => ${formatTypeString(type.returnType, formatAsLiteral)}`;
     case 'union':
       // Remove duplicates
-      const typeSet = new Set(type.types.map(type => formatTypeString(type, formatAsLiteral)))
-      return Array.from(typeSet).join(' | ')
+      const typeSet = new Set(type.types.map(type => formatTypeString(type, formatAsLiteral)));
+      return Array.from(typeSet).join(' | ');
     case 'literal':
       if (typeof type.value === 'string') {
-        return `"${type.value.toString()}"`
+        return `"${type.value.toString()}"`;
       }
-      return type.value.toString()
+      return type.value.toString();
     case 'primitive':
       if (!formatAsLiteral || type.value === undefined) {
-        return type.name
+        return type.name;
       }
       if (typeof type.value === 'string') {
-        return `"${type.value.toString()}"`
+        return `"${type.value.toString()}"`;
       }
-      return type.value.toString()
+      return type.value.toString();
     case 'pair':
       return `Pair<${formatTypeString(type.headType, formatAsLiteral)}, ${formatTypeString(
         type.tailType,
         formatAsLiteral,
-      )}>`
+      )}>`;
     case 'list':
-      return `List<${formatTypeString(type.elementType, formatAsLiteral)}>`
+      return `List<${formatTypeString(type.elementType, formatAsLiteral)}>`;
     case 'array':
-      const elementTypeString = formatTypeString(type.elementType, formatAsLiteral)
+      const elementTypeString = formatTypeString(type.elementType, formatAsLiteral);
       return elementTypeString.includes('|') || elementTypeString.includes('=>')
         ? `(${elementTypeString})[]`
-        : `${elementTypeString}[]`
+        : `${elementTypeString}[]`;
     case 'variable':
       if (type.typeArgs !== undefined && type.typeArgs.length > 0) {
         return `${type.name}<${type.typeArgs
           .map(param => formatTypeString(param, formatAsLiteral))
-          .join(', ')}>`
+          .join(', ')}>`;
       }
-      return type.name
+      return type.name;
     default:
-      return type
+      return type;
   }
 }
 
@@ -146,7 +146,7 @@ export function tPrimitive(name: Primitive['name'], value?: string | number | bo
     kind: 'primitive',
     name,
     value,
-  }
+  };
 }
 
 export function tVar(name: string, typeArgs?: Type[]): Variable {
@@ -155,7 +155,7 @@ export function tVar(name: string, typeArgs?: Type[]): Variable {
     name,
     constraint: 'none',
     typeArgs,
-  }
+  };
 }
 
 export function tAddable(name: string): Variable {
@@ -163,7 +163,7 @@ export function tAddable(name: string): Variable {
     kind: 'variable',
     name,
     constraint: 'addable',
-  }
+  };
 }
 
 export function tPair(headType: Type, tailType: Type): Pair {
@@ -171,7 +171,7 @@ export function tPair(headType: Type, tailType: Type): Pair {
     kind: 'pair',
     headType,
     tailType,
-  }
+  };
 }
 
 export function tList(elementType: Type, typeAsPair?: Pair): List {
@@ -180,7 +180,7 @@ export function tList(elementType: Type, typeAsPair?: Pair): List {
     elementType,
     // Used in Source Typed variants to check for type mismatches against pairs
     typeAsPair,
-  }
+  };
 }
 
 export function tForAll(polyType: Type, typeParams?: Variable[]): ForAll {
@@ -188,61 +188,61 @@ export function tForAll(polyType: Type, typeParams?: Variable[]): ForAll {
     kind: 'forall',
     polyType,
     typeParams,
-  }
+  };
 }
 
 export function tArray(elementType: Type): SArray {
   return {
     kind: 'array',
     elementType,
-  }
+  };
 }
 
-export const tAny = tPrimitive('any')
-export const tBool = tPrimitive('boolean')
-export const tNumber = tPrimitive('number')
-export const tString = tPrimitive('string')
-export const tUndef = tPrimitive('undefined')
-export const tVoid = tPrimitive('void')
-export const tNull = tPrimitive('null')
+export const tAny = tPrimitive('any');
+export const tBool = tPrimitive('boolean');
+export const tNumber = tPrimitive('number');
+export const tString = tPrimitive('string');
+export const tUndef = tPrimitive('undefined');
+export const tVoid = tPrimitive('void');
+export const tNull = tPrimitive('null');
 
 export function tFunc(...types: Type[]): FunctionType {
-  const parameterTypes = types.slice(0, -1)
-  const returnType = types.slice(-1)[0]
+  const parameterTypes = types.slice(0, -1);
+  const returnType = types.slice(-1)[0];
   return {
     kind: 'function',
     parameterTypes,
     returnType,
-  }
+  };
 }
 
 export function tUnion(...types: Type[]): UnionType {
   return {
     kind: 'union',
     types,
-  }
+  };
 }
 
 export function tLiteral(value: string | number | boolean): LiteralType {
   return {
     kind: 'literal',
     value,
-  }
+  };
 }
 
 export function tPred(ifTrueType: Type | ForAll): PredicateType {
   return {
     kind: 'predicate',
     ifTrueType,
-  }
+  };
 }
 
-export const headType = tVar('headType')
-export const tailType = tVar('tailType')
+export const headType = tVar('headType');
+export const tailType = tVar('tailType');
 
 // Stream type used in Source Typed
 export function tStream(elementType: Type): FunctionType {
-  return tFunc(tPair(elementType, tVar('Stream', [elementType])))
+  return tFunc(tPair(elementType, tVar('Stream', [elementType])));
 }
 
 // Types for preludes
@@ -308,7 +308,7 @@ export const predeclaredNames: [string, BindableType][] = [
   ['stringify', tForAll(tFunc(tVar('T'), tString))],
   ['display', tForAll(tVar('T'))],
   ['error', tForAll(tVar('T'))],
-]
+];
 
 export const pairFuncs: [string, BindableType][] = [
   ['pair', tForAll(tFunc(headType, tailType, tPair(headType, tailType)))],
@@ -317,19 +317,19 @@ export const pairFuncs: [string, BindableType][] = [
   ['is_pair', tPred(tForAll(tPair(headType, tailType)))],
   ['is_null', tPred(tForAll(tList(tVar('T'))))],
   ['is_list', tPred(tForAll(tList(tVar('T'))))],
-]
+];
 
 export const mutatingPairFuncs: [string, BindableType][] = [
   ['set_head', tForAll(tFunc(tPair(headType, tailType), headType, tUndef))],
   ['set_tail', tForAll(tFunc(tPair(headType, tailType), tailType, tUndef))],
-]
+];
 
 export const arrayFuncs: [string, BindableType][] = [
   ['is_array', tPred(tForAll(tArray(tVar('T'))))],
   ['array_length', tForAll(tFunc(tArray(tVar('T')), tNumber))],
-]
+];
 
-export const listFuncs: [string, BindableType][] = [['list', tForAll(tVar('T1'))]]
+export const listFuncs: [string, BindableType][] = [['list', tForAll(tVar('T1'))]];
 
 export const primitiveFuncs: [string, BindableType][] = [
   [NEGATIVE_OP, tFunc(tNumber, tNumber)],
@@ -345,19 +345,19 @@ export const primitiveFuncs: [string, BindableType][] = [
   ['-', tFunc(tNumber, tNumber, tNumber)],
   ['*', tFunc(tNumber, tNumber, tNumber)],
   ['/', tFunc(tNumber, tNumber, tNumber)],
-]
+];
 
 // Source 2 and below restricts === to addables
 export const preS3equalityFuncs: [string, BindableType][] = [
   ['===', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
   ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-]
+];
 
 // Source 3 and above allows any values as arguments for ===
 export const postS3equalityFuncs: [string, BindableType][] = [
   ['===', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))],
   ['!==', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))],
-]
+];
 
 export const temporaryStreamFuncs: [string, BindableType][] = [
   ['is_stream', tForAll(tFunc(tVar('T1'), tBool))],
@@ -377,7 +377,7 @@ export const temporaryStreamFuncs: [string, BindableType][] = [
   ['integers_from', tForAll(tFunc(tNumber, tVar('T1')))],
   ['eval_stream', tForAll(tFunc(tVar('T1'), tNumber, tList(tVar('T2'))))],
   ['stream_ref', tForAll(tFunc(tVar('T1'), tNumber, tVar('T2')))],
-]
+];
 
 // Prelude function type overrides for Source Typed variant
 // No need to override predicate functions as they are automatically handled by type checker
@@ -394,7 +394,7 @@ export const source1TypeOverrides: [string, BindableType][] = [
   // TODO: Add support for type checking of functions with variable no. of args
   ['display', tForAll(tAny)],
   ['error', tForAll(tAny)],
-]
+];
 
 export const source2TypeOverrides: [string, BindableType][] = [
   // list library functions
@@ -423,7 +423,7 @@ export const source2TypeOverrides: [string, BindableType][] = [
   ['display_list', tForAll(tAny)],
   ['draw_data', tForAll(tAny)],
   ['equal', tFunc(tAny, tAny, tBool)],
-]
+];
 
 export const source3TypeOverrides: [string, BindableType][] = [
   // array functions
@@ -456,37 +456,37 @@ export const source3TypeOverrides: [string, BindableType][] = [
   ['stream_reverse', tForAll(tFunc(tStream(tVar('T')), tStream(tVar('T'))))],
   ['stream_tail', tForAll(tFunc(tStream(tVar('T')), tStream(tVar('T'))))],
   ['stream_to_list', tForAll(tFunc(tStream(tVar('T')), tList(tVar('T'))))],
-]
+];
 
 export const source4TypeOverrides: [string, BindableType][] = [
   ['apply_in_underlying_javascript', tFunc(tAny, tList(tAny), tAny)],
   ['tokenize', tFunc(tString, tList(tString))],
   // For parse tree types, see parseTreeTypes.prelude.ts
   ['parse', tFunc(tString, tUnion(tVar('Program', []), tVar('Statement', [])))],
-]
+];
 
-const predeclaredConstTypes: [string, Type][] = []
+const predeclaredConstTypes: [string, Type][] = [];
 
 const pairTypeAlias: [string, ForAll] = [
   'Pair',
   tForAll(tPair(headType, tailType), [headType, tailType]),
-]
-const listTypeAlias: [string, ForAll] = ['List', tForAll(tList(tVar('T')), [tVar('T')])]
-const streamTypeAlias: [string, ForAll] = ['Stream', tForAll(tStream(tVar('T')), [tVar('T')])]
+];
+const listTypeAlias: [string, ForAll] = ['List', tForAll(tList(tVar('T')), [tVar('T')])];
+const streamTypeAlias: [string, ForAll] = ['Stream', tForAll(tStream(tVar('T')), [tVar('T')])];
 
 // Creates type environment for the appropriate Source chapter
 export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
-  const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs]
-  const initialTypeAliasMappings: [string, Type | ForAll][] = [...predeclaredConstTypes]
+  const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs];
+  const initialTypeAliasMappings: [string, Type | ForAll][] = [...predeclaredConstTypes];
   if (chapter >= 2) {
-    initialTypeMappings.push(...pairFuncs, ...listFuncs)
-    initialTypeAliasMappings.push(pairTypeAlias, listTypeAlias)
+    initialTypeMappings.push(...pairFuncs, ...listFuncs);
+    initialTypeAliasMappings.push(pairTypeAlias, listTypeAlias);
   }
   if (chapter >= 3) {
-    initialTypeMappings.push(...postS3equalityFuncs, ...mutatingPairFuncs, ...arrayFuncs)
-    initialTypeAliasMappings.push(streamTypeAlias)
+    initialTypeMappings.push(...postS3equalityFuncs, ...mutatingPairFuncs, ...arrayFuncs);
+    initialTypeAliasMappings.push(streamTypeAlias);
   } else {
-    initialTypeMappings.push(...preS3equalityFuncs)
+    initialTypeMappings.push(...preS3equalityFuncs);
   }
 
   return [
@@ -495,19 +495,19 @@ export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
       declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const'])),
       typeAliasMap: new Map(initialTypeAliasMappings),
     },
-  ]
+  ];
 }
 
 export function getTypeOverrides(chapter: Chapter): [string, BindableType][] {
-  const typeOverrides = [...source1TypeOverrides]
+  const typeOverrides = [...source1TypeOverrides];
   if (chapter >= 2) {
-    typeOverrides.push(...source2TypeOverrides)
+    typeOverrides.push(...source2TypeOverrides);
   }
   if (chapter >= 3) {
-    typeOverrides.push(...source3TypeOverrides)
+    typeOverrides.push(...source3TypeOverrides);
   }
   if (chapter >= 4) {
-    typeOverrides.push(...source4TypeOverrides)
+    typeOverrides.push(...source4TypeOverrides);
   }
-  return typeOverrides
+  return typeOverrides;
 }

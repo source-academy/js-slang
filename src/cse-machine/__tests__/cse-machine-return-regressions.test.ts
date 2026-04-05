@@ -3,12 +3,12 @@
  * Please reference Issue #124 (https://github.com/source-academy/js-slang/issues/124)
  */
 
-import { test } from 'vitest'
-import { Chapter, Variant } from '../../langs'
-import { expectFinishedResult, expectParsedError } from '../../utils/testing'
+import { test } from 'vitest';
+import { Chapter, Variant } from '../../langs';
+import { expectFinishedResult, expectParsedError } from '../../utils/testing';
 
-const optionEC = { variant: Variant.EXPLICIT_CONTROL }
-const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
+const optionEC = { variant: Variant.EXPLICIT_CONTROL };
+const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL };
 
 // This is bad practice. Don't do this!
 test('Calling unreachable results in error', () => {
@@ -24,8 +24,8 @@ test('Calling unreachable results in error', () => {
     f();
   `,
     optionEC,
-  ).toEqual('Line 3: Expected number on right hand side of operation, got boolean.')
-})
+  ).toEqual('Line 3: Expected number on right hand side of operation, got boolean.');
+});
 
 // This is bad practice. Don't do this!
 test('Bare early returns work', () => {
@@ -43,8 +43,8 @@ test('Bare early returns work', () => {
     f();
   `,
     optionEC,
-  ).toEqual(1)
-})
+  ).toEqual(1);
+});
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns work', () => {
@@ -65,8 +65,8 @@ test('Recursive call early returns work', () => {
     f();
   `,
     optionEC,
-  ).toEqual(3)
-})
+  ).toEqual(3);
+});
 
 // This is bad practice. Don't do this!
 test('Tail call early returns work', () => {
@@ -87,8 +87,8 @@ test('Tail call early returns work', () => {
     f();
   `,
     optionEC,
-  ).toEqual(1)
-})
+  ).toEqual(1);
+});
 
 // This is bad practice. Don't do this!
 test('Bare early returns in if statements work', () => {
@@ -109,8 +109,8 @@ test('Bare early returns in if statements work', () => {
     f();
   `,
     optionEC,
-  ).toEqual(1)
-})
+  ).toEqual(1);
+});
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in if statements work', () => {
@@ -134,8 +134,8 @@ test('Recursive call early returns in if statements work', () => {
     f();
   `,
     optionEC,
-  ).toEqual(3)
-})
+  ).toEqual(3);
+});
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in if statements work', () => {
@@ -159,8 +159,8 @@ test('Tail call early returns in if statements work', () => {
     f();
   `,
     optionEC,
-  ).toEqual(1)
-})
+  ).toEqual(1);
+});
 
 // This is bad practice. Don't do this!
 test('Bare early returns in while loops work', () => {
@@ -181,8 +181,8 @@ test('Bare early returns in while loops work', () => {
     f();
   `,
     optionEC3,
-  ).toEqual(1)
-})
+  ).toEqual(1);
+});
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in while loops work', () => {
@@ -206,8 +206,8 @@ test('Recursive call early returns in while loops work', () => {
     f();
   `,
     optionEC3,
-  ).toEqual(3)
-})
+  ).toEqual(3);
+});
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in while loops work', () => {
@@ -231,8 +231,8 @@ test('Tail call early returns in while loops work', () => {
     f();
   `,
     optionEC3,
-  ).toEqual(1)
-})
+  ).toEqual(1);
+});
 
 // This is bad practice. Don't do this!
 test('Bare early returns in for loops work', () => {
@@ -253,8 +253,8 @@ test('Bare early returns in for loops work', () => {
     f();
   `,
     optionEC3,
-  ).toEqual(1)
-})
+  ).toEqual(1);
+});
 
 // This is bad practice. Don't do this!
 test('Recursive call early returns in for loops work', () => {
@@ -275,8 +275,8 @@ test('Recursive call early returns in for loops work', () => {
     f();
   `,
     optionEC3,
-  ).toEqual(3)
-})
+  ).toEqual(3);
+});
 
 // This is bad practice. Don't do this!
 test('Tail call early returns in for loops work', () => {
@@ -300,5 +300,5 @@ test('Tail call early returns in for loops work', () => {
     f();
   `,
     optionEC3,
-  ).toEqual(1)
-})
+  ).toEqual(1);
+});

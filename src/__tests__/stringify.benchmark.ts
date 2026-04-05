@@ -1,10 +1,10 @@
 // TODO: Convert to actual benchmark
-import { test } from 'vitest'
-import { Chapter } from '../langs'
-import * as list from '../stdlib/list'
-import { stripIndent } from '../utils/formatters'
-import { stringify } from '../utils/stringify'
-import { expectFinishedResult } from '../utils/testing'
+import { test } from 'vitest';
+import { Chapter } from '../langs';
+import * as list from '../stdlib/list';
+import { stripIndent } from '../utils/formatters';
+import { stringify } from '../utils/stringify';
+import { expectFinishedResult } from '../utils/testing';
 
 test('stringify is fast', () => {
   return expectFinishedResult(
@@ -33,19 +33,19 @@ test('stringify is fast', () => {
       end - start;
       `,
     Chapter.SOURCE_3,
-  ).toBeLessThan(2000)
+  ).toBeLessThan(2000);
   // This benchmark takes 100ms on my machine,
   // but less than 2 seconds should be good enough on the test servers.
-})
+});
 
 test('display_list with stringify is linear runtime', { timeout: 1_000_000 }, () => {
-  const placeholder = Symbol('placeholder')
+  const placeholder = Symbol('placeholder');
   const noDisplayList = (v: any, s: any = placeholder) => {
     if (s !== placeholder && typeof s !== 'string') {
-      throw new TypeError('display_list expects the second argument to be a string')
+      throw new TypeError('display_list expects the second argument to be a string');
     }
-    return stringify(list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s))
-  }
+    return stringify(list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s));
+  };
 
   return expectFinishedResult(
     stripIndent`
@@ -143,8 +143,8 @@ test('display_list with stringify is linear runtime', { timeout: 1_000_000 }, ()
         no_display_list: noDisplayList,
       },
     },
-  ).toBeLessThan(1.2)
+  ).toBeLessThan(1.2);
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?
-})
+});

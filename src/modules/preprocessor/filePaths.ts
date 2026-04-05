@@ -2,7 +2,7 @@ import {
   ConsecutiveSlashesInFilePathError,
   IllegalCharInFilePathError,
   InvalidFilePathError,
-} from '../errors'
+} from '../errors';
 
 /**
  * Maps non-alphanumeric characters that are legal in file paths
@@ -25,7 +25,7 @@ export const nonAlphanumericCharEncoding: Record<string, string> = {
   // for more information.
   '.': '$$$$dot$$$$', // '$$dot$$'
   '-': '$$$$dash$$$$', // '$$dash$$'
-}
+};
 
 /**
  * Transforms the given file path to a valid function name. The
@@ -45,12 +45,12 @@ export const transformFilePathToValidFunctionName = (filePath: string): string =
       [charToReplace, replacementString]: [string, string],
     ) => {
       return (filePath: string): string =>
-        accumulatedFunction(filePath).replaceAll(charToReplace, replacementString)
+        accumulatedFunction(filePath).replaceAll(charToReplace, replacementString);
     },
     (filePath: string): string => filePath,
-  )
-  return `__${encodeChars(filePath)}__`
-}
+  );
+  return `__${encodeChars(filePath)}__`;
+};
 
 /**
  * Transforms the given function name to the expected name that
@@ -64,12 +64,12 @@ export const transformFilePathToValidFunctionName = (filePath: string): string =
 export const transformFunctionNameToInvokedFunctionResultVariableName = (
   functionName: string,
 ): string => {
-  return `_${functionName}_`
-}
+  return `_${functionName}_`;
+};
 
 const isAlphanumeric = (char: string): boolean => {
-  return /[a-zA-Z0-9]/i.exec(char) !== null
-}
+  return /[a-zA-Z0-9]/i.exec(char) !== null;
+};
 
 /**
  * Validates the given file path, returning an `InvalidFilePathError`
@@ -82,19 +82,19 @@ const isAlphanumeric = (char: string): boolean => {
  */
 export const validateFilePath = (filePath: string): InvalidFilePathError | null => {
   if (filePath.includes('//')) {
-    return new ConsecutiveSlashesInFilePathError(filePath)
+    return new ConsecutiveSlashesInFilePathError(filePath);
   }
   for (const char of filePath) {
     if (isAlphanumeric(char)) {
-      continue
+      continue;
     }
     if (char in nonAlphanumericCharEncoding) {
-      continue
+      continue;
     }
-    return new IllegalCharInFilePathError(filePath)
+    return new IllegalCharInFilePathError(filePath);
   }
-  return null
-}
+  return null;
+};
 
 /**
  * Returns whether a string is a file path. We define a file
@@ -103,5 +103,5 @@ export const validateFilePath = (filePath: string): InvalidFilePathError | null 
  * @param value The value of the string.
  */
 export const isFilePath = (value: string): boolean => {
-  return value.includes('/')
-}
+  return value.includes('/');
+};

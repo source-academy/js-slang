@@ -1,16 +1,16 @@
-import type { Comment, ExpressionStatement, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
-import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
+import type { Comment, ExpressionStatement, SourceLocation } from 'estree';
+import type { StepperExpression, StepperPattern } from '..';
+import { redex } from '../..';
+import { convert } from '../../generator';
+import type { StepperBaseNode } from '../../interface';
 
 export class StepperExpressionStatement implements ExpressionStatement, StepperBaseNode {
-  type: 'ExpressionStatement'
-  expression: StepperExpression
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
+  type: 'ExpressionStatement';
+  expression: StepperExpression;
+  leadingComments?: Comment[] | undefined;
+  trailingComments?: Comment[] | undefined;
+  loc?: SourceLocation | null | undefined;
+  range?: [number, number] | undefined;
 
   constructor(
     expression: StepperExpression,
@@ -19,12 +19,12 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined,
   ) {
-    this.type = 'ExpressionStatement'
-    this.expression = expression
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    this.type = 'ExpressionStatement';
+    this.expression = expression;
+    this.leadingComments = leadingComments;
+    this.trailingComments = trailingComments;
+    this.loc = loc;
+    this.range = range;
   }
 
   static create(node: ExpressionStatement) {
@@ -34,14 +34,14 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       node.trailingComments,
       node.loc,
       node.range,
-    )
+    );
   }
 
   isContractible(): boolean {
-    return this.expression.isContractible()
+    return this.expression.isContractible();
   }
   isOneStepPossible(): boolean {
-    return this.expression.isOneStepPossible()
+    return this.expression.isOneStepPossible();
   }
   contract(): StepperExpressionStatement {
     return new StepperExpressionStatement(
@@ -50,13 +50,13 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 
   contractEmpty() {
     // Handle cases such as 1; 2; -> 2;
-    redex.preRedex = [this]
-    redex.postRedex = []
+    redex.preRedex = [this];
+    redex.postRedex = [];
   }
 
   oneStep(): StepperExpressionStatement {
@@ -66,7 +66,7 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
@@ -76,15 +76,15 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 
   freeNames(): string[] {
-    return this.expression.freeNames()
+    return this.expression.freeNames();
   }
 
   allNames(): string[] {
-    return this.expression.allNames()
+    return this.expression.allNames();
   }
 
   rename(before: string, after: string): StepperExpressionStatement {
@@ -94,6 +94,6 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       this.trailingComments,
       this.loc,
       this.range,
-    )
+    );
   }
 }
