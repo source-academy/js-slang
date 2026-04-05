@@ -159,7 +159,7 @@ export const isStreamFn = (item: any, result?: any): result is [any, () => any] 
 function getStreamMaxWidth(
   targetStreamId: string,
   streamPairIdToStreamId: Map<string, string>,
-  streemPairIdToParentCount: Map<string, number>
+  streamPairIdToParentCount: Map<string, number>
 ): number {
   // This map will store: { depthLevel -> numberOfNodes }
   const nodesAtDepth = new Map<number, number>();
