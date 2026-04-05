@@ -5,7 +5,7 @@
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
-    "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
+    "lib": ["es2021.string", "es2020", "dom"],
     "module": "commonjs",
     "moduleResolution": "bundler",
     // "isolatedModules": true, Temporarily disabled
@@ -20,7 +20,8 @@
     "sourceMap": true,
     "strict": false,
     "strictNullChecks": true,
-    "target": "es2020"
+    "target": "es2020",
+    "types": ["node"]
   },
   "include": ["src", "vitest.config.ts"],
   "exclude": [
@@ -30,6 +31,5 @@
     "node_modules",
     "dist",
     "sicp_publish"
-  ],
-  "types": ["typePatches"]
+  ]
 }
