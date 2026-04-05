@@ -26,7 +26,12 @@ import type { SourceError } from './errors/base'
 import { ModuleNotFoundError } from './modules/errors'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
-import { getKeywords, getProgramNames, type GetProgramNamesOptions, type NameDeclaration } from './name-extractor'
+import {
+  getKeywords,
+  getProgramNames,
+  type GetProgramNamesOptions,
+  type NameDeclaration
+} from './name-extractor'
 import { htmlRunner, sourceFilesRunner } from './runner'
 
 export { SourceDocumentation } from './editors/ace/docTooltip'
@@ -189,7 +194,12 @@ export async function getNames(
   }
   const cursorLoc: es.Position = { line, column: col }
 
-  const [progNames, displaySuggestions] = await getProgramNames(program, comments, cursorLoc, options)
+  const [progNames, displaySuggestions] = await getProgramNames(
+    program,
+    comments,
+    cursorLoc,
+    options
+  )
   const keywords = getKeywords(program, cursorLoc, context)
   return [progNames.concat(keywords), displaySuggestions]
 }

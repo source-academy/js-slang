@@ -1,5 +1,7 @@
 import Closure from '../cse-machine/closure'
+import { GeneralRuntimeError, InvalidParameterTypeError } from '../errors/runtimeErrors'
 import type { Context, Value } from '../types'
+import { assertNumberWithinRange } from '../utils/misc'
 import { stringify } from '../utils/stringify'
 import * as list from './list'
 
@@ -85,27 +87,30 @@ export function array_length(xs: Value[]) {
  * integer within the range 2, 36 inclusive.
  */
 export function parse_int(str: string, radix: number) {
-  if (
-    typeof str === 'string' &&
-    typeof radix === 'number' &&
-    Number.isInteger(radix) &&
-    2 <= radix &&
-    radix <= 36
-  ) {
-    return parseInt(str, radix)
-  } else {
-    throw new Error(
-      'parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
-    )
+  if (typeof str !== 'string') {
+    throw new InvalidParameterTypeError('string', str, parse_int.name, 'str')
   }
+
+  assertNumberWithinRange(radix, parse_int.name, 2, 26, true, 'radix')
+  return parseInt(str, radix)
 }
 
+/**
+ * Returns the character at the given index of the given string.
+ */
 export function char_at(str: string, index: number) {
   if (typeof str !== 'string') {
-    throw new Error('char_at expects the first argument to be a string.')
-  } else if (typeof index !== 'number' || !Number.isInteger(index) || index < 0) {
-    throw new Error('char_at expects the second argument to be a nonnegative integer.')
+    throw new InvalidParameterTypeError('string', str, char_at.name, 'str')
   }
+
+  assertNumberWithinRange(index, char_at.name, 0, undefined, true, 'index')
+
+  if (index >= str.length) {
+    throw new GeneralRuntimeError(
+      `${char_at.name}: Index ${index} is out of bounds for string of length ${str.length}`
+    )
+  }
+
   return str[index]
 }
 
@@ -123,9 +128,9 @@ export function arity(f: Function) {
     return hasVarArgs ? params.length - 1 : params.length
   } else if (typeof f === 'function') {
     return f.length
-  } else {
-    throw new Error('arity expects a function as argument')
   }
+
+  throw new InvalidParameterTypeError('function', f, arity.name)
 }
 
 /**
