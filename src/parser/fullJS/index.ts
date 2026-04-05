@@ -1,10 +1,10 @@
-import { parse } from 'acorn'
-import type { Program } from 'estree'
+import { parse } from 'acorn';
+import type { Program } from 'estree';
 
-import type { Context } from '../..'
-import { FatalSyntaxError } from '../errors'
-import type { AcornOptions, Parser } from '../types'
-import { positionToSourceLocation } from '../utils'
+import type { Context } from '../..';
+import { FatalSyntaxError } from '../errors';
+import type { AcornOptions, Parser } from '../types';
+import { positionToSourceLocation } from '../utils';
 
 export class FullJSParser implements Parser<AcornOptions> {
   parse(
@@ -19,24 +19,27 @@ export class FullJSParser implements Parser<AcornOptions> {
         ecmaVersion: 'latest',
         locations: true,
         ...options,
-      }) as unknown as Program
+      }) as unknown as Program;
     } catch (error) {
       if (error instanceof SyntaxError) {
-        error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())
+        error = new FatalSyntaxError(
+          positionToSourceLocation((error as any).loc),
+          error.toString(),
+        );
       }
 
-      if (throwOnError) throw error
-      context.errors.push(error)
+      if (throwOnError) throw error;
+      context.errors.push(error);
     }
 
-    return null
+    return null;
   }
 
   validate(_ast: Program, _context: Context, _throwOnError: boolean): boolean {
-    return true
+    return true;
   }
 
   toString(): string {
-    return 'FullJSParser'
+    return 'FullJSParser';
   }
 }

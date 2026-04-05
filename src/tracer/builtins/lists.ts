@@ -1,59 +1,59 @@
-import { parse } from 'acorn'
-import type { ArrowFunctionExpression, ExpressionStatement } from 'estree'
-import type { StepperExpression } from '../nodes'
-import { StepperArrayExpression } from '../nodes/Expression/ArrayExpression'
-import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression'
-import { StepperBinaryExpression } from '../nodes/Expression/BinaryExpression'
-import { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication'
-import { StepperIdentifier } from '../nodes/Expression/Identifier'
-import { StepperLiteral } from '../nodes/Expression/Literal'
+import { parse } from 'acorn';
+import type { ArrowFunctionExpression, ExpressionStatement } from 'estree';
+import type { StepperExpression } from '../nodes';
+import { StepperArrayExpression } from '../nodes/Expression/ArrayExpression';
+import { StepperArrowFunctionExpression } from '../nodes/Expression/ArrowFunctionExpression';
+import { StepperBinaryExpression } from '../nodes/Expression/BinaryExpression';
+import { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication';
+import { StepperIdentifier } from '../nodes/Expression/Identifier';
+import { StepperLiteral } from '../nodes/Expression/Literal';
 
 export const listBuiltinFunctions = {
   pair: {
     definition: (args: StepperExpression[]): StepperExpression => {
-      return new StepperArrayExpression([args[0], args[1]])
+      return new StepperArrayExpression([args[0], args[1]]);
     },
-    arity: 2
+    arity: 2,
   },
   is_pair: {
     definition: (arg: StepperExpression[]): StepperExpression => {
-      return new StepperLiteral(arg[0].type === 'ArrayExpression' && arg[0].elements.length == 2)
+      return new StepperLiteral(arg[0].type === 'ArrayExpression' && arg[0].elements.length == 2);
     },
-    arity: 1
+    arity: 1,
   },
   head: {
     definition: (args: StepperExpression[]): StepperExpression => {
-      return (args[0] as StepperArrayExpression).elements[0] as StepperExpression
+      return (args[0] as StepperArrayExpression).elements[0] as StepperExpression;
     },
-    arity: 1
+    arity: 1,
   },
   tail: {
     definition: (args: StepperExpression[]): StepperExpression => {
-      return (args[0] as StepperArrayExpression).elements[1] as StepperArrayExpression
+      return (args[0] as StepperArrayExpression).elements[1] as StepperArrayExpression;
     },
-    arity: 1
+    arity: 1,
   },
   is_null: {
     definition: (arg: StepperExpression[]): StepperLiteral => {
-      return new StepperLiteral(arg[0].type === 'Literal' && arg[0].value === null)
+      return new StepperLiteral(arg[0].type === 'Literal' && arg[0].value === null);
     },
-    arity: 1
+    arity: 1,
   },
   is_list: {
     definition: (arg: StepperExpression[]): StepperLiteral => {
       const $is_list: (args: StepperExpression) => boolean = (arg: StepperExpression) =>
         arg === null ||
         (arg.type === 'Literal' && arg.value === null) ||
-        (arg.type === 'ArrayExpression' && arg.elements.length === 2 && $is_list(arg.elements[1]!))
-      return new StepperLiteral($is_list(arg[0]))
+        (arg.type === 'ArrayExpression' && arg.elements.length === 2 && $is_list(arg.elements[1]!));
+      return new StepperLiteral($is_list(arg[0]));
     },
-    arity: 1
+    arity: 1,
   },
   draw_data: {
     definition: (args: StepperExpression[]): StepperExpression => {
-      return args[0]
+      return args[0];
     },
-    arity: 0
+    arity: 0,
   },
   equal: {
     definition: (args: StepperExpression[]) => {
@@ -67,37 +67,37 @@ export const listBuiltinFunctions = {
                     : is_undefined(xs) ? is_undefined(ys) 
                     : is_function(xs) ? is_function(ys) && xs === ys : fals
             `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 2
+    arity: 2,
   },
   list: {
     definition: (args: StepperExpression[]): StepperExpression => {
       if (args.length === 0) {
-        return new StepperLiteral(null)
+        return new StepperLiteral(null);
       }
       return listBuiltinFunctions.pair.definition([
         args[0],
-        listBuiltinFunctions.list.definition(args.slice(1))
-      ])
+        listBuiltinFunctions.list.definition(args.slice(1)),
+      ]);
     },
-    arity: 0
+    arity: 0,
   },
   length: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperFunctionApplication(new StepperIdentifier('$length'), [
         ...args,
-        new StepperLiteral(0)
-      ])
+        new StepperLiteral(0),
+      ]);
     },
-    arity: 1
+    arity: 1,
   },
   $length: {
     definition: (args: StepperExpression[]) => {
@@ -105,42 +105,42 @@ export const listBuiltinFunctions = {
         `
                 (xs, acc) => is_null(xs) ? acc : $length(tail(xs), acc + 1);
             `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 2
+    arity: 2,
   },
   build_list: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperFunctionApplication(new StepperIdentifier('$build_list'), [
         new StepperBinaryExpression('-', args[1], new StepperLiteral(1)),
         args[0],
-        new StepperLiteral(null)
-      ])
+        new StepperLiteral(null),
+      ]);
     },
-    arity: 2
+    arity: 2,
   },
   $build_list: {
     definition: (args: StepperExpression[]): StepperExpression => {
       const parsedProgram = parse(
         ` 
                 (i, fun, already_built) => i < 0 ? already_built : $build_list(i - 1, fun, pair(fun(i), already_built));`,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 3
+    arity: 3,
   },
   for_each: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -155,25 +155,28 @@ export const listBuiltinFunctions = {
                 }    
             }
             `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 2
+    arity: 2,
   },
   list_to_string: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperFunctionApplication(new StepperIdentifier('$list_to_string'), [
         args[0],
-        new StepperArrowFunctionExpression([new StepperIdentifier('x')], new StepperIdentifier('x'))
-      ])
+        new StepperArrowFunctionExpression(
+          [new StepperIdentifier('x')],
+          new StepperIdentifier('x'),
+        ),
+      ]);
     },
-    arity: 1
+    arity: 1,
   },
   $list_to_string: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -182,16 +185,16 @@ export const listBuiltinFunctions = {
         (xs, cont) => is_null(xs) ? cont("null") : is_pair(xs) ? $list_to_string(head(xs),
         x => $list_to_string(tail(xs), y => cont("[" + x + "," + y + "]"))) : cont(stringify(xs))  
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 2
+    arity: 2,
   },
   append: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -199,11 +202,11 @@ export const listBuiltinFunctions = {
         ...args,
         new StepperArrowFunctionExpression(
           [new StepperIdentifier('xs')],
-          new StepperIdentifier('xs')
-        )
-      ])
+          new StepperIdentifier('xs'),
+        ),
+      ]);
     },
-    arity: 2
+    arity: 2,
   },
   $append: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -211,25 +214,25 @@ export const listBuiltinFunctions = {
         `
             (xs, ys, cont) => is_null(xs) ? cont(ys) : $append(tail(xs), ys, zs => cont(pair(head(xs), zs)));
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 3
+    arity: 3,
   },
   reverse: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperFunctionApplication(new StepperIdentifier('$reverse'), [
         ...args,
-        new StepperLiteral(null)
-      ])
+        new StepperLiteral(null),
+      ]);
     },
-    arity: 1
+    arity: 1,
   },
   $reverse: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -237,16 +240,16 @@ export const listBuiltinFunctions = {
         `
             (original, reversed) => is_null(original) ? reversed : $reverse(tail(original), pair(head(original), reversed));
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 2
+    arity: 2,
   },
   member: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -258,25 +261,25 @@ export const listBuiltinFunctions = {
                 ? xs
                 : member(v, tail(xs));
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 2
+    arity: 2,
   },
   remove: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperFunctionApplication(new StepperIdentifier('$remove'), [
         ...args,
-        new StepperLiteral(null)
-      ])
+        new StepperLiteral(null),
+      ]);
     },
-    arity: 2
+    arity: 2,
   },
   $remove: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -288,25 +291,25 @@ export const listBuiltinFunctions = {
                 ? append(reverse(acc), tail(xs))
                 : $remove(v, tail(xs), pair(head(xs), acc));
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 3
+    arity: 3,
   },
   remove_all: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperFunctionApplication(new StepperIdentifier('$remove_all'), [
         ...args,
-        new StepperLiteral(null)
-      ])
+        new StepperLiteral(null),
+      ]);
     },
-    arity: 2
+    arity: 2,
   },
   $remove_all: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -318,25 +321,25 @@ export const listBuiltinFunctions = {
                 ? $remove_all(v, tail(xs), acc)
                 : $remove_all(v, tail(xs), pair(head(xs), acc));
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 3
+    arity: 3,
   },
   enum_list: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperFunctionApplication(new StepperIdentifier('$enum_list'), [
         ...args,
-        new StepperLiteral(null)
-      ])
+        new StepperLiteral(null),
+      ]);
     },
-    arity: 2
+    arity: 2,
   },
   $enum_list: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -346,16 +349,16 @@ export const listBuiltinFunctions = {
                 ? reverse(acc)
                 : $enum_list(start + 1, end, pair(start, acc));
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 3
+    arity: 3,
   },
   list_ref: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -365,25 +368,25 @@ export const listBuiltinFunctions = {
                 ? head(xs)
                 : list_ref(tail(xs), n - 1);
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 2
+    arity: 2,
   },
   map: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperFunctionApplication(new StepperIdentifier('$map'), [
         ...args,
-        new StepperLiteral(null)
-      ])
+        new StepperLiteral(null),
+      ]);
     },
-    arity: 2
+    arity: 2,
   },
   $map: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -391,25 +394,25 @@ export const listBuiltinFunctions = {
         `
             (f, xs, acc) => is_null(xs) ? reverse(acc) : $map(f, tail(xs), pair(f(head(xs)), acc));
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 3
+    arity: 3,
   },
   filter: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperFunctionApplication(new StepperIdentifier('$filter'), [
         ...args,
-        new StepperLiteral(null)
-      ])
+        new StepperLiteral(null),
+      ]);
     },
-    arity: 2
+    arity: 2,
   },
   $filter: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -417,25 +420,28 @@ export const listBuiltinFunctions = {
         `
             (pred, xs, acc) =>  is_null(xs) ? reverse(acc) : pred(head(xs)) ? $filter(pred, tail(xs), pair(head(xs), acc)) : $filter(pred, tail(xs), acc);
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 3
+    arity: 3,
   },
   accumulate: {
     definition: (args: StepperExpression[]): StepperExpression => {
       return new StepperFunctionApplication(new StepperIdentifier('$accumulate'), [
         ...args,
-        new StepperArrowFunctionExpression([new StepperIdentifier('x')], new StepperIdentifier('x'))
-      ])
+        new StepperArrowFunctionExpression(
+          [new StepperIdentifier('x')],
+          new StepperIdentifier('x'),
+        ),
+      ]);
     },
-    arity: 3
+    arity: 3,
   },
   $accumulate: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -445,21 +451,21 @@ export const listBuiltinFunctions = {
                 ? cont(initial)
                 : $accumulate(f, initial, tail(xs), x => cont(f(head(xs), x)));
         `,
-        { ecmaVersion: 10 }
-      )
-      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
-      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
+        { ecmaVersion: 10 },
+      );
+      const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement;
+      const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression;
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
-      )
+        args,
+      );
     },
-    arity: 4
+    arity: 4,
   },
   display_list: {
     definition: (args: StepperExpression[]): StepperExpression => {
-      return args[0] // x => x
+      return args[0]; // x => x
     },
-    arity: 1
-  }
-}
+    arity: 1,
+  },
+};
