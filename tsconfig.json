@@ -26,7 +26,6 @@
   "exclude": [
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",
-    "src/alt-langs/scheme/scm-slang/**/__tests__",
     "src/py-slang/src/tests",
     "node_modules",
     "dist",
