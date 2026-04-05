@@ -72,7 +72,7 @@ export interface Context<T = any> {
 
   streamPairIdToStreamId: Map<string, string>
 
-  streemPairIdToParentCount: Map<string, number>
+  streamPairIdToParentCount: Map<string, number>
 
   /** Runtime Specific state */
   runtime: {
