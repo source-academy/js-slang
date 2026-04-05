@@ -14,15 +14,15 @@
     "url": "https://github.com/source-academy/"
   },
   "dependencies": {
-    "@joeychenofficial/alt-ergo-modified": "^2.4.0",
-    "@types/estree": "1.0.8",
     "acorn": "^8.0.3",
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
     "lodash": "^4.17.20",
-    "source-map": "^0.7.3",
-    "xmlhttprequest-ts": "^1.0.1"
+    "source-map": "^0.7.3"
+  },
+  "devDependencies": {
+    "@types/estree": "1.0.8"
   },
   "main": "dist/sicp",
   "types": "dist/sicp",
