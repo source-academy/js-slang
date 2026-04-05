@@ -1,4 +1,4 @@
-import { expect } from 'vitest'
+import { type Assertion, expect } from 'vitest'
 import { parseError, runInContext } from '../..'
 import createContext, { defineBuiltin } from '../../createContext'
 import { Chapter } from '../../langs'
@@ -18,6 +18,13 @@ type RemoveMatcher<T extends object> = Omit<
 >
 function removeMatcher<T extends object>(obj: T): RemoveMatcher<T> {
   return obj
+}
+
+// Copied @vitest/expect/dist/index.d.ts
+type Promisify<O> = {
+  [K in keyof O]: O[K] extends (...args: infer A) => infer R
+    ? Promisify<O[K]> & ((...args: A) => Promise<R>)
+    : O[K]
 }
 
 export function createTestContext(rawOptions: TestOptions = {}): TestContext {
@@ -111,7 +118,10 @@ export async function testFailure(code: string, options: TestOptions = {}) {
  * Run the given code and expect it to finish without errors. Use
  * as if using `expect()`
  */
-export function expectFinishedResult(code: string, options: TestOptions = {}) {
+export function expectFinishedResult(
+  code: string,
+  options: TestOptions = {}
+): RemoveMatcher<Promisify<Assertion<Promise<any>>>> {
   return removeMatcher(
     expect(
       testInContext(code, options).then(({ result, context }) => {
@@ -130,7 +140,11 @@ export function expectFinishedResult(code: string, options: TestOptions = {}) {
  * Expect the code to error, then test the parsed error value. Use as if using
  * `expect`
  */
-export function expectParsedError(code: string, options: TestOptions = {}, verbose?: boolean) {
+export function expectParsedError(
+  code: string,
+  options: TestOptions = {},
+  verbose?: boolean
+): RemoveMatcher<Promisify<Assertion<Promise<string>>>> {
   return removeMatcher(
     expect(
       testInContext(code, options).then(({ result, context }) => {
@@ -180,7 +194,10 @@ export async function snapshotFailure(code: string, options: TestOptions = {}, n
   return results
 }
 
-export function expectDisplayResult(code: string, options: TestOptions = {}) {
+export function expectDisplayResult(
+  code: string,
+  options: TestOptions = {}
+): RemoveMatcher<Promisify<Assertion<Promise<string[]>>>> {
   return removeMatcher(
     expect(testSuccess(code, options).then(({ context: { displayResult } }) => displayResult))
       .resolves
