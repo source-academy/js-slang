@@ -435,7 +435,7 @@ export function* generateCSEMachineStateStream(
     const evalResult = context.runtime.stash?.peek();
     const mostRecentControlHeight = context.pendingStreamFnStack.at(-1)?.[1]   
 
-    if(isPair(evalResult) && mostRecentControlHeight != undefined && context.runtime.control?.size() == parseInt(mostRecentControlHeight) - 1) {
+    if(isPair(evalResult) && mostRecentControlHeight != undefined && context.runtime.control?.size() == mostRecentControlHeight - 1) {
       const mostRecentNullaryFnId = context.pendingStreamFnStack.pop()?.[0]
       if (mostRecentNullaryFnId != undefined){
         context.pairToStreamFnId.set((evalResult as any).id, mostRecentNullaryFnId)
