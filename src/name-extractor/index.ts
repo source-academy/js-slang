@@ -18,7 +18,7 @@ export enum DeclarationKind {
   KIND_LET = 'let',
   KIND_PARAM = 'param',
   KIND_CONST = 'const',
-  KIND_KEYWORD = 'keyword'
+  KIND_KEYWORD = 'keyword',
 }
 
 export interface NameDeclaration {
@@ -51,29 +51,29 @@ const KEYWORD_SCORE = 20000
 // Ensure that keywords are prioritized over names
 const keywordsInBlock: { [key: string]: NameDeclaration[] } = {
   FunctionDeclaration: [
-    { name: 'function', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }
+    { name: 'function', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE },
   ],
   VariableDeclaration: [
-    { name: 'const', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }
+    { name: 'const', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE },
   ],
   AssignmentExpression: [{ name: 'let', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }],
   WhileStatement: [{ name: 'while', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }],
   IfStatement: [
     { name: 'if', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE },
-    { name: 'else', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }
+    { name: 'else', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE },
   ],
-  ForStatement: [{ name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }]
+  ForStatement: [{ name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }],
 }
 
 const keywordsInLoop: { [key: string]: NameDeclaration[] } = {
   BreakStatement: [{ name: 'break', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }],
   ContinueStatement: [
-    { name: 'continue', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }
-  ]
+    { name: 'continue', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE },
+  ],
 }
 
 const keywordsInFunction: { [key: string]: NameDeclaration[] } = {
-  ReturnStatement: [{ name: 'return', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }]
+  ReturnStatement: [{ name: 'return', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }],
 }
 
 /**
@@ -88,7 +88,7 @@ const keywordsInFunction: { [key: string]: NameDeclaration[] } = {
 export function getKeywords(
   prog: Node,
   cursorLoc: es.Position,
-  context: Context
+  context: Context,
 ): NameDeclaration[] {
   const identifier = findIdentifierNode(prog, context, cursorLoc)
   if (!identifier) {
@@ -147,7 +147,7 @@ export function getKeywords(
 export async function getProgramNames(
   prog: Node,
   comments: acorn.Comment[],
-  cursorLoc: es.Position
+  cursorLoc: es.Position,
 ): Promise<[NameDeclaration[], boolean]> {
   function before(first: es.Position, second: es.Position) {
     return first.line < second.line || (first.line === second.line && first.column <= second.column)
@@ -310,7 +310,7 @@ function cursorInIdentifier(node: Node, locTest: (node: Node) => boolean): boole
 
 function docsToHtml(
   spec: es.ImportSpecifier | es.ImportDefaultSpecifier,
-  obj: ModuleDocsEntry
+  obj: ModuleDocsEntry,
 ): string {
   const importedName = getImportedName(spec)
   const nameStr = importedName === spec.local.name ? '' : `Imported as ${spec.local.name}\n`
@@ -356,14 +356,14 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
             return {
               name: spec.local.name,
               meta: DeclarationKind.KIND_IMPORT,
-              docHTML: `Namespace import of '${moduleName}'`
+              docHTML: `Namespace import of '${moduleName}'`,
             }
           }
 
           return {
             name: spec.local.name,
             meta: DeclarationKind.KIND_IMPORT,
-            docHTML: `Import '${getImportedName(spec)}' from '${moduleName}'`
+            docHTML: `Import '${getImportedName(spec)}' from '${moduleName}'`,
           }
         })
       }
@@ -377,15 +377,15 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
           const namespaceDecls = namespaceSpecs.map(spec => ({
             name: spec.local.name,
             meta: DeclarationKind.KIND_IMPORT,
-            docHTML: `Namespace import of unknown module '${moduleName}'`
+            docHTML: `Namespace import of unknown module '${moduleName}'`,
           }))
 
           const otherDecls = (otherSpecs as (es.ImportSpecifier | es.ImportDefaultSpecifier)[]).map(
             spec => ({
               name: spec.local.name,
               meta: DeclarationKind.KIND_IMPORT,
-              docHTML: `Import from unknown module '${moduleName}'`
-            })
+              docHTML: `Import from unknown module '${moduleName}'`,
+            }),
           )
           return namespaceDecls.concat(otherDecls)
         }
@@ -393,7 +393,7 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
         const namespaceDecls = namespaceSpecs.map(spec => ({
           name: spec.local.name,
           meta: DeclarationKind.KIND_IMPORT,
-          docHTML: `Namespace import of '${moduleName}'`
+          docHTML: `Namespace import of '${moduleName}'`,
         }))
 
         // If there are only namespace specifiers, then don't bother
@@ -409,23 +409,23 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
               return {
                 name: spec.local.name,
                 meta: DeclarationKind.KIND_IMPORT,
-                docHTML: `No documentation available for <code>${importedName}</code> from '${moduleName}'`
+                docHTML: `No documentation available for <code>${importedName}</code> from '${moduleName}'`,
               }
             } else {
               return {
                 name: spec.local.name,
                 meta: DeclarationKind.KIND_IMPORT,
-                docHTML: docsToHtml(spec, docs[importedName])
+                docHTML: docsToHtml(spec, docs[importedName]),
               }
             }
-          })
+          }),
         )
       } catch {
         // Failed to load docs for whatever reason
         return specs.map(spec => ({
           name: spec.local.name,
           meta: DeclarationKind.KIND_IMPORT,
-          docHTML: `Unable to retrieve documentation for '${moduleName}'`
+          docHTML: `Unable to retrieve documentation for '${moduleName}'`,
         }))
       }
     case 'VariableDeclaration':

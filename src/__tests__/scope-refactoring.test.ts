@@ -10,7 +10,7 @@ import {
   getBlockFromLoc,
   getNodeLocsInCurrentBlockFrame,
   getScopeHelper,
-  scopeVariables
+  scopeVariables,
 } from '../scope-refactoring'
 import type { BlockFrame } from '../types'
 
@@ -52,7 +52,7 @@ function result(testCase: CodeTest, target: Target, value: any) {
     label: testCase.label,
     code: testCase.code,
     target,
-    value
+    value,
   }
 }
 
@@ -67,7 +67,7 @@ const variableDefinitionTests = [
         target + 4;
       }
     `,
-    [new Target('target', 5, 3)]
+    [new Target('target', 5, 3)],
   ),
   new CodeTest(
     'Test 2',
@@ -76,8 +76,8 @@ const variableDefinitionTests = [
       target = 2;
       target + 99;
     `,
-    [new Target('target', 3, 3)]
-  )
+    [new Target('target', 3, 3)],
+  ),
 ]
 
 const functionScopeTests = [
@@ -93,7 +93,7 @@ const functionScopeTests = [
         }
       }
     `,
-    [new Target('target', 7, 3), new Target('target', 1, 6)]
+    [new Target('target', 7, 3), new Target('target', 1, 6)],
   ),
   new CodeTest(
     'Test 1',
@@ -103,8 +103,8 @@ const functionScopeTests = [
     function repl(str) {
       const res = parse_and_eval(23);
     }`,
-    [new Target('parse_and_eval', 1, 13)]
-  )
+    [new Target('parse_and_eval', 1, 13)],
+  ),
 ]
 
 const arrowFunctionScopeTests = [
@@ -118,8 +118,8 @@ const arrowFunctionScopeTests = [
         const nestedArrowFn = (y) => (target) => 1 + target;
       }
     `,
-    [new Target('target', 5, 48)]
-  )
+    [new Target('target', 5, 48)],
+  ),
 ]
 
 const conditionalsLoopsTests = [
@@ -135,7 +135,7 @@ const conditionalsLoopsTests = [
         target = 99999;
       }
     `,
-    [new Target('target', 5, 2)]
+    [new Target('target', 5, 2)],
   ),
   new CodeTest(
     'Test 2',
@@ -145,7 +145,7 @@ const conditionalsLoopsTests = [
         target += 99;
       }
     `,
-    [new Target('target', 3, 5), new Target('i', 2, 10)]
+    [new Target('target', 3, 5), new Target('i', 2, 10)],
   ),
   new CodeTest(
     'Test 3',
@@ -156,7 +156,7 @@ const conditionalsLoopsTests = [
         target -= 0.1;
       }
     `,
-    [new Target('target', 4, 4)]
+    [new Target('target', 4, 4)],
   ),
   new CodeTest(
     'Test 4',
@@ -166,8 +166,8 @@ const conditionalsLoopsTests = [
         target += 99;
       }
     `,
-    [new Target('i', 2, 10), new Target('i', 1, 5)]
-  )
+    [new Target('i', 2, 10), new Target('i', 1, 5)],
+  ),
 ]
 
 test('Scoped based refactoring of ordinary variable definitions', () => {
@@ -181,9 +181,9 @@ test('Scoped based refactoring of ordinary variable definitions', () => {
           target,
           getAllOccurrencesInScope(testCase.code, context, {
             line: target.line,
-            column: target.column
-          })
-        )
+            column: target.column,
+          }),
+        ),
       )
     })
   })
@@ -201,9 +201,9 @@ test('Scoped based refactoring with function scopes', () => {
           target,
           getAllOccurrencesInScope(testCase.code, context, {
             line: target.line,
-            column: target.column
-          })
-        )
+            column: target.column,
+          }),
+        ),
       )
     })
   })
@@ -221,9 +221,9 @@ test('Scoped based refactoring with arrow function scopes', () => {
           target,
           getAllOccurrencesInScope(testCase.code, context, {
             line: target.line,
-            column: target.column
-          })
-        )
+            column: target.column,
+          }),
+        ),
       )
     })
   })
@@ -241,9 +241,9 @@ test('Scoped based refactoring with conditionals and loops', () => {
           target,
           getAllOccurrencesInScope(testCase.code, context, {
             line: target.line,
-            column: target.column
-          })
-        )
+            column: target.column,
+          }),
+        ),
       )
     })
   })
@@ -433,10 +433,10 @@ if (true) {
       identifiers,
       {
         start: { line: 1, column: 1 },
-        end: { line: 33, column: 2 }
+        end: { line: 33, column: 2 },
       },
-      [block]
-    ).length
+      [block],
+    ).length,
   ).toBe(0)
 })
 
@@ -482,10 +482,10 @@ if (true) {
       blockFrames as BlockFrame[],
       {
         start: { line: 1, column: 1 },
-        end: { line: 33, column: 2 }
+        end: { line: 33, column: 2 },
       },
-      []
-    ).length
+      [],
+    ).length,
   ).toBe(6)
 })
 
@@ -503,10 +503,10 @@ test('getScopeHelper', () => {
   }`
   const definitionLocation = {
     start: { line: 2, column: 10 },
-    end: { line: 2, column: 11 }
+    end: { line: 2, column: 11 },
   }
   expect(getScopeHelper(definitionLocation, looseParse(program, context) as any, 'x').length).toBe(
-    2
+    2,
   )
 })
 
@@ -524,9 +524,9 @@ test('getScopeHelperNested', () => {
   }`
   const definitionLocation = {
     start: { line: 4, column: 15 },
-    end: { line: 4, column: 16 }
+    end: { line: 4, column: 16 },
   }
   expect(getScopeHelper(definitionLocation, looseParse(program, context) as any, 'x').length).toBe(
-    1
+    1,
   )
 })

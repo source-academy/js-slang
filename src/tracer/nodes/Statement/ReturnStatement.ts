@@ -17,7 +17,7 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
     this.type = 'ReturnStatement'
     this.argument = argument
@@ -33,7 +33,7 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -72,7 +72,7 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -90,7 +90,7 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

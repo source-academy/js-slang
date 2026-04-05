@@ -28,8 +28,8 @@ const noImplicitReturnUndefined: Rule<ReturnStatement> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noImplicitReturnUndefined

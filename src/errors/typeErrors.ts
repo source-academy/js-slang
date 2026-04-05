@@ -14,7 +14,7 @@ export class InvalidArrayIndexType implements SourceError {
 
   constructor(
     public node: NodeWithInferredType<Node>,
-    public receivedType: Type
+    public receivedType: Type,
   ) {}
 
   get location() {
@@ -37,7 +37,7 @@ export class ArrayAssignmentError implements SourceError {
   constructor(
     public node: NodeWithInferredType<Node>,
     public arrayType: SArray,
-    public receivedType: SArray
+    public receivedType: SArray,
   ) {}
 
   get location() {
@@ -81,7 +81,7 @@ export class DifferentAssignmentError implements SourceError {
   constructor(
     public node: NodeWithInferredType<es.AssignmentExpression>,
     public expectedType: Type,
-    public receivedType: Type
+    public receivedType: Type,
   ) {}
 
   get location() {
@@ -134,7 +134,7 @@ function stringifyNode(node: NodeWithInferredType<Node>): string {
   switch (node.type) {
     case 'VariableDeclaration': {
       const {
-        id: { name }
+        id: { name },
       } = getSourceVariableDeclaration(node)
       return name
     }
@@ -154,7 +154,7 @@ export class DifferentNumberArgumentsError implements SourceError {
   constructor(
     public node: NodeWithInferredType<Node>,
     public numExpectedArgs: number,
-    public numReceived: number
+    public numReceived: number,
   ) {}
 
   get location() {
@@ -177,7 +177,7 @@ export class InvalidArgumentTypesError implements SourceError {
     public node: NodeWithInferredType<Node>,
     public args: NodeWithInferredType<Node>[],
     public expectedTypes: Type[],
-    public receivedTypes: Type[]
+    public receivedTypes: Type[],
   ) {}
 
   get location() {
@@ -238,7 +238,7 @@ export class InvalidArgumentTypesError implements SourceError {
 function formatNodeWithTest(
   node: NodeWithInferredType<
     es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
-  >
+  >,
 ) {
   let exprString = simplify(generate(node.test))
   let kind: string
@@ -274,7 +274,7 @@ export class InvalidTestConditionError implements SourceError {
     public node: NodeWithInferredType<
       es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
     >,
-    public receivedType: Type
+    public receivedType: Type,
   ) {}
 
   get location() {
@@ -302,7 +302,7 @@ export class UndefinedIdentifierError implements SourceError {
 
   constructor(
     public node: NodeWithInferredType<es.Identifier>,
-    public name: string
+    public name: string,
   ) {}
 
   get location() {
@@ -329,7 +329,7 @@ export class ConsequentAlternateMismatchError implements SourceError {
   constructor(
     public node: NodeWithInferredType<es.IfStatement | es.ConditionalExpression>,
     public consequentType: Type,
-    public alternateType: Type
+    public alternateType: Type,
   ) {}
 
   get location() {
@@ -360,7 +360,7 @@ export class CallingNonFunctionType implements SourceError {
 
   constructor(
     public node: NodeWithInferredType<es.CallExpression>,
-    public callerType: Type
+    public callerType: Type,
   ) {}
 
   get location() {
@@ -391,7 +391,7 @@ export class InconsistentPredicateTestError implements SourceError {
     public node: NodeWithInferredType<es.CallExpression>,
     public argVarName: string,
     public preUnifyType: Type,
-    public predicateType: Type
+    public predicateType: Type,
   ) {}
 
   get location() {
@@ -425,7 +425,7 @@ export class TypeMismatchError implements SourceError {
   constructor(
     public node: tsEs.Node,
     public actualTypeString: string,
-    public expectedTypeString: string
+    public expectedTypeString: string,
   ) {}
 
   get location() {
@@ -447,7 +447,7 @@ export class TypeNotFoundError implements SourceError {
 
   constructor(
     public node: tsEs.Node,
-    public name: string
+    public name: string,
   ) {}
 
   get location() {
@@ -488,7 +488,7 @@ export class TypeNotCallableError implements SourceError {
 
   constructor(
     public node: tsEs.CallExpression,
-    public typeName: string
+    public typeName: string,
   ) {}
 
   get location() {
@@ -511,7 +511,7 @@ export class TypecastError implements SourceError {
   constructor(
     public node: tsEs.TSAsExpression,
     public originalType: string,
-    public typeToCastTo: string
+    public typeToCastTo: string,
   ) {}
 
   get location() {
@@ -533,7 +533,7 @@ export class TypeNotAllowedError implements SourceError {
 
   constructor(
     public node: tsEs.TSType,
-    public name: string
+    public name: string,
   ) {}
 
   get location() {
@@ -555,7 +555,7 @@ export class UndefinedVariableTypeError implements SourceError {
 
   constructor(
     public node: tsEs.Node,
-    public name: string
+    public name: string,
   ) {}
 
   get location() {
@@ -580,7 +580,7 @@ export class InvalidNumberOfArgumentsTypeError implements SourceError {
     public node: tsEs.CallExpression,
     public expected: number,
     public got: number,
-    public hasVarArgs = false
+    public hasVarArgs = false,
   ) {
     this.calleeStr = generate(node.callee)
   }
@@ -610,7 +610,7 @@ export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceEr
   constructor(
     public node: tsEs.Node,
     public name: string,
-    public expected: number
+    public expected: number,
   ) {}
 
   get location() {
@@ -632,7 +632,7 @@ export class TypeNotGenericError implements SourceError {
 
   constructor(
     public node: tsEs.Node,
-    public name: string
+    public name: string,
   ) {}
 
   get location() {
@@ -654,7 +654,7 @@ export class TypeAliasNameNotAllowedError implements SourceError {
 
   constructor(
     public node: tsEs.TSTypeAliasDeclaration,
-    public name: string
+    public name: string,
   ) {}
 
   get location() {
@@ -676,7 +676,7 @@ export class TypeParameterNameNotAllowedError implements SourceError {
 
   constructor(
     public node: tsEs.TSTypeParameter,
-    public name: string
+    public name: string,
   ) {}
 
   get location() {
@@ -698,7 +698,7 @@ export class InvalidIndexTypeError implements SourceError {
 
   constructor(
     public node: tsEs.MemberExpression,
-    public typeName: string
+    public typeName: string,
   ) {}
 
   get location() {
@@ -720,7 +720,7 @@ export class InvalidArrayAccessTypeError implements SourceError {
 
   constructor(
     public node: tsEs.MemberExpression,
-    public typeName: string
+    public typeName: string,
   ) {}
 
   get location() {
@@ -742,7 +742,7 @@ export class ConstNotAssignableTypeError implements SourceError {
 
   constructor(
     public node: tsEs.AssignmentExpression,
-    public name: string
+    public name: string,
   ) {}
 
   get location() {
@@ -764,7 +764,7 @@ export class DuplicateTypeAliasError implements SourceError {
 
   constructor(
     public node: tsEs.TSTypeAliasDeclaration,
-    public name: string
+    public name: string,
   ) {}
 
   get location() {
@@ -787,7 +787,7 @@ export class NameNotFoundInModuleError implements SourceError {
   constructor(
     public node: tsEs.ImportDeclaration,
     public moduleName: string,
-    public name: string
+    public name: string,
   ) {}
 
   get location() {

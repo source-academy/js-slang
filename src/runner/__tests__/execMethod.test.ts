@@ -25,16 +25,16 @@ vi.mock(import('../sourceRunner'), async importOriginal => {
           Promise.resolve({
             status: 'finished',
             value: '',
-            context
+            context,
           })
 
         return {
           ...res,
-          [key]: vi.fn(mockRunner)
+          [key]: vi.fn(mockRunner),
         }
       },
-      {} as typeof runners
-    )
+      {} as typeof runners,
+    ),
   }
 })
 
@@ -82,36 +82,36 @@ const sourceCases: TestCase[] = [
     variant: Variant.DEFAULT,
     expectedRunner: 'native',
     expectedPrelude: true,
-    expectedValidate: true
+    expectedValidate: true,
   },
   {
     chapter: Chapter.SOURCE_2,
     variant: Variant.DEFAULT,
     expectedRunner: 'native',
     expectedPrelude: true,
-    expectedValidate: true
+    expectedValidate: true,
   },
   {
     chapter: Chapter.SOURCE_3,
     variant: Variant.DEFAULT,
     expectedRunner: 'native',
     expectedPrelude: true,
-    expectedValidate: true
+    expectedValidate: true,
   },
   {
     chapter: Chapter.SOURCE_4,
     variant: Variant.DEFAULT,
     expectedRunner: 'native',
     expectedPrelude: true,
-    expectedValidate: true
+    expectedValidate: true,
   },
   {
     contextMethod: 'native',
     variant: Variant.NATIVE,
     expectedRunner: 'fulljs',
     expectedPrelude: false,
-    expectedValidate: true
-  }
+    expectedValidate: true,
+  },
 ]
 
 // These JS cases never evaluate a prelude,
@@ -143,7 +143,7 @@ function expectCalls(count: number, expected: RunnerTypes) {
   switch (unexpectedRunner) {
     case undefined:
       throw new Error(
-        `Expected ${expected} to be called ${count} times, but no runners were called`
+        `Expected ${expected} to be called ${count} times, but no runners were called`,
       )
     case expected: {
       expect(runners[expected]).toHaveBeenCalledTimes(count)
@@ -152,7 +152,7 @@ function expectCalls(count: number, expected: RunnerTypes) {
     default: {
       const callCount = vi.mocked(runners[unexpectedRunner]).mock.calls.length
       throw new Error(
-        `Expected ${expected} to be called ${count} times, but ${unexpectedRunner} was called ${callCount} times`
+        `Expected ${expected} to be called ${count} times, but ${unexpectedRunner} was called ${callCount} times`,
       )
     }
   }
@@ -166,7 +166,7 @@ async function caseTester({
   optionMethod,
   expectedPrelude,
   expectedRunner,
-  expectedValidate
+  expectedValidate,
 }: TestObject) {
   const context = mockContext(chapter, variant)
   if (contextMethod !== undefined) {
@@ -180,7 +180,7 @@ async function caseTester({
     optionMethod === undefined
       ? undefined
       : {
-          executionMethod: optionMethod
+          executionMethod: optionMethod,
         }
 
   await runCodeInSource(code, context, options)
@@ -240,14 +240,14 @@ const testCases = wrapWithSkipAndOnly(
           }
 
           return [desc, { code, chapter, variant, ...tc }]
-        })
+        }),
       )
       if (timeout !== undefined) {
         return testEach('%s', { timeout }, async (_, to) => caseTester(to))
       }
       return testEach('%s', async (_, to) => caseTester(to))
     })
-  }
+  },
 )
 
 describe('Ensure that the correct runner is used for the given evaluation context and settings', () => {
@@ -257,8 +257,8 @@ describe('Ensure that the correct runner is used for the given evaluation contex
     sourceCases.map(tc => ({
       ...tc,
       verboseErrors: true,
-      expectedRunner: 'cse-machine'
-    }))
+      expectedRunner: 'cse-machine',
+    })),
   )
 
   testCases(
@@ -266,8 +266,8 @@ describe('Ensure that the correct runner is used for the given evaluation contex
     sourceCases.map(tc => ({
       ...tc,
       code: 'debugger;\n' + (tc.code ?? ''),
-      expectedRunner: 'cse-machine'
-    }))
+      expectedRunner: 'cse-machine',
+    })),
   )
 
   testCases(
@@ -275,8 +275,8 @@ describe('Ensure that the correct runner is used for the given evaluation contex
     sourceCases.map(tc => ({
       ...tc,
       variant: Variant.EXPLICIT_CONTROL,
-      expectedRunner: 'cse-machine'
-    }))
+      expectedRunner: 'cse-machine',
+    })),
   )
 
   testCases(
@@ -287,12 +287,12 @@ describe('Ensure that the correct runner is used for the given evaluation contex
         verboseErrors: false,
         expectedPrelude: false,
         expectedRunner: 'fulljs',
-        expectedValidate: false
+        expectedValidate: false,
       }
 
       const verboseErrorCase: TestCase = {
         ...fullCase,
-        verboseErrors: true
+        verboseErrors: true,
       }
 
       const variantCases = Object.values(Variant).map(
@@ -303,13 +303,13 @@ describe('Ensure that the correct runner is used for the given evaluation contex
           expectedPrelude: false,
           expectedRunner: 'fulljs',
           verboseErrors: false,
-          expectedValidate: false
-        })
+          expectedValidate: false,
+        }),
       )
 
       return [fullCase, verboseErrorCase, ...variantCases]
     }),
-    10_000
+    10_000,
   )
 
   testCases(
@@ -323,10 +323,10 @@ describe('Ensure that the correct runner is used for the given evaluation contex
           expectedPrelude: false,
           expectedRunner,
           verboseErrors: false,
-          expectedValidate: false
-        })
-      )
-    )
+          expectedValidate: false,
+        }),
+      ),
+    ),
   )
 
   test('if optionMethod is specified, verbose errors is ignored', () =>
@@ -337,7 +337,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       variant: Variant.DEFAULT,
       expectedPrelude: true,
       expectedRunner: 'native',
-      expectedValidate: true
+      expectedValidate: true,
     }))
 
   // testCases('runner correctly respects optionMethod', objectKeys(runners).map(runner => ({
@@ -357,7 +357,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       variant: Variant.DEFAULT,
       expectedPrelude: true,
       expectedRunner: 'native',
-      expectedValidate: true
+      expectedValidate: true,
     }))
 
   test('if contextMethod is specified, verbose errors is ignored', () =>
@@ -368,7 +368,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       variant: Variant.DEFAULT,
       expectedPrelude: true,
       expectedRunner: 'native',
-      expectedValidate: true
+      expectedValidate: true,
     }))
 
   test('if contextMethod is specified, debugger statements are ignored', () =>
@@ -379,7 +379,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       variant: Variant.DEFAULT,
       expectedPrelude: true,
       expectedRunner: 'native',
-      expectedValidate: true
+      expectedValidate: true,
     }))
 
   test('optionMethod takes precedence over contextMethod', () =>
@@ -391,7 +391,7 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       variant: Variant.DEFAULT,
       expectedPrelude: true,
       expectedRunner: 'cse-machine',
-      expectedValidate: true
+      expectedValidate: true,
     }))
 
   test('debugger statements require cse-machine', () =>
@@ -401,6 +401,6 @@ describe('Ensure that the correct runner is used for the given evaluation contex
       variant: Variant.DEFAULT,
       expectedPrelude: true,
       expectedRunner: 'cse-machine',
-      expectedValidate: true
+      expectedValidate: true,
     }))
 })

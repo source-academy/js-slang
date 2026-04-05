@@ -9,7 +9,7 @@ const forStatementParts: ForStatementParts[] = ['init', 'test', 'update']
 export class ForStatmentMustHaveAllParts extends RuleError<ForStatement> {
   constructor(
     node: ForStatement,
-    private readonly missingParts: ForStatementParts[]
+    private readonly missingParts: ForStatementParts[],
   ) {
     super(node)
   }
@@ -38,8 +38,8 @@ const forStatementMustHaveAllParts: Rule<ForStatement> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default forStatementMustHaveAllParts

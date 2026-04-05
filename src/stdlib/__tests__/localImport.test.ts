@@ -16,7 +16,7 @@ describe('__access_named_export__', () => {
       const square = __access_named_export__(importedFile(), "square");
       square(5);
     `,
-      Chapter.SOURCE_2
+      Chapter.SOURCE_2,
     ).toEqual(25)
   })
 
@@ -32,7 +32,7 @@ describe('__access_named_export__', () => {
       const square = __access_named_export__(importedFile(), "square");
       square(5);
     `,
-      Chapter.SOURCE_2
+      Chapter.SOURCE_2,
     ).toEqual(25)
   })
 
@@ -46,7 +46,7 @@ describe('__access_named_export__', () => {
       }
       __access_named_export__(importedFile(), "identity");
     `,
-      Chapter.SOURCE_2
+      Chapter.SOURCE_2,
     ).toBeUndefined()
   })
 
@@ -60,7 +60,7 @@ describe('__access_named_export__', () => {
       }
       __access_named_export__(importedFile(), "identity");
     `,
-      Chapter.SOURCE_2
+      Chapter.SOURCE_2,
     ).toBeUndefined()
   })
 })
@@ -77,7 +77,7 @@ describe('__access_export__', () => {
       const square = __access_export__(importedFile(), "square");
       square(5);
     `,
-      Chapter.SOURCE_2
+      Chapter.SOURCE_2,
     ).toEqual(25)
   })
 
@@ -94,7 +94,7 @@ describe('__access_export__', () => {
       const square = __access_export__(importedFile(), "${defaultExportLookupName}");
       square(5);
     `,
-      Chapter.SOURCE_2
+      Chapter.SOURCE_2,
     ).toEqual(125)
   })
 })

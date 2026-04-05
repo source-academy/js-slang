@@ -32,7 +32,7 @@ test('stringify is fast', () => {
       const end = get_time();
       end - start;
       `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toBeLessThan(2000)
   // This benchmark takes 100ms on my machine,
   // but less than 2 seconds should be good enough on the test servers.
@@ -140,9 +140,9 @@ test('display_list with stringify is linear runtime', { timeout: 1_000_000 }, ()
     {
       chapter: Chapter.SOURCE_3,
       testBuiltins: {
-        no_display_list: noDisplayList
-      }
-    }
+        no_display_list: noDisplayList,
+      },
+    },
   ).toBeLessThan(1.2)
   // estimated power is less than 1.2
   // means it's probably near 1

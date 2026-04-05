@@ -24,8 +24,8 @@ const noImportSpecifierWithDefault: Rule<ImportSpecifier> = {
         return [new NoImportSpecifierWithDefaultError(node)]
       }
       return []
-    }
-  }
+    },
+  },
 }
 
 export default noImportSpecifierWithDefault

@@ -13,7 +13,7 @@ describe('Any checker tests', () => {
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('const x = 4;', localContext)
     expect(parseError(localContext.errors)).toEqual(
-      'Line 1: Usage of "any" in variable declaration is not allowed.'
+      'Line 1: Usage of "any" in variable declaration is not allowed.',
     )
   })
 
@@ -39,7 +39,7 @@ describe('Any checker tests', () => {
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('function f(x: any) { return x; }', localContext)
     expect(parseError(localContext.errors)).toEqual(
-      'Line 1: Usage of "any" in function parameter is not allowed.'
+      'Line 1: Usage of "any" in function parameter is not allowed.',
     )
   })
 
@@ -73,7 +73,7 @@ describe('Any checker tests', () => {
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('function g(): any { return 4; }', localContext)
     expect(parseError(localContext.errors)).toEqual(
-      'Line 1: Usage of "any" in function return type is not allowed.'
+      'Line 1: Usage of "any" in function return type is not allowed.',
     )
   })
 
@@ -91,7 +91,7 @@ describe('Any checker tests', () => {
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('const h = (x: any) => x + 1;', localContext)
     expect(parseError(localContext.errors)).toEqual(
-      'Line 1: Usage of "any" in arrow function parameter is not allowed.'
+      'Line 1: Usage of "any" in arrow function parameter is not allowed.',
     )
   })
 
@@ -117,7 +117,7 @@ describe('Any checker tests', () => {
     const localContext = mockContext(Chapter.SOURCE_4, Variant.TYPED, languageOptions)
     parser.parse('const f = (x: number) => (y: any) => x + y;', localContext)
     expect(parseError(localContext.errors)).toEqual(
-      'Line 1: Usage of "any" in arrow function parameter is not allowed.'
+      'Line 1: Usage of "any" in arrow function parameter is not allowed.',
     )
   })
 
@@ -150,7 +150,7 @@ describe('Any checker tests', () => {
         return g;
       }
     `,
-      localContext
+      localContext,
     )
     expect(parseError(localContext.errors)).toEqual('')
   })
@@ -168,10 +168,10 @@ describe('Any checker tests', () => {
         return g;
       }
     `,
-      localContext
+      localContext,
     )
     expect(parseError(localContext.errors)).toEqual(
-      'Line 3: Usage of "any" in function parameter is not allowed.'
+      'Line 3: Usage of "any" in function parameter is not allowed.',
     )
   })
 
@@ -188,7 +188,7 @@ describe('Any checker tests', () => {
         return g;
       }
     `,
-      localContext
+      localContext,
     )
     expect(parseError(localContext.errors)).toEqual('')
   })
@@ -206,7 +206,7 @@ describe('Any checker tests', () => {
         return g;
       }
     `,
-      localContext
+      localContext,
     )
     expect(parseError(localContext.errors)).toEqual('')
   })
@@ -224,10 +224,10 @@ describe('Any checker tests', () => {
         return g;
       }
     `,
-      localContext
+      localContext,
     )
     expect(parseError(localContext.errors)).toEqual(
-      'Line 2: Usage of "any" in type annotation\'s function parameter is not allowed.'
+      'Line 2: Usage of "any" in type annotation\'s function parameter is not allowed.',
     )
   })
 
@@ -244,7 +244,7 @@ describe('Any checker tests', () => {
         return g;
       }
     `,
-      localContext
+      localContext,
     )
     expect(parseError(localContext.errors)).toEqual('')
   })
@@ -262,7 +262,7 @@ describe('Any checker tests', () => {
         return g;
       }
     `,
-      localContext
+      localContext,
     )
     expect(parseError(localContext.errors)).toEqual('')
   })
@@ -280,10 +280,10 @@ describe('Any checker tests', () => {
         return g;
       }
     `,
-      localContext
+      localContext,
     )
     expect(parseError(localContext.errors)).toEqual(
-      'Line 2: Usage of "any" in type annotation\'s function return type is not allowed.'
+      'Line 2: Usage of "any" in type annotation\'s function return type is not allowed.',
     )
   })
 
@@ -300,7 +300,7 @@ describe('Any checker tests', () => {
         return g;
       }
     `,
-      localContext
+      localContext,
     )
     expect(parseError(localContext.errors)).toEqual('')
   })

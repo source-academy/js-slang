@@ -14,7 +14,7 @@ const globalIdNames = [
   'throwIfTimeout',
   'setProp',
   'getProp',
-  'builtins'
+  'builtins',
 ] as const
 
 export type NativeIds = Record<(typeof globalIdNames)[number], es.Identifier>
@@ -62,7 +62,7 @@ export function getIdentifiersInProgram(program: es.Program) {
           identifiers.add(node.object.name)
         }
       }
-    }
+    },
   })
   return identifiers
 }
@@ -75,7 +75,7 @@ export function getFunctionDeclarationNamesInProgram(program: es.Program): Set<s
       if (node.id && node.id.type === 'Identifier') {
         functionNames.add(node.id.name)
       }
-    }
+    },
   })
 
   return functionNames

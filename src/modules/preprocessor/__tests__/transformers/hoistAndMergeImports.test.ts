@@ -34,7 +34,7 @@ describe(hoistAndMergeImports, () => {
       `
       import { a, b, c, d, e, f } from "one_module";
       import { x } from "another_module";
-      `
+      `,
     ],
     [
       `
@@ -43,7 +43,7 @@ describe(hoistAndMergeImports, () => {
       `,
       `
       import c, { a as x, a, b as y, b } from 'one_module';
-      `
+      `,
     ],
     [
       `
@@ -53,7 +53,7 @@ describe(hoistAndMergeImports, () => {
       `
       import e from 'one_module';
       import d, { a, b, c } from 'one_module';
-      `
+      `,
     ],
     [
       `
@@ -64,7 +64,7 @@ describe(hoistAndMergeImports, () => {
       `
       import * as a from 'one_module';
       import d, { b, c } from 'one_module';
-      `
+      `,
     ],
     [`import 'one_module';`, `import 'one_module';`],
     [
@@ -76,7 +76,7 @@ describe(hoistAndMergeImports, () => {
       `
       import a from 'one_module';
       import { x, y } from 'another_module';
-      `
+      `,
     ],
     [
       `
@@ -86,7 +86,7 @@ describe(hoistAndMergeImports, () => {
       `,
       `
       import { b } from 'one_module';
-      `
-    ]
+      `,
+    ],
   ])('%#', (actualCode, expectedCode) => assertASTsAreEqual(actualCode, expectedCode))
 })

@@ -56,7 +56,7 @@ const transformers: ASTTransformers = {
   ArrayExpression: ({ elements }) =>
     vector_to_list([
       'array_expression',
-      vector_to_list((elements as ContiguousArrayElements).map(transform))
+      vector_to_list((elements as ContiguousArrayElements).map(transform)),
     ]),
   ArrowFunctionExpression: node =>
     vector_to_list([
@@ -67,7 +67,7 @@ const transformers: ASTTransformers = {
           // The body of a function is the statement
           // inside the curly braces.
           makeBlockIfNeeded(node.body.body)
-        : vector_to_list(['return_statement', transform(node.body)])
+        : vector_to_list(['return_statement', transform(node.body)]),
     ]),
   AssignmentExpression: node => {
     if (node.left.type === 'Identifier') {
@@ -84,7 +84,7 @@ const transformers: ASTTransformers = {
       'binary_operator_combination',
       node.operator,
       transform(node.left),
-      transform(node.right)
+      transform(node.right),
     ]),
   BlockStatement: ({ body }) => makeBlockIfNeeded(body),
   BreakStatement: () => vector_to_list(['break_statement']),
@@ -97,8 +97,8 @@ const transformers: ASTTransformers = {
         'name',
         node.id?.name,
         !node.superClass ? null : transform(node.superClass),
-        node.body.body.map(transform)
-      ])
+        node.body.body.map(transform),
+      ]),
     ])
   },
   ConditionalExpression: node =>
@@ -106,7 +106,7 @@ const transformers: ASTTransformers = {
       'conditional_expression',
       transform(node.test),
       transform(node.consequent),
-      transform(node.alternate)
+      transform(node.alternate),
     ]),
   ContinueStatement: () => vector_to_list(['continue_statement']),
   ExportDefaultDeclaration: node =>
@@ -114,7 +114,7 @@ const transformers: ASTTransformers = {
   ExportNamedDeclaration: ({ declaration, specifiers }) =>
     vector_to_list([
       'export_named_declaration',
-      declaration ? transform(declaration) : specifiers.map(transform)
+      declaration ? transform(declaration) : specifiers.map(transform),
     ]),
   ExportSpecifier: node => vector_to_list(['name', node.exported.name]),
   ExpressionStatement: ({ expression }) => transform(expression),
@@ -124,20 +124,20 @@ const transformers: ASTTransformers = {
       transform(node.init!),
       transform(node.test!),
       transform(node.update!),
-      transform(node.body)
+      transform(node.body),
     ]),
   FunctionDeclaration: node =>
     vector_to_list([
       'function_declaration',
       transform(node.id!),
       vector_to_list(node.params.map(transform)),
-      makeBlockIfNeeded(node.body.body)
+      makeBlockIfNeeded(node.body.body),
     ]),
   FunctionExpression: ({ body: { body }, params }) =>
     vector_to_list([
       'lambda_expression',
       vector_to_list(params.map(transform)),
-      makeBlockIfNeeded(body)
+      makeBlockIfNeeded(body),
     ]),
   Identifier: ({ name }) => vector_to_list(['name', name]),
   IfStatement: node =>
@@ -145,13 +145,13 @@ const transformers: ASTTransformers = {
       'conditional_statement',
       transform(node.test),
       transform(node.consequent),
-      node.alternate == null ? makeSequenceIfNeeded([]) : transform(node.alternate)
+      node.alternate == null ? makeSequenceIfNeeded([]) : transform(node.alternate),
     ]),
   ImportDeclaration: node =>
     vector_to_list([
       'import_declaration',
       vector_to_list(node.specifiers.map(transform)),
-      node.source.value
+      node.source.value,
     ]),
   ImportDefaultSpecifier: () => vector_to_list(['default']),
   ImportSpecifier: node => vector_to_list(['name', node.imported.name]),
@@ -161,7 +161,7 @@ const transformers: ASTTransformers = {
       'logical_composition',
       node.operator,
       transform(node.left),
-      transform(node.right)
+      transform(node.right),
     ]),
   MemberExpression: node => {
     // "computed" property of MemberExpression distinguishes
@@ -174,7 +174,7 @@ const transformers: ASTTransformers = {
       transform(node.object),
       !node.computed && node.property.type === 'Identifier'
         ? vector_to_list(['property', node.property.name])
-        : transform(node.property)
+        : transform(node.property),
     ])
   },
   MethodDefinition: node =>
@@ -183,7 +183,7 @@ const transformers: ASTTransformers = {
       node.kind,
       node.static,
       transform(node.key),
-      transform(node.value)
+      transform(node.value),
     ]),
   NewExpression: ({ callee, arguments: args }) =>
     vector_to_list(['new_expression', transform(callee), vector_to_list(args.map(transform))]),
@@ -198,7 +198,7 @@ const transformers: ASTTransformers = {
       node.key.type === 'Identifier'
         ? vector_to_list(['property', node.key.name])
         : transform(node.key),
-      transform(node.value)
+      transform(node.value),
     ])
   },
   RestElement: ({ argument }) => vector_to_list(['rest_element', transform(argument)]),
@@ -213,14 +213,14 @@ const transformers: ASTTransformers = {
       'try_statement',
       transform(node.block),
       !node.handler ? null : vector_to_list(['name', (node.handler.param as es.Identifier).name]),
-      !node.handler ? null : transform(node.handler.body)
+      !node.handler ? null : transform(node.handler.body),
     ])
   },
   UnaryExpression: ({ operator, argument }) =>
     vector_to_list([
       'unary_operator_combination',
       operator === '-' ? '-unary' : operator,
-      transform(argument)
+      transform(argument),
     ]),
   VariableDeclaration: node => {
     const { id, init } = getSourceVariableDeclaration(node)
@@ -235,7 +235,7 @@ const transformers: ASTTransformers = {
     }
   },
   WhileStatement: ({ test, body }) =>
-    vector_to_list(['while_loop', transform(test), transform(body)])
+    vector_to_list(['while_loop', transform(test), transform(body)]),
 }
 
 /**

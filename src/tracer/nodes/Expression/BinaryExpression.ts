@@ -22,7 +22,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
     this.type = 'BinaryExpression'
     this.operator = operator
@@ -42,7 +42,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -63,7 +63,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       throw new Error(
         `Line ${
           this.loc?.start.line || 0
-        }: Expected number or string on left hand side of operation, got ${leftType}.`
+        }: Expected number or string on left hand side of operation, got ${leftType}.`,
       )
     }
 
@@ -74,7 +74,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
         throw new Error(
           `Line ${
             this.loc?.start.line || 0
-          }: Expected number on left hand side of operation, got ${leftType}.`
+          }: Expected number on left hand side of operation, got ${leftType}.`,
         )
       }
     }
@@ -84,13 +84,13 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
         throw new Error(
           `Line ${
             this.loc?.start.line || 0
-          }: Expected string on right hand side of operation, got ${rightType}.`
+          }: Expected string on right hand side of operation, got ${rightType}.`,
         )
       } else {
         throw new Error(
           `Line ${
             this.loc?.start.line || 0
-          }: Expected number on left hand side of operation, got ${leftType}.`
+          }: Expected number on left hand side of operation, got ${leftType}.`,
         )
       }
     }
@@ -105,7 +105,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       throw new Error(
         `Line ${
           this.loc?.start.line || 0
-        }: Expected number on right hand side of operation, got ${rightType}.`
+        }: Expected number on right hand side of operation, got ${rightType}.`,
       )
     }
 
@@ -160,7 +160,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       undefined,
       undefined,
       this.loc,
-      this.range
+      this.range,
     )
     redex.postRedex = [ret]
     return ret
@@ -182,7 +182,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -202,7 +202,7 @@ export class StepperBinaryExpression implements BinaryExpression, StepperBaseNod
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

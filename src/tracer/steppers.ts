@@ -13,7 +13,7 @@ import { type IStepperPropContents, type Marker, redex } from '.'
 export function getSteps(
   inputNode: es.BaseNode,
   context: Context,
-  { stepLimit }: Pick<IOptions, 'stepLimit'>
+  { stepLimit }: Pick<IOptions, 'stepLimit'>,
 ): IStepperPropContents[] {
   const node: StepperBaseNode = prelude(inputNode)
   const steps: IStepperPropContents[] = []
@@ -34,7 +34,7 @@ export function getSteps(
           const beforeMarkers: Marker[] = redex.preRedex.map((redex, index) => ({
             redex,
             redexType: 'beforeMarker',
-            explanation: explanations[index]
+            explanation: explanations[index],
           }))
           numSteps += 1
           if (numSteps >= limit) {
@@ -42,20 +42,20 @@ export function getSteps(
           }
           steps.push({
             ast: oldNode,
-            markers: beforeMarkers
+            markers: beforeMarkers,
           })
           const afterMarkers: Marker[] =
             redex.postRedex.length > 0
               ? redex.postRedex.map((redex, index) => ({
                   redex,
                   redexType: 'afterMarker',
-                  explanation: explanations[index]
+                  explanation: explanations[index],
                 }))
               : [
                   {
                     redexType: 'afterMarker',
-                    explanation: explanations[0] // use explanation based on preRedex
-                  }
+                    explanation: explanations[0], // use explanation based on preRedex
+                  },
                 ]
           numSteps += 1
           if (numSteps >= limit) {
@@ -63,7 +63,7 @@ export function getSteps(
           }
           steps.push({
             ast: newNode,
-            markers: afterMarkers
+            markers: afterMarkers,
           })
         }
         // reset
@@ -81,9 +81,9 @@ export function getSteps(
         markers: [
           {
             redexType: 'beforeMarker',
-            explanation: error instanceof Error ? error.message : String(error)
-          }
-        ]
+            explanation: error instanceof Error ? error.message : String(error),
+          },
+        ],
       })
       return node
     }
@@ -94,9 +94,9 @@ export function getSteps(
     ast: node,
     markers: [
       {
-        explanation: 'Start of evaluation'
-      }
-    ]
+        explanation: 'Start of evaluation',
+      },
+    ],
   })
   // check for undefined variables
   try {
@@ -110,9 +110,9 @@ export function getSteps(
           explanation:
             error instanceof UndefinedVariable
               ? `Line ${error.location.start.line}: Name ${error.name} not declared.`
-              : String(error)
-        }
-      ]
+              : String(error),
+        },
+      ],
     })
     return steps
   }
@@ -124,9 +124,9 @@ export function getSteps(
       ast: result,
       markers: [
         {
-          explanation: 'Maximum number of steps exceeded'
-        }
-      ]
+          explanation: 'Maximum number of steps exceeded',
+        },
+      ],
     })
     return steps
   }
@@ -140,18 +140,18 @@ export function getSteps(
       ast: result,
       markers: [
         {
-          explanation: 'Evaluation complete'
-        }
-      ]
+          explanation: 'Evaluation complete',
+        },
+      ],
     })
   } else {
     steps.push({
       ast: result,
       markers: [
         {
-          explanation: 'Evaluation stuck'
-        }
-      ]
+          explanation: 'Evaluation stuck',
+        },
+      ],
     })
   }
   return steps

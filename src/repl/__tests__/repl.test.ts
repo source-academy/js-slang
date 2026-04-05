@@ -16,12 +16,12 @@ vi.mock(import('path'), async importOriginal => {
 
   const newPath = {
     ...posix,
-    resolve: newResolve
+    resolve: newResolve,
   }
 
   return {
     default: newPath,
-    posix: newPath
+    posix: newPath,
   }
 })
 
@@ -46,7 +46,7 @@ describe(chapterParser, () => {
     ['3', Chapter.SOURCE_3],
     ['SOURCE_3', Chapter.SOURCE_3],
     ['4', Chapter.SOURCE_4],
-    ['SOURCE_4', Chapter.SOURCE_4]
+    ['SOURCE_4', Chapter.SOURCE_4],
   ])('%#', (value, expected) => {
     const parseFn = () => chapterParser(value)
     expect(parseFn()).toEqual(expected)
@@ -93,43 +93,43 @@ describe('Test repl command', () => {
           '/d.js': `
         import { a } from './a/a.js';
         a();
-      `
+      `,
         },
-        '"c and b"'
+        '"c and b"',
       ],
       [
         'Unknown local import',
         ['a.js'],
         {
-          '/a.js': 'import { b } from "./b.js";'
+          '/a.js': 'import { b } from "./b.js";',
         },
-        "Error: [/a.js] Line 1: Module './b.js' not found."
+        "Error: [/a.js] Line 1: Module './b.js' not found.",
       ],
       [
         'Unknown local import - verbose',
         ['a.js', '--verbose'],
         {
-          '/a.js': 'import { b } from "./b.js";'
+          '/a.js': 'import { b } from "./b.js";',
         },
 
-        "Error: [/a.js] Line 1, Column 0: Module './b.js' not found.\nYou should check your import declarations, and ensure that all are valid modules.\n"
+        "Error: [/a.js] Line 1, Column 0: Module './b.js' not found.\nYou should check your import declarations, and ensure that all are valid modules.\n",
       ],
       [
         'Source imports are ok',
         ['a.js'],
         {
-          '/a.js': "import { foo } from 'one_module'; foo();"
+          '/a.js': "import { foo } from 'one_module'; foo();",
         },
-        '"foo"'
+        '"foo"',
       ],
       [
         'Unknown Source imports are handled properly',
         ['a.js'],
         {
-          '/a.js': "import { foo } from 'unknown_module'; foo();"
+          '/a.js': "import { foo } from 'unknown_module'; foo();",
         },
-        "Error: [/a.js] Line 1: Module 'unknown_module' not found."
-      ]
+        "Error: [/a.js] Line 1: Module 'unknown_module' not found.",
+      ],
     ]
     test.each(testCases)('%s', async (_, args, files, expected) => {
       mockReadFiles(files)
@@ -177,8 +177,8 @@ describe('Test repl command', () => {
         [],
         [
           ['const x = 1 + 1;', 'undefined'],
-          ['x;', '2']
-        ]
+          ['x;', '2'],
+        ],
       ))
 
     test('REPL is able to recover from errors', () =>
@@ -190,8 +190,8 @@ describe('Test repl command', () => {
           ['x;', '2'],
           ['var0;', 'Error: Line 1: Name var0 not declared.'],
           ['const var0 = 0;', 'undefined'],
-          ['var0;', '0']
-        ]
+          ['var0;', '0'],
+        ],
       ))
 
     test('Running with a file name evaluates code and then enters the REPL', async () => {
@@ -203,7 +203,7 @@ describe('Test repl command', () => {
         `,
         '/b.js': `
           export function b() { return "b"; }
-        `
+        `,
       })
 
       await expectRepl(
@@ -216,8 +216,8 @@ describe('Test repl command', () => {
           ['b();', '"b"'],
           ['c;', '"c"'],
           ['const c = 0;', 'undefined'],
-          ['c;', '0']
-        ]
+          ['c;', '0'],
+        ],
       )
     })
 
@@ -228,23 +228,23 @@ describe('Test repl command', () => {
           ['const foo = () => "bar";', 'undefined'],
           ['foo();', '"bar"'],
           ['import { foo } from "one_module";', 'undefined'],
-          ['foo();', '"foo"']
-        ]
+          ['foo();', '"foo"'],
+        ],
       ))
 
     test('REPL handles local import statements ok', async () => {
       mockReadFiles({
         '/a.js': `
           export function a() { return "a"; }
-        `
+        `,
       })
 
       await expectRepl(
         [],
         [
           ['import { a } from "./a.js";', 'undefined'],
-          ['a();', '"a"']
-        ]
+          ['a();', '"a"'],
+        ],
       )
     })
   })

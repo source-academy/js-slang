@@ -24,8 +24,8 @@ const noSpreadInArray: Rule<SpreadElement> = {
       } else {
         return [new NoSpreadInArray(node)]
       }
-    }
-  }
+    },
+  },
 }
 
 export default noSpreadInArray

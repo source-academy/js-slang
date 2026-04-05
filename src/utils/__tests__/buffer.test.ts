@@ -101,7 +101,7 @@ describe('writing', () => {
   test('f64', () => {
     buffer.putF(64, -117.117)
     expect(buffer.asArray()).toEqual(
-      new Uint8Array([0x73, 0x68, 0x91, 0xed, 0x7c, 0x47, 0x5d, 0xc0])
+      new Uint8Array([0x73, 0x68, 0x91, 0xed, 0x7c, 0x47, 0x5d, 0xc0]),
     )
     expect(buffer.cursor).toEqual(8)
   })
@@ -122,8 +122,8 @@ describe('writing', () => {
           for (let i = 0; i < 256; i++) {
             yield i
           }
-        })()
-      )
+        })(),
+      ),
     )
 
     expect(buffer.cursor).toEqual(256)

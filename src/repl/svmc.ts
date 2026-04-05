@@ -25,23 +25,23 @@ export const getSVMCCommand = () =>
       json: Compile only, but don't assemble.
       binary: Compile and assemble.
       debug: Compile and pretty-print the compiler output. For debugging the compiler.
-      ast: Parse and pretty-print the AST. For debugging the parser.`
+      ast: Parse and pretty-print the AST. For debugging the parser.`,
       )
         .choices(compileToChoices)
-        .default('binary' as (typeof compileToChoices)[number])
+        .default('binary' as (typeof compileToChoices)[number]),
     )
     .option(
       '-o, --out <outFile>',
       stripIndent`
       Sets the output filename.
       Defaults to the input filename, minus any file extension, plus '.svm'.
-    `
+    `,
     )
     .addOption(
       new Option(
         '-i, --internals <names>',
         `Sets the list of VM-internal functions. The argument should be a JSON array of
-strings containing the names of the VM-internal functions.`
+strings containing the names of the VM-internal functions.`,
       )
         .argParser(value => {
           const parsed = JSON.parse(value)
@@ -56,7 +56,7 @@ strings containing the names of the VM-internal functions.`
           }
           return parsed as string[]
         })
-        .default([] as string[])
+        .default([] as string[]),
     )
     .action(async (inputFile, opts) => {
       const vmInternalFunctions = opts.internals || []

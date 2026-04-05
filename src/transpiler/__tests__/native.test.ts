@@ -77,7 +77,7 @@ test('test proper setting of variables in an outer scope', async () => {
       return a;
     }
   `,
-    context
+    context,
   )
   const result = await runInContext('a = "new"; f();', context)
   assertFinishedResultValue(result, 'new')
@@ -94,7 +94,7 @@ test('using internal names still work', async () => {
     }
     wrap();
   `,
-    context
+    context,
   )
   assertFinishedResultValue(result, 1)
   result = await runInContext('program;', context)
@@ -109,7 +109,7 @@ test('assigning a = b where b was from a previous program call works', async () 
     b = pair;
     b = 1;
   `,
-    context
+    context,
   )
   assertFinishedResultValue(result, 1)
 })

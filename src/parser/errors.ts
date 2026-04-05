@@ -38,7 +38,7 @@ export class FatalSyntaxError implements SourceError {
   public severity = ErrorSeverity.ERROR
   public constructor(
     public location: SourceLocation,
-    public message: string
+    public message: string,
   ) {}
 
   public explain() {

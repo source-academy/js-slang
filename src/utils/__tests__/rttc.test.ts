@@ -20,7 +20,7 @@ describe('Unary type combinations:', () => {
   const valid: [UnaryOperator, Value][] = [
     ['!', bool],
     ['+', num],
-    ['-', num]
+    ['-', num],
   ]
   const operators: UnaryOperator[] = ['!', '+', '-']
   const invalid: [UnaryOperator, Value][] = []
@@ -52,7 +52,7 @@ describe('Unary type combinations:', () => {
         operator,
         value,
         explain: error!.explain(),
-        elaborate: error!.elaborate()
+        elaborate: error!.elaborate(),
       }).toMatchSnapshot()
     })
   })
@@ -61,7 +61,7 @@ describe('Unary type combinations:', () => {
 describe('Binary + type combinations:', () => {
   const valid: [BinaryOperator, Value, Value][] = [
     ['+', num, num],
-    ['+', str, str]
+    ['+', str, str],
   ]
   const operators: BinaryOperator[] = ['+']
   const invalid: [BinaryOperator, Value, Value][] = []
@@ -72,7 +72,7 @@ describe('Binary + type combinations:', () => {
         if (
           !valid.some(
             combination =>
-              combination[0] === op && combination[1] === left && combination[2] === right
+              combination[0] === op && combination[1] === left && combination[2] === right,
           )
         ) {
           invalid.push([op, left, right])
@@ -101,7 +101,7 @@ describe('Binary + type combinations:', () => {
         left,
         right,
         explain: error!.explain(),
-        elaborate: error!.elaborate()
+        elaborate: error!.elaborate(),
       }).toMatchSnapshot()
     })
   })
@@ -112,7 +112,7 @@ describe('Binary (-|*|/|%) type combinations:', () => {
     ['-', num, num],
     ['*', num, num],
     ['/', num, num],
-    ['%', num, num]
+    ['%', num, num],
   ]
   const operators: BinaryOperator[] = ['-', '*', '/', '%']
   const invalid: [BinaryOperator, Value, Value][] = []
@@ -123,7 +123,7 @@ describe('Binary (-|*|/|%) type combinations:', () => {
         if (
           !valid.some(
             combination =>
-              combination[0] === op && combination[1] === left && combination[2] === right
+              combination[0] === op && combination[1] === left && combination[2] === right,
           )
         ) {
           invalid.push([op, left, right])
@@ -152,7 +152,7 @@ describe('Binary (-|*|/|%) type combinations:', () => {
         left,
         right,
         explain: error!.explain(),
-        elaborate: error!.elaborate()
+        elaborate: error!.elaborate(),
       }).toMatchSnapshot()
     })
   })
@@ -192,7 +192,7 @@ describe('Binary (===|!==) type combinations:', () => {
         left,
         right,
         explain: error!.explain(),
-        elaborate: error!.elaborate()
+        elaborate: error!.elaborate(),
       }).toMatchSnapshot()
     })
   })
@@ -207,7 +207,7 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
     ['<=', num, num],
     ['<=', str, str],
     ['>=', num, num],
-    ['>=', str, str]
+    ['>=', str, str],
   ]
   const operators: BinaryOperator[] = ['<', '>', '<=', '>=']
   const invalid: [BinaryOperator, Value, Value][] = []
@@ -218,7 +218,7 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
         if (
           !valid.some(
             combination =>
-              combination[0] === op && combination[1] === left && combination[2] === right
+              combination[0] === op && combination[1] === left && combination[2] === right,
           )
         ) {
           invalid.push([op, left, right])
@@ -247,7 +247,7 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
         left,
         right,
         explain: error!.explain(),
-        elaborate: error!.elaborate()
+        elaborate: error!.elaborate(),
       }).toMatchSnapshot()
     })
   })
@@ -281,7 +281,7 @@ describe('Ternary/if test expression type combinations:', () => {
       expect({
         value,
         explain: error!.explain(),
-        elaborate: error!.elaborate()
+        elaborate: error!.elaborate(),
       }).toMatchSnapshot()
     })
   })
@@ -290,7 +290,7 @@ describe('Ternary/if test expression type combinations:', () => {
 describe('Member expression type combinations:', () => {
   const valid: [Value, Value][] = [
     [obj, str],
-    [arr, num]
+    [arr, num],
   ]
   const invalid: [Value, Value][] = []
 
@@ -329,7 +329,7 @@ describe('Member expression type combinations:', () => {
         left,
         right,
         explain: error!.explain(),
-        elaborate: error!.elaborate()
+        elaborate: error!.elaborate(),
       }).toMatchSnapshot()
     })
   })

@@ -31,7 +31,7 @@ export default function hoistAndMergeImports(program: es.Program) {
     const { namespaces, regularSpecifiers, defaultSpecifiers } = importRecords.setdefault(source, {
       regularSpecifiers: new Dict(),
       defaultSpecifiers: new Set(),
-      namespaces: new Set()
+      namespaces: new Set(),
     })
 
     decl.specifiers.forEach(spec => {
@@ -83,7 +83,7 @@ export default function hoistAndMergeImports(program: es.Program) {
         // since one ImportDeclaration cannot have multiple ImportDefaultSpecifiers
         others.forEach(localName => {
           declarations.push(
-            create.importDeclaration(source, [create.importDefaultSpecifier(localName)])
+            create.importDeclaration(source, [create.importDefaultSpecifier(localName)]),
           )
         })
       }
@@ -94,7 +94,7 @@ export default function hoistAndMergeImports(program: es.Program) {
         declarations.push(create.importDeclaration(source, specifiers))
       }
       return declarations
-    }
+    },
   )
 
   program.body = [...combinedImports, ...nonImportDeclarations]

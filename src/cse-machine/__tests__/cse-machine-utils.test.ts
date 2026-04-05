@@ -14,7 +14,7 @@ describe(hasBreakStatement, () => {
     ['If statement with alternative missing break', 'if (true) { break; } else { }', true],
     ['If statement with consequent missing break', 'if (true) { } else { break; }', true],
     ['If statement with both missing break', 'if (true) { } else { }', false],
-    ['If statement with consequent only and missing break', 'if (true) { }', false]
+    ['If statement with consequent only and missing break', 'if (true) { }', false],
   ]
 
   const blockCases: TestCase[] = [
@@ -25,8 +25,8 @@ describe(hasBreakStatement, () => {
       `{
         ${code}
       }`,
-      expected
-    ])
+      expected,
+    ]),
   ]
 
   test.each([...ifCases, ...blockCases])('%#. %s', (_, code, expected) => {
@@ -34,11 +34,11 @@ describe(hasBreakStatement, () => {
       `while (true) {
       ${code}  
     }`,
-      ACORN_PARSE_OPTIONS
+      ACORN_PARSE_OPTIONS,
     )
 
     const {
-      body: [statement]
+      body: [statement],
     } = parsed
 
     if (statement.type !== 'WhileStatement' || statement.body.type !== 'BlockStatement')
@@ -55,7 +55,7 @@ describe(hasContinueStatement, () => {
     ['If statement with alternative missing continue', 'if (true) { continue; } else { }', true],
     ['If statement with consequent missing continue', 'if (true) { } else { continue; }', true],
     ['If statement with both missing continue', 'if (true) { } else { }', false],
-    ['If statement with consequent only and missing continue', 'if (true) { }', false]
+    ['If statement with consequent only and missing continue', 'if (true) { }', false],
   ]
 
   const blockCases: TestCase[] = [
@@ -66,8 +66,8 @@ describe(hasContinueStatement, () => {
       `{
         ${code}
       }`,
-      expected
-    ])
+      expected,
+    ]),
   ]
 
   test.each([
@@ -83,18 +83,18 @@ describe(hasContinueStatement, () => {
           }
         }
       `,
-      true
-    ]
+      true,
+    ],
   ])('%#. %s', (_, code, expected) => {
     const parsed = parse(
       `while (true) {
       ${code}  
     }`,
-      ACORN_PARSE_OPTIONS
+      ACORN_PARSE_OPTIONS,
     )
 
     const {
-      body: [statement]
+      body: [statement],
     } = parsed
 
     if (statement.type !== 'WhileStatement' || statement.body.type !== 'BlockStatement')
@@ -110,22 +110,22 @@ describe(hasReturnStatement, () => {
     ['If consequent and alternative have no returns', 'if (true) {} else {}', false],
     ['If consequent has return, alternative has no return', 'if (true) { return } else {}', false],
     ['If consequent no return, alternate has return', 'if (true) {} else { return }', false],
-    ['If consequent and alternative with returns', 'if (true) { return } else { return }', true]
+    ['If consequent and alternative with returns', 'if (true) { return } else { return }', true],
   ]
 
   test.each([
-    ...ifCases
+    ...ifCases,
     // ...blockCases
   ])('%#. %s', (_, code, expected) => {
     const parsed = parse(
       `function tester() {
       ${code}  
     }`,
-      ACORN_PARSE_OPTIONS
+      ACORN_PARSE_OPTIONS,
     )
 
     const {
-      body: [statement]
+      body: [statement],
     } = parsed
 
     if (statement.type !== 'FunctionDeclaration') throw new Error()

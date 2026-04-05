@@ -53,8 +53,8 @@ const expectEnvTreeFrom = (code: string, expectFunc: typeof expect, hasPrelude =
 
   return expect(
     runCodeInSource(code, context, {
-      executionMethod: 'cse-machine'
-    }).then(() => context.runtime.environmentTree)
+      executionMethod: 'cse-machine',
+    }).then(() => context.runtime.environmentTree),
   ).resolves.toMatchSnapshot()
 }
 
@@ -75,12 +75,12 @@ test('Arrays and closures are correctly added to their respective heaps', ({ exp
     f([7, 8, 9]);
     `,
     expect,
-    false
+    false,
   )
 })
 
 test('Arrays created from built-in functions are correctly added to their respective heaps', ({
-  expect
+  expect,
 }) => {
   return expectEnvTreeFrom(
     stripIndent`
@@ -89,12 +89,12 @@ test('Arrays created from built-in functions are correctly added to their respec
       list(1, 2, 3);
     }
     `,
-    expect
+    expect,
   )
 })
 
 test('Variadic closures correctly add argument array to the function environment heap', ({
-  expect
+  expect,
 }) => {
   return expectEnvTreeFrom(
     stripIndent`
@@ -102,7 +102,7 @@ test('Variadic closures correctly add argument array to the function environment
     f(1, 2, 3);
     `,
     expect,
-    false
+    false,
   )
 })
 
@@ -116,6 +116,6 @@ test('apply_in_underlying_javascript works correctly and adds objects to heaps',
     }
     apply_in_underlying_javascript(f, list(0));
     `,
-    expect
+    expect,
   )
 })

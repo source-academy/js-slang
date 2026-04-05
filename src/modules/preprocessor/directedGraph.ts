@@ -22,7 +22,7 @@ export type TopologicalOrderResult =
 export class DirectedGraph {
   private readonly adjacencyList: Map<string, Set<string>>
   private readonly differentKeysError = new Error(
-    'The keys of the adjacency list & the in-degree maps are not the same. This should never occur.'
+    'The keys of the adjacency list & the in-degree maps are not the same. This should never occur.',
   )
 
   constructor() {
@@ -117,7 +117,7 @@ export class DirectedGraph {
     // valid topological ordering & that the graph contains no cycles.
     assert(
       startingNodeInCycle !== null,
-      'There are no cycles in this graph. This should never happen.'
+      'There are no cycles in this graph. This should never happen.',
     )
 
     const cycle = [startingNodeInCycle]
@@ -137,7 +137,7 @@ export class DirectedGraph {
       // it is part of a cycle.
       assert(
         neighbours.size > 0,
-        `Node '${currentNode}' has no incoming edges. This should never happen.`
+        `Node '${currentNode}' has no incoming edges. This should never happen.`,
       )
 
       let nextNodeInCycle: string | null = null
@@ -152,7 +152,7 @@ export class DirectedGraph {
       // is because a cycle contains at least 2 nodes.
       assert(
         nextNodeInCycle !== null,
-        `None of the neighbours of node '${currentNode}' are part of the same cycle. This should never happen.`
+        `None of the neighbours of node '${currentNode}' are part of the same cycle. This should never happen.`,
       )
 
       // If the next node we pick is already part of the cycle,
@@ -220,14 +220,14 @@ export class DirectedGraph {
       return {
         isValidTopologicalOrderFound: false,
         topologicalOrder: null,
-        firstCycleFound
+        firstCycleFound,
       }
     }
 
     return {
       isValidTopologicalOrderFound: true,
       topologicalOrder,
-      firstCycleFound: null
+      firstCycleFound: null,
     }
   }
 }

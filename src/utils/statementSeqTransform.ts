@@ -135,7 +135,7 @@ const transformers: NodeTransformers = {
     node.declarations = node.declarations.map(transform)
     return node
   },
-  WhileStatement: ['body', 'test']
+  WhileStatement: ['body', 'test'],
 }
 
 export function transform<NodeType extends Node>(node: NodeType): NodeType {

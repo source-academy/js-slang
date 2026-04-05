@@ -237,7 +237,7 @@ export type {
   SVMFunction,
   Instruction as SVMInstruction,
   Offset as SVMOffset,
-  Program as SVMProgram
+  Program as SVMProgram,
 } from './vm/svml-compiler'
 
 export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>

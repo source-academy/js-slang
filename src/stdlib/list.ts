@@ -50,7 +50,7 @@ export function head(xs: unknown) {
     return xs[0]
   } else {
     throw new Error(
-      `${head.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`
+      `${head.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`,
     )
   }
 }
@@ -68,7 +68,7 @@ export function tail(xs: unknown) {
     return xs[1]
   } else {
     throw new Error(
-      `${tail.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`
+      `${tail.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`,
     )
   }
 }
@@ -139,7 +139,7 @@ export function set_head(xs: unknown, x: any): void {
     xs[0] = x
   } else {
     throw new Error(
-      `${set_head.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
+      `${set_head.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`,
     )
   }
 }
@@ -154,7 +154,7 @@ export function set_tail(xs: unknown, x: any): void {
     xs[1] = x
   } else {
     throw new Error(
-      `${set_tail.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
+      `${set_tail.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`,
     )
   }
 }

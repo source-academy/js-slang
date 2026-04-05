@@ -86,14 +86,14 @@ function serialiseFunction(f: SVMFunction): ImFunction {
       case OpCodes.LGCS:
         holes.push({
           offset: b.cursor,
-          referent: ['string', instr[1] as string]
+          referent: ['string', instr[1] as string],
         })
         b.putU(32, 0)
         break
       case OpCodes.NEWC:
         holes.push({
           offset: b.cursor,
-          referent: ['function', (instr[1]! as any)[0]]
+          referent: ['function', (instr[1]! as any)[0]],
         })
         b.putU(32, 0)
         break
@@ -139,14 +139,14 @@ function serialiseFunction(f: SVMFunction): ImFunction {
     throw new Error(
       `Assembler bug: calculated function length ${
         instrOffsets[instrOffsets.length - 1]
-      } is different from actual length ${binary.byteLength - 4}`
+      } is different from actual length ${binary.byteLength - 4}`,
     )
   }
 
   return {
     binary: b.asArray(),
     holes,
-    finalOffset: null
+    finalOffset: null,
   }
 }
 
@@ -163,10 +163,10 @@ export function assemble(p: Program): Uint8Array {
         ...imFns.map(fn =>
           fn.holes
             .filter(hole => hole.referent[0] === 'string')
-            .map(hole => hole.referent[1] as string)
-        )
-      )
-    )
+            .map(hole => hole.referent[1] as string),
+        ),
+      ),
+    ),
   ]
 
   const bin = new Buffer()

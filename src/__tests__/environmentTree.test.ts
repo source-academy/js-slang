@@ -55,7 +55,7 @@ test('EnvTreeNode::resetChildren should reset the children of the node to the gi
   parentNode?.resetChildren([
     grandChildNode1 as EnvTreeNode,
     grandChildNode2 as EnvTreeNode,
-    grandChildNode3 as EnvTreeNode
+    grandChildNode3 as EnvTreeNode,
   ])
   parentNode?.children.forEach(child => {
     expect(child).toMatchSnapshot()

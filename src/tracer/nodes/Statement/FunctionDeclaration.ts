@@ -30,7 +30,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
     this.type = 'FunctionDeclaration'
     this.id = id
@@ -62,7 +62,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -81,7 +81,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       this.id.name, // mu term
       false,
       this.async,
-      this.generator
+      this.generator,
     )
   }
 
@@ -118,7 +118,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
   substitute(
     id: StepperPattern,
     value: StepperExpression,
-    upperBoundName?: string[]
+    upperBoundName?: string[],
   ): StepperBaseNode {
     const valueFreeNames = value.freeNames()
     const scopeNames = this.scanAllDeclarationNames()
@@ -132,7 +132,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     const currentFunction = newNames.reduce(
       (current: StepperFunctionDeclaration, name: string, index: number) =>
         current.rename(repeatedNames[index], name),
-      this
+      this,
     )
 
     if (currentFunction.scanAllDeclarationNames().includes(id.name)) {
@@ -144,7 +144,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       currentFunction.body.substitute(
         id,
         value,
-        currentFunction.params.flatMap(p => p.allNames())
+        currentFunction.params.flatMap(p => p.allNames()),
       ) as unknown as StepperBlockStatement,
       currentFunction.params,
       this.generator,
@@ -152,7 +152,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -180,7 +180,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

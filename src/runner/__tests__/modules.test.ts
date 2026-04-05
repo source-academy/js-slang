@@ -17,7 +17,7 @@ const describeCases: DescribeCase[] = [
       Chapter.SOURCE_4,
       Chapter.FULL_JS,
       Chapter.FULL_TS,
-      Chapter.LIBRARY_PARSER
+      Chapter.LIBRARY_PARSER,
     ],
     [
       Variant.DEFAULT,
@@ -26,9 +26,9 @@ const describeCases: DescribeCase[] = [
       Variant.DEFAULT,
       Variant.DEFAULT,
       Variant.DEFAULT,
-      Variant.DEFAULT
+      Variant.DEFAULT,
     ],
-    'import { foo } from "one_module"; foo();'
+    'import { foo } from "one_module"; foo();',
   ],
   [
     'python',
@@ -37,8 +37,8 @@ const describeCases: DescribeCase[] = [
     stripIndent`
     from one_module import foo
     foo()
-    `
-  ]
+    `,
+  ],
 ]
 
 describe.each(describeCases)(
@@ -55,7 +55,7 @@ describe.each(describeCases)(
       { timeout: process.env.GITHUB_ACTIONS ? 20_000 : 10_000 },
       (_, chapter, variant) => {
         return expectFinishedResult(code, { chapter, variant }).toEqual('foo')
-      }
+      },
     )
-  }
+  },
 )

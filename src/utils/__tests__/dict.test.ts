@@ -4,7 +4,7 @@ import Dict, { arrayMapFrom } from '../dict'
 test(arrayMapFrom, () => {
   const arrMap = arrayMapFrom([
     [1, [1, 2, 3]],
-    [2, [2, 4, 6]]
+    [2, [2, 4, 6]],
   ])
 
   expect(arrMap.get(1)).toEqual([1, 2, 3])

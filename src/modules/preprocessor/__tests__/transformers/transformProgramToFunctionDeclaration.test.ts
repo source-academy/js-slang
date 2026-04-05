@@ -26,7 +26,7 @@ describe('transformImportedFile', () => {
 
     const actualFunctionDeclaration = transformProgramToFunctionDeclaration(
       actualProgram,
-      currentFileName
+      currentFileName,
     )
     const expectedFunctionDeclaration = expectedProgram.body[0]
     expect(expectedFunctionDeclaration.type).toEqual('FunctionDeclaration')

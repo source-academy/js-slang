@@ -17,7 +17,7 @@ import {
   type EnvArray,
   type Instr,
   InstrType,
-  type InstrTypeToInstr
+  type InstrTypeToInstr,
 } from './types'
 
 /**
@@ -135,7 +135,7 @@ export const isStreamFn = (item: any, result?: any): result is [any, () => any] 
 export const handleArrayCreation = (
   context: Context,
   array: any[],
-  envOverride?: Environment
+  envOverride?: Environment,
 ): void => {
   const environment = envOverride ?? currentEnvironment(context)
   // Both id and environment are non-enumerable so iterating
@@ -144,7 +144,7 @@ export const handleArrayCreation = (
     id: { value: uniqueId(context) },
     // Make environment writable as there are cases on the frontend where
     // environments of objects need to be modified
-    environment: { value: environment, writable: true }
+    environment: { value: environment, writable: true },
   })
   environment.heap.add(array as EnvArray)
 }
@@ -183,7 +183,7 @@ export const handleSequence = (seq: es.Program['body']): ControlItem[] => {
  * of control items to be added.
  */
 export const reduceConditional = (
-  node: es.IfStatement | es.ConditionalExpression
+  node: es.IfStatement | es.ConditionalExpression,
 ): ControlItem[] => {
   return [instr.branchInstr(node.consequent, node.alternate, node), node.test]
 }
@@ -275,7 +275,7 @@ export const createEnvironment = (
   context: Context,
   closure: Closure,
   args: Value[],
-  callExpression: es.CallExpression
+  callExpression: es.CallExpression,
 ): Environment => {
   const environment: Environment = {
     name: isIdentifier(callExpression.callee)
@@ -287,8 +287,8 @@ export const createEnvironment = (
     id: uniqueId(context),
     callExpression: {
       ...callExpression,
-      arguments: args.map(ast.primitive)
-    }
+      arguments: args.map(ast.primitive),
+    },
   }
   closure.node.params.forEach((param, index) => {
     if (isRestElement(param)) {
@@ -311,14 +311,14 @@ export const pushEnvironment = (context: Context, environment: Environment) => {
 
 export const createBlockEnvironment = (
   context: Context,
-  name = 'blockEnvironment'
+  name = 'blockEnvironment',
 ): Environment => {
   return {
     name,
     tail: currentEnvironment(context),
     head: {},
     heap: new Heap(),
-    id: uniqueId(context)
+    id: uniqueId(context),
   }
 }
 
@@ -338,14 +338,14 @@ export function declareIdentifier(
   name: string,
   node: Node,
   environment: Environment,
-  constant: boolean = false
+  constant: boolean = false,
 ) {
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
 
     return handleRuntimeError(
       context,
-      new errors.VariableRedeclaration(node, name, descriptors[name].writable)
+      new errors.VariableRedeclaration(node, name, descriptors[name].writable),
     )
   }
   environment.head[name] = constant ? UNASSIGNED_CONST : UNASSIGNED_LET
@@ -355,7 +355,7 @@ export function declareIdentifier(
 function declareVariables(
   context: Context,
   node: es.VariableDeclaration,
-  environment: Environment
+  environment: Environment,
 ) {
   for (const declaration of node.declarations) {
     // Retrieve declaration type from node
@@ -367,7 +367,7 @@ function declareVariables(
 export function declareFunctionsAndVariables(
   context: Context,
   node: es.BlockStatement | es.Program,
-  environment: Environment
+  environment: Environment,
 ) {
   for (const statement of node.body) {
     switch (statement.type) {
@@ -387,7 +387,7 @@ export function defineVariable(
   name: string,
   value: Value,
   constant = false,
-  node: es.VariableDeclaration | es.ImportDeclaration
+  node: es.VariableDeclaration | es.ImportDeclaration,
 ) {
   const environment = currentEnvironment(context)
 
@@ -402,7 +402,7 @@ export function defineVariable(
   Object.defineProperty(environment.head, name, {
     value,
     writable: !constant,
-    enumerable: true
+    enumerable: true,
   })
 
   return environment
@@ -431,7 +431,7 @@ export const setVariable = (
   context: Context,
   name: string,
   value: any,
-  node: es.AssignmentExpression
+  node: es.AssignmentExpression,
 ) => {
   let environment: Environment | null = currentEnvironment(context)
   while (environment) {
@@ -464,7 +464,7 @@ export const checkNumberOfArguments = (
   context: Context,
   callee: Closure | Value,
   args: Value[],
-  exp: es.CallExpression
+  exp: es.CallExpression,
 ) => {
   if (callee instanceof Closure) {
     // User-defined or Pre-defined functions
@@ -477,8 +477,8 @@ export const checkNumberOfArguments = (
           exp,
           hasVarArgs ? params.length - 1 : params.length,
           args.length,
-          hasVarArgs
-        )
+          hasVarArgs,
+        ),
       )
     }
   } else if (isCallWithCurrentContinuation(callee)) {
@@ -486,7 +486,7 @@ export const checkNumberOfArguments = (
     if (args.length !== 1) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+        new errors.InvalidNumberOfArguments(exp, 1, args.length, false),
       )
     }
     return undefined
@@ -506,8 +506,8 @@ export const checkNumberOfArguments = (
           exp,
           hasVarArgs ? callee.minArgsNeeded : callee.length,
           args.length,
-          hasVarArgs
-        )
+          hasVarArgs,
+        ),
       )
     }
   }
@@ -537,7 +537,7 @@ export const checkStackOverFlow = (context: Context, control: Control) => {
     }
     handleRuntimeError(
       context,
-      new errors.MaximumStackLimitExceeded(context.runtime.nodes[0], stacks)
+      new errors.MaximumStackLimitExceeded(context.runtime.nodes[0], stacks),
     )
   }
 }
@@ -696,7 +696,7 @@ const envCalculators: EnvCalculators = {
   [InstrType.SPREAD]: false,
   [InstrType.UNARY_OP]: false,
   [InstrType.WHILE]: ['body', 'test'],
-  [InstrType.FOR]: ['body', 'init', 'test', 'update']
+  [InstrType.FOR]: ['body', 'init', 'test', 'update'],
 }
 /**
  * Checks whether the evaluation of the given control item depends on the current environment.

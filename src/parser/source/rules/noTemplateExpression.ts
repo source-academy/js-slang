@@ -22,8 +22,8 @@ const noTemplateExpression: Rule<TemplateLiteral> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noTemplateExpression

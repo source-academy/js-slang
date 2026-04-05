@@ -14,7 +14,7 @@ export class StepperDebuggerStatement implements DebuggerStatement, StepperBaseN
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
     this.type = 'DebuggerStatement'
     this.leadingComments = leadingComments
@@ -28,7 +28,7 @@ export class StepperDebuggerStatement implements DebuggerStatement, StepperBaseN
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 

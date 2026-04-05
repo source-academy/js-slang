@@ -26,8 +26,8 @@ const noDotAbbreviation: Rule<MemberExpression> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noDotAbbreviation

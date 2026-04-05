@@ -5,7 +5,7 @@ import {
   bundleAndTabImporter,
   docsImporter,
   setModulesStaticURL as internalUrlSetter,
-  MODULES_STATIC_URL
+  MODULES_STATIC_URL,
 } from './importers'
 import { getRequireProvider } from './requireProvider'
 
@@ -52,7 +52,7 @@ function getMemoizedDocsImporter() {
 
     try {
       const { default: loadedDocs } = await docsImporter(
-        `${MODULES_STATIC_URL}/jsons/${moduleName}.json`
+        `${MODULES_STATIC_URL}/jsons/${moduleName}.json`,
       )
       docs.set(moduleName, loadedDocs)
       return loadedDocs
@@ -77,20 +77,20 @@ export async function loadModuleTabsAsync(moduleName: string) {
   return Promise.all(
     moduleInfo.tabs.map(async tabName => {
       const { default: result } = await bundleAndTabImporter(
-        `${MODULES_STATIC_URL}/tabs/${tabName}.js`
+        `${MODULES_STATIC_URL}/tabs/${tabName}.js`,
       )
       return result
-    })
+    }),
   )
 }
 
 export async function loadModuleBundleAsync(
   moduleName: string,
   context: Context,
-  node?: Node
+  node?: Node,
 ): Promise<ModuleFunctions> {
   const { default: result } = await bundleAndTabImporter(
-    `${MODULES_STATIC_URL}/bundles/${moduleName}.js`
+    `${MODULES_STATIC_URL}/bundles/${moduleName}.js`,
   )
   try {
     const loadedModule = result(getRequireProvider(context))
@@ -102,7 +102,7 @@ export async function loadModuleBundleAsync(
       }
       return {
         ...res,
-        [name]: value
+        [name]: value,
       }
     }, {})
   } catch (error) {

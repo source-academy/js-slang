@@ -32,7 +32,7 @@ export function determineExecutionMethod(
   theOptions: IOptions,
   context: Context,
   program: Program,
-  verboseErrors: boolean
+  verboseErrors: boolean,
 ): void {
   if (theOptions.executionMethod !== 'auto') {
     context.executionMethod = theOptions.executionMethod
@@ -51,7 +51,7 @@ export function determineExecutionMethod(
     simple(program, {
       DebuggerStatement() {
         hasDebuggerStatement = true
-      }
+      },
     })
     isNativeRunnable = !hasDebuggerStatement
   }

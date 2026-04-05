@@ -9,9 +9,9 @@ vi.mock(
     ({
       bar: vi.fn().mockReturnValue('bar'),
       list: {
-        foo: vi.fn().mockReturnValue('foo')
-      }
-    }) as any
+        foo: vi.fn().mockReturnValue('foo'),
+      },
+    }) as any,
 )
 
 const context = mockContext(Chapter.SOURCE_4)
@@ -29,6 +29,6 @@ test('Multiple segments', () => {
 
 test('Provider should throw an error if an unknown import is requested', () => {
   expect(() => provider('something')).toThrow(
-    new Error('Dynamic require of something is not supported')
+    new Error('Dynamic require of something is not supported'),
   )
 })

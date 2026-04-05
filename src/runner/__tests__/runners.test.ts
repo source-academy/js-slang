@@ -9,7 +9,7 @@ import {
   expectFinishedResult,
   expectParsedError,
   testFailure,
-  testSuccess
+  testSuccess,
 } from '../../utils/testing'
 import { assertFinishedResultValue, testWithChapters } from '../../utils/testing/misc'
 import { mockContext } from '../../utils/testing/mocks'
@@ -34,7 +34,7 @@ const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
           sourceLanguage["displayName"];
           `,
     value: 'Source 1',
-    errors: []
+    errors: [],
   },
   {
     name: 'OOP',
@@ -49,7 +49,7 @@ const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
           rect1.height;
           `,
     value: 1080,
-    errors: []
+    errors: [],
   },
   {
     name: 'ARRAY MAP',
@@ -57,7 +57,7 @@ const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
           [1,2,3,4].map(num => num + 1);
           `,
     value: [2, 3, 4, 5],
-    errors: []
+    errors: [],
   },
   {
     name: 'ARRAY FILTER',
@@ -65,7 +65,7 @@ const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
           [1,2,3,4].filter(num => num > 2);
           `,
     value: [3, 4],
-    errors: []
+    errors: [],
   },
   {
     name: 'TRY CATCH',
@@ -81,8 +81,8 @@ const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
             a;
            `,
     value: 1,
-    errors: []
-  }
+    errors: [],
+  },
 ]
 
 const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
@@ -92,7 +92,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
           const a = b;
           `,
     value: undefined,
-    errors: [new UndefinedVariable('b', locationDummyNode(2, 20, 'source'))]
+    errors: [new UndefinedVariable('b', locationDummyNode(2, 20, 'source'))],
   },
   {
     name: 'SYNTAX ERROR',
@@ -101,9 +101,9 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
     errors: [
       new FatalSyntaxError(
         { start: { line: 1, column: 8 }, end: { line: 1, column: 9 }, source: undefined },
-        'SyntaxError: Unexpected token (1:8)'
-      )
-    ]
+        'SyntaxError: Unexpected token (1:8)',
+      ),
+    ],
   },
   {
     name: 'REFERENCE ERROR',
@@ -114,8 +114,8 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
             h();
             `,
     value: undefined,
-    errors: [new UndefinedVariable('g', locationDummyNode(3, 14, 'source'))]
-  }
+    errors: [new UndefinedVariable('g', locationDummyNode(3, 14, 'source'))],
+  },
 ]
 
 // FullJS Unit Tests
@@ -131,7 +131,7 @@ test('Simulate fullJS REPL', async () => {
     ['const x = 1;', undefined],
     ['x;', 1],
     ['const y = x + 1;', undefined],
-    ['y;', 2]
+    ['y;', 2],
   ]
 
   for (const replStatement of replStatements) {
@@ -147,7 +147,7 @@ describe('Native javascript programs are valid in fullJSRunner', () => {
     `%s`,
     (_, { snippet, value }) => {
       return expectFinishedResult(snippet, Chapter.FULL_JS).toEqual(value)
-    }
+    },
   )
 })
 
@@ -157,7 +157,7 @@ describe('Error locations are handled well in fullJS', () => {
     (_, { snippet, errors }) => {
       const expected = parseError(errors)
       return expectParsedError(snippet, Chapter.FULL_JS).toEqual(expected)
-    }
+    },
   )
 })
 
@@ -172,11 +172,11 @@ describe('Additional JavaScript features are not available in Source Native', ()
         Chapter.SOURCE_1,
         Chapter.SOURCE_2,
         Chapter.SOURCE_3,
-        Chapter.SOURCE_4
+        Chapter.SOURCE_4,
       )(async chapter => {
         await testFailure(snippet, { chapter, variant: Variant.NATIVE })
       })
-    }
+    },
   )
 })
 
@@ -190,11 +190,11 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
     testWithChapters(
       Chapter.SOURCE_2,
       Chapter.SOURCE_3,
-      Chapter.SOURCE_4
+      Chapter.SOURCE_4,
     )(chapter =>
       expectFinishedResult(sourceNativeSnippet, { chapter, variant: Variant.NATIVE }).toStrictEqual(
-        55
-      )
+        55,
+      ),
     )
   })
 
@@ -206,11 +206,11 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
     // Test chapters from Source 3 - 4
     testWithChapters(
       Chapter.SOURCE_3,
-      Chapter.SOURCE_4
+      Chapter.SOURCE_4,
     )(chapter =>
       expectFinishedResult(sourceNativeSnippet, { chapter, variant: Variant.NATIVE }).toStrictEqual(
-        55
-      )
+        55,
+      ),
     )
   })
 })
@@ -220,6 +220,6 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
 test('Error handling script is injected in HTML code', () => {
   const htmlDocument = '<p>Hello World!</p>'
   return expectFinishedResult(htmlDocument, Chapter.HTML).toStrictEqual(
-    htmlErrorHandlingScript + htmlDocument
+    htmlErrorHandlingScript + htmlDocument,
   )
 })

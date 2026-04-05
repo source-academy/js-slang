@@ -5,7 +5,7 @@ describe('addEdge', () => {
   it('throws an error if the source and destination nodes are the same', () => {
     const graph = new DirectedGraph()
     expect(() => graph.addEdge('A', 'A')).toThrowError(
-      'Edges that connect a node to itself are not allowed.'
+      'Edges that connect a node to itself are not allowed.',
     )
   })
 })
@@ -44,7 +44,7 @@ describe('Topological ordering', () => {
       ['B', 'C', 'D', 'E', 'B'],
       ['C', 'D', 'E', 'B', 'C'],
       ['D', 'E', 'B', 'C', 'D'],
-      ['E', 'B', 'C', 'D', 'E']
+      ['E', 'B', 'C', 'D', 'E'],
     ]).toContainEqual(topologicalOrderResult.firstCycleFound)
   })
 
@@ -65,7 +65,7 @@ describe('Topological ordering', () => {
       ['C', 'A', 'B', 'C'],
       ['C', 'D', 'E', 'C'],
       ['D', 'E', 'C', 'D'],
-      ['E', 'C', 'D', 'E']
+      ['E', 'C', 'D', 'E'],
     ]).toContainEqual(topologicalOrderResult.firstCycleFound)
   })
 
@@ -85,7 +85,7 @@ describe('Topological ordering', () => {
       ['C', 'A', 'B', 'C'],
       ['A', 'D', 'C', 'A'],
       ['D', 'C', 'A', 'D'],
-      ['C', 'A', 'D', 'C']
+      ['C', 'A', 'D', 'C'],
     ]).toContainEqual(topologicalOrderResult.firstCycleFound)
   })
 
@@ -120,7 +120,7 @@ describe('Topological ordering', () => {
     expect(topologicalOrderResult.isValidTopologicalOrderFound).toBe(true)
     expect([
       ['A', 'B', 'C', 'D'],
-      ['A', 'C', 'B', 'D']
+      ['A', 'C', 'B', 'D'],
     ]).toContainEqual(topologicalOrderResult.topologicalOrder)
   })
 
@@ -137,7 +137,7 @@ describe('Topological ordering', () => {
       ['A', 'C', 'D', 'B'],
       ['C', 'A', 'B', 'D'],
       ['C', 'A', 'D', 'B'],
-      ['C', 'D', 'A', 'B']
+      ['C', 'D', 'A', 'B'],
     ]).toContainEqual(topologicalOrderResult.topologicalOrder)
   })
 })

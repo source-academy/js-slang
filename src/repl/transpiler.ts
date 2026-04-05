@@ -18,7 +18,7 @@ export const getTranspilerCommand = () =>
     .addOption(getLanguageOption())
     .option(
       '-p, --pretranspile',
-      "only pretranspile (e.g. GPU -> Source) and don't perform Source -> JS transpilation"
+      "only pretranspile (e.g. GPU -> Source) and don't perform Source -> JS transpilation",
     )
     .option('-o, --out <outFile>', 'Specify a file to write to')
     .argument('<filename>')
@@ -44,7 +44,7 @@ export const getTranspilerCommand = () =>
         entrypointFilePath,
         context,
         {},
-        true
+        true,
       )
 
       if (!linkerResult.ok) {

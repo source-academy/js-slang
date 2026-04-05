@@ -2,7 +2,7 @@ import { StepperBaseNode } from './interface'
 
 export let redex: { preRedex: StepperBaseNode[]; postRedex: StepperBaseNode[] } = {
   preRedex: [],
-  postRedex: []
+  postRedex: [],
 }
 
 export interface Marker {

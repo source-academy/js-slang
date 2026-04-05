@@ -18,16 +18,16 @@ export const auxiliaryBuiltinFunctions = {
                 }
             }
         `,
-        { ecmaVersion: 10 }
+        { ecmaVersion: 10 },
       )
       const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
       const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
+        args,
       )
     },
-    arity: 2
+    arity: 2,
   },
   __access_named_export__: {
     definition: (args: StepperExpression[]): StepperExpression => {
@@ -47,15 +47,15 @@ export const auxiliaryBuiltinFunctions = {
                 }
             }
         `,
-        { ecmaVersion: 10 }
+        { ecmaVersion: 10 },
       )
       const parsedExpressionStatement = parsedProgram.body[0] as ExpressionStatement
       const parsedExpression = parsedExpressionStatement.expression as ArrowFunctionExpression
       return new StepperFunctionApplication(
         StepperArrowFunctionExpression.create(parsedExpression),
-        args
+        args,
       )
     },
-    arity: 2
-  }
+    arity: 2,
+  },
 }

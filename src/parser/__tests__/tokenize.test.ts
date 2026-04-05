@@ -5,7 +5,7 @@ import { expectParsedError, testSuccess } from '../../utils/testing'
 
 test('tokenize works for a good program', async ({ expect }) => {
   const {
-    context: { displayResult }
+    context: { displayResult },
   } = await testSuccess(
     'display_list(tokenize(' +
       JSON.stringify(stripIndent`
@@ -19,7 +19,7 @@ test('tokenize works for a good program', async ({ expect }) => {
       f("55");
       `) +
       '));',
-    Chapter.SOURCE_4
+    Chapter.SOURCE_4,
   )
 
   expect(displayResult).toMatchInlineSnapshot(`
@@ -75,7 +75,7 @@ Array [
 
 test('tokenize works even with parse errors', async ({ expect }) => {
   const {
-    context: { displayResult }
+    context: { displayResult },
   } = await testSuccess(
     'display_list(tokenize(' +
       JSON.stringify(stripIndent`
@@ -83,7 +83,7 @@ test('tokenize works even with parse errors', async ({ expect }) => {
       ;;;;;;;
       `) +
       '));',
-    { chapter: Chapter.SOURCE_4 }
+    { chapter: Chapter.SOURCE_4 },
   )
   expect(displayResult).toMatchInlineSnapshot(`
 Array [
@@ -94,6 +94,6 @@ Array [
 
 test('tokenize prints suitable error when tokenization fails', () => {
   return expectParsedError('display_list(tokenize("\\""));', Chapter.SOURCE_4).toEqual(
-    'Line 1: SyntaxError: Unterminated string constant (1:0)'
+    'Line 1: SyntaxError: Unterminated string constant (1:0)',
   )
 })

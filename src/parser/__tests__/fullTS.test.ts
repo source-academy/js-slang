@@ -19,7 +19,7 @@ describe('fullTS parser', () => {
 
     parser.parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Type \'boolean\' is not assignable to type \'StringOrNumber\'."`
+      `"Line 2: Type \'boolean\' is not assignable to type \'StringOrNumber\'."`,
     )
   })
 

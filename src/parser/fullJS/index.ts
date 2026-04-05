@@ -11,14 +11,14 @@ export class FullJSParser implements Parser<AcornOptions> {
     programStr: string,
     context: Context,
     options?: Partial<AcornOptions>,
-    throwOnError?: boolean
+    throwOnError?: boolean,
   ): Program | null {
     try {
       return parse(programStr, {
         sourceType: 'module',
         ecmaVersion: 'latest',
         locations: true,
-        ...options
+        ...options,
       }) as unknown as Program
     } catch (error) {
       if (error instanceof SyntaxError) {

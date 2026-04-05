@@ -16,7 +16,7 @@ import type {
   RecursivePartial,
   Result,
   Error as ResultError,
-  SVMProgram
+  SVMProgram,
 } from './types'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
@@ -58,7 +58,7 @@ export interface IOptions {
 if (typeof window !== 'undefined') {
   // @ts-expect-error Initialize doesn't exist on SourceMapConsumer
   SourceMapConsumer.initialize({
-    'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
+    'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm',
   })
 }
 
@@ -91,7 +91,7 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
 export function findDeclaration(
   code: string,
   context: Context,
-  loc: { line: number; column: number }
+  loc: { line: number; column: number },
 ): es.SourceLocation | null | undefined {
   const program = looseParse(code, context)
   if (!program) {
@@ -111,7 +111,7 @@ export function findDeclaration(
 export function getScope(
   code: string,
   context: Context,
-  loc: { line: number; column: number }
+  loc: { line: number; column: number },
 ): es.SourceLocation[] {
   const program = looseParse(code, context)
   if (!program) {
@@ -132,7 +132,7 @@ export function getScope(
 export function getAllOccurrencesInScope(
   code: string,
   context: Context,
-  loc: { line: number; column: number }
+  loc: { line: number; column: number },
 ): es.SourceLocation[] {
   const program = looseParse(code, context)
   if (!program) {
@@ -152,7 +152,7 @@ export function getAllOccurrencesInScope(
 export function hasDeclaration(
   code: string,
   context: Context,
-  loc: { line: number; column: number }
+  loc: { line: number; column: number },
 ): boolean {
   const program = looseParse(code, context)
   if (!program) {
@@ -182,7 +182,7 @@ export async function getNames(
   code: string,
   line: number,
   col: number,
-  context: Context
+  context: Context,
 ): Promise<[NameDeclaration[], boolean]> {
   const [program, comments] = parseWithComments(code)
 
@@ -199,7 +199,7 @@ export async function getNames(
 export async function runInContext(
   code: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {},
 ): Promise<Result> {
   const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
@@ -214,7 +214,7 @@ export async function runFilesInContext(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {},
 ): Promise<Result> {
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
@@ -242,8 +242,8 @@ export async function runFilesInContext(
       context,
       {
         ...options,
-        shouldAddFileName: options.shouldAddFileName ?? Object.keys(files).length > 1
-      }
+        shouldAddFileName: options.shouldAddFileName ?? Object.keys(files).length > 1,
+      },
     ))
   }
 
@@ -268,7 +268,7 @@ export function interrupt(context: Context) {
 export function compile(
   code: string,
   context: Context,
-  vmInternalFunctions?: string[]
+  vmInternalFunctions?: string[],
 ): Promise<SVMProgram | undefined> {
   const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
@@ -280,7 +280,7 @@ export async function compileFiles(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
-  vmInternalFunctions?: string[]
+  vmInternalFunctions?: string[],
 ): Promise<SVMProgram | undefined> {
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
@@ -294,7 +294,7 @@ export async function compileFiles(
     p => Promise.resolve(files[p]),
     entrypointFilePath,
     context,
-    { shouldAddFileName: Object.keys(files).length > 1 }
+    { shouldAddFileName: Object.keys(files).length > 1 },
   )
 
   if (!preprocessResult.ok) {

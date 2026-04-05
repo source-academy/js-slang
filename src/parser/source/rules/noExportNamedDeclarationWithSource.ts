@@ -12,9 +12,9 @@ export class NoExportNamedDeclarationWithSourceError extends RuleError<ExportNam
     const [imports, exps] = this.node.specifiers.reduce(
       ([ins, outs], spec) => [
         [...ins, spec.local.name],
-        [...outs, speciferToString(spec)]
+        [...outs, speciferToString(spec)],
       ],
-      [[], []] as [string[], string[]]
+      [[], []] as [string[], string[]],
     )
     const importStr = `import { ${imports.join(', ')} } from "${this.node.source!.value}";`
     const exportStr = `export { ${exps.join(', ')} };`
@@ -31,8 +31,8 @@ const noExportNamedDeclarationWithSource: Rule<ExportNamedDeclaration> = {
         return [new NoExportNamedDeclarationWithSourceError(node)]
       }
       return []
-    }
-  }
+    },
+  },
 }
 
 export default noExportNamedDeclarationWithSource

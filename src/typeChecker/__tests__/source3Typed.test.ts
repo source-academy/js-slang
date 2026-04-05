@@ -22,7 +22,7 @@ describe('array type', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 4: Type '(number | string)[]' is not assignable to type 'boolean[]'."`
+      `"Line 4: Type '(number | string)[]' is not assignable to type 'boolean[]'."`,
     )
   })
 
@@ -129,7 +129,7 @@ describe('variable assignment', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Cannot assign to 'x' as it is a constant."`
+      `"Line 2: Cannot assign to 'x' as it is a constant."`,
     )
   })
 })
@@ -255,7 +255,7 @@ describe('stream type', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type alias 'Stream' has already been declared."`
+      `"Line 1: Type alias 'Stream' has already been declared."`,
     )
   })
 })

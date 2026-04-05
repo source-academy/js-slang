@@ -24,10 +24,10 @@ const noExportNamedDeclarationWithDefault: Rule<ExportNamedDeclaration> = {
       return mapAndFilter(node.specifiers, specifier =>
         specifier.exported.name === defaultExportLookupName
           ? new NoExportNamedDeclarationWithDefaultError(node)
-          : undefined
+          : undefined,
       )
-    }
-  }
+    },
+  },
 }
 
 export default noExportNamedDeclarationWithDefault

@@ -36,6 +36,6 @@ describe(getChapterName, () =>
     ['SOURCE_3', Chapter.SOURCE_3],
     ['SOURCE_4', Chapter.SOURCE_4],
     ['PYTHON_1', Chapter.PYTHON_1],
-    ['FULL_JS', Chapter.FULL_JS]
-  ])('%s', (expected, input) => expect(getChapterName(input)).toEqual(expected))
+    ['FULL_JS', Chapter.FULL_JS],
+  ])('%s', (expected, input) => expect(getChapterName(input)).toEqual(expected)),
 )

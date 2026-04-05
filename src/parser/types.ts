@@ -12,7 +12,7 @@ export interface Parser<TOptions> {
     programStr: string,
     context: Context,
     options?: Partial<TOptions>,
-    throwOnError?: boolean
+    throwOnError?: boolean,
   ): Program | null
   validate(ast: Program, context: Context, throwOnError?: boolean): boolean
 }

@@ -13,18 +13,18 @@ describe(runFilesInContext, () => {
   it('returns IllegalCharInFilePathError if any file path contains invalid characters', async () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
-      '/+-.js': '"hello world";'
+      '/+-.js': '"hello world";',
     }
     await runFilesInContext(files, '/a.js', context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"File path '/+-.js' must only contain alphanumeric chars and/or '_', '/', '.', '-'."`
+      `"File path '/+-.js' must only contain alphanumeric chars and/or '_', '/', '.', '-'."`,
     )
   })
 
   it('returns IllegalCharInFilePathError if any file path contains invalid characters - verbose', async () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
-      '/+-.js': '"hello world";'
+      '/+-.js': '"hello world";',
     }
     await runFilesInContext(files, '/a.js', context)
     expect(parseError(context.errors, true)).toMatchInlineSnapshot(`
@@ -37,18 +37,18 @@ describe(runFilesInContext, () => {
   it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters', async () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
-      '/dir//dir2/b.js': '"hello world";'
+      '/dir//dir2/b.js': '"hello world";',
     }
     await runFilesInContext(files, '/a.js', context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"File path '/dir//dir2/b.js' cannot contain consecutive slashes '//'."`
+      `"File path '/dir//dir2/b.js' cannot contain consecutive slashes '//'."`,
     )
   })
 
   it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters - verbose', async () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
-      '/dir//dir2/b.js': '"hello world";'
+      '/dir//dir2/b.js': '"hello world";',
     }
     await runFilesInContext(files, '/a.js', context)
     expect(parseError(context.errors, true)).toMatchInlineSnapshot(`
@@ -85,18 +85,18 @@ describe(compileFiles, () => {
   it('returns IllegalCharInFilePathError if any file path contains invalid characters', async () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
-      '/+-.js': '"hello world";'
+      '/+-.js': '"hello world";',
     }
     await compileFiles(files, '/a.js', context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"File path '/+-.js' must only contain alphanumeric chars and/or '_', '/', '.', '-'."`
+      `"File path '/+-.js' must only contain alphanumeric chars and/or '_', '/', '.', '-'."`,
     )
   })
 
   it('returns IllegalCharInFilePathError if any file path contains invalid characters - verbose', async () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
-      '/+-.js': '"hello world";'
+      '/+-.js': '"hello world";',
     }
     await compileFiles(files, '/a.js', context)
     expect(parseError(context.errors, true)).toMatchInlineSnapshot(`
@@ -109,18 +109,18 @@ describe(compileFiles, () => {
   it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters', async () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
-      '/dir//dir2/b.js': '"hello world";'
+      '/dir//dir2/b.js': '"hello world";',
     }
     await compileFiles(files, '/a.js', context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"File path '/dir//dir2/b.js' cannot contain consecutive slashes '//'."`
+      `"File path '/dir//dir2/b.js' cannot contain consecutive slashes '//'."`,
     )
   })
 
   it('returns ConsecutiveSlashesInFilePathError if any file path contains consecutive slash characters - verbose', async () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;',
-      '/dir//dir2/b.js': '"hello world";'
+      '/dir//dir2/b.js': '"hello world";',
     }
     await compileFiles(files, '/a.js', context)
     expect(parseError(context.errors, true)).toMatchInlineSnapshot(`

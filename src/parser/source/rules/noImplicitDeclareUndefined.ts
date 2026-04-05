@@ -35,10 +35,10 @@ const noImplicitDeclareUndefined: Rule<VariableDeclaration> = {
       }
 
       return mapAndFilter(node.declarations, decl =>
-        decl.init ? undefined : new NoImplicitDeclareUndefinedError(decl.id as Identifier)
+        decl.init ? undefined : new NoImplicitDeclareUndefinedError(decl.id as Identifier),
       )
-    }
-  }
+    },
+  },
 }
 
 export default noImplicitDeclareUndefined

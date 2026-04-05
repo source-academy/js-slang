@@ -30,7 +30,7 @@ export function chapterParser(str: string): Chapter {
 
 export const getChapterOption = <T extends Chapter>(
   defaultValue: T,
-  argParser: (value: string) => T
+  argParser: (value: string) => T,
 ) => {
   return new Option('--chapter <chapter>').default(defaultValue).argParser(argParser)
 }

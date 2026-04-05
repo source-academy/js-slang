@@ -1,7 +1,7 @@
 import {
   ConsecutiveSlashesInFilePathError,
   IllegalCharInFilePathError,
-  InvalidFilePathError
+  InvalidFilePathError,
 } from '../errors'
 
 /**
@@ -24,7 +24,7 @@ export const nonAlphanumericCharEncoding: Record<string, string> = {
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_string_as_the_replacement
   // for more information.
   '.': '$$$$dot$$$$', // '$$dot$$'
-  '-': '$$$$dash$$$$' // '$$dash$$'
+  '-': '$$$$dash$$$$', // '$$dash$$'
 }
 
 /**
@@ -42,12 +42,12 @@ export const transformFilePathToValidFunctionName = (filePath: string): string =
   const encodeChars = Object.entries(nonAlphanumericCharEncoding).reduce(
     (
       accumulatedFunction: (filePath: string) => string,
-      [charToReplace, replacementString]: [string, string]
+      [charToReplace, replacementString]: [string, string],
     ) => {
       return (filePath: string): string =>
         accumulatedFunction(filePath).replaceAll(charToReplace, replacementString)
     },
-    (filePath: string): string => filePath
+    (filePath: string): string => filePath,
   )
   return `__${encodeChars(filePath)}__`
 }
@@ -62,7 +62,7 @@ export const transformFilePathToValidFunctionName = (filePath: string): string =
  * @param functionName The function name to transform.
  */
 export const transformFunctionNameToInvokedFunctionResultVariableName = (
-  functionName: string
+  functionName: string,
 ): string => {
   return `_${functionName}_`
 }

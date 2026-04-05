@@ -8,7 +8,7 @@ import {
   loadModuleBundleAsync,
   loadModuleTabsAsync,
   memoizedGetModuleDocsAsync,
-  memoizedGetModuleManifestAsync
+  memoizedGetModuleManifestAsync,
 } from '../loaders'
 
 const moduleMocker = vi.fn()
@@ -18,15 +18,15 @@ const moduleMocker = vi.fn()
 // When testing with the import loader we can generally rely on the mocked versions
 // under __mocks__ instead.
 vi.doMock(`${importers.MODULES_STATIC_URL}/bundles/one_module.js`, () => ({
-  default: moduleMocker
+  default: moduleMocker,
 }))
 
 vi.doMock(`${importers.MODULES_STATIC_URL}/tabs/tab1.js`, () => ({
-  default: () => 'tab1'
+  default: () => 'tab1',
 }))
 
 vi.doMock(`${importers.MODULES_STATIC_URL}/tabs/tab2.js`, () => ({
-  default: () => 'tab2'
+  default: () => 'tab2',
 }))
 
 const mockedDocsImporter = vi.spyOn(importers, 'docsImporter')
@@ -42,7 +42,7 @@ describe('bundle loading', () => {
       foo() {
         return this.foo.name
       },
-      bar: () => 'bar'
+      bar: () => 'bar',
     })
     const mod = await loadModuleBundleAsync('one_module', context)
     expect(mod.foo()).toEqual('foo')
@@ -66,7 +66,7 @@ describe('bundle loading', () => {
 
     moduleMocker.mockReturnValueOnce({
       foo,
-      bar: () => 'bar'
+      bar: () => 'bar',
     })
 
     const mod = await loadModuleBundleAsync('one_module', context)
@@ -79,8 +79,8 @@ describe('tab loading', () => {
   test("Load a module's tabs", async () => {
     mockedDocsImporter.mockResolvedValueOnce({
       default: {
-        one_module: { tabs: ['tab1', 'tab2'] }
-      }
+        one_module: { tabs: ['tab1', 'tab2'] },
+      },
     })
 
     const tabs = await loadModuleTabsAsync('one_module')
@@ -99,8 +99,8 @@ describe('docs loading', () => {
     test('manifest is memoized on success', async () => {
       const mockManifest: ModuleManifest = {
         one_module: {
-          tabs: []
-        }
+          tabs: [],
+        },
       }
       mockedDocsImporter.mockResolvedValueOnce({ default: mockManifest })
 
@@ -125,8 +125,8 @@ describe('docs loading', () => {
 
       const mockManifest: ModuleManifest = {
         one_module: {
-          tabs: []
-        }
+          tabs: [],
+        },
       }
 
       mockedDocsImporter.mockResolvedValueOnce({ default: mockManifest })
@@ -144,7 +144,7 @@ describe('docs loading', () => {
 
     test('docs are memoized on success', async () => {
       const mockDocs: ModuleDocumentation = {
-        foo: { kind: 'unknown' }
+        foo: { kind: 'unknown' },
       }
 
       mockedDocsImporter.mockResolvedValue({ default: mockDocs })
@@ -167,7 +167,7 @@ describe('docs loading', () => {
 
     test('docs are not memoized on error', async () => {
       const mockDocs: ModuleDocumentation = {
-        foo: { kind: 'unknown' }
+        foo: { kind: 'unknown' },
       }
 
       mockedDocsImporter.mockResolvedValueOnce({ default: mockDocs })

@@ -17,7 +17,7 @@ export class TypeError extends RuntimeSourceError {
     public side: string,
     public expected: string,
     public got: string,
-    public chapter: Chapter = Chapter.SOURCE_4
+    public chapter: Chapter = Chapter.SOURCE_4,
   ) {
     super(node)
   }
@@ -57,7 +57,7 @@ export const checkUnaryExpression = (
   node: Node,
   operator: es.UnaryOperator,
   value: Value,
-  chapter: Chapter = Chapter.SOURCE_4
+  chapter: Chapter = Chapter.SOURCE_4,
 ) => {
   if ((operator === '+' || operator === '-') && !isNumber(value)) {
     return new TypeError(node, '', 'number', typeOf(value), chapter)
@@ -73,7 +73,7 @@ export const checkBinaryExpression = (
   operator: es.BinaryOperator,
   chapter: Chapter,
   left: Value,
-  right: Value
+  right: Value,
 ) => {
   switch (operator) {
     case '-':

@@ -8,14 +8,14 @@ import { isSourceModule } from '../utils'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import {
   transformFilePathToValidFunctionName,
-  transformFunctionNameToInvokedFunctionResultVariableName
+  transformFunctionNameToInvokedFunctionResultVariableName,
 } from './filePaths'
 import hoistAndMergeImports from './transformers/hoistAndMergeImports'
 import removeExports from './transformers/removeExports'
 import {
   createAccessImportStatements,
   getInvokedFunctionResultVariableNameToImportSpecifiersMap,
-  transformProgramToFunctionDeclaration
+  transformProgramToFunctionDeclaration,
 } from './transformers/transformProgramToFunctionDeclaration'
 
 /**
@@ -26,7 +26,7 @@ export type Bundler = (
   programs: Record<string, es.Program>,
   entrypointFilePath: string,
   topoOrder: string[],
-  context: Context
+  context: Context,
 ) => es.Program
 
 const getSourceModuleImports = (programs: Record<string, es.Program>): es.ImportDeclaration[] => {
@@ -50,10 +50,10 @@ const defaultBundler: Bundler = (programs, entrypointFilePath, topoOrder) => {
   const entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap =
     getInvokedFunctionResultVariableNameToImportSpecifiersMap(
       entrypointProgramModuleDeclarations,
-      entrypointDirPath
+      entrypointDirPath,
     )
   const entrypointProgramAccessImportStatements = createAccessImportStatements(
-    entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap
+    entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap,
   )
 
   // Transform all programs into their equivalent function declaration
@@ -71,7 +71,7 @@ const defaultBundler: Bundler = (programs, entrypointFilePath, topoOrder) => {
     const functionName = functionDeclaration.id?.name
     assert(
       functionName !== undefined,
-      'A transformed function declaration is missing its name. This should never happen.'
+      'A transformed function declaration is missing its name. This should never happen.',
     )
 
     functionDeclarations[functionName] = functionDeclaration
@@ -94,13 +94,13 @@ const defaultBundler: Bundler = (programs, entrypointFilePath, topoOrder) => {
     const functionParams = functionDeclaration.params.filter(isIdentifier)
     assert(
       functionParams.length === functionDeclaration.params.length,
-      'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
+      'Function declaration contains non-Identifier AST nodes as params. This should never happen.',
     )
 
     const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
       functionName,
       invokedFunctionResultVariableName,
-      functionParams
+      functionParams,
     )
     invokedFunctionResultVariableDeclarations.push(invokedFunctionResultVariableDeclaration)
   })
@@ -116,8 +116,8 @@ const defaultBundler: Bundler = (programs, entrypointFilePath, topoOrder) => {
       ...Object.values(functionDeclarations),
       ...invokedFunctionResultVariableDeclarations,
       ...entrypointProgramAccessImportStatements,
-      ...entrypointProgram.body
-    ]
+      ...entrypointProgram.body,
+    ],
   }
 
   // We need to hoist all remaining imports to the top of the

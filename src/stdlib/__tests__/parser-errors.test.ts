@@ -8,7 +8,7 @@ test('Blatant syntax error', () => {
     stripIndent`
     stringify(parse("'"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4 }
+    { chapter: Chapter.SOURCE_4 },
   ).toEqual('Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)')
 })
 
@@ -17,6 +17,6 @@ test('Blacklisted syntax', () => {
     stripIndent`
     stringify(parse("function* f() { yield 1; } f();"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4 }
+    { chapter: Chapter.SOURCE_4 },
   ).toEqual('Line 1: ParseError: Yield expressions are not allowed')
 })

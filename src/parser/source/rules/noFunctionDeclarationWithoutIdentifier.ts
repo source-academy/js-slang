@@ -21,8 +21,8 @@ const noFunctionDeclarationWithoutIdentifier: Rule<FunctionDeclaration> = {
         return [new NoFunctionDeclarationWithoutIdentifierError(node)]
       }
       return []
-    }
-  }
+    },
+  },
 }
 
 export default noFunctionDeclarationWithoutIdentifier

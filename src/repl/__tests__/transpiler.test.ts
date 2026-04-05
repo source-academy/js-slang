@@ -12,9 +12,9 @@ vi.mock(import('path'), async importOriginal => {
   return {
     default: {
       ...originalPath.default,
-      resolve: newResolve
+      resolve: newResolve,
     },
-    posix
+    posix,
   }
 })
 
@@ -33,7 +33,7 @@ test('Nothing should be written if the program has parser errors', async () => {
   expect(fs.writeFile).toHaveBeenCalledTimes(0)
 
   expectWritten(process.stderr.write).toMatchInlineSnapshot(
-    `"[/test.js] Line 1: Missing semicolon at the end of statement"`
+    `"[/test.js] Line 1: Missing semicolon at the end of statement"`,
   )
 })
 
@@ -43,7 +43,7 @@ test('Nothing should be written if the program has transpiler errors', async () 
   expect(fs.writeFile).toHaveBeenCalledTimes(0)
 
   expectWritten(process.stderr.write).toMatchInlineSnapshot(
-    `"[/test.js] Line 1: Name a not declared."`
+    `"[/test.js] Line 1: Name a not declared."`,
   )
 })
 

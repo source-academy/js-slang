@@ -26,7 +26,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
     this.type = 'IfStatement'
     this.test = test
@@ -46,7 +46,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -67,13 +67,13 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       return new StepperBlockStatement(
         [
           new StepperExpressionStatement(undefinedNode, undefined, undefined, this.loc, this.range),
-          ...result.body
+          ...result.body,
         ],
         result.innerComments,
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
     } else if (result instanceof StepperIfStatement) {
       // else if statement
@@ -103,7 +103,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -115,7 +115,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -128,7 +128,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     const names = new Set([
       ...this.test.freeNames(),
       ...this.consequent.freeNames(),
-      ...(this.alternate ? this.alternate.freeNames() : [])
+      ...(this.alternate ? this.alternate.freeNames() : []),
     ])
     return Array.from(names)
   }
@@ -137,7 +137,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
     const names = new Set([
       ...this.test.allNames(),
       ...this.consequent.allNames(),
-      ...(this.alternate ? this.alternate.allNames() : [])
+      ...(this.alternate ? this.alternate.allNames() : []),
     ])
     return Array.from(names)
   }
@@ -150,7 +150,7 @@ export class StepperIfStatement implements IfStatement, StepperBaseNode {
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

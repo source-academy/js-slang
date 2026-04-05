@@ -4,7 +4,7 @@ import {
   type Comment,
   ecmaVersion,
   type Node,
-  type Position
+  type Position,
 } from 'acorn'
 import { parse as acornLooseParse } from 'acorn-loose'
 import type { Program, SourceLocation } from 'estree'
@@ -29,7 +29,7 @@ export const createAcornParserOptions = (
   ecmaVersion: ecmaVersion,
   errors?: SourceError[],
   options?: Partial<AcornOptions>,
-  throwOnError?: boolean
+  throwOnError?: boolean,
 ): AcornOptions => ({
   ecmaVersion,
   sourceType: 'module',
@@ -44,7 +44,7 @@ export const createAcornParserOptions = (
     if (throwOnError) throw error
     errors?.push(error)
   },
-  ...options
+  ...options,
 })
 
 /**
@@ -58,7 +58,7 @@ export const createAcornParserOptions = (
 export function parseAt(
   programStr: string,
   offset: number,
-  ecmaVersion: ecmaVersion = DEFAULT_ECMA_VERSION
+  ecmaVersion: ecmaVersion = DEFAULT_ECMA_VERSION,
 ): Node | null {
   try {
     return acornParseAt(programStr, offset, { ecmaVersion })
@@ -76,16 +76,16 @@ export function parseAt(
  */
 export function parseWithComments(
   programStr: string,
-  ecmaVersion: ecmaVersion = DEFAULT_ECMA_VERSION
+  ecmaVersion: ecmaVersion = DEFAULT_ECMA_VERSION,
 ): [Program, Comment[]] {
   let comments: Comment[] = []
   const acornOptions: AcornOptions = createAcornParserOptions(
     ecmaVersion,
     undefined,
     {
-      onComment: comments
+      onComment: comments,
     },
-    undefined
+    undefined,
   )
 
   let ast: Program | undefined
@@ -109,7 +109,7 @@ export function parseWithComments(
 export function looseParse(programStr: string, context: Context): Program {
   return acornLooseParse(
     programStr,
-    createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors)
+    createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors),
   ) as unknown as Program
 }
 
@@ -134,10 +134,10 @@ export function typedParse(programStr: string, context: Context): Program {
 export const positionToSourceLocation = (position: Position, source?: string): SourceLocation => ({
   start: { ...position },
   end: { ...position, column: position.column + 1 },
-  source
+  source,
 })
 
 export const defaultBabelOptions: BabelOptions = {
   sourceType: 'module',
-  plugins: ['typescript', 'estree']
+  plugins: ['typescript', 'estree'],
 }

@@ -22,12 +22,12 @@ export function getCommandRunner<T extends Command<any, any>>(getter: () => T) {
       // Error conditions should always cause commands to call
       // process.exit(1)
       return expect(runner(...args)).rejects.toMatchInlineSnapshot(
-        `[Error: process.exit called with 1]`
+        `[Error: process.exit called with 1]`,
       )
     },
     expectSuccess(...args: string[]) {
       return expect(runner(...args)).resolves.toBeUndefined()
-    }
+    },
   }
 }
 

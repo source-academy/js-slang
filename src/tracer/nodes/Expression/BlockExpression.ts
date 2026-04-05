@@ -24,7 +24,7 @@ export class StepperBlockExpression implements StepperBaseNode {
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
     this.type = 'BlockStatement'
     this.body = body
@@ -81,7 +81,7 @@ export class StepperBlockExpression implements StepperBaseNode {
           this.leadingComments,
           this.trailingComments,
           this.loc,
-          this.range
+          this.range,
         )
       }
       return new StepperBlockExpression(
@@ -90,7 +90,7 @@ export class StepperBlockExpression implements StepperBaseNode {
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
     }
 
@@ -105,8 +105,8 @@ export class StepperBlockExpression implements StepperBaseNode {
             .reduce(
               (statement, declarator) =>
                 statement.substitute(declarator.id, declarator.init!) as StepperStatement,
-              current
-            )
+              current,
+            ),
         )
       const substitutedProgram = new StepperBlockExpression(
         afterSubstitutedScope,
@@ -114,7 +114,7 @@ export class StepperBlockExpression implements StepperBaseNode {
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
       redex.preRedex = [this.body[0]]
       redex.postRedex = declarations.map(x => x.id)
@@ -128,7 +128,7 @@ export class StepperBlockExpression implements StepperBaseNode {
       const afterSubstitutedScope = this.body
         .slice(1)
         .map(
-          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
+          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement,
         )
       const substitutedProgram = new StepperBlockExpression(
         afterSubstitutedScope,
@@ -136,7 +136,7 @@ export class StepperBlockExpression implements StepperBaseNode {
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
       redex.preRedex = [this.body[0]]
       redex.postRedex = afterSubstitutedScope
@@ -158,7 +158,7 @@ export class StepperBlockExpression implements StepperBaseNode {
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
     }
 
@@ -172,20 +172,20 @@ export class StepperBlockExpression implements StepperBaseNode {
           this.leadingComments,
           this.trailingComments,
           this.loc,
-          this.range
+          this.range,
         )
       }
       return new StepperBlockExpression(
         [
           firstValueStatement,
           secondStatementOneStep as StepperStatement,
-          afterSubstitutedScope
+          afterSubstitutedScope,
         ].flat(),
         this.innerComments,
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
     }
 
@@ -200,8 +200,8 @@ export class StepperBlockExpression implements StepperBaseNode {
             .reduce(
               (statement, declarator) =>
                 statement.substitute(declarator.id, declarator.init!) as StepperStatement,
-              current
-            )
+              current,
+            ),
         )
       const substitutedProgram = new StepperBlockExpression(
         [firstValueStatement, afterSubstitutedScope].flat(),
@@ -209,7 +209,7 @@ export class StepperBlockExpression implements StepperBaseNode {
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
       redex.preRedex = [this.body[1]]
       redex.postRedex = declarations.map(x => x.id)
@@ -223,7 +223,7 @@ export class StepperBlockExpression implements StepperBaseNode {
       const afterSubstitutedScope = this.body
         .slice(2)
         .map(
-          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
+          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement,
         )
       const substitutedProgram = new StepperBlockExpression(
         [firstValueStatement, afterSubstitutedScope].flat(),
@@ -231,7 +231,7 @@ export class StepperBlockExpression implements StepperBaseNode {
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
       redex.preRedex = [this.body[1]]
       redex.postRedex = afterSubstitutedScope
@@ -246,7 +246,7 @@ export class StepperBlockExpression implements StepperBaseNode {
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -262,7 +262,7 @@ export class StepperBlockExpression implements StepperBaseNode {
     const currentBlockExpression = newNames.reduce(
       (current: StepperBlockExpression, name: string, index: number) =>
         current.rename(repeatedNames[index], name),
-      this
+      this,
     )
 
     if (currentBlockExpression.scanAllDeclarationNames().includes(id.name)) {
@@ -270,13 +270,13 @@ export class StepperBlockExpression implements StepperBaseNode {
     }
     return new StepperBlockExpression(
       currentBlockExpression.body.map(
-        statement => statement.substitute(id, value) as StepperStatement
+        statement => statement.substitute(id, value) as StepperStatement,
       ),
       currentBlockExpression.innerComments,
       currentBlockExpression.leadingComments,
       currentBlockExpression.trailingComments,
       currentBlockExpression.loc,
-      currentBlockExpression.range
+      currentBlockExpression.range,
     )
   }
 
@@ -310,7 +310,7 @@ export class StepperBlockExpression implements StepperBaseNode {
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

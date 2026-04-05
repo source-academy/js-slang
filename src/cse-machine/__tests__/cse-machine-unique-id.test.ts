@@ -10,7 +10,7 @@ const getContextFrom = async (code: string, envSteps?: number) => {
   const context = mockContext(Chapter.SOURCE_4)
   await runCodeInSource(code, context, {
     envSteps,
-    executionMethod: 'cse-machine'
+    executionMethod: 'cse-machine',
   })
   return context
 }
@@ -35,7 +35,7 @@ test("Context runtime's objectCount continues after apply_in_underlying_javascri
         return [x];
       }
       apply_in_underlying_javascript(f, list(1, 2, 3));
-    `
+    `,
   )
   // 1 program environment + 1 closure + 1 function environment
   // 3 arrays from list + 1 array from variadic argument + 1 array from from function result
@@ -55,7 +55,7 @@ test('Every environment/array/closure has a unique id', async () => {
         [10];
         x => x;
       }
-    `
+    `,
   )
   expect(context.runtime.environmentTree).toMatchSnapshot()
   // Environments: 1 prelude + 1 program + 1 function (c) + 1 block, total: 4
@@ -73,7 +73,7 @@ test('CSE Machine stops at the given step number', async () => {
         x = [x];
       }
     `,
-    100
+    100,
   )
   // 7 additional environments + 2 arrays created at step 100, so object count is 48 + 7 + 2 = 57
   expect(context.runtime.objectCount).toMatchInlineSnapshot(`57`)
@@ -112,5 +112,5 @@ test(
       }
     }
     expect(programEnvId).toMatchInlineSnapshot(`"47"`)
-  }
+  },
 )

@@ -3,7 +3,7 @@ import type es from 'estree'
 import type { Node } from '../../types'
 
 export const isImportDeclaration = (
-  node: es.Program['body'][number]
+  node: es.Program['body'][number],
 ): node is es.ImportDeclaration => node.type === 'ImportDeclaration'
 
 // It is necessary to write this type guard like this as the 'type' of both
@@ -31,12 +31,12 @@ export const isModuleDeclaration = (node: Node): node is es.ModuleDeclaration =>
     'ImportDeclaration',
     'ExportNamedDeclaration',
     'ExportDefaultDeclaration',
-    'ExportAllDeclaration'
+    'ExportAllDeclaration',
   ].includes(node.type)
 }
 
 export const isStatement = (
-  node: es.Directive | es.Statement | es.ModuleDeclaration
+  node: es.Directive | es.Statement | es.ModuleDeclaration,
 ): node is es.Statement => {
   return !isDirective(node) && !isModuleDeclaration(node)
 }

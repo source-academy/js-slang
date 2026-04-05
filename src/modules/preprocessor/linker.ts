@@ -40,7 +40,7 @@ export type LinkerOptions = {
 }
 
 export const defaultLinkerOptions: LinkerOptions = {
-  resolverOptions: defaultResolutionOptions
+  resolverOptions: defaultResolutionOptions,
 }
 
 /**
@@ -55,7 +55,7 @@ export default async function parseProgramsAndConstructImportGraph(
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<LinkerOptions> = defaultLinkerOptions,
-  shouldAddFileName: boolean
+  shouldAddFileName: boolean,
 ): Promise<LinkerResult> {
   const importGraph = new DirectedGraph()
   const programs: Record<string, es.Program> = {}
@@ -99,7 +99,7 @@ export default async function parseProgramsAndConstructImportGraph(
   async function parseAndEnumerateModuleDeclarations(fromModule: string, fileText: string) {
     const parseOptions = shouldAddFileName
       ? {
-          sourceFile: fromModule
+          sourceFile: fromModule,
         }
       : {}
 
@@ -128,7 +128,7 @@ export default async function parseProgramsAndConstructImportGraph(
           default:
             return undefined
         }
-      })
+      }),
     )
   }
 
@@ -185,7 +185,7 @@ export default async function parseProgramsAndConstructImportGraph(
         programs,
         sourceModulesToImport,
         files,
-        verboseErrors: hasVerboseErrors()
+        verboseErrors: hasVerboseErrors(),
       }
     }
 
@@ -200,6 +200,6 @@ export default async function parseProgramsAndConstructImportGraph(
 
   return {
     ok: false,
-    verboseErrors: hasVerboseErrors()
+    verboseErrors: hasVerboseErrors(),
   }
 }

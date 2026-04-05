@@ -51,7 +51,7 @@ const rules: Rule<Node>[] = [
   noEval,
   noHolesInArrays,
   noTemplateExpression,
-  noSpreadInArray
+  noSpreadInArray,
 ]
 
 export default rules

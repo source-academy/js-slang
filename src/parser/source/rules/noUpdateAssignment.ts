@@ -33,8 +33,8 @@ const noUpdateAssignment: Rule<AssignmentExpression> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noUpdateAssignment

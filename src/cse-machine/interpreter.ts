@@ -20,14 +20,14 @@ import type {
   NodeTypeToNode,
   Result,
   StatementSequence,
-  Value
+  Value,
 } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import {
   filterImportDeclarations,
   getSourceVariableDeclaration,
   hasNoDeclarations,
-  hasNoImportDeclarations
+  hasNoImportDeclarations,
 } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -37,7 +37,7 @@ import Closure from './closure'
 import {
   Continuation,
   isCallWithCurrentContinuation,
-  makeDummyContCallExpression
+  makeDummyContCallExpression,
 } from './continuations'
 import * as instr from './instrCreator'
 import { Stack } from './stack'
@@ -47,7 +47,7 @@ import {
   type ControlItem,
   CseError,
   InstrType,
-  type InstrTypeToInstr
+  type InstrTypeToInstr,
 } from './types'
 import {
   checkNumberOfArguments,
@@ -77,7 +77,7 @@ import {
   pushEnvironment,
   reduceConditional,
   setVariable,
-  valueProducing
+  valueProducing,
 } from './utils'
 
 /**
@@ -193,7 +193,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
       context.runtime.stash,
       options.envSteps,
       options.stepLimit,
-      options.isPrelude
+      options.isPrelude,
     )
   } catch (error) {
     return new CseError(error)
@@ -292,7 +292,7 @@ function runCSEMachine(
   stash: Stash,
   envSteps: number,
   stepLimit: number,
-  isPrelude: boolean = false
+  isPrelude: boolean = false,
 ) {
   const eceState = generateCSEMachineStateStream(
     context,
@@ -300,7 +300,7 @@ function runCSEMachine(
     stash,
     envSteps,
     stepLimit,
-    isPrelude
+    isPrelude,
   )
 
   // Done intentionally as the state is not needed
@@ -317,7 +317,7 @@ export function* generateCSEMachineStateStream(
   stash: Stash,
   envSteps: number,
   stepLimit: number,
-  isPrelude: boolean = false
+  isPrelude: boolean = false,
 ) {
   context.runtime.break = false
   context.runtime.nodes = []
@@ -398,7 +398,7 @@ function callEvaluator(
   context: Context,
   control: Control,
   stash: Stash,
-  isPrelude: boolean
+  isPrelude: boolean,
 ) {
   if (isNode(command)) {
     // @ts-expect-error Command type gets narrowed to never
@@ -501,11 +501,11 @@ const cmdEvaluators: CommandEvaluators = {
                       ast.variableDeclarator(
                         ast.identifier(`_copy_of_${id.name}`, command.loc),
                         ast.identifier(id.name, command.loc),
-                        command.loc
-                      )
+                        command.loc,
+                      ),
                     ],
                     'const',
-                    command.loc
+                    command.loc,
                   ),
                   ast.blockStatement(
                     [
@@ -514,24 +514,24 @@ const cmdEvaluators: CommandEvaluators = {
                           ast.variableDeclarator(
                             ast.identifier(id.name, command.loc),
                             ast.identifier(`_copy_of_${id.name}`, command.loc),
-                            command.loc
-                          )
+                            command.loc,
+                          ),
                         ],
                         'const',
-                        command.loc
+                        command.loc,
                       ),
-                      command.body
+                      command.body,
                     ],
-                    command.loc
-                  )
+                    command.loc,
+                  ),
                 ],
-                command.loc
+                command.loc,
               ),
-              command.loc
-            )
+              command.loc,
+            ),
           ],
-          command.loc
-        )
+          command.loc,
+        ),
       )
     } else {
       if (hasBreakStatement(command.body as es.BlockStatement)) {
@@ -550,12 +550,12 @@ const cmdEvaluators: CommandEvaluators = {
     const lambdaExpression = ast.blockArrowFunction(
       command.params as es.Identifier[],
       command.body,
-      command.loc
+      command.loc,
     )
     const lambdaDeclaration = ast.constantDeclaration(
       command.id!.name,
       lambdaExpression,
-      command.loc
+      command.loc,
     )
     control.push(lambdaDeclaration)
   },
@@ -661,7 +661,7 @@ const cmdEvaluators: CommandEvaluators = {
       currentEnvironment(context),
       context,
       true,
-      isPrelude
+      isPrelude,
     )
     stash.push(closure)
   },
@@ -709,11 +709,11 @@ const cmdEvaluators: CommandEvaluators = {
   LogicalExpression({ command, control }) {
     if (command.operator === '&&') {
       control.push(
-        ast.conditionalExpression(command.left, command.right, ast.literal(false), command.loc)
+        ast.conditionalExpression(command.left, command.right, ast.literal(false), command.loc),
       )
     } else {
       control.push(
-        ast.conditionalExpression(command.left, ast.literal(true), command.right, command.loc)
+        ast.conditionalExpression(command.left, ast.literal(true), command.right, command.loc),
       )
     }
   },
@@ -866,7 +866,7 @@ const cmdEvaluators: CommandEvaluators = {
         //
         // TODO: remove this condition if `stream` becomes a pre-defined function
         Object.defineProperties(result[1], {
-          environment: { value: currentEnvironment(context), writable: true }
+          environment: { value: currentEnvironment(context), writable: true },
         })
       }
 
@@ -954,7 +954,7 @@ const cmdEvaluators: CommandEvaluators = {
       command.symbol,
       context.chapter,
       left,
-      right
+      right,
     )
     if (error) {
       handleRuntimeError(context, error)
@@ -1093,7 +1093,7 @@ const cmdEvaluators: CommandEvaluators = {
       command.srcNode,
       command.symbol,
       argument,
-      context.chapter
+      context.chapter,
     )
     if (error) {
       handleRuntimeError(context, error)
@@ -1123,5 +1123,5 @@ const cmdEvaluators: CommandEvaluators = {
       control.push(command.body)
       control.push(instr.popInstr(command.srcNode)) // Pop previous body value
     }
-  }
+  },
 }

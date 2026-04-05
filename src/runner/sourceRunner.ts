@@ -28,7 +28,7 @@ const runners = {
     return Promise.resolve({
       status: 'finished',
       context,
-      value: steps
+      value: steps,
     })
   },
   native: async (program, context, options) => {
@@ -58,7 +58,7 @@ const runners = {
       return {
         status: 'finished',
         context,
-        value
+        value,
       }
     } catch (error) {
       if (error instanceof RuntimeSourceError) {
@@ -82,7 +82,7 @@ const runners = {
       context.errors.push(sourceError)
       return { status: 'error', context }
     }
-  }
+  },
 } satisfies Record<string, Runner>
 
 export default runners

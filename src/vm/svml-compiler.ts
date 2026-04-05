@@ -8,7 +8,7 @@ import {
   generatePrimitiveFunctionCode,
   INTERNAL_FUNCTIONS,
   PRIMITIVE_FUNCTION_NAMES,
-  vmPrelude
+  vmPrelude,
 } from '../stdlib/vm.prelude'
 import type { Context, ContiguousArrayElements, Node, NodeTypeToNode } from '../types'
 import * as create from '../utils/ast/astCreator'
@@ -18,7 +18,7 @@ import OpCodes from './opcodes'
 
 const VALID_UNARY_OPERATORS: { [op in UnaryExpression['operator']]?: OpCodes } = {
   '!': OpCodes.NOTG,
-  '-': OpCodes.NEGG
+  '-': OpCodes.NEGG,
 }
 
 const VALID_BINARY_OPERATORS: { [op in BinaryExpression['operator']]?: OpCodes } = {
@@ -32,13 +32,13 @@ const VALID_BINARY_OPERATORS: { [op in BinaryExpression['operator']]?: OpCodes }
   '<=': OpCodes.LEG,
   '>=': OpCodes.GEG,
   '===': OpCodes.EQG,
-  '!==': OpCodes.NEQG
+  '!==': OpCodes.NEQG,
 }
 
 export type Offset = number // instructions to skip
 export type Address = [
   number, // function index
-  number? // instruction index within function; optional
+  number?, // instruction index within function; optional
 ]
 export type Instruction = [OpCodes, Argument?, Argument?]
 export type Argument = number | boolean | string | Offset | Address
@@ -46,11 +46,11 @@ export type SVMFunction = [
   number, // stack size
   number, // environment size
   number, // number of arguments
-  Instruction[] // code
+  Instruction[], // code
 ]
 export type Program = [
   number, // index of entry point function
-  SVMFunction[]
+  SVMFunction[],
 ]
 
 // Array of function headers in the compiled program
@@ -108,7 +108,7 @@ function pushToCompile(task: CompileTask) {
 function makeToCompileTask(
   body: es.BlockStatement | es.Program,
   functionAddress: Address,
-  indexTable: Map<string, EnvEntry>[]
+  indexTable: Map<string, EnvEntry>[],
 ): CompileTask {
   return [body, functionAddress, indexTable]
 }
@@ -128,7 +128,7 @@ function makeEmptyIndexTable(): Map<string, EnvEntry>[] {
   return []
 }
 function makeIndexTableWithPrimitivesAndInternals(
-  vmInternalFunctions?: string[]
+  vmInternalFunctions?: string[],
 ): Map<string, EnvEntry>[] {
   const names = new Map<string, EnvEntry>()
   for (let i = 0; i < PRIMITIVE_FUNCTION_NAMES.length; i++) {
@@ -174,7 +174,7 @@ const toplevelReturnNodes = new Set([
   'AssignmentExpression',
   'ArrowFunctionExpression',
   'IfStatement',
-  'VariableDeclaration'
+  'VariableDeclaration',
 ])
 
 function continueToCompile() {
@@ -207,14 +207,14 @@ interface EnvEntry {
 function extractAndRenameNames(
   baseNode: es.BlockStatement | es.Program,
   names: Map<string, EnvEntry>,
-  rename: boolean = true
+  rename: boolean = true,
 ) {
   // get all declared names of current scope and keep track of names to rename
   const namesToRename = new Map<string, string>()
   for (const stmt of baseNode.body) {
     if (stmt.type === 'VariableDeclaration') {
       let {
-        id: { name }
+        id: { name },
       } = getSourceVariableDeclaration(stmt)
 
       if (rename) {
@@ -232,7 +232,7 @@ function extractAndRenameNames(
       const node = stmt
       if (node.id === null) {
         throw new Error(
-          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
         )
       }
       let name = node.id.name
@@ -280,7 +280,7 @@ function extractAndRenameNames(
 // redeclaration occurs on VariableDeclaration and FunctionDeclaration
 function renameVariables(
   baseNode: es.BlockStatement | es.Program,
-  namesToRename: Map<string, string>
+  namesToRename: Map<string, string>,
 ) {
   if (namesToRename.size === 0) return
   let baseScope = true
@@ -288,7 +288,7 @@ function renameVariables(
   function recurseBlock(
     node: es.BlockStatement,
     inactive: Set<string>,
-    c: (node: Node, state: Set<string>) => void
+    c: (node: Node, state: Set<string>) => void,
   ) {
     // get names in current scope
     const locals = getLocalsInScope(node)
@@ -356,7 +356,7 @@ function renameVariables(
       if (node.type === 'FunctionDeclaration') {
         if (node.id === null) {
           throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
           )
         }
         c(node.id, inactive)
@@ -373,7 +373,7 @@ function renameVariables(
       c(
         node.body,
         inactive,
-        node.type === 'ArrowFunctionExpression' && node.expression ? 'Expression' : 'Statement'
+        node.type === 'ArrowFunctionExpression' && node.expression ? 'Expression' : 'Statement',
       )
       for (const name of locals) {
         if (oldActive.has(name)) {
@@ -385,7 +385,7 @@ function renameVariables(
     WhileStatement(node: es.WhileStatement, inactive, c) {
       c(node.test, inactive)
       recurseBlock(node.body as es.BlockStatement, inactive, c)
-    }
+    },
   })
 }
 
@@ -394,13 +394,13 @@ function getLocalsInScope(node: es.BlockStatement | es.Program) {
   for (const stmt of node.body) {
     if (stmt.type === 'VariableDeclaration') {
       const {
-        id: { name }
+        id: { name },
       } = getSourceVariableDeclaration(stmt)
       locals.add(name)
     } else if (stmt.type === 'FunctionDeclaration') {
       if (stmt.id === null) {
         throw new Error(
-          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
         )
       }
       const name = stmt.id.name
@@ -453,7 +453,7 @@ type TaggedBlockStatement = (es.Program | es.BlockStatement) & {
 function compileStatements(
   node: TaggedBlockStatement,
   indexTable: Map<string, EnvEntry>[],
-  insertFlag: boolean
+  insertFlag: boolean,
 ) {
   const statements = node.body
   let maxStackSize = 0
@@ -468,7 +468,7 @@ function compileStatements(
     const { maxStackSize: curExprSize } = compile(
       statements[i],
       indexTable,
-      i === statements.length - 1 ? insertFlag : false
+      i === statements.length - 1 ? insertFlag : false,
     )
     if (i !== statements.length - 1 || node.isLoopBlock) {
       addNullaryInstruction(OpCodes.POPG)
@@ -489,7 +489,7 @@ type NodeCompiler<T extends Node> = (
   node: T,
   indexTable: Map<string, EnvEntry>[],
   insertFlag: boolean,
-  isTailCallPosition?: boolean
+  isTailCallPosition?: boolean,
 ) => ReturnType<typeof compileStatements>
 
 type Compilers = {
@@ -614,13 +614,13 @@ const compilers: Compilers = {
       addBinaryInstruction(
         isTailCallPosition ? OpCodes.CALLTP : OpCodes.CALLP,
         callValue,
-        node.arguments.length
+        node.arguments.length,
       )
     } else if (callType === 'internal') {
       addBinaryInstruction(
         isTailCallPosition ? OpCodes.CALLTV : OpCodes.CALLV,
         callValue,
-        node.arguments.length
+        node.arguments.length,
       )
     } else {
       // normal call. only normal function calls have the function on the stack
@@ -668,16 +668,16 @@ const compilers: Compilers = {
   FunctionDeclaration(node, indexTable, insertFlag) {
     if (node.id === null) {
       throw new Error(
-        'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+        'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
       )
     }
     return compile(
       create.constantDeclaration(
         node.id.name,
-        create.arrowFunctionExpression(node.params, node.body)
+        create.arrowFunctionExpression(node.params, node.body),
       ),
       indexTable,
-      insertFlag
+      insertFlag,
     )
   },
   Identifier(node, indexTable, insertFlag) {
@@ -763,7 +763,7 @@ const compilers: Compilers = {
         create.conditionalExpression(node.left, node.right, create.literal(false)),
         indexTable,
         false,
-        isTailCallPosition
+        isTailCallPosition,
       )
       return { maxStackSize, insertFlag }
     } else if (node.operator === '||') {
@@ -771,7 +771,7 @@ const compilers: Compilers = {
         create.conditionalExpression(node.left, create.literal(true), node.right),
         indexTable,
         false,
-        isTailCallPosition
+        isTailCallPosition,
       )
       return { maxStackSize, insertFlag }
     }
@@ -867,7 +867,7 @@ const compilers: Compilers = {
     }
     addNullaryInstruction(OpCodes.LGCU)
     return { maxStackSize: Math.max(m1, m2), insertFlag }
-  }
+  },
 }
 
 const compile: NodeCompiler<Node> = (expr, indexTable, insertFlag, isTailCallPosition = false) => {
@@ -879,7 +879,7 @@ const compile: NodeCompiler<Node> = (expr, indexTable, insertFlag, isTailCallPos
     expr,
     indexTable,
     insertFlag,
-    isTailCallPosition
+    isTailCallPosition,
   )
   let maxStackSize = temp
 
@@ -945,7 +945,7 @@ export function compilePreludeToIns(program: es.Program): Program {
 export function compileToIns(
   program: es.Program,
   prelude?: Program,
-  vmInternalFunctions?: string[]
+  vmInternalFunctions?: string[],
 ): Program {
   // reset variables
   SVMFunctions = []
@@ -966,7 +966,7 @@ export function compileToIns(
 
   const extendedTable = extendIndexTable(
     makeIndexTableWithPrimitivesAndInternals(vmInternalFunctions),
-    locals
+    locals,
   )
   pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
   continueToCompile()
@@ -982,7 +982,7 @@ function transformForLoopsToWhileLoops(program: es.Program) {
       // Source spec: init must be present
       if (init!.type === 'VariableDeclaration') {
         const {
-          id: { name: loopVarName }
+          id: { name: loopVarName },
         } = getSourceVariableDeclaration(init)
 
         // loc is used for renaming. It doesn't matter if we use the same location, as the
@@ -991,11 +991,11 @@ function transformForLoopsToWhileLoops(program: es.Program) {
         const copyOfLoopVarName = 'copy-of-' + loopVarName
         const innerBlock = create.blockStatement([
           create.constantDeclaration(loopVarName, create.identifier(copyOfLoopVarName), init.loc),
-          body
+          body,
         ])
         forLoopBody = create.blockStatement([
           create.constantDeclaration(copyOfLoopVarName, create.identifier(loopVarName), init.loc),
-          innerBlock
+          innerBlock,
         ])
       }
       const assignment1 =
@@ -1010,7 +1010,7 @@ function transformForLoopsToWhileLoops(program: es.Program) {
       node = node as es.BlockStatement
       node.body = newBlockBody
       node.type = 'BlockStatement'
-    }
+    },
   })
 }
 
@@ -1019,8 +1019,8 @@ function insertEmptyElseBlocks(program: es.Program) {
     IfStatement(node: es.IfStatement) {
       node.alternate ??= {
         type: 'BlockStatement',
-        body: []
+        body: [],
       }
-    }
+    },
   })
 }

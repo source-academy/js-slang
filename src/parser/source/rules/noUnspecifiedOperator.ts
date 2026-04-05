@@ -53,7 +53,7 @@ const noUnspecifiedOperator: Rule<BinaryExpression | UnaryExpression> = {
         '<=',
         '>=',
         '&&',
-        '||'
+        '||',
       ]
 
       if (node.operator === '!=' || node.operator === '==') {
@@ -71,8 +71,8 @@ const noUnspecifiedOperator: Rule<BinaryExpression | UnaryExpression> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noUnspecifiedOperator

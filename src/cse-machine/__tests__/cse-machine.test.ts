@@ -21,7 +21,7 @@ test('Simple tail call returns work', () => {
     }
     f(5000, 5000);
   `,
-    optionEC
+    optionEC,
   ).toEqual(10000)
 })
 
@@ -33,7 +33,7 @@ test('Tail call in conditional expressions work', () => {
     }
     f(5000, 5000);
   `,
-    optionEC
+    optionEC,
   ).toEqual(10000)
 })
 
@@ -49,7 +49,7 @@ test('Tail call in boolean operators work', () => {
     }
     f(5000, 5000);
   `,
-    optionEC
+    optionEC,
   ).toEqual(10000)
 })
 
@@ -61,7 +61,7 @@ test('Tail call in nested mix of conditional expressions boolean operators work'
     }
     f(5000, 5000);
   `,
-    optionEC
+    optionEC,
   ).toEqual(10000)
 })
 
@@ -71,7 +71,7 @@ test('Tail calls in arrow functions work', () => {
     const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
     f(5000, 5000);
   `,
-    optionEC
+    optionEC,
   ).toEqual(10000)
 })
 
@@ -87,7 +87,7 @@ test('Tail calls in arrow block functions work', () => {
     };
     f(5000, 5000);
   `,
-    optionEC
+    optionEC,
   ).toEqual(10000)
 })
 
@@ -110,7 +110,7 @@ test('Tail calls in mutual recursion work', () => {
     }
     f(5000, 5000);
   `,
-    optionEC
+    optionEC,
   ).toEqual(10000)
 })
 
@@ -121,7 +121,7 @@ test('Tail calls in mutual recursion with arrow functions work', () => {
     const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
     f(5000, 5000);
   `,
-    optionEC
+    optionEC,
   ).toEqual(10000)
 })
 
@@ -137,7 +137,7 @@ test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
     }
     f(5000, 5000, 2);
   `,
-    optionEC
+    optionEC,
   ).toEqual(15000)
 })
 
@@ -154,7 +154,7 @@ test('standalone block statements', () => {
     }
     test();
   `,
-    optionEC
+    optionEC,
   ).toEqual(true)
 })
 
@@ -173,7 +173,7 @@ test('const uses block scoping instead of function scoping', () => {
     }
     test();
   `,
-    optionEC
+    optionEC,
   ).toEqual(true)
 })
 
@@ -192,7 +192,7 @@ test('let uses block scoping instead of function scoping', () => {
     }
     test();
   `,
-    optionEC3
+    optionEC3,
   ).toEqual(true)
 })
 
@@ -207,7 +207,7 @@ test('for loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    optionEC3
+    optionEC3,
   ).toEqual(true)
 })
 
@@ -224,7 +224,7 @@ test('while loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    optionEC4
+    optionEC4,
   ).toEqual(true)
 })
 
@@ -247,7 +247,7 @@ test('continue in while loops are working as intended', () => {
     }
     test();
   `,
-    optionEC4
+    optionEC4,
   ).toEqual(true)
 })
 
@@ -265,7 +265,7 @@ test('for loop `let` variables are copied into the block scope', () => {
     }
     test();
     `,
-    optionEC4
+    optionEC4,
   ).toEqual(1)
 })
 
@@ -285,7 +285,7 @@ test('streams and its pre-defined/pre-built functions are working as intended', 
     const ones = pair(1, () => ones);
     list_ref(eval_stream(make_alternating_stream(enum_stream(1, 9)), 9), 8);
     `,
-    optionEC4
+    optionEC4,
   ).toEqual(9)
 })
 
@@ -297,7 +297,7 @@ test('streams can be created and functions with no return statements are still e
     stream_for_each(item => {result[array_length(result)] = item;}, s);
     stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;
     `,
-    optionEC4
+    optionEC4,
   ).toEqual(false)
 })
 
@@ -324,7 +324,7 @@ test('Conditional statements are value producing always', () => {
       }
     fact(5);
     `,
-    optionEC3
+    optionEC3,
   ).toEqual(120)
 })
 
@@ -340,7 +340,7 @@ test('Nullary functions properly restore environment 1', () => {
     const h = f();
     h(100);
     `,
-    optionEC3
+    optionEC3,
   ).toEqual(0)
 })
 
@@ -354,19 +354,19 @@ test('Nullary functions properly restore environment 2', () => {
     const a = f();
     a;
     `,
-    optionEC3
+    optionEC3,
   ).toEqual(1)
 })
 
 test('Array literals work as expected', async ({ expect }) => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(
     stripIndent`
     let c = [1, 2, 3];
     c;
     `,
-    optionEC3
+    optionEC3,
   )
   expect(value).toMatchInlineSnapshot(`
     Array [
@@ -384,7 +384,7 @@ test('Array literals are unpacked in the correct order', () => {
     let c = [ d = d * 10 + 1, d = d * 10 + 2, d = d * 10 + 3];
     d;
     `,
-    optionEC3
+    optionEC3,
   ).toEqual(123)
 })
 
@@ -413,7 +413,7 @@ test('Breaks, continues and returns are detected properly inside loops', () => {
     }
     f();
     `,
-    optionEC3
+    optionEC3,
   ).toEqual(3)
 })
 
@@ -422,7 +422,7 @@ test('Environment reset is inserted when only instructions are in control stack'
     stripIndent`
     const a = (v => v)(0);
     `,
-    optionEC3
+    optionEC3,
   ).toEqual(undefined)
 })
 
@@ -447,7 +447,7 @@ test('breaks, continues are properly detected in child blocks 1', () => {
     }
     i;
     `,
-    optionEC3
+    optionEC3,
   ).toEqual(2)
 })
 
@@ -474,6 +474,6 @@ test('breaks, continues are properly detected in child blocks 2', () => {
     }
     a;
     `,
-    optionEC3
+    optionEC3,
   ).toEqual(2)
 })

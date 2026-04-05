@@ -11,7 +11,7 @@ import {
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getNativeIds,
-  type NativeIds
+  type NativeIds,
 } from '../utils/uniqueIds'
 
 class Declaration {
@@ -21,7 +21,7 @@ class Declaration {
 
 export function validateAndAnnotate(
   program: es.Program,
-  context: Context
+  context: Context,
 ): NodeWithInferredType<es.Program> {
   const accessedBeforeDeclarationMap = new Map<Node, Map<string, Declaration>>()
   const scopeHasCallExpressionMap = new Map<Node, boolean>()
@@ -31,12 +31,12 @@ export function validateAndAnnotate(
       if (statement.type === 'VariableDeclaration') {
         initialisedIdentifiers.set(
           getSourceVariableDeclaration(statement).id.name,
-          new Declaration(statement.kind === 'const')
+          new Declaration(statement.kind === 'const'),
         )
       } else if (statement.type === 'FunctionDeclaration') {
         if (statement.id === null) {
           throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
           )
         }
         initialisedIdentifiers.set(statement.id.name, new Declaration(true))
@@ -48,7 +48,7 @@ export function validateAndAnnotate(
   function processFunction(node: es.FunctionDeclaration | es.ArrowFunctionExpression) {
     accessedBeforeDeclarationMap.set(
       node,
-      new Map((node.params as es.Identifier[]).map(id => [id.name, new Declaration(false)]))
+      new Map((node.params as es.Identifier[]).map(id => [id.name, new Declaration(false)])),
     )
     scopeHasCallExpressionMap.set(node, false)
   }
@@ -65,12 +65,12 @@ export function validateAndAnnotate(
         accessedBeforeDeclarationMap.set(
           forStatement,
           new Map([
-            [getSourceVariableDeclaration(init).id.name, new Declaration(init.kind === 'const')]
-          ])
+            [getSourceVariableDeclaration(init).id.name, new Declaration(init.kind === 'const')],
+          ]),
         )
         scopeHasCallExpressionMap.set(forStatement, false)
       }
-    }
+    },
   })
 
   function validateIdentifier(id: es.Identifier, ancestors: Node[]) {
@@ -100,7 +100,7 @@ export function validateAndAnnotate(
       if (node.init) {
         c(node.init, st, 'Expression')
       }
-    }
+    },
   }
   ancestor(
     program,
@@ -136,9 +136,9 @@ export function validateAndAnnotate(
             break
           }
         }
-      }
+      },
     },
-    customWalker
+    customWalker,
   )
 
   /*
@@ -158,7 +158,7 @@ export function validateAndAnnotate(
 export function checkProgramForUndefinedVariables(program: es.Program, context: Context) {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
-    ...getIdentifiersInNativeStorage(context.nativeStorage)
+    ...getIdentifiersInNativeStorage(context.nativeStorage),
   ])
   const globalIds = getNativeIds(program, usedIdentifiers)
   return checkForUndefinedVariables(program, context, globalIds, false)
@@ -168,7 +168,7 @@ export function checkForUndefinedVariables(
   program: es.Program,
   context: Context,
   globalIds: NativeIds,
-  skipUndefined: boolean
+  skipUndefined: boolean,
 ) {
   const preludes = context.prelude
     ? getFunctionDeclarationNamesInProgram(parse(context.prelude, context)!)
@@ -183,13 +183,13 @@ export function checkForUndefinedVariables(
     for (const statement of node.body) {
       if (statement.type === 'VariableDeclaration') {
         const {
-          id: { name }
+          id: { name },
         } = getSourceVariableDeclaration(statement)
         identifiers.add(name)
       } else if (statement.type === 'FunctionDeclaration') {
         if (statement.id === null) {
           throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
           )
         }
         identifiers.add(statement.id.name)
@@ -203,7 +203,7 @@ export function checkForUndefinedVariables(
   }
   function processFunction(
     node: es.FunctionDeclaration | es.ArrowFunctionExpression,
-    _ancestors: es.Node[]
+    _ancestors: es.Node[],
   ) {
     identifiersIntroducedByNode.set(
       node,
@@ -211,9 +211,9 @@ export function checkForUndefinedVariables(
         node.params.map(id =>
           id.type === 'Identifier'
             ? id.name
-            : ((id as es.RestElement).argument as es.Identifier).name
-        )
-      )
+            : ((id as es.RestElement).argument as es.Identifier).name,
+        ),
+      ),
     )
   }
   const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
@@ -226,7 +226,7 @@ export function checkForUndefinedVariables(
       const init = forStatement.init!
       if (init.type === 'VariableDeclaration') {
         const {
-          id: { name }
+          id: { name },
         } = getSourceVariableDeclaration(init)
         identifiersIntroducedByNode.set(forStatement, new Set([name]))
       }
@@ -242,7 +242,7 @@ export function checkForUndefinedVariables(
           identifiersToAncestors.set(node.object, [...ancestors])
         }
       }
-    }
+    },
   })
   const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
 

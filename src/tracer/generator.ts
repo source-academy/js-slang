@@ -29,7 +29,7 @@ import { StepperIfStatement } from './nodes/Statement/IfStatement'
 import { StepperReturnStatement } from './nodes/Statement/ReturnStatement'
 import {
   StepperVariableDeclaration,
-  StepperVariableDeclarator
+  StepperVariableDeclarator,
 } from './nodes/Statement/VariableDeclaration'
 import { StepperDebuggerStatement } from './nodes/Statement/DebuggerStatement'
 
@@ -64,7 +64,7 @@ const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {
   },
   BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node),
   IfStatement: (node: es.IfStatement) => StepperIfStatement.create(node),
-  DebuggerStatement: (node: es.DebuggerStatement) => StepperDebuggerStatement.create(node)
+  DebuggerStatement: (node: es.DebuggerStatement) => StepperDebuggerStatement.create(node),
 }
 
 export function convert(node: es.BaseNode): StepperBaseNode {
@@ -127,7 +127,7 @@ export function explain(redex: StepperBaseNode): string {
     },
     FunctionDeclaration: (node: StepperFunctionDeclaration) => {
       return `Function ${node.id.name} declared, parameter(s) ${node.params.map(x =>
-        generate(x)
+        generate(x),
       )} required`
     },
     ExpressionStatement: (node: StepperExpressionStatement) => {
@@ -152,7 +152,7 @@ export function explain(redex: StepperBaseNode): string {
         throw new Error(
           'Invalid conditional contraction. `test` should be boolean, got ' +
             typeof testStatus +
-            ' instead.'
+            ' instead.',
         )
       }
       if (testStatus === true) {
@@ -181,7 +181,7 @@ export function explain(redex: StepperBaseNode): string {
             (x.type === 'ArrowFunctionExpression' || x.type === 'Identifier') &&
             x.name !== undefined
               ? x.name
-              : generate(x)
+              : generate(x),
           )
           .join(', ')
         return 'Function ' + func.name + ' takes in ' + argDisplay + ' as input ' + paramDisplay
@@ -217,7 +217,7 @@ export function explain(redex: StepperBaseNode): string {
     },
     Default: (_: StepperBaseNode) => {
       return '...'
-    }
+    },
   }
   //@ts-expect-error gracefully handle default ast node
   const explainer = explainers[redex.type] ?? explainers.Default

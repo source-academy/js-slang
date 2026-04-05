@@ -52,8 +52,8 @@ describe(transformImportDeclarations, () => {
     ['import * as a from "rune";', 'const a = modules.rune;'],
     [
       'import { a as x, b as y } from "rune";',
-      'const x = modules.rune.a;\nconst y = modules.rune.b;'
-    ]
+      'const x = modules.rune.a;\nconst y = modules.rune.b;',
+    ],
   ]
 
   test.each(testCases)('', (actual, expected) => {
@@ -72,7 +72,7 @@ describe(transformImportDeclarations, () => {
 
     const [declNodes, otherNodes] = transformImportDeclarations(
       actualProgram,
-      ast.identifier('modules')
+      ast.identifier('modules'),
     )
     expect(otherNodes.length).toEqual(0)
 

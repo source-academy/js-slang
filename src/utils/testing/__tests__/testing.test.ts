@@ -4,7 +4,7 @@ import {
   expectFinishedResult,
   expectParsedError,
   testFailure,
-  testSuccess
+  testSuccess,
 } from '..'
 import * as main from '../../..'
 import { Chapter, Variant } from '../../../langs'
@@ -17,14 +17,14 @@ function mockEvalSuccess(value: any = 0) {
   mockedRunInContext.mockResolvedValueOnce({
     value,
     context: {} as main.Context,
-    status: 'finished'
+    status: 'finished',
   })
 }
 
 function mockEvalFailure() {
   mockedRunInContext.mockResolvedValueOnce({
     status: 'error',
-    context: {} as main.Context
+    context: {} as main.Context,
   })
 }
 
@@ -34,9 +34,9 @@ describe(processTestOptions, () => {
     [
       'Specifying chapter number in options object',
       { chapter: Chapter.SOURCE_4 },
-      { chapter: Chapter.SOURCE_4 }
+      { chapter: Chapter.SOURCE_4 },
     ],
-    ['Empty options object is valid', {}, {}]
+    ['Empty options object is valid', {}, {}],
   ]
   test.each(options)('%s', (_, value, expected) => {
     expect(processTestOptions(value)).toEqual(expected)
@@ -71,7 +71,7 @@ describe(createTestContext, () => {
   test('If both chapter and variant are specified, both are used', () => {
     const context = createTestContext({
       chapter: Chapter.SOURCE_4,
-      variant: Variant.DEFAULT
+      variant: Variant.DEFAULT,
     })
     expect(context.chapter).toEqual(Chapter.SOURCE_4)
     expect(context.variant).toEqual(Variant.DEFAULT)
@@ -133,21 +133,21 @@ describe('Extra test results', () => {
 
   test('Calling display actually adds to displayResult', async () => {
     const {
-      context: { displayResult }
+      context: { displayResult },
     } = await testSuccess(`display("hi"); display("bye");`)
     expect(displayResult).toMatchObject(['"hi"', '"bye"'])
   })
 
   test('Calling alert actually adds to alertResult', async () => {
     const {
-      context: { alertResult }
+      context: { alertResult },
     } = await testSuccess(`alert("hi"); alert("bye");`, Chapter.LIBRARY_PARSER)
     expect(alertResult).toMatchObject(['hi', 'bye'])
   })
 
   test('Calling draw_data actually adds to visualizeList', async () => {
     const {
-      context: { visualiseListResult }
+      context: { visualiseListResult },
     } = await testSuccess(`draw_data(list(1, 2));`, Chapter.SOURCE_2)
     expect(visualiseListResult).toMatchInlineSnapshot(`
 Array [

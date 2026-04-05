@@ -29,7 +29,7 @@ function testCases(suiteDesc: string, testCases: TestCase[]) {
 
       // Assert that both parsed ASTs are equal to each other
       expect(sanitizeAST(actualProgram)).toEqual(sanitizeAST(expectedProgram))
-    })
+    }),
   )
 }
 
@@ -44,7 +44,7 @@ describe(removeExports, () => {
       `
       const x = 42;
       let y = 53;
-      `
+      `,
     ],
     [
       'when exporting function declarations',
@@ -57,12 +57,12 @@ describe(removeExports, () => {
       function square(x) {
         return x * x;
       }
-      `
+      `,
     ],
     [
       'when exporting arrow function declarations',
       'export const square = x => x * x;',
-      'const square = x => x * x;'
+      'const square = x => x * x;',
     ],
     [
       'when exporting renamed identifiers',
@@ -82,8 +82,8 @@ describe(removeExports, () => {
           return x * x;
         }
         const id = x => x;
-      `
-    ]
+      `,
+    ],
   ])
 
   testCases('removes ExportDefaultDeclaration node', [
@@ -100,7 +100,7 @@ describe(removeExports, () => {
         function square(x) {
           return x * x;
         }
-      `
+      `,
     ],
     [
       'when exporting constants',
@@ -108,7 +108,7 @@ describe(removeExports, () => {
         const x = 42;
         export default x;
       `,
-      'const x = 42;'
+      'const x = 42;',
     ],
     [
       'when exporting variables',
@@ -116,7 +116,7 @@ describe(removeExports, () => {
       let y = 53;
       export default y;
       `,
-      'let y = 53;'
+      'let y = 53;',
     ],
     [
       'when exporting arrow functions',
@@ -124,9 +124,9 @@ describe(removeExports, () => {
         const id = x => x;
         export default id;
       `,
-      'const id = x => x;'
+      'const id = x => x;',
     ],
-    ['when exporting expressions', 'export default 123 + 456;', '']
+    ['when exporting expressions', 'export default 123 + 456;', ''],
   ])
 
   testCases('removes ExportAllDeclaration nodes', [
@@ -135,6 +135,6 @@ describe(removeExports, () => {
     //   'export * as hi from "./a.js";',
     //   ''
     // ],
-    ['without exported name', 'export * from "./a.js";', '']
+    ['without exported name', 'export * from "./a.js";', ''],
   ])
 })

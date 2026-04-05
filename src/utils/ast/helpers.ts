@@ -6,16 +6,16 @@ import {
   isDeclaration,
   isIdentifier,
   isImportDeclaration,
-  isVariableDeclaration
+  isVariableDeclaration,
 } from './typeGuards'
 import { simple } from './walkers'
 
 export function getModuleDeclarationSource(
-  node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
+  node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>,
 ): string {
   assert(
     typeof node.source?.value === 'string',
-    `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`
+    `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`,
   )
   return node.source.value
 }
@@ -26,7 +26,7 @@ export function extractIdsFromPattern(pattern: es.Pattern) {
   simple(pattern, {
     Identifier: (node: es.Identifier) => {
       identifiers.push(node)
-    }
+    },
   })
 
   return identifiers
@@ -34,7 +34,7 @@ export function extractIdsFromPattern(pattern: es.Pattern) {
 
 export function getIdsFromDeclaration(
   decl: es.Declaration,
-  allowNull: true
+  allowNull: true,
 ): (es.Identifier | null)[]
 export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: false): es.Identifier[]
 export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: boolean) {
@@ -59,13 +59,13 @@ export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: boolean)
 export function getSourceVariableDeclaration(decl: es.VariableDeclaration) {
   assert(
     decl.declarations.length === 1,
-    'Variable Declarations in Source should only have 1 declarator!'
+    'Variable Declarations in Source should only have 1 declarator!',
   )
 
   const [declaration] = decl.declarations
   assert(
     isIdentifier(declaration.id),
-    'Variable Declarations in Source should be declared using an Identifier!'
+    'Variable Declarations in Source should be declared using an Identifier!',
   )
 
   assert(!!declaration.init, 'Variable declarations in Source must be initialized!')
@@ -73,12 +73,12 @@ export function getSourceVariableDeclaration(decl: es.VariableDeclaration) {
   return {
     id: declaration.id,
     init: declaration.init,
-    loc: declaration.loc
+    loc: declaration.loc,
   }
 }
 
 export const getImportedName = (
-  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
+  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier,
 ) => {
   switch (spec.type) {
     case 'ImportDefaultSpecifier':
@@ -91,7 +91,7 @@ export const getImportedName = (
 }
 
 export const speciferToString = (
-  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
+  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier,
 ) => {
   switch (spec.type) {
     case 'ImportSpecifier': {
@@ -134,7 +134,7 @@ export function hasNoImportDeclarations(stmt: BlockBody[]): stmt is BlockBodyWit
  * the module they import from
  */
 export function filterImportDeclarations({
-  body
+  body,
 }: es.Program): [ArrayMap<string, es.ImportDeclaration>, BlockBodyWithoutImports[]] {
   return body.reduce<[ArrayMap<string, es.ImportDeclaration>, BlockBodyWithoutImports[]]>(
     ([importNodes, otherNodes], node) => {
@@ -144,6 +144,6 @@ export function filterImportDeclarations({
       importNodes.add(moduleName, node)
       return [importNodes, otherNodes]
     },
-    [new ArrayMap(), []]
+    [new ArrayMap(), []],
   )
 }

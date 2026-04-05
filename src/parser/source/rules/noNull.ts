@@ -23,8 +23,8 @@ const noNull: Rule<Literal> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noNull

@@ -10,7 +10,7 @@ import { miscBuiltinFunctions } from './misc'
 const builtinFunctions = {
   ...listBuiltinFunctions,
   ...miscBuiltinFunctions,
-  ...auxiliaryBuiltinFunctions
+  ...auxiliaryBuiltinFunctions,
 }
 
 export function prelude(node: es.BaseNode) {
@@ -21,7 +21,7 @@ export function prelude(node: es.BaseNode) {
     .forEach(name => {
       inputNode = inputNode.substitute(
         new StepperIdentifier('math_' + name),
-        new StepperLiteral(Math[name as keyof typeof Math] as number)
+        new StepperLiteral(Math[name as keyof typeof Math] as number),
       )
     })
   return inputNode

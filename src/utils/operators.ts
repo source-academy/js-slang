@@ -4,12 +4,12 @@ import {
   CallingNonFunctionValue,
   ExceptionError,
   GetInheritedPropertyError,
-  InvalidNumberOfArguments
+  InvalidNumberOfArguments,
 } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import {
   PotentialInfiniteLoopError,
-  PotentialInfiniteRecursionError
+  PotentialInfiniteRecursionError,
 } from '../errors/timeoutErrors'
 import type { Chapter } from '../langs'
 import type { NativeStorage } from '../types'
@@ -24,12 +24,12 @@ export function throwIfTimeout(
   current: number,
   line: number,
   column: number,
-  source: string | null
+  source: string | null,
 ) {
   if (current - start > nativeStorage.maxExecTime) {
     throw new PotentialInfiniteLoopError(
       create.locationDummyNode(line, column, source),
-      nativeStorage.maxExecTime
+      nativeStorage.maxExecTime,
     )
   }
 }
@@ -43,7 +43,7 @@ export function callIfFuncAndRightArgs(
 ) {
   const dummy = create.callExpression(create.locationDummyNode(line, column, source), args, {
     start: { line, column },
-    end: { line, column }
+    end: { line, column },
   })
 
   if (typeof candidate === 'function') {
@@ -59,7 +59,7 @@ export function callIfFuncAndRightArgs(
         dummy,
         hasVarArgs ? candidate.minArgsNeeded : expectedLength,
         receivedLength,
-        hasVarArgs
+        hasVarArgs,
       )
     }
     try {
@@ -91,12 +91,12 @@ export function unaryOp(
   argument: any,
   line: number,
   column: number,
-  source: string | null
+  source: string | null,
 ) {
   const error = rttc.checkUnaryExpression(
     create.locationDummyNode(line, column, source),
     operator,
-    argument
+    argument,
   )
   if (error === undefined) {
     return evaluateUnaryExpression(operator, argument)
@@ -124,14 +124,14 @@ export function binaryOp(
   right: any,
   line: number,
   column: number,
-  source: string | null
+  source: string | null,
 ) {
   const error = rttc.checkBinaryExpression(
     create.locationDummyNode(line, column, source),
     operator,
     chapter,
     left,
-    right
+    right,
   )
   if (error === undefined) {
     return evaluateBinaryExpression(operator, left, right)
@@ -196,11 +196,11 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
           callExpression(dummy, args, {
             start: { line, column },
             end: { line, column },
-            source
+            source,
           }),
           hasVarArgs ? f.minArgsNeeded : expectedLength,
           receivedLength,
-          hasVarArgs
+          hasVarArgs,
         )
       }
     } else {
@@ -241,7 +241,7 @@ export const wrap = (
   f: (...args: any[]) => any,
   stringified: string,
   hasVarArgs: boolean,
-  nativeStorage: NativeStorage
+  nativeStorage: NativeStorage,
 ) => {
   if (hasVarArgs) {
     // @ts-ignore
@@ -261,7 +261,7 @@ export const setProp = (
   value: any,
   line: number,
   column: number,
-  source: string | null
+  source: string | null,
 ) => {
   const dummy = locationDummyNode(line, column, source)
   const error = rttc.checkMemberAccess(dummy, obj, prop)
@@ -277,7 +277,7 @@ export const getProp = (
   prop: any,
   line: number,
   column: number,
-  source: string | null
+  source: string | null,
 ) => {
   const dummy = locationDummyNode(line, column, source)
   const error = rttc.checkMemberAccess(dummy, obj, prop)

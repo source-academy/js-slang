@@ -31,16 +31,16 @@ export const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   importOptions: {
     ...defaultAnalysisOptions,
     ...defaultLinkerOptions,
-    loadTabs: true
+    loadTabs: true,
   },
-  shouldAddFileName: null
+  shouldAddFileName: null,
 }
 
 async function sourceRunner(
   program: Program,
   context: Context,
   isVerboseErrorsEnabled: boolean,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {},
 ): Promise<Result> {
   // It is necessary to make a copy of the DEFAULT_SOURCE_OPTIONS object because merge()
   // will modify it rather than create a new object
@@ -59,7 +59,7 @@ async function sourceRunner(
   if (context.errors.length > 0) {
     return {
       status: 'error',
-      context
+      context,
     }
   }
 
@@ -97,7 +97,7 @@ async function sourceRunner(
 
   assert(
     context.executionMethod !== 'auto',
-    'Execution method should have been properly determined!'
+    'Execution method should have been properly determined!',
   )
   return runners.native(program, context, theOptions)
 }
@@ -110,7 +110,7 @@ export async function sourceFilesRunner(
   filesInput: FileGetter,
   entrypointFilePath: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {},
 ): Promise<{
   result: Result
   verboseErrors: boolean
@@ -119,13 +119,13 @@ export async function sourceFilesRunner(
     filesInput,
     entrypointFilePath,
     context,
-    options
+    options,
   )
 
   if (!preprocessResult.ok) {
     return {
       result: { status: 'error', context },
-      verboseErrors: preprocessResult.verboseErrors
+      verboseErrors: preprocessResult.verboseErrors,
     }
   }
 
@@ -141,7 +141,7 @@ export async function sourceFilesRunner(
 
   const currentCode = {
     files,
-    entrypointFilePath
+    entrypointFilePath,
   }
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
@@ -152,7 +152,7 @@ export async function sourceFilesRunner(
 
   return {
     result,
-    verboseErrors
+    verboseErrors,
   }
 }
 
@@ -167,7 +167,7 @@ export function runCodeInSource(
   context: Context,
   options: RecursivePartial<IOptions> = {},
   defaultFilePath: string = '/default.js',
-  fileGetter?: FileGetter
+  fileGetter?: FileGetter,
 ) {
   return sourceFilesRunner(
     path => {
@@ -177,7 +177,7 @@ export function runCodeInSource(
     },
     defaultFilePath,
     context,
-    options
+    options,
   )
 }
 

@@ -23,7 +23,7 @@ test('Calling unreachable results in error', () => {
     }
     f();
   `,
-    optionEC
+    optionEC,
   ).toEqual('Line 3: Expected number on right hand side of operation, got boolean.')
 })
 
@@ -42,7 +42,7 @@ test('Bare early returns work', () => {
     }
     f();
   `,
-    optionEC
+    optionEC,
   ).toEqual(1)
 })
 
@@ -64,7 +64,7 @@ test('Recursive call early returns work', () => {
     }
     f();
   `,
-    optionEC
+    optionEC,
   ).toEqual(3)
 })
 
@@ -86,7 +86,7 @@ test('Tail call early returns work', () => {
     }
     f();
   `,
-    optionEC
+    optionEC,
   ).toEqual(1)
 })
 
@@ -108,7 +108,7 @@ test('Bare early returns in if statements work', () => {
     }
     f();
   `,
-    optionEC
+    optionEC,
   ).toEqual(1)
 })
 
@@ -133,7 +133,7 @@ test('Recursive call early returns in if statements work', () => {
     }
     f();
   `,
-    optionEC
+    optionEC,
   ).toEqual(3)
 })
 
@@ -158,7 +158,7 @@ test('Tail call early returns in if statements work', () => {
     }
     f();
   `,
-    optionEC
+    optionEC,
   ).toEqual(1)
 })
 
@@ -180,7 +180,7 @@ test('Bare early returns in while loops work', () => {
     }
     f();
   `,
-    optionEC3
+    optionEC3,
   ).toEqual(1)
 })
 
@@ -205,7 +205,7 @@ test('Recursive call early returns in while loops work', () => {
     }
     f();
   `,
-    optionEC3
+    optionEC3,
   ).toEqual(3)
 })
 
@@ -230,7 +230,7 @@ test('Tail call early returns in while loops work', () => {
     }
     f();
   `,
-    optionEC3
+    optionEC3,
   ).toEqual(1)
 })
 
@@ -252,7 +252,7 @@ test('Bare early returns in for loops work', () => {
     }
     f();
   `,
-    optionEC3
+    optionEC3,
   ).toEqual(1)
 })
 
@@ -274,7 +274,7 @@ test('Recursive call early returns in for loops work', () => {
     }
     f();
   `,
-    optionEC3
+    optionEC3,
   ).toEqual(3)
 })
 
@@ -299,6 +299,6 @@ test('Tail call early returns in for loops work', () => {
     }
     f();
   `,
-    optionEC3
+    optionEC3,
   ).toEqual(1)
 })

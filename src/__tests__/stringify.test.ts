@@ -5,7 +5,7 @@ import {
   lineTreeToString,
   stringDagToLineTree,
   stringify,
-  valueToStringDag
+  valueToStringDag,
 } from '../utils/stringify'
 import { expectFinishedResult, testSuccess } from '../utils/testing'
 
@@ -23,14 +23,14 @@ test('String representation of booleans are nice', () => {
 
 test('String representation of functions are nice', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(
     stripIndent`
   function f(x, y) {
     return x;
   }
   stringify(f);
-  `
+  `,
   )
 
   expect(value).toMatchInlineSnapshot(`
@@ -45,7 +45,7 @@ test('String representation of arrow functions are nice', () => {
     stripIndent`
       const f = (x, y) => x;
       stringify(f);
-    `
+    `,
   ).toEqual('(x, y) => x')
 })
 
@@ -55,7 +55,7 @@ test('String representation of arrays are nice', () => {
   const xs = [1, 'true', true, () => 1];
   stringify(xs);
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual('[1, "true", true, () => 1]')
 })
 
@@ -65,7 +65,7 @@ test('String representation of multidimensional arrays are nice', () => {
   const xs = [1, 'true', [true, () => 1, [[]]]];
   stringify(xs);
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual('[1, "true", [true, () => 1, [[]]]]')
 })
 
@@ -75,20 +75,20 @@ test('String representation of empty arrays are nice', () => {
 
 test('String representation of lists are nice', () => {
   return expectFinishedResult(`stringify(enum_list(1, 10));`, Chapter.SOURCE_2).toEqual(
-    '[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]'
+    '[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]',
   )
 })
 
 test('Correctly handles circular structures with multiple entry points', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(
     stripIndent`
   const x = enum_list(1, 3);
   set_tail(tail(tail(x)), x);
   stringify(list(x, tail(x), tail(tail(x))));
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   )
   expect(value).toMatchInlineSnapshot(`
             "[ [1, [2, [3, ...<circular>]]],
@@ -99,7 +99,7 @@ test('Correctly handles circular structures with multiple entry points', async (
 // The interpreter runs into a MaximumStackLimitExceeded error on 1000, so reduced it to 100.
 test('String representation of huge lists are nice', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(`stringify(enum_list(1, 100));`, Chapter.SOURCE_2)
   expect(value).toMatchInlineSnapshot(`
             "[ 1,
@@ -196,7 +196,7 @@ test('String representation of huge lists are nice', async () => {
 
 test('String representation of huge arrays are nice', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(
     stripIndent`
   const arr = [];
@@ -205,7 +205,7 @@ test('String representation of huge arrays are nice', async () => {
   }
   stringify(arr);
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   )
 
   expect(value).toMatchInlineSnapshot(`
@@ -318,7 +318,7 @@ test('String representation of objects are nice', () => {
   const o = { a: 1, b: true, c: () => 1 };
   stringify(o);
   `,
-    Chapter.LIBRARY_PARSER
+    Chapter.LIBRARY_PARSER,
   ).toEqual(`{"a": 1, "b": true, "c": () => 1}`)
 })
 
@@ -328,7 +328,7 @@ test('String representation of objects with toReplString member calls toReplStri
   const o = { toReplString: () => '<RUNE>' };
   stringify(o);
   `,
-    Chapter.LIBRARY_PARSER
+    Chapter.LIBRARY_PARSER,
   ).toEqual('<RUNE>')
 })
 
@@ -338,19 +338,19 @@ test('String representation of nested objects are nice', () => {
   const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 } };
   stringify(o);
   `,
-    Chapter.LIBRARY_PARSER
+    Chapter.LIBRARY_PARSER,
   ).toEqual(`{"a": 1, "b": true, "c": () => 1, "d": {"e": 5, "f": 6}}`)
 })
 
 test('String representation of big objects are nice', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(
     stripIndent`
   const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
   stringify(o);
   `,
-    Chapter.LIBRARY_PARSER
+    Chapter.LIBRARY_PARSER,
   )
 
   expect(value).toMatchInlineSnapshot(`
@@ -376,7 +376,7 @@ test('String representation of nested objects (circular) are nice', () => {
   o.o = o;
   stringify(o);
   `,
-    Chapter.LIBRARY_PARSER
+    Chapter.LIBRARY_PARSER,
   ).toEqual(`{"o": ...<circular>}`)
 })
 
@@ -390,10 +390,10 @@ test('String representation of non literal objects in nested object is nice', ()
   const errorMsg: string = 'This is an error'
   const errorObj: Error = new Error(errorMsg)
   const nestedObj = {
-    data: [1, [2, errorObj], 3]
+    data: [1, [2, errorObj], 3],
   }
   return expect(stringify(nestedObj)).toMatchInlineSnapshot(
-    `"{\\"data\\": [1, [2, Error: This is an error], 3]}"`
+    `"{\\"data\\": [1, [2, Error: This is an error], 3]}"`,
   )
 })
 
@@ -413,7 +413,7 @@ test('String representation of instances is nice', () => {
 
 test('Builtins hide their implementation when stringify', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess('stringify(pair);', Chapter.SOURCE_2)
   return expect(value).toMatchInlineSnapshot(`
     "function pair(left, right) {
@@ -432,7 +432,7 @@ test('String representation of undefined is nice', () => {
 
 test('String representation with no indent', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 0);`, Chapter.SOURCE_4)
   expect(value).toMatchInlineSnapshot(`
             "[\\"lambda_expression\\",
@@ -443,7 +443,7 @@ test('String representation with no indent', async () => {
 
 test('String representation with 1 space indent', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 1);`, Chapter.SOURCE_4)
   expect(value).toMatchInlineSnapshot(`
             "[\\"lambda_expression\\",
@@ -454,7 +454,7 @@ test('String representation with 1 space indent', async () => {
 
 test('String representation with default (2 space) indent', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 1);`, Chapter.SOURCE_4)
   expect(value).toMatchInlineSnapshot(`
     "[\\"lambda_expression\\",
@@ -465,7 +465,7 @@ test('String representation with default (2 space) indent', async () => {
 
 test('String representation with more than 10 space indent should trim to 10 space indent', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(stripIndent`stringify(parse('x=>x;'), 100);`, Chapter.SOURCE_4)
   expect(value).toMatchInlineSnapshot(`
             "[         \\"lambda_expression\\",
@@ -487,17 +487,17 @@ test('lineTreeToString', () => {
           prefixRest: '  ',
           block: [
             { type: 'line', line: { type: 'terminal', str: 'why', length: 3 } },
-            { type: 'line', line: { type: 'terminal', str: 'hello', length: 5 } }
+            { type: 'line', line: { type: 'terminal', str: 'hello', length: 5 } },
           ],
           suffixRest: ',',
-          suffixLast: ' ]'
+          suffixLast: ' ]',
         },
         { type: 'line', line: { type: 'terminal', str: 'there', length: 5 } },
-        { type: 'line', line: { type: 'terminal', str: 'sethbling here', length: 42 } }
+        { type: 'line', line: { type: 'terminal', str: 'sethbling here', length: 42 } },
       ],
       suffixRest: ',',
-      suffixLast: ' ]'
-    })
+      suffixLast: ' ]',
+    }),
   ).toMatchInlineSnapshot(`
             "[ [ why,
                 hello ],
@@ -513,12 +513,12 @@ test('stringDagToLineTree', () => {
         {
           type: 'multiline',
           lines: ['hello world', 'why hello there', "it's a", '  multiline', 'string!'],
-          length: 42
+          length: 42,
         },
         2,
-        80
-      )
-    )
+        80,
+      ),
+    ),
   ).toMatchInlineSnapshot(`
             "hello world
             why hello there
@@ -538,13 +538,13 @@ test('stringDagToLineTree part 2', () => {
           type: 'pair',
           head: { type: 'terminal', str: '69', length: 2 },
           tail: { type: 'terminal', str: 'null', length: 4 },
-          length: 42
+          length: 42,
         },
-        length: 42
+        length: 42,
       },
       2,
-      80
-    )
+      80,
+    ),
   ).toMatchInlineSnapshot(`
             Object {
               "line": Object {
@@ -586,14 +586,14 @@ test('stringDagToLineTree part 3', () => {
             type: 'pair',
             head: { type: 'terminal', str: '69', length: 2 },
             tail: { type: 'terminal', str: 'null', length: 4 },
-            length: 42
+            length: 42,
           },
-          length: 42
+          length: 42,
         },
         2,
-        80
-      )
-    )
+        80,
+      ),
+    ),
   ).toMatchInlineSnapshot(`"[42, [69, null]]"`)
 })
 
@@ -608,14 +608,14 @@ test('stringDagToLineTree part 4', () => {
             type: 'pair',
             head: { type: 'terminal', str: '69', length: 2 },
             tail: { type: 'terminal', str: 'null', length: 4 },
-            length: 42
+            length: 42,
           },
-          length: 99
+          length: 99,
         },
         2,
-        80
-      )
-    )
+        80,
+      ),
+    ),
   ).toMatchInlineSnapshot(`
             "[ 42,
             [69, null]]"
@@ -642,19 +642,19 @@ test('value to StringDag', () => {
                       7,
                       [
                         8,
-                        [9, [10, [11, [12, [13, [14, [15, [16, [17, [18, [19, [20, null]]]]]]]]]]]]
-                      ]
-                    ]
-                  ]
-                ]
-              ]
-            ]
-          ]
+                        [9, [10, [11, [12, [13, [14, [15, [16, [17, [18, [19, [20, null]]]]]]]]]]]],
+                      ],
+                    ],
+                  ],
+                ],
+              ],
+            ],
+          ],
         ]),
         2,
-        80
-      )
-    )
+        80,
+      ),
+    ),
   ).toMatchInlineSnapshot(`
             "[ 1,
             [ 2,

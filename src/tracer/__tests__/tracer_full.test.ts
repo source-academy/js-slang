@@ -909,7 +909,7 @@ describe(`#1109: Empty function bodies don't break execution`, () => {
     const steps = codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1]).toEqual(
-      '"Gets returned by normal run";\n[noMarker] Evaluation complete\n'
+      '"Gets returned by normal run";\n[noMarker] Evaluation complete\n',
     )
   })
 
@@ -923,7 +923,7 @@ describe(`#1109: Empty function bodies don't break execution`, () => {
     const steps = codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1]).toEqual(
-      '"Gets returned by normal run";\n[noMarker] Evaluation complete\n'
+      '"Gets returned by normal run";\n[noMarker] Evaluation complete\n',
     )
   })
 })
@@ -941,7 +941,7 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
     const steps = codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1]).toEqual(
-      '9.33262154439441e+157;\n[noMarker] Evaluation complete\n'
+      '9.33262154439441e+157;\n[noMarker] Evaluation complete\n',
     )
   })
 })
@@ -1593,7 +1593,7 @@ describe('Error handling on calling functions', () => {
     const steps = codify(acornParser(code))
     expect(steps.join('\n')).toMatchSnapshot()
     expect(steps[steps.length - 1]).toEqual(
-      '(a => { return a;})(1, 2, 3);\n[noMarker] Evaluation stuck\n'
+      '(a => { return a;})(1, 2, 3);\n[noMarker] Evaluation stuck\n',
     )
   })
 })

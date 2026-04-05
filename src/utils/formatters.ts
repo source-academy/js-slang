@@ -4,7 +4,7 @@ function templateToString(content: TemplateStringsArray | string, variables: any
   }
   return variables.reduce(
     (built: string, fragment: string, index: number) => built + fragment + content[index + 1],
-    content[0]
+    content[0],
   )
 }
 

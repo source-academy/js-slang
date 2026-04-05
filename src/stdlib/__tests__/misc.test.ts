@@ -5,7 +5,7 @@ import { expectFinishedResult, expectParsedError } from '../../utils/testing'
 
 test('parse_int with valid args is ok, radix 2', () => {
   return expectFinishedResult(`parse_int('1100101010101', 2);`, Chapter.SOURCE_1).toBe(
-    parseInt('1100101010101', 2)
+    parseInt('1100101010101', 2),
   )
 })
 
@@ -19,49 +19,49 @@ test('parse_int with valid args is ok, but invalid str for radix', () => {
 
 test('parse_int with non-string arg str throws error', () => {
   return expectParsedError(`parse_int(42, 2);`).toEqual(
-    'Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
+    'Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.',
   )
 })
 
 test('parse_int with non-integer arg radix throws error', () => {
   return expectParsedError(`parse_int(42, 2.1);`).toEqual(
-    'Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
+    'Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.',
   )
 })
 
 test('parse_int with radix outside [2, 36] throws error, radix=1', () => {
   return expectParsedError(`parse_int('10', 1);`).toEqual(
-    'Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
+    'Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.',
   )
 })
 
 test('parse_int with radix outside [2, 36] throws error, radix=37', () => {
   return expectParsedError(`parse_int('10', 37);`).toEqual(
-    'Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
+    'Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.',
   )
 })
 
 test('parse_int with string arg radix throws error', () => {
   return expectParsedError(`parse_int(42, '2'); `).toEqual(
-    'Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
+    'Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.',
   )
 })
 
 test('char_at with non string first argument errors', () => {
   return expectParsedError(`char_at(42, 123);`).toEqual(
-    'Line 1: Error: char_at expects the first argument to be a string.'
+    'Line 1: Error: char_at expects the first argument to be a string.',
   )
 })
 
 test('char_at with non nonnegative integer second argument errors', () => {
   return expectParsedError(`char_at('', -1);`).toEqual(
-    'Line 1: Error: char_at expects the second argument to be a nonnegative integer.'
+    'Line 1: Error: char_at expects the second argument to be a nonnegative integer.',
   )
 })
 
 test('char_at with string for second argument errors', () => {
   return expectParsedError(`char_at('', "");`).toEqual(
-    'Line 1: Error: char_at expects the second argument to be a nonnegative integer.'
+    'Line 1: Error: char_at expects the second argument to be a nonnegative integer.',
   )
 })
 
@@ -73,7 +73,7 @@ test('char_at with valid args (but index out of bounds) returns undefined', () =
   return expectFinishedResult(
     stripIndent`
     char_at("123", 3);
-  `
+  `,
   ).toBe(undefined)
 })
 
@@ -97,7 +97,7 @@ test('arity with user-made function is ok', () => {
     }
     arity(test);
   `,
-    Chapter.SOURCE_1
+    Chapter.SOURCE_1,
   ).toBe(2)
 })
 
@@ -117,12 +117,12 @@ test('arity with user-made function with rest parameter is ok', () => {
     }
     arity(test);
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toBe(0)
 })
 
 test('arity with non-function arg f throws error', () => {
   return expectParsedError(`arity('function');`, Chapter.SOURCE_1).toEqual(
-    'Line 1: Error: arity expects a function as argument'
+    'Line 1: Error: arity expects a function as argument',
   )
 })

@@ -53,7 +53,7 @@ export class EnvTreeNode {
 
   constructor(
     readonly environment: Environment,
-    public parent: EnvTreeNode | null
+    public parent: EnvTreeNode | null,
   ) {}
 
   get children(): EnvTreeNode[] {
@@ -94,7 +94,7 @@ const createEmptyRuntime = () => ({
   envSteps: -1,
   envStepsTotal: 0,
   breakpointSteps: [],
-  changepointSteps: []
+  changepointSteps: [],
 })
 
 const createEmptyDebugger = () => ({
@@ -103,8 +103,8 @@ const createEmptyDebugger = () => ({
   state: {
     it: (function* (): any {
       return
-    })()
-  }
+    })(),
+  },
 })
 
 export const createGlobalEnvironment = (): Environment => ({
@@ -112,7 +112,7 @@ export const createGlobalEnvironment = (): Environment => ({
   name: 'global',
   head: {},
   heap: new Heap(),
-  id: '-1'
+  id: '-1',
 })
 
 const createNativeStorage = (): NativeStorage => ({
@@ -122,7 +122,7 @@ const createNativeStorage = (): NativeStorage => ({
   maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
   evaller: null,
   loadedModules: {},
-  loadedModuleTypes: {}
+  loadedModuleTypes: {},
 })
 
 export const createEmptyContext = <T>(
@@ -130,7 +130,7 @@ export const createEmptyContext = <T>(
   variant: Variant = Variant.DEFAULT,
   languageOptions: LanguageOptions = {},
   externalSymbols: string[],
-  externalContext?: T
+  externalContext?: T,
 ): Context<T> => {
   return {
     chapter,
@@ -149,7 +149,7 @@ export const createEmptyContext = <T>(
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
     previousPrograms: [],
-    shouldIncreaseEvaluationTimeout: false
+    shouldIncreaseEvaluationTimeout: false,
   }
 }
 
@@ -175,7 +175,7 @@ export const defineSymbol = (context: Context, name: string, value: Value) => {
   Object.defineProperty(globalEnvironment.head, name, {
     value,
     writable: false,
-    enumerable: true
+    enumerable: true,
   })
   context.nativeStorage.builtins.set(name, value)
   const typeEnv = context.typeEnvironment[0]
@@ -191,13 +191,13 @@ export function defineBuiltin(
   context: Context,
   name: string, // enforce minArgsNeeded
   value: Value,
-  minArgsNeeded: number
+  minArgsNeeded: number,
 ): void
 export function defineBuiltin(
   context: Context,
   name: string,
   value: Value,
-  minArgsNeeded?: number
+  minArgsNeeded?: number,
 ): void
 // Defines a builtin in the given context
 // If the builtin is a function, wrap it such that its toString hides the implementation
@@ -205,7 +205,7 @@ export function defineBuiltin(
   context: Context,
   name: string,
   value: Value,
-  minArgsNeeded: undefined | number = undefined
+  minArgsNeeded: undefined | number = undefined,
 ) {
   function extractName(name: string): string {
     return name.split('(')[0].trim()
@@ -346,15 +346,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 4) {
     defineBuiltin(context, 'parse(program_string)', (str: string) =>
-      parser.parse(str, createContext(context.chapter))
+      parser.parse(str, createContext(context.chapter)),
     )
     defineBuiltin(context, 'tokenize(program_string)', (str: string) =>
-      parser.tokenize(str, createContext(context.chapter))
+      parser.tokenize(str, createContext(context.chapter)),
     )
     defineBuiltin(
       context,
       'apply_in_underlying_javascript(fun, args)',
-      (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
+      (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args)),
     )
 
     // Continuations for explicit-control variant
@@ -366,7 +366,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
           ? call_with_current_continuation
           : (f: any) => {
               throw new Error('call_cc is only available in Explicit-Control variant')
-            }
+            },
       )
     }
   }
@@ -377,7 +377,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
     defineBuiltin(context, 'alert(val)', alert)
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
-      misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
+      misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay),
     )
   }
 
@@ -483,7 +483,7 @@ const defaultBuiltIns: CustomBuiltIns = {
   alert: misc.rawDisplay,
   visualiseList: (_v: Value) => {
     throw new Error('List visualizer is not enabled')
-  }
+  },
 }
 
 const createContext = <T>(
@@ -492,7 +492,7 @@ const createContext = <T>(
   languageOptions: LanguageOptions = {},
   externalSymbols: string[] = [],
   externalContext?: T,
-  externalBuiltIns: CustomBuiltIns = defaultBuiltIns
+  externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
 ): Context => {
   if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS) {
     // fullJS will include all builtins and preludes of source 4
@@ -503,9 +503,9 @@ const createContext = <T>(
         languageOptions,
         externalSymbols,
         externalContext,
-        externalBuiltIns
+        externalBuiltIns,
       ),
-      chapter
+      chapter,
     } as Context
   }
   const context = createEmptyContext(
@@ -513,7 +513,7 @@ const createContext = <T>(
     variant,
     languageOptions,
     externalSymbols,
-    externalContext
+    externalContext,
   )
 
   importBuiltins(context, externalBuiltIns)

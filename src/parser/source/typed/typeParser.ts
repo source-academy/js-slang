@@ -33,25 +33,25 @@ const tsPredefinedType = {
   symbol: 'TSSymbolKeyword',
   undefined: 'TSUndefinedKeyword',
   unknown: 'TSUnknownKeyword',
-  void: 'TSVoidKeyword'
+  void: 'TSVoidKeyword',
 }
 
 const tsDeclaration = {
   interface: 1,
   type: 2,
   enum: 4,
-  declare: 8
+  declare: 8,
 }
 
 const tsTypeOperator = {
   typeof: 1,
   keyof: 2,
-  infer: 4
+  infer: 4,
 }
 
 const tsExprMarkup = {
   as: 1,
-  '!': 2
+  '!': 2,
 }
 
 const tsPlugin = (BaseParser: any) => {
@@ -99,7 +99,7 @@ const tsPlugin = (BaseParser: any) => {
         lastTokEndLoc,
         lastTokEnd,
         lastTokStart,
-        context
+        context,
       } = this
       return () => {
         this.pos = pos
@@ -158,7 +158,7 @@ const tsPlugin = (BaseParser: any) => {
         typeAnnotation: { end: any; loc: { end: any } }
         end: any
         loc: { end: any }
-      }
+      },
     ) {
       if (!left) {
         left = this.parseBindingAtom()
@@ -181,7 +181,7 @@ const tsPlugin = (BaseParser: any) => {
     parseMaybeAssign(
       noIn: boolean,
       refDestructuringErrors: any,
-      afterLeftParse: (item: any) => any
+      afterLeftParse: (item: any) => any,
     ) {
       let node = super.parseMaybeAssign(noIn, refDestructuringErrors, afterLeftParse)
       node = this._parseMaybeTSExpression(node)

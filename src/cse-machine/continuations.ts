@@ -89,13 +89,13 @@ export function makeDummyContCallExpression(callee: string, argument: string): e
     optional: false,
     callee: {
       type: 'Identifier',
-      name: callee
+      name: callee,
     },
     arguments: [
       {
         type: 'Identifier',
-        name: argument
-      }
-    ]
+        name: argument,
+      },
+    ],
   }
 }

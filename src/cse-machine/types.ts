@@ -23,7 +23,7 @@ export enum InstrType {
   CONTINUE_MARKER = 'ContinueMarker',
   BREAK = 'Break',
   BREAK_MARKER = 'BreakMarker',
-  SPREAD = 'Spread'
+  SPREAD = 'Spread',
 }
 
 interface BaseInstr<T extends InstrType = InstrType, U extends Node = Node> {

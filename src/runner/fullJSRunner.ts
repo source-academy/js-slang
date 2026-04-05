@@ -9,7 +9,7 @@ import {
   evallerReplacer,
   getBuiltins,
   getGloballyDeclaredIdentifiers,
-  transpile
+  transpile,
 } from '../transpiler/transpiler'
 import type { Context, NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
@@ -57,13 +57,13 @@ const fullJSRunner: Runner = async (program, context) => {
   // evaluate and create a separate block for preludes and builtins
   const preEvalProgram: es.Program = create.program([
     ...preludeAndBuiltins,
-    evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
+    evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
   ])
   getFunctionDeclarationNamesInProgram(preEvalProgram).forEach(id =>
-    context.nativeStorage.previousProgramsIdentifiers.add(id)
+    context.nativeStorage.previousProgramsIdentifiers.add(id),
   )
   getGloballyDeclaredIdentifiers(preEvalProgram).forEach(id =>
-    context.nativeStorage.previousProgramsIdentifiers.add(id)
+    context.nativeStorage.previousProgramsIdentifiers.add(id),
   )
   const preEvalCode: string = generate(preEvalProgram)
   fullJSEval(preEvalCode, context.nativeStorage)
@@ -75,11 +75,11 @@ const fullJSRunner: Runner = async (program, context) => {
     return {
       status: 'finished',
       context,
-      value: fullJSEval(transpiled, context.nativeStorage)
+      value: fullJSEval(transpiled, context.nativeStorage),
     }
   } catch (error) {
     context.errors.push(
-      error instanceof RuntimeSourceError ? error : await toSourceError(error, sourceMapJson)
+      error instanceof RuntimeSourceError ? error : await toSourceError(error, sourceMapJson),
     )
     return { status: 'error', context }
   }

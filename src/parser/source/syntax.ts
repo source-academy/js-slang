@@ -87,7 +87,7 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   MetaProperty: Infinity,
   SequenceExpression: Infinity,
   AssignmentPattern: Infinity,
-  TaggedTemplateExpression: Infinity
+  TaggedTemplateExpression: Infinity,
 }
 
 export default syntaxBlacklist

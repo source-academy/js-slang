@@ -31,7 +31,7 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
   const { chapter, variant, testBuiltins, languageOptions }: Exclude<TestOptions, Chapter> =
     typeof rawOptions === 'number'
       ? {
-          chapter: rawOptions
+          chapter: rawOptions,
         }
       : rawOptions
 
@@ -39,7 +39,7 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
     displayResult: [],
     promptResult: [],
     alertResult: [],
-    visualiseListResult: []
+    visualiseListResult: [],
   }
 
   const customBuiltIns: CustomBuiltIns = {
@@ -56,7 +56,7 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
     },
     visualiseList(value) {
       otherTestResults.visualiseListResult.push(value)
-    }
+    },
   }
 
   const evalContext = createContext(
@@ -65,15 +65,15 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
     languageOptions,
     [],
     undefined,
-    customBuiltIns
+    customBuiltIns,
   )
   Object.entries(testBuiltins ?? {}).forEach(([key, value]) =>
-    defineBuiltin(evalContext, key, value)
+    defineBuiltin(evalContext, key, value),
   )
 
   return {
     ...evalContext,
-    ...otherTestResults
+    ...otherTestResults,
   }
 }
 
@@ -83,7 +83,7 @@ async function testInContext(code: string, rawOptions: TestOptions) {
   const result = await runInContext(code, context)
   return {
     context,
-    result
+    result,
   }
 }
 
@@ -100,7 +100,7 @@ export async function testSuccess(code: string, options: TestOptions = {}) {
   assertIsFinished(result)
   return {
     context,
-    result
+    result,
   }
 }
 
@@ -120,7 +120,7 @@ export async function testFailure(code: string, options: TestOptions = {}) {
  */
 export function expectFinishedResult(
   code: string,
-  options: TestOptions = {}
+  options: TestOptions = {},
 ): RemoveMatcher<Promisify<Assertion<Promise<any>>>> {
   return removeMatcher(
     expect(
@@ -131,8 +131,8 @@ export function expectFinishedResult(
         }
         assertIsFinished(result)
         return result.value
-      })
-    ).resolves
+      }),
+    ).resolves,
   )
 }
 
@@ -143,15 +143,15 @@ export function expectFinishedResult(
 export function expectParsedError(
   code: string,
   options: TestOptions = {},
-  verbose?: boolean
+  verbose?: boolean,
 ): RemoveMatcher<Promisify<Assertion<Promise<string>>>> {
   return removeMatcher(
     expect(
       testInContext(code, options).then(({ result, context }) => {
         expect(result.status).toEqual('error')
         return parseError(context.errors, verbose)
-      })
-    ).resolves
+      }),
+    ).resolves,
   )
 }
 
@@ -160,7 +160,7 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   const context = mockContext(Chapter.SOURCE_4)
   await runInContext(code, context, {
     executionMethod: 'native',
-    throwInfiniteLoops: false
+    throwInfiniteLoops: false,
   })
   const timeTaken = Date.now() - start
   expect(timeTaken).toBeLessThan(timeout * 5)
@@ -196,10 +196,10 @@ export async function snapshotFailure(code: string, options: TestOptions = {}, n
 
 export function expectDisplayResult(
   code: string,
-  options: TestOptions = {}
+  options: TestOptions = {},
 ): RemoveMatcher<Promisify<Assertion<Promise<string[]>>>> {
   return removeMatcher(
     expect(testSuccess(code, options).then(({ context: { displayResult } }) => displayResult))
-      .resolves
+      .resolves,
   )
 }

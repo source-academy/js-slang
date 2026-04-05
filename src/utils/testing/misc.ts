@@ -12,7 +12,7 @@ import type { TestBuiltins, TestOptions } from './types'
 export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions, Chapter> {
   return typeof rawOptions === 'number'
     ? {
-        chapter: rawOptions
+        chapter: rawOptions,
       }
     : rawOptions
 }
@@ -53,14 +53,14 @@ export type TestFunctions = typeof test | (typeof test)['only'] | (typeof test)[
  */
 export function wrapWithSkipAndOnly<T extends (this: DescribeFunctions, ...args: any[]) => any>(
   type: 'describe',
-  f: T
+  f: T,
 ): FuncWithSkipAndOnly<T>
 export function wrapWithSkipAndOnly<T extends (this: TestFunctions, ...args: any[]) => any>(
   type: 'test',
-  f: T
+  f: T,
 ): FuncWithSkipAndOnly<T>
 export function wrapWithSkipAndOnly<
-  T extends (this: TestFunctions | DescribeFunctions, ...args: any[]) => any
+  T extends (this: TestFunctions | DescribeFunctions, ...args: any[]) => any,
 >(type: 'test' | 'describe', f: T) {
   function func(...args: Parameters<T>): ReturnType<T> {
     return f.call(type === 'test' ? test : describe, ...args)
@@ -89,7 +89,7 @@ export function assertTruthy(cond: boolean): asserts cond {
  * test function
  */
 export const testMultipleCases = wrapWithSkipAndOnly('test', function <
-  T extends Array<any>
+  T extends Array<any>,
 >(this: TestFunctions, cases: [string, ...T][], tester: (args: T, i: number) => void | Promise<void>, includeIndex?: boolean, timeout?: number) {
   const withIndex = cases.map(([desc, ...c], i) => {
     const newDesc = includeIndex ? `${i + 1}. ${desc}` : desc
@@ -114,7 +114,7 @@ export function testWithChapters(arg0: ChapterTestingFunction | Chapter, ...chap
   const tester = (chapters: Chapter[], func: ChapterTestingFunction) =>
     test.for(chapters.map(chapter => [getChapterName(chapter), chapter] as [string, Chapter]))(
       'Testing %s',
-      ([, chapter], context) => func(chapter, context)
+      ([, chapter], context) => func(chapter, context),
     )
 
   if (typeof arg0 === 'function') {
@@ -124,9 +124,9 @@ export function testWithChapters(arg0: ChapterTestingFunction | Chapter, ...chap
         Chapter.SOURCE_2,
         Chapter.SOURCE_3,
         Chapter.SOURCE_4,
-        Chapter.LIBRARY_PARSER
+        Chapter.LIBRARY_PARSER,
       ],
-      arg0
+      arg0,
     )
   }
 
@@ -153,7 +153,7 @@ export function assertFinishedResultValue(result: Result, value: Value) {
  */
 export function assertNodeType<T extends Node['type']>(
   typeStr: T,
-  node: Node
+  node: Node,
 ): asserts node is NodeTypeToNode<T> {
   expect(node.type).toEqual(typeStr)
 }

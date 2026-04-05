@@ -29,8 +29,8 @@ const bracesAroundFor: Rule<ForStatement> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default bracesAroundFor

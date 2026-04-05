@@ -19,7 +19,7 @@ function isArrayLike(v: Value) {
 export const stringify = (
   value: Value,
   indent: number | string = 2,
-  splitlineThreshold = 80
+  splitlineThreshold = 80,
 ): string => {
   if (typeof indent === 'string') {
     throw 'stringify with arbitrary indent string not supported'
@@ -330,7 +330,7 @@ export function valueToStringDag(value: Value): StringDag {
       type: 'pair',
       head: headDag,
       tail: tailDag,
-      length: headDag.length + tailDag.length + 4
+      length: headDag.length + tailDag.length + 4,
     }
     if (!isCircular) {
       memo.set(value, result)
@@ -342,7 +342,7 @@ export function valueToStringDag(value: Value): StringDag {
     value: Value,
     elems: Value[],
     prefix: string,
-    suffix: string
+    suffix: string,
   ): [StringDag, boolean] {
     const memoResult = memo.get(value)
     if (memoResult !== undefined) {
@@ -366,7 +366,7 @@ export function valueToStringDag(value: Value): StringDag {
       elems: converted.map(c => c[0]),
       prefix,
       suffix,
-      length
+      length,
     }
     if (!isCircular) {
       memo.set(value, result)
@@ -393,7 +393,7 @@ export function valueToStringDag(value: Value): StringDag {
         type: 'kvpair',
         key: entries[i][0],
         value: converted[i][0],
-        length: converted[i][0].length + entries[i][0].length
+        length: converted[i][0].length + entries[i][0].length,
       })
     }
     ancestors.delete(value)
@@ -402,7 +402,7 @@ export function valueToStringDag(value: Value): StringDag {
       elems: kvpairs,
       prefix: '{',
       suffix: '}',
-      length
+      length,
     }
     if (!isCircular) {
       memo.set(value, result)
@@ -473,7 +473,7 @@ type LineTree = BlockLineTree | LineLineTree
 export function stringDagToLineTree(
   dag: StringDag,
   indent: number,
-  splitlineThreshold: number
+  splitlineThreshold: number,
 ): LineTree {
   // precompute some useful strings
   const indentSpacesMinusOne = ' '.repeat(Math.max(0, indent - 1))
@@ -494,10 +494,10 @@ export function stringDagToLineTree(
         prefixRest: '',
         block: dag.lines.map(s => ({
           type: 'line',
-          line: { type: 'terminal', str: s, length: s.length }
+          line: { type: 'terminal', str: s, length: s.length },
         })),
         suffixRest: '',
-        suffixLast: ''
+        suffixLast: '',
       }
     } else if (dag.type === 'pair') {
       const headTree = format(dag.head)
@@ -514,12 +514,12 @@ export function stringDagToLineTree(
           prefixRest: '',
           block: [headTree, tailTree],
           suffixRest: ',',
-          suffixLast: ']'
+          suffixLast: ']',
         }
       } else {
         result = {
           type: 'line',
-          line: dag
+          line: dag,
         }
       }
     } else if (dag.type === 'arraylike') {
@@ -534,12 +534,12 @@ export function stringDagToLineTree(
           prefixRest: ' '.repeat(Math.max(dag.prefix.length, indent)),
           block: elemTrees,
           suffixRest: ',',
-          suffixLast: dag.suffix
+          suffixLast: dag.suffix,
         }
       } else {
         result = {
           type: 'line',
-          line: dag
+          line: dag,
         }
       }
     } else if (dag.type === 'kvpair') {
@@ -551,15 +551,15 @@ export function stringDagToLineTree(
           prefixRest: '',
           block: [
             { type: 'line', line: { type: 'terminal', str: JSON.stringify(dag.key), length: 0 } },
-            valueTree
+            valueTree,
           ],
           suffixRest: ':',
-          suffixLast: ''
+          suffixLast: '',
         }
       } else {
         result = {
           type: 'line',
-          line: dag
+          line: dag,
         }
       }
     } else {

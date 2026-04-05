@@ -18,19 +18,19 @@ import {
   InstrType,
   type RegularAssmtInstr,
   type UnOpInstr,
-  type WhileInstr
+  type WhileInstr,
 } from './types'
 
 export const resetInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.RESET,
-  srcNode
+  srcNode,
 })
 
 export const whileInstr = (test: es.Expression, body: es.Statement, srcNode: Node): WhileInstr => ({
   instrType: InstrType.WHILE,
   test,
   body,
-  srcNode
+  srcNode,
 })
 
 export const forInstr = (
@@ -38,21 +38,21 @@ export const forInstr = (
   test: es.Expression,
   update: es.Expression,
   body: es.Statement,
-  srcNode: es.ForStatement
+  srcNode: es.ForStatement,
 ): ForInstr => ({
   instrType: InstrType.FOR,
   init,
   test,
   update,
   body,
-  srcNode
+  srcNode,
 })
 
 export function assmtInstr(symbol: string, srcNode: es.VariableDeclaration): DeclAssmtInstr
 export function assmtInstr(symbol: string, srcNode: es.AssignmentExpression): RegularAssmtInstr
 export function assmtInstr(
   symbol: string,
-  srcNode: es.VariableDeclaration | es.AssignmentExpression
+  srcNode: es.VariableDeclaration | es.AssignmentExpression,
 ): AssmtInstr {
   if (srcNode.type === 'VariableDeclaration') {
     return {
@@ -60,7 +60,7 @@ export function assmtInstr(
       symbol,
       constant: srcNode.kind === 'const',
       declaration: true,
-      srcNode
+      srcNode,
     }
   }
 
@@ -68,20 +68,20 @@ export function assmtInstr(
     instrType: InstrType.ASSIGNMENT,
     symbol,
     declaration: false,
-    srcNode
+    srcNode,
   }
 }
 
 export const unOpInstr = (symbol: es.UnaryOperator, srcNode: es.UnaryExpression): UnOpInstr => ({
   instrType: InstrType.UNARY_OP,
   symbol,
-  srcNode
+  srcNode,
 })
 
 export const binOpInstr = (symbol: es.BinaryOperator, srcNode: Node): BinOpInstr => ({
   instrType: InstrType.BINARY_OP,
   symbol,
-  srcNode
+  srcNode,
 })
 
 export const popInstr = (srcNode: Node): Instr => ({ instrType: InstrType.POP, srcNode })
@@ -89,68 +89,68 @@ export const popInstr = (srcNode: Node): Instr => ({ instrType: InstrType.POP, s
 export const appInstr = (numOfArgs: number, srcNode: es.CallExpression): AppInstr => ({
   instrType: InstrType.APPLICATION,
   numOfArgs,
-  srcNode
+  srcNode,
 })
 
 export const branchInstr = (
   consequent: es.Expression | es.Statement,
   alternate: es.Expression | es.Statement | null | undefined,
-  srcNode: Node
+  srcNode: Node,
 ): BranchInstr => ({
   instrType: InstrType.BRANCH,
   consequent,
   alternate,
-  srcNode
+  srcNode,
 })
 
 export const envInstr = (env: Environment, srcNode: Node): EnvInstr => ({
   instrType: InstrType.ENVIRONMENT,
   env,
-  srcNode
+  srcNode,
 })
 
 export const arrLitInstr = (arity: number, srcNode: Node): ArrLitInstr => ({
   instrType: InstrType.ARRAY_LITERAL,
   arity,
-  srcNode
+  srcNode,
 })
 
 export const arrAccInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.ARRAY_ACCESS,
-  srcNode
+  srcNode,
 })
 
 export const arrAssmtInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.ARRAY_ASSIGNMENT,
-  srcNode
+  srcNode,
 })
 
 export const markerInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.MARKER,
-  srcNode
+  srcNode,
 })
 
 export const contInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.CONTINUE,
-  srcNode
+  srcNode,
 })
 
 export const contMarkerInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.CONTINUE_MARKER,
-  srcNode
+  srcNode,
 })
 
 export const breakInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.BREAK,
-  srcNode
+  srcNode,
 })
 
 export const breakMarkerInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.BREAK_MARKER,
-  srcNode
+  srcNode,
 })
 
 export const spreadInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.SPREAD,
-  srcNode
+  srcNode,
 })

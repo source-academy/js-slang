@@ -47,7 +47,7 @@ export const SourceDocumentation = {
     '3_typed': resolveImportInconsistency(source_3_typed),
     '4': resolveImportInconsistency(source_4),
     '4_typed': resolveImportInconsistency(source_4_typed),
-    '4_explicit-control': resolveImportInconsistency(source_4_explicit_control)
+    '4_explicit-control': resolveImportInconsistency(source_4_explicit_control),
   },
-  ext_lib
+  ext_lib,
 }

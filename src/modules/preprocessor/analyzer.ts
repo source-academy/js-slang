@@ -6,7 +6,7 @@ import assert from '../../utils/assert'
 import {
   getIdsFromDeclaration,
   getImportedName,
-  getModuleDeclarationSource
+  getModuleDeclarationSource,
 } from '../../utils/ast/helpers'
 import { isModuleDeclaration, isNamespaceSpecifier } from '../../utils/ast/typeGuards'
 import Dict, { ArrayMap } from '../../utils/dict'
@@ -14,13 +14,13 @@ import {
   DuplicateImportNameError,
   UndefinedDefaultImportError,
   UndefinedImportError,
-  UndefinedNamespaceImportError
+  UndefinedNamespaceImportError,
 } from '../errors'
 import { isSourceModule } from '../utils'
 
 export const defaultAnalysisOptions: ImportAnalysisOptions = {
   allowUndefinedImports: false,
-  throwOnDuplicateNames: true
+  throwOnDuplicateNames: true,
 }
 
 /**
@@ -50,7 +50,7 @@ export default function analyzeImportsAndExports(
   entrypointFilePath: string,
   topoOrder: string[],
   { nativeStorage: { loadedModules } }: Context,
-  options: Partial<ImportAnalysisOptions> = {}
+  options: Partial<ImportAnalysisOptions> = {},
 ) {
   const declaredNames = new Dict<
     string,
@@ -58,7 +58,7 @@ export default function analyzeImportsAndExports(
   >()
 
   const moduleDocs: Record<string, Set<string>> = Object.fromEntries(
-    Object.entries(loadedModules).map(([name, obj]) => [name, new Set(Object.keys(obj))])
+    Object.entries(loadedModules).map(([name, obj]) => [name, new Set(Object.keys(obj))]),
   )
 
   for (const sourceModule of [...topoOrder, entrypointFilePath]) {
@@ -70,7 +70,7 @@ export default function analyzeImportsAndExports(
         if (!options.allowUndefinedImports) {
           assert(
             !moduleDocs[sourceModule].has('default'),
-            "Multiple default exports should've been caught by the parser"
+            "Multiple default exports should've been caught by the parser",
           )
           moduleDocs[sourceModule].add('default')
         }

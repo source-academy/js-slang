@@ -8,7 +8,7 @@ import { locationDummyNode } from '../utils/ast/astCreator'
 enum BrowserType {
   Chrome = 'Chrome',
   FireFox = 'FireFox',
-  Unsupported = 'Unsupported'
+  Unsupported = 'Unsupported',
 }
 
 interface EvalErrorLocator {
@@ -18,12 +18,12 @@ interface EvalErrorLocator {
 
 const ChromeEvalErrorLocator = {
   regex: /eval at.+<anonymous>:(\d+):(\d+)/gm,
-  browser: BrowserType.Chrome
+  browser: BrowserType.Chrome,
 }
 
 const FireFoxEvalErrorLocator = {
   regex: /eval:(\d+):(\d+)/gm,
-  browser: BrowserType.FireFox
+  browser: BrowserType.FireFox,
 }
 
 const EVAL_LOCATORS: EvalErrorLocator[] = [ChromeEvalErrorLocator, FireFoxEvalErrorLocator]
@@ -37,7 +37,7 @@ const ASSIGNMENT_TO_CONST_ERROR_MESSAGES: string[] = [
   'invalid assignment to const',
   'Assignment to constant variable',
   'Assignment to const',
-  'Redeclaration of const'
+  'Redeclaration of const',
 ]
 
 function getBrowserType(): BrowserType {
@@ -52,7 +52,7 @@ function getBrowserType(): BrowserType {
 function extractErrorLocation(
   errorStack: string,
   lineOffset: number,
-  errorLocator: EvalErrorLocator
+  errorLocator: EvalErrorLocator,
 ): { line: number; column: number } | undefined {
   const evalErrors = Array.from(errorStack.matchAll(errorLocator.regex))
   if (evalErrors.length) {
@@ -66,11 +66,11 @@ function extractErrorLocation(
 
 function getErrorLocation(
   error: Error,
-  lineOffset: number = 0
+  lineOffset: number = 0,
 ): { line: number; column: number } | undefined {
   const browser: BrowserType = getBrowserType()
   const errorLocator: EvalErrorLocator | undefined = EVAL_LOCATORS.find(
-    locator => locator.browser === browser
+    locator => locator.browser === browser,
   )
   const errorStack: string | undefined = error.stack
 
@@ -79,7 +79,7 @@ function getErrorLocation(
   } else if (errorStack) {
     // if browser is unsupported try all supported locators until the first success
     return EVAL_LOCATORS.map(locator => extractErrorLocation(errorStack, lineOffset, locator)).find(
-      x => x !== undefined
+      x => x !== undefined,
     )
   }
 
@@ -108,7 +108,7 @@ export async function toSourceError(error: Error, sourceMap?: RawSourceMap): Pro
     const originalPosition: NullableMappedPosition = await SourceMapConsumer.with(
       sourceMap,
       null,
-      consumer => consumer.originalPositionFor({ line, column })
+      consumer => consumer.originalPositionFor({ line, column }),
     )
     line = originalPosition.line ?? -1 // use -1 in place of null
     column = originalPosition.column ?? -1
@@ -130,7 +130,7 @@ export async function toSourceError(error: Error, sourceMap?: RawSourceMap): Pro
         ? UNKNOWN_LOCATION
         : {
             start: { line, column },
-            end: { line: -1, column: -1 }
+            end: { line: -1, column: -1 },
           }
     return new ExceptionError(error, location)
   }

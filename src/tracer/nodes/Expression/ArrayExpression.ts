@@ -17,7 +17,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
     this.type = 'ArrayExpression'
     this.elements = elements
@@ -33,7 +33,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -65,7 +65,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
           this.leadingComments,
           this.trailingComments,
           this.loc,
-          this.range
+          this.range,
         )
       }
     }
@@ -79,7 +79,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -105,7 +105,7 @@ export class StepperArrayExpression implements ArrayExpression, StepperBaseNode 
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

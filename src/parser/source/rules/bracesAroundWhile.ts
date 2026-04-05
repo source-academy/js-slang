@@ -26,8 +26,8 @@ const bracesAroundWhile: Rule<WhileStatement> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default bracesAroundWhile

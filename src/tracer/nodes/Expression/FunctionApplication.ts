@@ -25,7 +25,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
     this.type = 'CallExpression'
     this.callee = callee
@@ -45,7 +45,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -62,8 +62,8 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
       ) {
         throw new Error(
           `Line ${this.loc?.start.line || 0}: Calling non-function value ${astring.generate(
-            this.callee
-          )}`
+            this.callee,
+          )}`,
         )
       }
       return false
@@ -75,7 +75,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
         throw new Error(
           `Line ${this.loc?.start.line || 0}: Expected ${
             arrowFunction.params.length
-          } arguments, but got ${this.arguments.length}.`
+          } arguments, but got ${this.arguments.length}.`,
         )
       }
     }
@@ -127,7 +127,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
     if (lambda.name && !this.callee.scanAllDeclarationNames().includes(lambda.name)) {
       result = result.substitute(
         { type: 'Identifier', name: lambda.name } as StepperPattern,
-        lambda
+        lambda,
       )
     }
 
@@ -153,7 +153,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
     }
 
@@ -168,7 +168,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
           this.leadingComments,
           this.trailingComments,
           this.loc,
-          this.range
+          this.range,
         )
       }
     }
@@ -184,19 +184,19 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
   freeNames(): string[] {
     return Array.from(
-      new Set([...this.callee.freeNames(), ...this.arguments.flatMap(arg => arg.freeNames())])
+      new Set([...this.callee.freeNames(), ...this.arguments.flatMap(arg => arg.freeNames())]),
     )
   }
 
   allNames(): string[] {
     return Array.from(
-      new Set([...this.callee.allNames(), ...this.arguments.flatMap(arg => arg.allNames())])
+      new Set([...this.callee.allNames(), ...this.arguments.flatMap(arg => arg.allNames())]),
     )
   }
 
@@ -208,7 +208,7 @@ export class StepperFunctionApplication implements SimpleCallExpression, Stepper
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

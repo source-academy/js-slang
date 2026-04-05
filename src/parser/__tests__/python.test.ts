@@ -38,7 +38,7 @@ describe('Python parser', () => {
 
       parserPython1.parse(code, context)
       expect(context.errors.slice(-1)[0]).toMatchObject(
-        expect.objectContaining({ message: expect.stringContaining('UnknownTokenError') })
+        expect.objectContaining({ message: expect.stringContaining('UnknownTokenError') }),
       )
     })
     it('allows usage of imports/modules', () => {
@@ -52,7 +52,7 @@ describe('Python parser', () => {
       const code = `?`
 
       expect(() => parserPython1.parse(code, context, undefined, true)).toThrowError(
-        FatalSyntaxError
+        FatalSyntaxError,
       )
     })
 
@@ -61,7 +61,7 @@ describe('Python parser', () => {
       const code = `1 is not 2`
 
       expect(() => parserPython1.parse(code, context, undefined, true)).toThrowError(
-        FatalSyntaxError
+        FatalSyntaxError,
       )
     })
   })

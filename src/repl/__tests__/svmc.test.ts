@@ -42,7 +42,7 @@ it("won't run if the program has parsing errors", async () => {
   await expectError('1 + 1', '/test.js')
   expect(vm.compileToIns).toHaveBeenCalledTimes(0)
   expectWritten(process.stderr.write).toMatchInlineSnapshot(
-    `"Line 1: Missing semicolon at the end of statement"`
+    `"Line 1: Missing semicolon at the end of statement"`,
   )
 })
 

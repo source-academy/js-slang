@@ -22,7 +22,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
     this.type = 'LogicalExpression'
     this.operator = operator
@@ -42,7 +42,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -54,7 +54,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
         throw new Error(
           `Line ${
             this.loc?.start.line || 0
-          }: Expected boolean on left hand side of operation, got ${leftType}.`
+          }: Expected boolean on left hand side of operation, got ${leftType}.`,
         )
       }
 
@@ -83,7 +83,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
       redex.postRedex = [ret]
       return ret
@@ -94,7 +94,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
       redex.postRedex = [ret]
       return ret
@@ -114,7 +114,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
     } else if (this.right.isOneStepPossible()) {
       return new StepperLogicalExpression(
@@ -124,7 +124,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
     } else {
       throw new Error('No step possible')
@@ -139,7 +139,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -159,7 +159,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

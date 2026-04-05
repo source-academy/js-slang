@@ -46,7 +46,7 @@ export class StepperProgram implements Program, StepperBaseNode {
         return new StepperProgram([afterSubstitutedScope].flat())
       }
       return new StepperProgram(
-        [firstStatementOneStep as StepperStatement, afterSubstitutedScope].flat()
+        [firstStatementOneStep as StepperStatement, afterSubstitutedScope].flat(),
       )
     }
 
@@ -61,8 +61,8 @@ export class StepperProgram implements Program, StepperBaseNode {
             .reduce(
               (statement, declarator) =>
                 statement.substitute(declarator.id, declarator.init!) as StepperStatement,
-              current
-            )
+              current,
+            ),
         )
       const substitutedProgram = new StepperProgram(afterSubstitutedScope)
       redex.preRedex = [this.body[0]]
@@ -77,7 +77,7 @@ export class StepperProgram implements Program, StepperBaseNode {
       const afterSubstitutedScope = this.body
         .slice(1)
         .map(
-          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
+          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement,
         )
       const substitutedProgram = new StepperProgram(afterSubstitutedScope)
       redex.preRedex = [this.body[0]]
@@ -97,8 +97,8 @@ export class StepperProgram implements Program, StepperBaseNode {
         [
           firstValueStatement,
           secondStatementOneStep as StepperStatement,
-          afterSubstitutedScope
-        ].flat()
+          afterSubstitutedScope,
+        ].flat(),
       )
     }
 
@@ -113,11 +113,11 @@ export class StepperProgram implements Program, StepperBaseNode {
             .reduce(
               (statement, declarator) =>
                 statement.substitute(declarator.id, declarator.init!) as StepperStatement,
-              current
-            )
+              current,
+            ),
         )
       const substitutedProgram = new StepperProgram(
-        [firstValueStatement, afterSubstitutedScope].flat()
+        [firstValueStatement, afterSubstitutedScope].flat(),
       )
       redex.preRedex = [this.body[1]]
       redex.postRedex = declarations.map(x => x.id)
@@ -131,10 +131,10 @@ export class StepperProgram implements Program, StepperBaseNode {
       const afterSubstitutedScope = this.body
         .slice(2)
         .map(
-          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement
+          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement,
         )
       const substitutedProgram = new StepperProgram(
-        [firstValueStatement, afterSubstitutedScope].flat()
+        [firstValueStatement, afterSubstitutedScope].flat(),
       )
       redex.preRedex = [this.body[1]]
       redex.postRedex = afterSubstitutedScope
@@ -152,7 +152,7 @@ export class StepperProgram implements Program, StepperBaseNode {
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -162,7 +162,7 @@ export class StepperProgram implements Program, StepperBaseNode {
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
     this.type = 'Program'
     this.sourceType = 'module'
@@ -176,7 +176,7 @@ export class StepperProgram implements Program, StepperBaseNode {
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperProgram(
-      this.body.map(statement => statement.substitute(id, value) as StepperStatement)
+      this.body.map(statement => statement.substitute(id, value) as StepperStatement),
     )
   }
 
@@ -205,7 +205,7 @@ export class StepperProgram implements Program, StepperBaseNode {
 
   rename(before: string, after: string): StepperProgram {
     return new StepperProgram(
-      this.body.map(statement => statement.rename(before, after) as StepperStatement)
+      this.body.map(statement => statement.rename(before, after) as StepperStatement),
     )
   }
 }

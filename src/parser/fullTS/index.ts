@@ -19,7 +19,7 @@ export class FullTSParser implements Parser<AcornOptions> {
     programStr: string,
     context: Context,
     options?: Partial<AcornOptions>,
-    throwOnError?: boolean
+    throwOnError?: boolean,
   ): Program | null {
     let code = ''
     // Add builtins to code
@@ -86,7 +86,7 @@ export class FullTSParser implements Parser<AcornOptions> {
     const ast = babelParse(programStr, {
       ...defaultBabelOptions,
       sourceFilename: options?.sourceFile,
-      errorRecovery: throwOnError ?? true
+      errorRecovery: throwOnError ?? true,
     })
 
     if (ast.errors?.length) {
@@ -96,8 +96,8 @@ export class FullTSParser implements Parser<AcornOptions> {
           context.errors.push(
             new FatalSyntaxError(
               positionToSourceLocation((error as any).loc, options?.sourceFile),
-              error.toString()
-            )
+              error.toString(),
+            ),
           )
         })
 

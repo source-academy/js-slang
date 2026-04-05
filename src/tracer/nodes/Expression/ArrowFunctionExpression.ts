@@ -28,7 +28,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
     this.type = 'ArrowFunctionExpression'
     this.params = params
@@ -54,7 +54,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -85,7 +85,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -108,7 +108,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
   substitute(
     id: StepperPattern,
     value: StepperExpression,
-    upperBoundName?: string[]
+    upperBoundName?: string[],
   ): StepperExpression {
     const valueFreeNames = value.freeNames()
     const scopeNames = this.scanAllDeclarationNames()
@@ -121,7 +121,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     const currentArrowFunction = newNames.reduce(
       (current: StepperArrowFunctionExpression, name: string, index: number) =>
         current.rename(repeatedNames[index], name) as StepperArrowFunctionExpression,
-      this
+      this,
     )
     if (currentArrowFunction.scanAllDeclarationNames().includes(id.name)) {
       return currentArrowFunction
@@ -132,7 +132,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
       currentArrowFunction.body.substitute(
         id,
         value,
-        currentArrowFunction.params.flatMap(p => p.allNames())
+        currentArrowFunction.params.flatMap(p => p.allNames()),
       ),
       currentArrowFunction.name,
       currentArrowFunction.expression,
@@ -141,7 +141,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
       currentArrowFunction.leadingComments,
       currentArrowFunction.trailingComments,
       currentArrowFunction.loc,
-      currentArrowFunction.range
+      currentArrowFunction.range,
     )
   }
 
@@ -170,7 +170,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

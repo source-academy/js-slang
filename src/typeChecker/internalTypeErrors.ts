@@ -10,7 +10,7 @@ export class TypeError implements SourceError {
 
   constructor(
     public node: NodeWithInferredType<Node>,
-    public message: string
+    public message: string,
   ) {
     node.typability = 'Untypable'
   }
@@ -42,7 +42,7 @@ export class InternalTypeError extends Error {
 export class UnifyError extends InternalTypeError {
   constructor(
     public LHS: Type,
-    public RHS: Type
+    public RHS: Type,
   ) {
     super(`Failed to unify LHS: ${typeToString(LHS)}, RHS: ${typeToString(RHS)}`)
   }
@@ -51,7 +51,7 @@ export class UnifyError extends InternalTypeError {
 export class InternalDifferentNumberArgumentsError extends InternalTypeError {
   constructor(
     public numExpectedArgs: number,
-    public numReceived: number
+    public numReceived: number,
   ) {
     super(`Expected ${numExpectedArgs} args, got ${numReceived}`)
   }
@@ -69,7 +69,7 @@ export class TypecheckError implements SourceError {
 
   constructor(
     public node: tsEs.Node | tsEs.TSType,
-    public message: string
+    public message: string,
   ) {}
 
   get location() {

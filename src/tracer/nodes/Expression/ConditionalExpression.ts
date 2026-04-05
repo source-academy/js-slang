@@ -21,7 +21,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
     this.type = 'ConditionalExpression'
     this.test = test
@@ -41,7 +41,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -52,7 +52,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       throw new Error(
         `Line ${
           this.loc?.start.line || 0
-        }: Expected boolean as condition, got ${typeof test_value}.`
+        }: Expected boolean as condition, got ${typeof test_value}.`,
       )
     }
     redex.preRedex = [this]
@@ -86,7 +86,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -98,7 +98,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -107,8 +107,8 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       new Set([
         ...this.test.freeNames(),
         ...this.consequent.freeNames(),
-        ...this.alternate.freeNames()
-      ])
+        ...this.alternate.freeNames(),
+      ]),
     )
   }
 
@@ -117,8 +117,8 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       new Set([
         ...this.test.allNames(),
         ...this.consequent.allNames(),
-        ...this.alternate.allNames()
-      ])
+        ...this.alternate.allNames(),
+      ]),
     )
   }
 
@@ -130,7 +130,7 @@ export class StepperConditionalExpression implements ConditionalExpression, Step
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

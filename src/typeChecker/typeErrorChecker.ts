@@ -18,7 +18,7 @@ import {
   TypeNotFoundError,
   TypeNotGenericError,
   TypeParameterNameNotAllowedError,
-  UndefinedVariableTypeError
+  UndefinedVariableTypeError,
 } from '../errors/typeErrors'
 import { Chapter } from '../langs'
 import {
@@ -33,7 +33,7 @@ import {
   type TSDisallowedTypes,
   type Type,
   type TypeEnvironment,
-  type Variable
+  type Variable,
 } from '../types'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
@@ -66,7 +66,7 @@ import {
   tUnion,
   tVar,
   tVoid,
-  typeAnnotationKeywordToBasicTypeMap
+  typeAnnotationKeywordToBasicTypeMap,
 } from './utils'
 // import { ModuleNotFoundError } from '../modules/errors'
 
@@ -92,7 +92,7 @@ export function checkForTypeErrors(program: tsEs.Program, inputContext: Context)
     // Add parse tree types to type environment
     const source4Types = babelParse(parseTreeTypesPrelude, {
       sourceType: 'module',
-      plugins: ['typescript', 'estree']
+      plugins: ['typescript', 'estree'],
     }).program as unknown as tsEs.Program
     typeCheckAndReturnType(source4Types)
   }
@@ -108,8 +108,8 @@ export function checkForTypeErrors(program: tsEs.Program, inputContext: Context)
         : new TypecheckError(
             program,
             'Uncaught error during typechecking, report this to the administrators!\n' +
-              error.message
-          )
+              error.message,
+          ),
     )
   }
   // Reset global variables
@@ -257,7 +257,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       // Only identifiers/rest elements are used as function params in Source
       const params = node.params.filter(
         (param): param is tsEs.Identifier | tsEs.RestElement =>
-          param.type === 'Identifier' || param.type === 'RestElement'
+          param.type === 'Identifier' || param.type === 'RestElement',
       )
       if (params.length !== node.params.length) {
         throw new TypecheckError(node, 'Unknown function parameter type')
@@ -310,7 +310,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       if (node.declarations.length !== 1) {
         throw new TypecheckError(
           node,
-          'Variable declaration should have one and only one declaration'
+          'Variable declaration should have one and only one declaration',
         )
       }
       if (node.declarations[0].id.type !== 'Identifier') {
@@ -410,7 +410,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
           'enum_list',
           'list_ref',
           'accumulate',
-          'reverse'
+          'reverse',
         ]
         const streamFunctions = [
           'stream_tail',
@@ -430,7 +430,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
           'enum_stream',
           'integers_from',
           'eval_stream',
-          'stream_ref'
+          'stream_ref',
         ]
         if (
           pairFunctions.includes(fnName) ||
@@ -451,7 +451,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
           // Check argument types before returning declared return type
           if (args.length !== expectedTypes.length) {
             context.errors.push(
-              new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
+              new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length),
             )
             return returnType
           }
@@ -497,7 +497,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       // Check argument types before returning declared return type
       if (args.length !== expectedTypes.length) {
         context.errors.push(
-          new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
+          new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length),
         )
         return returnType
       }
@@ -523,7 +523,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       // Casting is safe here as Source disallows use of spread elements and holes in arrays
       const elements = node.elements.filter(
         (elem): elem is Exclude<tsEs.ArrayExpression['elements'][0], tsEs.SpreadElement | null> =>
-          elem !== null && elem.type !== 'SpreadElement'
+          elem !== null && elem.type !== 'SpreadElement',
       )
       if (elements.length !== node.elements.length) {
         throw new TypecheckError(node, 'Disallowed array element type')
@@ -604,8 +604,8 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
           new TypecastError(
             node,
             formatTypeString(originalType, formatAsLiteral),
-            formatTypeString(typeToCastTo, formatAsLiteral)
-          )
+            formatTypeString(typeToCastTo, formatAsLiteral),
+          ),
         )
       }
       return typeToCastTo
@@ -624,7 +624,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
  */
 function handleImportDeclarations(node: tsEs.Program) {
   const importStmts: tsEs.ImportDeclaration[] = node.body.filter(
-    (stmt): stmt is tsEs.ImportDeclaration => stmt.type === 'ImportDeclaration'
+    (stmt): stmt is tsEs.ImportDeclaration => stmt.type === 'ImportDeclaration',
   )
   if (importStmts.length === 0) {
     return
@@ -682,7 +682,7 @@ function handleImportDeclarations(node: tsEs.Program) {
   Object.values(importedModuleTypesTextMap).forEach(typesText => {
     const parsedModuleTypes = babelParse(typesText, {
       sourceType: 'module',
-      plugins: ['typescript', 'estree']
+      plugins: ['typescript', 'estree'],
     }).program as unknown as tsEs.Program
     typeCheckAndReturnType(parsedModuleTypes)
   })
@@ -699,13 +699,13 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
       case 'FunctionDeclaration':
         if (bodyNode.id === null) {
           throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.',
           )
         }
         // Only identifiers/rest elements are used as function params in Source
         const params = bodyNode.params.filter(
           (param): param is tsEs.Identifier | tsEs.RestElement =>
-            param.type === 'Identifier' || param.type === 'RestElement'
+            param.type === 'Identifier' || param.type === 'RestElement',
         )
         if (params.length !== bodyNode.params.length) {
           throw new TypecheckError(bodyNode, 'Unknown function parameter type')
@@ -736,7 +736,7 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         if (bodyNode.declarations.length !== 1) {
           throw new TypecheckError(
             bodyNode,
-            'Variable declaration should have one and only one declaration'
+            'Variable declaration should have one and only one declaration',
           )
         }
         if (bodyNode.declarations[0].id.type !== 'Identifier') {
@@ -754,7 +754,7 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         const classType: Variable = {
           kind: 'variable',
           name: className,
-          constraint: 'none'
+          constraint: 'none',
         }
         setType(className, classType, env)
         setTypeAlias(className, classType, env)
@@ -763,7 +763,7 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         if (node.type === 'BlockStatement') {
           throw new TypecheckError(
             bodyNode,
-            'Type alias declarations may only appear at the top level'
+            'Type alias declarations may only appear at the top level',
           )
         }
         const alias = bodyNode.id.name
@@ -883,7 +883,7 @@ function typeCheckAndReturnArrowFunctionType(node: tsEs.ArrowFunctionExpression)
   // Only identifiers/rest elements are used as function params in Source
   const params = node.params.filter(
     (param): param is tsEs.Identifier | tsEs.RestElement =>
-      param.type === 'Identifier' || param.type === 'RestElement'
+      param.type === 'Identifier' || param.type === 'RestElement',
   )
   if (params.length !== node.params.length) {
     throw new TypecheckError(node, 'Unknown function parameter type')
@@ -931,7 +931,7 @@ function typeCheckAndReturnArrowFunctionType(node: tsEs.ArrowFunctionExpression)
 function getTypeVariableMappings(
   node: tsEs.Node,
   actualType: Type,
-  expectedType: Type
+  expectedType: Type,
 ): [string, Type][] {
   // If type variable mapping is found, terminate early
   if (expectedType.kind === 'variable') {
@@ -947,17 +947,17 @@ function getTypeVariableMappings(
       if (actualType.kind === 'list') {
         if (actualType.typeAsPair !== undefined) {
           mappings.push(
-            ...getTypeVariableMappings(node, actualType.typeAsPair.headType, expectedType.headType)
+            ...getTypeVariableMappings(node, actualType.typeAsPair.headType, expectedType.headType),
           )
           mappings.push(
-            ...getTypeVariableMappings(node, actualType.typeAsPair.tailType, expectedType.tailType)
+            ...getTypeVariableMappings(node, actualType.typeAsPair.tailType, expectedType.tailType),
           )
         } else {
           mappings.push(
-            ...getTypeVariableMappings(node, actualType.elementType, expectedType.headType)
+            ...getTypeVariableMappings(node, actualType.elementType, expectedType.headType),
           )
           mappings.push(
-            ...getTypeVariableMappings(node, actualType.elementType, expectedType.tailType)
+            ...getTypeVariableMappings(node, actualType.elementType, expectedType.tailType),
           )
         }
       }
@@ -969,7 +969,7 @@ function getTypeVariableMappings(
     case 'list':
       if (actualType.kind === 'list') {
         mappings.push(
-          ...getTypeVariableMappings(node, actualType.elementType, expectedType.elementType)
+          ...getTypeVariableMappings(node, actualType.elementType, expectedType.elementType),
         )
       }
       break
@@ -983,12 +983,12 @@ function getTypeVariableMappings(
             ...getTypeVariableMappings(
               node,
               actualType.parameterTypes[i],
-              expectedType.parameterTypes[i]
-            )
+              expectedType.parameterTypes[i],
+            ),
           )
         }
         mappings.push(
-          ...getTypeVariableMappings(node, actualType.returnType, expectedType.returnType)
+          ...getTypeVariableMappings(node, actualType.returnType, expectedType.returnType),
         )
       }
       break
@@ -1010,8 +1010,8 @@ function checkForTypeMismatch(node: tsEs.Node, actualType: Type, expectedType: T
       new TypeMismatchError(
         node,
         formatTypeString(actualType, formatAsLiteral),
-        formatTypeString(expectedType, formatAsLiteral)
-      )
+        formatTypeString(expectedType, formatAsLiteral),
+      ),
     )
   }
 }
@@ -1060,7 +1060,7 @@ function hasTypeMismatchErrors(
   expectedType: Type,
   visitedTypeAliasesForActualType: Variable[] = [],
   visitedTypeAliasesForExpectedType: Variable[] = [],
-  skipTypeAliasExpansion: boolean = false
+  skipTypeAliasExpansion: boolean = false,
 ): boolean {
   if (isEqual(actualType, tAny) || isEqual(expectedType, tAny)) {
     // Exit early as "any" is guaranteed not to cause type mismatch errors
@@ -1076,7 +1076,7 @@ function hasTypeMismatchErrors(
       actualType,
       visitedTypeAliasesForExpectedType,
       visitedTypeAliasesForActualType,
-      skipTypeAliasExpansion
+      skipTypeAliasExpansion,
     )
   }
   if (expectedType.kind !== 'union' && actualType.kind === 'union') {
@@ -1088,7 +1088,7 @@ function hasTypeMismatchErrors(
       actualType.types,
       expectedType,
       visitedTypeAliasesForActualType,
-      visitedTypeAliasesForExpectedType
+      visitedTypeAliasesForExpectedType,
     )
   }
   switch (expectedType.kind) {
@@ -1110,7 +1110,7 @@ function hasTypeMismatchErrors(
                 expectedType.typeArgs[i],
                 visitedTypeAliasesForActualType,
                 visitedTypeAliasesForExpectedType,
-                skipTypeAliasExpansion
+                skipTypeAliasExpansion,
               )
             ) {
               return true
@@ -1138,7 +1138,7 @@ function hasTypeMismatchErrors(
         aliasType,
         visitedTypeAliasesForActualType,
         visitedTypeAliasesForExpectedType,
-        skipTypeAliasExpansion
+        skipTypeAliasExpansion,
       )
     case 'primitive':
       if (actualType.kind === 'literal') {
@@ -1171,7 +1171,7 @@ function hasTypeMismatchErrors(
             actualParamTypes[i],
             visitedTypeAliasesForExpectedType,
             visitedTypeAliasesForActualType,
-            skipTypeAliasExpansion
+            skipTypeAliasExpansion,
           )
         ) {
           return true
@@ -1184,7 +1184,7 @@ function hasTypeMismatchErrors(
         expectedType.returnType,
         visitedTypeAliasesForActualType,
         visitedTypeAliasesForExpectedType,
-        skipTypeAliasExpansion
+        skipTypeAliasExpansion,
       )
     case 'union':
       // If actual type is not union type, check if actual type matches one of the expected types
@@ -1217,7 +1217,7 @@ function hasTypeMismatchErrors(
             expectedType,
             visitedTypeAliasesForActualType,
             visitedTypeAliasesForExpectedType,
-            skipTypeAliasExpansion
+            skipTypeAliasExpansion,
           )
         }
         // Head of pair should match list element type; tail of pair should match list type
@@ -1228,7 +1228,7 @@ function hasTypeMismatchErrors(
             expectedType.headType,
             visitedTypeAliasesForActualType,
             visitedTypeAliasesForExpectedType,
-            skipTypeAliasExpansion
+            skipTypeAliasExpansion,
           ) ||
           hasTypeMismatchErrors(
             node,
@@ -1236,7 +1236,7 @@ function hasTypeMismatchErrors(
             expectedType.tailType,
             visitedTypeAliasesForActualType,
             visitedTypeAliasesForExpectedType,
-            skipTypeAliasExpansion
+            skipTypeAliasExpansion,
           )
         )
       }
@@ -1250,7 +1250,7 @@ function hasTypeMismatchErrors(
           expectedType.headType,
           visitedTypeAliasesForActualType,
           visitedTypeAliasesForExpectedType,
-          skipTypeAliasExpansion
+          skipTypeAliasExpansion,
         ) ||
         hasTypeMismatchErrors(
           node,
@@ -1258,7 +1258,7 @@ function hasTypeMismatchErrors(
           expectedType.tailType,
           visitedTypeAliasesForActualType,
           visitedTypeAliasesForExpectedType,
-          skipTypeAliasExpansion
+          skipTypeAliasExpansion,
         )
       )
     case 'list':
@@ -1276,7 +1276,7 @@ function hasTypeMismatchErrors(
             expectedType.typeAsPair,
             visitedTypeAliasesForActualType,
             visitedTypeAliasesForExpectedType,
-            skipTypeAliasExpansion
+            skipTypeAliasExpansion,
           )
         }
         // Head of pair should match list element type; tail of pair should match list type
@@ -1287,7 +1287,7 @@ function hasTypeMismatchErrors(
             expectedType.elementType,
             visitedTypeAliasesForActualType,
             visitedTypeAliasesForExpectedType,
-            skipTypeAliasExpansion
+            skipTypeAliasExpansion,
           ) ||
           hasTypeMismatchErrors(
             node,
@@ -1295,7 +1295,7 @@ function hasTypeMismatchErrors(
             expectedType,
             visitedTypeAliasesForActualType,
             visitedTypeAliasesForExpectedType,
-            skipTypeAliasExpansion
+            skipTypeAliasExpansion,
           )
         )
       }
@@ -1308,7 +1308,7 @@ function hasTypeMismatchErrors(
         expectedType.elementType,
         visitedTypeAliasesForActualType,
         visitedTypeAliasesForExpectedType,
-        skipTypeAliasExpansion
+        skipTypeAliasExpansion,
       )
     case 'array':
       if (actualType.kind === 'union') {
@@ -1324,7 +1324,7 @@ function hasTypeMismatchErrors(
           expectedType.elementType,
           visitedTypeAliasesForActualType,
           visitedTypeAliasesForExpectedType,
-          skipTypeAliasExpansion
+          skipTypeAliasExpansion,
         )
       }
       if (actualType.kind !== 'array') {
@@ -1336,7 +1336,7 @@ function hasTypeMismatchErrors(
         expectedType.elementType,
         visitedTypeAliasesForActualType,
         visitedTypeAliasesForExpectedType,
-        skipTypeAliasExpansion
+        skipTypeAliasExpansion,
       )
     default:
       return true
@@ -1352,7 +1352,7 @@ function getTypeAnnotationType(
     | tsEs.TSTypeAnnotation
     | tsEs.TSTypeAliasDeclaration
     | tsEs.TSAsExpression
-    | undefined
+    | undefined,
 ): Type {
   if (!annotationNode) {
     return tAny
@@ -1448,7 +1448,7 @@ function getTailType(node: tsEs.Node, type: Type): Type {
         type.elementType,
         type.typeAsPair && type.typeAsPair.tailType.kind === 'pair'
           ? type.typeAsPair.tailType
-          : undefined
+          : undefined,
       )
     case 'union':
       return tUnion(...type.types.map(type => getTailType(node, type)))
@@ -1537,8 +1537,8 @@ function lookupTypeAliasAndRemoveForAllTypes(node: tsEs.Node, varType: Variable)
       new InvalidNumberOfTypeArgumentsForGenericTypeError(
         node,
         varType.name,
-        aliasType.typeParams.length
-      )
+        aliasType.typeParams.length,
+      ),
     )
     return tAny
   }
@@ -1574,7 +1574,7 @@ function substituteVariableTypes(type: Type, typeVar: Variable, typeToSub: Type)
       return type
     case 'function':
       const types = type.parameterTypes.map(param =>
-        substituteVariableTypes(param, typeVar, typeToSub)
+        substituteVariableTypes(param, typeVar, typeToSub),
       )
       types.push(substituteVariableTypes(type.returnType, typeVar, typeToSub))
       return tFunc(...types)
@@ -1583,12 +1583,12 @@ function substituteVariableTypes(type: Type, typeVar: Variable, typeToSub: Type)
     case 'pair':
       return tPair(
         substituteVariableTypes(type.headType, typeVar, typeToSub),
-        substituteVariableTypes(type.tailType, typeVar, typeToSub)
+        substituteVariableTypes(type.tailType, typeVar, typeToSub),
       )
     case 'list':
       return tList(
         substituteVariableTypes(type.elementType, typeVar, typeToSub),
-        type.typeAsPair && (substituteVariableTypes(type.typeAsPair, typeVar, typeToSub) as Pair)
+        type.typeAsPair && (substituteVariableTypes(type.typeAsPair, typeVar, typeToSub) as Pair),
       )
     case 'array':
       return tArray(substituteVariableTypes(type.elementType, typeVar, typeToSub))
@@ -1635,7 +1635,7 @@ function containsType(
   typeToCheck: Type,
   visitedTypeAliasesForTypes: Variable[] = [],
   visitedTypeAliasesForTypeToCheck: Variable[] = [],
-  skipTypeAliasExpansion: boolean = false
+  skipTypeAliasExpansion: boolean = false,
 ) {
   for (const type of arr) {
     if (
@@ -1645,7 +1645,7 @@ function containsType(
         type,
         visitedTypeAliasesForTypeToCheck,
         visitedTypeAliasesForTypes,
-        skipTypeAliasExpansion
+        skipTypeAliasExpansion,
       )
     ) {
       return true

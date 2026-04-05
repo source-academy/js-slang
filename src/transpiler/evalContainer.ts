@@ -17,5 +17,5 @@ export const sandboxedEval: Evaler = new Function(
   } else {
     return ${NATIVE_STORAGE_ID}.evaller(code);
   }
-`
+`,
 ) as Evaler

@@ -17,7 +17,7 @@ const propertiesToDelete: {
 } = {
   CallExpression: ['optional'],
   FunctionDeclaration: ['expression', 'generator'],
-  Literal: ['raw']
+  Literal: ['raw'],
 }
 
 const sanitizers = Object.entries(propertiesToDelete).reduce(
@@ -27,9 +27,9 @@ const sanitizers = Object.entries(propertiesToDelete).reduce(
       for (const prop of props) {
         delete node[prop as keyof typeof node]
       }
-    }
+    },
   }),
-  {}
+  {},
 )
 
 /**
@@ -56,19 +56,19 @@ export function sanitizeAST(node: es.Node) {
       if (Array.isArray(value)) {
         return {
           ...res,
-          [key]: value.map(convertNode)
+          [key]: value.map(convertNode),
         }
       }
       if (typeof value === 'object' && value !== null) {
         return {
           ...res,
-          [key]: convertNode(value)
+          [key]: convertNode(value),
         }
       }
 
       return {
         ...res,
-        [key]: value
+        [key]: value,
       }
     }, {} as es.Node)
   }

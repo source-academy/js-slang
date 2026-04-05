@@ -10,17 +10,17 @@ const HTML_ERROR_HANDLING_SCRIPT_TEMPLATE = `<script>
 const errorScriptLines = HTML_ERROR_HANDLING_SCRIPT_TEMPLATE.split('\n').length - 1
 export const htmlErrorHandlingScript = HTML_ERROR_HANDLING_SCRIPT_TEMPLATE.replace(
   '%d',
-  errorScriptLines.toString()
+  errorScriptLines.toString(),
 )
 
 export async function htmlRunner(
   code: string,
   context: Context,
-  _options: RecursivePartial<IOptions> = {}
+  _options: RecursivePartial<IOptions> = {},
 ): Promise<Result> {
   return Promise.resolve({
     status: 'finished',
     context,
-    value: htmlErrorHandlingScript + code
+    value: htmlErrorHandlingScript + code,
   })
 }

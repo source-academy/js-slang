@@ -17,7 +17,7 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
     this.type = 'ExpressionStatement'
     this.expression = expression
@@ -33,7 +33,7 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -49,7 +49,7 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -65,7 +65,7 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -75,7 +75,7 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -93,7 +93,7 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

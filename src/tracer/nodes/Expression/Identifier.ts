@@ -17,7 +17,7 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
     this.type = 'Identifier'
     this.name = name
@@ -33,7 +33,7 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -82,7 +82,7 @@ export class StepperIdentifier implements Identifier, StepperBaseNode {
           this.leadingComments,
           this.trailingComments,
           this.loc,
-          this.range
+          this.range,
         )
       : this
   }

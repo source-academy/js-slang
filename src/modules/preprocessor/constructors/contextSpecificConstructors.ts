@@ -11,7 +11,7 @@ import * as create from '../../../utils/ast/astCreator'
  */
 export const createPairCallExpression = (
   head: es.Expression | es.SpreadElement,
-  tail: es.Expression | es.SpreadElement
+  tail: es.Expression | es.SpreadElement,
 ): es.CallExpression => create.callExpression(create.identifier('pair'), [head, tail])
 
 /**
@@ -20,7 +20,7 @@ export const createPairCallExpression = (
  * @param listElements The elements of the list.
  */
 export const createListCallExpression = (
-  listElements: Array<es.Expression | es.SpreadElement>
+  listElements: Array<es.Expression | es.SpreadElement>,
 ): es.CallExpression => create.callExpression(create.identifier('list'), listElements)
 
 /**
@@ -34,11 +34,11 @@ export const createListCallExpression = (
 export const createImportedNameDeclaration = (
   functionName: string,
   importedName: es.Identifier,
-  lookupName: string
+  lookupName: string,
 ): es.VariableDeclaration => {
   const callExpression = create.callExpression(create.identifier(accessExportFunctionName), [
     create.identifier(functionName),
-    create.literal(lookupName)
+    create.literal(lookupName),
   ])
 
   return create.constantDeclaration(importedName.name, callExpression)
@@ -55,7 +55,7 @@ export const createImportedNameDeclaration = (
 export const createInvokedFunctionResultVariableDeclaration = (
   functionName: string,
   variableName: string,
-  functionArgs: es.Identifier[]
+  functionArgs: es.Identifier[],
 ): es.VariableDeclaration => {
   const callExpression = create.callExpression(create.identifier(functionName), functionArgs)
   return create.constantDeclaration(variableName, callExpression)
@@ -71,24 +71,24 @@ export const createInvokedFunctionResultVariableDeclaration = (
  * @param importSpecifier The import specifier to be cloned.
  */
 export const cloneAndStripImportSpecifier = (
-  importSpecifier: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
+  importSpecifier: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier,
 ): es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier => {
   switch (importSpecifier.type) {
     case 'ImportSpecifier':
       return {
         type: 'ImportSpecifier',
         local: create.identifier(importSpecifier.local.name),
-        imported: create.identifier(importSpecifier.imported.name)
+        imported: create.identifier(importSpecifier.imported.name),
       }
     case 'ImportDefaultSpecifier':
       return {
         type: 'ImportDefaultSpecifier',
-        local: create.identifier(importSpecifier.local.name)
+        local: create.identifier(importSpecifier.local.name),
       }
     case 'ImportNamespaceSpecifier':
       return {
         type: 'ImportNamespaceSpecifier',
-        local: create.identifier(importSpecifier.local.name)
+        local: create.identifier(importSpecifier.local.name),
       }
   }
 }

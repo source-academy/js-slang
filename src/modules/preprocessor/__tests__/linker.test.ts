@@ -23,11 +23,11 @@ async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: key
     entrypointFilePath as string,
     context,
     {},
-    true
+    true,
   )
   return [context, result] as [
     Context,
-    Awaited<ReturnType<typeof parseProgramsAndConstructImportGraph>>
+    Awaited<ReturnType<typeof parseProgramsAndConstructImportGraph>>,
   ]
 }
 
@@ -58,9 +58,9 @@ test('Adds CircularImportError and returns undefined when imports are circular',
   const [error] = await expectError(
     {
       '/a.js': `import { b } from "./b.js";`,
-      '/b.js': `import { a } from "./a.js";`
+      '/b.js': `import { a } from "./a.js";`,
     },
-    '/a.js'
+    '/a.js',
   )
 
   expect(error).toBeInstanceOf(CircularImportError)
@@ -76,9 +76,9 @@ test.todo('Longer cycle causes also causes CircularImportError', async () => {
       '/b.js': 'import { a } from "./a.js";',
       '/c.js': 'import { b } from "./b.js";',
       '/d.js': 'import { c } from "./c.js";',
-      '/e.js': 'import { d } from "./d.js";'
+      '/e.js': 'import { d } from "./d.js";',
     },
-    '/e.js'
+    '/e.js',
   )
 
   expect(error).toBeInstanceOf(CircularImportError)
@@ -95,9 +95,9 @@ test('Self Circular Imports cause a short circuiting of the linker', async () =>
       '/d.js': `
         import { a } from "./a.js";
         import { c } from "./c.js";
-      `
+      `,
     },
-    '/d.js'
+    '/d.js',
   )
 
   expect(error).toBeInstanceOf(CircularImportError)
@@ -110,9 +110,9 @@ test('Linker does tree-shaking', async () => {
   const [{ errors }, result] = await testCode(
     {
       '/a.js': 'export const a = 5;',
-      '/b.js': 'import { a } from "./a.js";'
+      '/b.js': 'import { a } from "./a.js";',
     },
-    '/a.js'
+    '/a.js',
   )
 
   expect(errors.length).toEqual(0)
@@ -129,9 +129,9 @@ test('Linker updates the source paths of Import Declaration nodes', async () => 
       '/b.js': `import { x } from "./dir0/a.js";
         export { x };
       `,
-      '/dir1/c.js': 'import { x } from "../b.js";'
+      '/dir1/c.js': 'import { x } from "../b.js";',
     },
-    '/dir1/c.js'
+    '/dir1/c.js',
   )
 
   assertTruthy(result.ok)
@@ -148,9 +148,9 @@ describe('Test determining verbose errors', () => {
   test('Verbose errors is normally false', async () => {
     const [, result] = await testCode(
       {
-        '/a.js': 'const a = 0;'
+        '/a.js': 'const a = 0;',
       },
-      '/a.js'
+      '/a.js',
     )
 
     assertTruthy(result.ok)
@@ -160,9 +160,9 @@ describe('Test determining verbose errors', () => {
   test('Verbose errors enables normally', async () => {
     const [, result] = await testCode(
       {
-        '/a.js': "'enable verbose';"
+        '/a.js': "'enable verbose';",
       },
-      '/a.js'
+      '/a.js',
     )
 
     assertTruthy(result.ok)
@@ -176,9 +176,9 @@ describe('Test determining verbose errors', () => {
         'enable verbose';
         export const a = "a";
       `,
-        '/b.js': "import { a } from './a.js';"
+        '/b.js': "import { a } from './a.js';",
       },
-      '/b.js'
+      '/b.js',
     )
 
     assertTruthy(result.ok)
@@ -191,9 +191,9 @@ describe('Test determining verbose errors', () => {
         '/a.js': `
       export const a = "a";
       'enable verbose';
-      `
+      `,
       },
-      '/a.js'
+      '/a.js',
     )
 
     assertTruthy(result.ok)
@@ -206,9 +206,9 @@ describe('Test determining verbose errors', () => {
         '/a.js': `
       export const a = "a";
       'enable verbose';
-      `
+      `,
       },
-      '/d.js' as any
+      '/d.js' as any,
     )
 
     assertTruthy(!result.ok)
@@ -222,9 +222,9 @@ describe('Test determining verbose errors', () => {
       'enable verbose';
       import { b } from "./b.js";
       `,
-        '/b.js': `export const b = "b"`
+        '/b.js': `export const b = "b"`,
       },
-      '/a.js'
+      '/a.js',
     )
 
     assertTruthy(!result.ok)
@@ -239,9 +239,9 @@ describe('Test determining verbose errors', () => {
         '/a.js': `
       'enable verbose';
       const x = 0
-      `
+      `,
       },
-      '/a.js'
+      '/a.js',
     )
 
     assertTruthy(!result.ok)
@@ -260,9 +260,9 @@ describe('Test determining verbose errors', () => {
         '/b.js': `
         import { c } from "./c.js";
         export { c as b };
-      `
+      `,
       },
-      '/a.js'
+      '/a.js',
     )
 
     assertTruthy(!result.ok)

@@ -12,7 +12,7 @@ export class NoVarError extends RuleError<VariableDeclaration> {
   public elaborate() {
     const {
       id: { name },
-      init
+      init,
     } = getSourceVariableDeclaration(this.node)
     const value = generate(init)
 
@@ -30,8 +30,8 @@ const noVar: Rule<VariableDeclaration> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noVar

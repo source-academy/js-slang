@@ -12,7 +12,7 @@ export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
       type: 'VariableDeclaration',
       kind: node.kind,
       loc: declaration.loc,
-      declarations: [declaration]
+      declarations: [declaration],
     }))
   }
 
@@ -36,8 +36,8 @@ const singleVariableDeclaration: Rule<VariableDeclaration> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default singleVariableDeclaration

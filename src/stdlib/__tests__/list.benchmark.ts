@@ -108,9 +108,9 @@ test('display_list is linear runtime', { timeout: 1_000_000 }, () => {
     {
       chapter: Chapter.SOURCE_3,
       testBuiltins: {
-        no_display_list: noDisplayList
-      }
-    }
+        no_display_list: noDisplayList,
+      },
+    },
   ).toBeLessThan(1.2)
   // estimated power is less than 1.2
   // means it's probably near 1

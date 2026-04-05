@@ -32,7 +32,7 @@ export class SourceParser implements Parser<AcornOptions> {
 
   static tokenize(programStr: string, context: Context): Token[] {
     return [
-      ...tokenizer(programStr, createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors))
+      ...tokenizer(programStr, createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors)),
     ]
   }
 
@@ -40,18 +40,18 @@ export class SourceParser implements Parser<AcornOptions> {
     programStr: string,
     context: Context,
     options?: Partial<AcornOptions>,
-    throwOnError?: boolean
+    throwOnError?: boolean,
   ): es.Program | null {
     try {
       return acornParse(
         programStr,
-        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options)
+        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options),
       ) as unknown as es.Program
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(
           positionToSourceLocation((error as any).loc, options?.sourceFile),
-          error.toString()
+          error.toString(),
         )
       }
 
@@ -87,7 +87,7 @@ export class SourceParser implements Parser<AcornOptions> {
         if (validationWalkers.has(syntaxNodeName)) {
           validationWalkers.set(
             syntaxNodeName,
-            combineAncestorWalkers(validationWalkers.get(syntaxNodeName)!, langWalker)
+            combineAncestorWalkers(validationWalkers.get(syntaxNodeName)!, langWalker),
           )
         } else {
           validationWalkers.set(syntaxNodeName, langWalker)
@@ -106,7 +106,7 @@ export class SourceParser implements Parser<AcornOptions> {
     return Object.entries(syntaxBlacklist).reduce(
       (acc, [nodeName, chapterAllowed]) =>
         this.chapter < chapterAllowed ? [...acc, nodeName] : acc,
-      []
+      [],
     )
   }
 
@@ -116,7 +116,7 @@ export class SourceParser implements Parser<AcornOptions> {
         !(
           (rule.disableFromChapter && this.chapter >= rule.disableFromChapter) ||
           (rule.disableForVariants && rule.disableForVariants.includes(this.variant))
-        )
+        ),
     )
   }
 }

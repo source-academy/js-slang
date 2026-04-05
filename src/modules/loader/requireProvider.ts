@@ -32,18 +32,18 @@ export const getRequireProvider = (context: Context) => (x: string) => {
         types,
         utils: {
           assert,
-          stringify
+          stringify,
         },
         parser: {
-          parser
+          parser,
         },
         'cse-machine': {
-          interpreter
-        }
+          interpreter,
+        },
       },
-      context
+      context,
     },
-    lodash: _
+    lodash: _,
   }
 
   return recurser(exports, pathSegments)

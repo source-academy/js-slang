@@ -14,8 +14,8 @@ const noTypeofOperator: Rule<UnaryExpression> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noTypeofOperator

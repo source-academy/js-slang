@@ -23,7 +23,7 @@ const CATEGORY = {
   keywords: /\bkeyword\b/,
   consts: /\bbuiltinconsts\b/,
   number: /\bconstant.numeric\b/,
-  bool: /\bconstant.language.boolean\b/
+  bool: /\bconstant.language.boolean\b/,
 }
 
 const setSession = (chapter: Chapter, variant: Variant, external: string, code: string): void => {

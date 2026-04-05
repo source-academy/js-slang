@@ -22,8 +22,8 @@ const noEval: Rule<Identifier> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noEval

@@ -11,7 +11,7 @@ import { FatalSyntaxError } from '../../errors'
 import {
   createAcornParserOptions,
   defaultBabelOptions,
-  positionToSourceLocation
+  positionToSourceLocation,
 } from '../../utils'
 import TypeParser from './typeParser'
 import { transformBabelASTToESTreeCompliantAST } from './utils'
@@ -21,20 +21,20 @@ export class SourceTypedParser extends SourceParser {
     programStr: string,
     context: Context,
     options?: Partial<AcornOptions>,
-    throwOnError?: boolean
+    throwOnError?: boolean,
   ): Program | null {
     // Parse with acorn type parser first to catch errors such as
     // import/export not at top level, trailing commas, missing semicolons
     try {
       TypeParser.parse(
         programStr,
-        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options)
+        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options),
       )
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(
           positionToSourceLocation((error as any).loc, options?.sourceFile),
-          error.toString()
+          error.toString(),
         )
       }
 
@@ -48,7 +48,7 @@ export class SourceTypedParser extends SourceParser {
     const ast = babelParse(programStr, {
       ...defaultBabelOptions,
       sourceFilename: options?.sourceFile,
-      errorRecovery: throwOnError ?? true
+      errorRecovery: throwOnError ?? true,
     })
 
     if (ast.errors?.length) {
@@ -58,8 +58,8 @@ export class SourceTypedParser extends SourceParser {
           context.errors.push(
             new FatalSyntaxError(
               positionToSourceLocation((error as any).loc, options?.sourceFile),
-              error.toString()
-            )
+              error.toString(),
+            ),
           )
         })
 
@@ -92,11 +92,11 @@ function checkForAnyDeclaration(program: TypedES.Program, context: Context) {
     allowAnyInParameters: parseConfigOption(context.languageOptions['typedAllowAnyInParameters']),
     allowAnyInReturnType: parseConfigOption(context.languageOptions['typedAllowAnyInReturnType']),
     allowAnyInTypeAnnotationParameters: parseConfigOption(
-      context.languageOptions['typedAllowAnyInTypeAnnotationParameters']
+      context.languageOptions['typedAllowAnyInTypeAnnotationParameters'],
     ),
     allowAnyInTypeAnnotationReturnType: parseConfigOption(
-      context.languageOptions['typedAllowAnyInTypeAnnotationReturnType']
-    )
+      context.languageOptions['typedAllowAnyInTypeAnnotationReturnType'],
+    ),
   }
 
   function pushAnyUsageError(message: string, node: TypedES.Node) {
@@ -201,7 +201,7 @@ function checkForAnyDeclaration(program: TypedES.Program, context: Context) {
             if (!config.allowAnyInTypeAnnotationParameters && isAnyType(param.typeAnnotation)) {
               pushAnyUsageError(
                 'Usage of "any" in type annotation\'s function parameter is not allowed.',
-                param
+                param,
               )
             }
             if (param.typeAnnotation) {
@@ -212,7 +212,7 @@ function checkForAnyDeclaration(program: TypedES.Program, context: Context) {
           if (!config.allowAnyInTypeAnnotationReturnType && isAnyType(returnAnno)) {
             pushAnyUsageError(
               'Usage of "any" in type annotation\'s function return type is not allowed.',
-              annotation
+              annotation,
             )
           }
           // Recursively check nested TSTypeAnnotations in return type

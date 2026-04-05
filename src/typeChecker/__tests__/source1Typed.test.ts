@@ -48,7 +48,7 @@ describe('basic types', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Type 'number' is not callable."`
+      `"Line 2: Type 'number' is not callable."`,
     )
   })
 
@@ -80,7 +80,7 @@ describe('union types', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 6: Type 'boolean' is not assignable to type 'string | number'."`
+      `"Line 6: Type 'boolean' is not assignable to type 'string | number'."`,
     )
   })
 
@@ -197,7 +197,7 @@ describe('function types', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 3: Type '(boolean, boolean) => number | string' is not assignable to type '(number | string, number | string) => number | string'."`
+      `"Line 3: Type '(boolean, boolean) => number | string' is not assignable to type '(number | string, number | string) => number | string'."`,
     )
   })
 
@@ -436,7 +436,7 @@ describe('type aliases', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 3: Type alias declarations may only appear at the top level"`
+      `"Line 3: Type alias declarations may only appear at the top level"`,
     )
   })
 
@@ -456,7 +456,7 @@ describe('type aliases', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Type 'boolean' is not assignable to type 'StringOrNumber'."`
+      `"Line 2: Type 'boolean' is not assignable to type 'StringOrNumber'."`,
     )
   })
 
@@ -468,7 +468,7 @@ describe('type aliases', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type 'boolean' is not assignable to type 'TestType'."`
+      `"Line 1: Type 'boolean' is not assignable to type 'TestType'."`,
     )
   })
 
@@ -486,7 +486,7 @@ describe('type aliases', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: SyntaxError: Identifier 'x' has already been declared. (2:11)"`
+      `"Line 2: SyntaxError: Identifier 'x' has already been declared. (2:11)"`,
     )
   })
 
@@ -534,7 +534,7 @@ describe('generic types', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Type 'NotGeneric' is not generic."`
+      `"Line 2: Type 'NotGeneric' is not generic."`,
     )
   })
 
@@ -585,7 +585,7 @@ describe('generic types', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type 'boolean' is not assignable to type 'Union<string, number>'."`
+      `"Line 1: Type 'boolean' is not assignable to type 'Union<string, number>'."`,
     )
   })
 })
@@ -709,7 +709,7 @@ describe('unary operations', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 9: Type 'string' is not assignable to type 'boolean'."`
+      `"Line 9: Type 'string' is not assignable to type 'boolean'."`,
     )
   })
 })
@@ -894,7 +894,7 @@ describe('conditional expressions', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 6: Type 'boolean | string' is not assignable to type 'number'."`
+      `"Line 6: Type 'boolean | string' is not assignable to type 'number'."`,
     )
   })
 })
@@ -989,7 +989,7 @@ describe('if-else statements', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 13: Type 'string' is not assignable to type 'number'."`
+      `"Line 13: Type 'string' is not assignable to type 'number'."`,
     )
   })
 })
@@ -1013,7 +1013,7 @@ describe('import statements', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 3: SyntaxError: 'import' and 'export' may only appear at the top level (3:8)"`
+      `"Line 3: SyntaxError: 'import' and 'export' may only appear at the top level (3:8)"`,
     )
   })
 

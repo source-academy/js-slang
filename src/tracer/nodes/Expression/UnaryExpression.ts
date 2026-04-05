@@ -21,7 +21,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
     this.type = 'UnaryExpression'
     this.operator = operator
@@ -47,7 +47,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
         node.leadingComments,
         node.trailingComments,
         node.loc,
-        node.range
+        node.range,
       )
     }
     return undefined
@@ -64,7 +64,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -111,7 +111,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
       redex.postRedex = [ret]
       return ret
@@ -122,7 +122,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
+        this.range,
       )
       redex.postRedex = [ret]
       return ret
@@ -141,7 +141,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
     const literal = StepperUnaryExpression.createLiteral(res)
     return literal ? literal : res
@@ -154,7 +154,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
     const literal = StepperUnaryExpression.createLiteral(res)
     return literal ? literal : res
@@ -175,7 +175,7 @@ export class StepperUnaryExpression implements UnaryExpression, StepperBaseNode 
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

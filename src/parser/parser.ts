@@ -13,7 +13,7 @@ export function parse<TOptions extends AcornOptions>(
   programStr: string,
   context: Context,
   options?: Partial<TOptions>,
-  throwOnError?: boolean
+  throwOnError?: boolean,
 ): Program | null {
   let parser: Parser<TOptions>
   switch (context.chapter) {

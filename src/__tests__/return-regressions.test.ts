@@ -35,7 +35,7 @@ test('Bare early returns work', () => {
       unreachable();
     }
     f();
-  `
+  `,
   ).toEqual(1)
 })
 
@@ -56,7 +56,7 @@ test('Recursive call early returns work', () => {
       unreachable();
     }
     f();
-  `
+  `,
   ).toEqual(3)
 })
 
@@ -77,7 +77,7 @@ test('Tail call early returns work', () => {
       unreachable();
     }
     f();
-  `
+  `,
   ).toEqual(1)
 })
 
@@ -98,7 +98,7 @@ test('Bare early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `
+  `,
   ).toEqual(1)
 })
 
@@ -122,7 +122,7 @@ test('Recursive call early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `
+  `,
   ).toEqual(3)
 })
 
@@ -146,7 +146,7 @@ test('Tail call early returns in if statements work', () => {
       unreachable();
     }
     f();
-  `
+  `,
   ).toEqual(1)
 })
 
@@ -168,7 +168,7 @@ test('Bare early returns in while loops work', () => {
     }
     f();
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual(1)
 })
 
@@ -193,7 +193,7 @@ test('Recursive call early returns in while loops work', () => {
     }
     f();
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual(3)
 })
 
@@ -218,7 +218,7 @@ test('Tail call early returns in while loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3 }
+    { chapter: Chapter.SOURCE_3 },
   ).toEqual(1)
 })
 
@@ -240,7 +240,7 @@ test('Bare early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3 }
+    { chapter: Chapter.SOURCE_3 },
   ).toEqual(1)
 })
 
@@ -262,7 +262,7 @@ test('Recursive call early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3 }
+    { chapter: Chapter.SOURCE_3 },
   ).toEqual(3)
 })
 
@@ -287,6 +287,6 @@ test('Tail call early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: Chapter.SOURCE_3 }
+    { chapter: Chapter.SOURCE_3 },
   ).toEqual(1)
 })

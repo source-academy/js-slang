@@ -10,7 +10,7 @@ test('call_cc works with normal functions', () => {
     stripIndent`
       1 + 2 + call_cc((cont) => 3) + 4;
     `,
-    optionEC4
+    optionEC4,
   ).toEqual(10)
 })
 
@@ -25,7 +25,7 @@ test('call_cc can be used to return early', () => {
         });
         x;
         `,
-    optionEC4
+    optionEC4,
   ).toEqual(2)
 })
 
@@ -34,7 +34,7 @@ test('call_cc throws error when given no arguments', () => {
     stripIndent`
         1 + 2 + call_cc() + 4;
         `,
-    optionEC4
+    optionEC4,
   ).toEqual('Line 1: Expected 1 arguments, but got 0.')
 })
 
@@ -44,13 +44,13 @@ test('call_cc throws error when given > 1 arguments', () => {
         const f = (cont) => cont;
         1 + 2 + call_cc(f,f) + 4;
         `,
-    optionEC4
+    optionEC4,
   ).toEqual('Line 2: Expected 1 arguments, but got 2.')
 })
 
 test('continuations can be stored as a value', async ({ expect }) => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(
     stripIndent`
         let a = 0;
@@ -59,7 +59,7 @@ test('continuations can be stored as a value', async ({ expect }) => {
         });
         a;
         `,
-    optionEC4
+    optionEC4,
   )
   expect(value).toMatchInlineSnapshot('[Function]')
 })

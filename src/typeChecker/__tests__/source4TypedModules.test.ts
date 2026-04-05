@@ -7,7 +7,7 @@ import { mockContext } from '../../utils/testing/mocks'
 function getContext() {
   const context = mockContext(Chapter.SOURCE_4, Variant.TYPED)
   context.nativeStorage.loadedModules = {
-    exampleModule: {}
+    exampleModule: {},
   }
   context.nativeStorage.loadedModuleTypes = {
     exampleModule: {
@@ -27,8 +27,8 @@ function getContext() {
       function1: 'function function1(n: number, s: string, b: boolean): number { return n }',
       function2: 'function function2(s: string, n: number, b: boolean): string { return s }',
       function3: 'function function3(b: boolean, s: string, n: number): boolean { return b }',
-      functionError: 'function functionError(n: number): string { return n }'
-    }
+      functionError: 'function functionError(n: number): string { return n }',
+    },
   }
 
   return context
@@ -55,43 +55,43 @@ describe('Typed module tests', () => {
         `
         import { x } from 'exampleModule';
         const a: string = x;
-      `
+      `,
       ],
       [
         'should allow correct assignment of a number variable',
         `
         import { y } from 'exampleModule';
         const a: number = y;
-      `
+      `,
       ],
       [
         'should allow correct assignment of a boolean variable',
         `
         import { z } from 'exampleModule';
         const a: boolean = z;
-      `
+      `,
       ],
       [
         'should allow a correct call to function1',
         `
         import { function1, x, y, z } from 'exampleModule';
         const a: number = function1(10, x, z);
-      `
+      `,
       ],
       [
         'should allow a correct call to function2',
         `
         import { function2, x, y, z } from 'exampleModule';
         const a: string = function2(x, y, z);
-      `
+      `,
       ],
       [
         'should allow a correct call to function3',
         `
         import { function3, x, y, z } from 'exampleModule';
         const a: boolean = function3(z, x, y);
-      `
-      ]
+      `,
+      ],
     ])('%s', (_, code) => expectParseSuccess(code)))
 
   /* ERROR CASES */
@@ -102,7 +102,7 @@ describe('Typed module tests', () => {
         const a: number = x;
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Type 'string' is not assignable to type 'number'."`
+        `"Line 3: Type 'string' is not assignable to type 'number'."`,
       )
     })
 
@@ -112,7 +112,7 @@ describe('Typed module tests', () => {
         const a: boolean = y;
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Type 'number' is not assignable to type 'boolean'."`
+        `"Line 3: Type 'number' is not assignable to type 'boolean'."`,
       )
     })
 
@@ -122,7 +122,7 @@ describe('Typed module tests', () => {
         const a: string = z;
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Type 'boolean' is not assignable to type 'string'."`
+        `"Line 3: Type 'boolean' is not assignable to type 'string'."`,
       )
     })
 
@@ -132,7 +132,7 @@ describe('Typed module tests', () => {
         const a = function1("wrong", x, z);
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Type 'string' is not assignable to type 'number'."`
+        `"Line 3: Type 'string' is not assignable to type 'number'."`,
       )
     })
 
@@ -142,7 +142,7 @@ describe('Typed module tests', () => {
         const a = function1(10, y, z);
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Type 'number' is not assignable to type 'string'."`
+        `"Line 3: Type 'number' is not assignable to type 'string'."`,
       )
     })
 
@@ -152,7 +152,7 @@ describe('Typed module tests', () => {
         const a = function1(10, x, "not boolean");
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Type 'string' is not assignable to type 'boolean'."`
+        `"Line 3: Type 'string' is not assignable to type 'boolean'."`,
       )
     })
 
@@ -162,7 +162,7 @@ describe('Typed module tests', () => {
         const a = function2(x, y);
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Expected 3 arguments, but got 2."`
+        `"Line 3: Expected 3 arguments, but got 2."`,
       )
     })
 
@@ -172,7 +172,7 @@ describe('Typed module tests', () => {
         const a = function2(x, y, z, x);
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Expected 3 arguments, but got 4."`
+        `"Line 3: Expected 3 arguments, but got 4."`,
       )
     })
 
@@ -182,7 +182,7 @@ describe('Typed module tests', () => {
         const a: string = functionError(10);
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 8: Type 'number' is not assignable to type 'string'."`
+        `"Line 8: Type 'number' is not assignable to type 'string'."`,
       )
     })
 
@@ -192,7 +192,7 @@ describe('Typed module tests', () => {
         const a: number = function2(x, y, z);
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Type 'string' is not assignable to type 'number'."`
+        `"Line 3: Type 'string' is not assignable to type 'number'."`,
       )
     })
 
@@ -240,7 +240,7 @@ describe('Typed module tests', () => {
         const a: string = test1;
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Type 'Test1' is not assignable to type 'string'."`
+        `"Line 3: Type 'Test1' is not assignable to type 'string'."`,
       )
     })
 
@@ -250,7 +250,7 @@ describe('Typed module tests', () => {
         const a: number = test2;
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Type 'Test2' is not assignable to type 'number'."`
+        `"Line 3: Type 'Test2' is not assignable to type 'number'."`,
       )
     })
 
@@ -260,7 +260,7 @@ describe('Typed module tests', () => {
         const a: boolean = test3;
       `
       expect(testParseError(code)).toMatchInlineSnapshot(
-        `"Line 3: Type 'Test3' is not assignable to type 'boolean'."`
+        `"Line 3: Type 'Test3' is not assignable to type 'boolean'."`,
       )
     })
   })
@@ -280,7 +280,7 @@ describe('Typed module tests', () => {
       const result: Test4 = (arg: Test1) => test1;
     `
     expect(testParseError(code)).toMatchInlineSnapshot(
-      `"Line 3: Type '(Test1) => Test1' is not assignable to type 'Test4'."`
+      `"Line 3: Type '(Test1) => Test1' is not assignable to type 'Test4'."`,
     )
   })
 })

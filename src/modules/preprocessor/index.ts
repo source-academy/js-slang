@@ -44,7 +44,7 @@ const preprocessFileImports = async (
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {},
-  bundler: Bundler = defaultBundler
+  bundler: Bundler = defaultBundler,
 ): Promise<PreprocessResult> => {
   if (context.variant === Variant.TYPED) {
     // Load typed source modules into context first to ensure that the type checker has access to all types.
@@ -55,7 +55,7 @@ const preprocessFileImports = async (
       context.errors.push(error)
       return {
         ok: false,
-        verboseErrors: false
+        verboseErrors: false,
       }
     }
   }
@@ -66,7 +66,7 @@ const preprocessFileImports = async (
     entrypointFilePath,
     context,
     options?.importOptions,
-    !!options?.shouldAddFileName
+    !!options?.shouldAddFileName,
   )
   // Return 'undefined' if there are errors while parsing.
   if (!linkerResult.ok) {
@@ -83,7 +83,7 @@ const preprocessFileImports = async (
       entrypointFilePath,
       context,
       options?.importOptions,
-      !!options?.shouldAddFileName
+      !!options?.shouldAddFileName,
     )
     // Return 'undefined' if there are errors while parsing.
     if (!linkerResult.ok) {
@@ -95,7 +95,7 @@ const preprocessFileImports = async (
       entrypointFilePath,
       topoOrder,
       context,
-      options?.importOptions
+      options?.importOptions,
     )
 
     const program = bundler(programs, entrypointFilePath, topoOrder, context)
@@ -103,13 +103,13 @@ const preprocessFileImports = async (
       ok: true,
       program,
       files: linkerResult.files,
-      verboseErrors: linkerResult.verboseErrors
+      verboseErrors: linkerResult.verboseErrors,
     }
   } catch (error) {
     context.errors.push(error)
     return {
       ok: false,
-      verboseErrors: linkerResult.verboseErrors
+      verboseErrors: linkerResult.verboseErrors,
     }
   }
 }

@@ -678,7 +678,7 @@ export const PRIMITIVE_FUNCTION_NAMES = [
   'prompt',
   'display_list',
   'char_at',
-  'arity'
+  'arity',
 ]
 
 export const VARARGS_NUM_ARGS = -1
@@ -687,7 +687,7 @@ export const VARARGS_NUM_ARGS = -1
 export const INTERNAL_FUNCTIONS: [string, OpCodes, number, boolean][] = [
   ['test_and_set', OpCodes.TEST_AND_SET, 1, true],
   ['clear', OpCodes.CLEAR, 1, false],
-  ['concurrent_execute', OpCodes.EXECUTE, VARARGS_NUM_ARGS, false]
+  ['concurrent_execute', OpCodes.EXECUTE, VARARGS_NUM_ARGS, false],
 ]
 
 // for each function, replace a specified opcode with another opcode
@@ -701,13 +701,13 @@ const VARARG_PRIMITIVES: [string, number?, number?][] = [
   ['draw_data', OpCodes.NOTG, OpCodes.DRAW_DATA],
   ['stream'],
   ['prompt', OpCodes.NOTG, OpCodes.PROMPT],
-  ['display_list', OpCodes.MODG, OpCodes.DISPLAY_LIST]
+  ['display_list', OpCodes.MODG, OpCodes.DISPLAY_LIST],
 ]
 
 // primitives without a function should be manually implemented
 export const NULLARY_PRIMITIVES: [string, number, any?][] = [
   ['math_random', OpCodes.MATH_RANDOM, Math.random],
-  ['get_time', OpCodes.RUNTIME, get_time]
+  ['get_time', OpCodes.RUNTIME, get_time],
 ]
 
 export const UNARY_PRIMITIVES: [string, number, any?][] = [
@@ -748,7 +748,7 @@ export const UNARY_PRIMITIVES: [string, number, any?][] = [
   ['math_tanh', OpCodes.MATH_TANH, Math.tanh],
   ['math_trunc', OpCodes.MATH_TRUNC, Math.trunc],
   ['stringify', OpCodes.STRINGIFY],
-  ['arity', OpCodes.ARITY]
+  ['arity', OpCodes.ARITY],
 ]
 
 export const BINARY_PRIMITIVES: [string, number, any?][] = [
@@ -756,7 +756,7 @@ export const BINARY_PRIMITIVES: [string, number, any?][] = [
   ['math_imul', OpCodes.MATH_IMUL, Math.imul],
   ['math_pow', OpCodes.MATH_POW, Math.pow],
   ['parse_int', OpCodes.PARSE_INT, parse_int],
-  ['char_at', OpCodes.CHAR_AT, char_at]
+  ['char_at', OpCodes.CHAR_AT, char_at],
 ]
 
 export const EXTERNAL_PRIMITIVES: [string, number][] = [
@@ -764,7 +764,7 @@ export const EXTERNAL_PRIMITIVES: [string, number][] = [
   ['draw_data', OpCodes.DRAW_DATA],
   ['error', OpCodes.ERROR],
   ['prompt', OpCodes.PROMPT],
-  ['display_list', OpCodes.DISPLAY_LIST]
+  ['display_list', OpCodes.DISPLAY_LIST],
 ]
 
 export const CONSTANT_PRIMITIVES: [string, any][] = [
@@ -778,7 +778,7 @@ export const CONSTANT_PRIMITIVES: [string, any][] = [
   ['math_LOG10E', Math.LOG10E],
   ['math_PI', Math.PI],
   ['math_SQRT1_2', Math.SQRT1_2],
-  ['math_SQRT2', Math.SQRT2]
+  ['math_SQRT2', Math.SQRT2],
 ]
 
 // helper functions to generate machine code
@@ -820,13 +820,13 @@ export function generatePrimitiveFunctionCode(prelude: Program) {
     nameToIndexMap.set(name, index)
   })
   NULLARY_PRIMITIVES.forEach(f =>
-    functions.push(generateNullaryPrimitive(nameToIndexMap.get(f[0])!, f[1]))
+    functions.push(generateNullaryPrimitive(nameToIndexMap.get(f[0])!, f[1])),
   )
   UNARY_PRIMITIVES.forEach(f =>
-    functions.push(generateUnaryPrimitive(nameToIndexMap.get(f[0])!, f[1]))
+    functions.push(generateUnaryPrimitive(nameToIndexMap.get(f[0])!, f[1])),
   )
   BINARY_PRIMITIVES.forEach(f =>
-    functions.push(generateBinaryPrimitive(nameToIndexMap.get(f[0])!, f[1]))
+    functions.push(generateBinaryPrimitive(nameToIndexMap.get(f[0])!, f[1])),
   )
 
   functions.forEach(func => {

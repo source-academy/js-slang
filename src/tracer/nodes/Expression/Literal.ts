@@ -28,7 +28,7 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
     this.type = 'Literal'
     this.value = value
@@ -46,7 +46,7 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
       literal.leadingComments,
       literal.trailingComments,
       literal.loc,
-      literal.range
+      literal.range,
     )
   }
 
@@ -85,7 +85,7 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

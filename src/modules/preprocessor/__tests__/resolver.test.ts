@@ -12,7 +12,7 @@ const resolveModule = (
   fromPath: string,
   toPath: string,
   pred: (p: string) => boolean,
-  options: ImportResolutionOptions
+  options: ImportResolutionOptions,
 ) => resolveFile(fromPath, toPath, p => Promise.resolve(pred(p) ? '' : undefined), options)
 
 test('If only local imports are used, the module manifest is not loaded', async () => {
@@ -24,8 +24,8 @@ test('If only local imports are used, the module manifest is not loaded', async 
 it('Returns false and resolved path of source file when resolution fails', () => {
   return expect(
     resolveModule('/', './a', () => false, {
-      extensions: ['js']
-    })
+      extensions: ['js'],
+    }),
   ).resolves.toBeUndefined()
 })
 
@@ -34,12 +34,12 @@ it('Will resolve extensions', () => {
 
   return expect(
     resolveModule('/', '/a', mockResolver, {
-      extensions: ['js', 'ts']
-    })
+      extensions: ['js', 'ts'],
+    }),
   ).resolves.toMatchObject({
     type: 'local',
     absPath: '/a.ts',
-    contents: ''
+    contents: '',
   })
 })
 
@@ -47,14 +47,14 @@ it('Will not resolve if the corresponding options are given as false', () => {
   const mockResolver = (p: string) => p === '/a.js'
   return expect(
     resolveModule('/', './a', mockResolver, {
-      extensions: null
-    })
+      extensions: null,
+    }),
   ).resolves.toBeUndefined()
 })
 
 it('Checks the module manifest when importing source modules', async () => {
   const result = await resolveModule('/', 'one_module', () => false, {
-    extensions: ['js']
+    extensions: ['js'],
   })
 
   expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(1)
@@ -63,7 +63,7 @@ it('Checks the module manifest when importing source modules', async () => {
 
 it('Returns false on failing to resolve a source module', async () => {
   const result = await resolveModule('/', 'unknown_module', () => true, {
-    extensions: ['js']
+    extensions: ['js'],
   })
 
   expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(1)
@@ -78,16 +78,16 @@ test('Resolving an absolute path from a local module', () => {
       p =>
         Promise.resolve(
           {
-            '/b.js': 'contents'
-          }[p]
+            '/b.js': 'contents',
+          }[p],
         ),
       {
-        extensions: null
-      }
-    )
+        extensions: null,
+      },
+    ),
   ).resolves.toMatchObject({
     type: 'local',
     contents: 'contents',
-    absPath: '/b.js'
+    absPath: '/b.js',
   })
 })

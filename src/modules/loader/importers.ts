@@ -57,7 +57,7 @@ function getDocsImporter(): (p: string) => Promise<{ default: object }> {
     try {
       return new Function(
         'path',
-        "return import(`${path}?q=${Date.now()}`, { with: { type: 'json'} })"
+        "return import(`${path}?q=${Date.now()}`, { with: { type: 'json'} })",
       ) as any
     } catch {
       // If the browser doesn't support import assertions, the above call will throw an error.

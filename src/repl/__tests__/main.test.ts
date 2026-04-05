@@ -16,8 +16,8 @@ describe('Make sure each subcommand can be run', () => {
     'Testing %s command',
     (_, cmd) => {
       return expect(cmd.parseAsync(['-h'], { from: 'user' })).rejects.toThrowError(
-        'process.exit called with 0'
+        'process.exit called with 0',
       )
-    }
+    },
   )
 })

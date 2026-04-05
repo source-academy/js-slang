@@ -31,8 +31,8 @@ const noIfWithoutElse: Rule<IfStatement> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noIfWithoutElse

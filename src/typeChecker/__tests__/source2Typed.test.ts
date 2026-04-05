@@ -67,7 +67,7 @@ describe('pair', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 3: Type 'null' is not assignable to type 'Pair<number, null>'."`
+      `"Line 3: Type 'null' is not assignable to type 'Pair<number, null>'."`,
     )
   })
 
@@ -76,7 +76,7 @@ describe('pair', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type alias 'Pair' has already been declared."`
+      `"Line 1: Type alias 'Pair' has already been declared."`,
     )
   })
 })
@@ -118,7 +118,7 @@ describe('list', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type alias 'List' has already been declared."`
+      `"Line 1: Type alias 'List' has already been declared."`,
     )
   })
 })
@@ -133,7 +133,7 @@ describe('head', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 4: Expected 1 arguments, but got 2."`
+      `"Line 4: Expected 1 arguments, but got 2."`,
     )
   })
 
@@ -149,7 +149,7 @@ describe('head', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 7: Type 'string | number' is not assignable to type 'boolean'."`
+      `"Line 7: Type 'string | number' is not assignable to type 'boolean'."`,
     )
   })
 
@@ -181,7 +181,7 @@ describe('tail', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 4: Expected 1 arguments, but got 2."`
+      `"Line 4: Expected 1 arguments, but got 2."`,
     )
   })
 
@@ -197,7 +197,7 @@ describe('tail', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 7: Type 'string | number' is not assignable to type 'boolean'."`
+      `"Line 7: Type 'string | number' is not assignable to type 'boolean'."`,
     )
   })
 
@@ -213,7 +213,7 @@ describe('tail', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 7: Type 'List<string | number>' is not assignable to type 'List<boolean>'."`
+      `"Line 7: Type 'List<string | number>' is not assignable to type 'List<boolean>'."`,
     )
   })
 })

@@ -20,7 +20,7 @@ export type ImportResolutionOptions = {
 }
 
 export const defaultResolutionOptions: ImportResolutionOptions = {
-  extensions: ['js']
+  extensions: ['js'],
 }
 
 export type ResolverResult =
@@ -40,7 +40,7 @@ export default async function resolveFile(
   fromPath: string,
   toPath: string,
   fileGetter: FileGetter,
-  options: Partial<ImportResolutionOptions> = defaultResolutionOptions
+  options: Partial<ImportResolutionOptions> = defaultResolutionOptions,
 ): Promise<ResolverResult | undefined> {
   if (isSourceModule(toPath)) {
     const manifest = await memoizedGetModuleManifestAsync()
@@ -54,7 +54,7 @@ export default async function resolveFile(
     return {
       type: 'local',
       absPath,
-      contents
+      contents,
     }
   }
 
@@ -67,7 +67,7 @@ export default async function resolveFile(
         return {
           type: 'local',
           absPath: extPath,
-          contents
+          contents,
         }
       }
     }

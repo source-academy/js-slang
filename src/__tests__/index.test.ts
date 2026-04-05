@@ -10,12 +10,12 @@ import {
   createTestContext,
   expectFinishedResult,
   expectParsedError,
-  testSuccess
+  testSuccess,
 } from '../utils/testing'
 import {
   assertFinishedResultValue,
   evalWithBuiltins,
-  processTestOptions
+  processTestOptions,
 } from '../utils/testing/misc'
 import type { TestOptions } from '../utils/testing/types'
 
@@ -48,17 +48,17 @@ test('Single boolean self-evaluates to itself', () => {
 
 test('Arrow function definition returns itself', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess('() => 42;')
   return expect(value).toMatchInlineSnapshot(`[Function]`)
 })
 
 test('Builtins hide their implementation when toString', async () => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess('toString(pair);', {
     chapter: Chapter.SOURCE_2,
-    testBuiltins: { toString }
+    testBuiltins: { toString },
   })
 
   expect(value).toMatchInlineSnapshot(`
@@ -79,7 +79,7 @@ test('functions toString (mostly) matches up with JS', async () => {
   const { result } = await testSuccess(code, options)
 
   expect(result.value.replace(/ /g, '')).toEqual(
-    evalWithBuiltins(code, options.testBuiltins).replace(/ /g, '')
+    evalWithBuiltins(code, options.testBuiltins).replace(/ /g, ''),
   )
 })
 
@@ -88,7 +88,7 @@ test('Factorial arrow function', () => {
     stripIndent`
     const fac = (i) => i === 1 ? 1 : i * fac(i-1);
     fac(5);
-  `
+  `,
   ).toBe(120)
 })
 
@@ -98,7 +98,7 @@ test('parseError for missing semicolon', () => {
 
 test('parseError for template literals with expressions', () => {
   return expectParsedError('`${1}`;').toEqual(
-    'Line 1: Expressions are not allowed in template literals (\`multiline strings\`)'
+    'Line 1: Expressions are not allowed in template literals (\`multiline strings\`)',
   )
 })
 
@@ -107,9 +107,9 @@ test(
   { timeout: 30_000 },
   () => {
     return expectParsedError('(x => x(x)(x))(x => x(x)(x));').toContain(
-      `RangeError: Maximum call stack size exceeded`
+      `RangeError: Maximum call stack size exceeded`,
     )
-  }
+  },
 )
 
 test(
@@ -117,9 +117,9 @@ test(
   { timeout: 30_000 },
   () => {
     return expectParsedError('function f(x) {return x(x)(x);} f(f);').toContain(
-      `RangeError: Maximum call stack size exceeded`
+      `RangeError: Maximum call stack size exceeded`,
     )
-  }
+  },
 )
 
 test('Cannot overwrite consts even when assignment is allowed', () => {
@@ -132,7 +132,7 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
     }
     test();
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual('Line 3: Cannot assign new value to constant constant.')
 })
 
@@ -144,7 +144,7 @@ test('Assignment has value', () => {
     b === 4 && a === 4;
   `,
 
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toBe(true)
 })
 
@@ -156,7 +156,7 @@ test('Array assignment has value', () => {
     const b = arr[1] = arr[2] = 4;
     arr[0] === 1 && arr[1] === 4 && arr[2] === 4;
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toBe(true)
 })
 
@@ -170,7 +170,7 @@ test('Can overwrite lets when assignment is allowed', () => {
     }
     test();
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toBe(true)
 })
 
@@ -183,9 +183,9 @@ test(
     const f = xs => append(f(xs), list());
     f(list(1, 2));
   `,
-      Chapter.SOURCE_2
+      Chapter.SOURCE_2,
     ).toContain(`RangeError: Maximum call stack size exceeded`)
-  }
+  },
 )
 
 test(
@@ -196,9 +196,9 @@ test(
       stripIndent`
     function f(xs) { return append(f(xs), list()); }
     f(list(1, 2));
-  `
+  `,
     ).toEqual('Line 1: Name append not declared.')
-  }
+  },
 )
 
 test(
@@ -209,7 +209,7 @@ test(
     const f = i => f(i+1) - 1;
     f(0);
   `).toContain(`RangeError: Maximum call stack size exceeded`)
-  }
+  },
 )
 
 test(
@@ -220,7 +220,7 @@ test(
     function f(i) { return f(i+1) - 1; }
     f(0);
   `).toContain(`RangeError: Maximum call stack size exceeded`)
-  }
+  },
 )
 
 test('Functions passed into non-source functions remain equal', () => {
@@ -231,7 +231,7 @@ test('Functions passed into non-source functions remain equal', () => {
     }
     identity(t) === t && t(1, 2, 3) === 6;
   `,
-    { chapter: Chapter.SOURCE_3, testBuiltins: { 'identity(x)': (x: any) => x } }
+    { chapter: Chapter.SOURCE_3, testBuiltins: { 'identity(x)': (x: any) => x } },
   ).toBe(true)
 })
 
@@ -241,7 +241,7 @@ test('Accessing array with nonexistent index returns undefined', () => {
     const a = [];
     a[1];
   `,
-    Chapter.SOURCE_4
+    Chapter.SOURCE_4,
   ).toBe(undefined)
 })
 
@@ -251,7 +251,7 @@ test('Accessing object with nonexistent property returns undefined', () => {
     const o = {};
     o.nonexistent;
   `,
-    Chapter.LIBRARY_PARSER
+    Chapter.LIBRARY_PARSER,
   ).toBe(undefined)
 })
 
@@ -262,7 +262,7 @@ test('Simple object assignment and retrieval', () => {
     o.a = 1;
     o.a;
   `,
-    Chapter.LIBRARY_PARSER
+    Chapter.LIBRARY_PARSER,
   ).toBe(1)
 })
 
@@ -275,7 +275,7 @@ test('Deep object assignment and retrieval', () => {
     o.a.b.c = "string";
     o.a.b.c;
   `,
-    Chapter.LIBRARY_PARSER
+    Chapter.LIBRARY_PARSER,
   ).toBe('string')
 })
 
@@ -284,7 +284,7 @@ test('Test apply_in_underlying_javascript', () => {
     stripIndent`
     apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));
   `,
-    Chapter.SOURCE_4
+    Chapter.SOURCE_4,
   ).toBe(60)
 })
 
@@ -293,7 +293,7 @@ test('Test equal for primitives', () => {
     stripIndent`
     equal(1, 1) && equal("str", "str") && equal(null, null) && !equal(1, 2) && !equal("str", "");
   `,
-    Chapter.SOURCE_2
+    Chapter.SOURCE_2,
   ).toBe(true)
 })
 
@@ -302,7 +302,7 @@ test('Test equal for lists', () => {
     stripIndent`
     equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));
   `,
-    Chapter.SOURCE_2
+    Chapter.SOURCE_2,
   ).toBe(true)
 })
 
@@ -311,7 +311,7 @@ test('Test equal for different lists', () => {
     stripIndent`
     !equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));
   `,
-    Chapter.SOURCE_2
+    Chapter.SOURCE_2,
   ).toBe(true)
 })
 
@@ -321,7 +321,7 @@ test('true if with empty if works', () => {
     if (true) {
     } else {
     }
-  `
+  `,
   ).toBe(undefined)
 })
 
@@ -332,7 +332,7 @@ test('true if with nonempty if works', () => {
       1;
     } else {
     }
-  `
+  `,
   ).toBe(1)
 })
 
@@ -342,7 +342,7 @@ test('false if with empty else works', () => {
     if (false) {
     } else {
     }
-  `
+  `,
   ).toBe(undefined)
 })
 
@@ -353,7 +353,7 @@ test('false if with nonempty if works', () => {
     } else {
       2;
     }
-  `
+  `,
   ).toBe(2)
 })
 
@@ -363,7 +363,7 @@ describe('matchJSTests', () => {
     if (options.testBuiltins) {
       options.testBuiltins = {
         ...options.testBuiltins,
-        toString
+        toString,
       }
     } else {
       options.testBuiltins = { toString }
@@ -387,7 +387,7 @@ describe('matchJSTests', () => {
 
     const options: TestOptions = {
       testBuiltins: { toString },
-      chapter: Chapter.SOURCE_2
+      chapter: Chapter.SOURCE_2,
     }
     const { result } = await testSuccess(code, options)
     expect(evalWithBuiltins(code, options.testBuiltins)).toEqual(result.value)
@@ -443,13 +443,13 @@ describe('matchJSTests', () => {
 
   test('Objects toString matches up with JS', () => {
     return expectToMatchJS('toString({a: 1});', {
-      chapter: Chapter.LIBRARY_PARSER
+      chapter: Chapter.LIBRARY_PARSER,
     })
   })
 
   test('Arrays toString matches up with JS', () => {
     return expectToMatchJS('toString([1, 2]);', {
-      chapter: Chapter.SOURCE_3
+      chapter: Chapter.SOURCE_3,
     })
   })
 })
@@ -467,7 +467,7 @@ test('Rest parameters work', () => {
     rest(1, 2); // no error
     rest(1, 2, ...[3, 4, 5],  ...[6, 7], ...[]);
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual(28)
 })
 
@@ -486,7 +486,7 @@ test('Test context reuse', async () => {
     [init, 0],
     ['i = 100; f();', 101],
     ['f(); i;', 102],
-    ['i;', 102]
+    ['i;', 102],
   ]
 
   for (const [code, expected] of snippets) {
@@ -506,7 +506,7 @@ class SourceLocationTestResult {
 
 function expectResultsToMatch(
   actualResult: SourceLocation | null | undefined,
-  expectedResult: SourceLocationTestResult | null | undefined
+  expectedResult: SourceLocationTestResult | null | undefined,
 ) {
   if (expectedResult === null) {
     expect(actualResult).toBeNull()
@@ -786,7 +786,7 @@ test('Find scope of a variable declaration', () => {
   }`
   const expected = [
     new SourceLocationTestResult(1, 0, 3, 4),
-    new SourceLocationTestResult(8, 5, 10, 3)
+    new SourceLocationTestResult(8, 5, 10, 3),
   ]
   const actual = getScope(code, context, { line: 2, column: 10 })
   expected.forEach((expectedRange, index) => {
@@ -794,7 +794,7 @@ test('Find scope of a variable declaration', () => {
       actual[index].start.line,
       actual[index].start.column,
       actual[index].end.line,
-      actual[index].end.column
+      actual[index].end.column,
     )
     expectResultsToMatch(actualRange, expectedRange)
   })
@@ -820,7 +820,7 @@ test('Find scope of a nested variable declaration', () => {
       actual[index].start.line,
       actual[index].start.column,
       actual[index].end.line,
-      actual[index].end.column
+      actual[index].end.column,
     )
     expectResultsToMatch(actualRange, expectedRange)
   })
@@ -846,7 +846,7 @@ test('Find scope of a function parameter', () => {
       actual[index].start.line,
       actual[index].start.column,
       actual[index].end.line,
-      actual[index].end.column
+      actual[index].end.column,
     )
     expectResultsToMatch(actualRange, expectedRange)
   })
@@ -872,7 +872,7 @@ test('Find scope of a function declaration', () => {
       actual[index].start.line,
       actual[index].start.column,
       actual[index].end.line,
-      actual[index].end.column
+      actual[index].end.column,
     )
     expectResultsToMatch(actualRange, expectedRange)
   })
@@ -900,7 +900,7 @@ test('Find scope of a variable declaration with more nesting', () => {
   const expected = [
     new SourceLocationTestResult(3, 4, 6, 12),
     new SourceLocationTestResult(8, 13, 11, 8),
-    new SourceLocationTestResult(13, 9, 14, 5)
+    new SourceLocationTestResult(13, 9, 14, 5),
   ]
   const actual = getScope(code, context, { line: 4, column: 15 })
   expected.forEach((expectedRange, index) => {
@@ -908,7 +908,7 @@ test('Find scope of a variable declaration with more nesting', () => {
       actual[index].start.line,
       actual[index].start.column,
       actual[index].end.line,
-      actual[index].end.column
+      actual[index].end.column,
     )
     expectResultsToMatch(actualRange, expectedRange)
   })
@@ -937,7 +937,7 @@ test('Find scope of a variable declaration with multiple blocks', () => {
     new SourceLocationTestResult(2, 4, 4, 8),
     new SourceLocationTestResult(6, 9, 8, 8),
     new SourceLocationTestResult(10, 9, 12, 8),
-    new SourceLocationTestResult(14, 9, 15, 5)
+    new SourceLocationTestResult(14, 9, 15, 5),
   ]
   const actual = getScope(code, context, { line: 3, column: 15 })
   expected.forEach((expectedRange, index) => {
@@ -945,7 +945,7 @@ test('Find scope of a variable declaration with multiple blocks', () => {
       actual[index].start.line,
       actual[index].start.column,
       actual[index].end.line,
-      actual[index].end.column
+      actual[index].end.column,
     )
     expectResultsToMatch(actualRange, expectedRange)
   })

@@ -23,8 +23,8 @@ const noConstDeclarationInForLoopInit: Rule<ForStatement> = {
       }
 
       return []
-    }
-  }
+    },
+  },
 }
 
 export { noConstDeclarationInForLoopInit }

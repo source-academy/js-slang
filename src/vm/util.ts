@@ -146,7 +146,7 @@ const OPCODES_STR: { [K in OpCodes]?: string } = {
   // Concurrency Opcodes
   [OpCodes.EXECUTE]: 'EXEC  ',
   [OpCodes.TEST_AND_SET]: 'T&S   ',
-  [OpCodes.CLEAR]: 'CLEAR '
+  [OpCodes.CLEAR]: 'CLEAR ',
 }
 
 /**

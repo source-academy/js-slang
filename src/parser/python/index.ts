@@ -16,7 +16,7 @@ export class PythonParser implements Parser<AcornOptions> {
     programStr: string,
     context: Context,
     options?: Partial<AcornOptions>,
-    throwOnError?: boolean
+    throwOnError?: boolean,
   ): Program | null {
     try {
       // parse the Python code

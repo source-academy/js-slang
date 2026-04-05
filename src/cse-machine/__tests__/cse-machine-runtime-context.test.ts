@@ -33,7 +33,7 @@ const evaluateCode = (code: string) => {
     context.runtime.stash,
     options.envSteps ?? -1,
     options.stepLimit ?? -1,
-    options.isPrelude
+    options.isPrelude,
   )
   return CSEState
 }
@@ -83,7 +83,7 @@ const codeSamples = [
       return i;
     }, 5);
     stream_ref(s, 4);
-  `
+  `,
 ]
 
 const contexts = codeSamples.map(code => getContextFrom(stripIndent(code)))
@@ -106,8 +106,8 @@ test('Avoid unnescessary environment instruction', () => {
           : f(n-1) * 2;
         }
         f(3);
-      `
-    )
+      `,
+    ),
   )
 
   for (const state of CSEState) {
@@ -125,8 +125,8 @@ test('Avoid unnescessary environment instruction 1', () => {
           : n * f(n-1);
         }
         f(3);
-      `
-    )
+      `,
+    ),
   )
 
   for (const state of CSEState) {
@@ -146,8 +146,8 @@ test('Avoid unnescessary environment instruction 2', () => {
         }
         f(3);
         a = 2;
-      `
-    )
+      `,
+    ),
   )
 
   for (const state of CSEState) {
@@ -168,8 +168,8 @@ test('Avoid unnescessary environment instruction 3', () => {
             1 + 2;
             3;
         }
-    `
-    )
+    `,
+    ),
   )
 
   for (const state of CSEState) {
@@ -202,8 +202,8 @@ test('Avoid unnescessary environment instruction 4', () => {
           }
       }
       display(sum);
-    `
-    )
+    `,
+    ),
   )
 
   for (const state of CSEState) {

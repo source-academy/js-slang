@@ -10,7 +10,7 @@ export class ModuleInternalError extends RuntimeSourceError {
   constructor(
     public moduleName: string,
     public error?: any,
-    node?: Node
+    node?: Node,
   ) {
     super(node)
   }
@@ -56,7 +56,7 @@ export class ModuleConnectionError extends ImportError {
 export class ModuleNotFoundError extends ImportError {
   constructor(
     public moduleName: string,
-    node?: Node
+    node?: Node,
   ) {
     super(node)
   }
@@ -76,7 +76,7 @@ export class UndefinedNamespaceImportError extends ImportError {
     node?:
       | Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
       | es.ImportDeclaration['specifiers'][number]
-      | es.ExportSpecifier
+      | es.ExportSpecifier,
   ) {
     super(node)
   }
@@ -94,7 +94,7 @@ export class UndefinedImportError extends UndefinedNamespaceImportError {
   constructor(
     public readonly symbol: string,
     moduleName: string,
-    node?: es.ImportDeclaration['specifiers'][number] | es.ExportSpecifier
+    node?: es.ImportDeclaration['specifiers'][number] | es.ExportSpecifier,
   ) {
     super(moduleName, node)
   }
@@ -107,7 +107,7 @@ export class UndefinedImportError extends UndefinedNamespaceImportError {
 export class UndefinedDefaultImportError extends UndefinedImportError {
   constructor(
     moduleName: string,
-    node?: es.ImportDeclaration['specifiers'][number] | es.ExportSpecifier
+    node?: es.ImportDeclaration['specifiers'][number] | es.ExportSpecifier,
   ) {
     super('default', moduleName, node)
   }
@@ -179,7 +179,7 @@ export class DuplicateImportNameError extends ImportError {
 
   constructor(
     public readonly name: string,
-    public readonly nodes: Node[]
+    public readonly nodes: Node[],
   ) {
     super()
 

@@ -19,7 +19,7 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
     this.type = 'VariableDeclarator'
     this.id = id
@@ -37,7 +37,7 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -56,7 +56,7 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -67,7 +67,7 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -78,7 +78,7 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -97,7 +97,7 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }
@@ -119,7 +119,7 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
     this.type = 'VariableDeclaration'
     this.declarations = declarations
@@ -137,7 +137,7 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
+      node.range,
     )
   }
 
@@ -173,7 +173,7 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
           this.leadingComments,
           this.trailingComments,
           this.loc,
-          this.range
+          this.range,
         )
       }
     }
@@ -184,13 +184,13 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
     return new StepperVariableDeclaration(
       this.declarations.map(
-        declaration => declaration.substitute(id, value) as StepperVariableDeclarator
+        declaration => declaration.substitute(id, value) as StepperVariableDeclarator,
       ),
       this.kind,
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 
@@ -209,7 +209,7 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
+      this.range,
     )
   }
 }

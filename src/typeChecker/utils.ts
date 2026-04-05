@@ -18,7 +18,7 @@ import type {
   Type,
   TypeEnvironment,
   UnionType,
-  Variable
+  Variable,
 } from '../types'
 import * as tsEs from './tsESTree'
 
@@ -40,7 +40,7 @@ export const typeAnnotationKeywordToBasicTypeMap: Record<tsEs.TSTypeKeyword, TSB
   TSSymbolKeyword: 'symbol',
   TSUndefinedKeyword: 'undefined',
   TSUnknownKeyword: 'unknown',
-  TSVoidKeyword: 'void'
+  TSVoidKeyword: 'void',
 }
 
 // Helper functions for dealing with type environment
@@ -55,7 +55,7 @@ export function lookupType(name: string, env: TypeEnvironment): BindableType | u
 
 export function lookupDeclKind(
   name: string,
-  env: TypeEnvironment
+  env: TypeEnvironment,
 ): AllowedDeclarations | undefined {
   for (let i = env.length - 1; i >= 0; i--) {
     if (env[i].declKindMap.has(name)) {
@@ -119,7 +119,7 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
     case 'pair':
       return `Pair<${formatTypeString(type.headType, formatAsLiteral)}, ${formatTypeString(
         type.tailType,
-        formatAsLiteral
+        formatAsLiteral,
       )}>`
     case 'list':
       return `List<${formatTypeString(type.elementType, formatAsLiteral)}>`
@@ -145,7 +145,7 @@ export function tPrimitive(name: Primitive['name'], value?: string | number | bo
   return {
     kind: 'primitive',
     name,
-    value
+    value,
   }
 }
 
@@ -154,7 +154,7 @@ export function tVar(name: string, typeArgs?: Type[]): Variable {
     kind: 'variable',
     name,
     constraint: 'none',
-    typeArgs
+    typeArgs,
   }
 }
 
@@ -162,7 +162,7 @@ export function tAddable(name: string): Variable {
   return {
     kind: 'variable',
     name,
-    constraint: 'addable'
+    constraint: 'addable',
   }
 }
 
@@ -170,7 +170,7 @@ export function tPair(headType: Type, tailType: Type): Pair {
   return {
     kind: 'pair',
     headType,
-    tailType
+    tailType,
   }
 }
 
@@ -179,7 +179,7 @@ export function tList(elementType: Type, typeAsPair?: Pair): List {
     kind: 'list',
     elementType,
     // Used in Source Typed variants to check for type mismatches against pairs
-    typeAsPair
+    typeAsPair,
   }
 }
 
@@ -187,14 +187,14 @@ export function tForAll(polyType: Type, typeParams?: Variable[]): ForAll {
   return {
     kind: 'forall',
     polyType,
-    typeParams
+    typeParams,
   }
 }
 
 export function tArray(elementType: Type): SArray {
   return {
     kind: 'array',
-    elementType
+    elementType,
   }
 }
 
@@ -212,28 +212,28 @@ export function tFunc(...types: Type[]): FunctionType {
   return {
     kind: 'function',
     parameterTypes,
-    returnType
+    returnType,
   }
 }
 
 export function tUnion(...types: Type[]): UnionType {
   return {
     kind: 'union',
-    types
+    types,
   }
 }
 
 export function tLiteral(value: string | number | boolean): LiteralType {
   return {
     kind: 'literal',
-    value
+    value,
   }
 }
 
 export function tPred(ifTrueType: Type | ForAll): PredicateType {
   return {
     kind: 'predicate',
-    ifTrueType
+    ifTrueType,
   }
 }
 
@@ -307,7 +307,7 @@ export const predeclaredNames: [string, BindableType][] = [
   ['get_time', tFunc(tNumber)],
   ['stringify', tForAll(tFunc(tVar('T'), tString))],
   ['display', tForAll(tVar('T'))],
-  ['error', tForAll(tVar('T'))]
+  ['error', tForAll(tVar('T'))],
 ]
 
 export const pairFuncs: [string, BindableType][] = [
@@ -316,17 +316,17 @@ export const pairFuncs: [string, BindableType][] = [
   ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
   ['is_pair', tPred(tForAll(tPair(headType, tailType)))],
   ['is_null', tPred(tForAll(tList(tVar('T'))))],
-  ['is_list', tPred(tForAll(tList(tVar('T'))))]
+  ['is_list', tPred(tForAll(tList(tVar('T'))))],
 ]
 
 export const mutatingPairFuncs: [string, BindableType][] = [
   ['set_head', tForAll(tFunc(tPair(headType, tailType), headType, tUndef))],
-  ['set_tail', tForAll(tFunc(tPair(headType, tailType), tailType, tUndef))]
+  ['set_tail', tForAll(tFunc(tPair(headType, tailType), tailType, tUndef))],
 ]
 
 export const arrayFuncs: [string, BindableType][] = [
   ['is_array', tPred(tForAll(tArray(tVar('T'))))],
-  ['array_length', tForAll(tFunc(tArray(tVar('T')), tNumber))]
+  ['array_length', tForAll(tFunc(tArray(tVar('T')), tNumber))],
 ]
 
 export const listFuncs: [string, BindableType][] = [['list', tForAll(tVar('T1'))]]
@@ -344,19 +344,19 @@ export const primitiveFuncs: [string, BindableType][] = [
   ['%', tFunc(tNumber, tNumber, tNumber)],
   ['-', tFunc(tNumber, tNumber, tNumber)],
   ['*', tFunc(tNumber, tNumber, tNumber)],
-  ['/', tFunc(tNumber, tNumber, tNumber)]
+  ['/', tFunc(tNumber, tNumber, tNumber)],
 ]
 
 // Source 2 and below restricts === to addables
 export const preS3equalityFuncs: [string, BindableType][] = [
   ['===', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))]
+  ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
 ]
 
 // Source 3 and above allows any values as arguments for ===
 export const postS3equalityFuncs: [string, BindableType][] = [
   ['===', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))],
-  ['!==', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))]
+  ['!==', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))],
 ]
 
 export const temporaryStreamFuncs: [string, BindableType][] = [
@@ -376,7 +376,7 @@ export const temporaryStreamFuncs: [string, BindableType][] = [
   ['enum_stream', tForAll(tFunc(tNumber, tNumber, tVar('T1')))],
   ['integers_from', tForAll(tFunc(tNumber, tVar('T1')))],
   ['eval_stream', tForAll(tFunc(tVar('T1'), tNumber, tList(tVar('T2'))))],
-  ['stream_ref', tForAll(tFunc(tVar('T1'), tNumber, tVar('T2')))]
+  ['stream_ref', tForAll(tFunc(tVar('T1'), tNumber, tVar('T2')))],
 ]
 
 // Prelude function type overrides for Source Typed variant
@@ -393,18 +393,18 @@ export const source1TypeOverrides: [string, BindableType][] = [
   ['char_at', tFunc(tString, tNumber, tUnion(tString, tUndef))],
   // TODO: Add support for type checking of functions with variable no. of args
   ['display', tForAll(tAny)],
-  ['error', tForAll(tAny)]
+  ['error', tForAll(tAny)],
 ]
 
 export const source2TypeOverrides: [string, BindableType][] = [
   // list library functions
   [
     'accumulate',
-    tForAll(tFunc(tFunc(tVar('T'), tVar('U'), tVar('U')), tVar('U'), tList(tVar('T')), tVar('U')))
+    tForAll(tFunc(tFunc(tVar('T'), tVar('U'), tVar('U')), tVar('U'), tList(tVar('T')), tVar('U'))),
   ],
   [
     'append',
-    tForAll(tFunc(tList(tVar('T')), tList(tVar('U')), tList(tUnion(tVar('T'), tVar('U')))))
+    tForAll(tFunc(tList(tVar('T')), tList(tVar('U')), tList(tUnion(tVar('T'), tVar('U'))))),
   ],
   ['build_list', tForAll(tFunc(tFunc(tNumber, tVar('T')), tNumber, tList(tVar('T'))))],
   ['enum_list', tFunc(tNumber, tNumber, tList(tNumber))],
@@ -422,7 +422,7 @@ export const source2TypeOverrides: [string, BindableType][] = [
   // TODO: Add support for type checking of functions with variable no. of args
   ['display_list', tForAll(tAny)],
   ['draw_data', tForAll(tAny)],
-  ['equal', tFunc(tAny, tAny, tBool)]
+  ['equal', tFunc(tAny, tAny, tBool)],
 ]
 
 export const source3TypeOverrides: [string, BindableType][] = [
@@ -437,17 +437,17 @@ export const source3TypeOverrides: [string, BindableType][] = [
   ['list_to_stream', tForAll(tFunc(tList(tVar('T')), tStream(tVar('T'))))],
   [
     'stream_append',
-    tForAll(tFunc(tStream(tVar('T')), tStream(tVar('U')), tStream(tUnion(tVar('T'), tVar('U')))))
+    tForAll(tFunc(tStream(tVar('T')), tStream(tVar('U')), tStream(tUnion(tVar('T'), tVar('U'))))),
   ],
   [
     'stream_filter',
-    tForAll(tFunc(tFunc(tVar('T'), tBool), tStream(tVar('T')), tStream(tVar('T'))))
+    tForAll(tFunc(tFunc(tVar('T'), tBool), tStream(tVar('T')), tStream(tVar('T')))),
   ],
   ['stream_for_each', tForAll(tFunc(tFunc(tVar('T'), tAny), tStream(tVar('T')), tLiteral(true)))],
   ['stream_length', tFunc(tStream(tAny), tNumber)],
   [
     'stream_map',
-    tForAll(tFunc(tFunc(tVar('T'), tVar('U')), tStream(tVar('T')), tStream(tVar('U'))))
+    tForAll(tFunc(tFunc(tVar('T'), tVar('U')), tStream(tVar('T')), tStream(tVar('U')))),
   ],
   ['stream_member', tForAll(tFunc(tVar('T'), tStream(tVar('T')), tStream(tVar('T'))))],
   ['stream_ref', tForAll(tFunc(tStream(tVar('T')), tNumber, tVar('T')))],
@@ -455,21 +455,21 @@ export const source3TypeOverrides: [string, BindableType][] = [
   ['stream_remove_all', tForAll(tFunc(tVar('T'), tStream(tVar('T')), tStream(tVar('T'))))],
   ['stream_reverse', tForAll(tFunc(tStream(tVar('T')), tStream(tVar('T'))))],
   ['stream_tail', tForAll(tFunc(tStream(tVar('T')), tStream(tVar('T'))))],
-  ['stream_to_list', tForAll(tFunc(tStream(tVar('T')), tList(tVar('T'))))]
+  ['stream_to_list', tForAll(tFunc(tStream(tVar('T')), tList(tVar('T'))))],
 ]
 
 export const source4TypeOverrides: [string, BindableType][] = [
   ['apply_in_underlying_javascript', tFunc(tAny, tList(tAny), tAny)],
   ['tokenize', tFunc(tString, tList(tString))],
   // For parse tree types, see parseTreeTypes.prelude.ts
-  ['parse', tFunc(tString, tUnion(tVar('Program', []), tVar('Statement', [])))]
+  ['parse', tFunc(tString, tUnion(tVar('Program', []), tVar('Statement', [])))],
 ]
 
 const predeclaredConstTypes: [string, Type][] = []
 
 const pairTypeAlias: [string, ForAll] = [
   'Pair',
-  tForAll(tPair(headType, tailType), [headType, tailType])
+  tForAll(tPair(headType, tailType), [headType, tailType]),
 ]
 const listTypeAlias: [string, ForAll] = ['List', tForAll(tList(tVar('T')), [tVar('T')])]
 const streamTypeAlias: [string, ForAll] = ['Stream', tForAll(tStream(tVar('T')), [tVar('T')])]
@@ -493,8 +493,8 @@ export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
     {
       typeMap: new Map(initialTypeMappings),
       declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const'])),
-      typeAliasMap: new Map(initialTypeAliasMappings)
-    }
+      typeAliasMap: new Map(initialTypeAliasMappings),
+    },
   ]
 }
 

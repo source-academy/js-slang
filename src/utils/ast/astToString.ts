@@ -71,10 +71,10 @@ export const sourceGen = Object.assign({}, astring.GENERATOR, {
     if (writeComments && node.trailingComments != null) {
       formatComments(state, node.trailingComments, indent, lineEnd)
     }
-  }
+  },
 })
 
 export const astToString = (node: Node): string =>
   astring.generate(node, {
-    generator: sourceGen
+    generator: sourceGen,
   })

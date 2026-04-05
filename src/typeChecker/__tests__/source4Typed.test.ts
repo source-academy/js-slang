@@ -53,7 +53,7 @@ describe(parse, () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Type 'number' is not assignable to type 'string'."`
+      `"Line 2: Type 'number' is not assignable to type 'string'."`,
     )
   })
 
@@ -62,7 +62,7 @@ describe(parse, () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type 'Program | Statement' is not assignable to type 'number'."`
+      `"Line 1: Type 'Program | Statement' is not assignable to type 'number'."`,
     )
   })
 
@@ -73,7 +73,7 @@ describe(parse, () => {
     `
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 3: SyntaxError: Identifier 'a' has already been declared (3:12)"`
+      `"Line 3: SyntaxError: Identifier 'a' has already been declared (3:12)"`,
     )
   })
 })

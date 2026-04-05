@@ -15,7 +15,7 @@ test('standalone block statements', () => {
       return x;
     }
     test();
-  `
+  `,
   ).toEqual(true)
 })
 
@@ -33,7 +33,7 @@ test('const uses block scoping instead of function scoping', () => {
       return x;
     }
     test();
-  `
+  `,
   ).toEqual(true)
 })
 
@@ -52,7 +52,7 @@ test('let uses block scoping instead of function scoping', () => {
     }
     test();
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual(true)
 })
 
@@ -68,7 +68,7 @@ test('for loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual(true)
 })
 
@@ -86,7 +86,7 @@ test('while loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    Chapter.SOURCE_4
+    Chapter.SOURCE_4,
   ).toEqual(true)
 })
 
@@ -104,7 +104,7 @@ test('for loop `let` variables are copied into the block scope', () => {
   }
   test();
   `,
-    Chapter.SOURCE_4
+    Chapter.SOURCE_4,
   ).toEqual(1)
 })
 
@@ -120,7 +120,7 @@ test('Cannot overwrite loop variables within a block', () => {
   }
   test();
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual('Line 4: Assignment to a for loop variable in the for loop is not allowed.')
 })
 
@@ -166,6 +166,6 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   }
   test();
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual("Line 3: ReferenceError: Cannot access 'variable' before initialization")
 })

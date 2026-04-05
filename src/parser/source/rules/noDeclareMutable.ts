@@ -15,7 +15,7 @@ export class NoDeclareMutableError extends RuleError<VariableDeclaration> {
   public elaborate() {
     const {
       id: { name },
-      init
+      init,
     } = getSourceVariableDeclaration(this.node)
     const value = generate(init)
 
@@ -34,8 +34,8 @@ const noDeclareMutable: Rule<VariableDeclaration> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noDeclareMutable

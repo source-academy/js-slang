@@ -7,7 +7,7 @@ import type { Rule } from '../../types'
 export class BracesAroundIfElseError extends RuleError<IfStatement> {
   constructor(
     node: IfStatement,
-    private readonly branch: 'consequent' | 'alternate'
+    private readonly branch: 'consequent' | 'alternate',
   ) {
     super(node)
   }
@@ -83,8 +83,8 @@ const bracesAroundIfElse: Rule<IfStatement> = {
         }
       }
       return errors
-    }
-  }
+    },
+  },
 }
 
 export default bracesAroundIfElse

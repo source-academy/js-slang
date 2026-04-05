@@ -14,7 +14,7 @@ import {
   getChapterOption,
   getLanguageOption,
   getVariantOption,
-  handleResult
+  handleResult,
 } from './utils'
 
 export const getReplCommand = () =>
@@ -63,8 +63,8 @@ export const getReplCommand = () =>
           context,
           {
             ...options,
-            shouldAddFileName: true
-          }
+            shouldAddFileName: true,
+          },
         )
 
         const toLog = handleResult(result, context, verbose ?? verboseErrors)
@@ -90,7 +90,7 @@ export const getReplCommand = () =>
             }
 
             return handleResult(output.result, context, verbose ?? output.verboseErrors)
-          }
-        }
+          },
+        },
       )
     })

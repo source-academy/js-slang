@@ -22,8 +22,8 @@ const noHolesInArrays: Rule<ArrayExpression> = {
   checkers: {
     ArrayExpression(node) {
       return node.elements.some(x => x === null) ? [new NoHolesInArrays(node)] : []
-    }
-  }
+    },
+  },
 }
 
 export default noHolesInArrays

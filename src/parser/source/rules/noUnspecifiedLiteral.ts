@@ -28,8 +28,8 @@ const noUnspecifiedLiteral: Rule<Literal> = {
       } else {
         return []
       }
-    }
-  }
+    },
+  },
 }
 
 export default noUnspecifiedLiteral

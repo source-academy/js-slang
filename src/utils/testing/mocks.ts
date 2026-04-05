@@ -9,7 +9,7 @@ import type { Context, Environment } from '../../types'
 export function mockContext(
   chapter: Chapter = Chapter.SOURCE_1,
   variant: Variant = Variant.DEFAULT,
-  languageOptions: LanguageOptions = {}
+  languageOptions: LanguageOptions = {},
 ): Context {
   return createContext(chapter, variant, languageOptions)
 }
@@ -22,15 +22,15 @@ export function mockImportDeclaration(): es.ImportDeclaration {
         type: 'ImportDefaultSpecifier',
         local: {
           type: 'Identifier',
-          name: 'MockName'
-        }
-      }
+          name: 'MockName',
+        },
+      },
     ],
     source: {
       type: 'Literal',
       value: 'mock-path',
-      raw: "'mock-path'"
-    }
+      raw: "'mock-path'",
+    },
   }
   return mockImportDecl
 }
@@ -48,19 +48,19 @@ export function mockRuntimeContext(): Context {
         type: 'Literal',
         loc: {
           start: { line: 1, column: 0 },
-          end: { line: 1, column: 1 }
+          end: { line: 1, column: 1 },
         },
         value: 0,
         raw: '0',
-        range: [0, 1]
-      }
+        range: [0, 1],
+      },
     ],
     control: null,
     stash: null,
     objectCount: 0,
     envStepsTotal: 0,
     breakpointSteps: [],
-    changepointSteps: []
+    changepointSteps: [],
   }
   return context
 }
@@ -75,11 +75,11 @@ export function mockClosure(): Closure {
       params: [],
       body: {
         type: 'BlockStatement',
-        body: []
-      }
+        body: [],
+      },
     } as es.ArrowFunctionExpression,
     mockEnvironment(context),
-    context
+    context,
   )
 }
 

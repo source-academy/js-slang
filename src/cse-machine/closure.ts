@@ -6,7 +6,7 @@ import {
   hasReturnStatement,
   isBlockStatement,
   isStatementSequence,
-  uniqueId
+  uniqueId,
 } from '../cse-machine/utils'
 import type { Context, Environment, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
@@ -18,7 +18,7 @@ const closureToJS = (value: Closure, context: Context) => {
     const args: Value[] = [...arguments]
     const node = ast.callExpression(
       ast.literal(value as any, value.node.loc),
-      args.map(arg => ast.primitive(arg))
+      args.map(arg => ast.primitive(arg)),
     )
     // Create a new CSE Machine with the same context as the current one, but with
     // the control reset to only contain the call expression, and the stash emptied.
@@ -31,8 +31,8 @@ const closureToJS = (value: Closure, context: Context) => {
         nodes: [...context.runtime.nodes],
         breakpointSteps: [...context.runtime.breakpointSteps],
         changepointSteps: [...context.runtime.changepointSteps],
-        debuggerOn: false
-      }
+        debuggerOn: false,
+      },
     }
     newContext.runtime.control = new Control()
     // Also need the env instruction to return back to the current environment at the end.
@@ -44,7 +44,7 @@ const closureToJS = (value: Closure, context: Context) => {
       newContext.runtime.control,
       newContext.runtime.stash,
       -1,
-      -1
+      -1,
     )
     // Run the new CSE Machine fully to obtain the result in the stash
     for (const _ of gen) {
@@ -54,14 +54,14 @@ const closureToJS = (value: Closure, context: Context) => {
     return newContext.runtime.stash.peek()
   }
   Object.defineProperty(DummyClass, 'name', {
-    value: value.functionName
+    value: value.functionName,
   })
   Object.setPrototypeOf(DummyClass, () => undefined)
   Object.defineProperty(DummyClass, 'Inherits', {
     value: (Parent: Value) => {
       DummyClass.prototype = Object.create(Parent.prototype)
       DummyClass.prototype.constructor = DummyClass
-    }
+    },
   })
   DummyClass.toString = () => generate(value.originalNode)
   DummyClass.call = (thisArg: Value, ...args: Value[]): any => {
@@ -86,7 +86,7 @@ export default class Closure extends Callable {
     environment: Environment,
     context: Context,
     dummyReturn?: boolean,
-    predefined?: boolean
+    predefined?: boolean,
   ) {
     const functionBody: es.BlockStatement | StatementSequence =
       !isBlockStatement(node.body) && !isStatementSequence(node.body)
@@ -95,9 +95,9 @@ export default class Closure extends Callable {
           ? ast.blockStatement(
               [
                 ...node.body.body,
-                ast.returnStatement(ast.identifier('undefined', node.body.loc), node.body.loc)
+                ast.returnStatement(ast.identifier('undefined', node.body.loc), node.body.loc),
               ],
-              node.body.loc
+              node.body.loc,
             )
           : node.body
 
@@ -105,7 +105,7 @@ export default class Closure extends Callable {
       ast.blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),
       environment,
       context,
-      predefined
+      predefined,
     )
 
     // Set the closure's node to point back at the original one
@@ -136,7 +136,7 @@ export default class Closure extends Callable {
     public node: es.ArrowFunctionExpression,
     public environment: Environment,
     context: Context,
-    isPredefined?: boolean
+    isPredefined?: boolean,
   ) {
     super(function (this: any, ...args: any[]) {
       return funJS.apply(this, args)
@@ -145,7 +145,7 @@ export default class Closure extends Callable {
     this.id = uniqueId(context)
     currentEnvironment(context).heap.add(this)
     const params = this.node.params.map((o: es.Identifier | es.RestElement) =>
-      o.type === 'RestElement' ? '...' + (o.argument as es.Identifier).name : o.name
+      o.type === 'RestElement' ? '...' + (o.argument as es.Identifier).name : o.name,
     )
     this.functionName = params.join(', ')
     if (params.length !== 1 || params[0].startsWith('...')) {

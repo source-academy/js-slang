@@ -11,7 +11,7 @@ test.each([
     display('message');
     `,
     true,
-    'message'
+    'message',
   ],
 
   [
@@ -20,7 +20,7 @@ test.each([
     error('error!');
     `,
     false,
-    undefined
+    undefined,
   ],
 
   [
@@ -29,7 +29,7 @@ test.each([
     is_undefined(undefined);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -38,7 +38,7 @@ test.each([
     is_undefined(null);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -47,7 +47,7 @@ test.each([
     is_null(undefined);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -56,7 +56,7 @@ test.each([
     is_null(null);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -65,7 +65,7 @@ test.each([
     is_string('string');
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -74,7 +74,7 @@ test.each([
     is_string('true');
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -83,7 +83,7 @@ test.each([
     is_string('1');
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -92,7 +92,7 @@ test.each([
     is_string(true);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -101,7 +101,7 @@ test.each([
     is_string(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -110,7 +110,7 @@ test.each([
     is_number('string');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -119,7 +119,7 @@ test.each([
     is_number('true');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -128,7 +128,7 @@ test.each([
     is_number('1');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -137,7 +137,7 @@ test.each([
     is_number(true);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -146,7 +146,7 @@ test.each([
     is_number(1);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -155,7 +155,7 @@ test.each([
     is_boolean('string');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -164,7 +164,7 @@ test.each([
     is_boolean('true');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -173,7 +173,7 @@ test.each([
     is_boolean('1');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -182,7 +182,7 @@ test.each([
     is_boolean(true);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -191,7 +191,7 @@ test.each([
     is_boolean(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -200,7 +200,7 @@ test.each([
     is_function(display);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -209,7 +209,7 @@ test.each([
     is_function(x => x);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -221,7 +221,7 @@ test.each([
     is_function(f);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -230,7 +230,7 @@ test.each([
     is_function(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -239,7 +239,7 @@ test.each([
     is_array(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -248,7 +248,7 @@ test.each([
     is_array(pair(1, 2));
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -257,7 +257,7 @@ test.each([
     is_array([1]);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -266,7 +266,7 @@ test.each([
     array_length([1]);
     `,
     true,
-    1
+    1,
   ],
 
   [
@@ -275,7 +275,7 @@ test.each([
     parse_int('10', 10);
     `,
     true,
-    10
+    10,
   ],
 
   [
@@ -284,7 +284,7 @@ test.each([
     parse_int('10', 2);
     `,
     true,
-    2
+    2,
   ],
 
   [
@@ -293,7 +293,7 @@ test.each([
     is_number(get_time());
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -310,7 +310,7 @@ test.each([
     repeatUntilDifferentTime();
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -319,7 +319,7 @@ test.each([
     pair(1, 2);
     `,
     true,
-    [1, 2]
+    [1, 2],
   ],
 
   [
@@ -328,7 +328,7 @@ test.each([
     list(1, 2);
     `,
     true,
-    [1, [2, null]]
+    [1, [2, null]],
   ],
 
   [
@@ -337,7 +337,7 @@ test.each([
     is_list(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -346,7 +346,7 @@ test.each([
     is_list(pair(1, 2));
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -355,7 +355,7 @@ test.each([
     is_list(list(1, 2));
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -364,7 +364,7 @@ test.each([
     head(pair(1, 2));
     `,
     true,
-    1
+    1,
   ],
 
   [
@@ -373,7 +373,7 @@ test.each([
     tail(pair(1, 2));
     `,
     true,
-    2
+    2,
   ],
 
   [
@@ -382,7 +382,7 @@ test.each([
     head(null);
     `,
     false,
-    undefined
+    undefined,
   ],
 
   [
@@ -391,7 +391,7 @@ test.each([
     tail(null);
     `,
     false,
-    undefined
+    undefined,
   ],
 
   [
@@ -400,7 +400,7 @@ test.each([
     head(1);
     `,
     false,
-    undefined
+    undefined,
   ],
 
   [
@@ -409,7 +409,7 @@ test.each([
     tail(1);
     `,
     false,
-    undefined
+    undefined,
   ],
 
   [
@@ -418,7 +418,7 @@ test.each([
     length(list(1, 2));
     `,
     true,
-    2
+    2,
   ],
 
   [
@@ -427,18 +427,18 @@ test.each([
     length(1);
     `,
     false,
-    undefined
-  ]
+    undefined,
+  ],
 ] as [Chapter, string, boolean, Value][])(
   'Builtins work as expected %#',
   async (chapter, snippet, passing, returnValue) => {
     if (passing) {
       await expectFinishedResult(stripIndent(snippet), {
         chapter,
-        variant: Variant.EXPLICIT_CONTROL
+        variant: Variant.EXPLICIT_CONTROL,
       }).toEqual(returnValue)
     } else {
       await snapshotFailure(stripIndent(snippet), { chapter, variant: Variant.EXPLICIT_CONTROL })
     }
-  }
+  },
 )
