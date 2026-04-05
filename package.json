@@ -74,7 +74,7 @@
     "jsdoc": "4.0.5",
     "jsdom": "^29.0.0",
     "prettier": "^3.6.2",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "typescript-eslint": "^8.46.3",
     "vitest": "^4.0.4"
   },
