@@ -1,4 +1,4 @@
-import type { Position } from 'acorn/dist/acorn'
+import type { Position } from 'acorn'
 import type { SourceLocation } from 'estree'
 import { describe, expect, test } from 'vitest'
 
