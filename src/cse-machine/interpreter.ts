@@ -434,11 +434,9 @@ export function* generateCSEMachineStateStream(
     }
     const evalResult = context.runtime.stash?.peek();
     const mostRecentControlHeight = context.pendingStreamFnStack.at(-1)?.[1]   
-    console.log(mostRecentControlHeight);
 
     if(isPair(evalResult) && mostRecentControlHeight != undefined && context.runtime.control?.size() == parseInt(mostRecentControlHeight) - 1) {
       const mostRecentNullaryFnId = context.pendingStreamFnStack.pop()?.[0]
-      console.log("pendingStreamFnStack pop: " + context.pendingStreamFnStack)
       if (mostRecentNullaryFnId != undefined){
         context.pairToStreamFnId.set((evalResult as any).id, mostRecentNullaryFnId)
         context.streamFnIdToPairId.set(mostRecentNullaryFnId, (evalResult as any).id)
@@ -449,9 +447,6 @@ export function* generateCSEMachineStateStream(
         context.streamLineage.get(mostRecentNullaryFnId)?.push((evalResult as any).id)
       }
 
-      console.log(context.streamLineage)
-      console.log(context.pairToStreamFnId)
-      console.log(context.streamFnIdToPairId)
 
     } 
 
@@ -882,7 +877,6 @@ const cmdEvaluators: CommandEvaluators = {
       if (src.callee.name == "stream_tail") {
         if(context.mostRecentPair == undefined) context.mostRecentPair = [];
         context.mostRecentPair?.push(args[0].id);
-        console.log("saved: " + context.mostRecentPair);
       }
     }
 
@@ -1037,7 +1031,6 @@ const cmdEvaluators: CommandEvaluators = {
       if (func.node.params.length === 0) {
         context.pendingStreamFnId = func.id
         context.pendingStreamFnStack.push([func.id, context.runtime.control !== null ? context.runtime.control.size().toString() : "0"])
-        console.log("pendingStreamFnStack push: "+context.pendingStreamFnStack)
       } 
       // else {
       //   context.pendingStreamFnId = undefined
@@ -1111,7 +1104,6 @@ const cmdEvaluators: CommandEvaluators = {
   [InstrType.ARRAY_ACCESS]({ command, context, stash }) {
     const index = stash.pop()
     const array = stash.pop()
-    console.log("accessing array: ");
 
     //Check if the index is legal
     const indexRangeError = rttc.checkoutofRange(command.srcNode, index, context.chapter)
