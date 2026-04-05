@@ -283,7 +283,7 @@ export const handleArrayCreation = (
 
   // Link the pairIds to the streamIds through a map
   context.streamPairIdToStreamId.set((array as any).id, (streamId as string))
-  context.streemPairIdToParentCount.set((array as any).id, parents)
+  context.streamPairIdToParentCount.set((array as any).id, parents)
 
   if(streamId != undefined) {
     let maxHeight: number = getStreamMaxWidth(streamId, context.streamPairIdToStreamId, context.streemPairIdToParentCount);
