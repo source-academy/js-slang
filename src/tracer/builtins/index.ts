@@ -1,24 +1,24 @@
-import type es from 'estree'
-import { convert } from '../generator'
-import type { StepperExpression } from '../nodes'
-import { StepperIdentifier } from '../nodes/Expression/Identifier'
-import { StepperLiteral } from '../nodes/Expression/Literal'
-import { InvalidNumberOfArgumentsError } from '../../errors/errors'
-import type { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication'
-import { GeneralRuntimeError } from '../../errors/runtimeErrors'
-import type { RedexInfo } from '..'
-import { auxiliaryBuiltinFunctions } from './auxiliary'
-import { listBuiltinFunctions } from './lists'
-import { miscBuiltinFunctions } from './misc'
+import type es from 'estree';
+import { convert } from '../generator';
+import type { StepperExpression } from '../nodes';
+import { StepperIdentifier } from '../nodes/Expression/Identifier';
+import { StepperLiteral } from '../nodes/Expression/Literal';
+import { InvalidNumberOfArgumentsError } from '../../errors/errors';
+import type { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication';
+import { GeneralRuntimeError } from '../../errors/runtimeErrors';
+import type { RedexInfo } from '..';
+import { auxiliaryBuiltinFunctions } from './auxiliary';
+import { listBuiltinFunctions } from './lists';
+import { miscBuiltinFunctions } from './misc';
 
 const builtinFunctions = {
   ...listBuiltinFunctions,
   ...miscBuiltinFunctions,
-  ...auxiliaryBuiltinFunctions
-}
+  ...auxiliaryBuiltinFunctions,
+};
 
 export function prelude(node: es.BaseNode, redex: RedexInfo) {
-  let inputNode = convert(node)
+  let inputNode = convert(node);
 
   // Substitute math constant
   Object.getOwnPropertyNames(Math)
@@ -27,46 +27,46 @@ export function prelude(node: es.BaseNode, redex: RedexInfo) {
       inputNode = inputNode.substitute(
         new StepperIdentifier('math_' + name),
         new StepperLiteral(Math[name as keyof typeof Math] as number),
-        redex
-      )
-    })
-  return inputNode
+        redex,
+      );
+    });
+  return inputNode;
 }
 
 export function getBuiltinFunction(
   name: string,
-  call: StepperFunctionApplication
+  call: StepperFunctionApplication,
 ): StepperExpression {
-  const args = call.arguments
+  const args = call.arguments;
 
   if (name.startsWith('math_')) {
-    const mathFnName = name.split('_')[1]
+    const mathFnName = name.split('_')[1];
 
     if (mathFnName in Math) {
-      const fn = (Math as any)[mathFnName]
-      const argVal = args.map(arg => (arg as StepperLiteral).value)
+      const fn = (Math as any)[mathFnName];
+      const argVal = args.map(arg => (arg as StepperLiteral).value);
       argVal.forEach(arg => {
         if (typeof arg !== 'number' && typeof arg !== 'bigint') {
-          throw new GeneralRuntimeError('Math functions must be called with numbers for arguments')
+          throw new GeneralRuntimeError('Math functions must be called with numbers for arguments');
         }
-      })
+      });
 
-      const result = fn(...argVal)
-      return new StepperLiteral(result, result)
+      const result = fn(...argVal);
+      return new StepperLiteral(result, result);
     }
   }
 
-  const calledFunction = builtinFunctions[name as keyof typeof builtinFunctions]
+  const calledFunction = builtinFunctions[name as keyof typeof builtinFunctions];
 
   if (calledFunction.arity != args.length && name !== 'list') {
     // brute force way to fix this issue
-    throw new InvalidNumberOfArgumentsError(call, calledFunction.arity, args.length)
+    throw new InvalidNumberOfArgumentsError(call, calledFunction.arity, args.length);
     // throw new Error(`Expected ${calledFunction.arity} arguments, but got ${args.length}.`)
   }
 
-  return calledFunction.definition(args)
+  return calledFunction.definition(args);
 }
 
 export function isBuiltinFunction(name: string): boolean {
-  return name.startsWith('math_') || Object.keys(builtinFunctions).includes(name)
+  return name.startsWith('math_') || Object.keys(builtinFunctions).includes(name);
 }

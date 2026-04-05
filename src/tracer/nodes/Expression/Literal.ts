@@ -1,7 +1,7 @@
-import type { Comment, SimpleLiteral, SourceLocation } from 'estree'
-import type { StepperExpression } from '..'
-import { StepperBaseNode } from '../../interface'
-import { InternalRuntimeError } from '../../../errors/runtimeErrors'
+import type { Comment, SimpleLiteral, SourceLocation } from 'estree';
+import type { StepperExpression } from '..';
+import { StepperBaseNode } from '../../interface';
+import { InternalRuntimeError } from '../../../errors/runtimeErrors';
 
 /**
  * This class represents a literal node in the stepper's AST (Abstract Syntax Tree).
@@ -21,9 +21,9 @@ export class StepperLiteral extends StepperBaseNode<SimpleLiteral> implements Si
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
-    super('Literal', leadingComments, trailingComments, loc, range)
+    super('Literal', leadingComments, trailingComments, loc, range);
   }
 
   static create(literal: SimpleLiteral) {
@@ -33,36 +33,36 @@ export class StepperLiteral extends StepperBaseNode<SimpleLiteral> implements Si
       literal.leadingComments,
       literal.trailingComments,
       literal.loc,
-      literal.range
-    )
+      literal.range,
+    );
   }
 
   public override isContractible(): boolean {
-    return false
+    return false;
   }
 
   public override isOneStepPossible(): boolean {
-    return false
+    return false;
   }
 
   public override contract(): StepperLiteral {
-    throw new InternalRuntimeError('Cannot contract Literal', this)
+    throw new InternalRuntimeError('Cannot contract Literal', this);
   }
 
   public override oneStep(): StepperLiteral {
-    throw new InternalRuntimeError('Cannot oneStep Literal', this)
+    throw new InternalRuntimeError('Cannot oneStep Literal', this);
   }
 
   public override substitute(): StepperLiteral {
-    return this
+    return this;
   }
 
   public override freeNames(): string[] {
-    return []
+    return [];
   }
 
   public override allNames(): string[] {
-    return []
+    return [];
   }
 
   public override rename(_before: string, _after: string): StepperExpression {
@@ -72,7 +72,7 @@ export class StepperLiteral extends StepperBaseNode<SimpleLiteral> implements Si
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 }

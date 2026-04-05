@@ -1,5 +1,5 @@
-import type { Context } from '../../types'
-import { ModuleConnectionError, ModuleInternalError } from '../errors'
+import type { Context } from '../../types';
+import { ModuleConnectionError, ModuleInternalError } from '../errors';
 import type {
   ModuleDocumentation,
   LoadedBundle,
@@ -7,120 +7,120 @@ import type {
   PartialSourceModule,
   Importer,
   ModuleDeclarationWithSource,
-  ManifestImporter
-} from '../moduleTypes'
+  ManifestImporter,
+} from '../moduleTypes';
 import {
   defaultSourceBundleImporter,
   defaultDocsImporter,
   setModulesStaticURL as internalUrlSetter,
   defaultManifestImporter,
-  defaultSourceTabImporter
-} from './importers'
-import { getRequireProvider } from './requireProvider'
+  defaultSourceTabImporter,
+} from './importers';
+import { getRequireProvider } from './requireProvider';
 
 export function setModulesStaticURL(value: string) {
-  internalUrlSetter(value)
+  internalUrlSetter(value);
 
   // Changing the backend url should clear the caches
   // TODO: Do we want to memoize based on backend url?
-  memoizedLoadModuleDocsAsync.cache.clear()
-  memoizedLoadModuleManifestAsync.reset()
+  memoizedLoadModuleDocsAsync.cache.clear();
+  memoizedLoadModuleManifestAsync.reset();
 }
 
 // lodash's memoize function memoizes on errors. This is undesirable,
 // so we have our own custom memoization that won't memoize on errors
 function getManifestLoader() {
-  let manifest: ModulesManifest | null = null
-  let storedImporter: ManifestImporter | undefined = undefined
+  let manifest: ModulesManifest | null = null;
+  let storedImporter: ManifestImporter | undefined = undefined;
 
   async function func(importer: ManifestImporter = defaultManifestImporter) {
     if (storedImporter !== undefined) {
       if (storedImporter !== importer) {
-        storedImporter = importer
-        manifest = null
+        storedImporter = importer;
+        manifest = null;
       }
     } else {
-      storedImporter = importer
+      storedImporter = importer;
     }
 
     if (manifest !== null) {
-      return manifest
+      return manifest;
     }
 
-    ;({ default: manifest } = await importer())
+    ({ default: manifest } = await importer());
 
-    return manifest
+    return manifest;
   }
 
   func.reset = () => {
-    manifest = null
-  }
+    manifest = null;
+  };
 
-  return func
+  return func;
 }
 
 function getMemoizedDocsLoader() {
-  const docs = new Map<string, ModuleDocumentation>()
-  let storedImporter: Importer<ModuleDocumentation> | undefined = undefined
+  const docs = new Map<string, ModuleDocumentation>();
+  let storedImporter: Importer<ModuleDocumentation> | undefined = undefined;
 
   async function func(
     moduleName: string,
     throwOnError: true,
-    importer?: Importer<ModuleDocumentation>
-  ): Promise<ModuleDocumentation>
+    importer?: Importer<ModuleDocumentation>,
+  ): Promise<ModuleDocumentation>;
   async function func(
     moduleName: string,
     throwOnError?: false,
-    importer?: Importer<ModuleDocumentation>
-  ): Promise<ModuleDocumentation | null>
+    importer?: Importer<ModuleDocumentation>,
+  ): Promise<ModuleDocumentation | null>;
   async function func(
     moduleName: string,
     throwOnError?: boolean,
-    importer: Importer<ModuleDocumentation> = defaultDocsImporter
+    importer: Importer<ModuleDocumentation> = defaultDocsImporter,
   ): Promise<ModuleDocumentation | null> {
     if (storedImporter === undefined) {
-      storedImporter = importer
+      storedImporter = importer;
     } else if (storedImporter !== importer) {
-      storedImporter = importer
+      storedImporter = importer;
       // Reset the cache if a different importer is used,
-      docs.clear()
+      docs.clear();
     }
 
     if (docs.has(moduleName)) {
-      return docs.get(moduleName)!
+      return docs.get(moduleName)!;
     }
 
     try {
-      const { default: loadedDocs } = await importer(moduleName)
-      docs.set(moduleName, loadedDocs)
-      return loadedDocs
+      const { default: loadedDocs } = await importer(moduleName);
+      docs.set(moduleName, loadedDocs);
+      return loadedDocs;
     } catch (error) {
-      if (throwOnError) throw error
-      console.warn(`Failed to load documentation for ${moduleName}:`, error)
-      return null
+      if (throwOnError) throw error;
+      console.warn(`Failed to load documentation for ${moduleName}:`, error);
+      return null;
     }
   }
 
-  func.cache = docs
-  return func
+  func.cache = docs;
+  return func;
 }
 
-export const memoizedLoadModuleManifestAsync = getManifestLoader()
-export const memoizedLoadModuleDocsAsync = getMemoizedDocsLoader()
+export const memoizedLoadModuleManifestAsync = getManifestLoader();
+export const memoizedLoadModuleDocsAsync = getMemoizedDocsLoader();
 
 /**
  * Load all the tabs of the given names
  */
 export async function loadModuleTabsAsync(
   tabs: string[],
-  importer: Importer<PartialSourceModule> = defaultSourceTabImporter
+  importer: Importer<PartialSourceModule> = defaultSourceTabImporter,
 ): Promise<any[]> {
   return Promise.all(
     tabs.map(async tabName => {
-      const { default: result } = await importer(tabName)
-      return result
-    })
-  )
+      const { default: result } = await importer(tabName);
+      return result;
+    }),
+  );
 }
 
 /**
@@ -133,26 +133,26 @@ export async function loadModuleBundleAsync(
   moduleName: string,
   context: Context,
   importer: Importer<PartialSourceModule> = defaultSourceBundleImporter,
-  node?: ModuleDeclarationWithSource
+  node?: ModuleDeclarationWithSource,
 ): Promise<LoadedBundle> {
   try {
-    const { default: partialBundle } = await importer(moduleName, node)
-    const loadedBundle = partialBundle(getRequireProvider(context))
+    const { default: partialBundle } = await importer(moduleName, node);
+    const loadedBundle = partialBundle(getRequireProvider(context));
 
     return Object.entries(loadedBundle).reduce((res, [name, value]) => {
       if (typeof value === 'function' && typeof value.toReplString !== 'function') {
         // Don't override toReplString if it already exists
-        const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`
-        value.toReplString = () => repr
+        const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`;
+        value.toReplString = () => repr;
       }
       return {
         ...res,
-        [name]: value
-      }
-    }, {})
+        [name]: value,
+      };
+    }, {});
   } catch (error) {
-    if (error instanceof ModuleConnectionError) throw error
-    console.error(`Internal error while loading module ${moduleName}:`, error)
-    throw new ModuleInternalError(moduleName, error, node)
+    if (error instanceof ModuleConnectionError) throw error;
+    console.error(`Internal error while loading module ${moduleName}:`, error);
+    throw new ModuleInternalError(moduleName, error, node);
   }
 }

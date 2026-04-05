@@ -1,10 +1,10 @@
-import type { Comment, ConditionalExpression, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
-import { convert } from '../../generator'
-import { StepperBaseNode } from '../../interface'
-import { checkIfStatement } from '../../../utils/rttc'
-import type { RedexInfo } from '../..'
-import { InternalRuntimeError } from '../../../errors/runtimeErrors'
+import type { Comment, ConditionalExpression, SourceLocation } from 'estree';
+import type { StepperExpression, StepperPattern } from '..';
+import { convert } from '../../generator';
+import { StepperBaseNode } from '../../interface';
+import { checkIfStatement } from '../../../utils/rttc';
+import type { RedexInfo } from '../..';
+import { InternalRuntimeError } from '../../../errors/runtimeErrors';
 
 export class StepperConditionalExpression
   extends StepperBaseNode<ConditionalExpression>
@@ -17,9 +17,9 @@ export class StepperConditionalExpression
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
-    super('ConditionalExpression', leadingComments, trailingComments, loc, range)
+    super('ConditionalExpression', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: ConditionalExpression) {
@@ -30,40 +30,40 @@ export class StepperConditionalExpression
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
-    )
+      node.range,
+    );
   }
 
   public override isContractible(redex: RedexInfo): boolean {
-    if (this.test.type !== 'Literal') return false
-    const test_value = this.test.value
-    checkIfStatement(this, test_value)
+    if (this.test.type !== 'Literal') return false;
+    const test_value = this.test.value;
+    checkIfStatement(this, test_value);
 
-    redex.preRedex = [this]
-    return true
+    redex.preRedex = [this];
+    return true;
   }
 
   public override isOneStepPossible(redex: RedexInfo): boolean {
-    return this.isContractible(redex) || this.test.isOneStepPossible(redex)
+    return this.isContractible(redex) || this.test.isOneStepPossible(redex);
   }
 
   public override contract(redex: RedexInfo): StepperExpression {
-    redex.preRedex = [this]
+    redex.preRedex = [this];
     if (this.test.type !== 'Literal' || typeof this.test.value !== 'boolean') {
       throw new InternalRuntimeError(
         'Cannot contract ConditionalExpression with non-boolean literal test',
-        this
-      )
+        this,
+      );
     }
 
-    const result = this.test.value ? this.consequent : this.alternate
-    redex.postRedex = [result]
-    return result
+    const result = this.test.value ? this.consequent : this.alternate;
+    redex.postRedex = [result];
+    return result;
   }
 
   public override oneStep(redex: RedexInfo): StepperExpression {
     if (this.isContractible(redex)) {
-      return this.contract(redex)
+      return this.contract(redex);
     }
 
     return new StepperConditionalExpression(
@@ -73,14 +73,14 @@ export class StepperConditionalExpression
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 
   public override substitute(
     id: StepperPattern,
     value: StepperExpression,
-    redex: RedexInfo
+    redex: RedexInfo,
   ): StepperExpression {
     return new StepperConditionalExpression(
       this.test.substitute(id, value, redex),
@@ -89,8 +89,8 @@ export class StepperConditionalExpression
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 
   public override freeNames(): string[] {
@@ -98,9 +98,9 @@ export class StepperConditionalExpression
       new Set([
         ...this.test.freeNames(),
         ...this.consequent.freeNames(),
-        ...this.alternate.freeNames()
-      ])
-    )
+        ...this.alternate.freeNames(),
+      ]),
+    );
   }
 
   public override allNames(): string[] {
@@ -108,9 +108,9 @@ export class StepperConditionalExpression
       new Set([
         ...this.test.allNames(),
         ...this.consequent.allNames(),
-        ...this.alternate.allNames()
-      ])
-    )
+        ...this.alternate.allNames(),
+      ]),
+    );
   }
 
   public override rename(before: string, after: string): StepperExpression {
@@ -121,7 +121,7 @@ export class StepperConditionalExpression
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 }

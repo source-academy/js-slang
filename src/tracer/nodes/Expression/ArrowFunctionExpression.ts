@@ -1,13 +1,13 @@
-import type { ArrowFunctionExpression, Comment, Expression, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
-import { convert } from '../../generator'
-import { StepperBaseNode } from '../../interface'
-import { getFreshName } from '../../utils'
-import type { StepperBlockStatement } from '../Statement/BlockStatement'
-import { InternalRuntimeError } from '../../../errors/runtimeErrors'
-import type { RedexInfo } from '../..'
-import { mapAndFilter } from '../../../utils/misc'
-import { isIdentifier } from '../../../utils/ast/typeGuards'
+import type { ArrowFunctionExpression, Comment, Expression, SourceLocation } from 'estree';
+import type { StepperExpression, StepperPattern } from '..';
+import { convert } from '../../generator';
+import { StepperBaseNode } from '../../interface';
+import { getFreshName } from '../../utils';
+import type { StepperBlockStatement } from '../Statement/BlockStatement';
+import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import type { RedexInfo } from '../..';
+import { mapAndFilter } from '../../../utils/misc';
+import { isIdentifier } from '../../../utils/ast/typeGuards';
 
 export class StepperArrowFunctionExpression
   extends StepperBaseNode<ArrowFunctionExpression>
@@ -23,9 +23,9 @@ export class StepperArrowFunctionExpression
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
-    super('ArrowFunctionExpression', leadingComments, trailingComments, loc, range)
+    super('ArrowFunctionExpression', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: ArrowFunctionExpression) {
@@ -39,24 +39,24 @@ export class StepperArrowFunctionExpression
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
-    )
+      node.range,
+    );
   }
 
   public override isContractible(): boolean {
-    return false
+    return false;
   }
 
   public override isOneStepPossible(): boolean {
-    return false
+    return false;
   }
 
   public override contract(): StepperExpression {
-    throw new InternalRuntimeError('Cannot contract an arrow function expression', this)
+    throw new InternalRuntimeError('Cannot contract an arrow function expression', this);
   }
 
   public override oneStep(): StepperExpression {
-    throw new InternalRuntimeError('Cannot step an arrow function expression', this)
+    throw new InternalRuntimeError('Cannot step an arrow function expression', this);
   }
 
   assignName(name: string): StepperArrowFunctionExpression {
@@ -70,23 +70,23 @@ export class StepperArrowFunctionExpression
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 
   scanAllDeclarationNames(): string[] {
-    const paramNames = this.params.map(param => param.name)
+    const paramNames = this.params.map(param => param.name);
 
-    let bodyDeclarations: string[] = []
+    let bodyDeclarations: string[] = [];
     // @ts-expect-error gracefully handle block statement as block expression
     if (this.body.type === 'BlockStatement') {
-      const body = this.body as StepperBlockStatement
+      const body = this.body as StepperBlockStatement;
       bodyDeclarations = body.body
         .filter(stmt => stmt.type === 'VariableDeclaration')
-        .flatMap(decl => (decl as any).declarations.map((d: any) => d.id.name))
+        .flatMap(decl => (decl as any).declarations.map((d: any) => d.id.name));
     }
 
-    return [...paramNames, ...bodyDeclarations]
+    return [...paramNames, ...bodyDeclarations];
   }
 
   // TODO: Fix name handling for lambda
@@ -94,23 +94,23 @@ export class StepperArrowFunctionExpression
     id: StepperPattern,
     value: StepperExpression,
     redex: RedexInfo,
-    upperBoundName?: string[]
+    upperBoundName?: string[],
   ): StepperExpression {
-    const valueFreeNames = value.freeNames()
-    const scopeNames = this.scanAllDeclarationNames()
-    const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
+    const valueFreeNames = value.freeNames();
+    const scopeNames = this.scanAllDeclarationNames();
+    const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name));
 
-    let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat())
-    repeatedNames.forEach(name => protectedNamesSet.delete(name))
-    const protectedNames = Array.from(protectedNamesSet)
-    const newNames = getFreshName(repeatedNames, protectedNames)
+    let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat());
+    repeatedNames.forEach(name => protectedNamesSet.delete(name));
+    const protectedNames = Array.from(protectedNamesSet);
+    const newNames = getFreshName(repeatedNames, protectedNames);
     const currentArrowFunction = newNames.reduce(
       (current: StepperArrowFunctionExpression, name: string, index: number) =>
         current.rename(repeatedNames[index], name) as StepperArrowFunctionExpression,
-      this
-    )
+      this,
+    );
     if (currentArrowFunction.scanAllDeclarationNames().includes(id.name)) {
-      return currentArrowFunction
+      return currentArrowFunction;
     }
 
     return new StepperArrowFunctionExpression(
@@ -119,7 +119,7 @@ export class StepperArrowFunctionExpression
         id,
         value,
         redex,
-        currentArrowFunction.params.flatMap(p => p.allNames())
+        currentArrowFunction.params.flatMap(p => p.allNames()),
       ),
       currentArrowFunction.name,
       currentArrowFunction.expression,
@@ -128,18 +128,22 @@ export class StepperArrowFunctionExpression
       currentArrowFunction.leadingComments,
       currentArrowFunction.trailingComments,
       currentArrowFunction.loc,
-      currentArrowFunction.range
-    )
+      currentArrowFunction.range,
+    );
   }
 
   public override freeNames(): string[] {
-    const paramNames = mapAndFilter(this.params, param => isIdentifier(param) ? param.name : undefined)
-    return this.body.freeNames().filter(name => !paramNames.includes(name))
+    const paramNames = mapAndFilter(this.params, param =>
+      isIdentifier(param) ? param.name : undefined,
+    );
+    return this.body.freeNames().filter(name => !paramNames.includes(name));
   }
 
   public override allNames(): string[] {
-    const paramNames = mapAndFilter(this.params, param => isIdentifier(param) ? param.name : undefined)
-    return Array.from(new Set([paramNames, this.body.allNames()].flat()))
+    const paramNames = mapAndFilter(this.params, param =>
+      isIdentifier(param) ? param.name : undefined,
+    );
+    return Array.from(new Set([paramNames, this.body.allNames()].flat()));
   }
 
   public override rename(before: string, after: string): StepperExpression {
@@ -153,7 +157,7 @@ export class StepperArrowFunctionExpression
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 }

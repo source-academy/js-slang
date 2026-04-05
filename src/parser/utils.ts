@@ -4,17 +4,17 @@ import {
   type Comment,
   ecmaVersion,
   type Node,
-  type Position
-} from 'acorn'
-import { parse as acornLooseParse } from 'acorn-loose'
-import type { Program, SourceLocation } from 'estree'
+  type Position,
+} from 'acorn';
+import { parse as acornLooseParse } from 'acorn-loose';
+import type { Program, SourceLocation } from 'estree';
 
-import type { Context } from '..'
-import { DEFAULT_ECMA_VERSION } from '../constants'
-import type { SourceError } from '../errors/base'
-import { validateAndAnnotate } from '../validator/validator'
-import { MissingSemicolonError, TrailingCommaError } from './errors'
-import type { AcornOptions, BabelOptions } from './types'
+import type { Context } from '..';
+import { DEFAULT_ECMA_VERSION } from '../constants';
+import type { SourceError } from '../errors/base';
+import { validateAndAnnotate } from '../validator/validator';
+import { MissingSemicolonError, TrailingCommaError } from './errors';
+import type { AcornOptions, BabelOptions } from './types';
 
 /**
  * Generates options object for acorn parser
@@ -29,23 +29,25 @@ export const createAcornParserOptions = (
   ecmaVersion: ecmaVersion,
   errors?: SourceError[],
   options?: Partial<AcornOptions>,
-  throwOnError?: boolean
+  throwOnError?: boolean,
 ): AcornOptions => ({
   ecmaVersion,
   sourceType: 'module',
   locations: true,
   onInsertedSemicolon(_tokenEndPos: number, tokenPos: Position) {
-    const error = new MissingSemicolonError(positionToSourceLocation(tokenPos, options?.sourceFile))
-    if (throwOnError) throw error
-    errors?.push(error)
+    const error = new MissingSemicolonError(
+      positionToSourceLocation(tokenPos, options?.sourceFile),
+    );
+    if (throwOnError) throw error;
+    errors?.push(error);
   },
   onTrailingComma(_tokenEndPos: number, tokenPos: Position) {
-    const error = new TrailingCommaError(positionToSourceLocation(tokenPos, options?.sourceFile))
-    if (throwOnError) throw error
-    errors?.push(error)
+    const error = new TrailingCommaError(positionToSourceLocation(tokenPos, options?.sourceFile));
+    if (throwOnError) throw error;
+    errors?.push(error);
   },
-  ...options
-})
+  ...options,
+});
 
 /**
  * Parses a single expression at a specified offset
@@ -58,12 +60,12 @@ export const createAcornParserOptions = (
 export function parseAt(
   programStr: string,
   offset: number,
-  ecmaVersion: ecmaVersion = DEFAULT_ECMA_VERSION
+  ecmaVersion: ecmaVersion = DEFAULT_ECMA_VERSION,
 ): Node | null {
   try {
-    return acornParseAt(programStr, offset, { ecmaVersion })
+    return acornParseAt(programStr, offset, { ecmaVersion });
   } catch {
-    return null
+    return null;
   }
 }
 
@@ -76,27 +78,27 @@ export function parseAt(
  */
 export function parseWithComments(
   programStr: string,
-  ecmaVersion: ecmaVersion = DEFAULT_ECMA_VERSION
+  ecmaVersion: ecmaVersion = DEFAULT_ECMA_VERSION,
 ): [Program, Comment[]] {
-  let comments: Comment[] = []
+  let comments: Comment[] = [];
   const acornOptions: AcornOptions = createAcornParserOptions(
     ecmaVersion,
     undefined,
     {
-      onComment: comments
+      onComment: comments,
     },
-    undefined
-  )
+    undefined,
+  );
 
-  let ast: Program | undefined
+  let ast: Program | undefined;
   try {
-    ast = acornParse(programStr, acornOptions) as unknown as Program
+    ast = acornParse(programStr, acornOptions) as unknown as Program;
   } catch {
-    comments = []
-    ast = acornLooseParse(programStr, acornOptions)
+    comments = [];
+    ast = acornLooseParse(programStr, acornOptions);
   }
 
-  return [ast, comments]
+  return [ast, comments];
 }
 
 /**
@@ -109,8 +111,8 @@ export function parseWithComments(
 export function looseParse(programStr: string, context: Context): Program {
   return acornLooseParse(
     programStr,
-    createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors)
-  ) as unknown as Program
+    createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors),
+  ) as unknown as Program;
 }
 
 /**
@@ -121,8 +123,8 @@ export function looseParse(programStr: string, context: Context): Program {
  * @returns ast for program string
  */
 export function typedParse(programStr: string, context: Context): Program {
-  const ast: Program = looseParse(programStr, context)
-  return validateAndAnnotate(ast, context)
+  const ast: Program = looseParse(programStr, context);
+  return validateAndAnnotate(ast, context);
 }
 
 /**
@@ -134,10 +136,10 @@ export function typedParse(programStr: string, context: Context): Program {
 export const positionToSourceLocation = (position: Position, source?: string): SourceLocation => ({
   start: { ...position },
   end: { ...position, column: position.column + 1 },
-  source
-})
+  source,
+});
 
 export const defaultBabelOptions: BabelOptions = {
   sourceType: 'module',
-  plugins: ['typescript', 'estree']
-}
+  plugins: ['typescript', 'estree'],
+};

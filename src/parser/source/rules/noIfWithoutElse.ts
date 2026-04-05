@@ -1,13 +1,13 @@
-import { generate } from 'astring'
-import type { IfStatement } from 'estree'
-import { Chapter } from '../../../langs'
-import { stripIndent } from '../../../utils/formatters'
-import { RuleError } from '../../errors'
-import type { Rule } from '../../types'
+import { generate } from 'astring';
+import type { IfStatement } from 'estree';
+import { Chapter } from '../../../langs';
+import { stripIndent } from '../../../utils/formatters';
+import { RuleError } from '../../errors';
+import type { Rule } from '../../types';
 
 export class NoIfWithoutElseError extends RuleError<IfStatement> {
   public override explain() {
-    return 'Missing "else" in "if-else" statement.'
+    return 'Missing "else" in "if-else" statement.';
   }
 
   public override elaborate() {
@@ -17,7 +17,7 @@ export class NoIfWithoutElseError extends RuleError<IfStatement> {
 
       Later in the course we will lift this restriction and allow "if" without
       else.
-    `
+    `;
   }
 }
 
@@ -27,12 +27,12 @@ const noIfWithoutElse: Rule<IfStatement> = {
   checkers: {
     IfStatement(node) {
       if (!node.alternate) {
-        return [new NoIfWithoutElseError(node)]
+        return [new NoIfWithoutElseError(node)];
       } else {
-        return []
+        return [];
       }
-    }
-  }
-}
+    },
+  },
+};
 
-export default noIfWithoutElse
+export default noIfWithoutElse;

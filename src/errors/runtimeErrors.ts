@@ -1,15 +1,15 @@
-import type { BaseNode } from 'estree'
-import { stringify } from '../utils/stringify'
-import { SourceErrorWithNode, ErrorType, ErrorSeverity } from './base'
+import type { BaseNode } from 'estree';
+import { stringify } from '../utils/stringify';
+import { SourceErrorWithNode, ErrorType, ErrorSeverity } from './base';
 
 /**
  * Abstract Source Error class for Runtime errors
  */
 export abstract class RuntimeSourceError<
-  T extends BaseNode | undefined
+  T extends BaseNode | undefined,
 > extends SourceErrorWithNode<T> {
-  type = ErrorType.RUNTIME
-  severity = ErrorSeverity.ERROR
+  type = ErrorType.RUNTIME;
+  severity = ErrorSeverity.ERROR;
 }
 
 /**
@@ -20,17 +20,17 @@ export class GeneralRuntimeError extends RuntimeSourceError<BaseNode | undefined
   constructor(
     private readonly explanation: string,
     node?: BaseNode,
-    private readonly elaboration?: string
+    private readonly elaboration?: string,
   ) {
-    super(node)
+    super(node);
   }
 
   public override explain() {
-    return this.explanation
+    return this.explanation;
   }
 
   public override elaborate(): string {
-    return this.elaboration ?? this.explanation
+    return this.elaboration ?? this.explanation;
   }
 }
 
@@ -42,17 +42,17 @@ export class InternalRuntimeError extends RuntimeSourceError<BaseNode | undefine
   constructor(
     private readonly explanation: string,
     node?: BaseNode,
-    private readonly elaboration?: string
+    private readonly elaboration?: string,
   ) {
-    super(node)
+    super(node);
   }
 
   public override explain() {
-    return this.explanation
+    return this.explanation;
   }
 
   public override elaborate(): string {
-    return this.elaboration ?? this.explanation
+    return this.elaboration ?? this.explanation;
   }
 }
 
@@ -89,19 +89,19 @@ export class InvalidParameterTypeError extends GeneralRuntimeError {
      * The name of the parameter that received the invalid value, if available.
      */
     public readonly param_name?: string,
-    node?: BaseNode
+    node?: BaseNode,
   ) {
-    const paramString = param_name ? ` for ${param_name}` : ''
-    const explanation = `${func_name}: Expected ${expectedType}${paramString}, got ${stringify(actualValue)}.`
-    super(explanation, node)
+    const paramString = param_name ? ` for ${param_name}` : '';
+    const explanation = `${func_name}: Expected ${expectedType}${paramString}, got ${stringify(actualValue)}.`;
+    super(explanation, node);
   }
 
   public override get message() {
-    return this.explain()
+    return this.explain();
   }
 
   public override toString() {
-    return this.explain()
+    return this.explain();
   }
 }
 
@@ -127,13 +127,13 @@ export class InvalidCallbackError extends InvalidParameterTypeError {
     actualValue: unknown,
     func_name: string,
     param_name?: string,
-    node?: BaseNode
+    node?: BaseNode,
   ) {
     const expectedStr =
       typeof expected === 'number'
         ? `function with ${expected} parameter${expected !== 1 ? 's' : ''}`
-        : expected
-    super(expectedStr, actualValue, func_name, param_name, node)
+        : expected;
+    super(expectedStr, actualValue, func_name, param_name, node);
   }
 }
 
@@ -141,17 +141,17 @@ export interface InvalidNumberParameterErrorOptions {
   /**
    * Maximum allowable value (inclusive). Set to `undefined` to not perform a maximum check.
    */
-  max?: number
+  max?: number;
 
   /**
    * Minimum allowable value (inclusive). Set to `undefined` to not perform a minimum check.
    */
-  min?: number
+  min?: number;
 
   /**
    * `true` by default. Set to `false` to allow non integer values
    */
-  integer?: boolean
+  integer?: boolean;
 }
 
 /**
@@ -164,24 +164,26 @@ export class InvalidNumberParameterError extends InvalidParameterTypeError {
     options: InvalidNumberParameterErrorOptions | string,
     func_name: string,
     param_name?: string,
-    node?: BaseNode
+    node?: BaseNode,
   ) {
-    let expectedStr: string
+    let expectedStr: string;
 
     if (typeof options === 'string') {
-      expectedStr = options
+      expectedStr = options;
     } else {
-      const { max, min, integer = true } = options
-      const typeStr = integer ? 'integer' : 'number'
+      const { max, min, integer = true } = options;
+      const typeStr = integer ? 'integer' : 'number';
 
       if (max !== undefined) {
         expectedStr =
-          min === undefined ? `${typeStr} less than ${max}` : `${typeStr} between ${min} and ${max}`
+          min === undefined
+            ? `${typeStr} less than ${max}`
+            : `${typeStr} between ${min} and ${max}`;
       } else {
-        expectedStr = min === undefined ? typeStr : `${typeStr} greater than ${min}`
+        expectedStr = min === undefined ? typeStr : `${typeStr} greater than ${min}`;
       }
     }
 
-    super(expectedStr, value, func_name, param_name, node)
+    super(expectedStr, value, func_name, param_name, node);
   }
 }

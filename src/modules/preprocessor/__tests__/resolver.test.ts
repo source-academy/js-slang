@@ -1,74 +1,74 @@
-import { beforeEach, expect, it, test, vi } from 'vitest'
-import { memoizedLoadModuleManifestAsync } from '../../loader/loaders'
-import resolveFile, { type ImportResolutionOptions, defaultResolutionOptions } from '../resolver'
+import { beforeEach, expect, it, test, vi } from 'vitest';
+import { memoizedLoadModuleManifestAsync } from '../../loader/loaders';
+import resolveFile, { type ImportResolutionOptions, defaultResolutionOptions } from '../resolver';
 
-vi.mock(import('../../loader/loaders'))
+vi.mock(import('../../loader/loaders'));
 
 beforeEach(() => {
-  vi.clearAllMocks()
-})
+  vi.clearAllMocks();
+});
 
 const resolveModule = (
   fromPath: string,
   toPath: string,
   pred: (p: string) => boolean,
-  options: ImportResolutionOptions
-) => resolveFile(fromPath, toPath, p => Promise.resolve(pred(p) ? '' : undefined), options)
+  options: ImportResolutionOptions,
+) => resolveFile(fromPath, toPath, p => Promise.resolve(pred(p) ? '' : undefined), options);
 
 test('If only local imports are used, the module manifest is not loaded', async () => {
-  await resolveModule('/a.js', '/b.js', () => true, defaultResolutionOptions)
+  await resolveModule('/a.js', '/b.js', () => true, defaultResolutionOptions);
 
-  expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(0)
-})
+  expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(0);
+});
 
 it('Returns false and resolved path of source file when resolution fails', () => {
   return expect(
     resolveModule('/', './a', () => false, {
-      extensions: ['js']
-    })
-  ).resolves.toBeUndefined()
-})
+      extensions: ['js'],
+    }),
+  ).resolves.toBeUndefined();
+});
 
 it('Will resolve extensions', () => {
-  const mockResolver = (p: string) => p === '/a.ts'
+  const mockResolver = (p: string) => p === '/a.ts';
 
   return expect(
     resolveModule('/', '/a', mockResolver, {
-      extensions: ['js', 'ts']
-    })
+      extensions: ['js', 'ts'],
+    }),
   ).resolves.toMatchObject({
     type: 'local',
     absPath: '/a.ts',
-    contents: ''
-  })
-})
+    contents: '',
+  });
+});
 
 it('Will not resolve if the corresponding options are given as false', () => {
-  const mockResolver = (p: string) => p === '/a.js'
+  const mockResolver = (p: string) => p === '/a.js';
   return expect(
     resolveModule('/', './a', mockResolver, {
-      extensions: null
-    })
-  ).resolves.toBeUndefined()
-})
+      extensions: null,
+    }),
+  ).resolves.toBeUndefined();
+});
 
 it('Checks the module manifest when importing source modules', async () => {
   const result = await resolveModule('/', 'one_module', () => false, {
-    extensions: ['js']
-  })
+    extensions: ['js'],
+  });
 
-  expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(1)
-  expect(result).toMatchObject({ type: 'source' })
-})
+  expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(1);
+  expect(result).toMatchObject({ type: 'source' });
+});
 
 it('Returns false on failing to resolve a source module', async () => {
   const result = await resolveModule('/', 'unknown_module', () => true, {
-    extensions: ['js']
-  })
+    extensions: ['js'],
+  });
 
-  expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(1)
-  expect(result).toBeUndefined()
-})
+  expect(memoizedLoadModuleManifestAsync).toHaveBeenCalledTimes(1);
+  expect(result).toBeUndefined();
+});
 
 test('Resolving an absolute path from a local module', () => {
   return expect(
@@ -78,16 +78,16 @@ test('Resolving an absolute path from a local module', () => {
       p =>
         Promise.resolve(
           {
-            '/b.js': 'contents'
-          }[p]
+            '/b.js': 'contents',
+          }[p],
         ),
       {
-        extensions: null
-      }
-    )
+        extensions: null,
+      },
+    ),
   ).resolves.toMatchObject({
     type: 'local',
     contents: 'contents',
-    absPath: '/b.js'
-  })
-})
+    absPath: '/b.js',
+  });
+});

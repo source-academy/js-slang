@@ -1,7 +1,7 @@
-import { posix as posixPath } from 'path'
-import { memoizedGetModuleManifestAsync } from '../loader'
-import type { FileGetter, ManifestImporter, ModuleInfo } from '../moduleTypes'
-import { isSourceModule } from '../utils'
+import { posix as posixPath } from 'path';
+import { memoizedGetModuleManifestAsync } from '../loader';
+import type { FileGetter, ManifestImporter, ModuleInfo } from '../moduleTypes';
+import { isSourceModule } from '../utils';
 
 /**
  * Options for resolving modules given a path
@@ -16,26 +16,26 @@ export interface ImportResolutionOptions {
    * Otherwise, providing an array like :`['js', 'ts']` will try
    * match `./a`, `./a.js` and then `./a.ts`
    */
-  extensions: string[] | null
+  extensions: string[] | null;
 
   /**
    * Custom importer for the modules manifest. Set to `undefined` to use the default importer.
    */
-  manifestImporter?: ManifestImporter
+  manifestImporter?: ManifestImporter;
 }
 
 export const defaultResolutionOptions: ImportResolutionOptions = {
   extensions: ['js'],
-  manifestImporter: undefined
-}
+  manifestImporter: undefined,
+};
 
 export type ResolverResult =
   | ({ type: 'source' } & ModuleInfo)
   | {
-      type: 'local'
-      absPath: string
-      contents: string
-    }
+      type: 'local';
+      absPath: string;
+      contents: string;
+    };
 
 /**
  * Resolve a relative module path to an absolute path.
@@ -44,45 +44,45 @@ export default async function resolveFile(
   fromPath: string,
   toPath: string,
   fileGetter: FileGetter,
-  options: Partial<ImportResolutionOptions> = defaultResolutionOptions
+  options: Partial<ImportResolutionOptions> = defaultResolutionOptions,
 ): Promise<ResolverResult | undefined> {
   if (isSourceModule(toPath)) {
-    const manifest = await memoizedGetModuleManifestAsync(options.manifestImporter)
-    if (!(toPath in manifest)) return undefined
+    const manifest = await memoizedGetModuleManifestAsync(options.manifestImporter);
+    if (!(toPath in manifest)) return undefined;
 
-    const info = manifest[toPath]
+    const info = manifest[toPath];
     return {
       type: 'source',
       name: toPath,
-      ...info
-    }
+      ...info,
+    };
   }
 
-  const absPath = posixPath.resolve(fromPath, '..', toPath)
-  let contents: string | undefined = await fileGetter(absPath)
+  const absPath = posixPath.resolve(fromPath, '..', toPath);
+  let contents: string | undefined = await fileGetter(absPath);
 
   if (contents !== undefined) {
     return {
       type: 'local',
       absPath,
-      contents
-    }
+      contents,
+    };
   }
 
   if (options.extensions) {
     for (const ext of options.extensions) {
-      const extPath = `${absPath}.${ext}`
-      contents = await fileGetter(extPath)
+      const extPath = `${absPath}.${ext}`;
+      contents = await fileGetter(extPath);
 
       if (contents !== undefined) {
         return {
           type: 'local',
           absPath: extPath,
-          contents
-        }
+          contents,
+        };
       }
     }
   }
 
-  return undefined
+  return undefined;
 }

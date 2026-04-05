@@ -1,102 +1,102 @@
-import type es from 'estree'
-import { parseError, type Context, type IOptions } from '..'
-import { UndefinedVariableError } from '../errors/errors'
-import { checkProgramForUndefinedVariables } from '../validator/validator'
-import { RuntimeSourceError } from '../errors/runtimeErrors'
-import type { StepperProgram } from './nodes/Program'
-import { prelude } from './builtins'
-import { explain } from './generator'
-import type { StepperBaseNode } from './interface'
-import { undefinedNode } from './nodes'
-import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement'
-import type { IStepperPropContents, Marker, RedexInfo } from '.'
+import type es from 'estree';
+import { parseError, type Context, type IOptions } from '..';
+import { UndefinedVariableError } from '../errors/errors';
+import { checkProgramForUndefinedVariables } from '../validator/validator';
+import { RuntimeSourceError } from '../errors/runtimeErrors';
+import type { StepperProgram } from './nodes/Program';
+import { prelude } from './builtins';
+import { explain } from './generator';
+import type { StepperBaseNode } from './interface';
+import { undefinedNode } from './nodes';
+import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement';
+import type { IStepperPropContents, Marker, RedexInfo } from '.';
 
 export function getSteps(
   inputNode: es.BaseNode,
   context: Context,
-  { stepLimit }: Pick<IOptions, 'stepLimit'>
+  { stepLimit }: Pick<IOptions, 'stepLimit'>,
 ): IStepperPropContents[] {
   const redex: RedexInfo = {
     preRedex: [],
-    postRedex: []
-  }
+    postRedex: [],
+  };
 
-  const node = prelude(inputNode, redex)
-  const steps: IStepperPropContents[] = []
-  const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
-  let hasError = false
+  const node = prelude(inputNode, redex);
+  const steps: IStepperPropContents[] = [];
+  const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1;
+  let hasError = false;
 
-  let numSteps = 1
+  let numSteps = 1;
   function evaluate(node: StepperBaseNode): StepperBaseNode {
     try {
       if (node.isOneStepPossible(redex)) {
-        const newNode = node.oneStep(redex)
+        const newNode = node.oneStep(redex);
 
-        const explanations = redex.preRedex.map(explain)
+        const explanations = redex.preRedex.map(explain);
         const beforeMarkers = redex.preRedex.map(
           (redex, index): Marker => ({
             redex,
             redexType: 'beforeMarker',
-            explanation: explanations[index]
-          })
-        )
-        numSteps += 1
+            explanation: explanations[index],
+          }),
+        );
+        numSteps += 1;
         if (numSteps >= limit) {
-          return node
+          return node;
         }
         steps.push({
           ast: node,
-          markers: beforeMarkers
-        })
+          markers: beforeMarkers,
+        });
 
         const afterMarkers: Marker[] =
           redex.postRedex.length > 0
             ? redex.postRedex.map((redex, index) => ({
                 redex,
                 redexType: 'afterMarker',
-                explanation: explanations[index]
+                explanation: explanations[index],
               }))
             : [
                 {
                   redexType: 'afterMarker',
-                  explanation: explanations[0] // use explanation based on preRedex
-                }
-              ]
-        numSteps += 1
+                  explanation: explanations[0], // use explanation based on preRedex
+                },
+              ];
+        numSteps += 1;
         if (numSteps >= limit) {
-          return node
+          return node;
         }
         steps.push({
           ast: newNode,
-          markers: afterMarkers
-        })
+          markers: afterMarkers,
+        });
 
         // reset
-        redex.preRedex = []
-        redex.postRedex = []
-        return evaluate(newNode)
+        redex.preRedex = [];
+        redex.postRedex = [];
+        return evaluate(newNode);
       } else {
-        return node
+        return node;
       }
     } catch (error) {
       if (!(error instanceof RuntimeSourceError)) {
-        throw error
+        throw error;
       }
 
-      const errStr = parseError([error])
+      const errStr = parseError([error]);
 
       // Handle error during step evaluation
-      hasError = true
+      hasError = true;
       steps.push({
         ast: node,
         markers: [
           {
             redexType: 'beforeMarker',
-            explanation: errStr
-          }
-        ]
-      })
-      return node
+            explanation: errStr,
+          },
+        ],
+      });
+      return node;
     }
   }
 
@@ -105,13 +105,13 @@ export function getSteps(
     ast: node,
     markers: [
       {
-        explanation: 'Start of evaluation'
-      }
-    ]
-  })
+        explanation: 'Start of evaluation',
+      },
+    ],
+  });
   // check for undefined variables
   try {
-    checkProgramForUndefinedVariables(inputNode as es.Program, context)
+    checkProgramForUndefinedVariables(inputNode as es.Program, context);
   } catch (error) {
     steps.push({
       ast: node,
@@ -121,29 +121,29 @@ export function getSteps(
           explanation:
             error instanceof UndefinedVariableError
               ? `Line ${error.location.start.line}: Name ${error.varname} not declared.`
-              : String(error)
-        }
-      ]
-    })
-    return steps
+              : String(error),
+        },
+      ],
+    });
+    return steps;
   }
 
-  let result = evaluate(node)
+  let result = evaluate(node);
   // If program has not completed within the step limit, halt.
   if (numSteps >= limit) {
     steps.push({
       ast: result,
       markers: [
         {
-          explanation: 'Maximum number of steps exceeded'
-        }
-      ]
-    })
-    return steps
+          explanation: 'Maximum number of steps exceeded',
+        },
+      ],
+    });
+    return steps;
   }
   // If the program does not return anything, return undefined
   if (result.type === 'Program' && (result as StepperProgram).body.length === 0) {
-    result = new StepperExpressionStatement(undefinedNode)
+    result = new StepperExpressionStatement(undefinedNode);
   }
 
   if (!hasError) {
@@ -151,19 +151,19 @@ export function getSteps(
       ast: result,
       markers: [
         {
-          explanation: 'Evaluation complete'
-        }
-      ]
-    })
+          explanation: 'Evaluation complete',
+        },
+      ],
+    });
   } else {
     steps.push({
       ast: result,
       markers: [
         {
-          explanation: 'Evaluation stuck'
-        }
-      ]
-    })
+          explanation: 'Evaluation stuck',
+        },
+      ],
+    });
   }
-  return steps
+  return steps;
 }

@@ -1,7 +1,7 @@
-import type { Comment, DebuggerStatement, SourceLocation } from 'estree'
-import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
-import { StepperBaseNode } from '../../interface'
-import type { RedexInfo } from '../..'
+import type { Comment, DebuggerStatement, SourceLocation } from 'estree';
+import { type StepperExpression, type StepperPattern, undefinedNode } from '..';
+import { StepperBaseNode } from '../../interface';
+import type { RedexInfo } from '../..';
 
 export class StepperDebuggerStatement
   extends StepperBaseNode<DebuggerStatement>
@@ -11,9 +11,9 @@ export class StepperDebuggerStatement
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
-    super('DebuggerStatement', leadingComments, trailingComments, loc, range)
+    super('DebuggerStatement', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: DebuggerStatement) {
@@ -21,45 +21,45 @@ export class StepperDebuggerStatement
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
-    )
+      node.range,
+    );
   }
 
   public override isContractible(): boolean {
-    return true
+    return true;
   }
 
   public override isOneStepPossible(): boolean {
-    return true
+    return true;
   }
 
   contractEmpty(redex: RedexInfo) {
-    redex.preRedex = [this]
-    redex.postRedex = []
+    redex.preRedex = [this];
+    redex.postRedex = [];
   }
 
   public override contract(): typeof undefinedNode {
-    return undefinedNode
+    return undefinedNode;
   }
 
   public override oneStep(redex: RedexInfo): typeof undefinedNode {
-    this.contractEmpty(redex)
-    return undefinedNode
+    this.contractEmpty(redex);
+    return undefinedNode;
   }
 
   public override substitute(_id: StepperPattern, _value: StepperExpression): StepperBaseNode {
-    return this
+    return this;
   }
 
   public override freeNames(): string[] {
-    return []
+    return [];
   }
 
   public override allNames(): string[] {
-    return []
+    return [];
   }
 
   public override rename(_before: string, _after: string): StepperBaseNode {
-    return this
+    return this;
   }
 }

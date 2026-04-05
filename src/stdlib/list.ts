@@ -5,21 +5,21 @@
  * Translated to TypeScript by Evan Sebastian
  */
 
-import { GeneralRuntimeError } from '../errors/runtimeErrors'
-import type { Value } from '../types'
-import { type ArrayLike, stringify } from '../utils/stringify'
+import { GeneralRuntimeError } from '../errors/runtimeErrors';
+import type { Value } from '../types';
+import { type ArrayLike, stringify } from '../utils/stringify';
 
-export type Pair<H, T> = [H, T]
-export type List<T = unknown> = null | NonEmptyList<T>
-export type NonEmptyList<T> = [T, List<T>]
+export type Pair<H, T> = [H, T];
+export type List<T = unknown> = null | NonEmptyList<T>;
+export type NonEmptyList<T> = [T, List<T>];
 
 // array test works differently for Rhino and
 // the Firefox environment (especially Web Console)
 export function array_test(x: unknown): x is unknown[] {
   if (Array.isArray === undefined) {
-    return x instanceof Array
+    return x instanceof Array;
   } else {
-    return Array.isArray(x)
+    return Array.isArray(x);
   }
 }
 
@@ -27,10 +27,10 @@ export function array_test(x: unknown): x is unknown[] {
  * constructs a pair using a two-element array\
  * LOW-LEVEL FUNCTION, NOT SOURCE
  */
-export function pair<T>(x: T, xs: List<T>): NonEmptyList<T>
-export function pair<H, T>(x: H, xs: T): Pair<H, T>
+export function pair<T>(x: T, xs: List<T>): NonEmptyList<T>;
+export function pair<H, T>(x: H, xs: T): Pair<H, T>;
 export function pair<H, T>(x: H, xs: T) {
-  return [x, xs]
+  return [x, xs];
 }
 
 /**
@@ -38,7 +38,7 @@ export function pair<H, T>(x: H, xs: T) {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  */
 export function is_pair(x: unknown): x is Pair<unknown, unknown> {
-  return array_test(x) && x.length === 2
+  return array_test(x) && x.length === 2;
 }
 
 /**
@@ -46,14 +46,14 @@ export function is_pair(x: unknown): x is Pair<unknown, unknown> {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  * @throws an exception if the argument is not a pair
  */
-export function head<T>(xs: Pair<T, unknown> | NonEmptyList<T>): T
+export function head<T>(xs: Pair<T, unknown> | NonEmptyList<T>): T;
 export function head(xs: unknown) {
   if (is_pair(xs)) {
-    return xs[0]
+    return xs[0];
   } else {
     throw new GeneralRuntimeError(
-      `${head.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`
-    )
+      `${head.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`,
+    );
   }
 }
 
@@ -62,15 +62,15 @@ export function head(xs: unknown) {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  * @throws an exception if the argument is not a pair
  */
-export function tail<T>(xs: NonEmptyList<T>): List<T>
-export function tail<T>(xs: Pair<unknown, T>): T
+export function tail<T>(xs: NonEmptyList<T>): List<T>;
+export function tail<T>(xs: Pair<unknown, T>): T;
 export function tail(xs: unknown) {
   if (is_pair(xs)) {
-    return xs[1]
+    return xs[1];
   } else {
     throw new GeneralRuntimeError(
-      `${tail.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`
-    )
+      `${tail.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`,
+    );
   }
 }
 
@@ -79,14 +79,14 @@ export function tail(xs: unknown) {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  * @throws an exception if the argument is not a pair
  */
-export function set_head(xs: Pair<any, any>, x: any): void
+export function set_head(xs: Pair<any, any>, x: any): void;
 export function set_head(xs: unknown, x: any): void {
   if (is_pair(xs)) {
-    xs[0] = x
+    xs[0] = x;
   } else {
     throw new GeneralRuntimeError(
-      `${set_head.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
-    )
+      `${set_head.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`,
+    );
   }
 }
 
@@ -95,14 +95,14 @@ export function set_head(xs: unknown, x: any): void {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  * @throws an exception if the argument is not a pair
  */
-export function set_tail(xs: Pair<any, any>, x: any): void
+export function set_tail(xs: Pair<any, any>, x: any): void;
 export function set_tail(xs: unknown, x: any): void {
   if (is_pair(xs)) {
-    xs[1] = x
+    xs[1] = x;
   } else {
     throw new GeneralRuntimeError(
-      `${set_tail.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`
-    )
+      `${set_tail.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`,
+    );
   }
 }
 
@@ -111,17 +111,17 @@ export function set_tail(xs: unknown, x: any): void {
  * LOW-LEVEL FUNCTION, NOT SOURCE
  */
 export function is_null(xs: unknown): xs is null {
-  return xs === null
+  return xs === null;
 }
 
 /**
  * makes a list out of its arguments\
  * LOW-LEVEL FUNCTION, NOT SOURCE
  */
-export function list<T>(...elements: T[]): NonEmptyList<T>
-export function list<T>(): List<T>
+export function list<T>(...elements: T[]): NonEmptyList<T>;
+export function list<T>(): List<T>;
 export function list<T>(...elements: T[]): List<T> {
-  return elements.reduceRight((res, each) => pair(each, res), null)
+  return elements.reduceRight((res, each) => pair(each, res), null);
 }
 
 /**
@@ -130,9 +130,9 @@ export function list<T>(...elements: T[]): List<T> {
  */
 export function is_list(xs: unknown): xs is List<unknown> {
   while (is_pair(xs)) {
-    xs = tail(xs)
+    xs = tail(xs);
   }
-  return is_null(xs)
+  return is_null(xs);
 }
 
 /**
@@ -142,9 +142,9 @@ export function is_list(xs: unknown): xs is List<unknown> {
  * @throws an exception if the argument is not a list
  */
 export function list_to_vector<T>(lst: List<T>): T[] {
-  const vector: T[] = []
-  for_each(each => vector.push(each), lst)
-  return vector
+  const vector: T[] = [];
+  for_each(each => vector.push(each), lst);
+  return vector;
 }
 
 /**
@@ -154,7 +154,7 @@ export function list_to_vector<T>(lst: List<T>): T[] {
  * @throws an exception if the argument is not a vector
  */
 export function vector_to_list<T>(vector: T[]): List<T> {
-  return list(...vector)
+  return list(...vector);
 }
 
 /**
@@ -168,9 +168,9 @@ export function vector_to_list<T>(vector: T[]): List<T> {
 export function accumulate<T, U>(op: (each: T, result: U) => U, initial: U, sequence: List<T>): U {
   // Use CPS to prevent stack overflow
   function $accumulate(xs: typeof sequence, cont: (each: U) => U): U {
-    return is_null(xs) ? cont(initial) : $accumulate(tail(xs), x => cont(op(head(xs), x)))
+    return is_null(xs) ? cont(initial) : $accumulate(tail(xs), x => cont(op(head(xs), x)));
   }
-  return $accumulate(sequence, x => x)
+  return $accumulate(sequence, x => x);
 }
 
 /**
@@ -179,10 +179,10 @@ export function accumulate<T, U>(op: (each: T, result: U) => U, initial: U, sequ
  */
 export function append<T>(xs: List<T>, ys: List<T>): List<T> {
   function $append(xs: List<T>, ys: List<T>, cont: (res: List<T>) => List<T>): List<T> {
-    return is_null(xs) ? cont(ys) : $append(tail(xs), ys, zs => cont(pair(head(xs), zs)))
+    return is_null(xs) ? cont(ys) : $append(tail(xs), ys, zs => cont(pair(head(xs), zs)));
   }
 
-  return $append(xs, ys, xs => xs)
+  return $append(xs, ys, xs => xs);
 }
 
 /**
@@ -190,26 +190,26 @@ export function append<T>(xs: List<T>, ys: List<T>): List<T> {
  * a new list containing the results
  */
 export function map<T, U>(op: (each: T) => U, sequence: List<T>): List<U> {
-  return accumulate((each, result) => pair(op(each), result), list(), sequence)
+  return accumulate((each, result) => pair(op(each), result), list(), sequence);
 }
 
 /**
  * Returns a new list that only contains elements that the predicate function returned `true`
  * for
  */
-export function filter<T, U extends T>(pred: (arg: T) => arg is U, xs: List<T>): List<U>
-export function filter<T>(pred: (arg: T) => boolean, xs: List<T>): List<T>
+export function filter<T, U extends T>(pred: (arg: T) => arg is U, xs: List<T>): List<U>;
+export function filter<T>(pred: (arg: T) => boolean, xs: List<T>): List<T>;
 export function filter<T>(pred: (arg: T) => boolean, xs: List<T>): List<T> {
-  return accumulate((each, result) => (pred(each) ? pair(each, result) : result), list(), xs)
+  return accumulate((each, result) => (pred(each) ? pair(each, result) : result), list(), xs);
 }
 
 /**
  * Applies the provided function to each element in the list. Returns `true`.
  */
 export function for_each<T>(op: (arg: T) => void, xs: List<T>): true {
-  if (is_null(xs)) return true
-  op(head(xs))
-  return for_each(op, tail(xs))
+  if (is_null(xs)) return true;
+  op(head(xs));
+  return for_each(op, tail(xs));
 }
 
 /**
@@ -217,23 +217,23 @@ export function for_each<T>(op: (arg: T) => void, xs: List<T>): true {
  */
 export function list_ref<T>(xs: List<T>, n: number) {
   if (is_null(xs)) {
-    throw new GeneralRuntimeError(`${list_ref.name}(xs, n): Index ${n} is out of bounds.`)
+    throw new GeneralRuntimeError(`${list_ref.name}(xs, n): Index ${n} is out of bounds.`);
   }
 
-  let res: NonEmptyList<T> = xs
-  let i = n
+  let res: NonEmptyList<T> = xs;
+  let i = n;
   while (i > 0) {
-    const temp = tail(res)
+    const temp = tail(res);
 
     if (is_null(temp)) {
-      throw new GeneralRuntimeError(`${list_ref.name}(xs, n): Index ${n} is out of bounds.`)
+      throw new GeneralRuntimeError(`${list_ref.name}(xs, n): Index ${n} is out of bounds.`);
     }
 
-    res = temp
-    i--
+    res = temp;
+    i--;
   }
 
-  return head(res)
+  return head(res);
 }
 
 /**
@@ -241,31 +241,35 @@ export function list_ref<T>(xs: List<T>, n: number) {
  */
 export function length(xs: unknown): number {
   if (!is_list(xs)) {
-    throw new GeneralRuntimeError(`${length.name}(xs) expects a list`)
+    throw new GeneralRuntimeError(`${length.name}(xs) expects a list`);
   }
 
-  return accumulate((_, total) => total + 1, 0, xs)
+  return accumulate((_, total) => total + 1, 0, xs);
 }
 
-export function rawDisplayList(display: (v: Value, ...s: string[]) => Value, xs: Value, prepend: string) {
-  const visited: Set<Value> = new Set() // Everything is put into this set, values, arrays, and even objects if they exist
-  const asListObjects: Map<NonEmptyList<Value>, NonEmptyList<Value> | ListObject> = new Map() // maps original list nodes to new list nodes
+export function rawDisplayList(
+  display: (v: Value, ...s: string[]) => Value,
+  xs: Value,
+  prepend: string,
+) {
+  const visited: Set<Value> = new Set(); // Everything is put into this set, values, arrays, and even objects if they exist
+  const asListObjects: Map<NonEmptyList<Value>, NonEmptyList<Value> | ListObject> = new Map(); // maps original list nodes to new list nodes
 
   // We will convert list-like structures in xs to ListObject.
   class ListObject implements ArrayLike {
-    replPrefix = 'list('
-    replSuffix = ')'
+    replPrefix = 'list(';
+    replSuffix = ')';
     replArrayContents(): Value[] {
-      return list_to_vector(this.listNode)
+      return list_to_vector(this.listNode);
     }
 
     constructor(readonly listNode: NonEmptyList<Value>) {}
   }
   function getListObject(curXs: Value): Value {
-    return asListObjects.get(curXs) || curXs
+    return asListObjects.get(curXs) || curXs;
   }
 
-  const pairsToProcess: Value[] = [xs]
+  const pairsToProcess: Value[] = [xs];
   // we need the guarantee that if there are any proper lists,
   // then the nodes of the proper list appear as a subsequence of this array.
   // We ensure this by always adding the tail after the current node is processed.
@@ -274,57 +278,56 @@ export function rawDisplayList(display: (v: Value, ...s: string[]) => Value, xs:
   // and each pair can only contribute to at most 3 items in this array,
   // this array has O(n) elements.
   for (let i = 0; i < pairsToProcess.length; i++) {
-    const curXs = pairsToProcess[i]
+    const curXs = pairsToProcess[i];
     if (visited.has(curXs)) {
-      continue
+      continue;
     }
-    visited.add(curXs)
+    visited.add(curXs);
     if (!is_pair(curXs)) {
-      continue
+      continue;
     }
-    pairsToProcess.push(head(curXs), tail(curXs))
+    pairsToProcess.push(head(curXs), tail(curXs));
   }
 
   function isListObject(x: Value): x is NonEmptyList<Value> {
-    return asListObjects.has(x)
+    return asListObjects.has(x);
   }
 
   // go through pairs in reverse to ensure the dependencies are resolved first
   while (pairsToProcess.length > 0) {
-    const curXs = pairsToProcess.pop()
+    const curXs = pairsToProcess.pop();
     if (!is_pair(curXs)) {
-      continue
+      continue;
     }
-    const h = head(curXs)
-    const t = tail(curXs)
+    const h = head(curXs);
+    const t = tail(curXs);
 
-    let newXs: Value
+    let newXs: Value;
     if (isListObject(t)) {
       const newTail = asListObjects.get(t)!;
-      newXs = (is_null(newTail) || newTail instanceof ListObject)
-        ? new ListObject(pair(h, t))
-        : pair(h, t)
+      newXs =
+        is_null(newTail) || newTail instanceof ListObject ? new ListObject(pair(h, t)) : pair(h, t);
     } else {
-      newXs = is_null(t) ? new ListObject(pair(h, t)) : pair(h, t)
+      newXs = is_null(t) ? new ListObject(pair(h, t)) : pair(h, t);
     }
 
     // @ts-ignore
-    asListObjects.set(curXs, newXs)
+    asListObjects.set(curXs, newXs);
   }
 
   for (const curXs of asListObjects.values()) {
     if (is_pair(curXs)) {
-      set_head(curXs, getListObject(head(curXs)))
-      set_tail(curXs, getListObject(tail(curXs)))
+      set_head(curXs, getListObject(head(curXs)));
+      set_tail(curXs, getListObject(tail(curXs)));
     } else if (curXs instanceof ListObject) {
-      set_head(curXs.listNode, getListObject(head(curXs.listNode)))
-      let newTail = getListObject(tail(curXs.listNode))
+      set_head(curXs.listNode, getListObject(head(curXs.listNode)));
+      let newTail = getListObject(tail(curXs.listNode));
       if (newTail instanceof ListObject) {
-        newTail = newTail.listNode
+        newTail = newTail.listNode;
       }
-      set_tail(curXs.listNode, newTail)
+      set_tail(curXs.listNode, newTail);
     }
   }
-  display(getListObject(xs), prepend)
-  return xs
+  display(getListObject(xs), prepend);
+  return xs;
 }

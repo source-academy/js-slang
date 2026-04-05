@@ -1,12 +1,12 @@
-import type { Identifier, VariableDeclaration } from 'estree'
-import { stripIndent } from '../../../utils/formatters'
-import { mapAndFilter } from '../../../utils/misc'
-import { RuleError } from '../../errors'
-import type { Rule } from '../../types'
+import type { Identifier, VariableDeclaration } from 'estree';
+import { stripIndent } from '../../../utils/formatters';
+import { mapAndFilter } from '../../../utils/misc';
+import { RuleError } from '../../errors';
+import type { Rule } from '../../types';
 
 export class NoImplicitDeclareUndefinedError extends RuleError<Identifier> {
   public override explain() {
-    return 'Missing value in variable declaration.'
+    return 'Missing value in variable declaration.';
   }
 
   public override elaborate() {
@@ -17,7 +17,7 @@ export class NoImplicitDeclareUndefinedError extends RuleError<Identifier> {
         let ${this.node.name} = 20;
 
         ${this.node.name} + ${this.node.name}; // 40
-    `
+    `;
   }
 }
 
@@ -30,15 +30,15 @@ const noImplicitDeclareUndefined: Rule<VariableDeclaration> = {
         switch (ancestors[ancestors.length - 2].type) {
           case 'ForOfStatement':
           case 'ForInStatement':
-            return []
+            return [];
         }
       }
 
       return mapAndFilter(node.declarations, decl =>
-        decl.init ? undefined : new NoImplicitDeclareUndefinedError(decl.id as Identifier)
-      )
-    }
-  }
-}
+        decl.init ? undefined : new NoImplicitDeclareUndefinedError(decl.id as Identifier),
+      );
+    },
+  },
+};
 
-export default noImplicitDeclareUndefined
+export default noImplicitDeclareUndefined;

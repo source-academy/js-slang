@@ -1,14 +1,14 @@
-import type { TemplateLiteral } from 'estree'
-import { RuleError } from '../../errors'
-import type { Rule } from '../../types'
+import type { TemplateLiteral } from 'estree';
+import { RuleError } from '../../errors';
+import type { Rule } from '../../types';
 
 export class NoTemplateExpressionError extends RuleError<TemplateLiteral> {
   public override explain() {
-    return 'Expressions are not allowed in template literals (`multiline strings`)'
+    return 'Expressions are not allowed in template literals (`multiline strings`)';
   }
 
   public override elaborate() {
-    return this.explain()
+    return this.explain();
   }
 }
 
@@ -18,12 +18,12 @@ const noTemplateExpression: Rule<TemplateLiteral> = {
   checkers: {
     TemplateLiteral(node) {
       if (node.expressions.length > 0) {
-        return [new NoTemplateExpressionError(node)]
+        return [new NoTemplateExpressionError(node)];
       } else {
-        return []
+        return [];
       }
-    }
-  }
-}
+    },
+  },
+};
 
-export default noTemplateExpression
+export default noTemplateExpression;

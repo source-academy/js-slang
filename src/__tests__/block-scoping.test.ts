@@ -1,7 +1,7 @@
-import { test } from 'vitest'
-import { Chapter } from '../langs'
-import { stripIndent } from '../utils/formatters'
-import { expectFinishedResult, expectParsedError } from '../utils/testing'
+import { test } from 'vitest';
+import { Chapter } from '../langs';
+import { stripIndent } from '../utils/formatters';
+import { expectFinishedResult, expectParsedError } from '../utils/testing';
 
 // This is bad practice. Don't do this!
 test('standalone block statements', () => {
@@ -15,9 +15,9 @@ test('standalone block statements', () => {
       return x;
     }
     test();
-  `
-  ).toEqual(true)
-})
+  `,
+  ).toEqual(true);
+});
 
 // This is bad practice. Don't do this!
 test('const uses block scoping instead of function scoping', () => {
@@ -33,9 +33,9 @@ test('const uses block scoping instead of function scoping', () => {
       return x;
     }
     test();
-  `
-  ).toEqual(true)
-})
+  `,
+  ).toEqual(true);
+});
 
 // This is bad practice. Don't do this!
 test('let uses block scoping instead of function scoping', () => {
@@ -52,9 +52,9 @@ test('let uses block scoping instead of function scoping', () => {
     }
     test();
   `,
-    Chapter.SOURCE_3
-  ).toEqual(true)
-})
+    Chapter.SOURCE_3,
+  ).toEqual(true);
+});
 
 // This is bad practice. Don't do this!
 test('for loops use block scoping instead of function scoping', () => {
@@ -68,9 +68,9 @@ test('for loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    Chapter.SOURCE_3
-  ).toEqual(true)
-})
+    Chapter.SOURCE_3,
+  ).toEqual(true);
+});
 
 // This is bad practice. Don't do this!
 test('while loops use block scoping instead of function scoping', () => {
@@ -86,9 +86,9 @@ test('while loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    Chapter.SOURCE_4
-  ).toEqual(true)
-})
+    Chapter.SOURCE_4,
+  ).toEqual(true);
+});
 
 // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
 // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
@@ -104,9 +104,9 @@ test('for loop `let` variables are copied into the block scope', () => {
   }
   test();
   `,
-    Chapter.SOURCE_4
-  ).toEqual(1)
-})
+    Chapter.SOURCE_4,
+  ).toEqual(1);
+});
 
 test('Cannot overwrite loop variables within a block', () => {
   return expectParsedError(
@@ -120,11 +120,11 @@ test('Cannot overwrite loop variables within a block', () => {
   }
   test();
   `,
-    Chapter.SOURCE_3
+    Chapter.SOURCE_3,
   ).toEqual(
-    'Line 4: Assignment to a for loop variable within the body of the for loop is not allowed.'
-  )
-})
+    'Line 4: Assignment to a for loop variable within the body of the for loop is not allowed.',
+  );
+});
 
 test('No hoisting of functions. Only the name is hoisted like let and const', () => {
   return expectParsedError(stripIndent`
@@ -133,8 +133,8 @@ test('No hoisting of functions. Only the name is hoisted like let and const', ()
         return 1;
       }
       v;
-    `).toEqual("Line 1: ReferenceError: Cannot access 'f' before initialization")
-}, 30000)
+    `).toEqual("Line 1: ReferenceError: Cannot access 'f' before initialization");
+}, 30000);
 
 test('Error when accessing temporal dead zone', () => {
   return expectParsedError(stripIndent`
@@ -144,8 +144,8 @@ test('Error when accessing temporal dead zone', () => {
       const a = 5;
     }
     f();
-    `).toEqual("Line 3: ReferenceError: Cannot access 'a' before initialization")
-}, 30000)
+    `).toEqual("Line 3: ReferenceError: Cannot access 'a' before initialization");
+}, 30000);
 
 test('In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.', () => {
   return expectParsedError(stripIndent`
@@ -154,8 +154,8 @@ test('In a block, every going-to-be-defined variable in the block cannot be acce
         a + a;
         const a = 10;
       }
-    `).toEqual("Line 3: ReferenceError: Cannot access 'a' before initialization")
-}, 30000)
+    `).toEqual("Line 3: ReferenceError: Cannot access 'a' before initialization");
+}, 30000);
 
 test('Shadowed variables may not be assigned to until declared in the current scope', () => {
   return expectParsedError(
@@ -168,6 +168,6 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   }
   test();
   `,
-    Chapter.SOURCE_3
-  ).toEqual("Line 3: ReferenceError: Cannot access 'variable' before initialization")
-})
+    Chapter.SOURCE_3,
+  ).toEqual("Line 3: ReferenceError: Cannot access 'variable' before initialization");
+});

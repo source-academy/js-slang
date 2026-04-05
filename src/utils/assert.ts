@@ -4,8 +4,8 @@
  * Plus, we can customize our own assert messages and handling
  */
 
-import { InternalRuntimeError } from '../errors/runtimeErrors'
-import type { Node } from '../types'
+import { InternalRuntimeError } from '../errors/runtimeErrors';
+import type { Node } from '../types';
 
 /**
  * Subclass of {@link InternalRuntimeError} thrown by the {@link assert} function.
@@ -15,8 +15,8 @@ export class AssertionError extends InternalRuntimeError {
     super(
       explanation,
       node,
-      'Please contact the administrators to let them know that this error has occurred'
-    )
+      'Please contact the administrators to let them know that this error has occurred',
+    );
   }
 }
 
@@ -27,9 +27,9 @@ export class AssertionError extends InternalRuntimeError {
 export default function assert(
   condition: boolean,
   message: string,
-  node?: Node
+  node?: Node,
 ): asserts condition {
   if (!condition) {
-    throw new AssertionError(message, node)
+    throw new AssertionError(message, node);
   }
 }

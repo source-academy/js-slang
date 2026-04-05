@@ -1,25 +1,25 @@
-import type es from 'estree'
-import { UNKNOWN_LOCATION } from '../constants'
+import type es from 'estree';
+import { UNKNOWN_LOCATION } from '../constants';
 
 export enum ErrorType {
   IMPORT = 'Import',
   RUNTIME = 'Runtime',
   SYNTAX = 'Syntax',
-  TYPE = 'Type'
+  TYPE = 'Type',
 }
 
 export enum ErrorSeverity {
   WARNING = 'Warning',
-  ERROR = 'Error'
+  ERROR = 'Error',
 }
 
 // any and all errors ultimately implement this interface. as such, changes to this will affect every type of error.
 export interface SourceError {
-  type: ErrorType
-  severity: ErrorSeverity
-  location: es.SourceLocation
-  explain(): string
-  elaborate(): string
+  type: ErrorType;
+  severity: ErrorSeverity;
+  location: es.SourceLocation;
+  explain(): string;
+  elaborate(): string;
 }
 
 /**
@@ -30,20 +30,20 @@ export abstract class SourceErrorWithNode<T extends es.BaseNode | undefined>
   implements SourceError
 {
   constructor(public readonly node: T) {
-    super()
+    super();
   }
 
   public get location() {
-    return this.node?.loc ?? UNKNOWN_LOCATION
+    return this.node?.loc ?? UNKNOWN_LOCATION;
   }
 
-  public abstract readonly type: ErrorType
-  public abstract readonly severity: ErrorSeverity
+  public abstract readonly type: ErrorType;
+  public abstract readonly severity: ErrorSeverity;
 
-  public abstract explain(): string
-  public abstract elaborate(): string
+  public abstract explain(): string;
+  public abstract elaborate(): string;
 
   public override get message() {
-    return this.explain()
+    return this.explain();
   }
 }

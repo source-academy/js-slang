@@ -74,4 +74,4 @@ type ArrayExpression = Pair<"array_expression", Pair<List<Expression>, null>>;
 type LogicalOperator = "&&" | "||";
 type BinaryOperator = "+" | "-" | "*" | "/" | "%" | "===" | "!==" | "<" | ">" | "<=" | ">=";
 type UnaryOperator = "!" | "-unary";
-`
+`;

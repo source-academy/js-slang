@@ -1,10 +1,10 @@
-import type { Comment, Identifier, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
-import { isBuiltinFunction } from '../../builtins'
-import { StepperBaseNode } from '../../interface'
-import { UnassignedVariableError } from '../../../errors/errors'
-import type { RedexInfo } from '../..'
-import { InternalRuntimeError } from '../../../errors/runtimeErrors'
+import type { Comment, Identifier, SourceLocation } from 'estree';
+import type { StepperExpression, StepperPattern } from '..';
+import { isBuiltinFunction } from '../../builtins';
+import { StepperBaseNode } from '../../interface';
+import { UnassignedVariableError } from '../../../errors/errors';
+import type { RedexInfo } from '../..';
+import { InternalRuntimeError } from '../../../errors/runtimeErrors';
 
 export class StepperIdentifier extends StepperBaseNode<Identifier> implements Identifier {
   constructor(
@@ -12,9 +12,9 @@ export class StepperIdentifier extends StepperBaseNode<Identifier> implements Id
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
-    super('Identifier', leadingComments, trailingComments, loc, range)
+    super('Identifier', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: Identifier) {
@@ -23,52 +23,52 @@ export class StepperIdentifier extends StepperBaseNode<Identifier> implements Id
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
-    )
+      node.range,
+    );
   }
 
   public override isContractible(): boolean {
     // catch undeclared variables
     if (this.name !== 'undefined' && !isBuiltinFunction(this.name)) {
-      throw new UnassignedVariableError(this.name, this)
+      throw new UnassignedVariableError(this.name, this);
     }
-    return false
+    return false;
   }
 
   public override isOneStepPossible(): boolean {
     if (this.name !== 'undefined' && !isBuiltinFunction(this.name)) {
-      throw new UnassignedVariableError(this.name, this)
+      throw new UnassignedVariableError(this.name, this);
     }
-    return false
+    return false;
   }
 
   public override contract(): StepperIdentifier {
-    throw new InternalRuntimeError('Cannot contract Identifier', this)
+    throw new InternalRuntimeError('Cannot contract Identifier', this);
   }
 
   public override oneStep(): StepperIdentifier {
-    throw new InternalRuntimeError('Cannot oneStep Identifier', this)
+    throw new InternalRuntimeError('Cannot oneStep Identifier', this);
   }
 
   public override substitute(
     id: StepperPattern,
     value: StepperExpression,
-    redex: RedexInfo
+    redex: RedexInfo,
   ): StepperExpression {
     if (id.name === this.name) {
-      redex.postRedex.push(value)
-      return value
+      redex.postRedex.push(value);
+      return value;
     } else {
-      return this
+      return this;
     }
   }
 
   public override freeNames(): string[] {
-    return [this.name]
+    return [this.name];
   }
 
   public override allNames(): string[] {
-    return [this.name]
+    return [this.name];
   }
 
   public override rename(before: string, after: string) {
@@ -78,8 +78,8 @@ export class StepperIdentifier extends StepperBaseNode<Identifier> implements Id
           this.leadingComments,
           this.trailingComments,
           this.loc,
-          this.range
+          this.range,
         )
-      : this
+      : this;
   }
 }

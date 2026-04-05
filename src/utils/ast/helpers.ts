@@ -1,17 +1,17 @@
-import type es from 'estree'
+import type es from 'estree';
 
-import assert from '../assert'
-import { ArrayMap } from '../dict'
-import type { ModuleDeclarationWithSource } from '../../modules/moduleTypes'
-import { InternalRuntimeError } from '../../errors/runtimeErrors'
-import { isDeclaration, isIdentifier, isImportDeclaration } from './typeGuards'
+import assert from '../assert';
+import { ArrayMap } from '../dict';
+import type { ModuleDeclarationWithSource } from '../../modules/moduleTypes';
+import { InternalRuntimeError } from '../../errors/runtimeErrors';
+import { isDeclaration, isIdentifier, isImportDeclaration } from './typeGuards';
 
 export function getModuleDeclarationSource(node: ModuleDeclarationWithSource): string {
   assert(
     typeof node.source?.value === 'string',
-    `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`
-  )
-  return node.source.value
+    `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`,
+  );
+  return node.source.value;
 }
 
 /**
@@ -21,57 +21,57 @@ export function extractDeclarations(decl: es.VariableDeclaration) {
   function recurser(pattern: es.Pattern): es.Identifier[] {
     switch (pattern.type) {
       case 'ArrayPattern':
-        return pattern.elements.flatMap(recurser)
+        return pattern.elements.flatMap(recurser);
       case 'AssignmentPattern':
-        return recurser(pattern.left)
+        return recurser(pattern.left);
       case 'Identifier':
-        return [pattern]
+        return [pattern];
       case 'ObjectPattern':
         return pattern.properties.flatMap(prop => {
           if (prop.type === 'Property') {
-            return recurser(prop.value)
+            return recurser(prop.value);
           }
-          return recurser(prop)
-        })
+          return recurser(prop);
+        });
       case 'RestElement':
-        return recurser(pattern.argument)
+        return recurser(pattern.argument);
       default:
         throw new InternalRuntimeError(
           `Should not encounter a ${pattern.type} in ${extractDeclarations.name}`,
-          pattern
-        )
+          pattern,
+        );
     }
   }
 
-  return decl.declarations.flatMap(({ id }) => recurser(id))
+  return decl.declarations.flatMap(({ id }) => recurser(id));
 }
 
 /**
  * Gets all the identifiers introduced by a declaration node
  */
 export function getIdsFromDeclaration(
-  decl: es.Declaration | es.ModuleDeclaration
+  decl: es.Declaration | es.ModuleDeclaration,
 ): es.Identifier[] {
   switch (decl.type) {
     case 'ExportAllDeclaration':
-      return []
+      return [];
     case 'ExportDefaultDeclaration': {
       switch (decl.declaration.type) {
         case 'ClassDeclaration':
         case 'FunctionDeclaration':
-          return decl.declaration.id ? [decl.declaration.id] : []
+          return decl.declaration.id ? [decl.declaration.id] : [];
       }
-      return []
+      return [];
     }
     case 'ExportNamedDeclaration':
-      return decl.declaration ? getIdsFromDeclaration(decl.declaration) : []
+      return decl.declaration ? getIdsFromDeclaration(decl.declaration) : [];
     case 'ImportDeclaration':
-      return decl.specifiers.flatMap(spec => spec.local)
+      return decl.specifiers.flatMap(spec => spec.local);
     case 'ClassDeclaration':
     case 'FunctionDeclaration':
-      return [decl.id]
+      return [decl.id];
     case 'VariableDeclaration':
-      return extractDeclarations(decl)
+      return extractDeclarations(decl);
   }
 }
 
@@ -83,74 +83,74 @@ export function getIdsFromDeclaration(
 export function getSourceVariableDeclaration(decl: es.VariableDeclaration) {
   assert(
     decl.declarations.length === 1,
-    'Variable Declarations in Source should only have 1 declarator!'
-  )
+    'Variable Declarations in Source should only have 1 declarator!',
+  );
 
-  const [declaration] = decl.declarations
+  const [declaration] = decl.declarations;
   assert(
     isIdentifier(declaration.id),
-    'Variable Declarations in Source should be declared using an Identifier!'
-  )
+    'Variable Declarations in Source should be declared using an Identifier!',
+  );
 
-  assert(!!declaration.init, 'Variable declarations in Source must be initialized!')
+  assert(!!declaration.init, 'Variable declarations in Source must be initialized!');
 
   return {
     id: declaration.id,
     init: declaration.init,
-    loc: declaration.loc
-  }
+    loc: declaration.loc,
+  };
 }
 
 export const getImportedName = (
-  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
+  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier,
 ) => {
   switch (spec.type) {
     case 'ImportDefaultSpecifier':
-      return 'default'
+      return 'default';
     case 'ImportSpecifier':
-      return spec.imported.name
+      return spec.imported.name;
     case 'ExportSpecifier':
-      return spec.local.name
+      return spec.local.name;
   }
-}
+};
 
 export const specifierToString = (
-  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
+  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier,
 ) => {
   switch (spec.type) {
     case 'ImportSpecifier': {
       if (spec.imported.name === spec.local.name) {
-        return spec.imported.name
+        return spec.imported.name;
       }
-      return `${spec.imported.name} as ${spec.local.name}`
+      return `${spec.imported.name} as ${spec.local.name}`;
     }
     case 'ImportDefaultSpecifier':
-      return `default as ${spec.local.name}`
+      return `default as ${spec.local.name}`;
     case 'ExportSpecifier': {
       if (spec.local.name === spec.exported.name) {
-        return spec.local.name
+        return spec.local.name;
       }
-      return `${spec.local.name} as ${spec.exported.name}`
+      return `${spec.local.name} as ${spec.exported.name}`;
     }
   }
-}
+};
 
-type BlockBody = (es.Program | es.BlockStatement)['body'][number]
-type BlocKBodyWithoutDeclarations = Exclude<BlockBody, es.Declaration>
+type BlockBody = (es.Program | es.BlockStatement)['body'][number];
+type BlocKBodyWithoutDeclarations = Exclude<BlockBody, es.Declaration>;
 
 /**
  * Returns true if the array of statements doesn't contain any declarations
  */
 export function hasNoDeclarations(stmt: BlockBody[]): stmt is BlocKBodyWithoutDeclarations[] {
-  return !stmt.some(isDeclaration)
+  return !stmt.some(isDeclaration);
 }
 
-type BlockBodyWithoutImports = Exclude<BlockBody, es.ImportDeclaration>
+type BlockBodyWithoutImports = Exclude<BlockBody, es.ImportDeclaration>;
 /**
  * Returns true if the array of statements doesn't contain any import declarations
  */
 export function hasNoImportDeclarations(stmt: BlockBody[]): stmt is BlockBodyWithoutImports[] {
-  return !stmt.some(isImportDeclaration)
+  return !stmt.some(isImportDeclaration);
 }
 
 /**
@@ -158,16 +158,16 @@ export function hasNoImportDeclarations(stmt: BlockBody[]): stmt is BlockBodyWit
  * the module they import from
  */
 export function filterImportDeclarations({
-  body
+  body,
 }: es.Program): [ArrayMap<string, es.ImportDeclaration>, BlockBodyWithoutImports[]] {
   return body.reduce<[ArrayMap<string, es.ImportDeclaration>, BlockBodyWithoutImports[]]>(
     ([importNodes, otherNodes], node) => {
-      if (!isImportDeclaration(node)) return [importNodes, [...otherNodes, node]]
+      if (!isImportDeclaration(node)) return [importNodes, [...otherNodes, node]];
 
-      const moduleName = getModuleDeclarationSource(node)
-      importNodes.add(moduleName, node)
-      return [importNodes, otherNodes]
+      const moduleName = getModuleDeclarationSource(node);
+      importNodes.add(moduleName, node);
+      return [importNodes, otherNodes];
     },
-    [new ArrayMap(), []]
-  )
+    [new ArrayMap(), []],
+  );
 }

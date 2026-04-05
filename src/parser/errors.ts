@@ -1,76 +1,76 @@
-import type { SourceLocation } from 'estree'
+import type { SourceLocation } from 'estree';
 
-import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, SourceErrorWithNode, type SourceError } from '../errors/base'
-import type { Node } from '../types'
-import { stripIndent } from '../utils/formatters'
+import { UNKNOWN_LOCATION } from '../constants';
+import { ErrorSeverity, ErrorType, SourceErrorWithNode, type SourceError } from '../errors/base';
+import type { Node } from '../types';
+import { stripIndent } from '../utils/formatters';
 
 export class MissingSemicolonError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
+  public type = ErrorType.SYNTAX;
+  public severity = ErrorSeverity.ERROR;
   public constructor(public location: SourceLocation) {}
 
   public explain() {
-    return 'Missing semicolon at the end of statement'
+    return 'Missing semicolon at the end of statement';
   }
 
   public elaborate() {
-    return 'Every statement must be terminated by a semicolon.'
+    return 'Every statement must be terminated by a semicolon.';
   }
 }
 
 export class TrailingCommaError implements SourceError {
-  public type: ErrorType.SYNTAX
-  public severity: ErrorSeverity.WARNING
+  public type: ErrorType.SYNTAX;
+  public severity: ErrorSeverity.WARNING;
   public constructor(public location: SourceLocation) {}
 
   public explain() {
-    return 'Trailing comma'
+    return 'Trailing comma';
   }
 
   public elaborate() {
-    return 'Please remove the trailing comma'
+    return 'Please remove the trailing comma';
   }
 }
 
 export class FatalSyntaxError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
+  public type = ErrorType.SYNTAX;
+  public severity = ErrorSeverity.ERROR;
   public constructor(
     public location: SourceLocation,
-    public message: string
+    public message: string,
   ) {}
 
   public explain() {
-    return this.message
+    return this.message;
   }
 
   public elaborate() {
-    return 'There is a syntax error in your program'
+    return 'There is a syntax error in your program';
   }
 }
 
 export class DisallowedConstructError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-  public nodeType: string
+  public type = ErrorType.SYNTAX;
+  public severity = ErrorSeverity.ERROR;
+  public nodeType: string;
 
   constructor(public node: Node) {
-    this.nodeType = this.formatNodeType(this.node.type)
+    this.nodeType = this.formatNodeType(this.node.type);
   }
 
   get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
+    return this.node.loc ?? UNKNOWN_LOCATION;
   }
 
   public explain() {
-    return `${this.nodeType} are not allowed`
+    return `${this.nodeType} are not allowed`;
   }
 
   public elaborate() {
     return stripIndent`
         You are trying to use ${this.nodeType}, which is not allowed (yet).
-      `
+      `;
   }
 
   /**
@@ -82,20 +82,20 @@ export class DisallowedConstructError implements SourceError {
   private formatNodeType(nodeType: string) {
     switch (nodeType) {
       case 'ThisExpression':
-        return "'this' expressions"
+        return "'this' expressions";
       case 'Property':
-        return 'Properties'
+        return 'Properties';
       case 'ImportNamespaceSpecifier':
-        return 'Namespace imports'
+        return 'Namespace imports';
       default: {
-        const words = nodeType.split(/(?=[A-Z])/)
-        return words.map((word, i) => (i === 0 ? word : word.toLowerCase())).join(' ') + 's'
+        const words = nodeType.split(/(?=[A-Z])/);
+        return words.map((word, i) => (i === 0 ? word : word.toLowerCase())).join(' ') + 's';
       }
     }
   }
 }
 
 export abstract class RuleError<T extends Node> extends SourceErrorWithNode<T> {
-  type = ErrorType.SYNTAX
-  severity = ErrorSeverity.ERROR
+  type = ErrorType.SYNTAX;
+  severity = ErrorSeverity.ERROR;
 }

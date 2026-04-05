@@ -1,37 +1,37 @@
-import type { AssignmentExpression, BinaryExpression, UnaryExpression } from 'estree'
-import { RuleError } from '../../errors'
-import type { Rule } from '../../types'
+import type { AssignmentExpression, BinaryExpression, UnaryExpression } from 'estree';
+import { RuleError } from '../../errors';
+import type { Rule } from '../../types';
 
-type ExpressionNodeType = AssignmentExpression | BinaryExpression | UnaryExpression
+type ExpressionNodeType = AssignmentExpression | BinaryExpression | UnaryExpression;
 
 export class NoUnspecifiedOperatorError<T extends ExpressionNodeType> extends RuleError<T> {
-  public readonly unspecifiedOperator: T['operator']
+  public readonly unspecifiedOperator: T['operator'];
 
   constructor(node: T) {
-    super(node)
-    this.unspecifiedOperator = node.operator
+    super(node);
+    this.unspecifiedOperator = node.operator;
   }
 
   public override explain() {
-    return `Operator '${this.unspecifiedOperator}' is not allowed.`
+    return `Operator '${this.unspecifiedOperator}' is not allowed.`;
   }
 
   public override elaborate() {
-    return ''
+    return '';
   }
 }
 
 export class StrictEqualityError extends NoUnspecifiedOperatorError<BinaryExpression> {
   public override explain() {
     if (this.node.operator === '==') {
-      return 'Use === instead of ==.'
+      return 'Use === instead of ==.';
     } else {
-      return 'Use !== instead of !=.'
+      return 'Use !== instead of !=.';
     }
   }
 
   public override elaborate() {
-    return '== and != are not valid operators.'
+    return '== and != are not valid operators.';
   }
 }
 
@@ -51,28 +51,28 @@ const noUnspecifiedOperator: Rule<BinaryExpression | UnaryExpression> = {
         '<',
         '>',
         '<=',
-        '>='
+        '>=',
         // '&&',
         // '||'
-      ]
+      ];
 
       if (node.operator === '!=' || node.operator === '==') {
-        return [new StrictEqualityError(node)]
+        return [new StrictEqualityError(node)];
       } else if (!permittedOperators.includes(node.operator)) {
-        return [new NoUnspecifiedOperatorError(node)]
+        return [new NoUnspecifiedOperatorError(node)];
       } else {
-        return []
+        return [];
       }
     },
     UnaryExpression(node) {
-      const permittedOperators = ['-', '!', 'typeof']
+      const permittedOperators = ['-', '!', 'typeof'];
       if (!permittedOperators.includes(node.operator)) {
-        return [new NoUnspecifiedOperatorError(node)]
+        return [new NoUnspecifiedOperatorError(node)];
       } else {
-        return []
+        return [];
       }
-    }
-  }
-}
+    },
+  },
+};
 
-export default noUnspecifiedOperator
+export default noUnspecifiedOperator;

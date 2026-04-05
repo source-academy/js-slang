@@ -1,30 +1,30 @@
-import type { Program } from 'estree'
+import type { Program } from 'estree';
 
-import { Chapter } from '../../langs'
-import { parsePythonToEstreeAst } from '../../py-slang/src'
-import type { Context } from '../../types'
-import { FatalSyntaxError } from '../errors'
-import type { AcornOptions, Parser } from '../types'
-import { positionToSourceLocation } from '../utils'
-import { InternalRuntimeError } from '../../errors/runtimeErrors'
+import { Chapter } from '../../langs';
+import { parsePythonToEstreeAst } from '../../py-slang/src';
+import type { Context } from '../../types';
+import { FatalSyntaxError } from '../errors';
+import type { AcornOptions, Parser } from '../types';
+import { positionToSourceLocation } from '../utils';
+import { InternalRuntimeError } from '../../errors/runtimeErrors';
 
 export class PythonParser implements Parser<AcornOptions> {
-  private chapter: Chapter
+  private chapter: Chapter;
   constructor(chapter: Chapter) {
-    this.chapter = chapter
+    this.chapter = chapter;
   }
   parse(
     programStr: string,
     context: Context,
     options?: Partial<AcornOptions>,
-    throwOnError?: boolean
+    throwOnError?: boolean,
   ): Program | null {
     try {
       // parse the Python code
       const chapterNum = (() => {
         switch (this.chapter) {
           case Chapter.PYTHON_1:
-            return 1
+            return 1;
           // Future additions:
           //   case Chapter.PYTHON_2:
           //     return 2
@@ -33,26 +33,29 @@ export class PythonParser implements Parser<AcornOptions> {
           //   case Chapter.PYTHON_4:
           //     return 4
           default:
-            throw new InternalRuntimeError(`Invalid chapter for python parser: ${this.chapter}`)
+            throw new InternalRuntimeError(`Invalid chapter for python parser: ${this.chapter}`);
         }
-      })()
-      return parsePythonToEstreeAst(programStr, chapterNum, true)
+      })();
+      return parsePythonToEstreeAst(programStr, chapterNum, true);
     } catch (error) {
       if (error instanceof SyntaxError) {
-        error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())
+        error = new FatalSyntaxError(
+          positionToSourceLocation((error as any).loc),
+          error.toString(),
+        );
       }
 
-      if (throwOnError) throw error
-      context.errors.push(error)
+      if (throwOnError) throw error;
+      context.errors.push(error);
     }
-    return null
+    return null;
   }
 
   validate(_ast: Program, _context: Context, _throwOnError: boolean): boolean {
-    return true
+    return true;
   }
 
   toString(): string {
-    return `PythonParser{chapter: ${this.chapter}}`
+    return `PythonParser{chapter: ${this.chapter}}`;
   }
 }

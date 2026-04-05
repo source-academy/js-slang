@@ -1,12 +1,12 @@
-import type { Comment, LogicalExpression, LogicalOperator, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
-import type { RedexInfo } from '../..'
-import { convert } from '../../generator'
-import { StepperBaseNode } from '../../interface'
-import assert from '../../../utils/assert'
-import { checkIfStatement } from '../../../utils/rttc'
-import { InternalRuntimeError } from '../../../errors/runtimeErrors'
-import { StepperLiteral } from './Literal'
+import type { Comment, LogicalExpression, LogicalOperator, SourceLocation } from 'estree';
+import type { StepperExpression, StepperPattern } from '..';
+import type { RedexInfo } from '../..';
+import { convert } from '../../generator';
+import { StepperBaseNode } from '../../interface';
+import assert from '../../../utils/assert';
+import { checkIfStatement } from '../../../utils/rttc';
+import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { StepperLiteral } from './Literal';
 
 export class StepperLogicalExpression
   extends StepperBaseNode<LogicalExpression>
@@ -19,9 +19,9 @@ export class StepperLogicalExpression
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
-    super('LogicalExpression', leadingComments, trailingComments, loc, range)
+    super('LogicalExpression', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: LogicalExpression) {
@@ -32,18 +32,18 @@ export class StepperLogicalExpression
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
-    )
+      node.range,
+    );
   }
 
   public override isContractible(redex: RedexInfo): boolean {
     if (this.left.type === 'Literal') {
-      checkIfStatement(this, this.left.value)
-      redex.preRedex = [this]
-      return true
+      checkIfStatement(this, this.left.value);
+      redex.preRedex = [this];
+      return true;
     }
 
-    return false
+    return false;
   }
 
   public override isOneStepPossible(redex: RedexInfo): boolean {
@@ -51,14 +51,14 @@ export class StepperLogicalExpression
       this.isContractible(redex) ||
       this.left.isOneStepPossible(redex) ||
       this.right.isOneStepPossible(redex)
-    )
+    );
   }
 
   public override contract(redex: RedexInfo): StepperExpression {
-    redex.preRedex = [this]
+    redex.preRedex = [this];
 
-    assert(this.left.type === 'Literal', 'Left operand must be a literal to contract')
-    const leftValue = this.left.value
+    assert(this.left.type === 'Literal', 'Left operand must be a literal to contract');
+    const leftValue = this.left.value;
 
     if (this.operator === '&&' && !leftValue) {
       let ret = new StepperLiteral(
@@ -67,10 +67,10 @@ export class StepperLogicalExpression
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
-      )
-      redex.postRedex = [ret]
-      return ret
+        this.range,
+      );
+      redex.postRedex = [ret];
+      return ret;
     } else if (this.operator === '||' && leftValue) {
       let ret = new StepperLiteral(
         true,
@@ -78,18 +78,18 @@ export class StepperLogicalExpression
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
-      )
-      redex.postRedex = [ret]
-      return ret
+        this.range,
+      );
+      redex.postRedex = [ret];
+      return ret;
     } else {
-      return this.right
+      return this.right;
     }
   }
 
   public override oneStep(redex: RedexInfo): StepperExpression {
     if (this.isContractible(redex)) {
-      return this.contract(redex)
+      return this.contract(redex);
     } else if (this.left.isOneStepPossible(redex)) {
       return new StepperLogicalExpression(
         this.operator,
@@ -98,8 +98,8 @@ export class StepperLogicalExpression
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
-      )
+        this.range,
+      );
     } else if (this.right.isOneStepPossible(redex)) {
       return new StepperLogicalExpression(
         this.operator,
@@ -108,17 +108,17 @@ export class StepperLogicalExpression
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
-      )
+        this.range,
+      );
     }
 
-    throw new InternalRuntimeError('Cannot oneStep ineligible LogicalExpression', this)
+    throw new InternalRuntimeError('Cannot oneStep ineligible LogicalExpression', this);
   }
 
   public override substitute(
     id: StepperPattern,
     value: StepperExpression,
-    redex: RedexInfo
+    redex: RedexInfo,
   ): StepperExpression {
     return new StepperLogicalExpression(
       this.operator,
@@ -127,16 +127,16 @@ export class StepperLogicalExpression
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 
   public override freeNames(): string[] {
-    return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()))
+    return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()));
   }
 
   public override allNames(): string[] {
-    return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()))
+    return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()));
   }
 
   public override rename(before: string, after: string): StepperExpression {
@@ -147,7 +147,7 @@ export class StepperLogicalExpression
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 }

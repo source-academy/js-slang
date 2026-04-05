@@ -1,9 +1,9 @@
-export const accessExportFunctionName = '__access_export__'
+export const accessExportFunctionName = '__access_export__';
 // We can make use of 'default' to denote that the default export
 // should be accessed because 'default' is a reserved keyword in
 // Source. Specifically, the Acorn parser does not allow 'default'
 // to be used as a name.
-export const defaultExportLookupName = 'default'
+export const defaultExportLookupName = 'default';
 
 export const localImportPrelude = `
 function __access_named_export__(named_exports, lookup_name) {
@@ -28,4 +28,4 @@ function ${accessExportFunctionName}(exports, lookup_name) {
     return __access_named_export__(named_exports, lookup_name);
   }
 }
-`
+`;

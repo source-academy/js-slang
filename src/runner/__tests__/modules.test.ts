@@ -1,12 +1,12 @@
-import { describe, test, vi } from 'vitest'
-import { Chapter, Variant } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
-import { getChapterName } from '../../utils/misc'
-import { expectFinishedResult } from '../../utils/testing'
+import { describe, test, vi } from 'vitest';
+import { Chapter, Variant } from '../../langs';
+import { stripIndent } from '../../utils/formatters';
+import { getChapterName } from '../../utils/misc';
+import { expectFinishedResult } from '../../utils/testing';
 
-vi.mock(import('../../modules/loader/loaders'))
+vi.mock(import('../../modules/loader/loaders'));
 
-type DescribeCase = [string, Chapter[], Variant[], string]
+type DescribeCase = [string, Chapter[], Variant[], string];
 const describeCases: DescribeCase[] = [
   [
     'javascript',
@@ -17,7 +17,7 @@ const describeCases: DescribeCase[] = [
       Chapter.SOURCE_4,
       Chapter.FULL_JS,
       Chapter.FULL_TS,
-      Chapter.LIBRARY_PARSER
+      Chapter.LIBRARY_PARSER,
     ],
     [
       Variant.DEFAULT,
@@ -26,9 +26,9 @@ const describeCases: DescribeCase[] = [
       Variant.DEFAULT,
       Variant.DEFAULT,
       Variant.DEFAULT,
-      Variant.DEFAULT
+      Variant.DEFAULT,
     ],
-    'import { foo } from "one_module"; foo();'
+    'import { foo } from "one_module"; foo();',
   ],
   [
     'python',
@@ -37,25 +37,25 @@ const describeCases: DescribeCase[] = [
     stripIndent`
     from one_module import foo
     foo()
-    `
-  ]
-]
+    `,
+  ],
+];
 
 describe.each(describeCases)(
   'Ensuring that %s chapters are able to load modules',
   (_, chapters, variants, code) => {
     const chapterCases = chapters.map((chapterVal, index) => {
-      const chapterName = getChapterName(chapterVal)
-      const variant = variants[index]
-      return [`Testing ${chapterName}`, chapterVal, variant] as [string, Chapter, Variant]
-    })
+      const chapterName = getChapterName(chapterVal);
+      const variant = variants[index];
+      return [`Testing ${chapterName}`, chapterVal, variant] as [string, Chapter, Variant];
+    });
 
     test.each(chapterCases)(
       '%s',
       { timeout: process.env.GITHUB_ACTIONS ? 20_000 : 10_000 },
       (_, chapter, variant) => {
-        return expectFinishedResult(code, { chapter, variant }).toEqual('foo')
-      }
-    )
-  }
-)
+        return expectFinishedResult(code, { chapter, variant }).toEqual('foo');
+      },
+    );
+  },
+);

@@ -1,33 +1,33 @@
-import { describe, expect, test } from 'vitest'
-import { Chapter } from '../../langs'
-import { getChapterName, PromiseTimeoutError, timeoutPromise } from '../misc'
+import { describe, expect, test } from 'vitest';
+import { Chapter } from '../../langs';
+import { getChapterName, PromiseTimeoutError, timeoutPromise } from '../misc';
 
 describe(timeoutPromise, () => {
   const timedResolvedPromise = (duration: number) =>
-    new Promise<void>(resolve => setTimeout(resolve, duration))
+    new Promise<void>(resolve => setTimeout(resolve, duration));
   const timedRejectedPromise = (duration: number) =>
-    new Promise<void>((_, reject) => setTimeout(() => reject(-1), duration))
+    new Promise<void>((_, reject) => setTimeout(() => reject(-1), duration));
 
   test('Regular timeouts', async () => {
-    const promise = timeoutPromise(timedResolvedPromise(100), 200)
-    return expect(promise).resolves.toBeUndefined()
-  })
+    const promise = timeoutPromise(timedResolvedPromise(100), 200);
+    return expect(promise).resolves.toBeUndefined();
+  });
 
   test('Rejected promise', () => {
-    const promise = timeoutPromise(timedRejectedPromise(100), 200)
-    return expect(promise).rejects.toEqual(-1)
-  })
+    const promise = timeoutPromise(timedRejectedPromise(100), 200);
+    return expect(promise).rejects.toEqual(-1);
+  });
 
   test('Timeout on resolved promise', () => {
-    const promise = timeoutPromise(timedResolvedPromise(200), 100)
-    return expect(promise).rejects.toBeInstanceOf(PromiseTimeoutError)
-  })
+    const promise = timeoutPromise(timedResolvedPromise(200), 100);
+    return expect(promise).rejects.toBeInstanceOf(PromiseTimeoutError);
+  });
 
   test('Timeout on rejected promise', () => {
-    const promise = timeoutPromise(timedRejectedPromise(200), 100)
-    return expect(promise).rejects.toBeInstanceOf(PromiseTimeoutError)
-  })
-})
+    const promise = timeoutPromise(timedRejectedPromise(200), 100);
+    return expect(promise).rejects.toBeInstanceOf(PromiseTimeoutError);
+  });
+});
 
 describe(getChapterName, () =>
   test.each([
@@ -36,6 +36,6 @@ describe(getChapterName, () =>
     ['SOURCE_3', Chapter.SOURCE_3],
     ['SOURCE_4', Chapter.SOURCE_4],
     ['PYTHON_1', Chapter.PYTHON_1],
-    ['FULL_JS', Chapter.FULL_JS]
-  ])('%s', (expected, input) => expect(getChapterName(input)).toEqual(expected))
-)
+    ['FULL_JS', Chapter.FULL_JS],
+  ])('%s', (expected, input) => expect(getChapterName(input)).toEqual(expected)),
+);

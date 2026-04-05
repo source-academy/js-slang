@@ -1,6 +1,6 @@
-import type es from 'estree'
+import type es from 'estree';
 
-import { mapAndFilter } from '../../../utils/misc'
+import { mapAndFilter } from '../../../utils/misc';
 
 /**
  * Removes all export-related nodes from the AST.
@@ -22,15 +22,15 @@ export default function removeExports(program: es.Program): void {
         return node.declaration.type === 'FunctionDeclaration' ||
           node.declaration.type === 'ClassDeclaration'
           ? (node.declaration as es.FunctionDeclaration)
-          : undefined
+          : undefined;
       case 'ExportNamedDeclaration':
         // If the ExportNamedDeclaration node contains a declaration, replace
         // it with the declaration node in its parent node's body.
-        return !node.declaration ? undefined : node.declaration
+        return !node.declaration ? undefined : node.declaration;
       case 'ExportAllDeclaration':
-        return undefined
+        return undefined;
       default:
-        return node
+        return node;
     }
-  })
+  });
 }

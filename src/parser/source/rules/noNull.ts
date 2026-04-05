@@ -1,15 +1,15 @@
-import type { Literal } from 'estree'
-import { Chapter } from '../../../langs'
-import { RuleError } from '../../errors'
-import type { Rule } from '../../types'
+import type { Literal } from 'estree';
+import { Chapter } from '../../../langs';
+import { RuleError } from '../../errors';
+import type { Rule } from '../../types';
 
 export class NoNullError extends RuleError<Literal> {
   public override explain() {
-    return `null literals are not allowed.`
+    return `null literals are not allowed.`;
   }
 
   public override elaborate() {
-    return "They're not part of the Source §1 specs."
+    return "They're not part of the Source §1 specs.";
   }
 }
 
@@ -19,12 +19,12 @@ const noNull: Rule<Literal> = {
   checkers: {
     Literal(node) {
       if (node.value === null) {
-        return [new NoNullError(node)]
+        return [new NoNullError(node)];
       } else {
-        return []
+        return [];
       }
-    }
-  }
-}
+    },
+  },
+};
 
-export default noNull
+export default noNull;

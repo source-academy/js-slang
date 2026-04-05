@@ -1,10 +1,10 @@
-import { expect, test } from 'vitest'
-import { compile, createContext } from '../..'
-import { Chapter } from '../../langs'
+import { expect, test } from 'vitest';
+import { compile, createContext } from '../..';
+import { Chapter } from '../../langs';
 
 test('handles if without else', async () => {
-  const context = createContext(Chapter.SOURCE_3)
-  const compiled = await compile(`if (true) { 1 + 1; }`, context)
+  const context = createContext(Chapter.SOURCE_3);
+  const compiled = await compile(`if (true) { 1 + 1; }`, context);
   expect(compiled).toMatchInlineSnapshot(`
     Array [
       0,
@@ -46,5 +46,5 @@ test('handles if without else', async () => {
         ],
       ],
     ]
-  `)
-})
+  `);
+});
