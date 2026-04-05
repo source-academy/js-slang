@@ -64,7 +64,7 @@ export interface Context<T = any> {
 
   pendingStreamFnId?: string
 
-  pendingStreamFnStack: (string[] | undefined)[]
+  pendingStreamFnStack: ([string, number] | undefined)[]
 
   streamCount?: number
 
