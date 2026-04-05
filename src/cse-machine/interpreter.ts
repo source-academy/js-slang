@@ -1030,7 +1030,7 @@ const cmdEvaluators: CommandEvaluators = {
       // Streams
       if (func.node.params.length === 0) {
         context.pendingStreamFnId = func.id
-        context.pendingStreamFnStack.push([func.id, context.runtime.control !== null ? context.runtime.control.size().toString() : "0"])
+        context.pendingStreamFnStack.push([func.id, context.runtime.control?.size() ?? 0])
       } 
       // else {
       //   context.pendingStreamFnId = undefined
