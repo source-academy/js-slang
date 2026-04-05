@@ -1,16 +1,16 @@
-import type { ForStatement } from 'estree'
-import { stripIndent } from '../../../utils/formatters'
-import { RuleError } from '../../errors'
-import type { Rule } from '../../types'
+import type { ForStatement } from 'estree';
+import { stripIndent } from '../../../utils/formatters';
+import { RuleError } from '../../errors';
+import type { Rule } from '../../types';
 
 export class NoConstDeclarationInForLoopInit extends RuleError<ForStatement> {
   public explain(): string {
-    return 'Const declaration in init part of for statement is not allowed.'
+    return 'Const declaration in init part of for statement is not allowed.';
   }
   public elaborate(): string {
     return stripIndent`
       The init part of this statement cannot contain a const declaration, use a let declaration instead.
-    `
+    `;
   }
 }
 const noConstDeclarationInForLoopInit: Rule<ForStatement> = {
@@ -19,12 +19,12 @@ const noConstDeclarationInForLoopInit: Rule<ForStatement> = {
   checkers: {
     ForStatement(node) {
       if (node.init && node.init.type === 'VariableDeclaration' && node.init.kind === 'const') {
-        return [new NoConstDeclarationInForLoopInit(node)]
+        return [new NoConstDeclarationInForLoopInit(node)];
       }
 
-      return []
-    }
-  }
-}
+      return [];
+    },
+  },
+};
 
-export { noConstDeclarationInForLoopInit }
+export { noConstDeclarationInForLoopInit };

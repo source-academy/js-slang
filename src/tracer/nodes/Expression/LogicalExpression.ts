@@ -1,19 +1,19 @@
-import type { Comment, LogicalExpression, LogicalOperator, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
-import { redex } from '../..'
-import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
-import { StepperLiteral } from './Literal'
+import type { Comment, LogicalExpression, LogicalOperator, SourceLocation } from 'estree';
+import type { StepperExpression, StepperPattern } from '..';
+import { redex } from '../..';
+import { convert } from '../../generator';
+import type { StepperBaseNode } from '../../interface';
+import { StepperLiteral } from './Literal';
 
 export class StepperLogicalExpression implements LogicalExpression, StepperBaseNode {
-  type: 'LogicalExpression'
-  operator: LogicalOperator
-  left: StepperExpression
-  right: StepperExpression
-  leadingComments?: Comment[]
-  trailingComments?: Comment[]
-  loc?: SourceLocation | null
-  range?: [number, number]
+  type: 'LogicalExpression';
+  operator: LogicalOperator;
+  left: StepperExpression;
+  right: StepperExpression;
+  leadingComments?: Comment[];
+  trailingComments?: Comment[];
+  loc?: SourceLocation | null;
+  range?: [number, number];
 
   constructor(
     operator: LogicalOperator,
@@ -22,16 +22,16 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
-    this.type = 'LogicalExpression'
-    this.operator = operator
-    this.left = left
-    this.right = right
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    this.type = 'LogicalExpression';
+    this.operator = operator;
+    this.left = left;
+    this.right = right;
+    this.leadingComments = leadingComments;
+    this.trailingComments = trailingComments;
+    this.loc = loc;
+    this.range = range;
   }
 
   static create(node: LogicalExpression) {
@@ -42,39 +42,39 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
-    )
+      node.range,
+    );
   }
 
   isContractible(): boolean {
     if (this.left.type === 'Literal') {
-      const leftType = typeof this.left.value
+      const leftType = typeof this.left.value;
 
       if (leftType !== 'boolean') {
         throw new Error(
           `Line ${
             this.loc?.start.line || 0
-          }: Expected boolean on left hand side of operation, got ${leftType}.`
-        )
+          }: Expected boolean on left hand side of operation, got ${leftType}.`,
+        );
       }
 
-      redex.preRedex = [this]
-      return true
+      redex.preRedex = [this];
+      return true;
     }
 
-    return false
+    return false;
   }
 
   isOneStepPossible(): boolean {
-    return this.isContractible() || this.left.isOneStepPossible() || this.right.isOneStepPossible()
+    return this.isContractible() || this.left.isOneStepPossible() || this.right.isOneStepPossible();
   }
 
   contract(): StepperExpression {
-    redex.preRedex = [this]
+    redex.preRedex = [this];
 
-    if (this.left.type !== 'Literal') throw new Error('Left operand must be a literal to contract')
+    if (this.left.type !== 'Literal') throw new Error('Left operand must be a literal to contract');
 
-    const leftValue = this.left.value
+    const leftValue = this.left.value;
 
     if (this.operator === '&&' && !leftValue) {
       let ret = new StepperLiteral(
@@ -83,10 +83,10 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
-      )
-      redex.postRedex = [ret]
-      return ret
+        this.range,
+      );
+      redex.postRedex = [ret];
+      return ret;
     } else if (this.operator === '||' && leftValue) {
       let ret = new StepperLiteral(
         true,
@@ -94,18 +94,18 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
-      )
-      redex.postRedex = [ret]
-      return ret
+        this.range,
+      );
+      redex.postRedex = [ret];
+      return ret;
     } else {
-      return this.right
+      return this.right;
     }
   }
 
   oneStep(): StepperExpression {
     if (this.isContractible()) {
-      return this.contract()
+      return this.contract();
     } else if (this.left.isOneStepPossible()) {
       return new StepperLogicalExpression(
         this.operator,
@@ -114,8 +114,8 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
-      )
+        this.range,
+      );
     } else if (this.right.isOneStepPossible()) {
       return new StepperLogicalExpression(
         this.operator,
@@ -124,10 +124,10 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
         this.leadingComments,
         this.trailingComments,
         this.loc,
-        this.range
-      )
+        this.range,
+      );
     } else {
-      throw new Error('No step possible')
+      throw new Error('No step possible');
     }
   }
 
@@ -139,16 +139,16 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 
   freeNames(): string[] {
-    return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()))
+    return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()));
   }
 
   allNames(): string[] {
-    return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()))
+    return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()));
   }
 
   rename(before: string, after: string): StepperExpression {
@@ -159,7 +159,7 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 }

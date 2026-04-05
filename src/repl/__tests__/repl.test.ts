@@ -1,41 +1,41 @@
 // @vitest-environment node
 
-import fs from 'fs/promises'
-import repl from 'repl'
-import { beforeEach, describe, expect, test, vi } from 'vitest'
-import { Chapter } from '../../langs'
-import type { SourceFiles } from '../../modules/moduleTypes'
-import { getReplCommand } from '../repl'
-import { chapterParser } from '../utils'
+import fs from 'fs/promises';
+import repl from 'repl';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { Chapter } from '../../langs';
+import type { SourceFiles } from '../../modules/moduleTypes';
+import { getReplCommand } from '../repl';
+import { chapterParser } from '../utils';
 
-vi.mock(import('../../modules/loader/loaders'))
+vi.mock(import('../../modules/loader/loaders'));
 
 vi.mock(import('path'), async importOriginal => {
-  const { posix } = await importOriginal()
-  const newResolve = (...args: string[]) => posix.resolve('/', ...args)
+  const { posix } = await importOriginal();
+  const newResolve = (...args: string[]) => posix.resolve('/', ...args);
 
   const newPath = {
     ...posix,
-    resolve: newResolve
-  }
+    resolve: newResolve,
+  };
 
   return {
     default: newPath,
-    posix: newPath
-  }
-})
+    posix: newPath,
+  };
+});
 
-const mockedReplStart = vi.spyOn(repl, 'start')
-const readFileMocker = vi.spyOn(fs, 'readFile')
+const mockedReplStart = vi.spyOn(repl, 'start');
+const readFileMocker = vi.spyOn(fs, 'readFile');
 
 function mockReadFiles(files: SourceFiles) {
   readFileMocker.mockImplementation((fileName: string) => {
-    if (fileName in files) return Promise.resolve(files[fileName]!)
-    return Promise.reject({ code: 'ENOENT' })
-  })
+    if (fileName in files) return Promise.resolve(files[fileName]!);
+    return Promise.reject({ code: 'ENOENT' });
+  });
 }
 
-const mockedConsoleLog = vi.spyOn(console, 'log')
+const mockedConsoleLog = vi.spyOn(console, 'log');
 
 describe(chapterParser, () => {
   test.each([
@@ -46,29 +46,29 @@ describe(chapterParser, () => {
     ['3', Chapter.SOURCE_3],
     ['SOURCE_3', Chapter.SOURCE_3],
     ['4', Chapter.SOURCE_4],
-    ['SOURCE_4', Chapter.SOURCE_4]
+    ['SOURCE_4', Chapter.SOURCE_4],
   ])('%#', (value, expected) => {
-    const parseFn = () => chapterParser(value)
-    expect(parseFn()).toEqual(expected)
-  })
+    const parseFn = () => chapterParser(value);
+    expect(parseFn()).toEqual(expected);
+  });
 
   test.each([['random string'], ['525600']])('%#', value => {
-    expect(() => chapterParser(value)).toThrow()
-  })
-})
+    expect(() => chapterParser(value)).toThrow();
+  });
+});
 
 describe('Test repl command', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
   const runCommand = (...args: string[]) => {
-    const promise = getReplCommand().parseAsync(args, { from: 'user' })
-    return expect(promise).resolves.not.toThrow()
-  }
+    const promise = getReplCommand().parseAsync(args, { from: 'user' });
+    return expect(promise).resolves.not.toThrow();
+  };
 
   describe('Test running files', () => {
-    type TestCase = [desc: string, args: string[], files: SourceFiles, expected: string]
+    type TestCase = [desc: string, args: string[], files: SourceFiles, expected: string];
 
     const testCases: TestCase[] = [
       [
@@ -93,93 +93,93 @@ describe('Test repl command', () => {
           '/d.js': `
         import { a } from './a/a.js';
         a();
-      `
+      `,
         },
-        '"c and b"'
+        '"c and b"',
       ],
       [
         'Unknown local import',
         ['a.js'],
         {
-          '/a.js': 'import { b } from "./b.js";'
+          '/a.js': 'import { b } from "./b.js";',
         },
-        "Error: [/a.js] Line 1: Module './b.js' not found."
+        "Error: [/a.js] Line 1: Module './b.js' not found.",
       ],
       [
         'Unknown local import - verbose',
         ['a.js', '--verbose'],
         {
-          '/a.js': 'import { b } from "./b.js";'
+          '/a.js': 'import { b } from "./b.js";',
         },
 
-        "Error: [/a.js] Line 1, Column 0: Module './b.js' not found.\nYou should check your import declarations, and ensure that all are valid modules.\n"
+        "Error: [/a.js] Line 1, Column 0: Module './b.js' not found.\nYou should check your import declarations, and ensure that all are valid modules.\n",
       ],
       [
         'Source imports are ok',
         ['a.js'],
         {
-          '/a.js': "import { foo } from 'one_module'; foo();"
+          '/a.js': "import { foo } from 'one_module'; foo();",
         },
-        '"foo"'
+        '"foo"',
       ],
       [
         'Unknown Source imports are handled properly',
         ['a.js'],
         {
-          '/a.js': "import { foo } from 'unknown_module'; foo();"
+          '/a.js': "import { foo } from 'unknown_module'; foo();",
         },
-        "Error: [/a.js] Line 1: Module 'unknown_module' not found."
-      ]
-    ]
+        "Error: [/a.js] Line 1: Module 'unknown_module' not found.",
+      ],
+    ];
     test.each(testCases)('%s', async (_, args, files, expected) => {
-      mockReadFiles(files)
-      await runCommand(...args)
-      expect(mockedConsoleLog.mock.calls[0][0]).toEqual(expected)
-    })
-  })
+      mockReadFiles(files);
+      await runCommand(...args);
+      expect(mockedConsoleLog.mock.calls[0][0]).toEqual(expected);
+    });
+  });
 
   describe('Test running with REPL', () => {
     function mockReplStart() {
-      type MockedReplReturn = (x: string) => Promise<string>
+      type MockedReplReturn = (x: string) => Promise<string>;
 
       return new Promise<MockedReplReturn>(resolve => {
         mockedReplStart.mockImplementation((args: repl.ReplOptions) => {
           const runCode = (code: string) =>
             new Promise<any>(resolve => {
               args.eval!.call({}, code, {} as any, '', (err: Error | null, result: any) => {
-                if (err) resolve(err)
-                resolve(result)
-              })
-            })
+                if (err) resolve(err);
+                resolve(result);
+              });
+            });
 
           resolve(async code => {
-            const output = await runCode(code)
-            return args.writer!.call({}, output)
-          })
-          return {} as any
-        })
-      })
+            const output = await runCode(code);
+            return args.writer!.call({}, output);
+          });
+          return {} as any;
+        });
+      });
     }
 
     const expectRepl = async (args: string[], expected: [string, string][]) => {
-      const replPromise = mockReplStart()
-      await runCommand(...args)
-      const func = await replPromise
-      expect(repl.start).toHaveBeenCalledTimes(1)
+      const replPromise = mockReplStart();
+      await runCommand(...args);
+      const func = await replPromise;
+      expect(repl.start).toHaveBeenCalledTimes(1);
 
       for (const [input, output] of expected) {
-        await expect(func(input)).resolves.toEqual(output)
+        await expect(func(input)).resolves.toEqual(output);
       }
-    }
+    };
 
     test('Running without file name', () =>
       expectRepl(
         [],
         [
           ['const x = 1 + 1;', 'undefined'],
-          ['x;', '2']
-        ]
-      ))
+          ['x;', '2'],
+        ],
+      ));
 
     test('REPL is able to recover from errors', () =>
       expectRepl(
@@ -190,9 +190,9 @@ describe('Test repl command', () => {
           ['x;', '2'],
           ['var0;', 'Error: Line 1: Name var0 not declared.'],
           ['const var0 = 0;', 'undefined'],
-          ['var0;', '0']
-        ]
-      ))
+          ['var0;', '0'],
+        ],
+      ));
 
     test('Running with a file name evaluates code and then enters the REPL', async () => {
       mockReadFiles({
@@ -203,8 +203,8 @@ describe('Test repl command', () => {
         `,
         '/b.js': `
           export function b() { return "b"; }
-        `
-      })
+        `,
+      });
 
       await expectRepl(
         ['a.js', '-r'],
@@ -216,10 +216,10 @@ describe('Test repl command', () => {
           ['b();', '"b"'],
           ['c;', '"c"'],
           ['const c = 0;', 'undefined'],
-          ['c;', '0']
-        ]
-      )
-    })
+          ['c;', '0'],
+        ],
+      );
+    });
 
     test('REPL handles Source import statements ok', () =>
       expectRepl(
@@ -228,24 +228,24 @@ describe('Test repl command', () => {
           ['const foo = () => "bar";', 'undefined'],
           ['foo();', '"bar"'],
           ['import { foo } from "one_module";', 'undefined'],
-          ['foo();', '"foo"']
-        ]
-      ))
+          ['foo();', '"foo"'],
+        ],
+      ));
 
     test('REPL handles local import statements ok', async () => {
       mockReadFiles({
         '/a.js': `
           export function a() { return "a"; }
-        `
-      })
+        `,
+      });
 
       await expectRepl(
         [],
         [
           ['import { a } from "./a.js";', 'undefined'],
-          ['a();', '"a"']
-        ]
-      )
-    })
-  })
-})
+          ['a();', '"a"'],
+        ],
+      );
+    });
+  });
+});

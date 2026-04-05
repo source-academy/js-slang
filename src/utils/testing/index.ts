@@ -1,11 +1,11 @@
-import { expect } from 'vitest'
-import { parseError, runInContext } from '../..'
-import createContext, { defineBuiltin } from '../../createContext'
-import { Chapter } from '../../langs'
-import type { CustomBuiltIns } from '../../types'
-import { assertIsFinished, processTestOptions } from './misc'
-import { mockContext } from './mocks'
-import type { TestContext, TestOptions, TestResults } from './types'
+import { type Assertion, expect } from 'vitest';
+import { parseError, runInContext } from '../..';
+import createContext, { defineBuiltin } from '../../createContext';
+import { Chapter } from '../../langs';
+import type { CustomBuiltIns } from '../../types';
+import { assertIsFinished, processTestOptions } from './misc';
+import { mockContext } from './mocks';
+import type { TestContext, TestOptions, TestResults } from './types';
 
 /**
  * The way Vitest works means that it doesn't let us call inline snapshot matchers via a 'proxy' function.
@@ -15,42 +15,49 @@ import type { TestContext, TestOptions, TestResults } from './types'
 type RemoveMatcher<T extends object> = Omit<
   T,
   'toMatchInlineSnapshot' | 'toThrowErrorMatchingInlineSnapshot'
->
+>;
 function removeMatcher<T extends object>(obj: T): RemoveMatcher<T> {
-  return obj
+  return obj;
 }
+
+// Copied @vitest/expect/dist/index.d.ts
+type Promisify<O> = {
+  [K in keyof O]: O[K] extends (...args: infer A) => infer R
+    ? Promisify<O[K]> & ((...args: A) => Promise<R>)
+    : O[K];
+};
 
 export function createTestContext(rawOptions: TestOptions = {}): TestContext {
   const { chapter, variant, testBuiltins, languageOptions }: Exclude<TestOptions, Chapter> =
     typeof rawOptions === 'number'
       ? {
-          chapter: rawOptions
+          chapter: rawOptions,
         }
-      : rawOptions
+      : rawOptions;
 
   const otherTestResults: TestResults = {
     displayResult: [],
     promptResult: [],
     alertResult: [],
-    visualiseListResult: []
-  }
+    visualiseListResult: [],
+  };
 
   const customBuiltIns: CustomBuiltIns = {
     rawDisplay(str1, str2, _externalContext) {
-      otherTestResults.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
-      return str1
+      otherTestResults.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1);
+      return str1;
     },
     prompt(str, _externalContext) {
-      otherTestResults.promptResult.push(str)
-      return null
+      otherTestResults.promptResult.push(str);
+      return null;
     },
     alert(str, _externalContext) {
-      otherTestResults.alertResult.push(str)
+      otherTestResults.alertResult.push(str);
     },
     visualiseList(value) {
-      otherTestResults.visualiseListResult.push(value)
-    }
-  }
+      otherTestResults.visualiseListResult.push(value);
+    },
+  };
 
   const evalContext = createContext(
     chapter,
@@ -58,26 +65,26 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
     languageOptions,
     [],
     undefined,
-    customBuiltIns
-  )
+    customBuiltIns,
+  );
   Object.entries(testBuiltins ?? {}).forEach(([key, value]) =>
-    defineBuiltin(evalContext, key, value)
-  )
+    defineBuiltin(evalContext, key, value),
+  );
 
   return {
     ...evalContext,
-    ...otherTestResults
-  }
+    ...otherTestResults,
+  };
 }
 
 async function testInContext(code: string, rawOptions: TestOptions) {
-  const options = processTestOptions(rawOptions)
-  const context = createTestContext(options)
-  const result = await runInContext(code, context)
+  const options = processTestOptions(rawOptions);
+  const context = createTestContext(options);
+  const result = await runInContext(code, context);
   return {
     context,
-    result
-  }
+    result,
+  };
 }
 
 /**
@@ -85,16 +92,16 @@ async function testInContext(code: string, rawOptions: TestOptions) {
  * @returns Context and result of test
  */
 export async function testSuccess(code: string, options: TestOptions = {}) {
-  const { context, result } = await testInContext(code, options)
+  const { context, result } = await testInContext(code, options);
   if (result.status !== 'finished') {
-    console.log(context.errors)
+    console.log(context.errors);
   }
 
-  assertIsFinished(result)
+  assertIsFinished(result);
   return {
     context,
-    result
-  }
+    result,
+  };
 }
 
 /**
@@ -102,87 +109,97 @@ export async function testSuccess(code: string, options: TestOptions = {}) {
  * @returns String value of parsed errors
  */
 export async function testFailure(code: string, options: TestOptions = {}) {
-  const res = await testInContext(code, options)
-  expect(res.result.status).toEqual('error')
-  return parseError(res.context.errors)
+  const res = await testInContext(code, options);
+  expect(res.result.status).toEqual('error');
+  return parseError(res.context.errors);
 }
 
 /**
  * Run the given code and expect it to finish without errors. Use
  * as if using `expect()`
  */
-export function expectFinishedResult(code: string, options: TestOptions = {}) {
+export function expectFinishedResult(
+  code: string,
+  options: TestOptions = {},
+): RemoveMatcher<Promisify<Assertion<Promise<any>>>> {
   return removeMatcher(
     expect(
       testInContext(code, options).then(({ result, context }) => {
         if (result.status === 'error') {
-          const errStr = parseError(context.errors)
-          console.log(errStr)
+          const errStr = parseError(context.errors);
+          console.log(errStr);
         }
-        assertIsFinished(result)
-        return result.value
-      })
-    ).resolves
-  )
+        assertIsFinished(result);
+        return result.value;
+      }),
+    ).resolves,
+  );
 }
 
 /**
  * Expect the code to error, then test the parsed error value. Use as if using
  * `expect`
  */
-export function expectParsedError(code: string, options: TestOptions = {}, verbose?: boolean) {
+export function expectParsedError(
+  code: string,
+  options: TestOptions = {},
+  verbose?: boolean,
+): RemoveMatcher<Promisify<Assertion<Promise<string>>>> {
   return removeMatcher(
     expect(
       testInContext(code, options).then(({ result, context }) => {
-        expect(result.status).toEqual('error')
-        return parseError(context.errors, verbose)
-      })
-    ).resolves
-  )
+        expect(result.status).toEqual('error');
+        return parseError(context.errors, verbose);
+      }),
+    ).resolves,
+  );
 }
 
 export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
-  const start = Date.now()
-  const context = mockContext(Chapter.SOURCE_4)
+  const start = Date.now();
+  const context = mockContext(Chapter.SOURCE_4);
   await runInContext(code, context, {
     executionMethod: 'native',
-    throwInfiniteLoops: false
-  })
-  const timeTaken = Date.now() - start
-  expect(timeTaken).toBeLessThan(timeout * 5)
-  expect(timeTaken).toBeGreaterThanOrEqual(timeout)
-  return parseError(context.errors)
+    throwInfiniteLoops: false,
+  });
+  const timeTaken = Date.now() - start;
+  expect(timeTaken).toBeLessThan(timeout * 5);
+  expect(timeTaken).toBeGreaterThanOrEqual(timeout);
+  return parseError(context.errors);
 }
 
 /**
  * Run the given code, expect it to finish without errors and also match a snapshot
  */
 export async function snapshotSuccess(code: string, options: TestOptions = {}, name?: string) {
-  const results = await testSuccess(code, options)
+  const results = await testSuccess(code, options);
   if (name === undefined) {
-    expect(results).toMatchSnapshot()
+    expect(results).toMatchSnapshot();
   } else {
-    expect(results).toMatchSnapshot(name)
+    expect(results).toMatchSnapshot(name);
   }
-  return results
+  return results;
 }
 
 /**
  * Run the given code, expect it to finish with errors and that those errors match a snapshot
  */
 export async function snapshotFailure(code: string, options: TestOptions = {}, name?: string) {
-  const results = await testFailure(code, options)
+  const results = await testFailure(code, options);
   if (name === undefined) {
-    expect(results).toMatchSnapshot()
+    expect(results).toMatchSnapshot();
   } else {
-    expect(results).toMatchSnapshot(name)
+    expect(results).toMatchSnapshot(name);
   }
-  return results
+  return results;
 }
 
-export function expectDisplayResult(code: string, options: TestOptions = {}) {
+export function expectDisplayResult(
+  code: string,
+  options: TestOptions = {},
+): RemoveMatcher<Promisify<Assertion<Promise<string[]>>>> {
   return removeMatcher(
     expect(testSuccess(code, options).then(({ context: { displayResult } }) => displayResult))
-      .resolves
-  )
+      .resolves,
+  );
 }

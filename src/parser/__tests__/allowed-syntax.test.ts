@@ -1,13 +1,13 @@
-import { describe, expect, test, vi } from 'vitest'
-import { parseError } from '../..'
-import { Chapter, Variant } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult, testSuccess } from '../../utils/testing'
-import { assertFinishedResultValue } from '../../utils/testing/misc'
-import { mockContext } from '../../utils/testing/mocks'
-import { parse } from '../parser'
+import { describe, expect, test, vi } from 'vitest';
+import { parseError } from '../..';
+import { Chapter, Variant } from '../../langs';
+import { stripIndent } from '../../utils/formatters';
+import { expectFinishedResult, testSuccess } from '../../utils/testing';
+import { assertFinishedResultValue } from '../../utils/testing/misc';
+import { mockContext } from '../../utils/testing/mocks';
+import { parse } from '../parser';
 
-vi.mock(import('../../modules/loader/loaders'))
+vi.mock(import('../../modules/loader/loaders'));
 
 describe.each([
   [Chapter.SOURCE_1, ''],
@@ -30,77 +30,77 @@ describe.each([
       }
     }
     name(1, 2);
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_1,
     `
     (() => true)();
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_1,
     `
     ((x, y) => { return x + y; })(1, 2);
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_1,
     `
     true;
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_1,
     `
     false;
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_1,
     `
     'a string "" \\'\\'';
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_1,
     `
     31.4 + (-3.14e10) * -1 % 2 / 1.5;
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_1,
     `
     1 === 1 && 1 < 2 && 1 <= 2 && 2 >= 1 && 2 > 1 || false;
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_1,
     `
     true ? 1 : 2;
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_2,
     `
     null;
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_2,
     `
     pair(1, null);
-    `
+    `,
   ],
 
   [
@@ -110,7 +110,7 @@ describe.each([
       return x;
     }
     f(5);
-    `
+    `,
   ],
 
   [
@@ -118,7 +118,7 @@ describe.each([
     `
     export const x = 1;
     x;
-    `
+    `,
   ],
 
   [
@@ -129,7 +129,7 @@ describe.each([
       i = i + 1;
     }
     i;
-    `
+    `,
   ],
 
   [
@@ -139,7 +139,7 @@ describe.each([
     for (i = 1; i < 5; i = i + 1) {
     }
     i;
-    `
+    `,
   ],
 
   [
@@ -157,28 +157,28 @@ describe.each([
       }
     }
     i;
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_3,
     `
     [];
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_3,
     `
     [1, 2, 3];
-    `
+    `,
   ],
 
   [
     Chapter.SOURCE_3,
     `
     [1, 2, 3][1];
-    `
+    `,
   ],
 
   [
@@ -186,7 +186,7 @@ describe.each([
     `
     let x = [1, 2, 3];
     x[1];
-    `
+    `,
   ],
 
   [
@@ -194,7 +194,7 @@ describe.each([
     `
     let x = [1, 2, 3];
     x[1] = 4;
-    `
+    `,
   ],
 
   [
@@ -205,7 +205,7 @@ describe.each([
     let z = 5;
     x = y = z = 6;
     x;
-    `
+    `,
   ],
   [
     Chapter.SOURCE_3,
@@ -214,48 +214,48 @@ describe.each([
       return x + y;
     }
     f(...[1, 2]);
-    `
+    `,
   ],
   [
     Chapter.LIBRARY_PARSER,
     `
     ({});
-    `
+    `,
   ],
 
   [
     Chapter.LIBRARY_PARSER,
     `
     ({a: 1, b: 2});
-    `
+    `,
   ],
 
   [
     Chapter.LIBRARY_PARSER,
     `
     ({a: 1, b: 2})['a'];
-    `
+    `,
   ],
 
   [
     Chapter.LIBRARY_PARSER,
     `
     ({a: 1, b: 2}).a;
-    `
+    `,
   ],
 
   [
     Chapter.LIBRARY_PARSER,
     `
     ({'a': 1, 'b': 2}).a;
-    `
+    `,
   ],
 
   [
     Chapter.LIBRARY_PARSER,
     `
     ({1: 1, 2: 2})['1'];
-    `
+    `,
   ],
 
   [
@@ -263,7 +263,7 @@ describe.each([
     `
     const key = 'a';
     ({a: 1, b: 2})[key];
-    `
+    `,
   ],
 
   [
@@ -271,7 +271,7 @@ describe.each([
     `
     let x = {a: 1, b: 2};
     x.a = 3;
-    `
+    `,
   ],
 
   [
@@ -279,7 +279,7 @@ describe.each([
     `
     let x = {a: 1, b: 2};
     x['a'] = 3;
-    `
+    `,
   ],
 
   [
@@ -288,14 +288,14 @@ describe.each([
     let x = {a: 1, b: 2};
     const key = 'a';
     x[key] = 3;
-    `
+    `,
   ],
 
   [
     Chapter.LIBRARY_PARSER,
     `
     import defaultExport from "one_module";
-    `
+    `,
   ],
 
   [
@@ -305,7 +305,7 @@ describe.each([
       return x;
     }
     f(5);
-    `
+    `,
   ],
 
   [
@@ -314,7 +314,7 @@ describe.each([
     const x = 1;
     export default x;
     x;
-    `
+    `,
   ],
 
   [
@@ -324,45 +324,45 @@ describe.each([
       return x * x;
     }
     export { square as default };
-    `
+    `,
   ],
 
   [Chapter.LIBRARY_PARSER, `import { default as x } from 'one_module';`],
-  [Chapter.LIBRARY_PARSER, `import * as a from 'one_module';`, true]
+  [Chapter.LIBRARY_PARSER, `import * as a from 'one_module';`, true],
 ] as [Chapter, string, boolean | undefined][])(
   'Syntaxes are allowed in the chapter they are introduced %#',
   (chapter: Chapter, snippet: string, skipSuccessTests: boolean = false) => {
-    snippet = stripIndent(snippet)
+    snippet = stripIndent(snippet);
 
     if (!skipSuccessTests) {
       test('Test regular parser', () => {
-        const context = mockContext(chapter)
-        const result = parse(snippet, context)
-        expect(result).not.toBeNull()
-        expect(result).toMatchSnapshot()
-      })
+        const context = mockContext(chapter);
+        const result = parse(snippet, context);
+        expect(result).not.toBeNull();
+        expect(result).toMatchSnapshot();
+      });
 
       test('Test stdlib parser', () => {
-        const parseSnippet = `parse(${JSON.stringify(snippet)});`
+        const parseSnippet = `parse(${JSON.stringify(snippet)});`;
         return expectFinishedResult(
           parseSnippet,
-          Math.max(Chapter.SOURCE_4, chapter)
-        ).toMatchSnapshot()
-      })
+          Math.max(Chapter.SOURCE_4, chapter),
+        ).toMatchSnapshot();
+      });
     }
 
     if (chapter > 1) {
       test('Test 1 chapter below', () => {
-        const context = mockContext(chapter - 1)
-        const result = parse(snippet, context)
-        expect(result).toBeNull()
-        expect(parseError(context.errors)).toMatchSnapshot()
-      })
+        const context = mockContext(chapter - 1);
+        const result = parse(snippet, context);
+        expect(result).toBeNull();
+        expect(parseError(context.errors)).toMatchSnapshot();
+      });
     }
-  }
-)
+  },
+);
 
 test('typeof operator is allowed in typed variant', async () => {
-  const { result } = await testSuccess(`typeof "0";`, { variant: Variant.TYPED })
-  assertFinishedResultValue(result, 'string')
-})
+  const { result } = await testSuccess(`typeof "0";`, { variant: Variant.TYPED });
+  assertFinishedResultValue(result, 'string');
+});

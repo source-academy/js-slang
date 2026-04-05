@@ -1,23 +1,23 @@
 // @vitest-environment node
 
-import type { Command } from '@commander-js/extra-typings'
-import { describe, expect, test, vi } from 'vitest'
-import { getMainCommand } from '../main'
+import type { Command } from '@commander-js/extra-typings';
+import { describe, expect, test, vi } from 'vitest';
+import { getMainCommand } from '../main';
 
 vi.spyOn(process, 'exit').mockImplementation(code => {
-  throw new Error(`process.exit called with ${code}`)
-})
+  throw new Error(`process.exit called with ${code}`);
+});
 
-vi.spyOn(process.stdout, 'write').mockImplementation(() => true)
+vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 
 describe('Make sure each subcommand can be run', () => {
-  const mainCommand = getMainCommand()
+  const mainCommand = getMainCommand();
   test.each(mainCommand.commands.map(cmd => [cmd.name(), cmd] as [string, Command]))(
     'Testing %s command',
     (_, cmd) => {
       return expect(cmd.parseAsync(['-h'], { from: 'user' })).rejects.toThrowError(
-        'process.exit called with 0'
-      )
-    }
-  )
-})
+        'process.exit called with 0',
+      );
+    },
+  );
+});
