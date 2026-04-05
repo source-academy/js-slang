@@ -1,5 +1,4 @@
 import type es from 'estree'
-
 import type { Node } from '../../types'
 
 export const isImportDeclaration = (

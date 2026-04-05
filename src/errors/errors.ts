@@ -5,7 +5,7 @@ import { UNKNOWN_LOCATION } from '../constants'
 import type { Node, Value } from '../types'
 import { stringify } from '../utils/stringify'
 import { getSourceVariableDeclaration } from '../utils/ast/helpers'
-import { RuntimeSourceError } from './base'
+import { RuntimeSourceError } from './runtimeErrors'
 
 //Wrap build-in function error in SourceError
 export class BuiltInFunctionError extends RuntimeSourceError<undefined> {

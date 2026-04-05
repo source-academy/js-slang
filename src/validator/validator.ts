@@ -13,6 +13,7 @@ import {
   getNativeIds,
   type NativeIds
 } from '../utils/uniqueIds'
+import assert from '../utils/assert'
 
 class Declaration {
   public accessedBeforeDeclaration: boolean = false
@@ -34,11 +35,10 @@ export function validateAndAnnotate(
           new Declaration(statement.kind === 'const')
         )
       } else if (statement.type === 'FunctionDeclaration') {
-        if (statement.id === null) {
-          throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-          )
-        }
+        assert(
+          !!statement.id,
+          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+        )
         initialisedIdentifiers.set(statement.id.name, new Declaration(true))
       }
     }

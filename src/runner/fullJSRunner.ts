@@ -3,7 +3,7 @@ import type es from 'estree'
 import { RawSourceMap } from 'source-map'
 
 import { NATIVE_STORAGE_ID } from '../constants'
-import { RuntimeSourceError } from '../errors/base'
+import { RuntimeSourceError } from '../errors/runtimeErrors'
 import { parse } from '../parser/parser'
 import {
   evallerReplacer,

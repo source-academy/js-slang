@@ -1,5 +1,5 @@
 import type es from 'estree'
-import { RuntimeSourceError } from '../errors/base'
+import { RuntimeSourceError } from '../errors/runtimeErrors'
 import { Chapter } from '../langs'
 import type { Node, Value } from '../types'
 
@@ -185,10 +185,6 @@ export const checkMemberAccess = (node: Node, obj: Value, prop: Value) => {
   } else {
     return new RuntimeTypeError(node, '', 'object or array', typeOf(obj))
   }
-}
-
-export const isIdentifier = (node: any): node is es.Identifier => {
-  return (node as es.Identifier).name !== undefined
 }
 
 export const checkArray = (node: Node, maybeArray: Value, chapter: Chapter = Chapter.SOURCE_4) => {

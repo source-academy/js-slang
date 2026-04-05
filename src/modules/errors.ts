@@ -1,7 +1,8 @@
 import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, RuntimeSourceError, SourceErrorWithNode } from '../errors/base'
+import { ErrorSeverity, ErrorType, SourceErrorWithNode } from '../errors/base'
+import { RuntimeSourceError } from '../errors/runtimeErrors'
 import type { Node } from '../types'
 import type { Chapter } from '../langs'
 import { getChapterName } from '../utils/misc'

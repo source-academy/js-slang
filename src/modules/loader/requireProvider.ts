@@ -3,11 +3,12 @@ import * as createContext from '../../createContext'
 import * as interpreter from '../../cse-machine/interpreter'
 import * as parser from '../../parser/parser'
 import * as stdlib from '../../stdlib'
-import type { Context } from '../../types'
+import type { Context, Node } from '../../types'
 import * as types from '../../types'
 import * as assert from '../../utils/assert'
 import * as stringify from '../../utils/stringify'
 import * as errorBase from '../../errors/base'
+import * as runtimeErrors from '../../errors/runtimeErrors'
 import * as errors from '../../errors/errors'
 
 /**
@@ -16,7 +17,7 @@ import * as errors from '../../errors/errors'
  * library
  */
 
-export const getRequireProvider = (context: Context) => {
+export function getRequireProvider(context: Context) {
   const exports = {
     'js-slang': {
       ...jsslang,
@@ -27,7 +28,8 @@ export const getRequireProvider = (context: Context) => {
         },
         errors: {
           base: errorBase,
-          errors
+          errors,
+          runtimeErrors,
         },
         parser: {
           parser
@@ -43,14 +45,14 @@ export const getRequireProvider = (context: Context) => {
     }
   }
 
-  return (x: string) => {
+  return (x: string, node?: Node) => {
     const pathSegments = x.split('/')
 
     const recurser = (obj: Record<string, any>, segments: string[]): any => {
       if (segments.length === 0) return obj
       const currObj = obj[segments[0]]
       if (currObj !== undefined) return recurser(currObj, segments.splice(1))
-      throw new Error(`Dynamic require of ${x} is not supported`)
+      throw new runtimeErrors.InternalRuntimeError(`Dynamic require of ${x} is not supported`, node)
     }
 
     return recurser(exports, pathSegments)

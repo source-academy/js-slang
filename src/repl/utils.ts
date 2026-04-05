@@ -6,6 +6,7 @@ import { Chapter, LanguageOptions, Variant } from '../langs'
 import type { Context, Result } from '../types'
 import { objectKeys } from '../utils/misc'
 import { stringify } from '../utils/stringify'
+import { GeneralRuntimeError } from '../errors/runtimeErrors'
 
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined
@@ -16,7 +17,7 @@ export function chapterParser(str: string): Chapter {
     foundChapter = objectKeys(Chapter).find(chapterName => Chapter[chapterName] === value)
 
     if (foundChapter === undefined) {
-      throw new Error(`Invalid chapter value: ${str}`)
+      throw new GeneralRuntimeError(`Invalid chapter value: ${str}`)
     }
   } else {
     foundChapter = str
@@ -25,7 +26,7 @@ export function chapterParser(str: string): Chapter {
   if (foundChapter in Chapter) {
     return Chapter[foundChapter as keyof typeof Chapter]
   }
-  throw new Error(`Invalid chapter value: ${str}`)
+  throw new GeneralRuntimeError(`Invalid chapter value: ${str}`)
 }
 
 export const getChapterOption = <T extends Chapter>(

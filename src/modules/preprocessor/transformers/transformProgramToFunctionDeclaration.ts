@@ -22,6 +22,7 @@ import {
   transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName
 } from '../filePaths'
+import { InternalRuntimeError } from '../../../errors/runtimeErrors'
 
 type ImportSpecifier = es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
 
@@ -101,7 +102,7 @@ const getIdentifier = (node: es.Declaration): es.Identifier | null => {
       )
       return id
     case 'ClassDeclaration':
-      throw new Error('Exporting of class is not supported.')
+      throw new InternalRuntimeError('Exporting of class is not supported.', node)
   }
 }
 

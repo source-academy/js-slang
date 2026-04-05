@@ -2,7 +2,7 @@ import type es from 'estree'
 import { isFunction } from 'lodash'
 
 import * as errors from '../errors/errors'
-import { RuntimeSourceError } from '../errors/base'
+import { RuntimeSourceError } from '../errors/runtimeErrors'
 import type { Context, Environment, Node, NodeTypeToNode, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { isIdentifier, isImportDeclaration, isVariableDeclaration } from '../utils/ast/typeGuards'

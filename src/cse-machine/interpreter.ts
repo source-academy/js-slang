@@ -11,7 +11,7 @@ import { isArray } from 'lodash'
 import type { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
-import { RuntimeSourceError } from '../errors/base'
+import { RuntimeSourceError } from '../errors/runtimeErrors'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import type {
   Context,

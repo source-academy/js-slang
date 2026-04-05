@@ -3,6 +3,7 @@
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
 import Heap from './cse-machine/heap'
+import { GeneralRuntimeError } from './errors/runtimeErrors'
 import { Chapter, Variant, type LanguageOptions } from './langs'
 import { createEmptyModuleContexts } from './modules/utils'
 import * as list from './stdlib/list'
@@ -501,7 +502,7 @@ export const defaultBuiltIns: CustomBuiltIns = {
   // See issue #11
   alert: misc.rawDisplay,
   visualiseList: (_v: Value) => {
-    throw new Error('List visualizer is not enabled')
+    throw new GeneralRuntimeError('List visualizer is not enabled')
   }
 }
 

@@ -6,6 +6,7 @@ import type { Context } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import type { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
+import { InternalRuntimeError } from '../../errors/runtimeErrors'
 
 export class PythonParser implements Parser<AcornOptions> {
   private chapter: Chapter
@@ -32,7 +33,7 @@ export class PythonParser implements Parser<AcornOptions> {
           //   case Chapter.PYTHON_4:
           //     return 4
           default:
-            throw new Error('Unreachable path')
+            throw new InternalRuntimeError(`Invalid chapter for python parser: ${this.chapter}`)
         }
       })()
       return parsePythonToEstreeAst(programStr, chapterNum, true)

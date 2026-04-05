@@ -9,6 +9,7 @@ Every class should have the following properties
 
 import { generate } from 'astring'
 import type es from 'estree'
+import assert from '../utils/assert'
 import { isBuiltinFunction } from './builtins'
 import type { StepperBaseNode } from './interface'
 import { StepperArrayExpression } from './nodes/Expression/ArrayExpression'
@@ -33,7 +34,7 @@ import {
 import { type StepperExpression, type StepperPattern, type StepperStatement, undefinedNode, type StepperNode } from './nodes'
 import { StepperDebuggerStatement } from './nodes/Statement/DebuggerStatement'
 
-const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {
+const nodeConverters = {
   Literal: (node: es.SimpleLiteral) => StepperLiteral.create(node),
   UnaryExpression: (node: es.UnaryExpression) => StepperUnaryExpression.create(node),
   BinaryExpression: (node: es.BinaryExpression) => StepperBinaryExpression.create(node),
@@ -63,7 +64,7 @@ const nodeConverters: { [Key: string]: (node: any) => StepperBaseNode } = {
   BlockStatement: (node: es.BlockStatement) => StepperBlockStatement.create(node),
   IfStatement: (node: es.IfStatement) => StepperIfStatement.create(node),
   DebuggerStatement: (node: es.DebuggerStatement) => StepperDebuggerStatement.create(node)
-}
+} satisfies { [key: string]: (node: any) => StepperBaseNode }
 
 const explainers: {
   [K in StepperNode['type']]?: (node: Extract<StepperNode, { type: K }>) => string
@@ -118,9 +119,8 @@ const explainers: {
   },
   ConditionalExpression(node) {
     const test = node.test // test should have typeof literal
-    if (test.type !== 'Literal') {
-      throw new Error('Invalid conditional contraction. `test` should be literal.')
-    }
+    assert(test.type === 'Literal', 'Invalid conditional contraction. `test` should be literal.')
+
     const testStatus = test.value
     if (typeof testStatus !== 'boolean') {
       throw new Error(
@@ -171,9 +171,7 @@ const explainers: {
     throw new Error(`Invalid operator for LogicalExpression: ${node.operator}`)
   },
   ReturnStatement(node) {
-    if (!node.argument) {
-      throw new Error('return argument should not be empty')
-    }
+    assert(!!node.argument, 'return argument should not be empty')
     return `${generate(node.argument)} returned`
   },
   UnaryExpression(node) {

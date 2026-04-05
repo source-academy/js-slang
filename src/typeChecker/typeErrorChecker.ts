@@ -35,6 +35,7 @@ import {
   type TypeEnvironment,
   type Variable
 } from '../types'
+import assert from '../utils/assert'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import type * as tsEs from './tsESTree'
@@ -68,7 +69,6 @@ import {
   tVoid,
   typeAnnotationKeywordToBasicTypeMap
 } from './utils'
-// import { ModuleNotFoundError } from '../modules/errors'
 
 // Context and type environment are saved as global variables so that they are not passed between functions excessively
 let context: Context = {} as Context
@@ -697,11 +697,11 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
   node.body.forEach(bodyNode => {
     switch (bodyNode.type) {
       case 'FunctionDeclaration':
-        if (bodyNode.id === null) {
-          throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-          )
-        }
+        assert(
+          bodyNode.id !== null,
+          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+        )
+
         // Only identifiers/rest elements are used as function params in Source
         const params = bodyNode.params.filter(
           (param): param is tsEs.Identifier | tsEs.RestElement =>

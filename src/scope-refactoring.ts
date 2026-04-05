@@ -3,6 +3,7 @@ import type es from 'estree'
 import { isInLoc } from './finder'
 import type { BlockFrame, DefinitionNode, Node } from './types'
 import { simple } from './utils/ast/walkers'
+import assert from './utils/assert'
 
 /**
  * This file parses the original AST Tree into another tree with a similar structure
@@ -129,11 +130,11 @@ function scopeFunctionDeclaration(node: es.FunctionDeclaration): {
   definition: DefinitionNode
   body: BlockFrame
 } {
-  if (node.id === null) {
-    throw new Error(
-      'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-    )
-  }
+  assert(
+    !!node.id,
+    'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+  )
+
   const definition = {
     name: node.id.name,
     type: 'DefinitionNode',

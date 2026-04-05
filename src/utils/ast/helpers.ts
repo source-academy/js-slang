@@ -3,6 +3,7 @@ import type es from 'estree'
 import assert from '../assert'
 import { ArrayMap } from '../dict'
 import type { ModuleDeclarationWithSource } from '../../modules/moduleTypes'
+import { InternalRuntimeError } from '../../errors/runtimeErrors'
 import { isDeclaration, isIdentifier, isImportDeclaration } from './typeGuards'
 
 export function getModuleDeclarationSource(node: ModuleDeclarationWithSource): string {
@@ -35,7 +36,10 @@ export function extractDeclarations(decl: es.VariableDeclaration) {
       case 'RestElement':
         return recurser(pattern.argument)
       default:
-        throw new Error(`Should not encounter a ${pattern.type} in ${extractDeclarations.name}`)
+        throw new InternalRuntimeError(
+          `Should not encounter a ${pattern.type} in ${extractDeclarations.name}`,
+          pattern
+        )
     }
   }
 

@@ -1,4 +1,4 @@
-import es, { type BinaryExpression, type UnaryExpression } from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import { ConstAssignmentError, UndefinedVariableError } from '../errors/errors'
@@ -16,12 +16,12 @@ import { getSourceVariableDeclaration } from '../utils/ast/helpers'
 import { recursive, simple } from '../utils/ast/walkers'
 import OpCodes from './opcodes'
 
-const VALID_UNARY_OPERATORS: { [op in UnaryExpression['operator']]?: OpCodes } = {
+const VALID_UNARY_OPERATORS: { [op in es.UnaryOperator]?: OpCodes } = {
   '!': OpCodes.NOTG,
   '-': OpCodes.NEGG
 }
 
-const VALID_BINARY_OPERATORS: { [op in BinaryExpression['operator']]?: OpCodes } = {
+const VALID_BINARY_OPERATORS: { [op in es.BinaryOperator]?: OpCodes } = {
   '+': OpCodes.ADDG,
   '-': OpCodes.SUBG,
   '*': OpCodes.MULG,
