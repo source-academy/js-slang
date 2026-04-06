@@ -95,6 +95,8 @@ const createEmptyRuntime = () => ({
   envStepsTotal: 0,
   breakpointSteps: [],
   changepointSteps: [],
+  streamLineage: new Map<string, string[]>(),
+  streamsPointSteps: []
 });
 
 const createEmptyDebugger = () => ({
@@ -140,6 +142,8 @@ export const createEmptyContext = <T>(
     runtime: createEmptyRuntime(),
     numberOfOuterEnvironments: 1,
     prelude: null,
+    pendingStreamFnStack: [],
+    streamLineage: new Map<string, string[]>(),
     debugger: createEmptyDebugger(),
     nativeStorage: createNativeStorage(),
     executionMethod: 'auto',

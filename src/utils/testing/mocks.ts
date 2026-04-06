@@ -61,6 +61,7 @@ export function mockRuntimeContext(): Context {
     envStepsTotal: 0,
     breakpointSteps: [],
     changepointSteps: [],
+    streamsPointSteps: []
   };
   return context;
 }

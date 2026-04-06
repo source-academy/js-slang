@@ -1,5 +1,5 @@
 /**
- * This interpreter implements an explicit-control evaluator.
+ * This interpreter implements an explicit-control evaluator. 
  *
  * Heavily adapted from https://github.com/source-academy/JSpike/
  * and the legacy interpreter
@@ -60,6 +60,7 @@ import {
   declareIdentifier,
   defineVariable,
   envChanging,
+  envChangingStreams,
   getVariable,
   handleArrayCreation,
   handleRuntimeError,
@@ -358,6 +359,25 @@ export function* generateCSEMachineStateStream(
       // Hence, next step will change the environment
       context.runtime.changepointSteps.push(steps + 1);
     }
+
+     if (!isPrelude && envChangingStreams(command, context)) {
+      // same as !isPrelude && envChanging(command) check above
+      // but this checks if next instruction on control is a pair() function
+      // Usage: streams visualiser
+      context.runtime.streamsPointSteps.push(steps + 1)
+    }
+    const evalResult = context.runtime.stash?.peek();
+    const mostRecentControlHeight = context.pendingStreamFnStack[context.pendingStreamFnStack.length -1]?.[1]   
+
+    if(Array.isArray(evalResult) && evalResult.length == 2 && mostRecentControlHeight != undefined && context.runtime.control?.size() == parseInt(mostRecentControlHeight) - 1) {
+      const mostRecentNullaryFnId = context.pendingStreamFnStack.pop()?.[0]
+      if (mostRecentNullaryFnId != undefined){
+        if (!context.streamLineage.get(mostRecentNullaryFnId)) {
+          context.streamLineage.set(mostRecentNullaryFnId, [])
+        }
+        context.streamLineage.get(mostRecentNullaryFnId)?.push((evalResult as any).id)
+      }
+    } 
 
     control.pop();
     if (isNode(command)) {
@@ -833,6 +853,13 @@ const cmdEvaluators: CommandEvaluators = {
       } else {
         context.runtime.environments.unshift(func.environment);
       }
+
+      // Streams Visualisation:
+      // If CALL0, push the nullary fn to pendingStreamFnStack 
+      // (to map which nullary fn produces which pairs; for nested nullary fn)
+      if (func.node.params.length === 0) {
+        context.pendingStreamFnStack.push([func.id, context.runtime.control !== null ? context.runtime.control.size().toString() : "0"])
+      } 
 
       // Handle special case if function is simple
       if (isSimpleFunction(func.node)) {

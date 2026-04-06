@@ -31,6 +31,7 @@ const closureToJS = (value: Closure, context: Context) => {
         nodes: [...context.runtime.nodes],
         breakpointSteps: [...context.runtime.breakpointSteps],
         changepointSteps: [...context.runtime.changepointSteps],
+        streamsPointSteps: [...context.runtime.streamsPointSteps],
         debuggerOn: false,
       },
     };
