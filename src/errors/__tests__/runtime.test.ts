@@ -32,7 +32,11 @@ describe(errors.InvalidCallbackError, () => {
 
 describe(errors.InvalidNumberParameterError, () => {
   test('integer with maximum and minimum', () => {
-    const error = new errors.InvalidNumberParameterError(-1, { max: 2, min: 0, integer: true }, 'foo');
+    const error = new errors.InvalidNumberParameterError(
+      -1,
+      { max: 2, min: 0, integer: true },
+      'foo',
+    );
     expect(error.explain()).toEqual('foo: Expected integer between 0 and 2, got -1.');
   });
 
@@ -52,7 +56,11 @@ describe(errors.InvalidNumberParameterError, () => {
   });
 
   test('non-integer with maximum and minimum', () => {
-    const error = new errors.InvalidNumberParameterError(-1, { max: 2, min: 0, integer: false }, 'foo');
+    const error = new errors.InvalidNumberParameterError(
+      -1,
+      { max: 2, min: 0, integer: false },
+      'foo',
+    );
     expect(error.explain()).toEqual('foo: Expected number between 0 and 2, got -1.');
   });
 

@@ -17,9 +17,11 @@ function isArrayLike(v: Value): v is ArrayLike {
   );
 }
 
-export function stringify(value: Value,
+export function stringify(
+  value: Value,
   indent: number | string = 2,
-  splitlineThreshold = 80): string {
+  splitlineThreshold = 80,
+): string {
   if (typeof indent === 'string') {
     throw new InternalRuntimeError(`${stringify.name} with arbitrary indent string not supported`);
   }
@@ -28,7 +30,7 @@ export function stringify(value: Value,
     indentN = 10;
   }
   return lineTreeToString(
-    stringDagToLineTree(valueToStringDag(value), indentN, splitlineThreshold)
+    stringDagToLineTree(valueToStringDag(value), indentN, splitlineThreshold),
   );
 }
 

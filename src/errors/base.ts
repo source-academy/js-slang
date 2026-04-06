@@ -1,4 +1,4 @@
-import es, {type  BaseNode } from 'estree';
+import es, { type BaseNode } from 'estree';
 import { UNKNOWN_LOCATION } from '../constants';
 
 export enum ErrorType {
@@ -52,7 +52,7 @@ export abstract class SourceErrorWithNode<T extends es.BaseNode | undefined>
  * Abstract Source Error class for Runtime errors
  */
 export abstract class RuntimeSourceError<
-  T extends BaseNode | undefined
+  T extends BaseNode | undefined,
 > extends SourceErrorWithNode<T> {
   type = ErrorType.RUNTIME;
   severity = ErrorSeverity.ERROR;
@@ -66,7 +66,7 @@ export class GeneralRuntimeError extends RuntimeSourceError<BaseNode | undefined
   constructor(
     private readonly explanation: string,
     node?: BaseNode,
-    private readonly elaboration?: string
+    private readonly elaboration?: string,
   ) {
     super(node);
   }
@@ -88,7 +88,7 @@ export class InternalRuntimeError extends RuntimeSourceError<BaseNode | undefine
   constructor(
     private readonly explanation: string,
     node?: BaseNode,
-    private readonly elaboration?: string
+    private readonly elaboration?: string,
   ) {
     super(node);
   }
@@ -101,4 +101,3 @@ export class InternalRuntimeError extends RuntimeSourceError<BaseNode | undefine
     return this.elaboration ?? this.explanation;
   }
 }
-
