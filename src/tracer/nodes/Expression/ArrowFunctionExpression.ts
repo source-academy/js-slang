@@ -4,7 +4,7 @@ import { convert } from '../../generator';
 import { StepperBaseNode } from '../../interface';
 import { getFreshName } from '../../utils';
 import type { StepperBlockStatement } from '../Statement/BlockStatement';
-import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
 import type { RedexInfo } from '../..';
 import { mapAndFilter } from '../../../utils/misc';
 import { isIdentifier } from '../../../utils/ast/typeGuards';

@@ -5,7 +5,7 @@ import { StepperBaseNode } from '../../interface';
 import { assignMuTerms, getFreshName } from '../../utils';
 import type { StepperStatement } from '../Statement';
 import type { RedexInfo } from '../..';
-import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
 
 // TODO: add docs, because this is a block expression, not a block statement, and this does not follow official estree spec
 export class StepperBlockExpression extends StepperBaseNode<BlockStatement> {

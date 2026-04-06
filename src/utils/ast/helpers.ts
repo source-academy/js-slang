@@ -3,7 +3,7 @@ import type es from 'estree';
 import assert from '../assert';
 import { ArrayMap } from '../dict';
 import type { ModuleDeclarationWithSource } from '../../modules/moduleTypes';
-import { InternalRuntimeError } from '../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../errors/base';
 import { isDeclaration, isIdentifier, isImportDeclaration } from './typeGuards';
 
 export function getModuleDeclarationSource(node: ModuleDeclarationWithSource): string {

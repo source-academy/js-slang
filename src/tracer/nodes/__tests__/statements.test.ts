@@ -1,7 +1,7 @@
 import type es from 'estree';
 import { describe, expect, expectTypeOf, test as baseTest } from 'vitest';
 import { StepperProgram } from '../Program';
-import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
 import { StepperBlockStatement } from '../Statement/BlockStatement';
 import * as ast from '../../../utils/ast/astCreator';
 import { StepperDebuggerStatement } from '../Statement/DebuggerStatement';

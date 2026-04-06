@@ -9,6 +9,7 @@ import * as assert from '../../utils/assert';
 import * as stringify from '../../utils/stringify';
 import * as errorBase from '../../errors/base';
 import * as runtimeErrors from '../../errors/runtimeErrors';
+import * as base from '../../errors/base';
 import * as errors from '../../errors/errors';
 
 /**
@@ -52,7 +53,7 @@ export function getRequireProvider(context: Context) {
       if (segments.length === 0) return obj;
       const currObj = obj[segments[0]];
       if (currObj !== undefined) return recurser(currObj, segments.splice(1));
-      throw new runtimeErrors.InternalRuntimeError(
+      throw new base.InternalRuntimeError(
         `Dynamic require of ${x} is not supported`,
         node,
       );

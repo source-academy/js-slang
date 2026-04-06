@@ -22,7 +22,7 @@ import {
   transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName,
 } from '../filePaths';
-import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
 
 type ImportSpecifier = es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier;
 

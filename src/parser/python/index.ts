@@ -6,7 +6,7 @@ import type { Context } from '../../types';
 import { FatalSyntaxError } from '../errors';
 import type { AcornOptions, Parser } from '../types';
 import { positionToSourceLocation } from '../utils';
-import { InternalRuntimeError } from '../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../errors/base';
 
 export class PythonParser implements Parser<AcornOptions> {
   private chapter: Chapter;

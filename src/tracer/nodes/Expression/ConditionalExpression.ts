@@ -4,7 +4,7 @@ import { convert } from '../../generator';
 import { StepperBaseNode } from '../../interface';
 import { checkIfStatement } from '../../../utils/rttc';
 import type { RedexInfo } from '../..';
-import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
 
 export class StepperConditionalExpression
   extends StepperBaseNode<ConditionalExpression>

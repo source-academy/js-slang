@@ -1,7 +1,7 @@
 import type { Comment, SimpleLiteral, SourceLocation } from 'estree';
 import type { StepperExpression } from '..';
 import { StepperBaseNode } from '../../interface';
-import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
 
 /**
  * This class represents a literal node in the stepper's AST (Abstract Syntax Tree).

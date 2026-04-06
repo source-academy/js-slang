@@ -2,7 +2,7 @@ import type es from 'estree';
 import { parseError, type Context, type IOptions } from '..';
 import { UndefinedVariableError } from '../errors/errors';
 import { checkProgramForUndefinedVariables } from '../validator/validator';
-import { RuntimeSourceError } from '../errors/runtimeErrors';
+import { RuntimeSourceError } from '../errors/base';
 import type { StepperProgram } from './nodes/Program';
 import { prelude } from './builtins';
 import { explain } from './generator';

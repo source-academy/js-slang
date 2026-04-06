@@ -1,4 +1,4 @@
-import { InternalRuntimeError } from '../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../errors/base';
 import assert from '../../utils/assert';
 
 /**

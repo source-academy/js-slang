@@ -2,7 +2,7 @@ import type es from 'estree';
 import { isFunction } from 'lodash';
 
 import * as errors from '../errors/errors';
-import { RuntimeSourceError } from '../errors/runtimeErrors';
+import { RuntimeSourceError } from '../errors/base';
 import type {
   Context,
   Environment,

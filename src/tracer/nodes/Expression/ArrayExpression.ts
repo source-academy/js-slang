@@ -3,7 +3,7 @@ import type { StepperExpression, StepperPattern } from '..';
 import { convert } from '../../generator';
 import { StepperBaseNode } from '../../interface';
 import type { RedexInfo } from '../..';
-import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
 
 export class StepperArrayExpression
   extends StepperBaseNode<ArrayExpression>

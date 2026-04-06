@@ -8,7 +8,8 @@ import {
   CallingNonFunctionValueError,
   InvalidNumberOfArgumentsError,
 } from '../../../errors/errors';
-import { GeneralRuntimeError, InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
+import { GeneralRuntimeError } from '../../../errors/base';
 import type { RedexInfo } from '../..';
 import { StepperBlockExpression } from './BlockExpression';
 

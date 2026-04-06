@@ -4,7 +4,7 @@ import { isBuiltinFunction } from '../../builtins';
 import { StepperBaseNode } from '../../interface';
 import { UnassignedVariableError } from '../../../errors/errors';
 import type { RedexInfo } from '../..';
-import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
 
 export class StepperIdentifier extends StepperBaseNode<Identifier> implements Identifier {
   constructor(

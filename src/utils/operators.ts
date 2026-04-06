@@ -6,7 +6,7 @@ import {
   GetInheritedPropertyError,
   InvalidNumberOfArgumentsError,
 } from '../errors/errors';
-import { RuntimeSourceError } from '../errors/runtimeErrors';
+import { RuntimeSourceError } from '../errors/base';
 import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError,

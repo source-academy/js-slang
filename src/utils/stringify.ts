@@ -1,5 +1,6 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants';
 import Closure from '../cse-machine/closure';
+import { InternalRuntimeError } from '../errors/base';
 import type { Type, Value } from '../types';
 
 export interface ArrayLike {
@@ -8,7 +9,7 @@ export interface ArrayLike {
   replArrayContents: () => Value[];
 }
 
-function isArrayLike(v: Value) {
+function isArrayLike(v: Value): v is ArrayLike {
   return (
     typeof v.replPrefix === 'string' &&
     typeof v.replSuffix === 'string' &&
@@ -16,22 +17,20 @@ function isArrayLike(v: Value) {
   );
 }
 
-export const stringify = (
-  value: Value,
+export function stringify(value: Value,
   indent: number | string = 2,
-  splitlineThreshold = 80,
-): string => {
+  splitlineThreshold = 80): string {
   if (typeof indent === 'string') {
-    throw 'stringify with arbitrary indent string not supported';
+    throw new InternalRuntimeError(`${stringify.name} with arbitrary indent string not supported`);
   }
   let indentN: number = indent;
   if (indent > 10) {
     indentN = 10;
   }
   return lineTreeToString(
-    stringDagToLineTree(valueToStringDag(value), indentN, splitlineThreshold),
+    stringDagToLineTree(valueToStringDag(value), indentN, splitlineThreshold)
   );
-};
+}
 
 export function typeToString(type: Type): string {
   return niceTypeToString(type);

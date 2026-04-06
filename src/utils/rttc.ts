@@ -1,5 +1,6 @@
 import type es from 'estree';
-import { RuntimeSourceError } from '../errors/runtimeErrors';
+import { InvalidCallbackError, InvalidNumberParameterError, type InvalidNumberParameterErrorOptions } from '../errors/runtimeErrors';
+import { RuntimeSourceError } from '../errors/base';
 import { Chapter } from '../langs';
 import type { Node, Value } from '../types';
 
@@ -171,24 +172,177 @@ export const checkoutofRange = (node: Node, index: Value, chapter: Chapter = Cha
     : new RuntimeTypeError(node, ' in reasonable range', 'index', 'out of range', chapter);
 };
 
-export const checkMemberAccess = (node: Node, obj: Value, prop: Value) => {
+export function checkMemberAccess(node: Node, obj: Value, prop: Value): asserts obj is unknown[] | object {
   if (isObject(obj)) {
-    return isString(prop)
-      ? undefined
-      : new RuntimeTypeError(node, ' as prop', 'string', typeOf(prop));
+    if (!isString(prop)) {
+      throw new RuntimeTypeError(node, ' as prop', 'string', typeOf(prop));
+    }
   } else if (isArray(obj)) {
-    return isArrayIndex(prop)
-      ? undefined
-      : isNumber(prop)
-        ? new RuntimeTypeError(node, ' as prop', 'array index', 'other number')
-        : new RuntimeTypeError(node, ' as prop', 'array index', typeOf(prop));
-  } else {
-    return new RuntimeTypeError(node, '', 'object or array', typeOf(obj));
-  }
-};
+    if (!isArrayIndex(prop)) {
+      if (isNumber(prop)) {
+        throw new RuntimeTypeError(node, ' as prop', 'array index', 'other number')
+      } else {
+        throw new RuntimeTypeError(node, ' as prop', 'array index', typeOf(prop));
+      }
+    }
+  } 
+
+  throw new RuntimeTypeError(node, '', 'object or array', typeOf(obj));
+}
 
 export const checkArray = (node: Node, maybeArray: Value, chapter: Chapter = Chapter.SOURCE_4) => {
   return isArray(maybeArray)
     ? undefined
     : new RuntimeTypeError(node, '', 'array', typeOf(maybeArray), chapter);
 };
+
+type TupleOfLengthHelper<T extends number, U, V extends U[] = []> = V['length'] extends T
+  ? V
+  : TupleOfLengthHelper<T, U, [...V, U]>;
+
+/**
+ * Utility type that represents a tuple of a specific length
+ */
+export type TupleOfLength<T extends number, U = unknown> = TupleOfLengthHelper<T, U>;
+
+/**
+ * Type guard for checking that the provided value is a function and that it has the specified number of parameters.
+ * Of course at runtime parameter types are not checked, so this is only useful when combined with TypeScript types.
+ */
+export function isFunctionOfLength<T extends (...args: any[]) => any>(
+  f: (...args: any) => any,
+  l: Parameters<T>['length']
+): f is T;
+export function isFunctionOfLength<T extends number>(
+  f: unknown,
+  l: T
+): f is (...args: TupleOfLength<T>) => unknown;
+export function isFunctionOfLength(f: unknown, l: number) {
+  // TODO: Need a variation for rest parameters
+  return typeof f === 'function' && f.length === l;
+}
+
+/**
+ * Assertion version of {@link isFunctionOfLength}
+ *
+ * @param f Value to validate
+ * @param l Number of parameters that `f` is expected to have
+ * @param func_name Function within which the validation is occurring
+ * @param type_name Optional alias for the function type
+ * @param param_name Name of the parameter that's being validated
+ */
+export function assertFunctionOfLength<T extends (...args: any[]) => any>(
+  f: (...args: any) => any,
+  l: Parameters<T>['length'],
+  func_name: string,
+  type_name?: string,
+  param_name?: string
+): asserts f is T;
+export function assertFunctionOfLength<T extends number>(
+  f: unknown,
+  l: T,
+  func_name: string,
+  type_name?: string,
+  param_name?: string
+): asserts f is (...args: TupleOfLength<T>) => unknown;
+export function assertFunctionOfLength(
+  f: unknown,
+  l: number,
+  func_name: string,
+  type_name?: string,
+  param_name?: string
+) {
+  if (!isFunctionOfLength(f, l)) {
+    throw new InvalidCallbackError(type_name ?? l, f, func_name, param_name);
+  }
+}
+
+/**
+ * Function for checking if a given value is a number and that it also potentially satisfies a bunch of other criteria:
+ * - Within a given range of [min, max]
+ * - Is an integer
+ * - Is not NaN
+ */
+export function isNumberWithinRange(
+  value: unknown,
+  min?: number,
+  max?: number,
+  integer?: boolean
+): value is number;
+export function isNumberWithinRange(
+  value: unknown,
+  options: InvalidNumberParameterErrorOptions
+): value is number;
+export function isNumberWithinRange(
+  value: unknown,
+  arg0?: InvalidNumberParameterErrorOptions | number,
+  max?: number,
+  integer: boolean = true
+): value is number {
+  let options: InvalidNumberParameterErrorOptions;
+
+  if (typeof arg0 === 'number' || typeof arg0 === 'undefined') {
+    options = {
+      min: arg0,
+      max,
+      integer,
+    };
+  } else {
+    options = arg0;
+    options.integer = arg0.integer ?? true;
+  }
+
+  if (typeof value !== 'number' || Number.isNaN(value)) return false;
+
+  if (options.max !== undefined && value > options.max) return false;
+  if (options.min !== undefined && value < options.min) return false;
+
+  return !options.integer || Number.isInteger(value);
+}
+
+export interface AssertNumberWithinRangeOptions extends InvalidNumberParameterErrorOptions {
+  func_name: string;
+  param_name?: string;
+}
+
+/**
+ * Assertion version of {@link isNumberWithinRange}
+ */
+export function assertNumberWithinRange(
+  value: unknown,
+  func_name: string,
+  min?: number,
+  max?: number,
+  integer?: boolean,
+  param_name?: string
+): asserts value is number;
+export function assertNumberWithinRange(
+  value: unknown,
+  options: AssertNumberWithinRangeOptions
+): asserts value is number;
+export function assertNumberWithinRange(
+  value: unknown,
+  arg0: AssertNumberWithinRangeOptions | string,
+  min?: number,
+  max?: number,
+  integer?: boolean,
+  param_name?: string
+): asserts value is number {
+  let options: AssertNumberWithinRangeOptions;
+
+  if (typeof arg0 === 'string') {
+    options = {
+      func_name: arg0,
+      min,
+      max,
+      integer: integer ?? true,
+      param_name,
+    };
+  } else {
+    options = arg0;
+  }
+
+  if (!isNumberWithinRange(value, options)) {
+    throw new InvalidNumberParameterError(value, options, options.func_name, options.param_name);
+  }
+}

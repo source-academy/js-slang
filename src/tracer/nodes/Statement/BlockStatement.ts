@@ -4,7 +4,7 @@ import type { RedexInfo } from '../..';
 import { convert } from '../../generator';
 import { StepperBaseNode } from '../../interface';
 import { assignMuTerms, getFreshName } from '../../utils';
-import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
 import type { StepperStatement } from '.';
 
 export class StepperBlockStatement

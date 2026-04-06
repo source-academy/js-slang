@@ -4,7 +4,7 @@ import { StepperBaseNode } from '../interface';
 
 import { assignMuTerms } from '../utils';
 import type { RedexInfo } from '..';
-import { InternalRuntimeError } from '../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../errors/base';
 import { StepperStatement } from './Statement';
 import type { StepperFunctionDeclaration } from './Statement/FunctionDeclaration';
 import type { StepperVariableDeclaration } from './Statement/VariableDeclaration';

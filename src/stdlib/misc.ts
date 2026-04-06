@@ -1,7 +1,8 @@
 import Closure from '../cse-machine/closure';
-import { GeneralRuntimeError, InvalidParameterTypeError } from '../errors/runtimeErrors';
+import { InvalidParameterTypeError } from '../errors/runtimeErrors';
+import { GeneralRuntimeError } from '../errors/base';
 import type { Context, Value } from '../types';
-import { assertNumberWithinRange } from '../utils/misc';
+import { assertNumberWithinRange } from '../utils/rttc';
 import { stringify } from '../utils/stringify';
 import * as list from './list';
 

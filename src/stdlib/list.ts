@@ -5,7 +5,7 @@
  * Translated to TypeScript by Evan Sebastian
  */
 
-import { GeneralRuntimeError } from '../errors/runtimeErrors';
+import { GeneralRuntimeError } from '../errors/base';
 import type { Value } from '../types';
 import { type ArrayLike, stringify } from '../utils/stringify';
 

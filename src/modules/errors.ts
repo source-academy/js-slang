@@ -2,7 +2,7 @@ import type es from 'estree';
 
 import { UNKNOWN_LOCATION } from '../constants';
 import { ErrorSeverity, ErrorType, SourceErrorWithNode } from '../errors/base';
-import { RuntimeSourceError } from '../errors/runtimeErrors';
+import { RuntimeSourceError } from '../errors/base';
 import type { Node } from '../types';
 import type { Chapter } from '../langs';
 import { getChapterName } from '../utils/misc';

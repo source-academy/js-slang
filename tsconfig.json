@@ -26,8 +26,6 @@
   },
   "include": ["src", "vitest.config.ts"],
   "exclude": [
-    "src/stdlib/metacircular-interpreter",
-    "src/stdlib/**/*.js",
     "src/py-slang/src/tests",
     "node_modules",
     "dist",

@@ -5,7 +5,7 @@ import { convert } from '../../generator';
 import { StepperBaseNode } from '../../interface';
 import assert from '../../../utils/assert';
 import { checkIfStatement } from '../../../utils/rttc';
-import { InternalRuntimeError } from '../../../errors/runtimeErrors';
+import { InternalRuntimeError } from '../../../errors/base';
 import { StepperLiteral } from './Literal';
 
 export class StepperLogicalExpression

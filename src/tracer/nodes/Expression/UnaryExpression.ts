@@ -4,7 +4,7 @@ import { convert } from '../../generator';
 import { StepperBaseNode } from '../../interface';
 import { checkUnaryExpression } from '../../../utils/rttc';
 import assert from '../../../utils/assert';
-import { GeneralRuntimeError } from '../../../errors/runtimeErrors';
+import { GeneralRuntimeError } from '../../../errors/base';
 import type { RedexInfo } from '../..';
 import { StepperLiteral } from './Literal';
 

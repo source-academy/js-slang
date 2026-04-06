@@ -6,7 +6,7 @@ import { Chapter, LanguageOptions, Variant } from '../langs';
 import type { Context, Result } from '../types';
 import { objectKeys } from '../utils/misc';
 import { stringify } from '../utils/stringify';
-import { GeneralRuntimeError } from '../errors/runtimeErrors';
+import { GeneralRuntimeError } from '../errors/base';
 
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined;

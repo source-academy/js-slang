@@ -2,7 +2,7 @@ import { JSSLANG_PROPERTIES } from '../constants';
 import type { Node } from '../types';
 import { stripIndent } from '../utils/formatters';
 import { stringify } from '../utils/stringify';
-import { RuntimeSourceError } from './runtimeErrors';
+import { RuntimeSourceError } from './base';
 
 function getWarningMessage(maxExecTime: number) {
   const from = maxExecTime / 1000;

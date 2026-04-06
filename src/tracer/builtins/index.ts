@@ -5,7 +5,7 @@ import { StepperIdentifier } from '../nodes/Expression/Identifier';
 import { StepperLiteral } from '../nodes/Expression/Literal';
 import { InvalidNumberOfArgumentsError } from '../../errors/errors';
 import type { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication';
-import { GeneralRuntimeError } from '../../errors/runtimeErrors';
+import { GeneralRuntimeError } from '../../errors/base';
 import type { RedexInfo } from '..';
 import { auxiliaryBuiltinFunctions } from './auxiliary';
 import { listBuiltinFunctions } from './lists';

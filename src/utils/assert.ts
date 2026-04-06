@@ -4,7 +4,7 @@
  * Plus, we can customize our own assert messages and handling
  */
 
-import { InternalRuntimeError } from '../errors/runtimeErrors';
+import { InternalRuntimeError } from '../errors/base';
 import type { Node } from '../types';
 
 /**
