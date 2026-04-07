@@ -1,5 +1,10 @@
 import type es from 'estree';
-import { InvalidCallbackError, InvalidNumberParameterError, type InvalidNumberParameterErrorOptions } from '../errors/runtimeErrors';
+import {
+  InvalidCallbackError,
+  InvalidNumberParameterError,
+  InvalidParameterTypeError,
+  type InvalidNumberParameterErrorOptions,
+} from '../errors/runtimeErrors';
 import { RuntimeSourceError } from '../errors/base';
 import { Chapter } from '../langs';
 import type { Node, Value } from '../types';
@@ -7,6 +12,11 @@ import type { Node, Value } from '../types';
 const LHS = ' on left hand side of operation';
 const RHS = ' on right hand side of operation';
 
+/**
+ * Error type to be thrown by runtime type checking functions. This is usually caused by a user
+ * trying to do something that would work in Javascript (like `'1' - 1`) but is forbidden
+ * in Source.
+ */
 export class RuntimeTypeError extends RuntimeSourceError<Node> {
   constructor(
     node: Node,
@@ -40,14 +50,14 @@ const typeOf = (v: Value) => {
   }
 };
 
-const isNumber = (v: Value) => typeOf(v) === 'number';
+const isNumber = (v: Value) => typeof v === 'number';
 // See section 4 of https://2ality.com/2012/12/arrays.html
 // v >>> 0 === v checks that v is a valid unsigned 32-bit int
-const isArrayIndex = (v: Value) => isNumber(v) && v >>> 0 === v && v < 2 ** 32 - 1;
-const isString = (v: Value) => typeOf(v) === 'string';
-const isBool = (v: Value) => typeOf(v) === 'boolean';
-const isObject = (v: Value) => typeOf(v) === 'object';
-const isArray = (v: Value) => typeOf(v) === 'array';
+const isArrayIndex = (v: Value): v is number => isNumber(v) && v >>> 0 === v && v < 2 ** 32 - 1;
+const isString = (v: Value) => typeof v === 'string';
+const isBool = (v: Value) => typeof v === 'boolean';
+const isObject = (v: Value): v is object => typeOf(v) === 'object';
+const isArray = (v: Value): v is unknown[] => typeOf(v) === 'array';
 
 export function checkUnaryExpression(
   node: Node,
@@ -166,13 +176,18 @@ export function checkIfStatement(
 }
 
 const MAX_SOURCE_ARRAY_INDEX = 4294967295;
-export const checkoutofRange = (node: Node, index: Value, chapter: Chapter = Chapter.SOURCE_4) => {
-  return index >= 0 && index <= MAX_SOURCE_ARRAY_INDEX // as per Source 3 spec
-    ? undefined
-    : new RuntimeTypeError(node, ' in reasonable range', 'index', 'out of range', chapter);
-};
+export function checkoutofRange(node: Node, index: Value, chapter: Chapter = Chapter.SOURCE_4) {
+  if (index < 0 || index > MAX_SOURCE_ARRAY_INDEX ) { // as per Source 3 spec
+    throw new RuntimeTypeError(node, ' in reasonable range', 'index', 'out of range', chapter);
+  }
+}
 
-export function checkMemberAccess(node: Node, obj: Value, prop: Value): asserts obj is unknown[] | object {
+export function checkMemberAccess(
+  node: Node,
+  args: [Value, Value],
+): asserts args is [object, string | number] | [unknown[], number] {
+  const [obj, prop] = args;
+
   if (isObject(obj)) {
     if (!isString(prop)) {
       throw new RuntimeTypeError(node, ' as prop', 'string', typeOf(prop));
@@ -180,21 +195,25 @@ export function checkMemberAccess(node: Node, obj: Value, prop: Value): asserts 
   } else if (isArray(obj)) {
     if (!isArrayIndex(prop)) {
       if (isNumber(prop)) {
-        throw new RuntimeTypeError(node, ' as prop', 'array index', 'other number')
+        throw new RuntimeTypeError(node, ' as prop', 'array index', 'other number');
       } else {
         throw new RuntimeTypeError(node, ' as prop', 'array index', typeOf(prop));
       }
     }
-  } 
+  }
 
   throw new RuntimeTypeError(node, '', 'object or array', typeOf(obj));
 }
 
-export const checkArray = (node: Node, maybeArray: Value, chapter: Chapter = Chapter.SOURCE_4) => {
-  return isArray(maybeArray)
-    ? undefined
-    : new RuntimeTypeError(node, '', 'array', typeOf(maybeArray), chapter);
-};
+export function checkArray(
+  node: Node,
+  maybeArray: Value,
+  chapter: Chapter = Chapter.SOURCE_4,
+): asserts maybeArray is unknown[] {
+  if (!isArray(maybeArray)) {
+    throw new RuntimeTypeError(node, '', 'array', typeOf(maybeArray), chapter);
+  }
+}
 
 type TupleOfLengthHelper<T extends number, U, V extends U[] = []> = V['length'] extends T
   ? V
@@ -211,11 +230,11 @@ export type TupleOfLength<T extends number, U = unknown> = TupleOfLengthHelper<T
  */
 export function isFunctionOfLength<T extends (...args: any[]) => any>(
   f: (...args: any) => any,
-  l: Parameters<T>['length']
+  l: Parameters<T>['length'],
 ): f is T;
 export function isFunctionOfLength<T extends number>(
   f: unknown,
-  l: T
+  l: T,
 ): f is (...args: TupleOfLength<T>) => unknown;
 export function isFunctionOfLength(f: unknown, l: number) {
   // TODO: Need a variation for rest parameters
@@ -236,24 +255,45 @@ export function assertFunctionOfLength<T extends (...args: any[]) => any>(
   l: Parameters<T>['length'],
   func_name: string,
   type_name?: string,
-  param_name?: string
+  param_name?: string,
 ): asserts f is T;
 export function assertFunctionOfLength<T extends number>(
   f: unknown,
   l: T,
   func_name: string,
   type_name?: string,
-  param_name?: string
+  param_name?: string,
 ): asserts f is (...args: TupleOfLength<T>) => unknown;
 export function assertFunctionOfLength(
   f: unknown,
   l: number,
   func_name: string,
   type_name?: string,
-  param_name?: string
+  param_name?: string,
 ) {
   if (!isFunctionOfLength(f, l)) {
     throw new InvalidCallbackError(type_name ?? l, f, func_name, param_name);
+  }
+}
+
+/**
+ * Function for checking if the given `obj` is a tuple of the given length.
+ */
+export function isTupleOfLength<T extends number, U>(obj: U[], l: T): obj is TupleOfLength<T, U>;
+export function isTupleOfLength<T extends number>(obj: unknown, l: T): obj is TupleOfLength<T>;
+export function isTupleOfLength<T extends number>(obj: unknown, l: T): obj is TupleOfLength<T> {
+  if (!Array.isArray(obj)) return false;
+  return obj.length === l;
+}
+
+/**
+ * Assertion version of {@link isTupleOfLength}
+ */
+export function assertTupleOfLength<T extends number, U>(obj: U[], l: T, func_name: string, param_name?: string): asserts obj is TupleOfLength<T, U>;
+export function assertTupleOfLength<T extends number>(obj: unknown, l: T, func_name: string, param_name?: string): asserts obj is TupleOfLength<T>;
+export function assertTupleOfLength<T extends number>(obj: unknown, l: T, func_name: string, param_name?: string): asserts obj is TupleOfLength<T> {
+  if (!isTupleOfLength(obj, l)) {
+    throw new InvalidParameterTypeError(`tuple of length ${length}`, obj, func_name, param_name);
   }
 }
 
@@ -267,17 +307,17 @@ export function isNumberWithinRange(
   value: unknown,
   min?: number,
   max?: number,
-  integer?: boolean
+  integer?: boolean,
 ): value is number;
 export function isNumberWithinRange(
   value: unknown,
-  options: InvalidNumberParameterErrorOptions
+  options: InvalidNumberParameterErrorOptions,
 ): value is number;
 export function isNumberWithinRange(
   value: unknown,
   arg0?: InvalidNumberParameterErrorOptions | number,
   max?: number,
-  integer: boolean = true
+  integer: boolean = true,
 ): value is number {
   let options: InvalidNumberParameterErrorOptions;
 
@@ -314,11 +354,11 @@ export function assertNumberWithinRange(
   min?: number,
   max?: number,
   integer?: boolean,
-  param_name?: string
+  param_name?: string,
 ): asserts value is number;
 export function assertNumberWithinRange(
   value: unknown,
-  options: AssertNumberWithinRangeOptions
+  options: AssertNumberWithinRangeOptions,
 ): asserts value is number;
 export function assertNumberWithinRange(
   value: unknown,
@@ -326,7 +366,7 @@ export function assertNumberWithinRange(
   min?: number,
   max?: number,
   integer?: boolean,
-  param_name?: string
+  param_name?: string,
 ): asserts value is number {
   let options: AssertNumberWithinRangeOptions;
 

@@ -240,44 +240,30 @@ export const wrap = (
   const wrapped = (...args: any[]) => callIteratively(f, nativeStorage, ...args);
   makeWrapper(f, wrapped);
   wrapped.transformedFunction = f;
-  (wrapped as any)[Symbol.toStringTag] = () => stringified;
-  wrapped.toString = () => stringified;
+  wrapped.toReplString = () => stringified;
   return wrapped;
 };
 
-export const setProp = (
+export function setProp(
   obj: any,
   prop: any,
   value: any,
   line: number,
   column: number,
   source: string | null,
-) => {
+) {
   const dummy = locationDummyNode(line, column, source);
-  const error = rttc.checkMemberAccess(dummy, obj, prop);
-  if (error === undefined) {
-    return (obj[prop] = value);
-  } else {
-    throw error;
-  }
-};
+  rttc.checkMemberAccess(dummy, [obj, prop]);
+  return (obj[prop] = value);
+}
 
-export const getProp = (
-  obj: any,
-  prop: any,
-  line: number,
-  column: number,
-  source: string | null,
-) => {
+export function getProp(obj: any, prop: any, line: number, column: number, source: string | null) {
   const dummy = locationDummyNode(line, column, source);
-  const error = rttc.checkMemberAccess(dummy, obj, prop);
-  if (error === undefined) {
-    if (obj[prop] !== undefined && !obj.hasOwnProperty(prop)) {
-      throw new GetInheritedPropertyError(dummy, obj, prop);
-    } else {
-      return obj[prop];
-    }
+  rttc.checkMemberAccess(dummy, [obj, prop]);
+
+  if (obj[prop] !== undefined && !obj.hasOwnProperty(prop)) {
+    throw new GetInheritedPropertyError(dummy, obj, prop);
   } else {
-    throw error;
+    return obj[prop];
   }
-};
+}
