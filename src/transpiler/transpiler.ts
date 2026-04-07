@@ -1,6 +1,11 @@
-import { generate } from 'astring';
-import type es from 'estree';
-import { type RawSourceMap, SourceMapGenerator } from 'source-map';
+/**
+ * This whole transpiler includes many many many many hacks to get stuff working.
+ * Order in which certain functions are called matter as well.
+ * There should be an explanation on it coming up soon.
+ */
+import { generate } from 'astring'
+import type es from 'estree'
+import { type RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants';
 import { Chapter, Variant } from '../langs';
@@ -22,12 +27,6 @@ import {
   type NativeIds,
 } from '../utils/uniqueIds';
 import { checkForUndefinedVariables } from '../validator/validator';
-
-/**
- * This whole transpiler includes many many many many hacks to get stuff working.
- * Order in which certain functions are called matter as well.
- * There should be an explanation on it coming up soon.
- */
 
 export function transformImportDeclarations(
   program: es.Program,
