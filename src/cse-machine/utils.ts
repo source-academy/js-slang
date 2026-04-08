@@ -258,13 +258,19 @@ export const envChanging = (command: ControlItem): boolean => {
 export const envChangingStreams = (command: ControlItem, context: Context): boolean => {
   if (isInstr(command)) {
     const evalResult = context.runtime.stash?.peek();
-    const mostRecentControlHeight = context.pendingStreamFnStack[context.pendingStreamFnStack.length - 1]?.[1]
-    if (Array.isArray(evalResult) && evalResult.length === 2 && mostRecentControlHeight !== undefined && context.runtime.control?.size() === mostRecentControlHeight - 1) {
-      return true
+    const mostRecentControlHeight =
+      context.pendingStreamFnStack[context.pendingStreamFnStack.length - 1]?.[1];
+    if (
+      Array.isArray(evalResult) &&
+      evalResult.length === 2 &&
+      mostRecentControlHeight !== undefined &&
+      context.runtime.control?.size() === mostRecentControlHeight - 1
+    ) {
+      return true;
     }
   }
-  return false
-}
+  return false;
+};
 
 // TODO: This type guard does not seem to be doing what it thinks its doing
 /**

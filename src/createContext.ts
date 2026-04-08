@@ -95,7 +95,7 @@ const createEmptyRuntime = () => ({
   envStepsTotal: 0,
   breakpointSteps: [],
   changepointSteps: [],
-  streamsPointSteps: []
+  streamsPointSteps: [],
 });
 
 const createEmptyDebugger = () => ({

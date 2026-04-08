@@ -63,13 +63,13 @@ export interface Context<T = any> {
     envStepsTotal: number;
     breakpointSteps: number[];
     changepointSteps: number[];
-    streamsPointSteps: number[]
+    streamsPointSteps: number[];
   };
 
   // STREAM VISUALISATION
-  streamLineage: Map<string, string[]>
+  streamLineage: Map<string, string[]>;
 
-  pendingStreamFnStack: [string, number][]
+  pendingStreamFnStack: [string, number][];
 
   numberOfOuterEnvironments: number;
 
