@@ -69,7 +69,7 @@ export interface Context<T = any> {
   // STREAM VISUALISATION
   streamLineage: Map<string, string[]>
 
-  pendingStreamFnStack: (string[] | undefined)[]
+  pendingStreamFnStack: [string, number][]
 
   numberOfOuterEnvironments: number;
 

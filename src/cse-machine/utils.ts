@@ -259,7 +259,7 @@ export const envChangingStreams = (command: ControlItem, context: Context): bool
   if (isInstr(command)) {
     const evalResult = context.runtime.stash?.peek();
     const mostRecentControlHeight = context.pendingStreamFnStack[context.pendingStreamFnStack.length - 1]?.[1]
-    if (Array.isArray(evalResult) && evalResult.length == 2 && mostRecentControlHeight != undefined && context.runtime.control?.size() == parseInt(mostRecentControlHeight) - 1) {
+    if (Array.isArray(evalResult) && evalResult.length == 2 && mostRecentControlHeight != undefined && context.runtime.control?.size() == mostRecentControlHeight - 1) {
       return true
     }
   }

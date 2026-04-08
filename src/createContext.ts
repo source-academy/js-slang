@@ -95,7 +95,6 @@ const createEmptyRuntime = () => ({
   envStepsTotal: 0,
   breakpointSteps: [],
   changepointSteps: [],
-  streamLineage: new Map<string, string[]>(),
   streamsPointSteps: []
 });
 
