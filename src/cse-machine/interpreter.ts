@@ -60,7 +60,6 @@ import {
   declareIdentifier,
   defineVariable,
   envChanging,
-  envChangingStreams,
   getVariable,
   handleArrayCreation,
   handleRuntimeError,
@@ -359,13 +358,7 @@ export function* generateCSEMachineStateStream(
       // Hence, next step will change the environment
       context.runtime.changepointSteps.push(steps + 1);
     }
-
-    if (!isPrelude && envChangingStreams(command, context)) {
-      // same as !isPrelude && envChanging(command) check above
-      // but this checks if next instruction on control is a pair() function
-      // Usage: streams visualiser
-      context.runtime.streamsPointSteps.push(steps + 1);
-    }
+    
     const evalResult = context.runtime.stash?.peek();
     const mostRecentControlHeight =
       context.pendingStreamFnStack[context.pendingStreamFnStack.length - 1]?.[1];
