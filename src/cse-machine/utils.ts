@@ -255,8 +255,6 @@ export const envChanging = (command: ControlItem): boolean => {
   }
 };
 
-
-
 // TODO: This type guard does not seem to be doing what it thinks its doing
 /**
  * To determine if the function is simple.

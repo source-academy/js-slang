@@ -358,7 +358,7 @@ export function* generateCSEMachineStateStream(
       // Hence, next step will change the environment
       context.runtime.changepointSteps.push(steps + 1);
     }
-    
+
     const evalResult = context.runtime.stash?.peek();
     const mostRecentControlHeight =
       context.pendingStreamFnStack[context.pendingStreamFnStack.length - 1]?.[1];
