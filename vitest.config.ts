@@ -14,7 +14,6 @@ export default defineConfig({
         "dist",
         '**/__mocks__/**',
         "src/alt-langs/scheme/scm-slang",
-        "src/py-slang/",
         "src/typings",
       ],
       reporter: ['text', 'html', 'lcov']

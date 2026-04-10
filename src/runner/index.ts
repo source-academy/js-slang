@@ -49,8 +49,7 @@ async function sourceRunner(
 
   if (
     context.chapter === Chapter.FULL_JS ||
-    context.chapter === Chapter.FULL_TS ||
-    context.chapter === Chapter.PYTHON_1
+    context.chapter === Chapter.FULL_TS
   ) {
     return runners.fulljs(program, context, theOptions);
   }

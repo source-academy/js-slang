@@ -1,6 +1,5 @@
 import { describe, test, vi } from 'vitest';
 import { Chapter, Variant } from '../../langs';
-import { stripIndent } from '../../utils/formatters';
 import { getChapterName } from '../../utils/misc';
 import { expectFinishedResult } from '../../utils/testing';
 
@@ -29,15 +28,6 @@ const describeCases: DescribeCase[] = [
       Variant.DEFAULT,
     ],
     'import { foo } from "one_module"; foo();',
-  ],
-  [
-    'python',
-    [Chapter.PYTHON_1],
-    [Variant.DEFAULT],
-    stripIndent`
-    from one_module import foo
-    foo()
-    `,
   ],
 ];
 

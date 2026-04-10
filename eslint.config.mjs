@@ -8,7 +8,7 @@ import * as importPlugin from 'eslint-plugin-import'
 export default tseslint.config(
   {
     // global ignores
-    ignores: ['dist', 'src/alt-langs', 'src/py-slang', 'src/__tests__/sicp', '**/*.snap']
+    ignores: ['dist', 'src/alt-langs', 'src/__tests__/sicp', '**/*.snap']
   },
   ...tseslint.configs.recommended,
   {
