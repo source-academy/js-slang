@@ -1,26 +1,26 @@
-import type es from 'estree'
+import type es from 'estree';
 // import * as TypedES from '../../typeChecker/tsESTree'
 
-import type { Context, IOptions } from '../..'
-import { Variant } from '../../langs'
-import { RecursivePartial } from '../../types'
-import loadSourceModules, { loadSourceModuleTypes } from '../loader'
-import type { FileGetter } from '../moduleTypes'
-import analyzeImportsAndExports from './analyzer'
-import defaultBundler, { type Bundler } from './bundler'
-import parseProgramsAndConstructImportGraph from './linker'
+import type { Context, IOptions } from '../..';
+import { Variant } from '../../langs';
+import { RecursivePartial } from '../../types';
+import loadSourceModules, { loadSourceModuleTypes } from '../loader';
+import type { FileGetter } from '../moduleTypes';
+import analyzeImportsAndExports from './analyzer';
+import defaultBundler, { type Bundler } from './bundler';
+import parseProgramsAndConstructImportGraph from './linker';
 
 export type PreprocessResult =
   | {
-      ok: true
-      program: es.Program
-      files: Record<string, string>
-      verboseErrors: boolean
+      ok: true;
+      program: es.Program;
+      files: Record<string, string>;
+      verboseErrors: boolean;
     }
   | {
-      ok: false
-      verboseErrors: boolean
-    }
+      ok: false;
+      verboseErrors: boolean;
+    };
 
 /**
  * Preprocesses file imports and returns a transformed Abstract Syntax Tree (AST).
@@ -44,19 +44,19 @@ const preprocessFileImports = async (
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {},
-  bundler: Bundler = defaultBundler
+  bundler: Bundler = defaultBundler,
 ): Promise<PreprocessResult> => {
   if (context.variant === Variant.TYPED) {
     // Load typed source modules into context first to ensure that the type checker has access to all types.
     // TODO: This is a temporary solution, and we should consider a better way to handle this.
     try {
-      await loadSourceModuleTypes(new Set<string>(['rune', 'curve']), context)
+      await loadSourceModuleTypes(new Set<string>(['rune', 'curve']), context);
     } catch (error) {
-      context.errors.push(error)
+      context.errors.push(error);
       return {
         ok: false,
-        verboseErrors: false
-      }
+        verboseErrors: false,
+      };
     }
   }
 
@@ -66,28 +66,32 @@ const preprocessFileImports = async (
     entrypointFilePath,
     context,
     options?.importOptions,
-    !!options?.shouldAddFileName
-  )
+    !!options?.shouldAddFileName,
+  );
   // Return 'undefined' if there are errors while parsing.
   if (!linkerResult.ok) {
-    return linkerResult
+    return linkerResult;
   }
 
-  const { programs, topoOrder, sourceModulesToImport } = linkerResult
+  const { programs, topoOrder, sourceModulesToImport } = linkerResult;
 
   try {
-    await loadSourceModules(sourceModulesToImport, context, options.importOptions?.loadTabs ?? true)
+    await loadSourceModules(
+      sourceModulesToImport,
+      context,
+      options.importOptions?.loadTabs ?? true,
+    );
     // Run type checking on the programs after loading the source modules and their types.
     const linkerResult = await parseProgramsAndConstructImportGraph(
       files,
       entrypointFilePath,
       context,
       options?.importOptions,
-      !!options?.shouldAddFileName
-    )
+      !!options?.shouldAddFileName,
+    );
     // Return 'undefined' if there are errors while parsing.
     if (!linkerResult.ok) {
-      return linkerResult
+      return linkerResult;
     }
 
     analyzeImportsAndExports(
@@ -95,23 +99,23 @@ const preprocessFileImports = async (
       entrypointFilePath,
       topoOrder,
       context,
-      options?.importOptions
-    )
+      options?.importOptions,
+    );
 
-    const program = bundler(programs, entrypointFilePath, topoOrder, context)
+    const program = bundler(programs, entrypointFilePath, topoOrder, context);
     return {
       ok: true,
       program,
       files: linkerResult.files,
-      verboseErrors: linkerResult.verboseErrors
-    }
+      verboseErrors: linkerResult.verboseErrors,
+    };
   } catch (error) {
-    context.errors.push(error)
+    context.errors.push(error);
     return {
       ok: false,
-      verboseErrors: linkerResult.verboseErrors
-    }
+      verboseErrors: linkerResult.verboseErrors,
+    };
   }
-}
+};
 
-export default preprocessFileImports
+export default preprocessFileImports;

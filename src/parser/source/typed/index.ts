@@ -1,46 +1,46 @@
-import { parse as babelParse } from '@babel/parser'
-import type { Options as AcornOptions } from 'acorn'
-import type { Program } from 'estree'
+import { parse as babelParse } from '@babel/parser';
+import type { Options as AcornOptions } from 'acorn';
+import type { Program } from 'estree';
 
-import { SourceParser } from '..'
-import type { Context } from '../../..'
-import { DEFAULT_ECMA_VERSION } from '../../../constants'
-import type * as TypedES from '../../../typeChecker/tsESTree'
-import { checkForTypeErrors } from '../../../typeChecker/typeErrorChecker'
-import { FatalSyntaxError } from '../../errors'
+import { SourceParser } from '..';
+import type { Context } from '../../..';
+import { DEFAULT_ECMA_VERSION } from '../../../constants';
+import type * as TypedES from '../../../typeChecker/tsESTree';
+import { checkForTypeErrors } from '../../../typeChecker/typeErrorChecker';
+import { FatalSyntaxError } from '../../errors';
 import {
   createAcornParserOptions,
   defaultBabelOptions,
-  positionToSourceLocation
-} from '../../utils'
-import TypeParser from './typeParser'
-import { transformBabelASTToESTreeCompliantAST } from './utils'
+  positionToSourceLocation,
+} from '../../utils';
+import TypeParser from './typeParser';
+import { transformBabelASTToESTreeCompliantAST } from './utils';
 
 export class SourceTypedParser extends SourceParser {
   parse(
     programStr: string,
     context: Context,
     options?: Partial<AcornOptions>,
-    throwOnError?: boolean
+    throwOnError?: boolean,
   ): Program | null {
     // Parse with acorn type parser first to catch errors such as
     // import/export not at top level, trailing commas, missing semicolons
     try {
       TypeParser.parse(
         programStr,
-        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options)
-      )
+        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options),
+      );
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(
           positionToSourceLocation((error as any).loc, options?.sourceFile),
-          error.toString()
-        )
+          error.toString(),
+        );
       }
 
-      if (throwOnError) throw error
-      context.errors.push(error)
-      return null
+      if (throwOnError) throw error;
+      context.errors.push(error);
+      return null;
     }
 
     // Parse again with babel parser to capture all type syntax
@@ -48,8 +48,8 @@ export class SourceTypedParser extends SourceParser {
     const ast = babelParse(programStr, {
       ...defaultBabelOptions,
       sourceFilename: options?.sourceFile,
-      errorRecovery: throwOnError ?? true
-    })
+      errorRecovery: throwOnError ?? true,
+    });
 
     if (ast.errors?.length) {
       ast.errors
@@ -58,33 +58,33 @@ export class SourceTypedParser extends SourceParser {
           context.errors.push(
             new FatalSyntaxError(
               positionToSourceLocation((error as any).loc, options?.sourceFile),
-              error.toString()
-            )
-          )
-        })
+              error.toString(),
+            ),
+          );
+        });
 
-      return null
+      return null;
     }
 
-    const typedProgram: TypedES.Program = ast.program as TypedES.Program
+    const typedProgram: TypedES.Program = ast.program as TypedES.Program;
     if (context.prelude !== programStr) {
       // Check for any declaration only if the program is not the prelude
-      checkForAnyDeclaration(typedProgram, context)
+      checkForAnyDeclaration(typedProgram, context);
     }
-    const typedCheckedProgram: Program = checkForTypeErrors(typedProgram, context)
-    transformBabelASTToESTreeCompliantAST(typedCheckedProgram)
+    const typedCheckedProgram: Program = checkForTypeErrors(typedProgram, context);
+    transformBabelASTToESTreeCompliantAST(typedCheckedProgram);
 
-    return typedCheckedProgram
+    return typedCheckedProgram;
   }
 
   toString(): string {
-    return 'SourceTypedParser'
+    return 'SourceTypedParser';
   }
 }
 
 function checkForAnyDeclaration(program: TypedES.Program, context: Context) {
   function parseConfigOption(option: string | undefined) {
-    return option === 'true' || option === undefined
+    return option === 'true' || option === undefined;
   }
 
   const config = {
@@ -92,89 +92,98 @@ function checkForAnyDeclaration(program: TypedES.Program, context: Context) {
     allowAnyInParameters: parseConfigOption(context.languageOptions['typedAllowAnyInParameters']),
     allowAnyInReturnType: parseConfigOption(context.languageOptions['typedAllowAnyInReturnType']),
     allowAnyInTypeAnnotationParameters: parseConfigOption(
-      context.languageOptions['typedAllowAnyInTypeAnnotationParameters']
+      context.languageOptions['typedAllowAnyInTypeAnnotationParameters'],
     ),
     allowAnyInTypeAnnotationReturnType: parseConfigOption(
-      context.languageOptions['typedAllowAnyInTypeAnnotationReturnType']
-    )
-  }
+      context.languageOptions['typedAllowAnyInTypeAnnotationReturnType'],
+    ),
+  };
 
   function pushAnyUsageError(message: string, node: TypedES.Node) {
     if (node.loc) {
-      context.errors.push(new FatalSyntaxError(node.loc, message))
+      context.errors.push(new FatalSyntaxError(node.loc, message));
     }
   }
 
   function isAnyType(node: TypedES.TSTypeAnnotation | undefined) {
-    return node?.typeAnnotation?.type === 'TSAnyKeyword' || node?.typeAnnotation === undefined
+    return node?.typeAnnotation?.type === 'TSAnyKeyword' || node?.typeAnnotation === undefined;
   }
 
   function checkNode(node: TypedES.Node) {
     switch (node.type) {
       case 'VariableDeclaration': {
         node.declarations.forEach(decl => {
-          const tsType = (decl as any).id?.typeAnnotation
+          const tsType = (decl as any).id?.typeAnnotation;
           if (!config.allowAnyInVariables && isAnyType(tsType)) {
-            pushAnyUsageError('Usage of "any" in variable declaration is not allowed.', node)
+            pushAnyUsageError('Usage of "any" in variable declaration is not allowed.', node);
           }
           if (decl.init) {
             // check for lambdas
-            checkNode(decl.init)
+            checkNode(decl.init);
           }
-        })
-        break
+        });
+        break;
       }
       case 'FunctionDeclaration': {
         if (!config.allowAnyInParameters || !config.allowAnyInReturnType) {
-          const func = node as any
+          const func = node as any;
           // Check parameters
           func.params?.forEach((param: any) => {
             if (!config.allowAnyInParameters && isAnyType(param.typeAnnotation)) {
-              pushAnyUsageError('Usage of "any" in function parameter is not allowed.', param)
+              pushAnyUsageError('Usage of "any" in function parameter is not allowed.', param);
             }
-          })
+          });
           // Check return type
           if (!config.allowAnyInReturnType && isAnyType(func.returnType)) {
-            pushAnyUsageError('Usage of "any" in function return type is not allowed.', node)
+            pushAnyUsageError('Usage of "any" in function return type is not allowed.', node);
           }
-          checkNode(node.body)
+          checkNode(node.body);
         }
-        break
+        break;
       }
       case 'ArrowFunctionExpression': {
         if (!config.allowAnyInParameters || !config.allowAnyInReturnType) {
-          const arrow = node as any
+          const arrow = node as any;
           // Check parameters
           arrow.params?.forEach((param: any) => {
             if (!config.allowAnyInParameters && isAnyType(param.typeAnnotation)) {
-              pushAnyUsageError('Usage of "any" in arrow function parameter is not allowed.', param)
+              pushAnyUsageError(
+                'Usage of "any" in arrow function parameter is not allowed.',
+                param,
+              );
             }
-          })
+          });
           // Recursively check return type if present
           if (!config.allowAnyInReturnType && isAnyType(arrow.returnType)) {
-            pushAnyUsageError('Usage of "any" in arrow function return type is not allowed.', arrow)
+            pushAnyUsageError(
+              'Usage of "any" in arrow function return type is not allowed.',
+              arrow,
+            );
           }
           if (
             !config.allowAnyInReturnType &&
             arrow.params?.some((param: any) => isAnyType(param.typeAnnotation))
           ) {
-            pushAnyUsageError('Usage of "any" in arrow function return type is not allowed.', arrow)
+            pushAnyUsageError(
+              'Usage of "any" in arrow function return type is not allowed.',
+              arrow,
+            );
           }
-          checkNode(node.body)
+          checkNode(node.body);
         }
-        break
+        break;
       }
       case 'ReturnStatement': {
         if (node.argument) {
-          checkNode(node.argument)
+          checkNode(node.argument);
         }
-        break
+        break;
       }
       case 'BlockStatement':
-        node.body.forEach(checkNode)
-        break
+        node.body.forEach(checkNode);
+        break;
       default:
-        break
+        break;
     }
   }
 
@@ -182,18 +191,18 @@ function checkForAnyDeclaration(program: TypedES.Program, context: Context) {
     if (!node) {
       // Happens when there is no type annotation
       // This should have been caught by checkNode function
-      return
+      return;
     }
     switch (node.type) {
       case 'VariableDeclaration': {
         node.declarations.forEach(decl => {
-          const tsType = (decl as any).id?.typeAnnotation
-          checkTSNode(tsType)
-        })
-        break
+          const tsType = (decl as any).id?.typeAnnotation;
+          checkTSNode(tsType);
+        });
+        break;
       }
       case 'TSTypeAnnotation': {
-        const annotation = node
+        const annotation = node;
         // If it's a function type annotation, check params and return
         if (annotation.typeAnnotation?.type === 'TSFunctionType') {
           annotation.typeAnnotation.parameters?.forEach(param => {
@@ -201,24 +210,24 @@ function checkForAnyDeclaration(program: TypedES.Program, context: Context) {
             if (!config.allowAnyInTypeAnnotationParameters && isAnyType(param.typeAnnotation)) {
               pushAnyUsageError(
                 'Usage of "any" in type annotation\'s function parameter is not allowed.',
-                param
-              )
+                param,
+              );
             }
             if (param.typeAnnotation) {
-              checkTSNode(param.typeAnnotation)
+              checkTSNode(param.typeAnnotation);
             }
-          })
-          const returnAnno = annotation.typeAnnotation.typeAnnotation
+          });
+          const returnAnno = annotation.typeAnnotation.typeAnnotation;
           if (!config.allowAnyInTypeAnnotationReturnType && isAnyType(returnAnno)) {
             pushAnyUsageError(
               'Usage of "any" in type annotation\'s function return type is not allowed.',
-              annotation
-            )
+              annotation,
+            );
           }
           // Recursively check nested TSTypeAnnotations in return type
-          checkTSNode(returnAnno)
+          checkTSNode(returnAnno);
         }
-        break
+        break;
       }
       case 'FunctionDeclaration': {
         // Here we also check param type annotations + return type via config
@@ -226,30 +235,30 @@ function checkForAnyDeclaration(program: TypedES.Program, context: Context) {
           !config.allowAnyInTypeAnnotationParameters ||
           !config.allowAnyInTypeAnnotationReturnType
         ) {
-          const func = node as any
+          const func = node as any;
           // Check parameters
           if (!config.allowAnyInTypeAnnotationParameters) {
             func.params?.forEach((param: any) => {
-              checkTSNode(param.typeAnnotation)
-            })
+              checkTSNode(param.typeAnnotation);
+            });
           }
           // Recursively check the function return type annotation
-          checkTSNode(func.returnType)
+          checkTSNode(func.returnType);
         }
-        break
+        break;
       }
       case 'BlockStatement':
-        node.body.forEach(checkTSNode)
-        break
+        node.body.forEach(checkTSNode);
+        break;
       default:
-        break
+        break;
     }
   }
 
   if (!config.allowAnyInVariables || !config.allowAnyInParameters || !config.allowAnyInReturnType) {
-    program.body.forEach(checkNode)
+    program.body.forEach(checkNode);
   }
   if (!config.allowAnyInTypeAnnotationParameters || !config.allowAnyInTypeAnnotationReturnType) {
-    program.body.forEach(checkTSNode)
+    program.body.forEach(checkTSNode);
   }
 }

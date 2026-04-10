@@ -1,6 +1,6 @@
-import { test } from 'vitest'
-import { stripIndent } from '../utils/formatters'
-import { expectFinishedResult, expectParsedError } from '../utils/testing'
+import { test } from 'vitest';
+import { stripIndent } from '../utils/formatters';
+import { expectFinishedResult, expectParsedError } from '../utils/testing';
 
 test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
   return expectParsedError(stripIndent`
@@ -12,8 +12,8 @@ test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
       }
     }
     f(10000);
-  `).toContain(`Line 5: RangeError: Maximum call stack size exceeded`)
-})
+  `).toContain(`Line 5: RangeError: Maximum call stack size exceeded`);
+});
 
 test('Simple tail call returns work', () => {
   return expectFinishedResult(
@@ -26,9 +26,9 @@ test('Simple tail call returns work', () => {
       }
     }
     f(5000, 5000);
-  `
-  ).toEqual(10000)
-})
+  `,
+  ).toEqual(10000);
+});
 
 test('Tail call in conditional expressions work', () => {
   return expectFinishedResult(
@@ -37,9 +37,9 @@ test('Tail call in conditional expressions work', () => {
       return x <= 0 ? y : f(x-1, y+1);
     }
     f(5000, 5000);
-  `
-  ).toEqual(10000)
-})
+  `,
+  ).toEqual(10000);
+});
 
 test('Tail call in boolean operators work', () => {
   return expectFinishedResult(
@@ -52,9 +52,9 @@ test('Tail call in boolean operators work', () => {
       }
     }
     f(5000, 5000);
-  `
-  ).toEqual(10000)
-})
+  `,
+  ).toEqual(10000);
+});
 
 test('Tail call in nested mix of conditional expressions boolean operators work', () => {
   return expectFinishedResult(
@@ -63,18 +63,18 @@ test('Tail call in nested mix of conditional expressions boolean operators work'
       return x <= 0 ? y : false || x > 0 ? f(x-1, y+1) : 'unreachable';
     }
     f(5000, 5000);
-  `
-  ).toEqual(10000)
-})
+  `,
+  ).toEqual(10000);
+});
 
 test('Tail calls in arrow functions work', () => {
   return expectFinishedResult(
     stripIndent`
     const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
     f(5000, 5000);
-  `
-  ).toEqual(10000)
-})
+  `,
+  ).toEqual(10000);
+});
 
 test('Tail calls in arrow block functions work', () => {
   return expectFinishedResult(
@@ -87,9 +87,9 @@ test('Tail calls in arrow block functions work', () => {
       }
     };
     f(5000, 5000);
-  `
-  ).toEqual(10000)
-})
+  `,
+  ).toEqual(10000);
+});
 
 test('Tail calls in mutual recursion work', () => {
   return expectFinishedResult(
@@ -109,9 +109,9 @@ test('Tail calls in mutual recursion work', () => {
       }
     }
     f(5000, 5000);
-  `
-  ).toEqual(10000)
-})
+  `,
+  ).toEqual(10000);
+});
 
 test('Tail calls in mutual recursion with arrow functions work', () => {
   return expectFinishedResult(
@@ -119,9 +119,9 @@ test('Tail calls in mutual recursion with arrow functions work', () => {
     const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
     const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
     f(5000, 5000);
-  `
-  ).toEqual(10000)
-})
+  `,
+  ).toEqual(10000);
+});
 
 test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
   return expectFinishedResult(
@@ -134,6 +134,6 @@ test('Tail calls in mixed tail-call/non-tail-call recursion work', () => {
       }
     }
     f(5000, 5000, 2);
-  `
-  ).toEqual(15000)
-})
+  `,
+  ).toEqual(15000);
+});

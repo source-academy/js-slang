@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "1.0.88",
+  "version": "1.0.89",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -61,7 +61,7 @@
   "devDependencies": {
     "@types/estree": "^1.0.5",
     "@types/lodash": "^4.14.202",
-    "@types/node": "^24.0.0",
+    "@types/node": "^24.12.2",
     "@vitest/coverage-v8": "^4.0.4",
     "@vitest/eslint-plugin": "^1.3.4",
     "@vitest/ui": "^4.0.4",
@@ -74,7 +74,7 @@
     "jsdoc": "4.0.5",
     "jsdom": "^29.0.0",
     "prettier": "^3.6.2",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "typescript-eslint": "^8.46.3",
     "vitest": "^4.0.4"
   },
@@ -85,5 +85,5 @@
       "onFail": "error"
     }
   },
-  "packageManager": "yarn@4.12.0+sha512.f45ab632439a67f8bc759bf32ead036a1f413287b9042726b7cc4818b7b49e14e9423ba49b18f9e06ea4941c1ad062385b1d8760a8d5091a1a31e5f6219afca8"
+  "packageManager": "yarn@4.13.0+sha512.5c20ba010c99815433e5c8453112165e673f1c7948d8d2b267f4b5e52097538658388ebc9f9580656d9b75c5cc996f990f611f99304a2197d4c56d21eea370e7"
 }

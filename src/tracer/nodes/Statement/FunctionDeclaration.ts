@@ -1,25 +1,25 @@
-import type { Comment, FunctionDeclaration, SourceLocation } from 'estree'
-import { type StepperExpression, type StepperPattern, undefinedNode } from '..'
-import { redex } from '../..'
-import { convert } from '../../generator'
-import type { StepperBaseNode } from '../../interface'
-import { getFreshName } from '../../utils'
-import { StepperArrowFunctionExpression } from '../Expression/ArrowFunctionExpression'
-import { StepperIdentifier } from '../Expression/Identifier'
-import { StepperBlockStatement } from './BlockStatement'
-import { StepperVariableDeclaration } from './VariableDeclaration'
+import type { Comment, FunctionDeclaration, SourceLocation } from 'estree';
+import { type StepperExpression, type StepperPattern, undefinedNode } from '..';
+import { redex } from '../..';
+import { convert } from '../../generator';
+import type { StepperBaseNode } from '../../interface';
+import { getFreshName } from '../../utils';
+import { StepperArrowFunctionExpression } from '../Expression/ArrowFunctionExpression';
+import { StepperIdentifier } from '../Expression/Identifier';
+import { StepperBlockStatement } from './BlockStatement';
+import { StepperVariableDeclaration } from './VariableDeclaration';
 
 export class StepperFunctionDeclaration implements FunctionDeclaration, StepperBaseNode {
-  type: 'FunctionDeclaration'
-  id: StepperIdentifier
-  body: StepperBlockStatement
-  params: StepperPattern[]
-  generator?: boolean | undefined
-  async?: boolean | undefined
-  leadingComments?: Comment[] | undefined
-  trailingComments?: Comment[] | undefined
-  loc?: SourceLocation | null | undefined
-  range?: [number, number] | undefined
+  type: 'FunctionDeclaration';
+  id: StepperIdentifier;
+  body: StepperBlockStatement;
+  params: StepperPattern[];
+  generator?: boolean | undefined;
+  async?: boolean | undefined;
+  leadingComments?: Comment[] | undefined;
+  trailingComments?: Comment[] | undefined;
+  loc?: SourceLocation | null | undefined;
+  range?: [number, number] | undefined;
 
   constructor(
     id: StepperIdentifier,
@@ -30,17 +30,17 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
-    range?: [number, number] | undefined
+    range?: [number, number] | undefined,
   ) {
-    this.type = 'FunctionDeclaration'
-    this.id = id
-    this.params = params
-    this.generator = generator
-    this.async = async
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    this.type = 'FunctionDeclaration';
+    this.id = id;
+    this.params = params;
+    this.generator = generator;
+    this.async = async;
+    this.leadingComments = leadingComments;
+    this.trailingComments = trailingComments;
+    this.loc = loc;
+    this.range = range;
 
     /*    
     const repeatedNames = body.scanAllDeclarationNames().filter(name => name === this.id.name);
@@ -50,7 +50,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       currentBlockStatement = currentBlockStatement.rename(repeatedNames[index], newNames[index])
     }
   */
-    this.body = body
+    this.body = body;
   }
   static create(node: FunctionDeclaration) {
     return new StepperFunctionDeclaration(
@@ -62,16 +62,16 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       node.leadingComments,
       node.trailingComments,
       node.loc,
-      node.range
-    )
+      node.range,
+    );
   }
 
   isContractible(): boolean {
-    return false
+    return false;
   }
 
   isOneStepPossible(): boolean {
-    return false
+    return false;
   }
 
   getArrowFunctionExpression() {
@@ -81,62 +81,62 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       this.id.name, // mu term
       false,
       this.async,
-      this.generator
-    )
+      this.generator,
+    );
   }
 
   contract(): typeof undefinedNode {
-    redex.preRedex = [this]
-    redex.postRedex = []
-    return undefinedNode
+    redex.preRedex = [this];
+    redex.postRedex = [];
+    return undefinedNode;
   }
 
   contractEmpty() {
-    redex.preRedex = [this]
-    redex.postRedex = []
+    redex.preRedex = [this];
+    redex.postRedex = [];
   }
 
   oneStep(): typeof undefinedNode {
-    return this.contract()
+    return this.contract();
   }
 
   scanAllDeclarationNames(): string[] {
-    const paramNames = this.params.map(param => param.name)
+    const paramNames = this.params.map(param => param.name);
     const bodyDeclarations = this.body.body
       .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
       .flatMap((ast: StepperVariableDeclaration | StepperFunctionDeclaration) => {
         if (ast.type === 'VariableDeclaration') {
-          return ast.declarations.map(ast => ast.id.name)
+          return ast.declarations.map(ast => ast.id.name);
         } else {
           // Function Declaration
-          return [ast.id.name]
+          return [ast.id.name];
         }
-      })
-    return [...paramNames, ...bodyDeclarations]
+      });
+    return [...paramNames, ...bodyDeclarations];
   }
 
   substitute(
     id: StepperPattern,
     value: StepperExpression,
-    upperBoundName?: string[]
+    upperBoundName?: string[],
   ): StepperBaseNode {
-    const valueFreeNames = value.freeNames()
-    const scopeNames = this.scanAllDeclarationNames()
-    const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name))
+    const valueFreeNames = value.freeNames();
+    const scopeNames = this.scanAllDeclarationNames();
+    const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name));
 
-    let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat())
-    repeatedNames.forEach(name => protectedNamesSet.delete(name))
-    const protectedNames = Array.from(protectedNamesSet)
-    const newNames = getFreshName(repeatedNames, protectedNames)
+    let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat());
+    repeatedNames.forEach(name => protectedNamesSet.delete(name));
+    const protectedNames = Array.from(protectedNamesSet);
+    const newNames = getFreshName(repeatedNames, protectedNames);
 
     const currentFunction = newNames.reduce(
       (current: StepperFunctionDeclaration, name: string, index: number) =>
         current.rename(repeatedNames[index], name),
-      this
-    )
+      this,
+    );
 
     if (currentFunction.scanAllDeclarationNames().includes(id.name)) {
-      return currentFunction
+      return currentFunction;
     }
 
     return new StepperFunctionDeclaration(
@@ -144,7 +144,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       currentFunction.body.substitute(
         id,
         value,
-        currentFunction.params.flatMap(p => p.allNames())
+        currentFunction.params.flatMap(p => p.allNames()),
       ) as unknown as StepperBlockStatement,
       currentFunction.params,
       this.generator,
@@ -152,22 +152,22 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 
   freeNames(): string[] {
     const paramNames = this.params
       .filter(param => param.type === 'Identifier')
-      .map(param => param.name)
-    return this.body.freeNames().filter(name => !paramNames.includes(name))
+      .map(param => param.name);
+    return this.body.freeNames().filter(name => !paramNames.includes(name));
   }
 
   allNames(): string[] {
     const paramNames = this.params
       .filter(param => param.type === 'Identifier')
-      .map(param => param.name)
-    return Array.from(new Set([paramNames, this.body.allNames()].flat()))
+      .map(param => param.name);
+    return Array.from(new Set([paramNames, this.body.allNames()].flat()));
   }
 
   rename(before: string, after: string): StepperFunctionDeclaration {
@@ -180,7 +180,7 @@ export class StepperFunctionDeclaration implements FunctionDeclaration, StepperB
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 }

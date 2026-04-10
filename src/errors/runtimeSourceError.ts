@@ -1,23 +1,23 @@
-import type es from 'estree'
-import type { Node } from '../types'
+import type es from 'estree';
+import type { Node } from '../types';
 
-import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, type SourceError } from './base'
+import { UNKNOWN_LOCATION } from '../constants';
+import { ErrorSeverity, ErrorType, type SourceError } from './base';
 
 export class RuntimeSourceError implements SourceError {
-  public type = ErrorType.RUNTIME
-  public severity = ErrorSeverity.ERROR
-  public location: es.SourceLocation
+  public type = ErrorType.RUNTIME;
+  public severity = ErrorSeverity.ERROR;
+  public location: es.SourceLocation;
 
   constructor(node?: Node) {
-    this.location = node?.loc ?? UNKNOWN_LOCATION
+    this.location = node?.loc ?? UNKNOWN_LOCATION;
   }
 
   public explain() {
-    return ''
+    return '';
   }
 
   public elaborate() {
-    return this.explain()
+    return this.explain();
   }
 }

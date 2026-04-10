@@ -235,4 +235,4 @@ function $accumulate(f, initial, xs, cont) {
 function accumulate(f, initial, xs) {
   return $accumulate(f, initial, xs, x => x);
 }
-`
+`;

@@ -5,13 +5,6 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@joeychenofficial/alt-ergo-modified@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "@joeychenofficial/alt-ergo-modified@npm:2.4.0"
-  checksum: 10c0/b6587dac0a76331602984ed61e482c2f7af2920d7069c873024bbc7575809ef440c7b91a7fb9a144b54abe98dd1d38a942e57f4476a0736a661c79bd66c176fa
-  languageName: node
-  linkType: hard
-
 "@types/estree@npm:1.0.8":
   version: 1.0.8
   resolution: "@types/estree@npm:1.0.8"
@@ -56,9 +49,9 @@ __metadata:
   linkType: hard
 
 "lodash@npm:^4.17.20":
-  version: 4.17.23
-  resolution: "lodash@npm:4.17.23"
-  checksum: 10c0/1264a90469f5bb95d4739c43eb6277d15b6d9e186df4ac68c3620443160fc669e2f14c11e7d8b2ccf078b81d06147c01a8ccced9aab9f9f63d50dcf8cace6bf6
+  version: 4.18.1
+  resolution: "lodash@npm:4.18.1"
+  checksum: 10c0/757228fc68805c59789e82185135cf85f05d0b2d3d54631d680ca79ec21944ec8314d4533639a14b8bcfbd97a517e78960933041a5af17ecb693ec6eecb99a27
   languageName: node
   linkType: hard
 
@@ -66,7 +59,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "sicp@workspace:."
   dependencies:
-    "@joeychenofficial/alt-ergo-modified": "npm:^2.4.0"
     "@types/estree": "npm:1.0.8"
     acorn: "npm:^8.0.3"
     acorn-loose: "npm:^8.0.0"
@@ -74,7 +66,6 @@ __metadata:
     astring: "npm:^1.4.3"
     lodash: "npm:^4.17.20"
     source-map: "npm:^0.7.3"
-    xmlhttprequest-ts: "npm:^1.0.1"
   languageName: unknown
   linkType: soft
 
@@ -82,24 +73,5 @@ __metadata:
   version: 0.7.6
   resolution: "source-map@npm:0.7.6"
   checksum: 10c0/59f6f05538539b274ba771d2e9e32f6c65451982510564438e048bc1352f019c6efcdc6dd07909b1968144941c14015c2c7d4369fb7c4d7d53ae769716dcc16c
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^1.9.2":
-  version: 1.14.1
-  resolution: "tslib@npm:1.14.1"
-  checksum: 10c0/69ae09c49eea644bc5ebe1bca4fa4cc2c82b7b3e02f43b84bd891504edf66dbc6b2ec0eef31a957042de2269139e4acff911e6d186a258fb14069cd7f6febce2
-  languageName: node
-  linkType: hard
-
-"xmlhttprequest-ts@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "xmlhttprequest-ts@npm:1.0.1"
-  dependencies:
-    tslib: "npm:^1.9.2"
-  peerDependencies:
-    "@angular/common": ">= 5.0.0"
-    "@angular/core": ">= 5.0.0"
-  checksum: 10c0/5ef31a94ed2cd94bfa6d5d7024cfb20253813c48ab94b7b5cea1b7e0bcbcc3bb51a53bc8eaca52642c93229507de4f95624b0dd339156c31533f3dc617e7240f
   languageName: node
   linkType: hard

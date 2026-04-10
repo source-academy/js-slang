@@ -1,6 +1,6 @@
-import type { Comment, SimpleLiteral, SourceLocation } from 'estree'
-import type { StepperExpression, StepperPattern } from '..'
-import type { StepperBaseNode } from '../../interface'
+import type { Comment, SimpleLiteral, SourceLocation } from 'estree';
+import type { StepperExpression, StepperPattern } from '..';
+import type { StepperBaseNode } from '../../interface';
 
 /**
  * This class represents a literal node in the stepper's AST (Abstract Syntax Tree).
@@ -14,13 +14,13 @@ import type { StepperBaseNode } from '../../interface'
  * @method oneStep() Throws an error as one-step evaluation is not implemented.
  */
 export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
-  type: 'Literal'
-  value: string | number | boolean | null
-  raw?: string
-  leadingComments?: Comment[]
-  trailingComments?: Comment[]
-  loc?: SourceLocation | null
-  range?: [number, number]
+  type: 'Literal';
+  value: string | number | boolean | null;
+  raw?: string;
+  leadingComments?: Comment[];
+  trailingComments?: Comment[];
+  loc?: SourceLocation | null;
+  range?: [number, number];
 
   constructor(
     value: string | number | boolean | null,
@@ -28,15 +28,15 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
-    range?: [number, number]
+    range?: [number, number],
   ) {
-    this.type = 'Literal'
-    this.value = value
-    this.raw = raw
-    this.leadingComments = leadingComments
-    this.trailingComments = trailingComments
-    this.loc = loc
-    this.range = range
+    this.type = 'Literal';
+    this.value = value;
+    this.raw = raw;
+    this.leadingComments = leadingComments;
+    this.trailingComments = trailingComments;
+    this.loc = loc;
+    this.range = range;
   }
 
   static create(literal: SimpleLiteral) {
@@ -46,36 +46,36 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
       literal.leadingComments,
       literal.trailingComments,
       literal.loc,
-      literal.range
-    )
+      literal.range,
+    );
   }
 
   isContractible(): boolean {
-    return false
+    return false;
   }
 
   isOneStepPossible(): boolean {
-    return false
+    return false;
   }
 
   contract(): StepperLiteral {
-    throw new Error('Method not implemented.')
+    throw new Error('Method not implemented.');
   }
 
   oneStep(): StepperLiteral {
-    throw new Error('Method not implemented.')
+    throw new Error('Method not implemented.');
   }
 
   substitute(_id: StepperPattern, _value: StepperExpression): StepperLiteral {
-    return this
+    return this;
   }
 
   freeNames(): string[] {
-    return []
+    return [];
   }
 
   allNames(): string[] {
-    return []
+    return [];
   }
 
   rename(_before: string, _after: string): StepperExpression {
@@ -85,7 +85,7 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
       this.leadingComments,
       this.trailingComments,
       this.loc,
-      this.range
-    )
+      this.range,
+    );
   }
 }

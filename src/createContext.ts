@@ -1,82 +1,82 @@
 // Variable determining chapter of Source is contained in this file.
 
-import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
-import { call_with_current_continuation } from './cse-machine/continuations'
-import Heap from './cse-machine/heap'
-import { Chapter, Variant, type LanguageOptions } from './langs'
-import * as list from './stdlib/list'
-import { list_to_vector } from './stdlib/list'
-import { listPrelude } from './stdlib/list.prelude'
-import { localImportPrelude } from './stdlib/localImport.prelude'
-import * as misc from './stdlib/misc'
-import * as parser from './stdlib/parser'
-import * as pylib from './stdlib/pylib'
-import * as stream from './stdlib/stream'
-import { streamPrelude } from './stdlib/stream.prelude'
-import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils'
-import type { Context, CustomBuiltIns, Environment, NativeStorage, Value } from './types'
-import * as operators from './utils/operators'
-import { stringify } from './utils/stringify'
+import { GLOBAL, JSSLANG_PROPERTIES } from './constants';
+import { call_with_current_continuation } from './cse-machine/continuations';
+import Heap from './cse-machine/heap';
+import { Chapter, Variant, type LanguageOptions } from './langs';
+import * as list from './stdlib/list';
+import { list_to_vector } from './stdlib/list';
+import { listPrelude } from './stdlib/list.prelude';
+import { localImportPrelude } from './stdlib/localImport.prelude';
+import * as misc from './stdlib/misc';
+import * as parser from './stdlib/parser';
+import * as pylib from './stdlib/pylib';
+import * as stream from './stdlib/stream';
+import { streamPrelude } from './stdlib/stream.prelude';
+import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils';
+import type { Context, CustomBuiltIns, Environment, NativeStorage, Value } from './types';
+import * as operators from './utils/operators';
+import { stringify } from './utils/stringify';
 
 export class EnvTree {
-  private _root: EnvTreeNode | null = null
-  private map = new Map<Environment, EnvTreeNode>()
+  private _root: EnvTreeNode | null = null;
+  private map = new Map<Environment, EnvTreeNode>();
 
   get root(): EnvTreeNode | null {
-    return this._root
+    return this._root;
   }
 
   public insert(environment: Environment): void {
-    const tailEnvironment = environment.tail
+    const tailEnvironment = environment.tail;
     if (tailEnvironment === null) {
       if (this._root === null) {
-        this._root = new EnvTreeNode(environment, null)
-        this.map.set(environment, this._root)
+        this._root = new EnvTreeNode(environment, null);
+        this.map.set(environment, this._root);
       }
     } else {
-      const parentNode = this.map.get(tailEnvironment)
+      const parentNode = this.map.get(tailEnvironment);
       if (parentNode) {
-        const childNode = new EnvTreeNode(environment, parentNode)
-        parentNode.addChild(childNode)
-        this.map.set(environment, childNode)
+        const childNode = new EnvTreeNode(environment, parentNode);
+        parentNode.addChild(childNode);
+        this.map.set(environment, childNode);
       }
     }
   }
 
   public getTreeNode(environment: Environment): EnvTreeNode | undefined {
-    return this.map.get(environment)
+    return this.map.get(environment);
   }
 }
 
 export class EnvTreeNode {
-  private _children: EnvTreeNode[] = []
+  private _children: EnvTreeNode[] = [];
 
   constructor(
     readonly environment: Environment,
-    public parent: EnvTreeNode | null
+    public parent: EnvTreeNode | null,
   ) {}
 
   get children(): EnvTreeNode[] {
-    return this._children
+    return this._children;
   }
 
   public resetChildren(newChildren: EnvTreeNode[]): void {
-    this.clearChildren()
-    this.addChildren(newChildren)
-    newChildren.forEach(c => (c.parent = this))
+    this.clearChildren();
+    this.addChildren(newChildren);
+    newChildren.forEach(c => (c.parent = this));
   }
 
   private clearChildren(): void {
-    this._children = []
+    this._children = [];
   }
 
   private addChildren(newChildren: EnvTreeNode[]): void {
-    this._children.push(...newChildren)
+    this._children.push(...newChildren);
   }
 
   public addChild(newChild: EnvTreeNode): EnvTreeNode {
-    this._children.push(newChild)
-    return newChild
+    this._children.push(newChild);
+    return newChild;
   }
 }
 
@@ -94,26 +94,26 @@ const createEmptyRuntime = () => ({
   envSteps: -1,
   envStepsTotal: 0,
   breakpointSteps: [],
-  changepointSteps: []
-})
+  changepointSteps: [],
+});
 
 const createEmptyDebugger = () => ({
   observers: { callbacks: Array<() => void>() },
   status: false,
   state: {
     it: (function* (): any {
-      return
-    })()
-  }
-})
+      return;
+    })(),
+  },
+});
 
 export const createGlobalEnvironment = (): Environment => ({
   tail: null,
   name: 'global',
   head: {},
   heap: new Heap(),
-  id: '-1'
-})
+  id: '-1',
+});
 
 const createNativeStorage = (): NativeStorage => ({
   builtins: new Map(),
@@ -122,15 +122,15 @@ const createNativeStorage = (): NativeStorage => ({
   maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
   evaller: null,
   loadedModules: {},
-  loadedModuleTypes: {}
-})
+  loadedModuleTypes: {},
+});
 
 export const createEmptyContext = <T>(
   chapter: Chapter,
   variant: Variant = Variant.DEFAULT,
   languageOptions: LanguageOptions = {},
   externalSymbols: string[],
-  externalContext?: T
+  externalContext?: T,
 ): Context<T> => {
   return {
     chapter,
@@ -149,213 +149,213 @@ export const createEmptyContext = <T>(
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
     previousPrograms: [],
-    shouldIncreaseEvaluationTimeout: false
-  }
-}
+    shouldIncreaseEvaluationTimeout: false,
+  };
+};
 
 export const ensureGlobalEnvironmentExist = (context: Context) => {
   if (!context.runtime) {
-    context.runtime = createEmptyRuntime()
+    context.runtime = createEmptyRuntime();
   }
   if (!context.runtime.environments) {
-    context.runtime.environments = []
+    context.runtime.environments = [];
   }
   if (!context.runtime.environmentTree) {
-    context.runtime.environmentTree = new EnvTree()
+    context.runtime.environmentTree = new EnvTree();
   }
   if (context.runtime.environments.length === 0) {
-    const globalEnvironment = createGlobalEnvironment()
-    context.runtime.environments.push(globalEnvironment)
-    context.runtime.environmentTree.insert(globalEnvironment)
+    const globalEnvironment = createGlobalEnvironment();
+    context.runtime.environments.push(globalEnvironment);
+    context.runtime.environmentTree.insert(globalEnvironment);
   }
-}
+};
 
 export const defineSymbol = (context: Context, name: string, value: Value) => {
-  const globalEnvironment = context.runtime.environments[0]
+  const globalEnvironment = context.runtime.environments[0];
   Object.defineProperty(globalEnvironment.head, name, {
     value,
     writable: false,
-    enumerable: true
-  })
-  context.nativeStorage.builtins.set(name, value)
-  const typeEnv = context.typeEnvironment[0]
+    enumerable: true,
+  });
+  context.nativeStorage.builtins.set(name, value);
+  const typeEnv = context.typeEnvironment[0];
   // if the global type env doesn't already have the imported symbol,
   // we set it to a type var T that can typecheck with anything.
   if (!typeEnv.declKindMap.has(name)) {
-    typeEnv.typeMap.set(name, tForAll(tVar('T1')))
-    typeEnv.declKindMap.set(name, 'const')
+    typeEnv.typeMap.set(name, tForAll(tVar('T1')));
+    typeEnv.declKindMap.set(name, 'const');
   }
-}
+};
 
 export function defineBuiltin(
   context: Context,
   name: string, // enforce minArgsNeeded
   value: Value,
-  minArgsNeeded: number
-): void
+  minArgsNeeded: number,
+): void;
 export function defineBuiltin(
   context: Context,
   name: string,
   value: Value,
-  minArgsNeeded?: number
-): void
+  minArgsNeeded?: number,
+): void;
 // Defines a builtin in the given context
 // If the builtin is a function, wrap it such that its toString hides the implementation
 export function defineBuiltin(
   context: Context,
   name: string,
   value: Value,
-  minArgsNeeded: undefined | number = undefined
+  minArgsNeeded: undefined | number = undefined,
 ) {
   function extractName(name: string): string {
-    return name.split('(')[0].trim()
+    return name.split('(')[0].trim();
   }
 
   function extractParameters(name: string): string[] {
     // if the function has no () in its name, it has no parameters
     if (!name.includes('(')) {
-      return []
+      return [];
     }
     return name
       .split('(')[1]
       .split(')')[0]
       .split(',')
-      .map(s => s.trim())
+      .map(s => s.trim());
   }
 
   if (typeof value === 'function') {
-    const funName = extractName(name)
-    const funParameters = extractParameters(name)
-    const repr = `function ${name} {\n\t[implementation hidden]\n}`
-    value.toString = () => repr
-    value.minArgsNeeded = minArgsNeeded
-    value.funName = funName
-    value.funParameters = funParameters
+    const funName = extractName(name);
+    const funParameters = extractParameters(name);
+    const repr = `function ${name} {\n\t[implementation hidden]\n}`;
+    value.toString = () => repr;
+    value.minArgsNeeded = minArgsNeeded;
+    value.funName = funName;
+    value.funParameters = funParameters;
 
-    defineSymbol(context, funName, value)
+    defineSymbol(context, funName, value);
   } else {
-    defineSymbol(context, name, value)
+    defineSymbol(context, name, value);
   }
 }
 
 export const importExternalSymbols = (context: Context, externalSymbols: string[]) => {
-  ensureGlobalEnvironmentExist(context)
+  ensureGlobalEnvironmentExist(context);
 
   externalSymbols.forEach(symbol => {
-    defineSymbol(context, symbol, GLOBAL[symbol as keyof typeof GLOBAL])
-  })
-}
+    defineSymbol(context, symbol, GLOBAL[symbol as keyof typeof GLOBAL]);
+  });
+};
 
 /**
  * Imports builtins from standard and external libraries.
  */
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
-  ensureGlobalEnvironmentExist(context)
+  ensureGlobalEnvironmentExist(context);
   const rawDisplay = (v: Value, ...s: string[]) =>
-    externalBuiltIns.rawDisplay(v, s[0], context.externalContext)
+    externalBuiltIns.rawDisplay(v, s[0], context.externalContext);
   const display = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
-      throw new TypeError('display expects the second argument to be a string')
+      throw new TypeError('display expects the second argument to be a string');
     }
-    return (rawDisplay(stringify(v), s[0]), v)
-  }
+    return (rawDisplay(stringify(v), s[0]), v);
+  };
   const displayList = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
-      throw new TypeError('display_list expects the second argument to be a string')
+      throw new TypeError('display_list expects the second argument to be a string');
     }
-    return list.rawDisplayList(display, v, s[0])
-  }
+    return list.rawDisplayList(display, v, s[0]);
+  };
   const prompt = (v: Value) => {
-    const start = Date.now()
-    const promptResult = externalBuiltIns.prompt(v, '', context.externalContext)
-    context.nativeStorage.maxExecTime += Date.now() - start
-    return promptResult
-  }
+    const start = Date.now();
+    const promptResult = externalBuiltIns.prompt(v, '', context.externalContext);
+    context.nativeStorage.maxExecTime += Date.now() - start;
+    return promptResult;
+  };
   const alert = (v: Value) => {
-    const start = Date.now()
-    externalBuiltIns.alert(v, '', context.externalContext)
-    context.nativeStorage.maxExecTime += Date.now() - start
-  }
+    const start = Date.now();
+    externalBuiltIns.alert(v, '', context.externalContext);
+    context.nativeStorage.maxExecTime += Date.now() - start;
+  };
   const visualiseList = (...v: Value) => {
-    externalBuiltIns.visualiseList(v, context.externalContext)
-    return v[0]
-  }
+    externalBuiltIns.visualiseList(v, context.externalContext);
+    return v[0];
+  };
 
   if (context.chapter >= 1) {
-    defineBuiltin(context, 'get_time()', misc.get_time)
-    defineBuiltin(context, 'display(val, prepend = undefined)', display, 1)
-    defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay, 1)
-    defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify, 1)
-    defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message, 1)
-    defineBuiltin(context, 'prompt(str)', prompt)
-    defineBuiltin(context, 'is_number(val)', misc.is_number)
-    defineBuiltin(context, 'is_string(val)', misc.is_string)
-    defineBuiltin(context, 'is_function(val)', misc.is_function)
-    defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
-    defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
-    defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
-    defineBuiltin(context, 'char_at(str, index)', misc.char_at)
-    defineBuiltin(context, 'arity(f)', misc.arity)
-    defineBuiltin(context, 'undefined', undefined)
-    defineBuiltin(context, 'NaN', NaN)
-    defineBuiltin(context, 'Infinity', Infinity)
+    defineBuiltin(context, 'get_time()', misc.get_time);
+    defineBuiltin(context, 'display(val, prepend = undefined)', display, 1);
+    defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay, 1);
+    defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify, 1);
+    defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message, 1);
+    defineBuiltin(context, 'prompt(str)', prompt);
+    defineBuiltin(context, 'is_number(val)', misc.is_number);
+    defineBuiltin(context, 'is_string(val)', misc.is_string);
+    defineBuiltin(context, 'is_function(val)', misc.is_function);
+    defineBuiltin(context, 'is_boolean(val)', misc.is_boolean);
+    defineBuiltin(context, 'is_undefined(val)', misc.is_undefined);
+    defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int);
+    defineBuiltin(context, 'char_at(str, index)', misc.char_at);
+    defineBuiltin(context, 'arity(f)', misc.arity);
+    defineBuiltin(context, 'undefined', undefined);
+    defineBuiltin(context, 'NaN', NaN);
+    defineBuiltin(context, 'Infinity', Infinity);
     // Define all Math libraries
-    const mathLibraryNames = Object.getOwnPropertyNames(Math)
+    const mathLibraryNames = Object.getOwnPropertyNames(Math);
     // Short param names for stringified version of math functions
-    const parameterNames = [...'abcdefghijklmnopqrstuvwxyz']
+    const parameterNames = [...'abcdefghijklmnopqrstuvwxyz'];
     for (const name of mathLibraryNames) {
-      const value = Math[name as keyof typeof Math]
+      const value = Math[name as keyof typeof Math];
       if (typeof value === 'function') {
-        let paramString: string
-        let minArgsNeeded = undefined
+        let paramString: string;
+        let minArgsNeeded = undefined;
         if (name === 'max' || name === 'min') {
-          paramString = '...values'
-          minArgsNeeded = 0
+          paramString = '...values';
+          minArgsNeeded = 0;
         } else {
-          paramString = parameterNames.slice(0, value.length).join(', ')
+          paramString = parameterNames.slice(0, value.length).join(', ');
         }
-        defineBuiltin(context, `math_${name}(${paramString})`, value, minArgsNeeded)
+        defineBuiltin(context, `math_${name}(${paramString})`, value, minArgsNeeded);
       } else {
-        defineBuiltin(context, `math_${name}`, value)
+        defineBuiltin(context, `math_${name}`, value);
       }
     }
   }
 
   if (context.chapter >= 2) {
     // List library
-    defineBuiltin(context, 'pair(left, right)', list.pair)
-    defineBuiltin(context, 'is_pair(val)', list.is_pair)
-    defineBuiltin(context, 'head(xs)', list.head)
-    defineBuiltin(context, 'tail(xs)', list.tail)
-    defineBuiltin(context, 'is_null(val)', list.is_null)
-    defineBuiltin(context, 'list(...values)', list.list, 0)
-    defineBuiltin(context, 'draw_data(...xs)', visualiseList, 1)
-    defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList, 0)
-    defineBuiltin(context, 'is_list(val)', list.is_list)
+    defineBuiltin(context, 'pair(left, right)', list.pair);
+    defineBuiltin(context, 'is_pair(val)', list.is_pair);
+    defineBuiltin(context, 'head(xs)', list.head);
+    defineBuiltin(context, 'tail(xs)', list.tail);
+    defineBuiltin(context, 'is_null(val)', list.is_null);
+    defineBuiltin(context, 'list(...values)', list.list, 0);
+    defineBuiltin(context, 'draw_data(...xs)', visualiseList, 1);
+    defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList, 0);
+    defineBuiltin(context, 'is_list(val)', list.is_list);
   }
 
   if (context.chapter >= 3) {
-    defineBuiltin(context, 'set_head(xs, val)', list.set_head)
-    defineBuiltin(context, 'set_tail(xs, val)', list.set_tail)
-    defineBuiltin(context, 'array_length(arr)', misc.array_length)
-    defineBuiltin(context, 'is_array(val)', misc.is_array)
+    defineBuiltin(context, 'set_head(xs, val)', list.set_head);
+    defineBuiltin(context, 'set_tail(xs, val)', list.set_tail);
+    defineBuiltin(context, 'array_length(arr)', misc.array_length);
+    defineBuiltin(context, 'is_array(val)', misc.is_array);
 
     // Stream library
-    defineBuiltin(context, 'stream(...values)', stream.stream, 0)
+    defineBuiltin(context, 'stream(...values)', stream.stream, 0);
   }
 
   if (context.chapter >= 4) {
     defineBuiltin(context, 'parse(program_string)', (str: string) =>
-      parser.parse(str, createContext(context.chapter))
-    )
+      parser.parse(str, createContext(context.chapter)),
+    );
     defineBuiltin(context, 'tokenize(program_string)', (str: string) =>
-      parser.tokenize(str, createContext(context.chapter))
-    )
+      parser.tokenize(str, createContext(context.chapter)),
+    );
     defineBuiltin(
       context,
       'apply_in_underlying_javascript(fun, args)',
-      (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
-    )
+      (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args)),
+    );
 
     // Continuations for explicit-control variant
     if (context.chapter >= 4) {
@@ -365,113 +365,113 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         context.variant === Variant.EXPLICIT_CONTROL
           ? call_with_current_continuation
           : (f: any) => {
-              throw new Error('call_cc is only available in Explicit-Control variant')
-            }
-      )
+              throw new Error('call_cc is only available in Explicit-Control variant');
+            },
+      );
     }
   }
 
   if (context.chapter === Chapter.LIBRARY_PARSER) {
-    defineBuiltin(context, 'is_object(val)', misc.is_object)
-    defineBuiltin(context, 'is_NaN(val)', misc.is_NaN)
-    defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
-    defineBuiltin(context, 'alert(val)', alert)
+    defineBuiltin(context, 'is_object(val)', misc.is_object);
+    defineBuiltin(context, 'is_NaN(val)', misc.is_NaN);
+    defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property);
+    defineBuiltin(context, 'alert(val)', alert);
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
-      misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay)
-    )
+      misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay),
+    );
   }
 
   if (context.chapter <= Chapter.PYTHON_1 && context.chapter >= Chapter.PYTHON_1) {
     if (context.chapter == Chapter.PYTHON_1) {
       // Display
-      defineBuiltin(context, 'get_time()', misc.get_time)
-      defineBuiltin(context, 'print(val)', display, 1)
-      defineBuiltin(context, 'raw_print(str)', rawDisplay, 1)
-      defineBuiltin(context, 'str(val)', (val: any) => stringify(val, 2, 80), 1)
-      defineBuiltin(context, 'error(str)', misc.error_message, 1)
-      defineBuiltin(context, 'prompt(str)', prompt)
-      defineBuiltin(context, 'is_float(val)', pylib.is_float)
-      defineBuiltin(context, 'is_int(val)', pylib.is_int)
-      defineBuiltin(context, 'is_string(val)', misc.is_string)
-      defineBuiltin(context, 'is_function(val)', misc.is_function)
-      defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
-      defineBuiltin(context, 'is_None(val)', list.is_null)
-      defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
-      defineBuiltin(context, 'char_at(str, index)', misc.char_at)
-      defineBuiltin(context, 'arity(f)', misc.arity)
-      defineBuiltin(context, 'None', null)
+      defineBuiltin(context, 'get_time()', misc.get_time);
+      defineBuiltin(context, 'print(val)', display, 1);
+      defineBuiltin(context, 'raw_print(str)', rawDisplay, 1);
+      defineBuiltin(context, 'str(val)', (val: any) => stringify(val, 2, 80), 1);
+      defineBuiltin(context, 'error(str)', misc.error_message, 1);
+      defineBuiltin(context, 'prompt(str)', prompt);
+      defineBuiltin(context, 'is_float(val)', pylib.is_float);
+      defineBuiltin(context, 'is_int(val)', pylib.is_int);
+      defineBuiltin(context, 'is_string(val)', misc.is_string);
+      defineBuiltin(context, 'is_function(val)', misc.is_function);
+      defineBuiltin(context, 'is_boolean(val)', misc.is_boolean);
+      defineBuiltin(context, 'is_None(val)', list.is_null);
+      defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int);
+      defineBuiltin(context, 'char_at(str, index)', misc.char_at);
+      defineBuiltin(context, 'arity(f)', misc.arity);
+      defineBuiltin(context, 'None', null);
 
       // Binary operators
-      defineBuiltin(context, '__py_adder(x, y)', pylib.__py_adder)
-      defineBuiltin(context, '__py_minuser(x, y)', pylib.__py_minuser)
-      defineBuiltin(context, '__py_multiplier(x, y)', pylib.__py_multiplier)
-      defineBuiltin(context, '__py_divider(x, y)', pylib.__py_divider)
-      defineBuiltin(context, '__py_modder(x, y)', pylib.__py_modder)
-      defineBuiltin(context, '__py_powerer(x, y)', pylib.__py_powerer)
-      defineBuiltin(context, '__py_floorer(x, y)', pylib.__py_floorer)
+      defineBuiltin(context, '__py_adder(x, y)', pylib.__py_adder);
+      defineBuiltin(context, '__py_minuser(x, y)', pylib.__py_minuser);
+      defineBuiltin(context, '__py_multiplier(x, y)', pylib.__py_multiplier);
+      defineBuiltin(context, '__py_divider(x, y)', pylib.__py_divider);
+      defineBuiltin(context, '__py_modder(x, y)', pylib.__py_modder);
+      defineBuiltin(context, '__py_powerer(x, y)', pylib.__py_powerer);
+      defineBuiltin(context, '__py_floorer(x, y)', pylib.__py_floorer);
 
       // Unary operator +
-      defineBuiltin(context, '__py_unary_plus(x)', pylib.__py_unary_plus)
+      defineBuiltin(context, '__py_unary_plus(x)', pylib.__py_unary_plus);
 
       // Math Library
-      defineBuiltin(context, 'math_abs(x)', pylib.math_abs)
-      defineBuiltin(context, 'math_acos(x)', pylib.math_acos)
-      defineBuiltin(context, 'math_acosh(x)', pylib.math_acosh)
-      defineBuiltin(context, 'math_asin(x)', pylib.math_asin)
-      defineBuiltin(context, 'math_asinh(x)', pylib.math_asinh)
-      defineBuiltin(context, 'math_atan(x)', pylib.math_atan)
-      defineBuiltin(context, 'math_atan2(x)', pylib.math_atan2)
-      defineBuiltin(context, 'math_atanh(x)', pylib.math_atanh)
-      defineBuiltin(context, 'math_cbrt(x)', pylib.math_cbrt)
-      defineBuiltin(context, 'math_ceil(x)', pylib.math_ceil)
-      defineBuiltin(context, 'math_clz32(x)', pylib.math_clz32)
-      defineBuiltin(context, 'math_cos(x)', pylib.math_cos)
-      defineBuiltin(context, 'math_cosh(x)', pylib.math_cosh)
-      defineBuiltin(context, 'math_exp(x)', pylib.math_exp)
-      defineBuiltin(context, 'math_expm1(x)', pylib.math_expm1)
-      defineBuiltin(context, 'math_floor(x)', pylib.math_floor)
-      defineBuiltin(context, 'math_fround(x)', pylib.math_fround)
-      defineBuiltin(context, 'math_hypot(...values)', pylib.math_hypot)
-      defineBuiltin(context, 'math_imul(x, y)', pylib.math_imul)
-      defineBuiltin(context, 'math_log(x)', pylib.math_log)
-      defineBuiltin(context, 'math_log1p(x)', pylib.math_log1p)
-      defineBuiltin(context, 'math_log2(x)', pylib.math_log2)
-      defineBuiltin(context, 'math_log10(x)', pylib.math_log10)
-      defineBuiltin(context, 'math_max(...values)', pylib.math_max)
-      defineBuiltin(context, 'math_min(...values)', pylib.math_min)
-      defineBuiltin(context, 'math_pow(base, exponent)', pylib.math_pow)
-      defineBuiltin(context, 'math_random()', pylib.math_random)
-      defineBuiltin(context, 'math_round(x)', pylib.math_round)
-      defineBuiltin(context, 'math_sign(x)', pylib.math_sign)
-      defineBuiltin(context, 'math_sin(x)', pylib.math_sin)
-      defineBuiltin(context, 'math_sinh(x)', pylib.math_sinh)
-      defineBuiltin(context, 'math_sqrt(x)', pylib.math_sqrt)
-      defineBuiltin(context, 'math_tan(x)', pylib.math_tan)
-      defineBuiltin(context, 'math_tanh(x)', pylib.math_tanh)
-      defineBuiltin(context, 'math_trunc(x)', pylib.math_trunc)
+      defineBuiltin(context, 'math_abs(x)', pylib.math_abs);
+      defineBuiltin(context, 'math_acos(x)', pylib.math_acos);
+      defineBuiltin(context, 'math_acosh(x)', pylib.math_acosh);
+      defineBuiltin(context, 'math_asin(x)', pylib.math_asin);
+      defineBuiltin(context, 'math_asinh(x)', pylib.math_asinh);
+      defineBuiltin(context, 'math_atan(x)', pylib.math_atan);
+      defineBuiltin(context, 'math_atan2(x)', pylib.math_atan2);
+      defineBuiltin(context, 'math_atanh(x)', pylib.math_atanh);
+      defineBuiltin(context, 'math_cbrt(x)', pylib.math_cbrt);
+      defineBuiltin(context, 'math_ceil(x)', pylib.math_ceil);
+      defineBuiltin(context, 'math_clz32(x)', pylib.math_clz32);
+      defineBuiltin(context, 'math_cos(x)', pylib.math_cos);
+      defineBuiltin(context, 'math_cosh(x)', pylib.math_cosh);
+      defineBuiltin(context, 'math_exp(x)', pylib.math_exp);
+      defineBuiltin(context, 'math_expm1(x)', pylib.math_expm1);
+      defineBuiltin(context, 'math_floor(x)', pylib.math_floor);
+      defineBuiltin(context, 'math_fround(x)', pylib.math_fround);
+      defineBuiltin(context, 'math_hypot(...values)', pylib.math_hypot);
+      defineBuiltin(context, 'math_imul(x, y)', pylib.math_imul);
+      defineBuiltin(context, 'math_log(x)', pylib.math_log);
+      defineBuiltin(context, 'math_log1p(x)', pylib.math_log1p);
+      defineBuiltin(context, 'math_log2(x)', pylib.math_log2);
+      defineBuiltin(context, 'math_log10(x)', pylib.math_log10);
+      defineBuiltin(context, 'math_max(...values)', pylib.math_max);
+      defineBuiltin(context, 'math_min(...values)', pylib.math_min);
+      defineBuiltin(context, 'math_pow(base, exponent)', pylib.math_pow);
+      defineBuiltin(context, 'math_random()', pylib.math_random);
+      defineBuiltin(context, 'math_round(x)', pylib.math_round);
+      defineBuiltin(context, 'math_sign(x)', pylib.math_sign);
+      defineBuiltin(context, 'math_sin(x)', pylib.math_sin);
+      defineBuiltin(context, 'math_sinh(x)', pylib.math_sinh);
+      defineBuiltin(context, 'math_sqrt(x)', pylib.math_sqrt);
+      defineBuiltin(context, 'math_tan(x)', pylib.math_tan);
+      defineBuiltin(context, 'math_tanh(x)', pylib.math_tanh);
+      defineBuiltin(context, 'math_trunc(x)', pylib.math_trunc);
 
       // Math constants
-      defineBuiltin(context, 'math_e', Math.E)
-      defineBuiltin(context, 'math_inf', Infinity)
-      defineBuiltin(context, 'math_nan', NaN)
-      defineBuiltin(context, 'math_pi', Math.PI)
-      defineBuiltin(context, 'math_tau', Math.PI * 2)
+      defineBuiltin(context, 'math_e', Math.E);
+      defineBuiltin(context, 'math_inf', Infinity);
+      defineBuiltin(context, 'math_nan', NaN);
+      defineBuiltin(context, 'math_pi', Math.PI);
+      defineBuiltin(context, 'math_tau', Math.PI * 2);
     }
   }
-}
+};
 
 function importPrelude(context: Context) {
-  let prelude = ''
+  let prelude = '';
   if (context.chapter >= 2) {
-    prelude += listPrelude
-    prelude += localImportPrelude
+    prelude += listPrelude;
+    prelude += localImportPrelude;
   }
   if (context.chapter >= 3) {
-    prelude += streamPrelude
+    prelude += streamPrelude;
   }
 
   if (prelude !== '') {
-    context.prelude = prelude
+    context.prelude = prelude;
   }
 }
 
@@ -482,9 +482,9 @@ const defaultBuiltIns: CustomBuiltIns = {
   // See issue #11
   alert: misc.rawDisplay,
   visualiseList: (_v: Value) => {
-    throw new Error('List visualizer is not enabled')
-  }
-}
+    throw new Error('List visualizer is not enabled');
+  },
+};
 
 const createContext = <T>(
   chapter: Chapter = Chapter.SOURCE_1,
@@ -492,7 +492,7 @@ const createContext = <T>(
   languageOptions: LanguageOptions = {},
   externalSymbols: string[] = [],
   externalContext?: T,
-  externalBuiltIns: CustomBuiltIns = defaultBuiltIns
+  externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
 ): Context => {
   if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS) {
     // fullJS will include all builtins and preludes of source 4
@@ -503,24 +503,24 @@ const createContext = <T>(
         languageOptions,
         externalSymbols,
         externalContext,
-        externalBuiltIns
+        externalBuiltIns,
       ),
-      chapter
-    } as Context
+      chapter,
+    } as Context;
   }
   const context = createEmptyContext(
     chapter,
     variant,
     languageOptions,
     externalSymbols,
-    externalContext
-  )
+    externalContext,
+  );
 
-  importBuiltins(context, externalBuiltIns)
-  importPrelude(context)
-  importExternalSymbols(context, externalSymbols)
+  importBuiltins(context, externalBuiltIns);
+  importPrelude(context);
+  importExternalSymbols(context, externalSymbols);
 
-  return context
-}
+  return context;
+};
 
-export default createContext
+export default createContext;

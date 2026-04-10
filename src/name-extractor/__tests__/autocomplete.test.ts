@@ -1,23 +1,23 @@
-import { pick } from 'lodash'
-import { expect, test, vi } from 'vitest'
-import { createContext } from '../..'
-import { getNames } from '../../index'
-import { Chapter } from '../../langs'
-import { DeclarationKind, type NameDeclaration } from '../index'
+import { pick } from 'lodash';
+import { expect, test, vi } from 'vitest';
+import { createContext } from '../..';
+import { getNames } from '../../index';
+import { Chapter } from '../../langs';
+import { DeclarationKind, type NameDeclaration } from '../index';
 
-vi.mock(import('../../modules/loader/loaders'))
+vi.mock(import('../../modules/loader/loaders'));
 
 function matchExpectedNames(
   extractedNames: NameDeclaration[],
   expectedNames: NameDeclaration[],
-  unexpectedNames: NameDeclaration[]
+  unexpectedNames: NameDeclaration[],
 ) {
   for (const expectedName of expectedNames) {
-    expect(extractedNames).toContainEqual(expectedName)
+    expect(extractedNames).toContainEqual(expectedName);
   }
 
   for (const unexpectedName of unexpectedNames) {
-    expect(extractedNames).not.toContainEqual(unexpectedName)
+    expect(extractedNames).not.toContainEqual(unexpectedName);
   }
 }
 
@@ -29,20 +29,20 @@ type TestCaseWithoutUnexpectedNames = [
   code: string,
   line: number,
   col: number,
-  expectedNames: NameDeclaration[]
-]
+  expectedNames: NameDeclaration[],
+];
 
 /**
  * If there are names that should not be returned that we want to explicitly
  * test for, provide an array of those declarations
  */
-type TestCaseWithUnexpectedNames = [...TestCaseWithoutUnexpectedNames, NameDeclaration[]]
+type TestCaseWithUnexpectedNames = [...TestCaseWithoutUnexpectedNames, NameDeclaration[]];
 
 /**
  * For test cases that require a specific context, provide the chapter number
  */
-type TestCaseWithChapter = [...TestCaseWithUnexpectedNames, Chapter]
-type TestCase = TestCaseWithUnexpectedNames | TestCaseWithoutUnexpectedNames | TestCaseWithChapter
+type TestCaseWithChapter = [...TestCaseWithUnexpectedNames, Chapter];
+type TestCase = TestCaseWithUnexpectedNames | TestCaseWithoutUnexpectedNames | TestCaseWithChapter;
 
 const testCases: TestCase[] = [
   [`Test empty program does not generate names`, `f`, 1, 1, []],
@@ -61,8 +61,8 @@ const testCases: TestCase[] = [
     1,
     [
       { name: 'foo2', meta: DeclarationKind.KIND_FUNCTION, score: 1 },
-      { name: 'foo1', meta: DeclarationKind.KIND_FUNCTION, score: 0 }
-    ]
+      { name: 'foo1', meta: DeclarationKind.KIND_FUNCTION, score: 0 },
+    ],
   ],
   [
     'Test that names in smaller scope are not extracted',
@@ -79,12 +79,12 @@ const testCases: TestCase[] = [
     1,
     [
       { name: 'baz2', meta: DeclarationKind.KIND_FUNCTION, score: 1 },
-      { name: 'baz1', meta: DeclarationKind.KIND_FUNCTION, score: 0 }
+      { name: 'baz1', meta: DeclarationKind.KIND_FUNCTION, score: 0 },
     ],
     [
       { name: 'bar1', meta: DeclarationKind.KIND_LET },
-      { name: 'bar2', meta: DeclarationKind.KIND_LET }
-    ]
+      { name: 'bar2', meta: DeclarationKind.KIND_LET },
+    ],
   ],
   [
     'Test that names in larger scope are extracted',
@@ -109,9 +109,9 @@ const testCases: TestCase[] = [
       { name: 'bar2', meta: DeclarationKind.KIND_CONST, score: 4 },
       { name: 'foo2', meta: DeclarationKind.KIND_FUNCTION, score: 3 },
       { name: 'bar3', meta: DeclarationKind.KIND_LET, score: 2 },
-      { name: 'bar1', meta: DeclarationKind.KIND_LET, score: 0 }
+      { name: 'bar1', meta: DeclarationKind.KIND_LET, score: 0 },
     ],
-    [{ name: 'baz', meta: DeclarationKind.KIND_CONST }]
+    [{ name: 'baz', meta: DeclarationKind.KIND_CONST }],
   ],
   [
     'Test nested global scope',
@@ -130,8 +130,8 @@ const testCases: TestCase[] = [
       { name: 'foo1', meta: DeclarationKind.KIND_FUNCTION, score: 1 },
       { name: 'foo2', meta: DeclarationKind.KIND_FUNCTION, score: 2 },
       { name: 'foo3', meta: DeclarationKind.KIND_FUNCTION, score: 3 },
-      { name: 'bar', meta: DeclarationKind.KIND_LET, score: 0 }
-    ]
+      { name: 'bar', meta: DeclarationKind.KIND_LET, score: 0 },
+    ],
   ],
   // Function declarations
   [
@@ -150,8 +150,8 @@ const testCases: TestCase[] = [
       { name: 'foo1', meta: DeclarationKind.KIND_FUNCTION, score: 1 },
       { name: 'foo2', meta: DeclarationKind.KIND_FUNCTION, score: 3 },
       { name: 'bar2', meta: DeclarationKind.KIND_LET, score: 2 },
-      { name: 'bar1', meta: DeclarationKind.KIND_LET, score: 0 }
-    ]
+      { name: 'bar1', meta: DeclarationKind.KIND_LET, score: 0 },
+    ],
   ],
   [
     'Test accessing parameter names inside function',
@@ -169,9 +169,9 @@ const testCases: TestCase[] = [
       { name: 'foo2', meta: DeclarationKind.KIND_FUNCTION, score: 1 },
       { name: 'foo1', meta: DeclarationKind.KIND_FUNCTION, score: 0 },
       { name: 'bar1', meta: DeclarationKind.KIND_PARAM, score: 2 },
-      { name: 'baz1', meta: DeclarationKind.KIND_PARAM, score: 3 }
+      { name: 'baz1', meta: DeclarationKind.KIND_PARAM, score: 3 },
     ],
-    [{ name: 'baz2', meta: DeclarationKind.KIND_CONST }]
+    [{ name: 'baz2', meta: DeclarationKind.KIND_CONST }],
   ],
   // For loops
   [
@@ -185,8 +185,8 @@ const testCases: TestCase[] = [
     6,
     [
       { name: 'baz', meta: DeclarationKind.KIND_LET, score: 1 },
-      { name: 'bar', meta: DeclarationKind.KIND_LET, score: 0 }
-    ]
+      { name: 'bar', meta: DeclarationKind.KIND_LET, score: 0 },
+    ],
   ],
   [
     'Test accessing for-loop parameter in for-loop body',
@@ -197,7 +197,7 @@ const testCases: TestCase[] = [
     ',
     2,
     3,
-    [{ name: 'foo', meta: DeclarationKind.KIND_LET, score: 0 }]
+    [{ name: 'foo', meta: DeclarationKind.KIND_LET, score: 0 }],
   ],
   [
     'Test that for-loop local variable cannot be accessed outside loop',
@@ -209,7 +209,7 @@ const testCases: TestCase[] = [
     `,
     4,
     1,
-    []
+    [],
   ],
   [
     'Test accessing local block in while-loop parameter',
@@ -222,8 +222,8 @@ const testCases: TestCase[] = [
     6,
     [
       { name: 'baz', meta: DeclarationKind.KIND_LET, score: 1 },
-      { name: 'bar', meta: DeclarationKind.KIND_LET, score: 0 }
-    ]
+      { name: 'bar', meta: DeclarationKind.KIND_LET, score: 0 },
+    ],
   ],
   [
     'Test that while-loop local variable cannot be accessed outside loop',
@@ -235,7 +235,7 @@ const testCases: TestCase[] = [
    `,
     4,
     1,
-    []
+    [],
   ],
   [
     'Test accessing local block in if-else parameter',
@@ -248,8 +248,8 @@ const testCases: TestCase[] = [
     5,
     [
       { name: 'baz', meta: DeclarationKind.KIND_LET, score: 1 },
-      { name: 'bar', meta: DeclarationKind.KIND_LET, score: 0 }
-    ]
+      { name: 'bar', meta: DeclarationKind.KIND_LET, score: 0 },
+    ],
   ],
   [
     'Test that local variable in if-block cannot be accessed in else-block',
@@ -262,7 +262,7 @@ const testCases: TestCase[] = [
     `,
     4,
     1,
-    []
+    [],
   ],
   [
     'Test that variable in if- and else- cannot be accessed outside either block',
@@ -276,7 +276,7 @@ const testCases: TestCase[] = [
     `,
     6,
     1,
-    []
+    [],
   ],
   [
     'Test that variable in if cannot be accessed outside if-statement',
@@ -292,8 +292,8 @@ const testCases: TestCase[] = [
     2,
     [
       { name: 'foo', meta: DeclarationKind.KIND_FUNCTION, score: 0 },
-      { name: 'baz', meta: DeclarationKind.KIND_PARAM, score: 1 }
-    ]
+      { name: 'baz', meta: DeclarationKind.KIND_PARAM, score: 1 },
+    ],
   ],
   // Blocks
   [
@@ -306,7 +306,7 @@ const testCases: TestCase[] = [
     `,
     4,
     1,
-    []
+    [],
   ],
   [
     'Test that declaration outside blocks can be accessed inside block',
@@ -321,8 +321,8 @@ const testCases: TestCase[] = [
     2,
     [
       { name: 'baz', meta: DeclarationKind.KIND_LET, score: 1 },
-      { name: 'bar', meta: DeclarationKind.KIND_LET, score: 0 }
-    ]
+      { name: 'bar', meta: DeclarationKind.KIND_LET, score: 0 },
+    ],
   ],
   // Anonymous functions
   [
@@ -339,8 +339,8 @@ const testCases: TestCase[] = [
     [
       { name: 'bar', meta: DeclarationKind.KIND_LET, score: 1 },
       { name: 'foo', meta: DeclarationKind.KIND_LET, score: 0 },
-      { name: 'baz', meta: DeclarationKind.KIND_LET, score: 2 }
-    ]
+      { name: 'baz', meta: DeclarationKind.KIND_LET, score: 2 },
+    ],
   ],
   [
     'Test that declaration inside anonymous functions can be accessed in body',
@@ -356,8 +356,8 @@ const testCases: TestCase[] = [
       { name: 'foo', meta: DeclarationKind.KIND_LET, score: 0 },
       { name: 'bar1', meta: DeclarationKind.KIND_PARAM, score: 1 },
       { name: 'bar2', meta: DeclarationKind.KIND_PARAM, score: 2 },
-      { name: 'baz', meta: DeclarationKind.KIND_LET, score: 3 }
-    ]
+      { name: 'baz', meta: DeclarationKind.KIND_LET, score: 3 },
+    ],
   ],
   [
     'Test that declaration inside anonymous functions cannot be accessed outside',
@@ -369,7 +369,7 @@ const testCases: TestCase[] = [
     `,
     4,
     1,
-    [{ name: 'foo', meta: DeclarationKind.KIND_LET, score: 0 }]
+    [{ name: 'foo', meta: DeclarationKind.KIND_LET, score: 0 }],
   ],
   // Return statements
   [
@@ -385,8 +385,8 @@ const testCases: TestCase[] = [
     7,
     [
       { name: 'foo1', meta: DeclarationKind.KIND_FUNCTION, score: 1 },
-      { name: 'bar2', meta: DeclarationKind.KIND_LET, score: 2 }
-    ]
+      { name: 'bar2', meta: DeclarationKind.KIND_LET, score: 2 },
+    ],
   ],
   // Declarations
   [
@@ -397,7 +397,7 @@ const testCases: TestCase[] = [
     `,
     2,
     9,
-    []
+    [],
   ],
   // Builtins
   [
@@ -412,10 +412,10 @@ const testCases: TestCase[] = [
       { name: 'while', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
       { name: 'if', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
       { name: 'else', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
-      { name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: 20000 }
+      { name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
     ],
     [],
-    Chapter.SOURCE_4
+    Chapter.SOURCE_4,
   ],
   [
     'Test that unavailable builtins are not prompted',
@@ -426,10 +426,10 @@ const testCases: TestCase[] = [
       { name: 'function', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
       { name: 'const', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
       { name: 'if', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
-      { name: 'else', meta: DeclarationKind.KIND_KEYWORD, score: 20000 }
+      { name: 'else', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
     ],
     [],
-    Chapter.SOURCE_1
+    Chapter.SOURCE_1,
   ],
   [
     'Test keywords in function',
@@ -445,10 +445,10 @@ const testCases: TestCase[] = [
       { name: 'while', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
       { name: 'if', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
       { name: 'else', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
-      { name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: 20000 }
+      { name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
     ],
     [],
-    Chapter.SOURCE_4
+    Chapter.SOURCE_4,
   ],
   [
     'Test keywords in while loop',
@@ -464,10 +464,10 @@ const testCases: TestCase[] = [
       { name: 'while', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
       { name: 'if', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
       { name: 'else', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
-      { name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: 20000 }
+      { name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
     ],
     [],
-    Chapter.SOURCE_4
+    Chapter.SOURCE_4,
   ],
   [
     'Test keywords in for loop',
@@ -483,10 +483,10 @@ const testCases: TestCase[] = [
       { name: 'while', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
       { name: 'if', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
       { name: 'else', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
-      { name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: 20000 }
+      { name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: 20000 },
     ],
     [],
-    Chapter.SOURCE_4
+    Chapter.SOURCE_4,
   ],
   // Import Declarations
   [
@@ -497,9 +497,9 @@ const testCases: TestCase[] = [
     `,
     2,
     1,
-    [{ name: 'foo', meta: DeclarationKind.KIND_IMPORT, score: 0 }]
-  ]
-]
+    [{ name: 'foo', meta: DeclarationKind.KIND_IMPORT, score: 0 }],
+  ],
+];
 
 test.each(
   testCases.map(tc => {
@@ -507,19 +507,19 @@ test.each(
     // 0 as chapter value if none was provided
     switch (tc.length) {
       case 5:
-        return [...tc, [], 0 as any]
+        return [...tc, [], 0 as any];
       case 6:
-        return [...tc, 0 as any]
+        return [...tc, 0 as any];
       case 7:
-        return tc
+        return tc;
     }
-  })
+  }),
 )('%#. %s', async (_, code, line, col, expectedNames, unexpectedNames, chapter) => {
-  const context = createContext(chapter)
-  const [extractedNames] = await getNames(code, line, col, context)
+  const context = createContext(chapter);
+  const [extractedNames] = await getNames(code, line, col, context);
 
   // Sometimes the declarations come with extra properties that we don't need to
   // compare, so we only pick the ones that we want to compare
-  const sanitized = extractedNames.map(each => pick(each, 'name', 'meta', 'score'))
-  matchExpectedNames(sanitized, expectedNames, unexpectedNames)
-})
+  const sanitized = extractedNames.map(each => pick(each, 'name', 'meta', 'score'));
+  matchExpectedNames(sanitized, expectedNames, unexpectedNames);
+});

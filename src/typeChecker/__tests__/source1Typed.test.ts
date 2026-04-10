@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { parseError } from '../..'
-import { Chapter, Variant } from '../../langs'
-import { parse } from '../../parser/parser'
-import { mockContext } from '../../utils/testing/mocks'
+import { beforeEach, describe, expect, it } from 'vitest';
+import { parseError } from '../..';
+import { Chapter, Variant } from '../../langs';
+import { parse } from '../../parser/parser';
+import { mockContext } from '../../utils/testing/mocks';
 
-let context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+let context = mockContext(Chapter.SOURCE_1, Variant.TYPED);
 
 beforeEach(() => {
-  context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-})
+  context = mockContext(Chapter.SOURCE_1, Variant.TYPED);
+});
 
 describe('basic types', () => {
   it('does not throw errors for allowed basic types', () => {
@@ -17,11 +17,11 @@ describe('basic types', () => {
       const x3: boolean = true;
       const x4: undefined = undefined;
       const x5: any = false;
-    `
+    `;
 
-    parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
-  })
+    parse(code, context);
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`);
+  });
 
   it('throws errors for disallowed basic types', () => {
     const code = `const x1: unknown = 1;
@@ -29,39 +29,39 @@ describe('basic types', () => {
       const x3: bigint = 1;
       const x4: object = 1;
       const x5: symbol = 1;
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 1: Type 'unknown' is not allowed.
       Line 2: Type 'never' is not allowed.
       Line 3: Type 'bigint' is not allowed.
       Line 4: Type 'object' is not allowed.
       Line 5: Type 'symbol' is not allowed."
-    `)
-  })
+    `);
+  });
 
   it('throws error for non-callable types', () => {
     const code = `const x1: number = 1;
       x1();
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Type 'number' is not callable."`
-    )
-  })
+      `"Line 2: Type 'number' is not callable."`,
+    );
+  });
 
   it('throws error for null type', () => {
-    const code = 'const x1: null = null;'
+    const code = 'const x1: null = null;';
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 1: Type 'null' is not allowed.
       Line 1: null literals are not allowed."
-    `)
-  })
-})
+    `);
+  });
+});
 
 describe('union types', () => {
   it('handles type mismatches correctly', () => {
@@ -76,13 +76,13 @@ describe('union types', () => {
       const x9: number = x4; // no error
       const x10: number | boolean = x7; // no error
       const x11: number | string | boolean = x8; // no error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 6: Type 'boolean' is not assignable to type 'string | number'."`
-    )
-  })
+      `"Line 6: Type 'boolean' is not assignable to type 'string | number'."`,
+    );
+  });
 
   it('merges duplicate types', () => {
     const code = `const x1: number | string | number = 1;
@@ -94,16 +94,16 @@ describe('union types', () => {
       const x7: boolean = x1; // error message should not show duplicates
       const x8: boolean = x2; // error message should not show duplicates
       const x9: string = x3; // error message should not show duplicates
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 7: Type 'number | string' is not assignable to type 'boolean'.
       Line 8: Type 'string | number' is not assignable to type 'boolean'.
       Line 9: Type 'number' is not assignable to type 'string'."
-    `)
-  })
-})
+    `);
+  });
+});
 
 describe('literal types', () => {
   it('handles type mismatches correctly', () => {
@@ -113,15 +113,15 @@ describe('literal types', () => {
       const x4: '2' = '1'; // error
       const x5: true = true; // no error
       const x6: false = true; // error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type '1' is not assignable to type '2'.
       Line 4: Type '\\"1\\"' is not assignable to type '\\"2\\"'.
       Line 6: Type 'true' is not assignable to type 'false'."
-    `)
-  })
+    `);
+  });
 
   it('matches with correct primitive type', () => {
     const code = `const x1: number = 1;
@@ -130,14 +130,14 @@ describe('literal types', () => {
       const x4: 1 = x1; // no error
       const x5: 1 = x2; // error
       const x6: 1 = x3; // error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 5: Type 'string' is not assignable to type '1'.
       Line 6: Type 'boolean' is not assignable to type '1'."
-    `)
-  })
+    `);
+  });
 
   it('works with union types and merges with primitive types', () => {
     const code = `const x1: number | 1 = '1'; // error should show type as 'number'
@@ -145,18 +145,18 @@ describe('literal types', () => {
       const x3: boolean | false = 1; // error should show type as 'boolean'
       const x4: number | '1' = '2'; // error should show full type
       const x5: string | true | 1 = false; // error should show full type
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 1: Type 'string' is not assignable to type 'number'.
       Line 2: Type 'boolean' is not assignable to type 'string'.
       Line 3: Type 'number' is not assignable to type 'boolean'.
       Line 4: Type '\\"2\\"' is not assignable to type 'number | \\"1\\"'.
       Line 5: Type 'false' is not assignable to type 'string | true | 1'."
-    `)
-  })
-})
+    `);
+  });
+});
 
 describe('function types', () => {
   it('handles type mismatches correctly', () => {
@@ -174,9 +174,9 @@ describe('function types', () => {
       const f12: (a: string, b: string) => string = (a: number, b, c) => b; // error
       const f13: () => number = () => 1; // no error
       const f14: () => number = (a) => a; // error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 7: Type '(any, string) => string' is not assignable to type '(number, number) => number'.
       Line 8: Type '(number, any) => number' is not assignable to type '(string, string) => string'.
@@ -185,21 +185,21 @@ describe('function types', () => {
       Line 11: Type '(string) => string' is not assignable to type '(number, number) => number'.
       Line 12: Type '(number, any, any) => any' is not assignable to type '(string, string) => string'.
       Line 14: Type '(any) => any' is not assignable to type '() => number'."
-    `)
-  })
+    `);
+  });
 
   it('handles type mismatches correctly with union types', () => {
     const code = `const f1: (a: number | string, b: number | string) => number | string // no error
         = (c: string | number, d: string | number): string | number => c + d; 
       const f2: (a: number | string, b: number | string) => number | string // error
         = (a: boolean, b: boolean): number | string => a && b ? 1 : '1';
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 3: Type '(boolean, boolean) => number | string' is not assignable to type '(number | string, number | string) => number | string'."`
-    )
-  })
+      `"Line 3: Type '(boolean, boolean) => number | string' is not assignable to type '(number | string, number | string) => number | string'."`,
+    );
+  });
 
   it('checks argument types correctly', () => {
     const code = `const sum: (a: number, b: number) => number = (a, b) => a + b;
@@ -209,9 +209,9 @@ describe('function types', () => {
       sum('1', false); // 2 errors
       sum(1); // error
       sum(1, '2', 3); // 1 error, typecheck on arguments only done if number of arguments is correct
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 3: Type 'string' is not assignable to type 'number'.
       Line 4: Type 'boolean' is not assignable to type 'number'.
@@ -219,8 +219,8 @@ describe('function types', () => {
       Line 5: Type 'boolean' is not assignable to type 'number'.
       Line 6: Expected 2 arguments, but got 1.
       Line 7: Expected 2 arguments, but got 3."
-    `)
-  })
+    `);
+  });
 
   it('gets types of higher order functions correct', () => {
     const code = `const make_adder: (x: number) => (y: number) => number = x => y => x + y;
@@ -228,16 +228,16 @@ describe('function types', () => {
       const x2 = make_adder('1')(2); // error
       const x3 = make_adder(1)('2'); // error
       const x4: string = make_adder(1)(2); // error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 3: Type 'string' is not assignable to type 'number'.
       Line 4: Type 'string' is not assignable to type 'number'.
       Line 5: Type 'number' is not assignable to type 'string'."
-    `)
-  })
-})
+    `);
+  });
+});
 
 describe('function declarations', () => {
   it('checks argument types correctly', () => {
@@ -250,9 +250,9 @@ describe('function declarations', () => {
       sum('1', false); // 2 errors
       sum(1); // error
       sum(1, '2', 3); // 1 error, typecheck on arguments only done if number of arguments is correct
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 5: Type 'string' is not assignable to type 'number'.
       Line 6: Type 'boolean' is not assignable to type 'number'.
@@ -260,8 +260,8 @@ describe('function declarations', () => {
       Line 7: Type 'boolean' is not assignable to type 'number'.
       Line 8: Expected 2 arguments, but got 1.
       Line 9: Expected 2 arguments, but got 3."
-    `)
-  })
+    `);
+  });
 
   it('checks return type correctly', () => {
     const code = `function f1(n: number): number {
@@ -285,9 +285,9 @@ describe('function declarations', () => {
       const x3: number = f3(1); // error
       const x4: number = f4(1); // error
       const x5: number = f5(1); // no error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 5: Type 'number' is not assignable to type 'string'.
       Line 8: Type 'number' is not assignable to type 'void'.
@@ -295,8 +295,8 @@ describe('function declarations', () => {
       Line 18: Type 'string' is not assignable to type 'number'.
       Line 19: Type 'void' is not assignable to type 'number'.
       Line 20: Type 'void' is not assignable to type 'number'."
-    `)
-  })
+    `);
+  });
 
   it('handles recursive functions correctly', () => {
     const code = `function f1(n: number): number {
@@ -309,16 +309,16 @@ describe('function declarations', () => {
           ? 1
           : n * f2(n - 1); // 3 errors, 1 for multiplication, 1 for subtraction, 1 for function argument
       }
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 7: Type 'number' is not assignable to type 'string'.
       Line 9: Type 'string' is not assignable to type 'number'.
       Line 9: Type 'number' is not assignable to type 'string'.
       Line 9: Type 'string' is not assignable to type 'number'."
-    `)
-  })
+    `);
+  });
 
   it('handles higher order functions', () => {
     const code = `function make_adder(x: number): (y: number) => number {
@@ -331,16 +331,16 @@ describe('function declarations', () => {
       const x2 = make_adder('1')(2); // error
       const x3 = make_adder(1)('2'); // error
       const x4: string = make_adder(1)(2); // error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 8: Type 'string' is not assignable to type 'number'.
       Line 9: Type 'string' is not assignable to type 'number'.
       Line 10: Type 'number' is not assignable to type 'string'."
-    `)
-  })
-})
+    `);
+  });
+});
 
 describe('arrow functions', () => {
   it('checks argument types correctly', () => {
@@ -350,9 +350,9 @@ describe('arrow functions', () => {
       ((a: number, b: number): number => a + b)('1', false); // 2 errors
       ((a: number, b: number): number => a + b)(1); // error
       ((a: number, b: number): number => a + b)(1, '2', 3); // 1 error, typecheck on arguments only done if number of arguments is correct
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type 'string' is not assignable to type 'number'.
       Line 3: Type 'boolean' is not assignable to type 'number'.
@@ -360,8 +360,8 @@ describe('arrow functions', () => {
       Line 4: Type 'boolean' is not assignable to type 'number'.
       Line 5: Expected 2 arguments, but got 1.
       Line 6: Expected 2 arguments, but got 3."
-    `)
-  })
+    `);
+  });
 
   it('checks return type correctly', () => {
     const code = `(n: number): number => n; // no error
@@ -373,15 +373,15 @@ describe('arrow functions', () => {
       (n: number): number => { // error
         n; // do not return
       };
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type 'number' is not assignable to type 'string'.
       Line 3: Type 'number' is not assignable to type 'void'.
       Line 7: A function whose declared type is neither 'void' nor 'any' must return a value."
-    `)
-  })
+    `);
+  });
 
   it('gets return type correct both with and without braces', () => {
     const code = `((a: number, b: number): number => a + b)(1, 2); // no error
@@ -392,213 +392,213 @@ describe('arrow functions', () => {
       ((a: string, b: string): string => { 
         return a + b; // no error
       })('1', '2');
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type 'number' is not assignable to type 'string'.
       Line 4: Type 'string' is not assignable to type 'number'."
-    `)
-  })
+    `);
+  });
 
   it('gets types of higher order functions correct', () => {
     const code = `const x1 = ((x: number): (y: number) => number => y => x + y)(1)(2); // no error
       const x2 = ((x: number): (y: number) => number => y => x + y)('1')(2); // error
       const x3 = ((x: number): (y: number) => number => y => x + y)(1)('2'); // error
       const x4: string = ((x: number): (y: number) => number => y => x + y)(1)(2); // error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type 'string' is not assignable to type 'number'.
       Line 3: Type 'string' is not assignable to type 'number'.
       Line 4: Type 'number' is not assignable to type 'string'."
-    `)
-  })
-})
+    `);
+  });
+});
 
 describe('type aliases', () => {
   it('TSTypeAliasDeclaration nodes should be removed from program at end of typechecking', () => {
     const code = `type StringOrNumber = string | number;
       const x = 1;
-    `
+    `;
 
-    const program = parse(code, context)
-    expect(program).toMatchSnapshot() // Should not contain TSTypeAliasDeclaration node
-  })
+    const program = parse(code, context);
+    expect(program).toMatchSnapshot(); // Should not contain TSTypeAliasDeclaration node
+  });
 
   it('should only be used at top level', () => {
     const code = `type x = string;
       {
         type y = number;
       }
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 3: Type alias declarations may only appear at the top level"`
-    )
-  })
+      `"Line 3: Type alias declarations may only appear at the top level"`,
+    );
+  });
 
   it('should not be used as variables', () => {
     const code = `type x = string | number;
       x;
-    `
+    `;
 
-    parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 2: Name x not declared."`)
-  })
+    parse(code, context);
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 2: Name x not declared."`);
+  });
 
   it('should throw errors for type mismatch', () => {
     const code = `type StringOrNumber = string | number;
       const x: StringOrNumber = true;
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Type 'boolean' is not assignable to type 'StringOrNumber'."`
-    )
-  })
+      `"Line 2: Type 'boolean' is not assignable to type 'StringOrNumber'."`,
+    );
+  });
 
   it('type alias can be referenced before initialization', () => {
     const code = `const x: TestType = true;
       type StringOrNumber = string | number;
       type TestType = StringOrNumber;
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type 'boolean' is not assignable to type 'TestType'."`
-    )
-  })
+      `"Line 1: Type 'boolean' is not assignable to type 'TestType'."`,
+    );
+  });
 
   it('should throw errors for undeclared types', () => {
-    const code = `const x: x = 1;`
+    const code = `const x: x = 1;`;
 
-    parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 1: Type 'x' not declared."`)
-  })
+    parse(code, context);
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 1: Type 'x' not declared."`);
+  });
 
   it('should throw errors for duplicates', () => {
     const code = `type x = string;
       type x = number;
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: SyntaxError: Identifier 'x' has already been declared. (2:11)"`
-    )
-  })
+      `"Line 2: SyntaxError: Identifier 'x' has already been declared. (2:11)"`,
+    );
+  });
 
   it('should coexist with variables of the same name', () => {
     const code = `type x = string | number;
       const x: x = 1;
-    `
+    `;
 
-    parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
-  })
+    parse(code, context);
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`);
+  });
 
   it('type alias name cannot be reserved type', () => {
     const code = `type string = number;
       type number = string;
       type boolean = number;
       type undefined = number;
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 1: Type alias name cannot be 'string'.
       Line 2: Type alias name cannot be 'number'.
       Line 3: Type alias name cannot be 'boolean'.
       Line 4: Type alias name cannot be 'undefined'."
-    `)
-  })
+    `);
+  });
 
   it('should not throw errors for types that are not introduced yet', () => {
     const code = `type Pair = number;
       type List = string;
       type Stream = boolean;
-    `
+    `;
 
-    parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
-  })
-})
+    parse(code, context);
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`);
+  });
+});
 
 describe('generic types', () => {
   it('non-generic types should not have type parameters', () => {
     const code = `type NotGeneric = string;
       const x: NotGeneric<string> = '1';
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Type 'NotGeneric' is not generic."`
-    )
-  })
+      `"Line 2: Type 'NotGeneric' is not generic."`,
+    );
+  });
 
   it('should throw errors for incorrect number of type arguments', () => {
     const code = `type Union<T, U> = T | U;
       const x1: Union<string> = '1';
       const x2: Union<string, number, boolean> = true;
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Generic type 'Union' requires 2 type argument(s).
       Line 3: Generic type 'Union' requires 2 type argument(s)."
-    `)
-  })
+    `);
+  });
 
   it('type parameters cannot be reserved types', () => {
-    const code = `type Union<string, number, boolean, undefined> = string | number | boolean | undefined;`
+    const code = `type Union<string, number, boolean, undefined> = string | number | boolean | undefined;`;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 1: Type parameter name cannot be 'string'.
       Line 1: Type parameter name cannot be 'number'.
       Line 1: Type parameter name cannot be 'boolean'.
       Line 1: Type parameter name cannot be 'undefined'."
-    `)
-  })
+    `);
+  });
 
   it('should throw errors for type mismatch', () => {
     const code = `type Union<T, U> = T | U;
       const x1: Union<string, number> = true;
       const x2: Union<string, boolean> = 1;
       const x3: Union<number, boolean> = '1';
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type 'boolean' is not assignable to type 'Union<string, number>'.
       Line 3: Type 'number' is not assignable to type 'Union<string, boolean>'.
       Line 4: Type 'string' is not assignable to type 'Union<number, boolean>'."
-    `)
-  })
+    `);
+  });
 
   it('generic type aliases can be referenced before initialization', () => {
     const code = `const x: Union<string, number> = true;
       type Union<T, U> = T | U;
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type 'boolean' is not assignable to type 'Union<string, number>'."`
-    )
-  })
-})
+      `"Line 1: Type 'boolean' is not assignable to type 'Union<string, number>'."`,
+    );
+  });
+});
 
 describe('typecasting', () => {
   it('TSAsExpression nodes should be removed from program at end of typechecking', () => {
     const code = `const x1: string | number = 1;
       const x2: string = x1 as string;
-    `
+    `;
 
-    const program = parse(code, context)
-    expect(program).toMatchSnapshot() // Should not contain TSAsExpression node
-  })
+    const program = parse(code, context);
+    expect(program).toMatchSnapshot(); // Should not contain TSAsExpression node
+  });
 
   it('type to cast to must have non-empty intersection with original type', () => {
     const code = `const x1: string | number = 1;
@@ -610,15 +610,15 @@ describe('typecasting', () => {
       const x7: true = x1 as true; // error
       const x8: string | number | boolean = x1 as string | number | boolean; // no error
       const x9: 1 | 2 | '1' = x5 as 1 | 2 | '1'; // no error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 6: Type 'string | number' cannot be casted to type 'boolean' as the two types do not intersect.
       Line 7: Type 'string | number' cannot be casted to type 'true' as the two types do not intersect."
-    `)
-  })
-})
+    `);
+  });
+});
 
 describe('variable declarations', () => {
   it('identifies type mismatch errors for literals correctly', () => {
@@ -626,16 +626,16 @@ describe('variable declarations', () => {
       const x2: string = true;
       const x3: boolean = undefined;
       const x4: undefined = 1;
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 1: Type 'string' is not assignable to type 'number'.
       Line 2: Type 'boolean' is not assignable to type 'string'.
       Line 3: Type 'undefined' is not assignable to type 'boolean'.
       Line 4: Type 'number' is not assignable to type 'undefined'."
-    `)
-  })
+    `);
+  });
 
   it('identifies type mismatch errors for identifiers correctly', () => {
     const code = `const x1: number = 1;
@@ -644,17 +644,17 @@ describe('variable declarations', () => {
       const x4: undefined = x3;
       const x5: number = x4;
       const x6: number = x5;
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type 'number' is not assignable to type 'string'.
       Line 3: Type 'string' is not assignable to type 'boolean'.
       Line 4: Type 'boolean' is not assignable to type 'undefined'.
       Line 5: Type 'undefined' is not assignable to type 'number'."
-    `)
-  })
-})
+    `);
+  });
+});
 
 describe('unary operations', () => {
   it('! is allowed for boolean type, and returns boolean type', () => {
@@ -667,14 +667,14 @@ describe('unary operations', () => {
       const x7: boolean = !x3; // no error
       const x8: boolean = !x4; // no error
       const x9: number = !true; // error as result of ! operation is boolean
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 6: Type 'string' is not assignable to type 'boolean'.
       Line 9: Type 'boolean' is not assignable to type 'number'."
-    `)
-  })
+    `);
+  });
 
   it('- is allowed for number type, and returns number type', () => {
     const code = `const x1: number = 1;
@@ -686,14 +686,14 @@ describe('unary operations', () => {
       const x7: number = -x3; // no error
       const x8: number = -x4; // no error
       const x9: boolean = -1; // error as result of - operation is number
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 6: Type 'string' is not assignable to type 'number'.
       Line 9: Type 'number' is not assignable to type 'boolean'."
-    `)
-  })
+    `);
+  });
 
   it('typeof is allowed for any type, and returns string type', () => {
     const code = `const x1: number = 1;
@@ -705,14 +705,14 @@ describe('unary operations', () => {
       const x7: string = typeof x3; // no error
       const x8: string = typeof x4; // no error
       const x9: boolean = typeof 1; // error as result of typeof operation is string
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 9: Type 'string' is not assignable to type 'boolean'."`
-    )
-  })
-})
+      `"Line 9: Type 'string' is not assignable to type 'boolean'."`,
+    );
+  });
+});
 
 describe('binary operations', () => {
   it('-*/% are allowed for number type, and returns number type', () => {
@@ -728,15 +728,15 @@ describe('binary operations', () => {
       const x10: number = x1 - x5; // no error, number + string | number
       const x11: number = x5 * x3; // no error, string | number + any
       const x12: string = x3 - x4; // error as result of -*/% operation is number
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 7: Type 'string' is not assignable to type 'number'.
       Line 9: Type 'string' is not assignable to type 'number'.
       Line 12: Type 'number' is not assignable to type 'string'."
-    `)
-  })
+    `);
+  });
 
   it('+ is allowed for number or string type, and returns appropriate type', () => {
     const code = `const x1: number = 1;
@@ -758,16 +758,16 @@ describe('binary operations', () => {
       const x17: number = x1 + x6; // no error, number + string | number, return type number
       const x18: string = x6 + x2; // no error, string | number + string, return type string
       const x19: string | number = x5 + x7; // no error, any + string | boolean, return type number | string
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 10: Type 'boolean' is not assignable to type 'number'.
       Line 11: Type 'boolean' is not assignable to type 'string'.
       Line 14: Type 'string' is not assignable to type 'number'.
       Line 16: Type 'number | string' is not assignable to type 'boolean'."
-    `)
-  })
+    `);
+  });
 
   it('inequality operators are allowed for number or string type, and returns boolean type', () => {
     const code = `const x1: number = 1;
@@ -790,17 +790,17 @@ describe('binary operations', () => {
       const x18: boolean = x6 > x2; // no error, string | number + string
       const x19: boolean = x5 >= x7; // no error, any + string | boolean
       const x20: string = 1 === 2; // error as result of operation is boolean
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 10: Type 'boolean' is not assignable to type 'number'.
       Line 11: Type 'boolean' is not assignable to type 'string'.
       Line 14: Type 'string' is not assignable to type 'number'.
       Line 20: Type 'boolean' is not assignable to type 'string'."
-    `)
-  })
-})
+    `);
+  });
+});
 
 describe('logical expressions', () => {
   it('left type must be success type of boolean', () => {
@@ -814,14 +814,14 @@ describe('logical expressions', () => {
       x2 || true; // error
       x3 && true; // no error
       x4 || true; // no error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 7: Type 'string' is not assignable to type 'boolean'.
       Line 8: Type 'string' is not assignable to type 'boolean'."
-    `)
-  })
+    `);
+  });
 
   it('return type is union of boolean and right type', () => {
     const code = `const x1: boolean = true;
@@ -833,16 +833,16 @@ describe('logical expressions', () => {
       const x7: undefined = x1 && x3; // error, return type boolean | number | string
       const x8: boolean = x1 || x4; // no error, return type any
       const x9: string = x1 && x4; // no error, return type any
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 5: Type 'boolean' is not assignable to type 'string'.
       Line 6: Type 'boolean | string' is not assignable to type 'number'.
       Line 7: Type 'boolean | number | string' is not assignable to type 'undefined'."
-    `)
-  })
-})
+    `);
+  });
+});
 
 describe('conditional expressions', () => {
   it('predicate type must be success type of boolean', () => {
@@ -867,14 +867,14 @@ describe('conditional expressions', () => {
       function f6(): number {
         return x1 || x2 ? 1 : 2; // no error
       }
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 8: Type 'string' is not assignable to type 'boolean'.
       Line 14: Type 'string' is not assignable to type 'boolean'."
-    `)
-  })
+    `);
+  });
 
   it('return type is union of cons and alt type', () => {
     const code = `const x: string | number = 1;
@@ -890,14 +890,14 @@ describe('conditional expressions', () => {
       function f4(): number | boolean | string {
         return true ? true : x; // no error
       }
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 6: Type 'boolean | string' is not assignable to type 'number'."`
-    )
-  })
-})
+      `"Line 6: Type 'boolean | string' is not assignable to type 'number'."`,
+    );
+  });
+});
 
 describe('if-else statements', () => {
   it('predicate type must be success type of boolean', () => {
@@ -946,14 +946,14 @@ describe('if-else statements', () => {
           return 2;
         }
       }
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 12: Type 'string' is not assignable to type 'boolean'.
       Line 26: Type 'string' is not assignable to type 'boolean'."
-    `)
-  })
+    `);
+  });
 
   it('return type is checked one by one', () => {
     const code = `const x: string | number = 1;
@@ -985,37 +985,37 @@ describe('if-else statements', () => {
           return x;
         }
       }
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 13: Type 'string' is not assignable to type 'number'."`
-    )
-  })
-})
+      `"Line 13: Type 'string' is not assignable to type 'number'."`,
+    );
+  });
+});
 
 describe('import statements', () => {
   it('identifies imports even if accessed before import statement', () => {
     const code = `show(heart);
       import { show, heart } from 'rune';
-    `
+    `;
 
-    parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
-  })
+    parse(code, context);
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`);
+  });
 
   it('should only be used at top level', () => {
     const code = `import { show } from 'rune';
       {
         import { heart } from 'rune';
       }
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 3: SyntaxError: 'import' and 'export' may only appear at the top level (3:8)"`
-    )
-  })
+      `"Line 3: SyntaxError: 'import' and 'export' may only appear at the top level (3:8)"`,
+    );
+  });
 
   it('defaults to any for all imports', () => {
     const code = `import { show, heart } from 'rune';
@@ -1023,12 +1023,12 @@ describe('import statements', () => {
       heart(show);
       const x1: string = heart;
       const x2: number = show;
-    `
+    `;
 
-    parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
-  })
-})
+    parse(code, context);
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`);
+  });
+});
 
 describe('scoping', () => {
   it('gets types correct even if accessed before initialization', () => {
@@ -1041,15 +1041,15 @@ describe('scoping', () => {
     }
     const y: string = h; // error
     const h: number = 1;
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 1: Type 'string' is not assignable to type 'number'.
       Line 3: Type 'number' is not assignable to type 'string'.
       Line 8: Type 'number' is not assignable to type 'string'."
-    `)
-  })
+    `);
+  });
 
   it('gets types correct for nested constants and functions', () => {
     const code = `function f(n: string): string {
@@ -1066,12 +1066,12 @@ describe('scoping', () => {
       const z: string = x + y; // no error
     }
     const z: number = x + y; // error
-    `
+    `;
 
-    parse(code, context)
+    parse(code, context);
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 11: Type 'string' is not assignable to type 'number'.
       Line 14: Type 'string' is not assignable to type 'number'."
-    `)
-  })
-})
+    `);
+  });
+});

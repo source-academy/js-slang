@@ -1,54 +1,54 @@
-import type es from 'estree'
+import type es from 'estree';
 
-import assert from '../assert'
-import { ArrayMap } from '../dict'
+import assert from '../assert';
+import { ArrayMap } from '../dict';
 import {
   isDeclaration,
   isIdentifier,
   isImportDeclaration,
-  isVariableDeclaration
-} from './typeGuards'
-import { simple } from './walkers'
+  isVariableDeclaration,
+} from './typeGuards';
+import { simple } from './walkers';
 
 export function getModuleDeclarationSource(
-  node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
+  node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>,
 ): string {
   assert(
     typeof node.source?.value === 'string',
-    `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`
-  )
-  return node.source.value
+    `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`,
+  );
+  return node.source.value;
 }
 
 export function extractIdsFromPattern(pattern: es.Pattern) {
-  const identifiers: es.Identifier[] = []
+  const identifiers: es.Identifier[] = [];
 
   simple(pattern, {
     Identifier: (node: es.Identifier) => {
-      identifiers.push(node)
-    }
-  })
+      identifiers.push(node);
+    },
+  });
 
-  return identifiers
+  return identifiers;
 }
 
 export function getIdsFromDeclaration(
   decl: es.Declaration,
-  allowNull: true
-): (es.Identifier | null)[]
-export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: false): es.Identifier[]
+  allowNull: true,
+): (es.Identifier | null)[];
+export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: false): es.Identifier[];
 export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: boolean) {
   const rawIds = isVariableDeclaration(decl)
     ? decl.declarations.flatMap(({ id }) => extractIdsFromPattern(id))
-    : [decl.id]
+    : [decl.id];
 
   if (!allowNull) {
     rawIds.forEach(each => {
-      assert(each !== null, 'Encountered a null identifier!')
-    })
+      assert(each !== null, 'Encountered a null identifier!');
+    });
   }
 
-  return rawIds
+  return rawIds;
 }
 
 /**
@@ -59,74 +59,74 @@ export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: boolean)
 export function getSourceVariableDeclaration(decl: es.VariableDeclaration) {
   assert(
     decl.declarations.length === 1,
-    'Variable Declarations in Source should only have 1 declarator!'
-  )
+    'Variable Declarations in Source should only have 1 declarator!',
+  );
 
-  const [declaration] = decl.declarations
+  const [declaration] = decl.declarations;
   assert(
     isIdentifier(declaration.id),
-    'Variable Declarations in Source should be declared using an Identifier!'
-  )
+    'Variable Declarations in Source should be declared using an Identifier!',
+  );
 
-  assert(!!declaration.init, 'Variable declarations in Source must be initialized!')
+  assert(!!declaration.init, 'Variable declarations in Source must be initialized!');
 
   return {
     id: declaration.id,
     init: declaration.init,
-    loc: declaration.loc
-  }
+    loc: declaration.loc,
+  };
 }
 
 export const getImportedName = (
-  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
+  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier,
 ) => {
   switch (spec.type) {
     case 'ImportDefaultSpecifier':
-      return 'default'
+      return 'default';
     case 'ImportSpecifier':
-      return spec.imported.name
+      return spec.imported.name;
     case 'ExportSpecifier':
-      return spec.local.name
+      return spec.local.name;
   }
-}
+};
 
 export const speciferToString = (
-  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
+  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier,
 ) => {
   switch (spec.type) {
     case 'ImportSpecifier': {
       if (spec.imported.name === spec.local.name) {
-        return spec.imported.name
+        return spec.imported.name;
       }
-      return `${spec.imported.name} as ${spec.local.name}`
+      return `${spec.imported.name} as ${spec.local.name}`;
     }
     case 'ImportDefaultSpecifier':
-      return `default as ${spec.local.name}`
+      return `default as ${spec.local.name}`;
     case 'ExportSpecifier': {
       if (spec.local.name === spec.exported.name) {
-        return spec.local.name
+        return spec.local.name;
       }
-      return `${spec.local.name} as ${spec.exported.name}`
+      return `${spec.local.name} as ${spec.exported.name}`;
     }
   }
-}
+};
 
-type BlockBody = (es.Program | es.BlockStatement)['body'][number]
-type BlocKBodyWithoutDeclarations = Exclude<BlockBody, es.Declaration>
+type BlockBody = (es.Program | es.BlockStatement)['body'][number];
+type BlocKBodyWithoutDeclarations = Exclude<BlockBody, es.Declaration>;
 
 /**
  * Returns true if the array of statements doesn't contain any declarations
  */
 export function hasNoDeclarations(stmt: BlockBody[]): stmt is BlocKBodyWithoutDeclarations[] {
-  return !stmt.some(isDeclaration)
+  return !stmt.some(isDeclaration);
 }
 
-type BlockBodyWithoutImports = Exclude<BlockBody, es.ImportDeclaration>
+type BlockBodyWithoutImports = Exclude<BlockBody, es.ImportDeclaration>;
 /**
  * Returns true if the array of statements doesn't contain any import declarations
  */
 export function hasNoImportDeclarations(stmt: BlockBody[]): stmt is BlockBodyWithoutImports[] {
-  return !stmt.some(isImportDeclaration)
+  return !stmt.some(isImportDeclaration);
 }
 
 /**
@@ -134,16 +134,16 @@ export function hasNoImportDeclarations(stmt: BlockBody[]): stmt is BlockBodyWit
  * the module they import from
  */
 export function filterImportDeclarations({
-  body
+  body,
 }: es.Program): [ArrayMap<string, es.ImportDeclaration>, BlockBodyWithoutImports[]] {
   return body.reduce<[ArrayMap<string, es.ImportDeclaration>, BlockBodyWithoutImports[]]>(
     ([importNodes, otherNodes], node) => {
-      if (!isImportDeclaration(node)) return [importNodes, [...otherNodes, node]]
+      if (!isImportDeclaration(node)) return [importNodes, [...otherNodes, node]];
 
-      const moduleName = getModuleDeclarationSource(node)
-      importNodes.add(moduleName, node)
-      return [importNodes, otherNodes]
+      const moduleName = getModuleDeclarationSource(node);
+      importNodes.add(moduleName, node);
+      return [importNodes, otherNodes];
     },
-    [new ArrayMap(), []]
-  )
+    [new ArrayMap(), []],
+  );
 }

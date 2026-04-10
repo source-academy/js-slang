@@ -1,49 +1,49 @@
-import type es from 'estree'
+import type es from 'estree';
 
-const DUMMY_STRING = '__DUMMY__'
-const DUMMY_UNARY_OPERATOR = '!'
-const DUMMY_LOGICAL_OPERATOR = '||'
-const DUMMY_BINARY_OPERATOR = '+'
+const DUMMY_STRING = '__DUMMY__';
+const DUMMY_UNARY_OPERATOR = '!';
+const DUMMY_LOGICAL_OPERATOR = '||';
+const DUMMY_BINARY_OPERATOR = '+';
 
 export const dummyLocation = (): es.SourceLocation => ({
   start: { line: -1, column: -1 },
-  end: { line: -1, column: -1 }
-})
+  end: { line: -1, column: -1 },
+});
 
 export const dummyIdentifier = (): es.Identifier => ({
   type: 'Identifier',
-  name: DUMMY_STRING
-})
+  name: DUMMY_STRING,
+});
 
 export const dummyLiteral = (): es.Literal => ({
   type: 'Literal',
   value: DUMMY_STRING,
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
-export const dummyExpression = (): es.Expression => dummyLiteral() as es.Expression
+export const dummyExpression = (): es.Expression => dummyLiteral() as es.Expression;
 
 export const dummyCallExpression = (): es.CallExpression => ({
   type: 'CallExpression',
   callee: dummyExpression(),
   arguments: [],
   loc: dummyLocation(),
-  optional: false
-})
+  optional: false,
+});
 
 export const dummyExpressionStatement = (): es.ExpressionStatement => ({
   type: 'ExpressionStatement',
   expression: dummyExpression(),
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
-export const dummyStatement = (): es.Statement => dummyExpressionStatement() as es.Statement
+export const dummyStatement = (): es.Statement => dummyExpressionStatement() as es.Statement;
 
 export const dummyBlockStatement = (): es.BlockStatement => ({
   type: 'BlockStatement',
   body: [],
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
 export const dummyArrowFunctionExpression = (): es.ArrowFunctionExpression => ({
   type: 'ArrowFunctionExpression',
@@ -51,21 +51,21 @@ export const dummyArrowFunctionExpression = (): es.ArrowFunctionExpression => ({
   generator: false,
   params: [],
   body: dummyBlockStatement(),
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
 export const dummyProgram = (): es.Program => ({
   type: 'Program',
   body: [],
   loc: dummyLocation(),
-  sourceType: 'module'
-})
+  sourceType: 'module',
+});
 
 export const dummyReturnStatement = (): es.ReturnStatement => ({
   type: 'ReturnStatement',
   argument: dummyExpression(),
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
 /*
 export const property = (): es.Property => ({
@@ -100,60 +100,60 @@ export const dummyLogicalExpression = (): es.LogicalExpression => ({
   operator: DUMMY_LOGICAL_OPERATOR,
   left: dummyExpression(),
   right: dummyExpression(),
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
 export const dummyConditionalExpression = (): es.ConditionalExpression => ({
   type: 'ConditionalExpression',
   test: dummyExpression(),
   consequent: dummyExpression(),
   alternate: dummyExpression(),
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
 export const dummyArrayExpression = (): es.ArrayExpression => ({
   type: 'ArrayExpression',
-  elements: []
-})
+  elements: [],
+});
 
 export const dummyBinaryExpression = (): es.BinaryExpression => ({
   type: 'BinaryExpression',
   operator: DUMMY_BINARY_OPERATOR,
   left: dummyExpression(),
   right: dummyExpression(),
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
 export const dummyUnaryExpression = (): es.UnaryExpression => ({
   type: 'UnaryExpression',
   operator: DUMMY_UNARY_OPERATOR,
   prefix: true,
   argument: dummyExpression(),
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
 // primitive: undefined is a possible value
-export const dummyPrimitive = (): es.Expression => dummyLiteral()
+export const dummyPrimitive = (): es.Expression => dummyLiteral();
 
 export const dummyFunctionExpression = (): es.FunctionExpression => ({
   type: 'FunctionExpression',
   id: dummyIdentifier(),
   params: [],
   body: dummyBlockStatement(),
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
 export const dummyFunctionDeclaration = (): es.FunctionDeclaration => ({
   type: 'FunctionDeclaration',
   id: dummyIdentifier(),
   params: [],
   body: dummyBlockStatement(),
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
 
 export const dummyVariableDeclarator = (): es.VariableDeclarator => ({
   type: 'VariableDeclarator',
   id: dummyIdentifier(),
   init: dummyExpression(),
-  loc: dummyLocation()
-})
+  loc: dummyLocation(),
+});
