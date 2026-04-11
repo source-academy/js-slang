@@ -35,4 +35,10 @@ describe(stringify, () => {
 
     expect(stringify(a)).toEqual('str1');
   });
+
+  test('toReplString takes precedence over toString for functions', () => {
+    function f() {}
+    f.toReplString = () => 'str1';
+    expect(stringify(f)).toEqual('str1');
+  });
 });
