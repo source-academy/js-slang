@@ -1,25 +1,26 @@
 import type es from 'estree';
 
 import { UNKNOWN_LOCATION } from '../constants';
-import { ErrorSeverity, ErrorType, SourceErrorWithNode } from '../errors/base';
-import { RuntimeSourceError } from '../errors/base';
+import { ErrorSeverity, ErrorType, InternalRuntimeError, SourceErrorWithNode } from '../errors/base';
 import type { Node } from '../types';
 import type { Chapter } from '../langs';
 import { getChapterName } from '../utils/misc';
 import { nonAlphanumericCharEncoding } from './preprocessor/filePaths';
 import type { ModuleDeclarationWithSource } from './moduleTypes';
 
-export class ModuleInternalError extends RuntimeSourceError<ModuleDeclarationWithSource> {
+/**
+ * Error thrown at runtime when loading amodule throws an unhandled error.
+ */
+export class ModuleInternalError extends InternalRuntimeError<ModuleDeclarationWithSource> {
   constructor(
     public readonly moduleName: string,
     node: ModuleDeclarationWithSource,
     public readonly error?: any,
   ) {
-    super(node);
-  }
-
-  public override explain() {
-    return `Error(s) occured when executing the module '${this.moduleName}'.`;
+    super(
+      `Error(s) occured when executing the module '${moduleName}'.`,
+      node
+    );
   }
 
   public override elaborate() {
@@ -32,6 +33,9 @@ abstract class ImportError<T extends Node | undefined> extends SourceErrorWithNo
   severity = ErrorSeverity.ERROR;
 }
 
+/**
+ * Error thrown at Import time when the configured modules server can't be reached.
+ */
 export class ModuleConnectionError extends ImportError<ModuleDeclarationWithSource | undefined> {
   private static message: string = `Unable to get modules.`;
   private static elaboration: string = `You should check your Internet connection, and ensure you have used the correct module path.`;
@@ -45,6 +49,10 @@ export class ModuleConnectionError extends ImportError<ModuleDeclarationWithSour
   }
 }
 
+/**
+ * Error thrown at import time when the requested module can't be found on the configured modules
+ * server. If this error is thrown, it means that the modules server is reachable.
+ */
 export class ModuleNotFoundError extends ImportError<ModuleDeclarationWithSource | undefined> {
   constructor(
     public readonly moduleName: string,
@@ -154,6 +162,10 @@ export class UndefinedDefaultImportError extends UndefinedImportError {
   }
 }
 
+/**
+ * Error thrown when together, the imports by a group of files
+ * causes an import cycle.
+ */
 export class CircularImportError extends ImportError<undefined> {
   constructor(public readonly filePathsInCycle: string[]) {
     super(undefined);

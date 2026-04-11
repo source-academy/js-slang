@@ -1,3 +1,4 @@
+import { GeneralRuntimeError } from '../errors/base';
 import { head, is_null, is_pair, type List, type Pair, pair, tail } from './list'
 import { arity } from './misc'
 
@@ -23,12 +24,12 @@ export function list_to_stream<T>(xs: List<T>): Stream<T> {
 export function stream_tail<T>(stream: NonEmptyStream<T>): Stream<T>
 export function stream_tail(stream: unknown): Stream<unknown> {
   if (!is_pair(stream)) {
-    throw new Error(`${stream_tail.name}(s) expects a non-empty stream!`)
+    throw new GeneralRuntimeError(`${stream_tail.name}(s) expects a non-empty stream!`)
   }
 
   const next = tail(stream)
   if (typeof next !== 'function' || arity(next) !== 0) {
-    throw new Error(`${stream_tail.name}(s) expects a stream!`)
+    throw new GeneralRuntimeError(`${stream_tail.name}(s) expects a stream!`)
   }
 
   return next()

@@ -1,4 +1,5 @@
-import es, { type BaseNode } from 'estree';
+import type es from 'estree';
+import type { Node } from '../types';
 import { UNKNOWN_LOCATION } from '../constants';
 
 export enum ErrorType {
@@ -52,7 +53,7 @@ export abstract class SourceErrorWithNode<T extends es.BaseNode | undefined>
  * Abstract Source Error class for Runtime errors
  */
 export abstract class RuntimeSourceError<
-  T extends BaseNode | undefined,
+  T extends es.BaseNode | undefined,
 > extends SourceErrorWithNode<T> {
   type = ErrorType.RUNTIME;
   severity = ErrorSeverity.ERROR;
@@ -62,10 +63,10 @@ export abstract class RuntimeSourceError<
  * A concrete instantiation of {@link RuntimeSourceError} that can
  * be used when there just aren't any other good Source error classes that can be used
  */
-export class GeneralRuntimeError extends RuntimeSourceError<BaseNode | undefined> {
+export class GeneralRuntimeError extends RuntimeSourceError<es.BaseNode | undefined> {
   constructor(
     private readonly explanation: string,
-    node?: BaseNode,
+    node?: es.BaseNode,
     private readonly elaboration?: string,
   ) {
     super(node);
@@ -84,10 +85,10 @@ export class GeneralRuntimeError extends RuntimeSourceError<BaseNode | undefined
  * A subclass of {@link RuntimeSourceError} intended for use when an unexpected runtime error
  * occurs due to an internal error rather than any error caused by the code being evaluated.
  */
-export class InternalRuntimeError extends RuntimeSourceError<BaseNode | undefined> {
+export class InternalRuntimeError<T extends es.BaseNode = Node> extends RuntimeSourceError<T | undefined> {
   constructor(
     private readonly explanation: string,
-    node?: BaseNode,
+    node?: T,
     private readonly elaboration?: string,
   ) {
     super(node);

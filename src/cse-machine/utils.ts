@@ -485,10 +485,10 @@ export const setVariable = (
   return handleRuntimeError(context, new errors.UndefinedVariableError(name, node));
 };
 
-export const handleRuntimeError = (context: Context, error: RuntimeSourceError<any>) => {
+export function handleRuntimeError(context: Context, error: RuntimeSourceError<any>) {
   context.errors.push(error);
   throw error;
-};
+}
 
 export const checkNumberOfArguments = (
   context: Context,
@@ -660,7 +660,7 @@ type GetNodeKeys<T extends ControlItem> = {
 type KeysOfNodeProperties<T extends ControlItem> = GetNodeKeys<T>[keyof GetNodeKeys<T>];
 
 /**
- * To provide a specifcation on how to calculate whether a ControlItem is env dependent or not:
+ * To provide a specification on how to calculate whether a ControlItem is env dependent or not:
  * - If a boolean is provided, that value is used directly
  * - If a string is provided, it is treated as the name of a property. `isEnvDependent` is then called on the value of that property.
  * - If an array of strings is provided, all values are treated as names of properties and `isEnvDependent` is called on all

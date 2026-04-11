@@ -6,8 +6,9 @@
  */
 
 import { GeneralRuntimeError } from '../errors/base';
+import { InvalidParameterTypeError } from '../errors/runtimeErrors';
 import type { Value } from '../types';
-import { type ArrayLike, stringify } from '../utils/stringify';
+import type { ArrayLike } from '../utils/stringify';
 
 export type Pair<H, T> = [H, T];
 export type List<T = unknown> = null | NonEmptyList<T>;
@@ -15,7 +16,7 @@ export type NonEmptyList<T> = [T, List<T>];
 
 // array test works differently for Rhino and
 // the Firefox environment (especially Web Console)
-export function array_test(x: unknown): x is unknown[] {
+function array_test(x: unknown): x is unknown[] {
   if (Array.isArray === undefined) {
     return x instanceof Array;
   } else {
@@ -48,13 +49,11 @@ export function is_pair(x: unknown): x is Pair<unknown, unknown> {
  */
 export function head<T>(xs: Pair<T, unknown> | NonEmptyList<T>): T;
 export function head(xs: unknown) {
-  if (is_pair(xs)) {
-    return xs[0];
-  } else {
-    throw new GeneralRuntimeError(
-      `${head.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`,
-    );
+  if (!is_pair(xs)) {
+    throw new InvalidParameterTypeError('pair', xs, head.name)
   }
+
+  return xs[0];
 }
 
 /**
@@ -65,13 +64,11 @@ export function head(xs: unknown) {
 export function tail<T>(xs: NonEmptyList<T>): List<T>;
 export function tail<T>(xs: Pair<unknown, T>): T;
 export function tail(xs: unknown) {
-  if (is_pair(xs)) {
-    return xs[1];
-  } else {
-    throw new GeneralRuntimeError(
-      `${tail.name}(xs) expects a pair as argument xs, but encountered ${stringify(xs)}`,
-    );
+  if (!is_pair(xs)) {
+    throw new InvalidParameterTypeError('pair', xs, tail.name);
   }
+
+  return xs[1];
 }
 
 /**
@@ -81,13 +78,11 @@ export function tail(xs: unknown) {
  */
 export function set_head(xs: Pair<any, any>, x: any): void;
 export function set_head(xs: unknown, x: any): void {
-  if (is_pair(xs)) {
-    xs[0] = x;
-  } else {
-    throw new GeneralRuntimeError(
-      `${set_head.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`,
-    );
+  if (!is_pair(xs)) {
+    throw new InvalidParameterTypeError('pair', xs, set_head.name)
   }
+
+  xs[0] = x;
 }
 
 /**
@@ -97,13 +92,11 @@ export function set_head(xs: unknown, x: any): void {
  */
 export function set_tail(xs: Pair<any, any>, x: any): void;
 export function set_tail(xs: unknown, x: any): void {
-  if (is_pair(xs)) {
-    xs[1] = x;
-  } else {
-    throw new GeneralRuntimeError(
-      `${set_tail.name}(xs,x) expects a pair as argument xs, but encountered ${stringify(xs)}`,
-    );
+  if (!is_pair(xs)) {
+    throw new InvalidParameterTypeError('pair', xs, set_tail.name)
   }
+
+  xs[1] = x;
 }
 
 /**
@@ -241,7 +234,7 @@ export function list_ref<T>(xs: List<T>, n: number) {
  */
 export function length(xs: unknown): number {
   if (!is_list(xs)) {
-    throw new GeneralRuntimeError(`${length.name}(xs) expects a list`);
+    throw new InvalidParameterTypeError('list', xs, length.name);
   }
 
   return accumulate((_, total) => total + 1, 0, xs);

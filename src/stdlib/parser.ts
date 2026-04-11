@@ -7,12 +7,23 @@ import type { Context, ContiguousArrayElements, Node, NodeTypeToNode, Value } fr
 import { getSourceVariableDeclaration } from '../utils/ast/helpers';
 import { isDeclaration } from '../utils/ast/typeGuards';
 import { oneLine } from '../utils/formatters';
+import { RuntimeSourceError } from '../errors/base';
 import { vector_to_list, type List } from './list';
 
-class ParseError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'ParseError';
+class ParseError extends RuntimeSourceError<Node | undefined> {
+  constructor(
+    private readonly explanation: string,
+    node?: Node
+  ) {
+    super(node)
+  }
+
+  public override explain(): string {
+    return this.explanation;
+  }
+
+  public override elaborate(): string {
+    return this.explanation;
   }
 }
 
@@ -76,7 +87,7 @@ const transformers: ASTTransformers = {
       return vector_to_list(['object_assignment', transform(node.left), transform(node.right)]);
     } else {
       unreachable();
-      throw new ParseError('Invalid assignment');
+      throw new ParseError('Invalid assignment', node);
     }
   },
   BinaryExpression: node =>
@@ -231,7 +242,7 @@ const transformers: ASTTransformers = {
       return vector_to_list(['constant_declaration', transform(id), transform(init)]);
     } else {
       unreachable();
-      throw new ParseError('Invalid declaration kind');
+      throw new ParseError(`Invalid declaration kind for VariableDeclaration: ${node.kind}`, node);
     }
   },
   WhileStatement: ({ test, body }) =>
@@ -245,7 +256,7 @@ const transformers: ASTTransformers = {
 function transform(node: Node) {
   if (!(node.type in transformers)) {
     unreachable();
-    throw new ParseError('Cannot transform unknown type: ' + node.type);
+    throw new ParseError(`Cannot transform unknown node type: ${node.type}`, node);
   }
 
   const transformer = transformers[node.type] as ParseTransformer<Node>;
