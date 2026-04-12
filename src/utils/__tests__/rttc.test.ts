@@ -14,7 +14,7 @@ const builtin = (x: Value) => x;
 const obj = { a: 1 };
 const arr = [2];
 
-const mockValues: Value[] = [num, bool, str, func, builtin, obj, arr, undefined, null];
+const mockValues: ReadonlyArray<Value> = [num, bool, str, func, builtin, obj, arr, undefined, null];
 
 interface Fixtures {
   context: Context;
@@ -45,13 +45,13 @@ describe(rttc.checkUnaryExpression, () => {
   });
 
   describe('Valid type combinations are okay', () => {
-    test.for(valid)('%#', ([op, value], { node }) => {
+    test.for(valid)('%s, %s', ([op, value], { node }) => {
       expect(() => rttc.checkUnaryExpression(node, op, value)).not.toThrow();
     });
   });
 
   describe('Invalid type combinations throw TypeError', () => {
-    test.for(invalid)('%#', ([op, value], { node }) => {
+    test.for(invalid)('%s, %s', ([op, value], { node }) => {
       try {
         rttc.checkUnaryExpression(node, op, value);
       } catch (error) {
@@ -94,7 +94,7 @@ describe(rttc.checkBinaryExpression, () => {
     });
 
     describe('Valid type combinations are OK', () => {
-      test.for(valid)('%#', ([operator, left, right], { node }) => {
+      test.for(valid)('$1 %s $2', ([operator, left, right], { node }) => {
         expect(() =>
           rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right]),
         ).not.toThrow();
@@ -102,7 +102,7 @@ describe(rttc.checkBinaryExpression, () => {
     });
 
     describe('Invalid type combinations throw TypeError', () => {
-      test.for(invalid)('%#', ([operator, left, right], { node }) => {
+      test.for(invalid)('$1 %s $2', ([operator, left, right], { node }) => {
         try {
           rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right]);
         } catch (error) {
@@ -147,15 +147,15 @@ describe(rttc.checkBinaryExpression, () => {
     });
 
     describe('Valid type combinations are OK', () => {
-      test.for(valid)('%#', ([operator, left, right], { node }) => {
+      test.for(valid)('$1 %s $2', ([operator, left, right], { node }) => {
         expect(() =>
           rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right]),
         ).not.toThrow();
       });
     });
 
-    describe('Invalid type combinations throw TypeError', () => {
-      test.for(invalid)('%#', ([operator, left, right], { node }) => {
+    describe.skipIf(invalid.length === 0)('Invalid type combinations throw TypeError', () => {
+      test.for(invalid)('$1 %s $2', ([operator, left, right], { node }) => {
         try {
           rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right]);
         } catch (error) {
@@ -189,15 +189,15 @@ describe(rttc.checkBinaryExpression, () => {
     });
 
     describe('Valid type combinations are OK', () => {
-      test.for(valid)('%#', ([operator, left, right], { node }) => {
+      test.for(valid)('$1 %s $2', ([operator, left, right], { node }) => {
         expect(() =>
           rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right]),
         ).not.toThrow();
       });
     });
 
-    describe('Invalid type combinations throw TypeError', () => {
-      test.for(invalid)('%#', ([operator, left, right], { node }) => {
+    describe.skipIf(invalid.length === 0)('Invalid type combinations throw TypeError', () => {
+      test.for(invalid)('$1 %s $2', ([operator, left, right], { node }) => {
         try {
           rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right]);
         } catch (error) {
@@ -246,7 +246,7 @@ describe(rttc.checkBinaryExpression, () => {
     });
 
     describe('Valid type combinations are OK', () => {
-      test.for(valid)('%#', ([operator, left, right], { node }) => {
+      test.for(valid)('$1 %s $2', ([operator, left, right], { node }) => {
         expect(() =>
           rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right]),
         ).not.toThrow();
@@ -254,7 +254,7 @@ describe(rttc.checkBinaryExpression, () => {
     });
 
     describe('Invalid type combinations throw TypeError', () => {
-      test.for(invalid)('%#', ([operator, left, right], { node }) => {
+      test.for(invalid)('$1 %s $2', ([operator, left, right], { node }) => {
         try {
           rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, [left, right]);
         } catch (error) {
@@ -276,22 +276,16 @@ describe(rttc.checkBinaryExpression, () => {
 
 describe(rttc.checkIfStatement, () => {
   const valid: Value[] = [bool];
-  const invalid: Value[] = [];
-
-  mockValues.forEach(value => {
-    if (!valid.some(combination => combination === value)) {
-      invalid.push(value);
-    }
-  });
+  const invalid: Value[] = mockValues.filter(each => !valid.includes(each))
 
   describe('Valid type combinations are OK', () => {
-    test.for(valid)('%#', ([value], { node }) => {
+    test.for(valid)('%s', (value, { node }) => {
       expect(() => rttc.checkIfStatement(node, value)).not.toThrow();
     });
   });
 
   describe('Invalid type combinations return TypeError', () => {
-    test.for(invalid)('%#', ([value], { node }) => {
+    test.for(invalid)('%s', (value, { node }) => {
       try {
         rttc.checkIfStatement(node, value);
       } catch (error) {
@@ -333,13 +327,13 @@ describe(rttc.checkMemberAccess, () => {
   invalid.push([arr, 2 ** 32 - 1]);
 
   describe('Valid type combinations are OK', () => {
-    test.for(valid)('%#', ([left, right], { node }) => {
+    test.for(valid)('%s, %s', ([left, right], { node }) => {
       expect(() => rttc.checkMemberAccess(node, [left, right])).not.toThrow();
     });
   });
 
   describe('Invalid type combinations throw TypeError', () => {
-    test.for(invalid)('%#', ([left, right], { node }) => {
+    test.for(invalid)('%s, %s', ([left, right], { node }) => {
       try {
         rttc.checkMemberAccess(node, [left, right]);
       } catch (error) {
@@ -350,6 +344,7 @@ describe(rttc.checkMemberAccess, () => {
           explain: error.explain(),
           elaborate: error.elaborate(),
         }).toMatchSnapshot();
+        return;
       }
       throw new Error('Expected checkMemberAccess to throw error, no error thrown');
     });
@@ -383,7 +378,7 @@ describe(rttc.isFunctionOfLength, () => {
 describe(rttc.assertFunctionOfLength, () => {
   test('throws InvalidCallbackError', () => {
     expect(() => rttc.assertFunctionOfLength(() => 0, 1, 'foo')).toThrow(
-      'foo: Expected function with 0 parameters, got () => 0.',
+      'foo: Expected function with 1 parameter, got () => 0.',
     );
   });
 });

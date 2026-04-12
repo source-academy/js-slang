@@ -40,7 +40,7 @@ export class RuntimeTypeError extends RuntimeSourceError<Node> {
 }
 
 // We need to define our own typeof in order for null/array to display properly in error messages
-const typeOf = (v: Value) => {
+export const typeOf = (v: Value) => {
   if (v === null) {
     return 'null';
   } else if (Array.isArray(v)) {
@@ -56,7 +56,7 @@ const isNumber = (v: Value) => typeof v === 'number';
 const isArrayIndex = (v: Value): v is number => isNumber(v) && v >>> 0 === v && v < 2 ** 32 - 1;
 const isString = (v: Value) => typeof v === 'string';
 const isBool = (v: Value) => typeof v === 'boolean';
-const isObject = (v: Value): v is object => typeOf(v) === 'object';
+export const isObject = (v: Value): v is object => typeOf(v) === 'object';
 const isArray = (v: Value): v is unknown[] => typeOf(v) === 'array';
 
 export function checkUnaryExpression(
@@ -192,14 +192,14 @@ export function checkMemberAccess(
     if (!isString(prop)) {
       throw new RuntimeTypeError(node, ' as prop', 'string', typeOf(prop));
     }
+    return;
   } else if (isArray(obj)) {
-    if (!isArrayIndex(prop)) {
-      if (isNumber(prop)) {
-        throw new RuntimeTypeError(node, ' as prop', 'array index', 'other number');
-      } else {
-        throw new RuntimeTypeError(node, ' as prop', 'array index', typeOf(prop));
-      }
-    }
+    if (isArrayIndex(prop)) return;
+
+    if (isNumber(prop)) {
+      throw new RuntimeTypeError(node, ' as prop', 'array index', 'other number');
+    } 
+    throw new RuntimeTypeError(node, ' as prop', 'array index', typeOf(prop));
   }
 
   throw new RuntimeTypeError(node, '', 'object or array', typeOf(obj));
