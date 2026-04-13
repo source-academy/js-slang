@@ -113,10 +113,10 @@ function transformFunctionDeclarationsToArrowFunctions(
 ) {
   simple(program, {
     FunctionDeclaration(node) {
-      const { id, params, body } = node as es.FunctionDeclaration;
+      const { id, params, body, loc } = node as es.FunctionDeclaration;
       node.type = 'VariableDeclaration';
       node = node as es.VariableDeclaration;
-      const asArrowFunction = create.blockArrowFunction(params as es.Identifier[], body);
+      const asArrowFunction = create.blockArrowFunction(params as es.Identifier[], body, loc);
       functionsToStringMap.set(asArrowFunction, functionsToStringMap.get(node)!);
       node.declarations = [
         {
@@ -147,6 +147,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   program: es.Program,
   functionsToStringMap: Map<Node, string>,
   globalIds: NativeIds,
+  isPrelude: boolean
 ) {
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
@@ -156,8 +157,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
           { ...node },
           create.literal(functionsToStringMap.get(node)!),
           create.literal(node.params[node.params.length - 1]?.type === 'RestElement'),
-
-          globalIds.native,
+          create.literal(isPrelude)
         ]);
       }
     },
@@ -242,6 +242,7 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program, globalId
         create.literal(line),
         create.literal(column),
         create.literal(source),
+        globalIds.native,
         ...args,
       ];
 
@@ -425,6 +426,7 @@ function transpileToSource(
   program: es.Program,
   context: Context,
   skipUndefined: boolean,
+  isPrelude: boolean
 ): TranspiledResult {
   if (program.body.length === 0) {
     return { transpiled: '' };
@@ -447,7 +449,7 @@ function transpileToSource(
   checkForUndefinedVariables(program, context, globalIds, skipUndefined);
   // checkProgramForUndefinedVariables(program, context, skipUndefined)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap);
-  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds);
+  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds, isPrelude);
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers);
 
   const [importNodes, otherNodes] = transformImportDeclarations(
@@ -520,13 +522,14 @@ function transpileToFullJS(
 export function transpile(
   program: es.Program,
   context: Context,
-  skipUndefined = false,
+  isPrelude: boolean,
+  skipUndefined = false
 ): TranspiledResult {
   if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.PYTHON_1) {
     return transpileToFullJS(program, context, true);
   } else if (context.variant == Variant.NATIVE) {
     return transpileToFullJS(program, context, false);
   } else {
-    return transpileToSource(program, context, skipUndefined);
+    return transpileToSource(program, context, skipUndefined, isPrelude);
   }
 }

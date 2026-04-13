@@ -15,7 +15,7 @@ import { transformImportDeclarations, transpile } from '../transpiler';
 test('builtins do get prepended', () => {
   const code = '"ensure_builtins";';
   const context = mockContext(Chapter.SOURCE_4);
-  const { transpiled } = transpile(parse(code, context)!, context);
+  const { transpiled } = transpile(parse(code, context)!, context, false);
   // replace native[<number>] as they may be inconsistent
   const replacedNative = transpiled.replace(/native\[\d+]/g, 'native');
   // replace the line hiding globals as they may differ between environments
@@ -35,7 +35,7 @@ test('Ensure no name clashes', () => {
     const native = 123;
   `;
   const context = mockContext(Chapter.SOURCE_4);
-  const { transpiled } = transpile(parse(code, context)!, context);
+  const { transpiled } = transpile(parse(code, context)!, context, false);
   const replacedNative = transpiled.replace(/native0\[\d+]/g, 'native');
   const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )');
   expect(replacedGlobalsLine).toMatchSnapshot();
