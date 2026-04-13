@@ -4,7 +4,7 @@ import {
   InvalidNumberParameterError,
   InvalidParameterTypeError,
   type InvalidNumberParameterErrorOptions,
-} from '../errors/runtimeErrors';
+} from '../errors/rttcErrors';
 import { RuntimeSourceError } from '../errors/base';
 import { Chapter } from '../langs';
 import type { Node, Value } from '../types';
@@ -32,10 +32,6 @@ export class RuntimeTypeError extends RuntimeSourceError<Node> {
     const displayGot =
       this.got === 'array' ? (this.chapter <= 2 ? 'pair' : 'compound data') : this.got;
     return `Expected ${this.expected}${this.side}, got ${displayGot}.`;
-  }
-
-  public override elaborate() {
-    return this.explain();
   }
 }
 

@@ -16,6 +16,22 @@ const arr = [2];
 
 const mockValues: ReadonlyArray<Value> = [num, bool, str, func, builtin, obj, arr, undefined, null];
 
+describe('rttc Type Guards', () => {
+  describe(rttc.typeOf, () => {
+    baseTest('correctly types arrays', () => {
+      expect(rttc.typeOf(arr)).toEqual('array')
+    })
+
+    baseTest('correctly types null', () => {
+      expect(rttc.typeOf(null)).toEqual('null');
+    })
+
+    baseTest('correctly types objects', () => {
+      expect(rttc.typeOf(obj)).toEqual('object');
+    })
+  });
+});
+
 interface Fixtures {
   context: Context;
   node: Node;
