@@ -39,8 +39,24 @@ export class RuntimeTypeError extends RuntimeSourceError<Node> {
   }
 }
 
-// We need to define our own typeof in order for null/array to display properly in error messages
-export const typeOf = (v: Value) => {
+type TypeOfConstants =
+  'array' | 'boolean' | 'bigint' | 'function' | 'number' | 'null' | 'object' | 'string' | 'undefined';
+
+
+/**
+ * A wrapper around the typeof operator to account for `null` and arrays.
+ */
+export function typeOf(v: boolean): 'boolean'
+export function typeOf(v: bigint): 'bigint'
+export function typeOf(v: number): 'number'
+export function typeOf(v: string): 'string'
+export function typeOf(v: (...args: any[]) => any): 'function'
+export function typeOf(v: null): 'null'
+export function typeOf(v: unknown[]): 'array'
+export function typeOf(v: object): 'object'
+export function typeOf(v: undefined): 'undefined'
+export function typeOf(v: unknown): TypeOfConstants
+export function typeOf(v: unknown) {
   if (v === null) {
     return 'null';
   } else if (Array.isArray(v)) {
@@ -48,16 +64,40 @@ export const typeOf = (v: Value) => {
   } else {
     return typeof v;
   }
-};
+}
 
-const isNumber = (v: Value) => typeof v === 'number';
-// See section 4 of https://2ality.com/2012/12/arrays.html
-// v >>> 0 === v checks that v is a valid unsigned 32-bit int
-const isArrayIndex = (v: Value): v is number => isNumber(v) && v >>> 0 === v && v < 2 ** 32 - 1;
-const isString = (v: Value) => typeof v === 'string';
-const isBool = (v: Value) => typeof v === 'boolean';
-export const isObject = (v: Value): v is object => typeOf(v) === 'object';
-const isArray = (v: Value): v is unknown[] => typeOf(v) === 'array';
+/**
+ * Returns `true` if the provided value is a `number`.
+ */
+export function isNumber(v: unknown): v is number {
+  return typeOf(v) === 'number';
+}
+
+/**
+ * Returns `true` is the provided value is a `number` and also a valid
+ * index for an array.\
+ * See section 4 of https://2ality.com/2012/12/arrays.html
+ */
+export function isArrayIndex(v: unknown): v is number {
+  // v >>> 0 === v checks that v is a valid unsigned 32-bit int
+  return isNumber(v) && v >>> 0 === v && v < 2 ** 32 - 1;
+}
+
+export function isArray(v: unknown): v is unknown[] {
+  return typeOf(v) === 'array';
+}
+
+export function isString(v: unknown): v is string {
+  return typeOf(v) === 'string';
+}
+
+export function isBool(v: unknown): v is boolean {
+  return v === true || v === false;
+}
+
+export function isObject(v: Value): v is object {
+  return typeOf(v) === 'object';
+}
 
 export function checkUnaryExpression(
   node: Node,

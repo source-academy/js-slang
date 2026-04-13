@@ -6,8 +6,9 @@
  */
 
 import { GeneralRuntimeError } from '../errors/base';
-import { InvalidParameterTypeError } from '../errors/runtimeErrors';
+import { InvalidParameterTypeError } from '../errors/rttcErrors';
 import type { Value } from '../types';
+import { assertFunctionOfLength, assertNumberWithinRange } from '../utils/rttc';
 import type { ArrayLike } from '../utils/stringify';
 
 export type Pair<H, T> = [H, T];
@@ -179,11 +180,29 @@ export function append<T>(xs: List<T>, ys: List<T>): List<T> {
 }
 
 /**
- * Calls the provided function on each element of the provided list, and returns
- * a new list containing the results
+ * Takes a unary function `f` and a non-negative integer `n`. Returns the list
+ * of `n` elements that results from applying `f` to the numbers from 0 to `n-1`.
  */
-export function map<T, U>(op: (each: T) => U, sequence: List<T>): List<U> {
-  return accumulate((each, result) => pair(op(each), result), list(), sequence);
+export function build_list<T>(f: (arg: number) => T, n: number): List<T> {
+  assertNumberWithinRange(n, build_list.name, 0);
+  assertFunctionOfLength(f, 1, build_list.name);
+
+  function $build_list(i: number, already_built: List<T>): List<T> {
+    return i < 0 ? already_built : $build_list(i - 1, pair(f(i), already_built));
+  }
+
+  return $build_list(n - 1, null);
+}
+
+/**
+ * Takes two numbers, `start` and `end` and returns the list containing numbers between `start` and `end`,
+ * beginning with `start` and then incrementing by 1 until the value exceeds `end`.
+ */
+export function enum_list(start: number, end: number): List<number> {
+  assertNumberWithinRange(start, { func_name: enum_list.name, param_name: 'start', integer: false });
+  assertNumberWithinRange(end, enum_list.name, start, undefined, false, 'end');
+
+  return build_list(x => x + start, Math.floor(end - start) + 1);
 }
 
 /**
@@ -206,11 +225,22 @@ export function for_each<T>(op: (arg: T) => void, xs: List<T>): true {
 }
 
 /**
+ * returns the length of a List xs. Throws an exception if xs is not a List
+ */
+export function length(xs: unknown): number {
+  if (!is_list(xs)) {
+    throw new InvalidParameterTypeError('list', xs, length.name);
+  }
+
+  return accumulate((_, total) => total + 1, 0, xs);
+}
+
+/**
  * Returns the element at the `n`th index in the provided list
  */
 export function list_ref<T>(xs: List<T>, n: number) {
   if (is_null(xs)) {
-    throw new GeneralRuntimeError(`${list_ref.name}(xs, n): Index ${n} is out of bounds.`);
+    throw new GeneralRuntimeError(`${list_ref.name}: Index ${n} is out of bounds.`);
   }
 
   let res: NonEmptyList<T> = xs;
@@ -219,7 +249,7 @@ export function list_ref<T>(xs: List<T>, n: number) {
     const temp = tail(res);
 
     if (is_null(temp)) {
-      throw new GeneralRuntimeError(`${list_ref.name}(xs, n): Index ${n} is out of bounds.`);
+      throw new GeneralRuntimeError(`${list_ref.name}: Index ${n} is out of bounds.`);
     }
 
     res = temp;
@@ -230,14 +260,55 @@ export function list_ref<T>(xs: List<T>, n: number) {
 }
 
 /**
- * returns the length of a List xs. Throws an exception if xs is not a List
+ * Calls the provided function on each element of the provided list, and returns
+ * a new list containing the results
  */
-export function length(xs: unknown): number {
-  if (!is_list(xs)) {
-    throw new InvalidParameterTypeError('list', xs, length.name);
+export function map<T, U>(op: (each: T) => U, sequence: List<T>): List<U> {
+  return accumulate((each, result) => pair(op(each), result), list(), sequence);
+}
+
+/**
+ * Returns the first postfix sublist that starts with the given element `v`. If
+ * the element is not in `xs`, returns an empty list.
+ */
+export function member<T>(v: T, xs: List<T>): List<T> {
+  return is_null(xs)
+         ? null
+	 : v === head(xs)
+	 ? xs
+	 : member(v, tail(xs));
+}
+
+/**
+ * Removes the first instance of `v` in the given List `xs`.
+ */
+export function remove<T>(v: T, xs: List<T>): List<T> {
+  if (is_null(xs)) return xs;
+
+  const current = head(xs);
+  if (current === v) return tail(xs);
+
+  return pair(head(xs), remove(v, tail(xs)));
+}
+
+/**
+ * Removes all instances of `v` from the given list `xs`.
+ */
+export function remove_all<T>(v: T, xs: List<T>): List<T> {
+  return filter(x => x !== v, xs);
+}
+
+/**
+ * Reverses the given list `xs`.
+ */
+export function reverse<T>(xs: List<T>): List<T> {
+  function $reverse(original: List<T>, reversed: List<T>): List<T> {
+    return is_null(original)
+      ? reversed
+      : $reverse(tail(original), pair(head(original), reversed));
   }
 
-  return accumulate((_, total) => total + 1, 0, xs);
+  return $reverse(xs, null);
 }
 
 export function rawDisplayList(
