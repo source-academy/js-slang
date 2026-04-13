@@ -13,7 +13,6 @@ export default defineConfig({
       exclude: [
         "dist",
         '**/__mocks__/**',
-        "src/alt-langs/scheme/scm-slang",
         "src/typings",
       ],
       reporter: ['text', 'html', 'lcov']
