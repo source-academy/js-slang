@@ -31,6 +31,12 @@ describe(list.accumulate, () => {
         Chapter.SOURCE_2,
       ).toEqual('4321');
     });
+
+    it('throws when given not a list', () => {
+      return expectParsedError(`accumulate((x, y) => x + y, null, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+        '[prelude] Line 232: tail: Expected pair, got [1, 2, 3].'
+      );
+    })
   });
 });
 
@@ -65,8 +71,157 @@ describe(list.append, () => {
         Chapter.SOURCE_2,
       ).toEqual(true);
     });
+
+    it('throws an error when given not a list', () => {
+      return expectParsedError(`append([1, 2, 3], list(1, 2, 3));`, Chapter.SOURCE_3).toEqual(
+        '[prelude] Line 121: tail: Expected pair, got [1, 2, 3].'
+      );
+    })
   });
 });
+
+describe(list.build_list, () => {
+  describe('javascript', () => {
+    it('works', () => {
+      expect(list.build_list(x => x + 1, 3)).toEqual([
+        1, [2, [3, null]]
+      ])
+    })
+
+    it('gives empty list when n = 0', () => {
+      expect(list.build_list(x => x, 0)).toBeNull();
+    })
+
+    it('throws error when not given a unary function', () => {
+      expect(() => list.build_list(0 as any, 1)).toThrow(
+        'build_list: Expected function with 1 parameter, got 0.'
+      )
+    })
+
+    it('throws error when given a negative integer', () => {
+      expect(() => list.build_list(x => x, -1)).toThrow(
+        'build_list: Expected integer greater than 0, got -1.'
+      )
+    })
+
+    it('throws error when given a float', () => {
+      expect(() => list.build_list(x => x, 0.5)).toThrow(
+        'build_list: Expected integer greater than 0, got 0.5.'
+      )
+    })
+  })
+
+  describe('source', () => {
+    it('works', () => {
+      return expectFinishedResult(
+        stripIndent`
+        equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));
+      `,
+        Chapter.SOURCE_2,
+      ).toEqual(true);
+    });
+
+    // skipped as implementation does not check types, causing infinite recursion.
+    test.todo('build_list with negative integer', () => {
+      return expectParsedError(`build_list(x => x, -1);`, Chapter.SOURCE_2).toEqual(
+        'Line 1: Error: build_list expects a positive integer as argument n, but encountered -1',
+      );
+    });
+
+    // skipped as implementation does not check types, causing infinite recursion.
+    test.todo('build_list with float', () => {
+      return expectParsedError(`build_list(x => x, 1.5); `, Chapter.SOURCE_2).toEqual(
+        'Line 1: build_list: Expected an integer greater than 0 for n, got 1.5.',
+      );
+    });
+
+    test('build_list with string', () => {
+      return expectParsedError(`build_list(x => x, '1'); `, Chapter.SOURCE_2).toEqual(
+        '[prelude] Line 63: Expected number on left hand side of operation, got string.',
+      );
+    });
+  })
+})
+
+describe(list.enum_list, () => {
+  describe('javascript', () => {
+    it('works', () => {
+      expect(list.enum_list(5, 7)).toEqual([
+        5, [6, [7, null]]
+      ])
+    })
+
+    it('works when start = end', () => {
+      expect(list.enum_list(3, 3)).toEqual([3, null])
+    })
+
+    it('works with floats', () => {
+      expect(list.enum_list(1.5, 5)).toEqual(
+        [1.5, [2.5, [3.5, [4.5, null]]]]
+      )
+    })
+
+    it('works with negative numbers', () => {
+      expect(list.enum_list(-1, 1)).toEqual(
+        [-1, [0, [1, null]]]
+      )
+    })
+
+    it('throws an error when end < start', () => {
+      expect(() => list.enum_list(1, -1)).toThrow(
+        'enum_list: Expected number greater than 1 for end, got -1.'
+      )
+    })
+
+    it('throws an error when start is not a number', () => {
+      expect(() => list.enum_list('0' as any, 10)).toThrow(
+        'enum_list: Expected number for start, got "0".'
+      )
+    })
+
+    it('throws an error when end is not a number', () => {
+      expect(() => list.enum_list(0, '0' as any)).toThrow(
+        'enum_list: Expected number greater than 0 for end, got "0".'
+      )
+    })
+  })
+
+  describe('source', () => {
+    test('enum_list', () => {
+      return expectFinishedResult(
+        stripIndent`
+        equal(enum_list(1, 5), list(1, 2, 3, 4, 5));
+      `,
+        Chapter.SOURCE_2,
+      ).toEqual(true);
+    });
+
+    test('enum_list with floats', () => {
+      return expectFinishedResult(
+        `equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));`,
+        Chapter.SOURCE_2,
+      ).toEqual(true);
+    });
+    
+    test('bad number error enum_list', () => {
+      return expectParsedError(`enum_list('1', '5'); `, Chapter.SOURCE_2).toEqual(
+        '[prelude] Line 203: Expected string on right hand side of operation, got number.',
+      );
+    });
+
+    test('enum_list called with string and number', () => {
+      return expectParsedError(`enum_list('1', 5); `, Chapter.SOURCE_2).toEqual(
+        '[prelude] Line 201: Expected string on right hand side of operation, got number.',
+      );
+    });
+
+    test('enum_list called with number and string', () => {
+      return expectParsedError(`enum_list(1, '5'); `, Chapter.SOURCE_2).toEqual(
+        '[prelude] Line 201: Expected number on right hand side of operation, got string.',
+      );
+    });
+  })
+})
 
 describe(list.filter, () => {
   describe('javascript', () => {
@@ -89,6 +244,12 @@ describe(list.filter, () => {
         Chapter.SOURCE_2,
       ).toEqual(true);
     });
+
+    it('throws an error when given not a list', () => {
+      return expectParsedError(`filter(x => true, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+        '[prelude] Line 185: head: Expected pair, got [1, 2, 3].'
+      );
+    })
   });
 });
 
@@ -106,6 +267,12 @@ describe(list.for_each, () => {
         Chapter.SOURCE_3,
       ).toEqual(6);
     });
+
+    it('throws an error when given not a list', () => {
+      return expectParsedError(`for_each(x=>x, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+        '[prelude] Line 76: head: Expected pair, got [1, 2, 3].'
+      );
+    })
   });
 
   describe('javascript', () => {
@@ -134,19 +301,16 @@ describe(list.head, () => {
   describe('javascript', () => {
     it('throws an error when argument is not a pair', () => {
       expect(() => list.head(0 as any)).toThrowError(
-        'head(xs) expects a pair as argument xs, but encountered 0',
+        'head: Expected pair, got 0.',
       );
     });
   });
 
   describe('source', () => {
     test('non-list error head (in Source)', () => {
-      return expectParsedError(
-        stripIndent`
-      head([1, 2, 3]);
-    `,
+      return expectParsedError('head([1, 2, 3]);',
         Chapter.SOURCE_3,
-      ).toEqual('Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]');
+      ).toEqual('Line 1: head: Expected pair, got [1, 2, 3].');
     });
 
     it('works', () => {
@@ -189,6 +353,12 @@ describe(list.length, () => {
         `,
         Chapter.SOURCE_2,
       ).toEqual(0);
+    });
+
+    it('throws an error when given not a list', () => {
+      return expectParsedError(`length([1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+        '[prelude] Line 33: tail: Expected pair, got [1, 2, 3].'
+      );
     });
   });
 
@@ -263,21 +433,45 @@ describe(list.list_ref, () => {
 
     it('throws error when given empty list', () => {
       expect(() => list.list_ref(null, 0)).toThrowError(
-        'list_ref(xs, n): Index 0 is out of bounds',
+        'list_ref: Index 0 is out of bounds',
       );
     });
 
     test('throwing out of bounds for populated list', () => {
       expect(() => list.list_ref(list.list(1, 2), 2)).toThrowError(
-        'list_ref(xs, n): Index 2 is out of bounds',
+        'list_ref: Index 2 is out of bounds',
       );
     });
   });
 
   describe('source', () => {
-    test('list_ref', () => {
+    it('works', () => {
       return expectFinishedResult(`list_ref(list(1, 2, 3, "4", 4), 4);`, Chapter.SOURCE_2).toEqual(
         4,
+      );
+    });
+
+    test('list_ref out of bounds', () => {
+      return expectParsedError(`list_ref(list(1, 2, 3), 3); `, Chapter.SOURCE_2).toEqual(
+        '[prelude] Line 216: head: Expected pair, got null.'
+      );
+    });
+
+    test('list_ref with negative index', () => {
+      return expectParsedError(`list_ref(list(1, 2, 3), -1); `, Chapter.SOURCE_2).toEqual(
+        '[prelude] Line 217: tail: Expected pair, got null.'
+      );
+    });
+
+    test('list_ref with float index', () => {
+      return expectParsedError(`list_ref(list(1, 2, 3), 1.5); `, Chapter.SOURCE_2).toEqual(
+        '[prelude] Line 217: tail: Expected pair, got null.'
+      );
+    });
+
+    test('list_ref with string index', () => {
+      return expectParsedError(`list_ref(list(1, 2, 3), '1'); `, Chapter.SOURCE_2).toEqual(
+        '[prelude] Line 215: Expected string on right hand side of operation, got number.',
       );
     });
   });
@@ -296,12 +490,16 @@ describe(list.map, () => {
   describe('source', () => {
     it('works', () => {
       return expectFinishedResult(
-        stripIndent`
-        equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));
-      `,
+        `equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));`,
         Chapter.SOURCE_2,
       ).toEqual(true);
     });
+
+    it('throws an error when not given a list', () => {
+      return expectParsedError(`map(x=>x, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+        '[prelude] Line 47: tail: Expected pair, got [1, 2, 3].',
+      );
+    })
   });
 
   describe('javascript', () => {
@@ -315,6 +513,43 @@ describe(list.map, () => {
     });
   });
 });
+
+describe(list.member, () => {
+  describe('javascript', () => {
+    it('works', () => {
+      const xs = list.list(1, 2, 3, 4, 123, 456, 789);
+      expect(list.member(4, xs)).toEqual([
+        4, [123, [456, [789, null]]]
+      ])
+    })
+
+    it('works when element is not found', () => {
+      const xs = list.list(1, 2, 3, 4, 123, 456, 789);
+      expect(list.member(525600, xs)).toBeNull();
+    })
+  })
+
+  describe('source', () => {
+    test('member', () => {
+      return expectFinishedResult(
+        stripIndent`
+        equal(
+          member(4, list(1, 2, 3, 4, 123, 456, 789)),
+          list(4, 123, 456, 789)
+        );
+        `,
+        Chapter.SOURCE_2,
+      ).toEqual(true);
+
+    });
+
+    test('non-list error member', () => {
+      return expectParsedError(`member(1, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+        '[prelude] Line 136: head: Expected pair, got [1, 2, 3].',
+      );
+    });
+  })
+})
 
 describe(list.pair, () => {
   describe('source', () => {
@@ -339,11 +574,126 @@ describe(list.pair, () => {
   });
 });
 
+describe(list.remove, () => {
+  describe('javascript', () => {
+    it('works', () => {
+      const xs = list.list(1,2,3);
+      expect(list.remove(1, xs)).toEqual([2, [3, null]])
+      expect(list.remove(2, xs)).toEqual([1, [3, null]])
+      expect(list.remove(3, xs)).toEqual([1, [2, null]])
+    })
+
+    it('only removes the first instance', () => {
+      const xs = list.list(1, 1, 1);
+      expect(list.remove(1, xs)).toEqual([1, [1, null]]);
+    })
+
+    it('works when the element is not found', () => {
+      const xs = list.list(1, 2, 3);
+      expect(list.remove(4, xs)).toEqual([1, [2, [3, null]]]);
+    })
+  })
+
+  describe('source', () => {
+    test('remove', () => {
+      return expectFinishedResult(`remove(1, list(1));`, Chapter.SOURCE_2).toBeNull();
+    });
+
+    test('remove not found', async () => {
+      const {
+        result: { value },
+      } = await testSuccess(`remove(2, list(1));`, Chapter.SOURCE_2);
+      expect(value).toMatchInlineSnapshot(`
+        Array [
+          1,
+          null,
+        ]
+      `);
+    });
+
+    test('non-list error remove', () => {
+      return expectParsedError(`remove(1, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
+        '[prelude] Line 151: head: Expected pair, got [1, 2, 3].',
+      );
+    });
+  })
+})
+
+describe(list.remove_all, () => {
+  describe('javascript', () => {
+    it('works', () => {
+      const xs = list.list(1, 1, 2, 3, 1, 1);
+      expect(list.remove_all(1, xs)).toEqual([2, [3, null]]);
+    })
+
+    it('returns the original when element is not found', () => {
+      const xs = list.list(1, 1, 2, 3, 1, 1);
+      expect(list.remove_all(5, xs)).toEqual([
+        1, [1, [2, [3, [1, [1, null]]]]]
+      ])
+    })
+  })
+
+  describe('source', () => {
+    test('remove_all', () => {
+      return expectFinishedResult(
+        `equal(remove_all(1, list(1, 2, 3, 4, 1, 1, 1, 5, 1, 1, 6)), list(2, 3, 4, 5, 6));`,
+        Chapter.SOURCE_2,
+      ).toEqual(true);
+    });
+
+    test('remove_all not found', () => {
+      return expectFinishedResult(
+        stripIndent`
+        equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));
+      `,
+        Chapter.SOURCE_2,
+      ).toEqual(true);
+    });
+
+    test('non-list error remove_all', () => {
+      return expectParsedError(`remove_all(1, [1, 2, 3]); `, Chapter.SOURCE_3).toEqual(
+        '[prelude] Line 169: head: Expected pair, got [1, 2, 3].',
+      );
+    });
+  })
+})
+
+describe(list.reverse, () => {
+  describe('javascript', () => {
+    it('works', () => {
+      const xs = list.list(1, 2, 3);
+      expect(list.reverse(xs)).toEqual([
+        3, [2, [1, null]]
+      ])
+    })
+
+    it('works with empty list', () => {
+      expect(list.reverse(null)).toBeNull();
+    })
+  })
+
+  describe('source', () => {
+    test('reverse', () => {
+      return expectFinishedResult(
+        `equal(reverse(list("string", "null", "undefined", "null", 123)), list(123, "null", "undefined", "null", "string")); `,
+        Chapter.SOURCE_2,
+      ).toEqual(true);
+    });
+
+    test('non-list error reverse', () => {
+      return expectParsedError(`reverse([1, 2, 3]); `, Chapter.SOURCE_3).toEqual(
+        '[prelude] Line 106: tail: Expected pair, got [1, 2, 3].',
+      );
+    });
+  })
+})
+
 describe(list.set_head, () => {
   describe('javascript', () => {
     it('throws when the argument is not a pair', () => {
-      expect(() => list.set_head(0 as any, 0)).toThrowError(
-        'set_head(xs,x) expects a pair as argument xs, but encountered 0',
+      expect(() => list.set_head(0 as any, 0)).toThrow(
+        'set_head: Expected pair, got 0.',
       );
     });
   });
@@ -360,33 +710,47 @@ describe(list.set_head, () => {
         Chapter.SOURCE_3,
       ).toEqual(true);
     });
+
+    it('throws an error when given not a pair', () => {
+      return expectParsedError(`set_head([1, 2, 3], 4);`, Chapter.SOURCE_3).toEqual(
+        'Line 1: set_head: Expected pair, got [1, 2, 3].',
+      );
+    })
   });
 });
 
 describe(list.set_tail, () => {
-  it('throws when the argument is not a pair', () => {
-    expect(() => list.set_tail(0 as any, 0)).toThrowError(
-      'set_tail(xs,x) expects a pair as argument xs, but encountered 0',
-    );
-  });
+  describe('javascript', () => {
+    it('throws when the argument is not a pair', () => {
+      expect(() => list.set_tail(0 as any, 0)).toThrow('set_tail: Expected pair, got 0.');
+    });
+  })
 
-  it('works', () => {
-    return expectFinishedResult(
-      stripIndent`
-      let p = pair(1, 2);
-      const q = p;
-      set_tail(p, 3);
-      p === q && equal(p, pair(1, 3));
-    `,
-      Chapter.SOURCE_3,
-    ).toEqual(true);
-  });
+  describe('source', () => {
+    it('works', () => {
+      return expectFinishedResult(
+        stripIndent`
+        let p = pair(1, 2);
+        const q = p;
+        set_tail(p, 3);
+        p === q && equal(p, pair(1, 3));
+      `,
+        Chapter.SOURCE_3,
+      ).toEqual(true);
+    });
+
+    it('throws an error when given not a pair', () => {
+      return expectParsedError(`set_tail([1, 2, 3], 4);`, Chapter.SOURCE_3).toEqual(
+        'Line 1: set_tail: Expected pair, got [1, 2, 3].'
+      );
+    });
+  })
 });
 
 describe(list.tail, () => {
   it('throws an error when argument is not a pair (in Javascript)', () => {
-    expect(() => list.tail(0 as any)).toThrowError(
-      'tail(xs) expects a pair as argument xs, but encountered 0',
+    expect(() => list.tail(0 as any)).toThrow(
+      'tail: Expected pair, got 0.',
     );
   });
 
@@ -406,7 +770,7 @@ describe(list.tail, () => {
     tail([1, 2, 3]);
   `,
       Chapter.SOURCE_3,
-    ).toEqual('Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]');
+    ).toEqual('Line 1: tail: Expected pair, got [1, 2, 3].');
   });
 });
 
@@ -431,82 +795,6 @@ test('equal', () => {
   );
 });
 
-test('build_list', () => {
-  return expectFinishedResult(
-    stripIndent`
-    equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));
-  `,
-    Chapter.SOURCE_2,
-  ).toEqual(true);
-});
-
-test('reverse', () => {
-  return expectFinishedResult(
-    `equal(reverse(list("string", "null", "undefined", "null", 123)), list(123, "null", "undefined", "null", "string")); `,
-    Chapter.SOURCE_2,
-  ).toEqual(true);
-});
-
-test('member', () => {
-  return expectFinishedResult(
-    stripIndent`
-    equal(
-      member(4, list(1, 2, 3, 4, 123, 456, 789)),
-      list(4, 123, 456, 789)
-    );
-    `,
-    Chapter.SOURCE_2,
-  ).toEqual(true);
-});
-
-test('remove', () => {
-  return expectFinishedResult(`remove(1, list(1));`, Chapter.SOURCE_2).toBeNull();
-});
-
-test('remove not found', async () => {
-  const {
-    result: { value },
-  } = await testSuccess(`remove(2, list(1));`, Chapter.SOURCE_2);
-  expect(value).toMatchInlineSnapshot(`
-    Array [
-      1,
-      null,
-    ]
-  `);
-});
-
-test('remove_all', () => {
-  return expectFinishedResult(
-    `equal(remove_all(1, list(1, 2, 3, 4, 1, 1, 1, 5, 1, 1, 6)), list(2, 3, 4, 5, 6));`,
-    Chapter.SOURCE_2,
-  ).toEqual(true);
-});
-
-test('remove_all not found', () => {
-  return expectFinishedResult(
-    stripIndent`
-    equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));
-  `,
-    Chapter.SOURCE_2,
-  ).toEqual(true);
-});
-
-test('enum_list', () => {
-  return expectFinishedResult(
-    stripIndent`
-    equal(enum_list(1, 5), list(1, 2, 3, 4, 5));
-  `,
-    Chapter.SOURCE_2,
-  ).toEqual(true);
-});
-
-test('enum_list with floats', () => {
-  return expectFinishedResult(
-    `equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));`,
-    Chapter.SOURCE_2,
-  ).toEqual(true);
-});
-
 test('list_to_string', () => {
   return expectFinishedResult(`list_to_string(list(1, 2, 3));`, Chapter.SOURCE_2).toEqual(
     '[1,[2,[3,null]]]',
@@ -528,150 +816,10 @@ test.todo('assoc not found', () => {
   ).toEqual(true);
 });
 
-describe('These tests are reporting weird line numbers, as list functions are now implemented in Source.', () => {
-  test('non-list error length', () => {
-    return expectParsedError(`length([1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-      'Line 33: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]',
+test.todo('non-list error assoc', () => {
+  return expectParsedError(`assoc(1, [1, 2, 3]);`, Chapter.LIBRARY_PARSER).toEqual(
+    'Line 1: Name assoc not declared.',
     );
-  });
-
-  test('non-list error map', () => {
-    return expectParsedError(`map(x=>x, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-      'Line 47: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]',
-    );
-  });
-
-  test('non-list error for_each', () => {
-    return expectParsedError(`for_each(x=>x, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-      'Line 76: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]',
-    );
-  });
-
-  test('non-list error reverse', () => {
-    return expectParsedError(`reverse([1, 2, 3]); `, Chapter.SOURCE_3).toEqual(
-      'Line 106: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]',
-    );
-  });
-
-  test('non-list error append', () => {
-    return expectParsedError(`append([1, 2, 3], list(1, 2, 3));`, Chapter.SOURCE_3).toEqual(
-      'Line 121: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]',
-    );
-  });
-
-  test('non-list error member', () => {
-    return expectParsedError(`member(1, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-      'Line 136: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]',
-    );
-  });
-
-  test('non-list error remove', () => {
-    return expectParsedError(`remove(1, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-      'Line 151: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]',
-    );
-  });
-
-  test('non-list error remove_all', () => {
-    return expectParsedError(`remove_all(1, [1, 2, 3]); `, Chapter.SOURCE_3).toEqual(
-      'Line 169: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]',
-    );
-  });
-
-  test.todo('non-list error assoc', () => {
-    return expectParsedError(`assoc(1, [1, 2, 3]);`, Chapter.LIBRARY_PARSER).toEqual(
-      'Line 1: Name assoc not declared.',
-    );
-  });
-
-  test('non-list error filter', () => {
-    return expectParsedError(`filter(x => true, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-      'Line 185: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]',
-    );
-  });
-
-  test('non-list error accumulate', () => {
-    return expectParsedError(`accumulate((x, y) => x + y, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-      'Line 1: Expected 3 arguments, but got 2.',
-    );
-  });
-
-  test('non-list error set_head', () => {
-    return expectParsedError(`set_head([1, 2, 3], 4);`, Chapter.SOURCE_3).toEqual(
-      'Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]',
-    );
-  });
-
-  test('non-list error set_tail', () => {
-    return expectParsedError(`set_tail([1, 2, 3], 4);`, Chapter.SOURCE_3).toEqual(
-      'Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]',
-    );
-  });
-
-  // skipped as implementation does not check types, causing infinite recursion.
-  test.todo('build_list with negative integer', () => {
-    return expectParsedError(`build_list(x => x, -1);`, Chapter.SOURCE_2).toEqual(
-      'Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1',
-    );
-  });
-
-  // skipped as implementation does not check types, causing infinite recursion.
-  test.todo('build_list with float', () => {
-    return expectParsedError(`build_list(x => x, 1.5); `, Chapter.SOURCE_2).toEqual(
-      'Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered 1.5',
-    );
-  });
-
-  test('build_list with string', () => {
-    return expectParsedError(`build_list(x => x, '1'); `, Chapter.SOURCE_2).toEqual(
-      'Line 63: Expected number on left hand side of operation, got string.',
-    );
-  });
-
-  describe('enum_list', () => {
-    test('bad number error enum_list', () => {
-      return expectParsedError(`enum_list('1', '5'); `, Chapter.SOURCE_2).toEqual(
-        'Line 203: Expected string on right hand side of operation, got number.',
-      );
-    });
-
-    test('enum_list called with string and number', () => {
-      return expectParsedError(`enum_list('1', 5); `, Chapter.SOURCE_2).toEqual(
-        'Line 201: Expected string on right hand side of operation, got number.',
-      );
-    });
-
-    test('enum_list called with number and string', () => {
-      return expectParsedError(`enum_list(1, '5'); `, Chapter.SOURCE_2).toEqual(
-        'Line 201: Expected number on right hand side of operation, got string.',
-      );
-    });
-  });
-
-  describe('list_ref', () => {
-    test('list_ref out of bounds', () => {
-      return expectParsedError(`list_ref(list(1, 2, 3), 3); `, Chapter.SOURCE_2).toEqual(
-        'Line 216: Error: head(xs) expects a pair as argument xs, but encountered null',
-      );
-    });
-
-    test('list_ref with negative index', () => {
-      return expectParsedError(`list_ref(list(1, 2, 3), -1); `, Chapter.SOURCE_2).toEqual(
-        'Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null',
-      );
-    });
-
-    test('list_ref with float index', () => {
-      return expectParsedError(`list_ref(list(1, 2, 3), 1.5); `, Chapter.SOURCE_2).toEqual(
-        'Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null',
-      );
-    });
-
-    test('list_ref with string index', () => {
-      return expectParsedError(`list_ref(list(1, 2, 3), '1'); `, Chapter.SOURCE_2).toEqual(
-        'Line 215: Expected string on right hand side of operation, got number.',
-      );
-    });
-  });
 });
 
 describe('display_list', () => {
@@ -802,7 +950,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       Chapter.SOURCE_2,
-    ).toEqual('Line 1: TypeError: display_list expects the second argument to be a string');
+    ).toEqual('Line 1: display_list: Expected string for second argument, got true.');
   });
 
   /**************
