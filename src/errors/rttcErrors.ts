@@ -1,9 +1,9 @@
 import type { BaseNode } from 'estree';
 import { stringify } from '../utils/stringify';
-import { GeneralRuntimeError } from './base';
+import { RuntimeSourceError } from './base';
 
 /**
- * A specific {@link GeneralRuntimeError} that is thrown when a function receives a parameter of the wrong type.
+ * A specific {@link RuntimeSourceError} that is thrown when a function receives a parameter of the wrong type.
  *
  * @example
  * ```
@@ -14,7 +14,7 @@ import { GeneralRuntimeError } from './base';
  * }
  * ```
  */
-export class InvalidParameterTypeError extends GeneralRuntimeError {
+export class InvalidParameterTypeError extends RuntimeSourceError<BaseNode | undefined> {
   constructor(
     /**
      * String representation of the expected type. Examples include "number", "string", or "Point".
@@ -37,17 +37,14 @@ export class InvalidParameterTypeError extends GeneralRuntimeError {
     public readonly param_name?: string,
     node?: BaseNode,
   ) {
-    const paramString = param_name ? ` for ${param_name}` : '';
-    const explanation = `${func_name}: Expected ${expectedType}${paramString}, got ${stringify(actualValue)}.`;
-    super(explanation, node);
+    super(node);
   }
 
-  public override get message() {
-    return this.explain();
-  }
+  public override explain(): string {
+    const paramString = this.param_name ? ` for ${this.param_name}` : '';
+    const explanation = `${this.func_name}: Expected ${this.expectedType}${paramString}, got ${stringify(this.actualValue)}.`;
 
-  public override toString() {
-    return this.explain();
+    return explanation;
   }
 }
 
