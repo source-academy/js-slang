@@ -6,11 +6,6 @@ export enum Chapter {
   FULL_JS = -1,
   HTML = -2,
   FULL_TS = -3,
-  PYTHON_1 = -4,
-  PYTHON_2 = -5,
-  PYTHON_3 = -6,
-  PYTHON_4 = -7,
-  FULL_PYTHON = -8,
   FULL_C = -14,
   FULL_JAVA = -15,
   LIBRARY_PARSER = 100,
@@ -58,12 +53,6 @@ export const { languages: sourceLanguages, typeguard: isSourceLanguage } = defin
 
 export type SourceLanguages = (typeof sourceLanguages)[number];
 
-export const { languages: pyLanguages, typeguard: isPythonLanguage } = defineLanguages([
-  { chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT },
-]);
-
-export type PythonLanguages = (typeof pyLanguages)[number];
-
 export function isSupportedLanguageCombo(lang: Language) {
-  return isSourceLanguage(lang) || isPythonLanguage(lang);
+  return isSourceLanguage(lang);
 }
