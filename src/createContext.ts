@@ -395,7 +395,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
       ),
     );
   }
-};
+}
 
 function importPrelude(context: Context) {
   let prelude = '';
