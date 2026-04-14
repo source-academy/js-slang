@@ -7,6 +7,7 @@ import { TimeoutError } from '../errors/timeoutErrors';
 import { getSteps } from '../tracer/steppers';
 import { sandboxedEval } from '../transpiler/evalContainer';
 import { transpile } from '../transpiler/transpiler';
+import { SourceErrorWithNode } from '../errors/base';
 import { toSourceError } from './errors';
 import fullJSRunner from './fullJSRunner';
 import type { Runner } from './types';
@@ -38,10 +39,11 @@ const runners = {
       }
     }
 
-    let transpiled: string;
     let sourceMapJson: RawSourceMap | undefined;
     try {
-      ({ transpiled, sourceMapJson } = transpile(program, context));
+      let transpiled: string;
+      ({ transpiled, sourceMapJson } = transpile(program, context, options.isPrelude));
+      
       let value = sandboxedEval(transpiled, context.nativeStorage);
 
       if (!options.isPrelude) {
@@ -64,12 +66,15 @@ const runners = {
         }
       }
 
-      if (error instanceof TimeoutError) {
+      if (error instanceof SourceErrorWithNode) {
+        if (error instanceof TimeoutError) {
+          isPreviousCodeTimeoutError = true;
+        }
+
         context.errors.push(error);
-        isPreviousCodeTimeoutError = true;
         return { status: 'error', context };
       }
-
+      
       const sourceError = await toSourceError(error, sourceMapJson);
       context.errors.push(sourceError);
       return { status: 'error', context };

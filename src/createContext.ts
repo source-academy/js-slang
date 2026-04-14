@@ -4,6 +4,7 @@ import { GLOBAL, JSSLANG_PROPERTIES } from './constants';
 import { call_with_current_continuation } from './cse-machine/continuations';
 import Heap from './cse-machine/heap';
 import { GeneralRuntimeError } from './errors/base';
+import { InvalidParameterTypeError } from './errors/rttcErrors';
 import { Chapter, Variant, type LanguageOptions } from './langs';
 import { createEmptyModuleContexts } from './modules/utils';
 import * as list from './stdlib/list';
@@ -193,25 +194,13 @@ export function defineSymbol(context: Context, name: string, value: Value) {
   }
 }
 
-export function defineBuiltin(
-  context: Context,
-  name: string, // enforce minArgsNeeded
-  value: Value,
-  minArgsNeeded: number,
-): void;
-export function defineBuiltin(
-  context: Context,
-  name: string,
-  value: Value,
-  minArgsNeeded?: number,
-): void;
 // Defines a builtin in the given context
 // If the builtin is a function, wrap it such that its toString hides the implementation
 export function defineBuiltin(
   context: Context,
   name: string,
   value: Value,
-  minArgsNeeded: undefined | number = undefined,
+  minArgsNeeded?: number,
 ) {
   function extractName(name: string): string {
     return name.split('(')[0].trim();
@@ -232,13 +221,20 @@ export function defineBuiltin(
   if (typeof value === 'function') {
     const funName = extractName(name);
     const funParameters = extractParameters(name);
-    const repr = `function ${name} {\n\t[implementation hidden]\n}`;
-    value.toString = () => repr;
-    value.minArgsNeeded = minArgsNeeded;
+
+    const wrapped = operators.wrap(
+      value,
+      `function ${name} {\n\t[implementation hidden]\n}`,
+      minArgsNeeded,
+      false
+    )
+
+    // value.toString = () => repr;
+    // value.minArgsNeeded = minArgsNeeded;
     value.funName = funName;
     value.funParameters = funParameters;
 
-    defineSymbol(context, funName, value);
+    defineSymbol(context, funName, wrapped);
   } else {
     defineSymbol(context, name, value);
   }
@@ -262,16 +258,16 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
 
   const display = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
-      throw new TypeError('display expects the second argument to be a string');
+      throw new InvalidParameterTypeError('string', s[0], display.name, 'second argument')
     }
 
     rawDisplay(stringify(v), s[0]);
     return v;
   };
 
-  const displayList = (v: Value, ...s: string[]) => {
+  const display_list = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
-      throw new TypeError('display_list expects the second argument to be a string');
+      throw new InvalidParameterTypeError('string', s[0], display_list.name, 'second argument')
     }
     return list.rawDisplayList(display, v, s[0]);
   };
@@ -291,7 +287,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     (externalBuiltIns.alert ?? defaultBuiltIns.alert)(v, '', context.externalContext);
     context.nativeStorage.maxExecTime += Date.now() - start;
   };
-  const visualiseList = (...v: Value) => {
+  const visualiseList = (...v: Value[]) => {
     (externalBuiltIns.visualiseList ?? defaultBuiltIns.visualiseList)(v, context.externalContext);
     return v[0];
   };
@@ -345,7 +341,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     defineBuiltin(context, 'is_null(val)', list.is_null);
     defineBuiltin(context, 'list(...values)', list.list, 0);
     defineBuiltin(context, 'draw_data(...xs)', visualiseList, 1);
-    defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList, 0);
+    defineBuiltin(context, 'display_list(val, prepend = undefined)', display_list, 0);
     defineBuiltin(context, 'is_list(val)', list.is_list);
   }
 
@@ -364,7 +360,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
       parser.parse(str, createContext(context.chapter)),
     );
     defineBuiltin(context, 'tokenize(program_string)', (str: string) =>
-      parser.tokenize(str, createContext(context.chapter)),
+      parser.tokenize(str, createContext(context.chapter), true)
     );
     defineBuiltin(
       context,

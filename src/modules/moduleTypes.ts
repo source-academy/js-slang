@@ -55,7 +55,7 @@ export const unknownDocs: UnknownDocumentation = { kind: 'unknown' };
 
 export type ModuleDocsEntry = FunctionDocumentation | VariableDocumentation | UnknownDocumentation;
 
-export type ModuleDocumentation = {
+export interface ModuleDocumentation {
   [name: string]: ModuleDocsEntry;
 };
 
