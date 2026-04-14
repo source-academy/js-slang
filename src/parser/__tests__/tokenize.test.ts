@@ -94,6 +94,6 @@ Array [
 
 test('tokenize prints suitable error when tokenization fails', () => {
   return expectParsedError('display_list(tokenize("\\""));', Chapter.SOURCE_4).toEqual(
-    'Line 1: SyntaxError: Unterminated string constant (1:0)',
+    'Line 1: tokenize: Unterminated string constant (1:0)',
   );
 });
