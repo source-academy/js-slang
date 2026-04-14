@@ -122,8 +122,8 @@ function getFunctionDetails(f: Function): FunctionDetails {
 
   return {
     minArgsNeeded: f.length, // no way to check if the function hasVarArgs
-    isPrelude: false
-  }
+    isPrelude: false,
+  };
 }
 
 /**
@@ -161,7 +161,7 @@ export function callIfFuncAndRightArgs(
     const expectedLength = f.length;
     const receivedLength = args.length;
     const { minArgsNeeded, isPrelude: isPreludeFunc } = getFunctionDetails(f);
-    
+
     if (isPreludeFunc) {
       // Once we call into a prelude function, everything that follows
       // is in prelude code
@@ -185,7 +185,7 @@ export function callIfFuncAndRightArgs(
     let res;
     try {
       res = f(...args);
-      
+
       if (nativeStorage && Date.now() - startTime > nativeStorage.maxExecTime) {
         throw new PotentialInfiniteRecursionError(dummy, pastCalls, nativeStorage.maxExecTime);
       }
@@ -202,9 +202,9 @@ export function callIfFuncAndRightArgs(
               start: { line, column },
               end: { line, column },
               source: 'prelude',
-            }
+            };
           } else {
-            error.node.loc.source = 'prelude'
+            error.node.loc.source = 'prelude';
           }
         }
         throw error;
@@ -235,7 +235,7 @@ export function wrap(
   f: (...args: any[]) => any,
   stringified: string,
   hasVarArgs: boolean | undefined | number,
-  isPrelude: boolean
+  isPrelude: boolean,
 ) {
   let minArgsNeeded: number | undefined;
   if (hasVarArgs === true) {
@@ -246,7 +246,7 @@ export function wrap(
 
   (f as any)[funcDetSymbol] = {
     minArgsNeeded,
-    isPrelude
+    isPrelude,
   };
 
   // @ts-expect-error toReplString is not a known property of functions

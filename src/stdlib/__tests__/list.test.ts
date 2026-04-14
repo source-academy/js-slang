@@ -33,10 +33,11 @@ describe(list.accumulate, () => {
     });
 
     it('throws when given not a list', () => {
-      return expectParsedError(`accumulate((x, y) => x + y, null, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-        '[prelude] Line 232: tail: Expected pair, got [1, 2, 3].'
-      );
-    })
+      return expectParsedError(
+        `accumulate((x, y) => x + y, null, [1, 2, 3]);`,
+        Chapter.SOURCE_3,
+      ).toEqual('[prelude] Line 232: tail: Expected pair, got [1, 2, 3].');
+    });
   });
 });
 
@@ -74,42 +75,40 @@ describe(list.append, () => {
 
     it('throws an error when given not a list', () => {
       return expectParsedError(`append([1, 2, 3], list(1, 2, 3));`, Chapter.SOURCE_3).toEqual(
-        '[prelude] Line 121: tail: Expected pair, got [1, 2, 3].'
+        '[prelude] Line 121: tail: Expected pair, got [1, 2, 3].',
       );
-    })
+    });
   });
 });
 
 describe(list.build_list, () => {
   describe('javascript', () => {
     it('works', () => {
-      expect(list.build_list(x => x + 1, 3)).toEqual([
-        1, [2, [3, null]]
-      ])
-    })
+      expect(list.build_list(x => x + 1, 3)).toEqual([1, [2, [3, null]]]);
+    });
 
     it('gives empty list when n = 0', () => {
       expect(list.build_list(x => x, 0)).toBeNull();
-    })
+    });
 
     it('throws error when not given a unary function', () => {
       expect(() => list.build_list(0 as any, 1)).toThrow(
-        'build_list: Expected function with 1 parameter, got 0.'
-      )
-    })
+        'build_list: Expected function with 1 parameter, got 0.',
+      );
+    });
 
     it('throws error when given a negative integer', () => {
       expect(() => list.build_list(x => x, -1)).toThrow(
-        'build_list: Expected integer greater than 0, got -1.'
-      )
-    })
+        'build_list: Expected integer greater than 0, got -1.',
+      );
+    });
 
     it('throws error when given a float', () => {
       expect(() => list.build_list(x => x, 0.5)).toThrow(
-        'build_list: Expected integer greater than 0, got 0.5.'
-      )
-    })
-  })
+        'build_list: Expected integer greater than 0, got 0.5.',
+      );
+    });
+  });
 
   describe('source', () => {
     it('works', () => {
@@ -140,51 +139,45 @@ describe(list.build_list, () => {
         '[prelude] Line 63: Expected number on left hand side of operation, got string.',
       );
     });
-  })
-})
+  });
+});
 
 describe(list.enum_list, () => {
   describe('javascript', () => {
     it('works', () => {
-      expect(list.enum_list(5, 7)).toEqual([
-        5, [6, [7, null]]
-      ])
-    })
+      expect(list.enum_list(5, 7)).toEqual([5, [6, [7, null]]]);
+    });
 
     it('works when start = end', () => {
-      expect(list.enum_list(3, 3)).toEqual([3, null])
-    })
+      expect(list.enum_list(3, 3)).toEqual([3, null]);
+    });
 
     it('works with floats', () => {
-      expect(list.enum_list(1.5, 5)).toEqual(
-        [1.5, [2.5, [3.5, [4.5, null]]]]
-      )
-    })
+      expect(list.enum_list(1.5, 5)).toEqual([1.5, [2.5, [3.5, [4.5, null]]]]);
+    });
 
     it('works with negative numbers', () => {
-      expect(list.enum_list(-1, 1)).toEqual(
-        [-1, [0, [1, null]]]
-      )
-    })
+      expect(list.enum_list(-1, 1)).toEqual([-1, [0, [1, null]]]);
+    });
 
     it('throws an error when end < start', () => {
       expect(() => list.enum_list(1, -1)).toThrow(
-        'enum_list: Expected number greater than 1 for end, got -1.'
-      )
-    })
+        'enum_list: Expected number greater than 1 for end, got -1.',
+      );
+    });
 
     it('throws an error when start is not a number', () => {
       expect(() => list.enum_list('0' as any, 10)).toThrow(
-        'enum_list: Expected number for start, got "0".'
-      )
-    })
+        'enum_list: Expected number for start, got "0".',
+      );
+    });
 
     it('throws an error when end is not a number', () => {
       expect(() => list.enum_list(0, '0' as any)).toThrow(
-        'enum_list: Expected number greater than 0 for end, got "0".'
-      )
-    })
-  })
+        'enum_list: Expected number greater than 0 for end, got "0".',
+      );
+    });
+  });
 
   describe('source', () => {
     test('enum_list', () => {
@@ -202,7 +195,7 @@ describe(list.enum_list, () => {
         Chapter.SOURCE_2,
       ).toEqual(true);
     });
-    
+
     test('bad number error enum_list', () => {
       return expectParsedError(`enum_list('1', '5'); `, Chapter.SOURCE_2).toEqual(
         '[prelude] Line 203: Expected string on right hand side of operation, got number.',
@@ -220,8 +213,8 @@ describe(list.enum_list, () => {
         '[prelude] Line 201: Expected number on right hand side of operation, got string.',
       );
     });
-  })
-})
+  });
+});
 
 describe(list.filter, () => {
   describe('javascript', () => {
@@ -247,9 +240,9 @@ describe(list.filter, () => {
 
     it('throws an error when given not a list', () => {
       return expectParsedError(`filter(x => true, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-        '[prelude] Line 185: head: Expected pair, got [1, 2, 3].'
+        '[prelude] Line 185: head: Expected pair, got [1, 2, 3].',
       );
-    })
+    });
   });
 });
 
@@ -270,9 +263,9 @@ describe(list.for_each, () => {
 
     it('throws an error when given not a list', () => {
       return expectParsedError(`for_each(x=>x, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-        '[prelude] Line 76: head: Expected pair, got [1, 2, 3].'
+        '[prelude] Line 76: head: Expected pair, got [1, 2, 3].',
       );
-    })
+    });
   });
 
   describe('javascript', () => {
@@ -300,17 +293,15 @@ describe(list.for_each, () => {
 describe(list.head, () => {
   describe('javascript', () => {
     it('throws an error when argument is not a pair', () => {
-      expect(() => list.head(0 as any)).toThrowError(
-        'head: Expected pair, got 0.',
-      );
+      expect(() => list.head(0 as any)).toThrowError('head: Expected pair, got 0.');
     });
   });
 
   describe('source', () => {
     test('non-list error head (in Source)', () => {
-      return expectParsedError('head([1, 2, 3]);',
-        Chapter.SOURCE_3,
-      ).toEqual('Line 1: head: Expected pair, got [1, 2, 3].');
+      return expectParsedError('head([1, 2, 3]);', Chapter.SOURCE_3).toEqual(
+        'Line 1: head: Expected pair, got [1, 2, 3].',
+      );
     });
 
     it('works', () => {
@@ -357,7 +348,7 @@ describe(list.length, () => {
 
     it('throws an error when given not a list', () => {
       return expectParsedError(`length([1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
-        '[prelude] Line 33: tail: Expected pair, got [1, 2, 3].'
+        '[prelude] Line 33: tail: Expected pair, got [1, 2, 3].',
       );
     });
   });
@@ -432,9 +423,7 @@ describe(list.list_ref, () => {
     });
 
     it('throws error when given empty list', () => {
-      expect(() => list.list_ref(null, 0)).toThrowError(
-        'list_ref: Index 0 is out of bounds',
-      );
+      expect(() => list.list_ref(null, 0)).toThrowError('list_ref: Index 0 is out of bounds');
     });
 
     test('throwing out of bounds for populated list', () => {
@@ -453,19 +442,19 @@ describe(list.list_ref, () => {
 
     test('list_ref out of bounds', () => {
       return expectParsedError(`list_ref(list(1, 2, 3), 3); `, Chapter.SOURCE_2).toEqual(
-        '[prelude] Line 216: head: Expected pair, got null.'
+        '[prelude] Line 216: head: Expected pair, got null.',
       );
     });
 
     test('list_ref with negative index', () => {
       return expectParsedError(`list_ref(list(1, 2, 3), -1); `, Chapter.SOURCE_2).toEqual(
-        '[prelude] Line 217: tail: Expected pair, got null.'
+        '[prelude] Line 217: tail: Expected pair, got null.',
       );
     });
 
     test('list_ref with float index', () => {
       return expectParsedError(`list_ref(list(1, 2, 3), 1.5); `, Chapter.SOURCE_2).toEqual(
-        '[prelude] Line 217: tail: Expected pair, got null.'
+        '[prelude] Line 217: tail: Expected pair, got null.',
       );
     });
 
@@ -499,7 +488,7 @@ describe(list.map, () => {
       return expectParsedError(`map(x=>x, [1, 2, 3]);`, Chapter.SOURCE_3).toEqual(
         '[prelude] Line 47: tail: Expected pair, got [1, 2, 3].',
       );
-    })
+    });
   });
 
   describe('javascript', () => {
@@ -518,16 +507,14 @@ describe(list.member, () => {
   describe('javascript', () => {
     it('works', () => {
       const xs = list.list(1, 2, 3, 4, 123, 456, 789);
-      expect(list.member(4, xs)).toEqual([
-        4, [123, [456, [789, null]]]
-      ])
-    })
+      expect(list.member(4, xs)).toEqual([4, [123, [456, [789, null]]]]);
+    });
 
     it('works when element is not found', () => {
       const xs = list.list(1, 2, 3, 4, 123, 456, 789);
       expect(list.member(525600, xs)).toBeNull();
-    })
-  })
+    });
+  });
 
   describe('source', () => {
     test('member', () => {
@@ -540,7 +527,6 @@ describe(list.member, () => {
         `,
         Chapter.SOURCE_2,
       ).toEqual(true);
-
     });
 
     test('non-list error member', () => {
@@ -548,8 +534,8 @@ describe(list.member, () => {
         '[prelude] Line 136: head: Expected pair, got [1, 2, 3].',
       );
     });
-  })
-})
+  });
+});
 
 describe(list.pair, () => {
   describe('source', () => {
@@ -577,22 +563,22 @@ describe(list.pair, () => {
 describe(list.remove, () => {
   describe('javascript', () => {
     it('works', () => {
-      const xs = list.list(1,2,3);
-      expect(list.remove(1, xs)).toEqual([2, [3, null]])
-      expect(list.remove(2, xs)).toEqual([1, [3, null]])
-      expect(list.remove(3, xs)).toEqual([1, [2, null]])
-    })
+      const xs = list.list(1, 2, 3);
+      expect(list.remove(1, xs)).toEqual([2, [3, null]]);
+      expect(list.remove(2, xs)).toEqual([1, [3, null]]);
+      expect(list.remove(3, xs)).toEqual([1, [2, null]]);
+    });
 
     it('only removes the first instance', () => {
       const xs = list.list(1, 1, 1);
       expect(list.remove(1, xs)).toEqual([1, [1, null]]);
-    })
+    });
 
     it('works when the element is not found', () => {
       const xs = list.list(1, 2, 3);
       expect(list.remove(4, xs)).toEqual([1, [2, [3, null]]]);
-    })
-  })
+    });
+  });
 
   describe('source', () => {
     test('remove', () => {
@@ -616,23 +602,21 @@ describe(list.remove, () => {
         '[prelude] Line 151: head: Expected pair, got [1, 2, 3].',
       );
     });
-  })
-})
+  });
+});
 
 describe(list.remove_all, () => {
   describe('javascript', () => {
     it('works', () => {
       const xs = list.list(1, 1, 2, 3, 1, 1);
       expect(list.remove_all(1, xs)).toEqual([2, [3, null]]);
-    })
+    });
 
     it('returns the original when element is not found', () => {
       const xs = list.list(1, 1, 2, 3, 1, 1);
-      expect(list.remove_all(5, xs)).toEqual([
-        1, [1, [2, [3, [1, [1, null]]]]]
-      ])
-    })
-  })
+      expect(list.remove_all(5, xs)).toEqual([1, [1, [2, [3, [1, [1, null]]]]]]);
+    });
+  });
 
   describe('source', () => {
     test('remove_all', () => {
@@ -656,22 +640,20 @@ describe(list.remove_all, () => {
         '[prelude] Line 169: head: Expected pair, got [1, 2, 3].',
       );
     });
-  })
-})
+  });
+});
 
 describe(list.reverse, () => {
   describe('javascript', () => {
     it('works', () => {
       const xs = list.list(1, 2, 3);
-      expect(list.reverse(xs)).toEqual([
-        3, [2, [1, null]]
-      ])
-    })
+      expect(list.reverse(xs)).toEqual([3, [2, [1, null]]]);
+    });
 
     it('works with empty list', () => {
       expect(list.reverse(null)).toBeNull();
-    })
-  })
+    });
+  });
 
   describe('source', () => {
     test('reverse', () => {
@@ -686,15 +668,13 @@ describe(list.reverse, () => {
         '[prelude] Line 106: tail: Expected pair, got [1, 2, 3].',
       );
     });
-  })
-})
+  });
+});
 
 describe(list.set_head, () => {
   describe('javascript', () => {
     it('throws when the argument is not a pair', () => {
-      expect(() => list.set_head(0 as any, 0)).toThrow(
-        'set_head: Expected pair, got 0.',
-      );
+      expect(() => list.set_head(0 as any, 0)).toThrow('set_head: Expected pair, got 0.');
     });
   });
 
@@ -715,7 +695,7 @@ describe(list.set_head, () => {
       return expectParsedError(`set_head([1, 2, 3], 4);`, Chapter.SOURCE_3).toEqual(
         'Line 1: set_head: Expected pair, got [1, 2, 3].',
       );
-    })
+    });
   });
 });
 
@@ -724,7 +704,7 @@ describe(list.set_tail, () => {
     it('throws when the argument is not a pair', () => {
       expect(() => list.set_tail(0 as any, 0)).toThrow('set_tail: Expected pair, got 0.');
     });
-  })
+  });
 
   describe('source', () => {
     it('works', () => {
@@ -741,17 +721,15 @@ describe(list.set_tail, () => {
 
     it('throws an error when given not a pair', () => {
       return expectParsedError(`set_tail([1, 2, 3], 4);`, Chapter.SOURCE_3).toEqual(
-        'Line 1: set_tail: Expected pair, got [1, 2, 3].'
+        'Line 1: set_tail: Expected pair, got [1, 2, 3].',
       );
     });
-  })
+  });
 });
 
 describe(list.tail, () => {
   it('throws an error when argument is not a pair (in Javascript)', () => {
-    expect(() => list.tail(0 as any)).toThrow(
-      'tail: Expected pair, got 0.',
-    );
+    expect(() => list.tail(0 as any)).toThrow('tail: Expected pair, got 0.');
   });
 
   it('works', () => {
@@ -819,7 +797,7 @@ test.todo('assoc not found', () => {
 test.todo('non-list error assoc', () => {
   return expectParsedError(`assoc(1, [1, 2, 3]);`, Chapter.LIBRARY_PARSER).toEqual(
     'Line 1: Name assoc not declared.',
-    );
+  );
 });
 
 describe('display_list', () => {

@@ -27,7 +27,11 @@ import {
   hasNoDeclarations,
   hasNoImportDeclarations,
 } from '../utils/ast/helpers';
-import { callIfFuncAndRightArgs, evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators';
+import {
+  callIfFuncAndRightArgs,
+  evaluateBinaryExpression,
+  evaluateUnaryExpression,
+} from '../utils/operators';
 import * as rttc from '../utils/rttc';
 import * as seq from '../utils/statementSeqTransform';
 import { checkProgramForUndefinedVariables } from '../validator/validator';
@@ -854,7 +858,7 @@ const cmdEvaluators: CommandEvaluators = {
     try {
       const line = command.srcNode.loc?.start?.line ?? -1;
       const col = command.srcNode.loc?.start?.column ?? -1;
-      const result = callIfFuncAndRightArgs(func, line, col, null, undefined, ...args)
+      const result = callIfFuncAndRightArgs(func, line, col, null, undefined, ...args);
 
       if (isStreamFn(func, result)) {
         // This is a special case for the `stream` built-in function, since it returns pairs

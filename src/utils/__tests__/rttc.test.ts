@@ -19,16 +19,16 @@ const mockValues: ReadonlyArray<Value> = [num, bool, str, func, builtin, obj, ar
 describe('rttc Type Guards', () => {
   describe(rttc.typeOf, () => {
     baseTest('correctly types arrays', () => {
-      expect(rttc.typeOf(arr)).toEqual('array')
-    })
+      expect(rttc.typeOf(arr)).toEqual('array');
+    });
 
     baseTest('correctly types null', () => {
       expect(rttc.typeOf(null)).toEqual('null');
-    })
+    });
 
     baseTest('correctly types objects', () => {
       expect(rttc.typeOf(obj)).toEqual('object');
-    })
+    });
   });
 });
 
@@ -292,7 +292,7 @@ describe(rttc.checkBinaryExpression, () => {
 
 describe(rttc.checkIfStatement, () => {
   const valid: Value[] = [bool];
-  const invalid: Value[] = mockValues.filter(each => !valid.includes(each))
+  const invalid: Value[] = mockValues.filter(each => !valid.includes(each));
 
   describe('Valid type combinations are OK', () => {
     test.for(valid)('%s', (value, { node }) => {
@@ -401,28 +401,28 @@ describe(rttc.assertFunctionOfLength, () => {
 
 describe(rttc.isTupleOfLength, () => {
   test('correctly identifies unknown as a tuple of length 0', () => {
-    const tup0: unknown = []
-    assert(rttc.isTupleOfLength(tup0, 0))
+    const tup0: unknown = [];
+    assert(rttc.isTupleOfLength(tup0, 0));
     expectTypeOf(tup0).toEqualTypeOf<[]>();
-  })
+  });
 
   test('correctly identifies unknown as a tuple of length 2', () => {
-    const tup: unknown = [0, 0]
-    assert(rttc.isTupleOfLength(tup, 2))
-    expectTypeOf(tup).toEqualTypeOf<[unknown, unknown]>()
-  })
+    const tup: unknown = [0, 0];
+    assert(rttc.isTupleOfLength(tup, 2));
+    expectTypeOf(tup).toEqualTypeOf<[unknown, unknown]>();
+  });
 
   test('uses available type information', () => {
     const tup: [number, string] = [0, 'a'];
     assert(rttc.isTupleOfLength(tup, 2));
     expectTypeOf(tup).toEqualTypeOf<[number, string]>();
-  })
+  });
 
   test('correctly returns false', () => {
     const tup: unknown = [0, 0];
     expect(rttc.isTupleOfLength(tup, 1)).toEqual(false);
-  })
-})
+  });
+});
 
 describe(rttc.isNumberWithinRange, () => {
   describe('non-options overload', () => {

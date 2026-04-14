@@ -36,22 +36,29 @@ export class RuntimeTypeError extends RuntimeSourceError<Node> {
 }
 
 type TypeOfConstants =
-  'array' | 'boolean' | 'bigint' | 'function' | 'number' | 'null' | 'object' | 'string' | 'undefined';
-
+  | 'array'
+  | 'boolean'
+  | 'bigint'
+  | 'function'
+  | 'number'
+  | 'null'
+  | 'object'
+  | 'string'
+  | 'undefined';
 
 /**
  * A wrapper around the typeof operator to account for `null` and arrays.
  */
-export function typeOf(v: boolean): 'boolean'
-export function typeOf(v: bigint): 'bigint'
-export function typeOf(v: number): 'number'
-export function typeOf(v: string): 'string'
-export function typeOf(v: (...args: any[]) => any): 'function'
-export function typeOf(v: null): 'null'
-export function typeOf(v: unknown[]): 'array'
-export function typeOf(v: object): 'object'
-export function typeOf(v: undefined): 'undefined'
-export function typeOf(v: unknown): TypeOfConstants
+export function typeOf(v: boolean): 'boolean';
+export function typeOf(v: bigint): 'bigint';
+export function typeOf(v: number): 'number';
+export function typeOf(v: string): 'string';
+export function typeOf(v: (...args: any[]) => any): 'function';
+export function typeOf(v: null): 'null';
+export function typeOf(v: unknown[]): 'array';
+export function typeOf(v: object): 'object';
+export function typeOf(v: undefined): 'undefined';
+export function typeOf(v: unknown): TypeOfConstants;
 export function typeOf(v: unknown) {
   if (v === null) {
     return 'null';
@@ -213,7 +220,8 @@ export function checkIfStatement(
 
 const MAX_SOURCE_ARRAY_INDEX = 4294967295;
 export function checkoutofRange(node: Node, index: Value, chapter: Chapter = Chapter.SOURCE_4) {
-  if (index < 0 || index > MAX_SOURCE_ARRAY_INDEX ) { // as per Source 3 spec
+  if (index < 0 || index > MAX_SOURCE_ARRAY_INDEX) {
+    // as per Source 3 spec
     throw new RuntimeTypeError(node, ' in reasonable range', 'index', 'out of range', chapter);
   }
 }
@@ -234,7 +242,7 @@ export function checkMemberAccess(
 
     if (isNumber(prop)) {
       throw new RuntimeTypeError(node, ' as prop', 'array index', 'other number');
-    } 
+    }
     throw new RuntimeTypeError(node, ' as prop', 'array index', typeOf(prop));
   }
 
@@ -325,9 +333,24 @@ export function isTupleOfLength<T extends number>(obj: unknown, l: T): obj is Tu
 /**
  * Assertion version of {@link isTupleOfLength}
  */
-export function assertTupleOfLength<T extends number, U>(obj: U[], l: T, func_name: string, param_name?: string): asserts obj is TupleOfLength<T, U>;
-export function assertTupleOfLength<T extends number>(obj: unknown, l: T, func_name: string, param_name?: string): asserts obj is TupleOfLength<T>;
-export function assertTupleOfLength<T extends number>(obj: unknown, l: T, func_name: string, param_name?: string): asserts obj is TupleOfLength<T> {
+export function assertTupleOfLength<T extends number, U>(
+  obj: U[],
+  l: T,
+  func_name: string,
+  param_name?: string,
+): asserts obj is TupleOfLength<T, U>;
+export function assertTupleOfLength<T extends number>(
+  obj: unknown,
+  l: T,
+  func_name: string,
+  param_name?: string,
+): asserts obj is TupleOfLength<T>;
+export function assertTupleOfLength<T extends number>(
+  obj: unknown,
+  l: T,
+  func_name: string,
+  param_name?: string,
+): asserts obj is TupleOfLength<T> {
   if (!isTupleOfLength(obj, l)) {
     throw new InvalidParameterTypeError(`tuple of length ${length}`, obj, func_name, param_name);
   }

@@ -13,12 +13,8 @@ import { vector_to_list, type List } from './list';
 class ParseError extends RuntimeSourceError<Node | undefined> {
   private readonly explanation: string;
 
-  constructor(
-    explanation: string,
-    parseFuncName: string,
-    node?: Node
-  ) {
-    super(node)
+  constructor(explanation: string, parseFuncName: string, node?: Node) {
+    super(node);
     this.explanation = `${parseFuncName}: ${explanation}`;
   }
 
@@ -65,10 +61,7 @@ function hasDeclarationAtToplevel(exs: Node[]) {
   return exs.some(isDeclaration);
 }
 
-type ParseTransformer<T extends Node> = (
-  this: TransformerData,
-  node: T
-) => List;
+type ParseTransformer<T extends Node> = (this: TransformerData, node: T) => List;
 type ASTTransformers = {
   [K in Node['type']]?: ParseTransformer<NodeTypeToNode<K>>;
 };
@@ -78,7 +71,7 @@ const transformers: ASTTransformers = {
     return vector_to_list([
       'array_expression',
       vector_to_list((elements as ContiguousArrayElements).map(this.transform)),
-    ])
+    ]);
   },
   ArrowFunctionExpression({ body, params }) {
     return vector_to_list([
@@ -90,13 +83,17 @@ const transformers: ASTTransformers = {
           // inside the curly braces.
           this.makeBlockIfNeeded(body.body)
         : vector_to_list(['return_statement', this.transform(body)]),
-    ])
+    ]);
   },
   AssignmentExpression(node) {
     if (node.left.type === 'Identifier') {
       return vector_to_list(['assignment', this.transform(node.left), this.transform(node.right)]);
     } else if (node.left.type === 'MemberExpression') {
-      return vector_to_list(['object_assignment', this.transform(node.left), this.transform(node.right)]);
+      return vector_to_list([
+        'object_assignment',
+        this.transform(node.left),
+        this.transform(node.right),
+      ]);
     } else {
       unreachable();
       throw new ParseError('Invalid assignment', this.funcName, node);
@@ -108,14 +105,18 @@ const transformers: ASTTransformers = {
       node.operator,
       this.transform(node.left),
       this.transform(node.right),
-    ])
+    ]);
   },
-  BlockStatement({ body }) { 
-    return this.makeBlockIfNeeded(body)
+  BlockStatement({ body }) {
+    return this.makeBlockIfNeeded(body);
   },
   BreakStatement: () => vector_to_list(['break_statement']),
   CallExpression({ callee, arguments: args }) {
-    return vector_to_list(['application', this.transform(callee), vector_to_list(args.map(this.transform))])
+    return vector_to_list([
+      'application',
+      this.transform(callee),
+      vector_to_list(args.map(this.transform)),
+    ]);
   },
   ClassDeclaration(node) {
     return vector_to_list([
@@ -134,7 +135,7 @@ const transformers: ASTTransformers = {
       this.transform(node.test),
       this.transform(node.consequent),
       this.transform(node.alternate),
-    ])
+    ]);
   },
   ContinueStatement: () => vector_to_list(['continue_statement']),
   ExportDefaultDeclaration(node) {
@@ -148,7 +149,7 @@ const transformers: ASTTransformers = {
   },
   ExportSpecifier: node => vector_to_list(['name', node.exported.name]),
   ExpressionStatement({ expression }) {
-    return this.transform(expression)
+    return this.transform(expression);
   },
   ForStatement(node) {
     return vector_to_list([
@@ -157,7 +158,7 @@ const transformers: ASTTransformers = {
       this.transform(node.test!),
       this.transform(node.update!),
       this.transform(node.body),
-    ])
+    ]);
   },
   FunctionDeclaration({ id, params, body }) {
     return vector_to_list([
@@ -165,14 +166,14 @@ const transformers: ASTTransformers = {
       this.transform(id!),
       vector_to_list(params.map(this.transform)),
       this.makeBlockIfNeeded(body.body),
-    ])
+    ]);
   },
   FunctionExpression({ body: { body }, params }) {
     return vector_to_list([
       'lambda_expression',
       vector_to_list(params.map(this.transform)),
       this.makeBlockIfNeeded(body),
-    ])
+    ]);
   },
   Identifier: ({ name }) => vector_to_list(['name', name]),
   IfStatement(node) {
@@ -181,14 +182,14 @@ const transformers: ASTTransformers = {
       this.transform(node.test),
       this.transform(node.consequent),
       node.alternate == null ? this.makeSequenceIfNeeded([]) : this.transform(node.alternate),
-    ])
+    ]);
   },
   ImportDeclaration(node) {
     return vector_to_list([
       'import_declaration',
       vector_to_list(node.specifiers.map(this.transform)),
       node.source.value,
-    ])
+    ]);
   },
   ImportDefaultSpecifier: () => vector_to_list(['default']),
   ImportSpecifier: node => vector_to_list(['name', node.imported.name]),
@@ -199,7 +200,7 @@ const transformers: ASTTransformers = {
       node.operator,
       this.transform(node.left),
       this.transform(node.right),
-    ])
+    ]);
   },
   MemberExpression(node) {
     // "computed" property of MemberExpression distinguishes
@@ -222,16 +223,20 @@ const transformers: ASTTransformers = {
       node.static,
       this.transform(node.key),
       this.transform(node.value),
-    ])
+    ]);
   },
   NewExpression({ callee, arguments: args }) {
-    return vector_to_list(['new_expression', this.transform(callee), vector_to_list(args.map(this.transform))]);
+    return vector_to_list([
+      'new_expression',
+      this.transform(callee),
+      vector_to_list(args.map(this.transform)),
+    ]);
   },
   ObjectExpression({ properties }) {
     return vector_to_list(['object_expression', vector_to_list(properties.map(this.transform))]);
   },
   Program({ body }) {
-    return this.makeSequenceIfNeeded(body)
+    return this.makeSequenceIfNeeded(body);
   },
   Property(node) {
     // identifiers before the ":" in literal objects are meant
@@ -250,8 +255,8 @@ const transformers: ASTTransformers = {
   ReturnStatement(node) {
     return vector_to_list(['return_statement', this.transform(node.argument!)]);
   },
-  SpreadElement({ argument }) { 
-    return vector_to_list(['spread_element', this.transform(argument)])
+  SpreadElement({ argument }) {
+    return vector_to_list(['spread_element', this.transform(argument)]);
   },
   StatementSequence({ body }) {
     return this.makeSequenceIfNeeded(body);
@@ -274,7 +279,7 @@ const transformers: ASTTransformers = {
       'unary_operator_combination',
       operator === '-' ? '-unary' : operator,
       this.transform(argument),
-    ])
+    ]);
   },
   VariableDeclaration(node) {
     const { id, init } = getSourceVariableDeclaration(node);
@@ -285,7 +290,11 @@ const transformers: ASTTransformers = {
       return vector_to_list(['constant_declaration', this.transform(id), this.transform(init)]);
     } else {
       unreachable();
-      throw new ParseError(`Invalid declaration kind for VariableDeclaration: ${node.kind}`, this.funcName, node);
+      throw new ParseError(
+        `Invalid declaration kind for VariableDeclaration: ${node.kind}`,
+        this.funcName,
+        node,
+      );
     }
   },
   WhileStatement({ test, body }) {
@@ -297,7 +306,7 @@ export function parse(x: string, context: Context): Value {
   context.chapter = libraryParserLanguage;
   const program = sourceParse(x, context);
   if (context.errors.length > 0) {
-    throw new ParseError(context.errors[0].explain(),  parse.name);
+    throw new ParseError(context.errors[0].explain(), parse.name);
   }
 
   function transform(node: Node) {
@@ -307,12 +316,15 @@ export function parse(x: string, context: Context): Value {
     }
 
     const transformer = transformers[node.type] as ParseTransformer<Node>;
-    return transformer.call({
-      funcName: parse.name,
-      transform,
-      makeBlockIfNeeded,
-      makeSequenceIfNeeded
-    }, node);
+    return transformer.call(
+      {
+        funcName: parse.name,
+        transform,
+        makeBlockIfNeeded,
+        makeSequenceIfNeeded,
+      },
+      node,
+    );
   }
 
   function makeSequenceIfNeeded(exs: Node[]): List {

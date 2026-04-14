@@ -226,8 +226,8 @@ export function defineBuiltin(
       value,
       `function ${name} {\n\t[implementation hidden]\n}`,
       minArgsNeeded,
-      false
-    )
+      false,
+    );
 
     // value.toString = () => repr;
     // value.minArgsNeeded = minArgsNeeded;
@@ -258,7 +258,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
 
   const display = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
-      throw new InvalidParameterTypeError('string', s[0], display.name, 'second argument')
+      throw new InvalidParameterTypeError('string', s[0], display.name, 'second argument');
     }
 
     rawDisplay(stringify(v), s[0]);
@@ -267,7 +267,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
 
   const display_list = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
-      throw new InvalidParameterTypeError('string', s[0], display_list.name, 'second argument')
+      throw new InvalidParameterTypeError('string', s[0], display_list.name, 'second argument');
     }
     return list.rawDisplayList(display, v, s[0]);
   };
@@ -360,7 +360,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
       parser.parse(str, createContext(context.chapter)),
     );
     defineBuiltin(context, 'tokenize(program_string)', (str: string) =>
-      parser.tokenize(str, createContext(context.chapter), true)
+      parser.tokenize(str, createContext(context.chapter), true),
     );
     defineBuiltin(
       context,

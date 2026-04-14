@@ -3,9 +3,9 @@
  * Order in which certain functions are called matter as well.
  * There should be an explanation on it coming up soon.
  */
-import { generate } from 'astring'
-import type es from 'estree'
-import { type RawSourceMap, SourceMapGenerator } from 'source-map'
+import { generate } from 'astring';
+import type es from 'estree';
+import { type RawSourceMap, SourceMapGenerator } from 'source-map';
 
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants';
 import { Chapter, Variant } from '../langs';
@@ -147,7 +147,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   program: es.Program,
   functionsToStringMap: Map<Node, string>,
   globalIds: NativeIds,
-  isPrelude: boolean
+  isPrelude: boolean,
 ) {
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
@@ -157,7 +157,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
           { ...node },
           create.literal(functionsToStringMap.get(node)!),
           create.literal(node.params[node.params.length - 1]?.type === 'RestElement'),
-          create.literal(isPrelude)
+          create.literal(isPrelude),
         ]);
       }
     },
@@ -426,7 +426,7 @@ function transpileToSource(
   program: es.Program,
   context: Context,
   skipUndefined: boolean,
-  isPrelude: boolean
+  isPrelude: boolean,
 ): TranspiledResult {
   if (program.body.length === 0) {
     return { transpiled: '' };
@@ -449,7 +449,12 @@ function transpileToSource(
   checkForUndefinedVariables(program, context, globalIds, skipUndefined);
   // checkProgramForUndefinedVariables(program, context, skipUndefined)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap);
-  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds, isPrelude);
+  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
+    program,
+    functionsToStringMap,
+    globalIds,
+    isPrelude,
+  );
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers);
 
   const [importNodes, otherNodes] = transformImportDeclarations(
@@ -523,7 +528,7 @@ export function transpile(
   program: es.Program,
   context: Context,
   isPrelude: boolean,
-  skipUndefined = false
+  skipUndefined = false,
 ): TranspiledResult {
   if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.PYTHON_1) {
     return transpileToFullJS(program, context, true);

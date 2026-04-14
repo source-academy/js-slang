@@ -43,7 +43,7 @@ const runners = {
     try {
       let transpiled: string;
       ({ transpiled, sourceMapJson } = transpile(program, context, options.isPrelude));
-      
+
       let value = sandboxedEval(transpiled, context.nativeStorage);
 
       if (!options.isPrelude) {
@@ -74,7 +74,7 @@ const runners = {
         context.errors.push(error);
         return { status: 'error', context };
       }
-      
+
       const sourceError = await toSourceError(error, sourceMapJson);
       context.errors.push(sourceError);
       return { status: 'error', context };

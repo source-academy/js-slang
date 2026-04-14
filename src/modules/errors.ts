@@ -1,7 +1,12 @@
 import type es from 'estree';
 
 import { UNKNOWN_LOCATION } from '../constants';
-import { ErrorSeverity, ErrorType, InternalRuntimeError, SourceErrorWithNode } from '../errors/base';
+import {
+  ErrorSeverity,
+  ErrorType,
+  InternalRuntimeError,
+  SourceErrorWithNode,
+} from '../errors/base';
 import type { Node } from '../types';
 import type { Chapter } from '../langs';
 import { getChapterName } from '../utils/misc';
@@ -17,10 +22,7 @@ export class ModuleInternalError extends InternalRuntimeError<ModuleDeclarationW
     node: ModuleDeclarationWithSource,
     public readonly error?: any,
   ) {
-    super(
-      `Error(s) occured when executing the module '${moduleName}'.`,
-      node
-    );
+    super(`Error(s) occured when executing the module '${moduleName}'.`, node);
   }
 
   public override elaborate() {

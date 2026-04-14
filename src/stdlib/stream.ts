@@ -1,10 +1,10 @@
 import { InvalidParameterTypeError } from '../errors/rttcErrors';
 import { wrap } from '../utils/operators';
-import { head, is_null, is_pair, type List, type Pair, pair, tail } from './list'
-import { arity } from './misc'
+import { head, is_null, is_pair, type List, type Pair, pair, tail } from './list';
+import { arity } from './misc';
 
-type NonEmptyStream<T = unknown> = Pair<T, () => Stream<T>>
-export type Stream<T = unknown> = null | NonEmptyStream<T>
+type NonEmptyStream<T = unknown> = Pair<T, () => Stream<T>>;
+export type Stream<T = unknown> = null | NonEmptyStream<T>;
 
 function createStreamPair<T>(item: T, next: () => Stream<T>): NonEmptyStream<T> {
   const streamTail = wrap(next, '() => ...', false, false);
@@ -29,18 +29,18 @@ export function list_to_stream<T>(xs: List<T>): Stream<T> {
   return is_null(xs) ? null : createStreamPair(head(xs), () => list_to_stream(tail(xs)));
 }
 
-export function stream_tail<T>(stream: NonEmptyStream<T>): Stream<T>
+export function stream_tail<T>(stream: NonEmptyStream<T>): Stream<T>;
 export function stream_tail(stream: unknown): Stream<unknown> {
   if (!is_pair(stream)) {
     throw new InvalidParameterTypeError('non-empty stream', stream, stream_tail.name);
   }
 
-  const next = tail(stream)
+  const next = tail(stream);
   if (typeof next !== 'function' || arity(next) !== 0) {
     throw new InvalidParameterTypeError('stream', stream, stream_tail.name);
   }
 
-  return next()
+  return next();
 }
 
 /**
@@ -49,15 +49,15 @@ export function stream_tail(stream: unknown): Stream<unknown> {
  * NOT Lazy: The function must evaluate all the elements of the stream
  */
 export function is_stream(obj: unknown): obj is Stream<unknown> {
-  if (is_null(obj)) return true
+  if (is_null(obj)) return true;
 
-  if (!is_pair(obj)) return false
-  const next = tail(obj)
+  if (!is_pair(obj)) return false;
+  const next = tail(obj);
 
-  if (typeof next !== 'function') return false
-  if (arity(next) !== 0) return false
+  if (typeof next !== 'function') return false;
+  if (arity(next) !== 0) return false;
 
-  return is_stream(next())
+  return is_stream(next());
 }
 
 /**
@@ -67,7 +67,7 @@ export function is_stream(obj: unknown): obj is Stream<unknown> {
  * Lazy.
  */
 export function integers_from(n: number): Stream<number> {
-  return pair(n, () => integers_from(n + 1))
+  return pair(n, () => integers_from(n + 1));
 }
 
 /**
@@ -78,10 +78,10 @@ export function integers_from(n: number): Stream<number> {
  */
 export function build_stream<T>(f: (n: number) => T, n: number): Stream<T> {
   function build(i: number): Stream<T> {
-    return i >= n ? null : pair(f(i), () => build(i + 1))
+    return i >= n ? null : pair(f(i), () => build(i + 1));
   }
 
-  return build(0)
+  return build(0);
 }
 
 /**
@@ -91,7 +91,7 @@ export function build_stream<T>(f: (n: number) => T, n: number): Stream<T> {
  * forced by the resulting stream.
  */
 export function stream_map<T, U>(f: (arg: T) => U, s: Stream<T>): Stream<U> {
-  return is_null(s) ? null : pair(f(head(s)), () => stream_map(f, stream_tail(s)))
+  return is_null(s) ? null : pair(f(head(s)), () => stream_map(f, stream_tail(s)));
 }
 
 /**
@@ -99,16 +99,16 @@ export function stream_map<T, U>(f: (arg: T) => U, s: Stream<T>): Stream<U> {
  *
  * Partially Lazy: Both the predicate and stream are evaluated as necessary
  */
-export function stream_filter<T, U extends T>(f: (arg: T) => arg is U, s: Stream<T>): Stream<U>
-export function stream_filter<T>(f: (arg: T) => boolean, s: Stream<T>): Stream<T>
+export function stream_filter<T, U extends T>(f: (arg: T) => arg is U, s: Stream<T>): Stream<U>;
+export function stream_filter<T>(f: (arg: T) => boolean, s: Stream<T>): Stream<T>;
 export function stream_filter<T>(f: (arg: T) => boolean, s: Stream<T>): Stream<T> {
-  if (is_null(s)) return null
+  if (is_null(s)) return null;
 
-  const should = f(head(s))
+  const should = f(head(s));
 
   return should
     ? pair(head(s), () => stream_filter(f, stream_tail(s)))
-    : stream_filter(f, stream_tail(s))
+    : stream_filter(f, stream_tail(s));
 }
 
 /**
@@ -118,10 +118,10 @@ export function stream_filter<T>(f: (arg: T) => boolean, s: Stream<T>): Stream<T
  */
 export function stream_for_each<T>(f: (arg: T) => void, s: Stream<T>) {
   if (is_null(s)) {
-    return true
+    return true;
   } else {
-    f(head(s))
-    return stream_for_each(f, stream_tail(s))
+    f(head(s));
+    return stream_for_each(f, stream_tail(s));
   }
 }
 
@@ -138,18 +138,18 @@ export function stream_for_each<T>(f: (arg: T) => void, s: Stream<T>) {
 export function stream_accumulate<T, U>(
   f: (each: T, result: U) => U,
   initial: U,
-  stream: Stream<T>
+  stream: Stream<T>,
 ): U {
-  let res = initial
-  let entry = stream
+  let res = initial;
+  let entry = stream;
 
   while (!is_null(entry)) {
-    const element = head(entry)
-    res = f(element, res)
-    entry = stream_tail(entry)
+    const element = head(entry);
+    res = f(element, res);
+    entry = stream_tail(entry);
   }
 
-  return res
+  return res;
 }
 
 /**
@@ -158,7 +158,7 @@ export function stream_accumulate<T, U>(
  * NOT lazy: The function must evaluate the entire stream
  */
 export function stream_length(s: Stream<unknown>): number {
-  return stream_accumulate((_, res) => res + 1, 0, s)
+  return stream_accumulate((_, res) => res + 1, 0, s);
 }
 
 /**
@@ -168,14 +168,14 @@ export function stream_length(s: Stream<unknown>): number {
  */
 export function stream_ref<T>(s: Stream<T>, n: number): T {
   for (let i = 0; i < n && !is_null(s); i++) {
-    s = stream_tail(s)
+    s = stream_tail(s);
   }
 
   if (is_null(s)) {
-    throw new Error(`${stream_ref.name}: Index ${n} out of bounds!`)
+    throw new Error(`${stream_ref.name}: Index ${n} out of bounds!`);
   }
 
-  return head(s)
+  return head(s);
 }
 
 /**
@@ -188,7 +188,7 @@ export function stream_ref<T>(s: Stream<T>, n: number): T {
  * does mean that if `lhs` is infinite elements from `rhs` will never be evaluated.
  */
 export function stream_append<T>(lhs: Stream<T>, rhs: Stream<T>): Stream<T> {
-  return is_null(lhs) ? rhs : pair(head(lhs), () => stream_append(stream_tail(lhs), rhs))
+  return is_null(lhs) ? rhs : pair(head(lhs), () => stream_append(stream_tail(lhs), rhs));
 }
 
 /**
@@ -198,5 +198,5 @@ export function stream_append<T>(lhs: Stream<T>, rhs: Stream<T>): Stream<T> {
  * to populate the resulting list
  */
 export function stream_to_list<T>(stream: Stream<T>): List<T> {
-  return is_null(stream) ? null : pair(head(stream), stream_to_list(stream_tail(stream)))
+  return is_null(stream) ? null : pair(head(stream), stream_to_list(stream_tail(stream)));
 }

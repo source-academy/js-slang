@@ -89,7 +89,9 @@ export class GeneralRuntimeError extends RuntimeSourceError<es.BaseNode | undefi
  * A subclass of {@link RuntimeSourceError} intended for use when an unexpected runtime error
  * occurs due to an internal error rather than any error caused by the code being evaluated.
  */
-export class InternalRuntimeError<T extends es.BaseNode = Node> extends RuntimeSourceError<T | undefined> {
+export class InternalRuntimeError<T extends es.BaseNode = Node> extends RuntimeSourceError<
+  T | undefined
+> {
   constructor(
     private readonly explanation: string,
     node?: T,

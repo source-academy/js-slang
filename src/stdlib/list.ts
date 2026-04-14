@@ -51,7 +51,7 @@ export function is_pair(x: unknown): x is Pair<unknown, unknown> {
 export function head<T>(xs: Pair<T, unknown> | NonEmptyList<T>): T;
 export function head(xs: unknown) {
   if (!is_pair(xs)) {
-    throw new InvalidParameterTypeError('pair', xs, head.name)
+    throw new InvalidParameterTypeError('pair', xs, head.name);
   }
 
   return xs[0];
@@ -80,7 +80,7 @@ export function tail(xs: unknown) {
 export function set_head(xs: Pair<any, any>, x: any): void;
 export function set_head(xs: unknown, x: any): void {
   if (!is_pair(xs)) {
-    throw new InvalidParameterTypeError('pair', xs, set_head.name)
+    throw new InvalidParameterTypeError('pair', xs, set_head.name);
   }
 
   xs[0] = x;
@@ -94,7 +94,7 @@ export function set_head(xs: unknown, x: any): void {
 export function set_tail(xs: Pair<any, any>, x: any): void;
 export function set_tail(xs: unknown, x: any): void {
   if (!is_pair(xs)) {
-    throw new InvalidParameterTypeError('pair', xs, set_tail.name)
+    throw new InvalidParameterTypeError('pair', xs, set_tail.name);
   }
 
   xs[1] = x;
@@ -199,7 +199,11 @@ export function build_list<T>(f: (arg: number) => T, n: number): List<T> {
  * beginning with `start` and then incrementing by 1 until the value exceeds `end`.
  */
 export function enum_list(start: number, end: number): List<number> {
-  assertNumberWithinRange(start, { func_name: enum_list.name, param_name: 'start', integer: false });
+  assertNumberWithinRange(start, {
+    func_name: enum_list.name,
+    param_name: 'start',
+    integer: false,
+  });
   assertNumberWithinRange(end, enum_list.name, start, undefined, false, 'end');
 
   return build_list(x => x + start, Math.floor(end - start) + 1);
@@ -272,11 +276,7 @@ export function map<T, U>(op: (each: T) => U, sequence: List<T>): List<U> {
  * the element is not in `xs`, returns an empty list.
  */
 export function member<T>(v: T, xs: List<T>): List<T> {
-  return is_null(xs)
-         ? null
-	 : v === head(xs)
-	 ? xs
-	 : member(v, tail(xs));
+  return is_null(xs) ? null : v === head(xs) ? xs : member(v, tail(xs));
 }
 
 /**
@@ -303,9 +303,7 @@ export function remove_all<T>(v: T, xs: List<T>): List<T> {
  */
 export function reverse<T>(xs: List<T>): List<T> {
   function $reverse(original: List<T>, reversed: List<T>): List<T> {
-    return is_null(original)
-      ? reversed
-      : $reverse(tail(original), pair(head(original), reversed));
+    return is_null(original) ? reversed : $reverse(tail(original), pair(head(original), reversed));
   }
 
   return $reverse(xs, null);

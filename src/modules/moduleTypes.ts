@@ -57,7 +57,7 @@ export type ModuleDocsEntry = FunctionDocumentation | VariableDocumentation | Un
 
 export interface ModuleDocumentation {
   [name: string]: ModuleDocsEntry;
-};
+}
 
 export type Importer<T = object> = (
   name: string,

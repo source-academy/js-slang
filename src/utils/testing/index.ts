@@ -126,29 +126,28 @@ export async function testFailure(code: string, options: TestOptions = {}) {
  * Run the given code and expect it to finish without errors. Use
  * as if using `expect()`
  */
-export const expectFinishedResult = vi.defineHelper((
-  code: string,
-  options: TestOptions = {},
-): RemoveMatcher<Promisify<Assertion<Promise<any>>>> => {
-  return removeMatcher(
-    expect(
-      testInContext(code, options).then(({ result, context }) => {
-        if (result.status === 'error') {
-          const errStr = parseError(context.errors);
-          console.log(errStr);
-        }
-        assertIsFinished(result);
-        return result.value;
-      }),
-    ).resolves,
-  );
-});
+export const expectFinishedResult = vi.defineHelper(
+  (code: string, options: TestOptions = {}): RemoveMatcher<Promisify<Assertion<Promise<any>>>> => {
+    return removeMatcher(
+      expect(
+        testInContext(code, options).then(({ result, context }) => {
+          if (result.status === 'error') {
+            const errStr = parseError(context.errors);
+            console.log(errStr);
+          }
+          assertIsFinished(result);
+          return result.value;
+        }),
+      ).resolves,
+    );
+  },
+);
 
 /**
  * Expect the code to error, then test the parsed error value. Use as if using
  * `expect`
  */
-export const expectParsedError = ((
+export const expectParsedError = (
   code: string,
   options: TestOptions = {},
   verbose?: boolean,
@@ -159,48 +158,54 @@ export const expectParsedError = ((
         expect(result.status).toEqual('error');
         return parseError(context.errors, verbose);
       }),
-    ).resolves
+    ).resolves,
   );
-});
+};
 
-export const expectNativeToTimeoutAndError = vi.defineHelper(async (code: string, timeout: number) => {
-  const start = Date.now();
-  const context = mockContext(Chapter.SOURCE_4);
-  await runInContext(code, context, {
-    executionMethod: 'native',
-    throwInfiniteLoops: false,
-  });
-  const timeTaken = Date.now() - start;
-  expect(timeTaken).toBeLessThan(timeout * 5);
-  expect(timeTaken).toBeGreaterThanOrEqual(timeout);
-  return parseError(context.errors);
-});
+export const expectNativeToTimeoutAndError = vi.defineHelper(
+  async (code: string, timeout: number) => {
+    const start = Date.now();
+    const context = mockContext(Chapter.SOURCE_4);
+    await runInContext(code, context, {
+      executionMethod: 'native',
+      throwInfiniteLoops: false,
+    });
+    const timeTaken = Date.now() - start;
+    expect(timeTaken).toBeLessThan(timeout * 5);
+    expect(timeTaken).toBeGreaterThanOrEqual(timeout);
+    return parseError(context.errors);
+  },
+);
 
 /**
  * Run the given code, expect it to finish without errors and also match a snapshot
  */
-export const snapshotSuccess = vi.defineHelper(async (code: string, options: TestOptions = {}, name?: string) => {
-  const results = await testSuccess(code, options);
-  if (name === undefined) {
-    expect(results).toMatchSnapshot();
-  } else {
-    expect(results).toMatchSnapshot(name);
-  }
-  return results;
-});
+export const snapshotSuccess = vi.defineHelper(
+  async (code: string, options: TestOptions = {}, name?: string) => {
+    const results = await testSuccess(code, options);
+    if (name === undefined) {
+      expect(results).toMatchSnapshot();
+    } else {
+      expect(results).toMatchSnapshot(name);
+    }
+    return results;
+  },
+);
 
 /**
  * Run the given code, expect it to finish with errors and that those errors match a snapshot
  */
-export const snapshotFailure = vi.defineHelper(async (code: string, options: TestOptions = {}, name?: string) => {
-  const results = await testFailure(code, options);
-  if (name === undefined) {
-    expect(results).toMatchSnapshot();
-  } else {
-    expect(results).toMatchSnapshot(name);
-  }
-  return results;
-});
+export const snapshotFailure = vi.defineHelper(
+  async (code: string, options: TestOptions = {}, name?: string) => {
+    const results = await testFailure(code, options);
+    if (name === undefined) {
+      expect(results).toMatchSnapshot();
+    } else {
+      expect(results).toMatchSnapshot(name);
+    }
+    return results;
+  },
+);
 
 export function expectDisplayResult(
   code: string,

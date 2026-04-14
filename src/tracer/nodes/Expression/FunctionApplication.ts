@@ -83,7 +83,8 @@ export class StepperFunctionApplication
   public override contract(redex: RedexInfo): StepperExpression | StepperBlockExpression {
     redex.preRedex = [this];
 
-    if (!this.isContractible(redex)) throw new InternalRuntimeError('Trying to contract ineliglble CallExpression', this);
+    if (!this.isContractible(redex))
+      throw new InternalRuntimeError('Trying to contract ineliglble CallExpression', this);
 
     if (this.callee.type === 'Identifier') {
       const functionName = this.callee.name;
