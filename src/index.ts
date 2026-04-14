@@ -224,8 +224,6 @@ export async function runFilesInContext(
   context: Context,
   options: RecursivePartial<IOptions> = {},
 ): Promise<Result> {
-  console.log('manifest importer?', options?.importOptions?.resolverOptions?.manifestImporter);
-
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath);
     if (filePathError !== null) {
