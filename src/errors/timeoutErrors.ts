@@ -26,10 +26,6 @@ export class PotentialInfiniteLoopError extends TimeoutError {
     return stripIndent`${'Potential infinite loop detected'}.
     ${getWarningMessage(this.maxExecTime)}`;
   }
-
-  public elaborate() {
-    return this.explain();
-  }
 }
 
 export class PotentialInfiniteRecursionError extends TimeoutError {
@@ -49,9 +45,5 @@ export class PotentialInfiniteRecursionError extends TimeoutError {
     );
     return stripIndent`${'Potential infinite recursion detected'}: ${formattedCalls.join(' ... ')}.
       ${getWarningMessage(this.maxExecTime)}`;
-  }
-
-  public elaborate() {
-    return this.explain();
   }
 }

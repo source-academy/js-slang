@@ -9,7 +9,9 @@ import { RuntimeSourceError } from './base';
 
 //Wrap build-in function error in SourceError
 export class BuiltInFunctionError extends RuntimeSourceError<undefined> {
-  constructor(private readonly explanation: string) {
+  constructor(
+    private readonly explanation: string,
+  ) {
     super(undefined);
   }
 
@@ -140,7 +142,7 @@ export class CallingNonFunctionValueError extends RuntimeSourceError<es.CallExpr
 export class UndefinedVariableError extends RuntimeSourceError<Node> {
   constructor(
     public readonly varname: string,
-    node: Node,
+    node: Node
   ) {
     super(node);
   }

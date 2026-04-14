@@ -30,7 +30,7 @@ export abstract class SourceErrorWithNode<T extends es.BaseNode | undefined>
   extends Error
   implements SourceError
 {
-  constructor(public readonly node: T) {
+  constructor(public node: T) {
     super();
   }
 
@@ -57,6 +57,10 @@ export abstract class RuntimeSourceError<
 > extends SourceErrorWithNode<T> {
   type = ErrorType.RUNTIME;
   severity = ErrorSeverity.ERROR;
+
+  public override elaborate(): string {
+    return this.explain();
+  }
 }
 
 /**
@@ -76,7 +80,7 @@ export class GeneralRuntimeError extends RuntimeSourceError<es.BaseNode | undefi
     return this.explanation;
   }
 
-  public override elaborate(): string {
+  public override elaborate() {
     return this.elaboration ?? this.explanation;
   }
 }

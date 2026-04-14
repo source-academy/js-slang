@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import * as errors from '../runtimeErrors';
+import * as errors from '../rttcErrors';
 
 describe(errors.InvalidParameterTypeError, () => {
   test('constructing without parameter name', () => {

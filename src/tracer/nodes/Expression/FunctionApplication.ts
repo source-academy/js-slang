@@ -8,8 +8,7 @@ import {
   CallingNonFunctionValueError,
   InvalidNumberOfArgumentsError,
 } from '../../../errors/errors';
-import { InternalRuntimeError } from '../../../errors/base';
-import { GeneralRuntimeError } from '../../../errors/base';
+import { GeneralRuntimeError, InternalRuntimeError } from '../../../errors/base';
 import type { RedexInfo } from '../..';
 import { StepperBlockExpression } from './BlockExpression';
 
@@ -51,6 +50,7 @@ export class StepperFunctionApplication
 
     if (!isValidCallee) {
       // Since the callee can not proceed further, calling non callables should result to an error.
+
       if (
         !this.callee.isOneStepPossible(redex) &&
         this.arguments.every(arg => !arg.isOneStepPossible(redex))
@@ -82,8 +82,9 @@ export class StepperFunctionApplication
 
   public override contract(redex: RedexInfo): StepperExpression | StepperBlockExpression {
     redex.preRedex = [this];
-    if (!this.isContractible(redex))
-      throw new InternalRuntimeError('Trying to contract ineliglble CallExpression', this);
+
+    if (!this.isContractible(redex)) throw new InternalRuntimeError('Trying to contract ineliglble CallExpression', this);
+
     if (this.callee.type === 'Identifier') {
       const functionName = this.callee.name;
       if (isBuiltinFunction(functionName)) {

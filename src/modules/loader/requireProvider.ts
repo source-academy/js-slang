@@ -8,7 +8,7 @@ import * as types from '../../types';
 import * as assert from '../../utils/assert';
 import * as stringify from '../../utils/stringify';
 import * as errorBase from '../../errors/base';
-import * as runtimeErrors from '../../errors/runtimeErrors';
+import * as runtimeErrors from '../../errors/rttcErrors';
 import * as base from '../../errors/base';
 import * as errors from '../../errors/errors';
 

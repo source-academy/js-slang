@@ -2,6 +2,7 @@ import { expect, test, vi } from 'vitest';
 import { Chapter } from '../../../langs';
 import { mockContext } from '../../../utils/testing/mocks';
 import { getRequireProvider } from '../requireProvider';
+import { InternalRuntimeError } from '../../../errors/base';
 
 vi.mock(
   import('../../../stdlib'),
@@ -28,7 +29,5 @@ test('Multiple segments', () => {
 });
 
 test('Provider should throw an error if an unknown import is requested', () => {
-  expect(() => provider('something')).toThrow(
-    new Error('Dynamic require of something is not supported'),
-  );
+  expect(() => provider('something')).toThrow(InternalRuntimeError);
 });

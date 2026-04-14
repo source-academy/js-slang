@@ -1,6 +1,6 @@
 import Closure from '../cse-machine/closure';
-import { InvalidParameterTypeError } from '../errors/runtimeErrors';
 import { GeneralRuntimeError } from '../errors/base';
+import { InvalidParameterTypeError } from '../errors/rttcErrors';
 import type { Context, Value } from '../types';
 import { assertNumberWithinRange } from '../utils/rttc';
 import { stringify } from '../utils/stringify';
@@ -20,7 +20,7 @@ export function rawDisplay(value: Value, str: string, _externalContext: any) {
 
 export function error_message(value: Value, ...strs: string[]) {
   const output = (strs[0] === undefined ? '' : strs[0] + ' ') + stringify(value);
-  throw new Error(output);
+  throw new GeneralRuntimeError(`Error: ${output}`);
 }
 
 export function timed(
@@ -92,12 +92,13 @@ export function parse_int(str: string, radix: number) {
     throw new InvalidParameterTypeError('string', str, parse_int.name, 'str');
   }
 
-  assertNumberWithinRange(radix, parse_int.name, 2, 26, true, 'radix');
+  assertNumberWithinRange(radix, parse_int.name, 2, 36, true, 'radix');
   return parseInt(str, radix);
 }
 
 /**
- * Returns the character at the given index of the given string.
+ * Returns the character at the given index of the given string. If the `index` is out of bounds,
+ * returns `undefined`.
  */
 export function char_at(str: string, index: number) {
   if (typeof str !== 'string') {
@@ -107,9 +108,7 @@ export function char_at(str: string, index: number) {
   assertNumberWithinRange(index, char_at.name, 0, undefined, true, 'index');
 
   if (index >= str.length) {
-    throw new GeneralRuntimeError(
-      `${char_at.name}: Index ${index} is out of bounds for string of length ${str.length}`,
-    );
+    return undefined;
   }
 
   return str[index];

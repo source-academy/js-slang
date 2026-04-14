@@ -1,4 +1,4 @@
-import { type Assertion, expect } from 'vitest';
+import { type Assertion, expect, vi } from 'vitest';
 import { parseError, runInContext } from '../..';
 import createContext, { defineBuiltin } from '../../createContext';
 import { Chapter } from '../../langs';
@@ -85,7 +85,7 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
   };
 }
 
-async function testInContext(code: string, rawOptions: TestOptions) {
+export async function testInContext(code: string, rawOptions: TestOptions) {
   const options = processTestOptions(rawOptions);
   const context = createTestContext(options);
   const result = await runInContext(code, context);
@@ -126,10 +126,10 @@ export async function testFailure(code: string, options: TestOptions = {}) {
  * Run the given code and expect it to finish without errors. Use
  * as if using `expect()`
  */
-export function expectFinishedResult(
+export const expectFinishedResult = vi.defineHelper((
   code: string,
   options: TestOptions = {},
-): RemoveMatcher<Promisify<Assertion<Promise<any>>>> {
+): RemoveMatcher<Promisify<Assertion<Promise<any>>>> => {
   return removeMatcher(
     expect(
       testInContext(code, options).then(({ result, context }) => {
@@ -142,28 +142,28 @@ export function expectFinishedResult(
       }),
     ).resolves,
   );
-}
+});
 
 /**
  * Expect the code to error, then test the parsed error value. Use as if using
  * `expect`
  */
-export function expectParsedError(
+export const expectParsedError = ((
   code: string,
   options: TestOptions = {},
   verbose?: boolean,
-): RemoveMatcher<Promisify<Assertion<Promise<string>>>> {
+): RemoveMatcher<Promisify<Assertion<Promise<string>>>> => {
   return removeMatcher(
     expect(
       testInContext(code, options).then(({ result, context }) => {
         expect(result.status).toEqual('error');
         return parseError(context.errors, verbose);
       }),
-    ).resolves,
+    ).resolves
   );
-}
+});
 
-export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
+export const expectNativeToTimeoutAndError = vi.defineHelper(async (code: string, timeout: number) => {
   const start = Date.now();
   const context = mockContext(Chapter.SOURCE_4);
   await runInContext(code, context, {
@@ -174,12 +174,12 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   expect(timeTaken).toBeLessThan(timeout * 5);
   expect(timeTaken).toBeGreaterThanOrEqual(timeout);
   return parseError(context.errors);
-}
+});
 
 /**
  * Run the given code, expect it to finish without errors and also match a snapshot
  */
-export async function snapshotSuccess(code: string, options: TestOptions = {}, name?: string) {
+export const snapshotSuccess = vi.defineHelper(async (code: string, options: TestOptions = {}, name?: string) => {
   const results = await testSuccess(code, options);
   if (name === undefined) {
     expect(results).toMatchSnapshot();
@@ -187,12 +187,12 @@ export async function snapshotSuccess(code: string, options: TestOptions = {}, n
     expect(results).toMatchSnapshot(name);
   }
   return results;
-}
+});
 
 /**
  * Run the given code, expect it to finish with errors and that those errors match a snapshot
  */
-export async function snapshotFailure(code: string, options: TestOptions = {}, name?: string) {
+export const snapshotFailure = vi.defineHelper(async (code: string, options: TestOptions = {}, name?: string) => {
   const results = await testFailure(code, options);
   if (name === undefined) {
     expect(results).toMatchSnapshot();
@@ -200,7 +200,7 @@ export async function snapshotFailure(code: string, options: TestOptions = {}, n
     expect(results).toMatchSnapshot(name);
   }
   return results;
-}
+});
 
 export function expectDisplayResult(
   code: string,
