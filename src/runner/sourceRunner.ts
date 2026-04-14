@@ -4,7 +4,7 @@ import { JSSLANG_PROPERTIES } from '../constants';
 import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter';
 import { ExceptionError } from '../errors/errors';
 import { TimeoutError } from '../errors/timeoutErrors';
-import { getSteps } from '../tracer/steppers';
+import { getSteps } from '../stepper/steppers';
 import { sandboxedEval } from '../transpiler/evalContainer';
 import { transpile } from '../transpiler/transpiler';
 import { SourceErrorWithNode } from '../errors/base';

@@ -22,16 +22,16 @@
 
 ## Quickstart
 
-First of all, make sure that you have already installed `js-slang` using `yarn`. There are many possible ways that you can work and test the code. One of my personal solution is using `yarn test`. During the development, you can edit the file from `../__test__/tracer_debug.ts` and run it with the following command:
+First of all, make sure that you have already installed `js-slang` using `yarn`. There are many possible ways that you can work and test the code. One of my personal solution is using `yarn test`. During the development, you can edit the file from `../__test__/stepper_debug.ts` and run it with the following command:
 
 ```bash
-yarn test -- tracer_debug.ts  > testOutput.log
+yarn test -- stepper_debug.ts  > testOutput.log
 ```
 
 Note that the flag `--silence=false` is set in order to see the output from `console.log`. In order to fully test the stepper, you can execute the following command.
 
 ```bash
-yarn test -- tracer_full.ts
+yarn test -- stepper_full.ts
 ```
 
 ## High-level implementation details
@@ -44,7 +44,7 @@ In order to implement the program with such functionalities, we have to first pa
 
 Here comes the fun part. How are we supposed to evaluate `BinExp[* Lit[2] Lit[3]]`? Since we cannot do anything further, we just simply **contract** them to `Lit[6]` and we are done. However, consider the AST `BinExp[* Lit[2] BinExp[+ Lit[3] Lit[4]]]` generated from `2 * (3 + 4)`, if we contract this expression directly, we will get `2 * {OBJECT}` which is not computable since one of the operands is not a number. Hence, we have to contract `BinExp[+ Lit[3] Lit[4]]]` first before contracting the outer `BinExp`.  Note that our stepper only contracts one node for each step. This is our main constraint that we use during the implementation.
 
-![alt text](images/tracer-1.png)
+![alt text](images/stepper-1.png)
 
 To implement this, we should have two methods `oneStep` and `contract` to perform this reduction. In addition, we also have another two methods `oneStepPossible` and `isContractible` to safeguard our AST before actually proceeding with our reduction procedure.
 

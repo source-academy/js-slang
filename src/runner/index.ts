@@ -55,11 +55,7 @@ async function sourceRunner(
   const theOptions = _.merge({ ...DEFAULT_SOURCE_OPTIONS }, options);
   context.variant = determineVariant(context, options);
 
-  if (
-    context.chapter === Chapter.FULL_JS ||
-    context.chapter === Chapter.FULL_TS ||
-    context.chapter === Chapter.PYTHON_1
-  ) {
+  if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.FULL_TS) {
     return runners.fulljs(program, context, theOptions);
   }
 
