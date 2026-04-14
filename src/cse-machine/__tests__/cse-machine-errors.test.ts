@@ -155,7 +155,7 @@ test('Nice errors when errors occur inside builtins 1', () => {
 
 test('Nice errors when errors occur inside builtins 2', () => {
   return expectParsedError(`parse("'");`, optionEC4).toEqual(
-    'Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)',
+    'Line 1: parse: SyntaxError: Unterminated string constant (1:0)',
   );
 });
 
@@ -979,7 +979,7 @@ test('Cascading js errors work properly', () => {
     h(null);
     `,
     optionEC2,
-  ).toEqual('Line 2: Error: head(xs) expects a pair as argument xs, but encountered null');
+  ).toEqual('Line 2: head: Expected pair, got null.');
 });
 
 test('Check that stack is at most 10k in size', { timeout: 20_000 }, () => {

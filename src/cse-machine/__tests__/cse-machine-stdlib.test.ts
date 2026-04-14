@@ -430,7 +430,7 @@ test.each([
     undefined,
   ],
 ] as [Chapter, string, boolean, Value][])(
-  'Builtins work as expected %#',
+  '%#. Builtins work as expected',
   async (chapter, snippet, passing, returnValue) => {
     if (passing) {
       await expectFinishedResult(stripIndent(snippet), {
