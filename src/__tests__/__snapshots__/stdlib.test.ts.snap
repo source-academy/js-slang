@@ -2,12 +2,12 @@
 
 exports[`Builtins work as expected 1 1`] = `"Line 1: Error: \\"error!\\""`;
 
-exports[`Builtins work as expected 56 1`] = `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered null"`;
+exports[`Builtins work as expected 56 1`] = `"Line 1: head: Expected pair, got null."`;
 
-exports[`Builtins work as expected 57 1`] = `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered null"`;
+exports[`Builtins work as expected 57 1`] = `"Line 1: tail: Expected pair, got null."`;
 
-exports[`Builtins work as expected 58 1`] = `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered 1"`;
+exports[`Builtins work as expected 58 1`] = `"Line 1: head: Expected pair, got 1."`;
 
-exports[`Builtins work as expected 59 1`] = `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
+exports[`Builtins work as expected 59 1`] = `"Line 1: tail: Expected pair, got 1."`;
 
-exports[`Builtins work as expected 61 1`] = `"Line 33: Error: tail(xs) expects a pair as argument xs, but encountered 1"`;
+exports[`Builtins work as expected 61 1`] = `"[prelude] Line 33: tail: Expected pair, got 1."`;

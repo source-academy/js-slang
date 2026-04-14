@@ -65,6 +65,6 @@ test('display with no arguments throws an error', () => {
 
 test('display throw error if second argument is non-string when used', () => {
   return expectParsedError(`display(31072020, 0xDEADC0DE);`).toEqual(
-    'Line 1: TypeError: display expects the second argument to be a string',
+    'Line 1: display: Expected string for second argument, got 3735929054.',
   );
 });

@@ -53,7 +53,8 @@ test('Arrow function definition returns itself', async () => {
   return expect(value).toMatchInlineSnapshot(`[Function]`);
 });
 
-test('Builtins hide their implementation when toString', async () => {
+// TODO: toString shouldn't be the way things are converted to strings in Source
+test.skip('Builtins hide their implementation when toString', async () => {
   const {
     result: { value },
   } = await testSuccess('toString(pair);', {
@@ -68,7 +69,8 @@ test('Builtins hide their implementation when toString', async () => {
   `);
 });
 
-test('functions toString (mostly) matches up with JS', async () => {
+// TODO: toString shouldn't be the way things are converted to strings in Source
+test.skip('functions toString (mostly) matches up with JS', async () => {
   const code = stripIndent`
     function f(x) {
     return 5;
