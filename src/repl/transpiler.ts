@@ -58,7 +58,7 @@ export const getTranspilerCommand = () =>
       try {
         const transpiled = opts.pretranspile
           ? generate(bundledProgram)
-          : transpile(bundledProgram, context).transpiled;
+          : transpile(bundledProgram, context, false).transpiled;
 
         if (opts.out) {
           await fs.writeFile(opts.out, transpiled);

@@ -43,7 +43,7 @@ function containsPrevEval(context: Context): boolean {
   return context.nativeStorage.evaller != null;
 }
 
-const fullJSRunner: Runner = async (program, context) => {
+const fullJSRunner: Runner = async (program, context, { isPrelude }) => {
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
   const prelude = preparePrelude(context);
@@ -71,7 +71,7 @@ const fullJSRunner: Runner = async (program, context) => {
   let transpiled;
   let sourceMapJson: RawSourceMap | undefined;
   try {
-    ({ transpiled, sourceMapJson } = transpile(program, context));
+    ({ transpiled, sourceMapJson } = transpile(program, context, isPrelude));
     return {
       status: 'finished',
       context,

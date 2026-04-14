@@ -15,7 +15,6 @@ import type { Chapter } from '../langs';
 import type { NativeStorage } from '../types';
 import * as create from './ast/astCreator';
 import { callExpression, locationDummyNode } from './ast/astCreator';
-import { makeWrapper } from './makeWrapper';
 import * as rttc from './rttc';
 
 export function throwIfTimeout(
@@ -31,49 +30,6 @@ export function throwIfTimeout(
       create.locationDummyNode(line, column, source),
       nativeStorage.maxExecTime,
     );
-  }
-}
-
-export function callIfFuncAndRightArgs(
-  candidate: any,
-  line: number,
-  column: number,
-  source: string | null,
-  ...args: any[]
-) {
-  const dummy = create.callExpression(create.locationDummyNode(line, column, source), args, {
-    start: { line, column },
-    end: { line, column },
-  });
-
-  if (typeof candidate === 'function') {
-    const originalCandidate = candidate;
-    if (candidate.transformedFunction !== undefined) {
-      candidate = candidate.transformedFunction;
-    }
-    const expectedLength = candidate.length;
-    const receivedLength = args.length;
-    const hasVarArgs = candidate.minArgsNeeded !== undefined;
-    if (hasVarArgs ? candidate.minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
-      throw new InvalidNumberOfArgumentsError(
-        dummy,
-        hasVarArgs ? candidate.minArgsNeeded : expectedLength,
-        receivedLength,
-        hasVarArgs,
-      );
-    }
-    try {
-      return originalCandidate(...args);
-    } catch (error) {
-      // if we already handled the error, simply pass it on
-      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-        throw new ExceptionError(error, dummy.loc);
-      } else {
-        throw error;
-      }
-    }
-  } else {
-    throw new CallingNonFunctionValueError(candidate, dummy);
   }
 }
 
@@ -152,6 +108,24 @@ export function evaluateBinaryExpression(operator: BinaryOperator, left: any, ri
   }
 }
 
+interface FunctionDetails {
+  isPrelude: boolean;
+  minArgsNeeded?: number;
+}
+
+const funcDetSymbol = Symbol();
+
+function getFunctionDetails(f: Function): FunctionDetails {
+  if (funcDetSymbol in f) {
+    return f[funcDetSymbol] as FunctionDetails;
+  }
+
+  return {
+    minArgsNeeded: f.length, // no way to check if the function hasVarArgs
+    isPrelude: false
+  }
+}
+
 /**
  * Limitations for current properTailCalls implementation:
  * Obviously, if objects ({}) are reintroduced,
@@ -159,34 +133,21 @@ export function evaluateBinaryExpression(operator: BinaryOperator, left: any, ri
  * as isTail and transformedFunctions are properties
  * and may be added by Source code.
  */
-export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: any[]) => {
-  let line = -1;
-  let column = -1;
-  let source: string | null = null;
+export function callIfFuncAndRightArgs(
+  f: unknown,
+  line: number,
+  column: number,
+  source: string | null,
+  nativeStorage: NativeStorage | undefined,
+  ...args: any[]
+) {
   const startTime = Date.now();
   const pastCalls: [string, any[]][] = [];
+  let isPrelude = false;
+
   while (true) {
     const dummy = locationDummyNode(line, column, source);
-    if (typeof f === 'function') {
-      if (f.transformedFunction !== undefined) {
-        f = f.transformedFunction;
-      }
-      const expectedLength = f.length;
-      const receivedLength = args.length;
-      const hasVarArgs = f.minArgsNeeded !== undefined;
-      if (hasVarArgs ? f.minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
-        throw new InvalidNumberOfArgumentsError(
-          callExpression(dummy, args, {
-            start: { line, column },
-            end: { line, column },
-            source,
-          }),
-          hasVarArgs ? f.minArgsNeeded : expectedLength,
-          receivedLength,
-          hasVarArgs,
-        );
-      }
-    } else {
+    if (typeof f !== 'function') {
       throw new CallingNonFunctionValueError(
         f,
         callExpression(dummy, args, {
@@ -196,53 +157,102 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
         }),
       );
     }
+
+    const expectedLength = f.length;
+    const receivedLength = args.length;
+    const { minArgsNeeded, isPrelude: isPreludeFunc } = getFunctionDetails(f);
+    
+    if (isPreludeFunc) {
+      // Once we call into a prelude function, everything that follows
+      // is in prelude code
+      isPrelude = true;
+    }
+
+    const hasVarArgs = minArgsNeeded !== undefined;
+    if (hasVarArgs ? minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
+      throw new InvalidNumberOfArgumentsError(
+        callExpression(dummy, args, {
+          start: { line, column },
+          end: { line, column },
+          source,
+        }),
+        hasVarArgs ? minArgsNeeded : expectedLength,
+        receivedLength,
+        hasVarArgs,
+      );
+    }
+
     let res;
     try {
       res = f(...args);
-      if (Date.now() - startTime > nativeStorage.maxExecTime) {
+      
+      if (nativeStorage && Date.now() - startTime > nativeStorage.maxExecTime) {
         throw new PotentialInfiniteRecursionError(dummy, pastCalls, nativeStorage.maxExecTime);
       }
     } catch (error) {
       // if we already handled the error, simply pass it on
-      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-        throw new ExceptionError(error, dummy.loc);
-      } else {
+      if (error instanceof ExceptionError) throw error;
+
+      if (error instanceof RuntimeSourceError) {
+        if (!error.node) {
+          error.node = locationDummyNode(line, column, isPrelude ? 'prelude' : source);
+        } else if (isPrelude) {
+          if (!error.node.loc) {
+            error.node.loc = {
+              start: { line, column },
+              end: { line, column },
+              source: 'prelude',
+            }
+          } else {
+            error.node.loc.source = 'prelude'
+          }
+        }
         throw error;
       }
+
+      throw new ExceptionError(error);
     }
+
     if (res === null || res === undefined) {
       return res;
     } else if (res.isTail === true) {
       f = res.function;
       args = res.arguments;
+      source = res.source;
       line = res.line;
       column = res.column;
-      source = res.source;
       pastCalls.push([res.functionName, args]);
+      // Then go back to the top of the while loop
     } else if (res.isTail === false) {
       return res.value;
     } else {
       return res;
     }
   }
-};
+}
 
-export const wrap = (
+export function wrap(
   f: (...args: any[]) => any,
   stringified: string,
-  hasVarArgs: boolean,
-  nativeStorage: NativeStorage,
-) => {
-  if (hasVarArgs) {
-    // @ts-expect-error Ignore the fact that minArgsNeeded is an unknown property
-    f.minArgsNeeded = f.length;
+  hasVarArgs: boolean | undefined | number,
+  isPrelude: boolean
+) {
+  let minArgsNeeded: number | undefined;
+  if (hasVarArgs === true) {
+    minArgsNeeded = f.length;
+  } else if (typeof hasVarArgs === 'number') {
+    minArgsNeeded = hasVarArgs;
   }
-  const wrapped = (...args: any[]) => callIteratively(f, nativeStorage, ...args);
-  makeWrapper(f, wrapped);
-  wrapped.transformedFunction = f;
-  wrapped.toReplString = () => stringified;
-  return wrapped;
-};
+
+  (f as any)[funcDetSymbol] = {
+    minArgsNeeded,
+    isPrelude
+  };
+
+  // @ts-expect-error toReplString is not a known property of functions
+  f.toReplString = () => stringified;
+  return f;
+}
 
 export function setProp(
   obj: any,

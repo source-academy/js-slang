@@ -9,9 +9,7 @@ import type es from 'estree';
 import { isArray } from 'lodash';
 
 import type { IOptions } from '..';
-import { UNKNOWN_LOCATION } from '../constants';
 import * as errors from '../errors/errors';
-import { RuntimeSourceError } from '../errors/base';
 import { checkEditorBreakpoints } from '../stdlib/inspector';
 import type {
   Context,
@@ -29,7 +27,7 @@ import {
   hasNoDeclarations,
   hasNoImportDeclarations,
 } from '../utils/ast/helpers';
-import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators';
+import { callIfFuncAndRightArgs, evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators';
 import * as rttc from '../utils/rttc';
 import * as seq from '../utils/statementSeqTransform';
 import { checkProgramForUndefinedVariables } from '../validator/validator';
@@ -852,11 +850,11 @@ const cmdEvaluators: CommandEvaluators = {
     }
 
     // Value is a built-in function
-    // Check for number of arguments mismatch error
-    checkNumberOfArguments(context, func, args, command.srcNode);
     // Directly stash result of applying pre-built functions without the CSE machine.
     try {
-      const result = func(...args);
+      const line = command.srcNode.loc?.start?.line ?? -1;
+      const col = command.srcNode.loc?.start?.column ?? -1;
+      const result = callIfFuncAndRightArgs(func, line, col, null, undefined, ...args)
 
       if (isStreamFn(func, result)) {
         // This is a special case for the `stream` built-in function, since it returns pairs
@@ -886,13 +884,7 @@ const cmdEvaluators: CommandEvaluators = {
 
       stash.push(result);
     } catch (error) {
-      if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
-        // The error could've arisen when the builtin called a source function which errored.
-        // If the cause was a source error, we don't want to include the error.
-        // However if the error came from the builtin itself, we need to handle it.
-        const loc = command.srcNode.loc ?? UNKNOWN_LOCATION;
-        handleRuntimeError(context, new errors.ExceptionError(error, loc));
-      }
+      handleRuntimeError(context, error);
     }
   },
 

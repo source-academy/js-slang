@@ -86,6 +86,22 @@ function getErrorLocation(
   return undefined;
 }
 
+export async function getPositionWithSourceMap(line: number, column: number, sourceMap: RawSourceMap) {
+  const originalPosition: NullableMappedPosition = await SourceMapConsumer.with(
+    sourceMap,
+    null,
+    consumer => consumer.originalPositionFor({ line, column }),
+  );
+
+  return {
+    line: originalPosition.line ?? -1, // use -1 in place of null
+    column: originalPosition.column ?? -1,
+    identifier: originalPosition.name ?? 'UNKNOWN',
+    source: originalPosition.source ?? null
+  }
+  
+}
+
 /**
  * Converts native errors to SourceError
  *
@@ -104,16 +120,7 @@ export async function toSourceError(error: Error, sourceMap?: RawSourceMap): Pro
   let source: string | null = null;
 
   if (sourceMap && !(line === -1 || column === -1)) {
-    // Get original lines, column and identifier
-    const originalPosition: NullableMappedPosition = await SourceMapConsumer.with(
-      sourceMap,
-      null,
-      consumer => consumer.originalPositionFor({ line, column }),
-    );
-    line = originalPosition.line ?? -1; // use -1 in place of null
-    column = originalPosition.column ?? -1;
-    identifier = originalPosition.name ?? identifier;
-    source = originalPosition.source ?? null;
+    ;({ line, column, source, identifier } = await getPositionWithSourceMap(line, column, sourceMap));
   }
 
   const errorMessage: string = error.message;
