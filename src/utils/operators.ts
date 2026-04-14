@@ -231,12 +231,20 @@ export function callIfFuncAndRightArgs(
   }
 }
 
-export function wrap(
-  f: (...args: any[]) => any,
+/**
+ * Augment the given function with the necessary information for it to be called
+ * properly by {@link callIfFuncAndRightArgs}.
+ *
+ * If `hasVarArgs` is `false` or `undefined`, then `f` is assumed not to have variadic args.
+ * If `hasVarArgs` is `true`, `minArgsNeeded` is inferred from `f.length`.
+ * If `hasVarArgs` is a number, it is used for `minArgsNeeded`.
+ */
+export function wrap<T extends (...args: any[]) => any>(
+  f: T,
   stringified: string,
   hasVarArgs: boolean | undefined | number,
   isPrelude: boolean,
-) {
+): T {
   let minArgsNeeded: number | undefined;
   if (hasVarArgs === true) {
     minArgsNeeded = f.length;

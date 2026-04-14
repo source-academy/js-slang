@@ -6,10 +6,6 @@ export class PromiseTimeoutError extends TimeoutError {
   public override explain() {
     return 'An internal operation timed out while executing.';
   }
-
-  public override elaborate() {
-    return this.explain();
-  }
 }
 
 export const timeoutPromise = <T>(promise: Promise<T>, timeout: number, node?: Node) =>
