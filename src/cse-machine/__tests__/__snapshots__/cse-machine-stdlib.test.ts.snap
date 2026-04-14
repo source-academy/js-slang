@@ -1,37 +1,13 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`1. Builtins work as expected  1`] = `"Line 1: Error: \\"error!\\""`;
-
-exports[`1. Builtins work as expected '\\n    error(\\'error!\\');\\n    '  1`] = `"Line 1: Error: \\"error!\\""`;
-
 exports[`1. Builtins work as expected 1`] = `"Line 1: Error: \\"error!\\""`;
-
-exports[`40. Builtins work as expected  1`] = `"Line 1: head: Expected pair, got null."`;
-
-exports[`40. Builtins work as expected '\\n    head(null);\\n    '  1`] = `"Line 1: head: Expected pair, got null."`;
 
 exports[`40. Builtins work as expected 1`] = `"Line 1: head: Expected pair, got null."`;
 
-exports[`41. Builtins work as expected  1`] = `"Line 1: tail: Expected pair, got null."`;
-
-exports[`41. Builtins work as expected '\\n    tail(null);\\n    '  1`] = `"Line 1: tail: Expected pair, got null."`;
-
 exports[`41. Builtins work as expected 1`] = `"Line 1: tail: Expected pair, got null."`;
-
-exports[`42. Builtins work as expected  1`] = `"Line 1: head: Expected pair, got 1."`;
-
-exports[`42. Builtins work as expected '\\n    head(1);\\n    '  1`] = `"Line 1: head: Expected pair, got 1."`;
 
 exports[`42. Builtins work as expected 1`] = `"Line 1: head: Expected pair, got 1."`;
 
-exports[`43. Builtins work as expected  1`] = `"Line 1: tail: Expected pair, got 1."`;
-
-exports[`43. Builtins work as expected '\\n    tail(1);\\n    '  1`] = `"Line 1: tail: Expected pair, got 1."`;
-
 exports[`43. Builtins work as expected 1`] = `"Line 1: tail: Expected pair, got 1."`;
-
-exports[`45. Builtins work as expected  1`] = `"Line 33: tail: Expected pair, got 1."`;
-
-exports[`45. Builtins work as expected '\\n    length(1);\\n    '  1`] = `"Line 33: tail: Expected pair, got 1."`;
 
 exports[`45. Builtins work as expected 1`] = `"Line 33: tail: Expected pair, got 1."`;
