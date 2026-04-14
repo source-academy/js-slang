@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { defaultBuiltIns } from '../createContext';
 import { expectFinishedResult } from '../utils/testing';
 
-const defaultRawDisplay = vi.spyOn(defaultBuiltIns, 'rawDisplay');
+const defaultRawDisplay = vi.spyOn(defaultBuiltIns, 'rawDisplay').mockImplementation(() => {});
 const defaultPrompt = vi.spyOn(defaultBuiltIns, 'prompt');
 const defaultAlert = vi.spyOn(defaultBuiltIns, 'alert');
 

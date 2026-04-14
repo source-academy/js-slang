@@ -102,6 +102,10 @@ export function isObject(v: Value): v is object {
   return typeOf(v) === 'object';
 }
 
+/**
+ * Checks that the given unary expression has a valid type, i.e `!` is used with booleans
+ * and `-` and `+` are used with numbers.
+ */
 export function checkUnaryExpression(
   node: Node,
   operator: '!',
@@ -133,6 +137,13 @@ export function checkUnaryExpression(
   }
 }
 
+/**
+ * Checks that the given binary expression has a valid type:
+ * 1. `+` can be used with both numbers or both strings
+ * 2. `-`, `/`, `%`, `*`, `>`, `>=`, `<`, `<=` can only be used with numbers
+ * 3. `||` and `&&` can only be used with booleans
+ * 4. Equality operators can be used with any values
+ */
 export function checkBinaryExpression(
   node: Node,
   operator: '+',
@@ -208,6 +219,9 @@ export function checkBinaryExpression(
   }
 }
 
+/**
+ * Checks that the given if statement's test has a boolean type
+ */
 export function checkIfStatement(
   node: Node,
   test: unknown,
@@ -226,6 +240,11 @@ export function checkoutofRange(node: Node, index: Value, chapter: Chapter = Cha
   }
 }
 
+/**
+ * Check that the given MemberExpression `x[y]` is of the correct type:
+ * 1. `x` is an array and `y` is a valid array index
+ * 2. `x` is an object and `y` is a string
+ */
 export function checkMemberAccess(
   node: Node,
   args: [Value, Value],
