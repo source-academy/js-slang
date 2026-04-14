@@ -1,35 +1,43 @@
-import { GeneralRuntimeError } from '../errors/base';
+import { InvalidParameterTypeError } from '../errors/rttcErrors';
+import { wrap } from '../utils/operators';
 import { head, is_null, is_pair, type List, type Pair, pair, tail } from './list'
 import { arity } from './misc'
 
 type NonEmptyStream<T = unknown> = Pair<T, () => Stream<T>>
 export type Stream<T = unknown> = null | NonEmptyStream<T>
 
+function createStreamPair<T>(item: T, next: () => Stream<T>): NonEmptyStream<T> {
+  const streamTail = wrap(next, '() => ...', false, false);
+  return pair(item, streamTail);
+}
+
 /**
  * Makes a Stream out of its arguments\
  * LOW-LEVEL FUNCTION, NOT SOURCE
  */
+export function stream(): null;
+export function stream<T>(...elements: T[]): NonEmptyStream<T>;
 export function stream<T>(...elements: T[]): Stream<T> {
   if (elements.length === 0) return null;
 
   const [item, ...rest] = elements;
-  return pair(item, () => stream(...rest));
+  return createStreamPair(item, () => stream(...rest));
 }
 
 // same as list_to_stream in stream.prelude.ts
 export function list_to_stream<T>(xs: List<T>): Stream<T> {
-  return is_null(xs) ? null : pair(head(xs), () => list_to_stream(tail(xs)));
+  return is_null(xs) ? null : createStreamPair(head(xs), () => list_to_stream(tail(xs)));
 }
 
 export function stream_tail<T>(stream: NonEmptyStream<T>): Stream<T>
 export function stream_tail(stream: unknown): Stream<unknown> {
   if (!is_pair(stream)) {
-    throw new GeneralRuntimeError(`${stream_tail.name}(s) expects a non-empty stream!`)
+    throw new InvalidParameterTypeError('non-empty stream', stream, stream_tail.name);
   }
 
   const next = tail(stream)
   if (typeof next !== 'function' || arity(next) !== 0) {
-    throw new GeneralRuntimeError(`${stream_tail.name}(s) expects a stream!`)
+    throw new InvalidParameterTypeError('stream', stream, stream_tail.name);
   }
 
   return next()
@@ -164,7 +172,7 @@ export function stream_ref<T>(s: Stream<T>, n: number): T {
   }
 
   if (is_null(s)) {
-    throw new Error(`${stream_ref.name}(s, n): Index ${n} out of bounds!`)
+    throw new Error(`${stream_ref.name}: Index ${n} out of bounds!`)
   }
 
   return head(s)

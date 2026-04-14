@@ -3,6 +3,7 @@ import { Chapter } from '../../langs'
 import { stripIndent } from '../../utils/formatters'
 import * as funcs from '../stream'
 import { expectFinishedResult, expectParsedError, testSuccess } from '../../utils/testing'
+import { stringify } from '../../utils/stringify'
 
 describe(funcs.stream, () => {
   describe('source', () => {
@@ -27,10 +28,11 @@ describe(funcs.stream, () => {
     test('regular stream', () => {
       const stream = funcs.stream(1, 2)
 
-      expect(stream![0]).toEqual(1)
-      expect(stream![1]).toBeInstanceOf(Function)
+      expect(stream[0]).toEqual(1)
+      expect(stream[1]).toBeInstanceOf(Function)
+      expect(stringify(stream)).toEqual('[1, () => ...]');
 
-      const next = stream![1]()
+      const next = stream[1]()
       expect(next![0]).toEqual(2)
       expect(next![1]).toBeInstanceOf(Function)
       expect(next![1]()).toBeNull()
@@ -100,13 +102,13 @@ describe(funcs.stream_tail, () => {
   describe('javascript', () => {
     it('works with populated stream', () => {
       const stream = funcs.stream(1, 2)
-      expect(funcs.stream_tail(stream!)).toEqual([2, expect.any(Function)])
+      expect(funcs.stream_tail(stream)).toEqual([2, expect.any(Function)])
     })
 
     test('throws error on empty stream', () => {
       const stream = funcs.stream()
-      expect(() => funcs.stream_tail(stream!)).toThrowError(
-        'stream_tail(s) expects a non-empty stream!'
+      expect(() => funcs.stream_tail(stream!)).toThrow(
+        'stream_tail: Expected non-empty stream, got null.'
       )
     })
   })
