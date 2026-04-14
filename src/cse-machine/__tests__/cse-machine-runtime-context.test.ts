@@ -219,7 +219,7 @@ test('CSE Machine correctly updates streamLineage with simple streams', async ()
     `,
     172,
   );
-  
+
   expect(context.streamLineage.size).toEqual(2);
 });
 
@@ -231,7 +231,7 @@ test('CSE Machine correctly updates streamLineage with self-referential streams'
     `,
     164,
   );
-  
+
   expect((context.streamLineage.values().next().value as Array<string>).length).toEqual(2);
 });
 
@@ -247,6 +247,6 @@ test('CSE Machine does not update streamLineage when nullary function does not r
     `,
     115,
   );
-  
+
   expect(context.streamLineage.size).toEqual(0);
 });
