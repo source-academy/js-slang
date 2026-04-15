@@ -26,7 +26,6 @@
   },
   "include": ["src", "vitest.config.ts"],
   "exclude": [
-    "src/py-slang/src/tests",
     "node_modules",
     "dist",
     "sicp_publish"
