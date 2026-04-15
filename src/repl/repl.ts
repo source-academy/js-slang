@@ -4,12 +4,13 @@ import replLib from 'repl';
 import { Command } from '@commander-js/extra-typings';
 
 import { createContext, type IOptions } from '..';
-import { Chapter, isSupportedLanguageCombo, Variant } from '../langs';
+import { Chapter, Variant } from '../langs';
 import { setModulesStaticURL } from '../modules/loader';
 import type { FileGetter } from '../modules/moduleTypes';
 import { runCodeInSource, sourceFilesRunner } from '../runner';
 import type { RecursivePartial } from '../types';
 import {
+  assertLanguageCombo,
   chapterParser,
   getChapterOption,
   getLanguageOption,
@@ -28,10 +29,7 @@ export const getReplCommand = () =>
     .option('--optionsFile <file>', 'Specify a JSON file to read options from')
     .argument('[filename]')
     .action(async (filename, { modulesBackend, optionsFile, repl, verbose, ...lang }) => {
-      if (!isSupportedLanguageCombo(lang)) {
-        console.log('Invalid language combination!');
-        return;
-      }
+      assertLanguageCombo(lang);
 
       const context = createContext(lang.chapter, lang.variant, lang.languageOptions);
 

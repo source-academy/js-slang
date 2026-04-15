@@ -59,7 +59,7 @@ test.each(testCases)('%s', (_, code, expectedDisplay, chapter = undefined) =>
 
 test('display with no arguments throws an error', () => {
   return expectParsedError(`display();`, Chapter.LIBRARY_PARSER).toEqual(
-    'Line 1: Expected 1 or more arguments, but got 0.',
+    'Line 1: display: Expected 1 or more arguments, but got 0.',
   );
 });
 

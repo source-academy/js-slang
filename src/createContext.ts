@@ -232,6 +232,7 @@ export function defineBuiltin(
     // value.minArgsNeeded = minArgsNeeded;
     value.funName = funName;
     value.funParameters = funParameters;
+    Object.defineProperty(value, 'name', { value: funName });
 
     defineSymbol(context, funName, wrapped);
   } else {
@@ -286,7 +287,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     (externalBuiltIns.alert ?? defaultBuiltIns.alert)(v, '', context.externalContext);
     context.nativeStorage.maxExecTime += Date.now() - start;
   };
-  const visualiseList = (...v: Value[]) => {
+  const visualise_list = (...v: Value[]) => {
     (externalBuiltIns.visualiseList ?? defaultBuiltIns.visualiseList)(v, context.externalContext);
     return v[0];
   };
@@ -339,7 +340,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     defineBuiltin(context, 'tail(xs)', list.tail);
     defineBuiltin(context, 'is_null(val)', list.is_null);
     defineBuiltin(context, 'list(...values)', list.list, 0);
-    defineBuiltin(context, 'draw_data(...xs)', visualiseList, 1);
+    defineBuiltin(context, 'draw_data(...xs)', visualise_list, 1);
     defineBuiltin(context, 'display_list(val, prepend = undefined)', display_list, 0);
     defineBuiltin(context, 'is_list(val)', list.is_list);
   }

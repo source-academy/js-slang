@@ -1,6 +1,6 @@
 import { TimeoutError } from '../errors/timeoutErrors';
 import type { Node } from '../types';
-import { Chapter } from '../langs';
+import { Chapter, Variant } from '../langs';
 
 export class PromiseTimeoutError extends TimeoutError {
   public override explain() {
@@ -47,4 +47,11 @@ export function objectKeys<T extends string | number | symbol>(obj: Record<T, an
  */
 export function getChapterName(chapter: Chapter) {
   return objectKeys(Chapter).find(name => Chapter[name] === chapter)!;
+}
+
+/**
+ * Given the variant value, return the string name of that variant
+ */
+export function getVariantName(variant: Variant) {
+  return objectKeys(Variant).find(name => Variant[name] === variant)!;
 }

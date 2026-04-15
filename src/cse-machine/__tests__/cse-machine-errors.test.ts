@@ -149,7 +149,7 @@ test('Assigning to keyword error message differs from verbose version', () => {
 
 test('Nice errors when errors occur inside builtins 1', () => {
   return expectParsedError(`parse_int("10");`, optionEC4).toEqual(
-    'Line 1: Expected 2 arguments, but got 1.',
+    'Line 1: parse_int: Expected 2 arguments, but got 1.',
   );
 });
 
@@ -639,21 +639,15 @@ test('Error when calling arrow function in tail call with too many arguments', (
 });
 
 test('Error when calling builtin function in with too many arguments', () => {
-  return expectParsedError(
-    stripIndent`
-    is_number(1, 2, 3);
-  `,
-    optionEC,
-  ).toEqual('Line 1: Expected 1 arguments, but got 3.');
+  return expectParsedError(`is_number(1, 2, 3);`, optionEC).toEqual(
+    'Line 1: is_number: Expected 1 arguments, but got 3.',
+  );
 });
 
 test('Error when calling builtin function in with too few arguments', () => {
-  return expectParsedError(
-    stripIndent`
-    parse_int("");
-  `,
-    optionEC,
-  ).toEqual('Line 1: Expected 2 arguments, but got 1.');
+  return expectParsedError(`parse_int("");`, optionEC).toEqual(
+    'Line 1: parse_int: Expected 2 arguments, but got 1.',
+  );
 });
 
 test('No error when calling list function in with variable arguments', async ({ expect }) => {
@@ -737,12 +731,9 @@ test('No error when calling math_min function in with variable arguments', () =>
 });
 
 test('Error with too many arguments passed to math_sin', () => {
-  return expectParsedError(
-    stripIndent`
-    math_sin(7,8);
-  `,
-    optionEC3,
-  ).toEqual('Line 1: Expected 1 arguments, but got 2.');
+  return expectParsedError(`math_sin(7,8);`, optionEC3).toEqual(
+    'Line 1: math_sin: Expected 1 arguments, but got 2.',
+  );
 });
 
 test('Error with too few arguments passed to rest parameters', () => {

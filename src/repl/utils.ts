@@ -2,9 +2,16 @@ import { Option } from '@commander-js/extra-typings';
 
 import { parseError } from '..';
 import Closure from '../cse-machine/closure';
-import { Chapter, LanguageOptions, Variant } from '../langs';
+import {
+  Chapter,
+  isSupportedLanguageCombo,
+  Language,
+  LanguageOptions,
+  SourceLanguages,
+  Variant,
+} from '../langs';
 import type { Context, Result } from '../types';
-import { objectKeys } from '../utils/misc';
+import { getChapterName, getVariantName, objectKeys } from '../utils/misc';
 import { stringify } from '../utils/stringify';
 import { GeneralRuntimeError } from '../errors/base';
 
@@ -62,4 +69,15 @@ export function handleResult(result: Result, context: Context, verboseErrors: bo
   }
 
   return `Error: ${parseError(context.errors, verboseErrors)}`;
+}
+
+export function assertLanguageCombo(combo: Language): asserts combo is SourceLanguages {
+  if (isSupportedLanguageCombo(combo)) return;
+
+  const chapterName = getChapterName(combo.chapter);
+  const variantName = getVariantName(combo.variant);
+
+  throw new GeneralRuntimeError(
+    `Invalid language combo: chapter ${chapterName} and variant ${variantName}`,
+  );
 }

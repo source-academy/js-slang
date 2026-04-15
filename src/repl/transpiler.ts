@@ -5,11 +5,17 @@ import { Command } from '@commander-js/extra-typings';
 import { generate } from 'astring';
 
 import { createContext, parseError } from '../index';
-import { Chapter, isSupportedLanguageCombo, Variant } from '../langs';
+import { Chapter, Variant } from '../langs';
 import defaultBundler from '../modules/preprocessor/bundler';
 import parseProgramsAndConstructImportGraph from '../modules/preprocessor/linker';
 import { transpile } from '../transpiler/transpiler';
-import { chapterParser, getChapterOption, getLanguageOption, getVariantOption } from './utils';
+import {
+  assertLanguageCombo,
+  chapterParser,
+  getChapterOption,
+  getLanguageOption,
+  getVariantOption,
+} from './utils';
 
 export const getTranspilerCommand = () =>
   new Command('transpiler')
@@ -23,10 +29,7 @@ export const getTranspilerCommand = () =>
     .option('-o, --out <outFile>', 'Specify a file to write to')
     .argument('<filename>')
     .action(async (fileName, opts) => {
-      if (isSupportedLanguageCombo(opts)) {
-        console.log('Invalid language combination!');
-        return;
-      }
+      assertLanguageCombo(opts);
 
       const context = createContext(opts.chapter, opts.variant, opts.languageOptions);
       const entrypointFilePath = pathlib.resolve(fileName);

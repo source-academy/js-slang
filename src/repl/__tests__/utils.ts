@@ -18,21 +18,19 @@ export function getCommandRunner<T extends Command<any, any>>(getter: () => T) {
   }
 
   return {
-    expectError(...args: string[]) {
+    expectError: vi.defineHelper((...args: string[]) => {
       // Error conditions should always cause commands to call
       // process.exit(1)
-      return expect(runner(...args)).rejects.toMatchInlineSnapshot(
-        `[Error: process.exit called with 1]`,
-      );
-    },
-    expectSuccess(...args: string[]) {
+      return expect(runner(...args)).rejects.toThrow(`process.exit called with 1`);
+    }),
+    expectSuccess: vi.defineHelper((...args: string[]) => {
       return expect(runner(...args)).resolves.toBeUndefined();
-    },
+    }),
   };
 }
 
-export function expectWritten(f: (contents: string) => any) {
+export const expectWritten = vi.defineHelper((f: (contents: string) => any) => {
   expect(f).toHaveBeenCalledTimes(1);
   const [[contents]] = vi.mocked(f).mock.calls;
   return expect(contents);
-}
+});

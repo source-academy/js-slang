@@ -12,6 +12,6 @@ test('draw_data returns first argument if exactly one argument', () => {
 
 test('draw_data with no arguments throws error', () => {
   return expectParsedError(`draw_data();`, Chapter.SOURCE_3).toEqual(
-    'Line 1: Expected 1 or more arguments, but got 0.',
+    'Line 1: draw_data: Expected 1 or more arguments, but got 0.',
   );
 });
