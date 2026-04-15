@@ -178,6 +178,7 @@ export function callIfFuncAndRightArgs(
         }),
         hasVarArgs ? minArgsNeeded : expectedLength,
         receivedLength,
+        f.name,
         hasVarArgs,
       );
     }

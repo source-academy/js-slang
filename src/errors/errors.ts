@@ -185,6 +185,7 @@ export class InvalidNumberOfArgumentsError extends RuntimeSourceError<es.CallExp
     node: es.CallExpression,
     private readonly expected: number,
     private readonly got: number,
+    private readonly funcName?: string,
     private readonly hasVarArgs = false,
   ) {
     super(node);
@@ -192,7 +193,8 @@ export class InvalidNumberOfArgumentsError extends RuntimeSourceError<es.CallExp
   }
 
   public override explain() {
-    return `Expected ${this.expected} ${this.hasVarArgs ? 'or more ' : ''}arguments, but got ${
+    const funcStr = this.funcName !== undefined ? `${this.funcName}: ` : '';
+    return `${funcStr}Expected ${this.expected} ${this.hasVarArgs ? 'or more ' : ''}arguments, but got ${
       this.got
     }.`;
   }
