@@ -261,7 +261,7 @@ describe(funcs.build_stream, () => {
 
       for (let i = 0; s !== null; i++) {
         if (i > 1000) {
-          throw new Error('should not get here');
+          expect.fail('should not get here');
         }
 
         expect(f).toHaveBeenCalledTimes(i + 1);

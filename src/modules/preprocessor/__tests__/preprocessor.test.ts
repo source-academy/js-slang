@@ -53,12 +53,12 @@ describe(preprocessFileImports, () => {
     _log: boolean = false,
   ): void => {
     if (!actualProgram) {
-      throw new Error('Actual program should not be undefined!');
+      expect.fail('Actual program should not be undefined!');
     }
 
     const expectedProgram = parse(expectedCode, expectedContext);
     if (!expectedProgram) {
-      throw new Error('Failed to parse expected code');
+      expect.fail('Failed to parse expected code');
     }
 
     expect(sanitizeAST(actualProgram)).toMatchObject(sanitizeAST(expectedProgram));

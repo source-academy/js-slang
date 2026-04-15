@@ -137,16 +137,14 @@ function expectCalls(count: number, expected: RunnerTypes) {
 
   switch (calledRunner) {
     case undefined:
-      throw new Error(
-        `Expected ${expected} to be called ${count} times, but no runners were called`,
-      );
+      expect.fail(`Expected ${expected} to be called ${count} times, but no runners were called`);
     case expected: {
       expect(runners[expected]).toHaveBeenCalledTimes(count);
       return vi.mocked(runners[expected]).mock.calls;
     }
     default: {
       const callCount = vi.mocked(runners[calledRunner]).mock.calls.length;
-      throw new Error(
+      expect.fail(
         `Expected ${expected} to be called ${count} times, but ${calledRunner} was called ${callCount} times`,
       );
     }

@@ -23,7 +23,7 @@ function testCases(suiteDesc: string, testCases: TestCase[]) {
       const expectedProgram = parse(expectedCode, expectedContext);
       if (actualProgram === null || expectedProgram === null) {
         // If there are any errors in the given code throw an error
-        throw new Error('Failed to parse expected code or actual code');
+        expect.fail('Failed to parse expected code or actual code');
       }
       removeExports(actualProgram);
 

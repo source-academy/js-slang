@@ -507,6 +507,7 @@ export const checkNumberOfArguments = (
           exp,
           hasVarArgs ? params.length - 1 : params.length,
           args.length,
+          undefined,
           hasVarArgs,
         ),
       );
@@ -516,7 +517,7 @@ export const checkNumberOfArguments = (
     if (args.length !== 1) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArgumentsError(exp, 1, args.length, false),
+        new errors.InvalidNumberOfArgumentsError(exp, 1, args.length, undefined, false),
       );
     }
     return undefined;
@@ -536,6 +537,7 @@ export const checkNumberOfArguments = (
           exp,
           hasVarArgs ? callee.minArgsNeeded : callee.length,
           args.length,
+          undefined,
           hasVarArgs,
         ),
       );

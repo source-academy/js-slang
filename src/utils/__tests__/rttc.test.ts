@@ -80,7 +80,7 @@ describe(rttc.checkUnaryExpression, () => {
         }).toMatchSnapshot();
         return;
       }
-      throw new Error('Expected checkUnaryExpression to throw, did not throw');
+      expect.fail('Expected checkUnaryExpression to throw, did not throw');
     });
   });
 });
@@ -132,7 +132,7 @@ describe(rttc.checkBinaryExpression, () => {
           }).toMatchSnapshot();
           return;
         }
-        throw new Error('Expected checkBinaryExpression to throw, did not throw');
+        expect.fail('Expected checkBinaryExpression to throw, did not throw');
       });
     });
   });
@@ -185,7 +185,7 @@ describe(rttc.checkBinaryExpression, () => {
           }).toMatchSnapshot();
           return;
         }
-        throw new Error('Expected checkBinaryExpression to throw, did not throw');
+        expect.fail('Expected checkBinaryExpression to throw, did not throw');
       });
     });
   });
@@ -227,7 +227,7 @@ describe(rttc.checkBinaryExpression, () => {
           }).toMatchSnapshot();
           return;
         }
-        throw new Error('Expected checkBinaryExpression to throw, did not throw');
+        expect.fail('Expected checkBinaryExpression to throw, did not throw');
       });
     });
   });
@@ -284,7 +284,7 @@ describe(rttc.checkBinaryExpression, () => {
           }).toMatchSnapshot();
           return;
         }
-        throw new Error('Expected checkBinaryExpression to throw error, did not throw error');
+        expect.fail('Expected checkBinaryExpression to throw error, did not throw error');
       });
     });
   });
@@ -314,7 +314,7 @@ describe(rttc.checkIfStatement, () => {
         return;
       }
 
-      throw new Error('Expected checkIfStatement to throw, did not get error');
+      expect.fail('Expected checkIfStatement to throw, did not get error');
     });
   });
 });
@@ -362,7 +362,7 @@ describe(rttc.checkMemberAccess, () => {
         }).toMatchSnapshot();
         return;
       }
-      throw new Error('Expected checkMemberAccess to throw error, no error thrown');
+      expect.fail('Expected checkMemberAccess to throw error, no error thrown');
     });
   });
 });
@@ -386,7 +386,7 @@ describe(rttc.isFunctionOfLength, () => {
       expectTypeOf(func3).toEqualTypeOf<(a: unknown) => unknown>();
     } else {
       expectTypeOf(func3).toEqualTypeOf<unknown>();
-      throw new Error('Type guard failed unexpectedly');
+      expect.fail('Type guard failed unexpectedly');
     }
   });
 });

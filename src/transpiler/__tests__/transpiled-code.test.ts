@@ -60,14 +60,14 @@ describe(transformImportDeclarations, () => {
     const expectedContext = mockContext(Chapter.LIBRARY_PARSER);
     const expectedProgram = parse(expected, expectedContext);
     if (!expectedProgram || expectedContext.errors.length > 0) {
-      throw new Error('Expected program should not have parse errors');
+      expect.fail('Expected program should not have parse errors');
     }
 
     const actualContext = mockContext(Chapter.LIBRARY_PARSER);
     const actualProgram = parse(actual, actualContext);
 
     if (!actualProgram || actualContext.errors.length > 0) {
-      throw new Error('Expected program should not have parse errors');
+      expect.fail('Expected program should not have parse errors');
     }
 
     const [declNodes, otherNodes] = transformImportDeclarations(

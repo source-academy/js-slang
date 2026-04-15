@@ -27,7 +27,7 @@ function codify(node: StepperBaseNode) {
         explanation = prop.markers[0].explanation;
       } else {
         explanation = `Missing explanation for type ${prop.markers[0].redex?.type}.`;
-        throw new Error(explanation);
+        expect.fail(explanation);
       }
     }
     const markerAnnotation =
