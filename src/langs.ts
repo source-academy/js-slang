@@ -38,7 +38,7 @@ function defineLanguages<T extends Language[]>(languages: T) {
   };
 }
 
-export const { languages: sourceLanguages, typeguard: isSupportedLangaugeCombo } = defineLanguages([
+export const { languages: sourceLanguages, typeguard: isSupportedLanguageCombo } = defineLanguages([
   { chapter: Chapter.SOURCE_1, variant: Variant.DEFAULT },
   { chapter: Chapter.SOURCE_1, variant: Variant.TYPED },
   { chapter: Chapter.SOURCE_1, variant: Variant.WASM },

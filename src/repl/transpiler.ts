@@ -5,7 +5,7 @@ import { Command } from '@commander-js/extra-typings';
 import { generate } from 'astring';
 
 import { createContext, parseError } from '../index';
-import { Chapter, isSourceLanguage, Variant } from '../langs';
+import { Chapter, isSupportedLanguageCombo, Variant } from '../langs';
 import defaultBundler from '../modules/preprocessor/bundler';
 import parseProgramsAndConstructImportGraph from '../modules/preprocessor/linker';
 import { transpile } from '../transpiler/transpiler';
@@ -23,7 +23,7 @@ export const getTranspilerCommand = () =>
     .option('-o, --out <outFile>', 'Specify a file to write to')
     .argument('<filename>')
     .action(async (fileName, opts) => {
-      if (!isSourceLanguage(opts)) {
+      if (isSupportedLanguageCombo(opts)) {
         console.log('Invalid language combination!');
         return;
       }
