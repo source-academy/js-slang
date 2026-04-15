@@ -65,7 +65,10 @@ export async function loadSourceModuleTypes(
   );
   const loadedObj = Object.fromEntries(loadedModules);
   sourceModulesToImport.forEach(module => {
-    context.nativeStorage.loadedModuleTypes[module] = loadedObj[module].type_map;
+    context.nativeStorage.loadedModuleTypes[module] = loadedObj[module].type_map as Record<
+      string,
+      string
+    >;
   });
 }
 

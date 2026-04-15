@@ -31,7 +31,7 @@ export interface ModulesManifest {
 export type PartialSourceModule = (require: RequireProvider) => LoadedBundle;
 
 export type LoadedBundle = {
-  [name: string]: any;
+  [name: string]: unknown;
 };
 
 export interface FunctionDocumentation {

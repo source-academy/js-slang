@@ -109,7 +109,11 @@ export function evaluateBinaryExpression(operator: BinaryOperator, left: any, ri
 }
 
 interface FunctionDetails {
-  isPrelude: boolean;
+  /**
+   * Name of the file/module that the function
+   * was originally defined in
+   */
+  source: string | null;
   minArgsNeeded?: number;
 }
 
@@ -122,7 +126,7 @@ function getFunctionDetails(f: Function): FunctionDetails {
 
   return {
     minArgsNeeded: f.length, // no way to check if the function hasVarArgs
-    isPrelude: false,
+    source: null,
   };
 }
 
@@ -143,7 +147,7 @@ export function callIfFuncAndRightArgs(
 ) {
   const startTime = Date.now();
   const pastCalls: [string, any[]][] = [];
-  let isPrelude = false;
+  let isPrelude = source === 'prelude';
 
   while (true) {
     const dummy = locationDummyNode(line, column, source);
@@ -160,9 +164,9 @@ export function callIfFuncAndRightArgs(
 
     const expectedLength = f.length;
     const receivedLength = args.length;
-    const { minArgsNeeded, isPrelude: isPreludeFunc } = getFunctionDetails(f);
+    const { minArgsNeeded, source: funcSource } = getFunctionDetails(f);
 
-    if (isPreludeFunc) {
+    if (funcSource === 'prelude') {
       // Once we call into a prelude function, everything that follows
       // is in prelude code
       isPrelude = true;
@@ -196,16 +200,16 @@ export function callIfFuncAndRightArgs(
 
       if (error instanceof RuntimeSourceError) {
         if (!error.node) {
-          error.node = locationDummyNode(line, column, isPrelude ? 'prelude' : source);
-        } else if (isPrelude) {
+          error.node = locationDummyNode(line, column, isPrelude ? 'prelude' : funcSource);
+        } else if (funcSource) {
           if (!error.node.loc) {
             error.node.loc = {
               start: { line, column },
               end: { line, column },
-              source: 'prelude',
+              source: isPrelude ? 'prelude' : funcSource,
             };
           } else {
-            error.node.loc.source = 'prelude';
+            error.node.loc.source = isPrelude ? 'prelude' : funcSource;
           }
         }
         throw error;
@@ -244,7 +248,7 @@ export function wrap<T extends (...args: any[]) => any>(
   f: T,
   stringified: string,
   hasVarArgs: boolean | undefined | number,
-  isPrelude: boolean,
+  source: string | null,
 ): T {
   let minArgsNeeded: number | undefined;
   if (hasVarArgs === true) {
@@ -255,7 +259,7 @@ export function wrap<T extends (...args: any[]) => any>(
 
   (f as any)[funcDetSymbol] = {
     minArgsNeeded,
-    isPrelude,
+    source,
   };
 
   // @ts-expect-error toReplString is not a known property of functions

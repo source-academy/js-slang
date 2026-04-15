@@ -225,7 +225,7 @@ export function defineBuiltin(
       value,
       `function ${name} {\n\t[implementation hidden]\n}`,
       minArgsNeeded,
-      false,
+      null,
     );
 
     // value.toString = () => repr;

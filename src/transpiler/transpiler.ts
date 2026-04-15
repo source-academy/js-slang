@@ -157,7 +157,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
           { ...node },
           create.literal(functionsToStringMap.get(node)!),
           create.literal(node.params[node.params.length - 1]?.type === 'RestElement'),
-          create.literal(isPrelude),
+          create.literal(isPrelude ? 'prelude' : null),
         ]);
       }
     },

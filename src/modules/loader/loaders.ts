@@ -1,4 +1,6 @@
+import mapValues from 'lodash/mapValues';
 import type { Context } from '../../types';
+import { wrap } from '../../utils/operators';
 import { ModuleConnectionError, ModuleInternalError } from '../errors';
 import type {
   ModuleDocumentation,
@@ -139,17 +141,17 @@ export async function loadModuleBundleAsync(
     const { default: partialBundle } = await importer(moduleName, node);
     const loadedBundle = partialBundle(getRequireProvider(context));
 
-    return Object.entries(loadedBundle).reduce((res, [name, value]) => {
-      if (typeof value === 'function' && typeof value.toReplString !== 'function') {
-        // Don't override toReplString if it already exists
-        const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`;
-        value.toReplString = () => repr;
-      }
-      return {
-        ...res,
-        [name]: value,
-      };
-    }, {});
+    return mapValues(loadedBundle, value => {
+      if (typeof value !== 'function') return value;
+
+      const name = value.name;
+      return wrap(
+        value as (...args: any[]) => any,
+        `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`,
+        false,
+        name,
+      );
+    });
   } catch (error) {
     if (error instanceof ModuleConnectionError) throw error;
     console.error(`Internal error while loading module ${moduleName}:`, error);

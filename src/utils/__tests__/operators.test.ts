@@ -7,7 +7,7 @@ import { locationDummyNode } from '../ast/astCreator';
 describe('Wrapping and Calling functions', () => {
   describe('wrapped nullary function tests', () => {
     const x = () => 0;
-    const wrapped = operators.wrap(x, '() => 0', undefined, false);
+    const wrapped = operators.wrap(x, '() => 0', undefined, null);
 
     test('toReplString is set correctly', () => {
       expect(stringify(wrapped)).toEqual('() => 0');
@@ -26,7 +26,7 @@ describe('Wrapping and Calling functions', () => {
 
   describe('wrapped varargs function test', () => {
     const f = (x: any, ...args: any[]) => [x, ...args];
-    const wrapped = operators.wrap(f, '(x, ...args) => [x, ...args]', 1, false);
+    const wrapped = operators.wrap(f, '(x, ...args) => [x, ...args]', 1, null);
 
     test('toReplString is set correctly', () => {
       expect(stringify(wrapped)).toEqual('(x, ...args) => [x, ...args]');
@@ -78,7 +78,7 @@ describe('Wrapping and Calling functions', () => {
         },
         '() => { ... }',
         undefined,
-        true,
+        'prelude',
       );
 
       try {
@@ -100,9 +100,9 @@ describe('Wrapping and Calling functions', () => {
         },
         '() => {...}',
         undefined,
-        false,
+        null,
       );
-      const notPrelude = operators.wrap(() => prelude(), '() => {...}', undefined, true);
+      const notPrelude = operators.wrap(() => prelude(), '() => {...}', undefined, 'prelude');
 
       try {
         operators.callIfFuncAndRightArgs(notPrelude, 2, 2, null, undefined);
