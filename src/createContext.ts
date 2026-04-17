@@ -139,6 +139,8 @@ export const createEmptyContext = <T>(
     runtime: createEmptyRuntime(),
     numberOfOuterEnvironments: 1,
     prelude: null,
+    pendingStreamFnStack: [],
+    streamLineage: new Map<string, string[]>(),
     debugger: createEmptyDebugger(),
     nativeStorage: createNativeStorage(),
     executionMethod: 'auto',
