@@ -361,6 +361,25 @@ export function* generateCSEMachineStateStream(
       context.runtime.changepointSteps.push(steps + 1);
     }
 
+    const evalResult = context.runtime.stash?.peek();
+    const mostRecentControlHeight =
+      context.pendingStreamFnStack[context.pendingStreamFnStack.length - 1]?.[1];
+
+    if (
+      Array.isArray(evalResult) &&
+      evalResult.length === 2 &&
+      mostRecentControlHeight !== undefined &&
+      context.runtime.control?.size() === mostRecentControlHeight - 1
+    ) {
+      const mostRecentNullaryFnId = context.pendingStreamFnStack.pop()?.[0];
+      if (mostRecentNullaryFnId !== undefined) {
+        if (!context.streamLineage.get(mostRecentNullaryFnId)) {
+          context.streamLineage.set(mostRecentNullaryFnId, []);
+        }
+        context.streamLineage.get(mostRecentNullaryFnId)?.push((evalResult as any).id);
+      }
+    }
+
     control.pop();
     if (isNode(command)) {
       context.runtime.nodes.shift();
@@ -834,6 +853,16 @@ const cmdEvaluators: CommandEvaluators = {
         pushEnvironment(context, environment);
       } else {
         context.runtime.environments.unshift(func.environment);
+      }
+
+      // Streams Visualisation:
+      // If CALL0, push the nullary fn to pendingStreamFnStack
+      // (to map which nullary fn produces which pairs; for nested nullary fn)
+      if (func.node.params.length === 0) {
+        context.pendingStreamFnStack.push([
+          func.id,
+          context.runtime.control !== null ? context.runtime.control.size() : 0,
+        ]);
       }
 
       // Handle special case if function is simple

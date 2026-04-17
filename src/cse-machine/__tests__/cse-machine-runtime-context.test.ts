@@ -210,3 +210,43 @@ test('Avoid unnescessary environment instruction 4', () => {
     expect(state.control.getNumEnvDependentItems()).toMatchSnapshot();
   }
 });
+
+test('CSE Machine correctly updates streamLineage with simple streams', async () => {
+  const context = await getContextFrom(
+    stripIndent`
+      const s1 = pair(1, () => pair(2, () => pair(3, () => null)));
+      eval_stream(s1, 3);
+    `,
+    172,
+  );
+
+  expect(context.streamLineage.size).toEqual(2);
+});
+
+test('CSE Machine correctly updates streamLineage with self-referential streams', async () => {
+  const context = await getContextFrom(
+    stripIndent`
+      const s1 = pair(1, () => s1);
+      eval_stream(s1, 3);
+    `,
+    164,
+  );
+
+  expect((context.streamLineage.values().next().value as Array<string>).length).toEqual(2);
+});
+
+test('CSE Machine does not update streamLineage when nullary function does not return a stream', async () => {
+  const context = await getContextFrom(
+    stripIndent`
+      const s1 = pair(1, () => [0, 1, 2, () => 1]);
+      stream_tail(s1);
+      const s2 = pair(1, x => s2);
+      tail(s2)(1);
+      const s3 = pair(1, () => 2);
+      stream_tail(s3);
+    `,
+    115,
+  );
+
+  expect(context.streamLineage.size).toEqual(0);
+});

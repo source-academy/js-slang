@@ -73,6 +73,11 @@ export interface Context<T = any> {
     changepointSteps: number[];
   };
 
+  // STREAM VISUALISATION
+  streamLineage: Map<string, string[]>;
+
+  pendingStreamFnStack: [string, number][];
+
   numberOfOuterEnvironments: number;
 
   prelude: string | null;
