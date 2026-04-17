@@ -6,7 +6,7 @@
 import { generate } from 'astring';
 import type es from 'estree';
 import { type RawSourceMap, SourceMapGenerator } from 'source-map';
-
+import cloneDeep from 'lodash/cloneDeep';
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants';
 import { Chapter, Variant } from '../langs';
 import type { Context, NativeStorage, Node } from '../types';
@@ -423,14 +423,16 @@ function getDeclarationsToAccessTranspilerInternals(
 export type TranspiledResult = { transpiled: string; sourceMapJson?: RawSourceMap };
 
 function transpileToSource(
-  program: es.Program,
+  originalProgram: es.Program,
   context: Context,
   skipUndefined: boolean,
   isPrelude: boolean,
 ): TranspiledResult {
-  if (program.body.length === 0) {
+  if (originalProgram.body.length === 0) {
     return { transpiled: '' };
   }
+
+  const program = cloneDeep(originalProgram);
 
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
@@ -486,10 +488,16 @@ function transpileToSource(
 }
 
 function transpileToFullJS(
-  program: es.Program,
+  originalProgram: es.Program,
   context: Context,
   skipUndefined: boolean,
 ): TranspiledResult {
+  if (originalProgram.body.length === 0) {
+    return { transpiled: '' };
+  }
+
+  const program = cloneDeep(originalProgram);
+
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage),
