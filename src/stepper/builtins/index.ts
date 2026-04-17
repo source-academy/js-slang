@@ -5,8 +5,8 @@ import { StepperIdentifier } from '../nodes/Expression/Identifier';
 import { StepperLiteral } from '../nodes/Expression/Literal';
 import { InvalidNumberOfArgumentsError } from '../../errors/errors';
 import type { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication';
-import { GeneralRuntimeError } from '../../errors/base';
 import type { RedexInfo } from '..';
+import { InvalidParameterTypeError } from '../../errors/rttcErrors';
 import { auxiliaryBuiltinFunctions } from './auxiliary';
 import { listBuiltinFunctions } from './lists';
 import { miscBuiltinFunctions } from './misc';
@@ -47,7 +47,7 @@ export function getBuiltinFunction(
       const argVal = args.map(arg => (arg as StepperLiteral).value);
       argVal.forEach(arg => {
         if (typeof arg !== 'number' && typeof arg !== 'bigint') {
-          throw new GeneralRuntimeError('Math functions must be called with numbers for arguments');
+          throw new InvalidParameterTypeError('number', arg, name, undefined, call);
         }
       });
 
@@ -61,7 +61,6 @@ export function getBuiltinFunction(
   if (calledFunction.arity != args.length && name !== 'list') {
     // brute force way to fix this issue
     throw new InvalidNumberOfArgumentsError(call, calledFunction.arity, args.length);
-    // throw new Error(`Expected ${calledFunction.arity} arguments, but got ${args.length}.`)
   }
 
   return calledFunction.definition(args);
