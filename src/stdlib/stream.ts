@@ -1,3 +1,4 @@
+import { GeneralRuntimeError } from '../errors/base';
 import { InvalidParameterTypeError } from '../errors/rttcErrors';
 import { wrap } from '../utils/operators';
 import { head, is_null, is_pair, type List, type Pair, pair, tail } from './list';
@@ -172,7 +173,7 @@ export function stream_ref<T>(s: Stream<T>, n: number): T {
   }
 
   if (is_null(s)) {
-    throw new Error(`${stream_ref.name}: Index ${n} out of bounds!`);
+    throw new GeneralRuntimeError(`${stream_ref.name}: Index ${n} out of bounds!`);
   }
 
   return head(s);
