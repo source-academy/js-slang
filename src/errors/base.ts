@@ -28,7 +28,7 @@ export interface SourceError {
  * Abstract Source Error class that automatically handles its location property
  */
 export abstract class SourceErrorWithNode<
-  T extends es.BaseNode | undefined = es.BaseNode | undefined
+  T extends es.BaseNode | undefined = es.BaseNode | undefined,
 >
   extends Error
   implements SourceError
@@ -56,7 +56,7 @@ export abstract class SourceErrorWithNode<
  * Abstract Source Error class for Runtime errors
  */
 export abstract class RuntimeSourceError<
-  T extends es.BaseNode | undefined = es.BaseNode | undefined
+  T extends es.BaseNode | undefined = es.BaseNode | undefined,
 > extends SourceErrorWithNode<T> {
   type = ErrorType.RUNTIME;
   severity = ErrorSeverity.ERROR;
