@@ -51,7 +51,7 @@ describe('bundle loading', () => {
       },
       bar: () => 'bar',
     });
-    const mod = await loadModuleBundleAsync('one_module', context);
+    const mod: any = await loadModuleBundleAsync('one_module', context);
     expect(mod.foo()).toEqual('foo');
     expect(stringify(mod.foo)).toMatchInlineSnapshot(`
       "function foo {
@@ -77,14 +77,14 @@ describe('bundle loading', () => {
     }
     foo.someprop = true;
 
-    expect('someprop' in foo).toEqual(true);
+    expect(foo).toHaveProperty('someprop', true);
 
     moduleMocker.mockReturnValueOnce({
       foo,
       bar: () => 'bar',
     });
 
-    const mod = await loadModuleBundleAsync('one_module', context);
+    const mod: any = await loadModuleBundleAsync('one_module', context);
     expect(mod.foo()).toEqual('foo');
     expect(mod.foo).toHaveProperty('someprop', true);
     expect(moduleMocker).toHaveBeenCalledOnce();
@@ -310,7 +310,7 @@ describe('module loading', () => {
       }),
     );
 
-    const loadedModules = await loadSourceModules(
+    const loadedModules: any = await loadSourceModules(
       {
         one_module: {
           name: 'one_module',
