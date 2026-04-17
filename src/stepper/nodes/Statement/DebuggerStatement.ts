@@ -33,14 +33,18 @@ export class StepperDebuggerStatement
     return true;
   }
 
-  public override contract(redex: RedexInfo): typeof undefinedNode {
+  contractEmpty(redex: RedexInfo) {
     redex.preRedex = [this];
     redex.postRedex = [];
+  }
+
+  public override contract(): typeof undefinedNode {
     return undefinedNode;
   }
 
   public override oneStep(redex: RedexInfo): typeof undefinedNode {
-    return this.contract(redex);
+    this.contractEmpty(redex);
+    return undefinedNode;
   }
 
   public override substitute(_id: StepperPattern, _value: StepperExpression): StepperBaseNode {

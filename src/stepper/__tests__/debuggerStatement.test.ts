@@ -24,8 +24,10 @@ describe('DebuggerStatement', () => {
     expect(node.isOneStepPossible()).toBe(true);
     expect(explain(node)).toBe('Debugger statement reached');
 
+    expect(node.contract()).toBe(undefinedNode);
+
     const redex: RedexInfo = { preRedex: [], postRedex: [] };
-    expect(node.contract(redex)).toBe(undefinedNode);
+    node.contractEmpty(redex);
     expect(redex.preRedex[0]).toBe(node);
     expect(redex.postRedex).toEqual([]);
 
