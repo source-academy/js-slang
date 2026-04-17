@@ -51,8 +51,8 @@ describe('DebuggerStatement', () => {
         step.markers?.[0]?.explanation,
       ]),
     ).toEqual([
-      ['debugger; 1;', 'noMarker', 'Start of evaluation'],
-      ['debugger; 1;', 'beforeMarker', 'Debugger statement reached'],
+      ['debugger;1;', 'noMarker', 'Start of evaluation'],
+      ['debugger;1;', 'beforeMarker', 'Debugger statement reached'],
       ['1;', 'afterMarker', 'Debugger statement reached'],
       ['1;', 'noMarker', 'Evaluation complete'],
     ]);
