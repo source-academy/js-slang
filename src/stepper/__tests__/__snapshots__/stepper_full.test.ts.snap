@@ -15053,7 +15053,7 @@ exports[`Test catching errors from built in function > Incorrect type of argumen
 [noMarker] Start of evaluation
 
 math_sin(true);
-[beforeMarker] Math functions must be called with numbers for arguments
+[beforeMarker] Line 2: math_sin: Expected number, got true.
 
 math_sin(true);
 [noMarker] Evaluation stuck
