@@ -1,18 +1,18 @@
-import type es from 'estree'
+import type es from 'estree';
 
-import { parse as sourceParse } from '../parser/parser'
-import { SourceParser } from '../parser/source'
-import { libraryParserLanguage } from '../parser/source/syntax'
-import type { Context, ContiguousArrayElements, Node, NodeTypeToNode, Value } from '../types'
-import { getSourceVariableDeclaration } from '../utils/ast/helpers'
-import { isDeclaration } from '../utils/ast/typeGuards'
-import { oneLine } from '../utils/formatters'
-import { vector_to_list, type List } from './list'
+import { parse as sourceParse } from '../parser/parser';
+import { SourceParser } from '../parser/source';
+import { libraryParserLanguage } from '../parser/source/syntax';
+import type { Context, ContiguousArrayElements, Node, NodeTypeToNode, Value } from '../types';
+import { getSourceVariableDeclaration } from '../utils/ast/helpers';
+import { isDeclaration } from '../utils/ast/typeGuards';
+import { oneLine } from '../utils/formatters';
+import { vector_to_list, type List } from './list';
 
 class ParseError extends Error {
   constructor(message: string) {
-    super(message)
-    this.name = 'ParseError'
+    super(message);
+    this.name = 'ParseError';
   }
 }
 
@@ -22,7 +22,7 @@ function unreachable() {
     Please file an issue at
     https://github.com/source-academy/js-slang/issues
     if you see this.
-  `)
+  `);
 }
 
 // sequences of expressions of length 1
@@ -32,31 +32,31 @@ function unreachable() {
 function makeSequenceIfNeeded(exs: Node[]): List {
   return exs.length === 1
     ? transform(exs[0])
-    : vector_to_list(['sequence', vector_to_list(exs.map(transform))])
+    : vector_to_list(['sequence', vector_to_list(exs.map(transform))]);
 }
 
 function makeBlockIfNeeded(exs: Node[]): List {
   return hasDeclarationAtToplevel(exs)
     ? vector_to_list(['block', makeSequenceIfNeeded(exs)])
-    : makeSequenceIfNeeded(exs)
+    : makeSequenceIfNeeded(exs);
 }
 
 // checks if sequence has declaration at toplevel
 // (outside of any block)
 function hasDeclarationAtToplevel(exs: Node[]) {
-  return exs.some(isDeclaration)
+  return exs.some(isDeclaration);
 }
 
-type ParseTransformer<T extends Node> = (node: T) => List
+type ParseTransformer<T extends Node> = (node: T) => List;
 type ASTTransformers = {
-  [K in Node['type']]?: ParseTransformer<NodeTypeToNode<K>>
-}
+  [K in Node['type']]?: ParseTransformer<NodeTypeToNode<K>>;
+};
 
 const transformers: ASTTransformers = {
   ArrayExpression: ({ elements }) =>
     vector_to_list([
       'array_expression',
-      vector_to_list((elements as ContiguousArrayElements).map(transform))
+      vector_to_list((elements as ContiguousArrayElements).map(transform)),
     ]),
   ArrowFunctionExpression: node =>
     vector_to_list([
@@ -67,16 +67,16 @@ const transformers: ASTTransformers = {
           // The body of a function is the statement
           // inside the curly braces.
           makeBlockIfNeeded(node.body.body)
-        : vector_to_list(['return_statement', transform(node.body)])
+        : vector_to_list(['return_statement', transform(node.body)]),
     ]),
   AssignmentExpression: node => {
     if (node.left.type === 'Identifier') {
-      return vector_to_list(['assignment', transform(node.left), transform(node.right)])
+      return vector_to_list(['assignment', transform(node.left), transform(node.right)]);
     } else if (node.left.type === 'MemberExpression') {
-      return vector_to_list(['object_assignment', transform(node.left), transform(node.right)])
+      return vector_to_list(['object_assignment', transform(node.left), transform(node.right)]);
     } else {
-      unreachable()
-      throw new ParseError('Invalid assignment')
+      unreachable();
+      throw new ParseError('Invalid assignment');
     }
   },
   BinaryExpression: node =>
@@ -84,7 +84,7 @@ const transformers: ASTTransformers = {
       'binary_operator_combination',
       node.operator,
       transform(node.left),
-      transform(node.right)
+      transform(node.right),
     ]),
   BlockStatement: ({ body }) => makeBlockIfNeeded(body),
   BreakStatement: () => vector_to_list(['break_statement']),
@@ -97,16 +97,16 @@ const transformers: ASTTransformers = {
         'name',
         node.id?.name,
         !node.superClass ? null : transform(node.superClass),
-        node.body.body.map(transform)
-      ])
-    ])
+        node.body.body.map(transform),
+      ]),
+    ]);
   },
   ConditionalExpression: node =>
     vector_to_list([
       'conditional_expression',
       transform(node.test),
       transform(node.consequent),
-      transform(node.alternate)
+      transform(node.alternate),
     ]),
   ContinueStatement: () => vector_to_list(['continue_statement']),
   ExportDefaultDeclaration: node =>
@@ -114,7 +114,7 @@ const transformers: ASTTransformers = {
   ExportNamedDeclaration: ({ declaration, specifiers }) =>
     vector_to_list([
       'export_named_declaration',
-      declaration ? transform(declaration) : specifiers.map(transform)
+      declaration ? transform(declaration) : specifiers.map(transform),
     ]),
   ExportSpecifier: node => vector_to_list(['name', node.exported.name]),
   ExpressionStatement: ({ expression }) => transform(expression),
@@ -124,20 +124,20 @@ const transformers: ASTTransformers = {
       transform(node.init!),
       transform(node.test!),
       transform(node.update!),
-      transform(node.body)
+      transform(node.body),
     ]),
   FunctionDeclaration: node =>
     vector_to_list([
       'function_declaration',
       transform(node.id!),
       vector_to_list(node.params.map(transform)),
-      makeBlockIfNeeded(node.body.body)
+      makeBlockIfNeeded(node.body.body),
     ]),
   FunctionExpression: ({ body: { body }, params }) =>
     vector_to_list([
       'lambda_expression',
       vector_to_list(params.map(transform)),
-      makeBlockIfNeeded(body)
+      makeBlockIfNeeded(body),
     ]),
   Identifier: ({ name }) => vector_to_list(['name', name]),
   IfStatement: node =>
@@ -145,13 +145,13 @@ const transformers: ASTTransformers = {
       'conditional_statement',
       transform(node.test),
       transform(node.consequent),
-      node.alternate == null ? makeSequenceIfNeeded([]) : transform(node.alternate)
+      node.alternate == null ? makeSequenceIfNeeded([]) : transform(node.alternate),
     ]),
   ImportDeclaration: node =>
     vector_to_list([
       'import_declaration',
       vector_to_list(node.specifiers.map(transform)),
-      node.source.value
+      node.source.value,
     ]),
   ImportDefaultSpecifier: () => vector_to_list(['default']),
   ImportSpecifier: node => vector_to_list(['name', node.imported.name]),
@@ -161,7 +161,7 @@ const transformers: ASTTransformers = {
       'logical_composition',
       node.operator,
       transform(node.left),
-      transform(node.right)
+      transform(node.right),
     ]),
   MemberExpression: node => {
     // "computed" property of MemberExpression distinguishes
@@ -174,8 +174,8 @@ const transformers: ASTTransformers = {
       transform(node.object),
       !node.computed && node.property.type === 'Identifier'
         ? vector_to_list(['property', node.property.name])
-        : transform(node.property)
-    ])
+        : transform(node.property),
+    ]);
   },
   MethodDefinition: node =>
     vector_to_list([
@@ -183,7 +183,7 @@ const transformers: ASTTransformers = {
       node.kind,
       node.static,
       transform(node.key),
-      transform(node.value)
+      transform(node.value),
     ]),
   NewExpression: ({ callee, arguments: args }) =>
     vector_to_list(['new_expression', transform(callee), vector_to_list(args.map(transform))]),
@@ -198,8 +198,8 @@ const transformers: ASTTransformers = {
       node.key.type === 'Identifier'
         ? vector_to_list(['property', node.key.name])
         : transform(node.key),
-      transform(node.value)
-    ])
+      transform(node.value),
+    ]);
   },
   RestElement: ({ argument }) => vector_to_list(['rest_element', transform(argument)]),
   ReturnStatement: node => vector_to_list(['return_statement', transform(node.argument!)]),
@@ -213,30 +213,30 @@ const transformers: ASTTransformers = {
       'try_statement',
       transform(node.block),
       !node.handler ? null : vector_to_list(['name', (node.handler.param as es.Identifier).name]),
-      !node.handler ? null : transform(node.handler.body)
-    ])
+      !node.handler ? null : transform(node.handler.body),
+    ]);
   },
   UnaryExpression: ({ operator, argument }) =>
     vector_to_list([
       'unary_operator_combination',
       operator === '-' ? '-unary' : operator,
-      transform(argument)
+      transform(argument),
     ]),
   VariableDeclaration: node => {
-    const { id, init } = getSourceVariableDeclaration(node)
+    const { id, init } = getSourceVariableDeclaration(node);
 
     if (node.kind === 'let') {
-      return vector_to_list(['variable_declaration', transform(id), transform(init)])
+      return vector_to_list(['variable_declaration', transform(id), transform(init)]);
     } else if (node.kind === 'const') {
-      return vector_to_list(['constant_declaration', transform(id), transform(init)])
+      return vector_to_list(['constant_declaration', transform(id), transform(init)]);
     } else {
-      unreachable()
-      throw new ParseError('Invalid declaration kind')
+      unreachable();
+      throw new ParseError('Invalid declaration kind');
     }
   },
   WhileStatement: ({ test, body }) =>
-    vector_to_list(['while_loop', transform(test), transform(body)])
-}
+    vector_to_list(['while_loop', transform(test), transform(body)]),
+};
 
 /**
  * Converts the given Node to a Source Value (which will be a list
@@ -244,30 +244,30 @@ const transformers: ASTTransformers = {
  */
 function transform(node: Node) {
   if (!(node.type in transformers)) {
-    unreachable()
-    throw new ParseError('Cannot transform unknown type: ' + node.type)
+    unreachable();
+    throw new ParseError('Cannot transform unknown type: ' + node.type);
   }
 
-  const transformer = transformers[node.type] as ParseTransformer<Node>
-  return transformer(node)
+  const transformer = transformers[node.type] as ParseTransformer<Node>;
+  return transformer(node);
 }
 
 export function parse(x: string, context: Context): Value {
-  context.chapter = libraryParserLanguage
-  const program = sourceParse(x, context)
+  context.chapter = libraryParserLanguage;
+  const program = sourceParse(x, context);
   if (context.errors.length > 0) {
-    throw new ParseError(context.errors[0].explain())
+    throw new ParseError(context.errors[0].explain());
   }
 
   if (program) {
-    return transform(program)
+    return transform(program);
   } else {
-    unreachable()
-    throw new ParseError('Invalid parse')
+    unreachable();
+    throw new ParseError('Invalid parse');
   }
 }
 
 export function tokenize(x: string, context: Context): Value {
-  const tokensArr = SourceParser.tokenize(x, context).map(tok => x.substring(tok.start, tok.end))
-  return vector_to_list(tokensArr)
+  const tokensArr = SourceParser.tokenize(x, context).map(tok => x.substring(tok.start, tok.end));
+  return vector_to_list(tokensArr);
 }

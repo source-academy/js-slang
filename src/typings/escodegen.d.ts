@@ -1,1 +1,1 @@
-declare module 'escodegen'
+declare module 'escodegen';

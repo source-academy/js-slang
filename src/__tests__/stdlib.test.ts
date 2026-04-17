@@ -1,8 +1,8 @@
-import { test } from 'vitest'
-import { Chapter } from '../langs'
-import { Value } from '../types'
-import { stripIndent } from '../utils/formatters'
-import { expectFinishedResult, snapshotFailure } from '../utils/testing'
+import { test } from 'vitest';
+import { Chapter } from '../langs';
+import { Value } from '../types';
+import { stripIndent } from '../utils/formatters';
+import { expectFinishedResult, snapshotFailure } from '../utils/testing';
 
 test.each([
   [
@@ -11,7 +11,7 @@ test.each([
     display('message');
     `,
     true,
-    'message'
+    'message',
   ],
 
   [
@@ -20,7 +20,7 @@ test.each([
     error('error!');
     `,
     false,
-    undefined
+    undefined,
   ],
 
   [
@@ -29,7 +29,7 @@ test.each([
     is_undefined(undefined);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -38,7 +38,7 @@ test.each([
     is_undefined(null);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -47,7 +47,7 @@ test.each([
     is_null(undefined);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -56,7 +56,7 @@ test.each([
     is_null(null);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -65,7 +65,7 @@ test.each([
     is_string('string');
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -74,7 +74,7 @@ test.each([
     is_string('true');
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -83,7 +83,7 @@ test.each([
     is_string('1');
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -92,7 +92,7 @@ test.each([
     is_string(true);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -101,7 +101,7 @@ test.each([
     is_string(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -110,7 +110,7 @@ test.each([
     is_number('string');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -119,7 +119,7 @@ test.each([
     is_number('true');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -128,7 +128,7 @@ test.each([
     is_number('1');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -137,7 +137,7 @@ test.each([
     is_number(true);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -146,7 +146,7 @@ test.each([
     is_number(1);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -155,7 +155,7 @@ test.each([
     is_boolean('string');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -164,7 +164,7 @@ test.each([
     is_boolean('true');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -173,7 +173,7 @@ test.each([
     is_boolean('1');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -182,7 +182,7 @@ test.each([
     is_boolean(true);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -191,7 +191,7 @@ test.each([
     is_boolean(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -200,7 +200,7 @@ test.each([
     is_function(display);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -209,7 +209,7 @@ test.each([
     is_function(x => x);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -221,7 +221,7 @@ test.each([
     is_function(f);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -230,7 +230,7 @@ test.each([
     is_function(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -239,7 +239,7 @@ test.each([
     is_array(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -248,7 +248,7 @@ test.each([
     is_array(pair(1, 2));
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -257,7 +257,7 @@ test.each([
     is_array([1]);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -266,7 +266,7 @@ test.each([
     is_object(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -275,7 +275,7 @@ test.each([
     is_object(pair(1, 2));
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -284,7 +284,7 @@ test.each([
     is_object([1]);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -293,7 +293,7 @@ test.each([
     is_object({});
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -302,7 +302,7 @@ test.each([
     is_object({a: 1});
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -311,7 +311,7 @@ test.each([
     is_object(x => x);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -320,7 +320,7 @@ test.each([
     is_object(display);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -329,7 +329,7 @@ test.each([
     is_object(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -338,7 +338,7 @@ test.each([
     is_object('string');
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -347,7 +347,7 @@ test.each([
     is_object(true);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -356,7 +356,7 @@ test.each([
     is_NaN(1 / 0);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -365,7 +365,7 @@ test.each([
     is_NaN(NaN);
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -374,7 +374,7 @@ test.each([
     is_NaN(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -383,7 +383,7 @@ test.each([
     is_NaN(x => x);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -392,7 +392,7 @@ test.each([
     has_own_property({a: 1, b: 2}, 'a');
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -401,7 +401,7 @@ test.each([
     has_own_property({a: 1, b: 2}, 'c');
     `,
     true,
-    false
+    false,
   ],
 
   // NOTE: OOP doesn't work because we've disabled inherited properties for security reasons
@@ -449,7 +449,7 @@ test.each([
     array_length([1]);
     `,
     true,
-    1
+    1,
   ],
 
   [
@@ -458,7 +458,7 @@ test.each([
     parse_int('10', 10);
     `,
     true,
-    10
+    10,
   ],
 
   [
@@ -467,7 +467,7 @@ test.each([
     parse_int('10', 2);
     `,
     true,
-    2
+    2,
   ],
 
   [
@@ -476,7 +476,7 @@ test.each([
     is_number(get_time());
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -493,7 +493,7 @@ test.each([
     repeatUntilDifferentTime();
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -502,7 +502,7 @@ test.each([
     pair(1, 2);
     `,
     true,
-    [1, 2]
+    [1, 2],
   ],
 
   [
@@ -511,7 +511,7 @@ test.each([
     list(1, 2);
     `,
     true,
-    [1, [2, null]]
+    [1, [2, null]],
   ],
 
   [
@@ -520,7 +520,7 @@ test.each([
     is_list(1);
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -529,7 +529,7 @@ test.each([
     is_list(pair(1, 2));
     `,
     true,
-    false
+    false,
   ],
 
   [
@@ -538,7 +538,7 @@ test.each([
     is_list(list(1, 2));
     `,
     true,
-    true
+    true,
   ],
 
   [
@@ -547,7 +547,7 @@ test.each([
     head(pair(1, 2));
     `,
     true,
-    1
+    1,
   ],
 
   [
@@ -556,7 +556,7 @@ test.each([
     tail(pair(1, 2));
     `,
     true,
-    2
+    2,
   ],
 
   [
@@ -565,7 +565,7 @@ test.each([
     head(null);
     `,
     false,
-    undefined
+    undefined,
   ],
 
   [
@@ -574,7 +574,7 @@ test.each([
     tail(null);
     `,
     false,
-    undefined
+    undefined,
   ],
 
   [
@@ -583,7 +583,7 @@ test.each([
     head(1);
     `,
     false,
-    undefined
+    undefined,
   ],
 
   [
@@ -592,7 +592,7 @@ test.each([
     tail(1);
     `,
     false,
-    undefined
+    undefined,
   ],
 
   [
@@ -601,7 +601,7 @@ test.each([
     length(list(1, 2));
     `,
     true,
-    2
+    2,
   ],
 
   [
@@ -610,17 +610,17 @@ test.each([
     length(1);
     `,
     false,
-    undefined
-  ]
+    undefined,
+  ],
 ] as [Chapter, string, boolean, Value][])(
   'Builtins work as expected %#',
   async (chapter, snippet, passing, returnValue) => {
     if (passing) {
       await expectFinishedResult(stripIndent(snippet), {
-        chapter
-      }).toEqual(returnValue)
+        chapter,
+      }).toEqual(returnValue);
     } else {
-      await snapshotFailure(stripIndent(snippet), { chapter })
+      await snapshotFailure(stripIndent(snippet), { chapter });
     }
-  }
-)
+  },
+);

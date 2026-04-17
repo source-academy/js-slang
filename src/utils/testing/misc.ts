@@ -1,9 +1,9 @@
-import { describe, expect, test, type TestContext as VitestTestContext } from 'vitest'
-import type { Result } from '../..'
-import { Chapter } from '../../langs'
-import type { Finished, Node, NodeTypeToNode, Value } from '../../types'
-import { getChapterName } from '../misc'
-import type { TestBuiltins, TestOptions } from './types'
+import { describe, expect, test, type TestContext as VitestTestContext } from 'vitest';
+import type { Result } from '../..';
+import { Chapter } from '../../langs';
+import type { Finished, Node, NodeTypeToNode, Value } from '../../types';
+import { getChapterName } from '../misc';
+import type { TestBuiltins, TestOptions } from './types';
 
 /**
  * Convert the options provided by the user for each test into the full options
@@ -12,9 +12,9 @@ import type { TestBuiltins, TestOptions } from './types'
 export function processTestOptions(rawOptions: TestOptions): Exclude<TestOptions, Chapter> {
   return typeof rawOptions === 'number'
     ? {
-        chapter: rawOptions
+        chapter: rawOptions,
       }
-    : rawOptions
+    : rawOptions;
 }
 
 /**
@@ -25,12 +25,12 @@ type RemoveThis<T extends (this: any, ...args: any[]) => any> = T extends (
   ...args: infer U
 ) => any
   ? U
-  : Parameters<T>
+  : Parameters<T>;
 
 interface FuncWithSkipAndOnly<T extends (...args: any[]) => any> {
-  (...args: RemoveThis<T>): ReturnType<T>
-  skip: (...args: RemoveThis<T>) => ReturnType<T>
-  only: (...args: RemoveThis<T>) => ReturnType<T>
+  (...args: RemoveThis<T>): ReturnType<T>;
+  skip: (...args: RemoveThis<T>) => ReturnType<T>;
+  only: (...args: RemoveThis<T>) => ReturnType<T>;
 }
 
 /**
@@ -39,12 +39,12 @@ interface FuncWithSkipAndOnly<T extends (...args: any[]) => any> {
 export type DescribeFunctions =
   | typeof describe
   | (typeof describe)['only']
-  | (typeof describe)['skip']
+  | (typeof describe)['skip'];
 
 /**
  * Refers to the three `test` operations
  */
-export type TestFunctions = typeof test | (typeof test)['only'] | (typeof test)['skip']
+export type TestFunctions = typeof test | (typeof test)['only'] | (typeof test)['skip'];
 
 /**
  * For functions that are designed to wrap around a `describe` or `test` block. Adds the `.only` and `.skip`
@@ -53,35 +53,35 @@ export type TestFunctions = typeof test | (typeof test)['only'] | (typeof test)[
  */
 export function wrapWithSkipAndOnly<T extends (this: DescribeFunctions, ...args: any[]) => any>(
   type: 'describe',
-  f: T
-): FuncWithSkipAndOnly<T>
+  f: T,
+): FuncWithSkipAndOnly<T>;
 export function wrapWithSkipAndOnly<T extends (this: TestFunctions, ...args: any[]) => any>(
   type: 'test',
-  f: T
-): FuncWithSkipAndOnly<T>
+  f: T,
+): FuncWithSkipAndOnly<T>;
 export function wrapWithSkipAndOnly<
-  T extends (this: TestFunctions | DescribeFunctions, ...args: any[]) => any
+  T extends (this: TestFunctions | DescribeFunctions, ...args: any[]) => any,
 >(type: 'test' | 'describe', f: T) {
   function func(...args: Parameters<T>): ReturnType<T> {
-    return f.call(type === 'test' ? test : describe, ...args)
+    return f.call(type === 'test' ? test : describe, ...args);
   }
 
   func.skip = (...args: Parameters<T>) => {
-    return f.call((type === 'test' ? test : describe).skip, ...args)
-  }
+    return f.call((type === 'test' ? test : describe).skip, ...args);
+  };
 
   func.only = (...args: Parameters<T>) => {
-    return f.call((type === 'test' ? test : describe).only, ...args)
-  }
+    return f.call((type === 'test' ? test : describe).only, ...args);
+  };
 
-  return func as FuncWithSkipAndOnly<T>
+  return func as FuncWithSkipAndOnly<T>;
 }
 
 /**
  * Asserts that the given value is true
  */
 export function assertTruthy(cond: boolean): asserts cond {
-  expect(cond).toBeTruthy()
+  expect(cond).toBeTruthy();
 }
 
 /**
@@ -89,33 +89,36 @@ export function assertTruthy(cond: boolean): asserts cond {
  * test function
  */
 export const testMultipleCases = wrapWithSkipAndOnly('test', function <
-  T extends Array<any>
+  T extends Array<any>,
 >(this: TestFunctions, cases: [string, ...T][], tester: (args: T, i: number) => void | Promise<void>, includeIndex?: boolean, timeout?: number) {
   const withIndex = cases.map(([desc, ...c], i) => {
-    const newDesc = includeIndex ? `${i + 1}. ${desc}` : desc
-    return [newDesc, i, ...c] as [string, number, ...T]
-  })
-  this.each(withIndex)('%s', (_, i, ...args) => tester(args, i), timeout)
-})
+    const newDesc = includeIndex ? `${i + 1}. ${desc}` : desc;
+    return [newDesc, i, ...c] as [string, number, ...T];
+  });
+  this.each(withIndex)('%s', (_, i, ...args) => tester(args, i), timeout);
+});
 
-type ChapterTestingFunction = (chapter: Chapter, context: VitestTestContext) => void | Promise<void>
+type ChapterTestingFunction = (
+  chapter: Chapter,
+  context: VitestTestContext,
+) => void | Promise<void>;
 
 /**
  * Convenience wrapper for testing a case with multiple chapters. Tests with source chapters 1-4 and the library parser
  */
-export function testWithChapters(func: ChapterTestingFunction): void
+export function testWithChapters(func: ChapterTestingFunction): void;
 
 /**
  * Convenience wrapper for testing a case with multiple chapters. Tests with the given chapters. Returns a function
  * that should be called in the same way `test.each` is
  */
-export function testWithChapters(...chapters: Chapter[]): (f: ChapterTestingFunction) => void
+export function testWithChapters(...chapters: Chapter[]): (f: ChapterTestingFunction) => void;
 export function testWithChapters(arg0: ChapterTestingFunction | Chapter, ...chapters: Chapter[]) {
   const tester = (chapters: Chapter[], func: ChapterTestingFunction) =>
     test.for(chapters.map(chapter => [getChapterName(chapter), chapter] as [string, Chapter]))(
       'Testing %s',
-      ([, chapter], context) => func(chapter, context)
-    )
+      ([, chapter], context) => func(chapter, context),
+    );
 
   if (typeof arg0 === 'function') {
     return tester(
@@ -124,28 +127,28 @@ export function testWithChapters(arg0: ChapterTestingFunction | Chapter, ...chap
         Chapter.SOURCE_2,
         Chapter.SOURCE_3,
         Chapter.SOURCE_4,
-        Chapter.LIBRARY_PARSER
+        Chapter.LIBRARY_PARSER,
       ],
-      arg0
-    )
+      arg0,
+    );
   }
 
-  return (func: ChapterTestingFunction) => tester([arg0, ...chapters], func)
+  return (func: ChapterTestingFunction) => tester([arg0, ...chapters], func);
 }
 
 /**
  * Asserts that the provided result is a `Finished`
  */
 export function assertIsFinished(result: Result): asserts result is Finished {
-  expect(result.status).toEqual('finished')
+  expect(result.status).toEqual('finished');
 }
 
 /**
  * Asserts that the provided result is both `Finished` and is equal to the given value
  */
 export function assertFinishedResultValue(result: Result, value: Value) {
-  assertIsFinished(result)
-  expect(result.value).toEqual(value)
+  assertIsFinished(result);
+  expect(result.value).toEqual(value);
 }
 
 /**
@@ -153,9 +156,9 @@ export function assertFinishedResultValue(result: Result, value: Value) {
  */
 export function assertNodeType<T extends Node['type']>(
   typeStr: T,
-  node: Node
+  node: Node,
 ): asserts node is NodeTypeToNode<T> {
-  expect(node.type).toEqual(typeStr)
+  expect(node.type).toEqual(typeStr);
 }
 
 /**
@@ -163,8 +166,8 @@ export function assertNodeType<T extends Node['type']>(
  */
 export function evalWithBuiltins(code: string, testBuiltins: TestBuiltins = {}) {
   // Ugly, but if you know how to `eval` code with some builtins attached, please change this.
-  const builtins = Object.keys(testBuiltins).map(key => `const ${key} = testBuiltins.${key};`)
-  const evalstring = builtins.join('\n') + code
+  const builtins = Object.keys(testBuiltins).map(key => `const ${key} = testBuiltins.${key};`);
+  const evalstring = builtins.join('\n') + code;
 
-  return eval(evalstring + code)
+  return eval(evalstring + code);
 }

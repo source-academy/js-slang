@@ -5,9 +5,9 @@
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
-    "lib": ["es2021.string", "es2018", "es2017.object", "dom"],
+    "lib": ["es2021.string", "es2020", "dom"],
     "module": "commonjs",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     // "isolatedModules": true, Temporarily disabled
     "noEmit": true,
     "noImplicitAny": true,
@@ -18,18 +18,17 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
+    "strict": false,
     "strictNullChecks": true,
     "target": "es2020",
+    "types": ["node"]
   },
   "include": ["src", "vitest.config.ts"],
   "exclude": [
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",
-    "src/alt-langs/scheme/scm-slang/**/__tests__",
-    "src/py-slang/src/tests",
     "node_modules",
     "dist",
     "sicp_publish"
-  ],
-  "types": ["typePatches"]
+  ]
 }

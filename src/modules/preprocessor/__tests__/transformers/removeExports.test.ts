@@ -1,36 +1,36 @@
-import { describe, expect, test } from 'vitest'
-import { Chapter } from '../../../../langs'
-import { parse } from '../../../../parser/parser'
-import type { Context } from '../../../../types'
-import { mockContext } from '../../../../utils/testing/mocks'
-import { sanitizeAST } from '../../../../utils/testing/sanitizer'
-import removeExports from '../../transformers/removeExports'
+import { describe, expect, test } from 'vitest';
+import { Chapter } from '../../../../langs';
+import { parse } from '../../../../parser/parser';
+import type { Context } from '../../../../types';
+import { mockContext } from '../../../../utils/testing/mocks';
+import { sanitizeAST } from '../../../../utils/testing/sanitizer';
+import removeExports from '../../transformers/removeExports';
 
-type TestCase = [description: string, inputCode: string, expectedCode: string]
+type TestCase = [description: string, inputCode: string, expectedCode: string];
 
-let actualContext: Context
-let expectedContext: Context
+let actualContext: Context;
+let expectedContext: Context;
 
 function testCases(suiteDesc: string, testCases: TestCase[]) {
   describe(suiteDesc, () =>
     test.each(testCases)('%s', (_, inputCode, expectedCode) => {
-      actualContext = mockContext(Chapter.LIBRARY_PARSER)
-      expectedContext = mockContext(Chapter.LIBRARY_PARSER)
+      actualContext = mockContext(Chapter.LIBRARY_PARSER);
+      expectedContext = mockContext(Chapter.LIBRARY_PARSER);
 
       // Parse both the code we're giving to removeExports, as well
       // as the code we expect to get from removeExports
-      const actualProgram = parse(inputCode, actualContext)
-      const expectedProgram = parse(expectedCode, expectedContext)
+      const actualProgram = parse(inputCode, actualContext);
+      const expectedProgram = parse(expectedCode, expectedContext);
       if (actualProgram === null || expectedProgram === null) {
         // If there are any errors in the given code throw an error
-        throw new Error('Failed to parse expected code or actual code')
+        throw new Error('Failed to parse expected code or actual code');
       }
-      removeExports(actualProgram)
+      removeExports(actualProgram);
 
       // Assert that both parsed ASTs are equal to each other
-      expect(sanitizeAST(actualProgram)).toEqual(sanitizeAST(expectedProgram))
-    })
-  )
+      expect(sanitizeAST(actualProgram)).toEqual(sanitizeAST(expectedProgram));
+    }),
+  );
 }
 
 describe(removeExports, () => {
@@ -44,7 +44,7 @@ describe(removeExports, () => {
       `
       const x = 42;
       let y = 53;
-      `
+      `,
     ],
     [
       'when exporting function declarations',
@@ -57,12 +57,12 @@ describe(removeExports, () => {
       function square(x) {
         return x * x;
       }
-      `
+      `,
     ],
     [
       'when exporting arrow function declarations',
       'export const square = x => x * x;',
-      'const square = x => x * x;'
+      'const square = x => x * x;',
     ],
     [
       'when exporting renamed identifiers',
@@ -82,9 +82,9 @@ describe(removeExports, () => {
           return x * x;
         }
         const id = x => x;
-      `
-    ]
-  ])
+      `,
+    ],
+  ]);
 
   testCases('removes ExportDefaultDeclaration node', [
     // Default exports of variable declarations
@@ -100,7 +100,7 @@ describe(removeExports, () => {
         function square(x) {
           return x * x;
         }
-      `
+      `,
     ],
     [
       'when exporting constants',
@@ -108,7 +108,7 @@ describe(removeExports, () => {
         const x = 42;
         export default x;
       `,
-      'const x = 42;'
+      'const x = 42;',
     ],
     [
       'when exporting variables',
@@ -116,7 +116,7 @@ describe(removeExports, () => {
       let y = 53;
       export default y;
       `,
-      'let y = 53;'
+      'let y = 53;',
     ],
     [
       'when exporting arrow functions',
@@ -124,10 +124,10 @@ describe(removeExports, () => {
         const id = x => x;
         export default id;
       `,
-      'const id = x => x;'
+      'const id = x => x;',
     ],
-    ['when exporting expressions', 'export default 123 + 456;', '']
-  ])
+    ['when exporting expressions', 'export default 123 + 456;', ''],
+  ]);
 
   testCases('removes ExportAllDeclaration nodes', [
     // [
@@ -135,6 +135,6 @@ describe(removeExports, () => {
     //   'export * as hi from "./a.js";',
     //   ''
     // ],
-    ['without exported name', 'export * from "./a.js";', '']
-  ])
-})
+    ['without exported name', 'export * from "./a.js";', ''],
+  ]);
+});

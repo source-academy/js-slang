@@ -1,18 +1,18 @@
-import { test } from 'vitest'
-import { Chapter, Variant } from '../../langs'
-import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult, expectParsedError, testSuccess } from '../../utils/testing'
+import { test } from 'vitest';
+import { Chapter, Variant } from '../../langs';
+import { stripIndent } from '../../utils/formatters';
+import { expectFinishedResult, expectParsedError, testSuccess } from '../../utils/testing';
 // Continuation tests for Source
-const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
+const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL };
 
 test('call_cc works with normal functions', () => {
   return expectFinishedResult(
     stripIndent`
       1 + 2 + call_cc((cont) => 3) + 4;
     `,
-    optionEC4
-  ).toEqual(10)
-})
+    optionEC4,
+  ).toEqual(10);
+});
 
 test('call_cc can be used to return early', () => {
   return expectFinishedResult(
@@ -25,18 +25,18 @@ test('call_cc can be used to return early', () => {
         });
         x;
         `,
-    optionEC4
-  ).toEqual(2)
-})
+    optionEC4,
+  ).toEqual(2);
+});
 
 test('call_cc throws error when given no arguments', () => {
   return expectParsedError(
     stripIndent`
         1 + 2 + call_cc() + 4;
         `,
-    optionEC4
-  ).toEqual('Line 1: Expected 1 arguments, but got 0.')
-})
+    optionEC4,
+  ).toEqual('Line 1: Expected 1 arguments, but got 0.');
+});
 
 test('call_cc throws error when given > 1 arguments', () => {
   return expectParsedError(
@@ -44,13 +44,13 @@ test('call_cc throws error when given > 1 arguments', () => {
         const f = (cont) => cont;
         1 + 2 + call_cc(f,f) + 4;
         `,
-    optionEC4
-  ).toEqual('Line 2: Expected 1 arguments, but got 2.')
-})
+    optionEC4,
+  ).toEqual('Line 2: Expected 1 arguments, but got 2.');
+});
 
 test('continuations can be stored as a value', async ({ expect }) => {
   const {
-    result: { value }
+    result: { value },
   } = await testSuccess(
     stripIndent`
         let a = 0;
@@ -59,7 +59,7 @@ test('continuations can be stored as a value', async ({ expect }) => {
         });
         a;
         `,
-    optionEC4
-  )
-  expect(value).toMatchInlineSnapshot('[Function]')
-})
+    optionEC4,
+  );
+  expect(value).toMatchInlineSnapshot('[Function]');
+});

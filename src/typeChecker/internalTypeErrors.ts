@@ -1,28 +1,28 @@
-import { UNKNOWN_LOCATION } from '../constants'
-import { ErrorSeverity, ErrorType, type SourceError } from '../errors/base'
-import type { Node, NodeWithInferredType, Type } from '../types'
-import { typeToString } from '../utils/stringify'
-import type * as tsEs from './tsESTree'
+import { UNKNOWN_LOCATION } from '../constants';
+import { ErrorSeverity, ErrorType, type SourceError } from '../errors/base';
+import type { Node, NodeWithInferredType, Type } from '../types';
+import { typeToString } from '../utils/stringify';
+import type * as tsEs from './tsESTree';
 
 export class TypeError implements SourceError {
-  public type = ErrorType.TYPE
-  public severity = ErrorSeverity.WARNING
+  public type = ErrorType.TYPE;
+  public severity = ErrorSeverity.WARNING;
 
   constructor(
     public node: NodeWithInferredType<Node>,
-    public message: string
+    public message: string,
   ) {
-    node.typability = 'Untypable'
+    node.typability = 'Untypable';
   }
 
   get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
+    return this.node.loc ?? UNKNOWN_LOCATION;
   }
   public explain() {
-    return this.message
+    return this.message;
   }
   public elaborate() {
-    return this.message
+    return this.message;
   }
 }
 
@@ -35,50 +35,50 @@ export class InternalTypeError extends Error {
   //   super(...params)
   // }
   constructor(public message: string) {
-    super()
+    super();
   }
 }
 
 export class UnifyError extends InternalTypeError {
   constructor(
     public LHS: Type,
-    public RHS: Type
+    public RHS: Type,
   ) {
-    super(`Failed to unify LHS: ${typeToString(LHS)}, RHS: ${typeToString(RHS)}`)
+    super(`Failed to unify LHS: ${typeToString(LHS)}, RHS: ${typeToString(RHS)}`);
   }
 }
 
 export class InternalDifferentNumberArgumentsError extends InternalTypeError {
   constructor(
     public numExpectedArgs: number,
-    public numReceived: number
+    public numReceived: number,
   ) {
-    super(`Expected ${numExpectedArgs} args, got ${numReceived}`)
+    super(`Expected ${numExpectedArgs} args, got ${numReceived}`);
   }
 }
 
 export class InternalCyclicReferenceError extends InternalTypeError {
   constructor(public name: string) {
-    super(`contains a cyclic reference to itself`)
+    super(`contains a cyclic reference to itself`);
   }
 }
 
 export class TypecheckError implements SourceError {
-  public type = ErrorType.TYPE
-  public severity = ErrorSeverity.WARNING
+  public type = ErrorType.TYPE;
+  public severity = ErrorSeverity.WARNING;
 
   constructor(
     public node: tsEs.Node | tsEs.TSType,
-    public message: string
+    public message: string,
   ) {}
 
   get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
+    return this.node.loc ?? UNKNOWN_LOCATION;
   }
   public explain() {
-    return this.message
+    return this.message;
   }
   public elaborate() {
-    return this.message
+    return this.message;
   }
 }

@@ -4,24 +4,24 @@
  * Plus, we can customize our own assert messages and handling
  */
 
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { RuntimeSourceError } from '../errors/runtimeSourceError';
 
 export class AssertionError extends RuntimeSourceError {
   constructor(public readonly message: string) {
-    super()
+    super();
   }
 
   public explain(): string {
-    return this.message
+    return this.message;
   }
 
   public elaborate(): string {
-    return 'Please contact the administrators to let them know that this error has occurred'
+    return 'Please contact the administrators to let them know that this error has occurred';
   }
 }
 
 export default function assert(condition: boolean, message: string): asserts condition {
   if (!condition) {
-    throw new AssertionError(message)
+    throw new AssertionError(message);
   }
 }

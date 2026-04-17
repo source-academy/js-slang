@@ -1,20 +1,20 @@
-import * as astring from 'astring'
+import * as astring from 'astring';
 
-import type { Node } from '../../types'
+import type { Node } from '../../types';
 
 /**
  * Writes into `state` the `text` string reindented with the provided `indent`.
  */
 function reindent(state: any, text: any, indent: any, lineEnd: any) {
-  const lines = text.split('\n')
-  const end = lines.length - 1
-  state.write(lines[0].trim())
+  const lines = text.split('\n');
+  const end = lines.length - 1;
+  state.write(lines[0].trim());
   if (end > 0) {
-    state.write(lineEnd)
+    state.write(lineEnd);
     for (let i = 1; i < end; i++) {
-      state.write(indent + lines[i].trim() + lineEnd)
+      state.write(indent + lines[i].trim() + lineEnd);
     }
-    state.write(indent + lines[end].trim())
+    state.write(indent + lines[end].trim());
   }
 }
 
@@ -24,57 +24,57 @@ function reindent(state: any, text: any, indent: any, lineEnd: any) {
  * Expects to start on a new unindented line.
  */
 function formatComments(state: any, comments: any, indent: any, lineEnd: any) {
-  const { length } = comments
+  const { length } = comments;
   for (let i = 0; i < length; i++) {
-    const comment = comments[i]
-    state.write(indent)
+    const comment = comments[i];
+    state.write(indent);
     if (comment.type[0] === 'L') {
       // Line comment
-      state.write('// ' + comment.value.trim() + '\n', comment)
+      state.write('// ' + comment.value.trim() + '\n', comment);
     } else {
       // Block comment
-      state.write('/*')
-      reindent(state, comment.value, indent, lineEnd)
-      state.write('*/' + lineEnd)
+      state.write('/*');
+      reindent(state, comment.value, indent, lineEnd);
+      state.write('*/' + lineEnd);
     }
   }
 }
 
 export const sourceGen = Object.assign({}, astring.GENERATOR, {
   StatementSequence: function (node: any, state: any) {
-    const indent = state.indent.repeat(state.indentLevel)
-    const { lineEnd, writeComments } = state
-    const statements = node.body
+    const indent = state.indent.repeat(state.indentLevel);
+    const { lineEnd, writeComments } = state;
+    const statements = node.body;
     if (statements != null && statements.length > 0) {
-      state.write(lineEnd)
+      state.write(lineEnd);
       if (writeComments && node.comments != null) {
-        formatComments(state, node.comments, indent, lineEnd)
+        formatComments(state, node.comments, indent, lineEnd);
       }
-      const { length } = statements
+      const { length } = statements;
       for (let i = 0; i < length; i++) {
-        const statement = statements[i]
+        const statement = statements[i];
         if (writeComments && statement.comments != null) {
-          formatComments(state, statement.comments, indent, lineEnd)
+          formatComments(state, statement.comments, indent, lineEnd);
         }
-        state.write(indent)
-        this[statement.type as keyof typeof this](statement, state)
-        state.write(lineEnd)
+        state.write(indent);
+        this[statement.type as keyof typeof this](statement, state);
+        state.write(lineEnd);
       }
-      state.write(indent)
+      state.write(indent);
     } else {
       if (writeComments && node.comments != null) {
-        state.write(lineEnd)
-        formatComments(state, node.comments, indent, lineEnd)
-        state.write(indent)
+        state.write(lineEnd);
+        formatComments(state, node.comments, indent, lineEnd);
+        state.write(indent);
       }
     }
     if (writeComments && node.trailingComments != null) {
-      formatComments(state, node.trailingComments, indent, lineEnd)
+      formatComments(state, node.trailingComments, indent, lineEnd);
     }
-  }
-})
+  },
+});
 
 export const astToString = (node: Node): string =>
   astring.generate(node, {
-    generator: sourceGen
-  })
+    generator: sourceGen,
+  });
