@@ -262,8 +262,11 @@ export function wrap<T extends (...args: any[]) => any>(
     source,
   };
 
-  // @ts-expect-error toReplString is not a known property of functions
-  f.toReplString = () => stringified;
+  if (!('toReplString' in f)) {
+    // Don't override toReplString if was already defined
+    // @ts-expect-error toReplString is not a known property of functions
+    f.toReplString = () => stringified;
+  }
   return f;
 }
 
