@@ -41,13 +41,13 @@ export class StepperDebuggerStatement implements DebuggerStatement, StepperBaseN
   }
 
   contract(): StepperBaseNode {
-    redex.preRedex = [this]
-    redex.postRedex = []
-    return undefinedNode
+    redex.preRedex = [this];
+    redex.postRedex = [];
+    return undefinedNode;
   }
 
   oneStep(): StepperBaseNode {
-    return this.contract()
+    return this.contract();
   }
 
   substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
