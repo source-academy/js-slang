@@ -43,18 +43,6 @@ interface TransformerData {
 // can be represented by the element itself,
 // instead of constructing a sequence
 
-// function makeSequenceIfNeeded(this: TransformerData, exs: Node[]): List {
-//   return exs.length === 1
-//     ? this.transform(exs[0])
-//     : vector_to_list(['sequence', vector_to_list(exs.map(this.transform))]);
-// }
-
-// function makeBlockIfNeeded(this: TransformerData, exs: Node[]): List {
-//   return hasDeclarationAtToplevel(exs)
-//     ? vector_to_list(['block', makeSequenceIfNeeded.call(this ,exs)])
-//     : makeSequenceIfNeeded.call(this, exs);
-// }
-
 // checks if sequence has declaration at toplevel
 // (outside of any block)
 function hasDeclarationAtToplevel(exs: Node[]) {

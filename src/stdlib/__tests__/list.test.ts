@@ -779,27 +779,6 @@ test('list_to_string', () => {
   );
 });
 
-// assoc removed from Source
-test.todo('assoc', () => {
-  return expectFinishedResult(
-    `equal(assoc(3, list(pair(1, 2), pair(3, 4))), pair(3, 4));`,
-    Chapter.LIBRARY_PARSER,
-  ).toEqual(true);
-});
-
-test.todo('assoc not found', () => {
-  return expectFinishedResult(
-    `equal(assoc(2, list(pair(1, 2), pair(3, 4))), false);`,
-    Chapter.LIBRARY_PARSER,
-  ).toEqual(true);
-});
-
-test.todo('non-list error assoc', () => {
-  return expectParsedError(`assoc(1, [1, 2, 3]);`, Chapter.LIBRARY_PARSER).toEqual(
-    'Line 1: Name assoc not declared.',
-  );
-});
-
 describe('display_list', () => {
   async function testForDisplayResult(code: string, chapter: Chapter = Chapter.SOURCE_2) {
     const {
