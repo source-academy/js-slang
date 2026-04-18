@@ -31,3 +31,11 @@ test('Multiple segments', () => {
 test('Provider should throw an error if an unknown import is requested', () => {
   expect(() => provider('something')).toThrow(InternalRuntimeError);
 });
+
+test('Exports should refer to the same thing', () => {
+  const { InternalRuntimeError } = provider('js-slang/dist/errors/base');
+  const { AssertionError } = provider('js-slang/dist/utils/assert');
+  const error = new AssertionError('test assert');
+
+  expect(error).toBeInstanceOf(InternalRuntimeError);
+});
