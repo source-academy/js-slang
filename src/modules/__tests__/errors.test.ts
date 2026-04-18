@@ -11,8 +11,8 @@ describe(ModuleConnectionError, () => {
   test('properties', () => {
     expect(error.type).toEqual(ErrorType.IMPORT);
     expect(error.severity).toEqual(ErrorSeverity.ERROR);
-  })
-})
+  });
+});
 
 describe(WrongChapterForModuleError, () => {
   test('properties', () => {
@@ -22,5 +22,5 @@ describe(WrongChapterForModuleError, () => {
     expect(error.severity).toEqual(ErrorSeverity.ERROR);
 
     expect(error.explain()).toEqual('module0 needs at least SOURCE_3, but you are using SOURCE_1');
-  })
+  });
 });
