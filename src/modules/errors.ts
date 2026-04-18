@@ -31,7 +31,7 @@ export class ModuleInternalError extends InternalRuntimeError<ModuleDeclarationW
 }
 
 abstract class ImportError<T extends Node | undefined> extends SourceErrorWithNode<T> {
-  type: ErrorType.IMPORT;
+  type = ErrorType.IMPORT;
   severity = ErrorSeverity.ERROR;
 }
 
@@ -91,7 +91,7 @@ export class WrongChapterForModuleError extends ImportError<
   public override explain(): string {
     const reqName = getChapterName(this.required);
     const actName = getChapterName(this.actual);
-    return `${this.moduleName} needs at least Source chapter ${reqName}, but you are using ${actName}`;
+    return `${this.moduleName} needs at least ${reqName}, but you are using ${actName}`;
   }
 
   public override elaborate() {
