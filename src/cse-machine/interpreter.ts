@@ -386,7 +386,6 @@ export function* generateCSEMachineStateStream(
 
     steps += 1;
 
-
     const evalResult = context.runtime.stash?.peek();
     const mostRecentControlHeight =
       context.pendingStreamFnStack[context.pendingStreamFnStack.length - 1]?.[1];
@@ -395,7 +394,6 @@ export function* generateCSEMachineStateStream(
       Array.isArray(evalResult) &&
       evalResult.length === 2 &&
       mostRecentControlHeight !== undefined &&
-      context.runtime.control?.size() === mostRecentControlHeight - 1 || 
       context.runtime.control?.size() === mostRecentControlHeight
     ) {
       const mostRecentNullaryFnId = context.pendingStreamFnStack.pop()?.[0];
