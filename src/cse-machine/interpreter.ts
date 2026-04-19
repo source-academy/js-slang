@@ -386,7 +386,7 @@ export function* generateCSEMachineStateStream(
 
     steps += 1;
 
-       const evalResult = stash.peek();
+    const evalResult = stash.peek();
     const mostRecentControlHeight =
       context.pendingStreamFnStack[context.pendingStreamFnStack.length - 1]?.[1];
 
