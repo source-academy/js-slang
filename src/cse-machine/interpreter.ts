@@ -361,25 +361,6 @@ export function* generateCSEMachineStateStream(
       context.runtime.changepointSteps.push(steps + 1);
     }
 
-    const evalResult = context.runtime.stash?.peek();
-    const mostRecentControlHeight =
-      context.pendingStreamFnStack[context.pendingStreamFnStack.length - 1]?.[1];
-
-    if (
-      Array.isArray(evalResult) &&
-      evalResult.length === 2 &&
-      mostRecentControlHeight !== undefined &&
-      context.runtime.control?.size() === mostRecentControlHeight - 1
-    ) {
-      const mostRecentNullaryFnId = context.pendingStreamFnStack.pop()?.[0];
-      if (mostRecentNullaryFnId !== undefined) {
-        if (!context.streamLineage.get(mostRecentNullaryFnId)) {
-          context.streamLineage.set(mostRecentNullaryFnId, []);
-        }
-        context.streamLineage.get(mostRecentNullaryFnId)?.push((evalResult as any).id);
-      }
-    }
-
     control.pop();
     if (isNode(command)) {
       context.runtime.nodes.shift();
@@ -406,6 +387,26 @@ export function* generateCSEMachineStateStream(
     command = control.peek();
 
     steps += 1;
+
+    const evalResult = stash.peek();
+    const mostRecentControlHeight =
+      context.pendingStreamFnStack[context.pendingStreamFnStack.length - 1]?.[1];
+
+    if (
+      Array.isArray(evalResult) &&
+      evalResult.length === 2 &&
+      mostRecentControlHeight !== undefined &&
+      control.size() === mostRecentControlHeight
+    ) {
+      const mostRecentNullaryFnId = context.pendingStreamFnStack.pop()?.[0];
+      if (mostRecentNullaryFnId !== undefined) {
+        if (!context.streamLineage.get(mostRecentNullaryFnId)) {
+          context.streamLineage.set(mostRecentNullaryFnId, []);
+        }
+        context.streamLineage.get(mostRecentNullaryFnId)?.push((evalResult as any).id);
+      }
+    }
+
     if (!isPrelude) {
       context.runtime.envStepsTotal = steps;
     }
