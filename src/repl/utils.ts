@@ -1,7 +1,6 @@
+import fs from 'fs/promises';
 import { Option } from '@commander-js/extra-typings';
-
 import { parseError } from '..';
-import Closure from '../cse-machine/closure';
 import {
   Chapter,
   isSupportedLanguageCombo,
@@ -14,7 +13,12 @@ import type { Context, Result } from '../types';
 import { getChapterName, getVariantName, objectKeys } from '../utils/misc';
 import { stringify } from '../utils/stringify';
 import { GeneralRuntimeError } from '../errors/base';
+import type { FileGetter } from '../modules/moduleTypes';
 
+/**
+ * Converts a string to the corresponding Source chapter. Throws an error if the string
+ * doesn't represent a valid string.
+ */
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined;
 
@@ -36,16 +40,31 @@ export function chapterParser(str: string): Chapter {
   throw new GeneralRuntimeError(`Invalid chapter value: ${str}`);
 }
 
-export const getChapterOption = <T extends Chapter>(
-  defaultValue: T,
+/**
+ * Returns an {@link Option} for selecting Source chapters.
+ */
+export function getChapterOption(): Option<
+  '--chapter <chapter>',
+  undefined,
+  Chapter.SOURCE_4,
+  undefined,
+  false,
+  Chapter
+>;
+export function getChapterOption<T extends Chapter, U extends T>(
+  defaultValue: U,
   argParser: (value: string) => T,
-) => {
+): Option<'--chapter <chapter>', undefined, U, undefined, false, T>;
+export function getChapterOption(
+  defaultValue: Chapter = Chapter.SOURCE_4,
+  argParser: (value: string) => Chapter = chapterParser,
+) {
   return new Option('--chapter <chapter>').default(defaultValue).argParser(argParser);
-};
+}
 
-export const getVariantOption = <T extends Variant>(defaultValue: T, choices: T[]) => {
+export function getVariantOption<T extends Variant>(defaultValue: T, choices: T[]) {
   return new Option('--variant <variant>').default(defaultValue).choices(choices);
-};
+}
 
 export const getLanguageOption = <T extends LanguageOptions>() => {
   return new Option('--languageOptions <options>')
@@ -59,12 +78,8 @@ export const getLanguageOption = <T extends LanguageOptions>() => {
     });
 };
 
-export function handleResult(result: Result, context: Context, verboseErrors: boolean) {
+export function handleResult(result: Result, context: Context, verboseErrors: boolean): string {
   if (result.status === 'finished') {
-    if (result.value instanceof Closure || typeof result.value === 'function') {
-      return result.value.toString();
-    }
-
     return stringify(result.value);
   }
 
@@ -81,3 +96,13 @@ export function assertLanguageCombo(combo: Language): asserts combo is SourceLan
     `Invalid language combo: chapter ${chapterName} and variant ${variantName}`,
   );
 }
+
+export const nodeFileGetter: FileGetter = async p => {
+  try {
+    const text = await fs.readFile(p, 'utf-8');
+    return text;
+  } catch (error) {
+    if (error.code === 'ENOENT') return undefined;
+    throw error;
+  }
+};

@@ -15,6 +15,7 @@ import {
   getChapterOption,
   getLanguageOption,
   getVariantOption,
+  nodeFileGetter,
 } from './utils';
 
 export const getTranspilerCommand = () =>
@@ -35,15 +36,7 @@ export const getTranspilerCommand = () =>
       const entrypointFilePath = pathlib.resolve(fileName);
 
       const linkerResult = await parseProgramsAndConstructImportGraph(
-        async p => {
-          try {
-            const text = await fs.readFile(p, 'utf-8');
-            return text;
-          } catch (error) {
-            if (error.code === 'ENOENT') return undefined;
-            throw error;
-          }
-        },
+        nodeFileGetter,
         entrypointFilePath,
         context,
         {},
