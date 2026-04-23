@@ -1014,7 +1014,7 @@ test('No regexp', async ({ expect }) => {
   const errStr = await testFailure(`/pattern/`, Chapter.LIBRARY_PARSER);
   expect(errStr).toMatchInlineSnapshot(`
             "Line 1: Missing semicolon at the end of statement
-            Line 1: 'RegExp' literals are not allowed."
+            Line 1: 'regexp' literals are not allowed."
           `);
 });
 
@@ -1030,7 +1030,7 @@ test('No regexp - verbose', async ({ expect }) => {
             "Line 2, Column 9: Missing semicolon at the end of statement
             Every statement must be terminated by a semicolon.
 
-            Line 2, Column 0: 'RegExp' literals are not allowed.
+            Line 2, Column 0: 'regexp' literals are not allowed.
 
             "
           `);
