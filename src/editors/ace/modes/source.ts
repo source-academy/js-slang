@@ -56,7 +56,7 @@ export function HighlightRulesSelector(
       }
       let func = '';
       for (const name in builtin_lib) {
-        if (builtin_lib[name]['meta'] === meta) {
+        if (builtin_lib[name as keyof typeof builtin_lib]['meta'] === meta) {
           func += '|' + name;
         }
       }
