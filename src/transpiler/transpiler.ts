@@ -155,8 +155,8 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
       if (functionsToStringMap.get(node)! !== undefined) {
         create.mutateToCallExpression(node, globalIds.wrap, [
           { ...node },
-          create.literal(functionsToStringMap.get(node)!),
           create.literal(node.params[node.params.length - 1]?.type === 'RestElement'),
+          create.literal(functionsToStringMap.get(node)!),
           create.literal(isPrelude ? 'prelude' : null),
         ]);
       }

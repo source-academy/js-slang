@@ -8,7 +8,7 @@ type NonEmptyStream<T = unknown> = Pair<T, () => Stream<T>>;
 export type Stream<T = unknown> = null | NonEmptyStream<T>;
 
 function createStreamPair<T>(item: T, next: () => Stream<T>): NonEmptyStream<T> {
-  const streamTail = wrap(next, '() => ...', false, null);
+  const streamTail = wrap(next, false, '() => ...');
   return pair(item, streamTail);
 }
 

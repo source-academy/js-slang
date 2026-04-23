@@ -147,8 +147,9 @@ export async function loadModuleBundleAsync(
       const name = value.name;
       return wrap(
         value as (...args: any[]) => any,
-        `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`,
         false,
+        `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`,
+        moduleName,
         name,
       );
     });

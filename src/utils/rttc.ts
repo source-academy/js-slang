@@ -248,7 +248,7 @@ export function checkoutofRange(node: Node, index: Value, chapter: Chapter = Cha
 export function checkMemberAccess(
   node: Node,
   args: [Value, Value],
-): asserts args is [object, string | number] | [unknown[], number] {
+): asserts args is [object, string] | [unknown[], number] {
   const [obj, prop] = args;
 
   if (isObject(obj)) {

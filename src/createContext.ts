@@ -225,8 +225,8 @@ export function defineBuiltin(
 
     const wrapped = operators.wrap(
       value,
-      `function ${name} {\n\t[implementation hidden]\n}`,
       minArgsNeeded,
+      `function ${name} {\n\t[implementation hidden]\n}`,
       null,
     );
 

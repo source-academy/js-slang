@@ -5,9 +5,38 @@ import { GeneralRuntimeError, RuntimeSourceError } from '../../errors/base';
 import { locationDummyNode } from '../ast/astCreator';
 
 describe('Wrapping and Calling functions', () => {
-  describe('wrapped nullary function tests', () => {
+  describe('No redefine tests', () => {
+    test("Doesn't redefine toReplString if it is already present", () => {
+      const x = () => 0;
+      x.toReplString = () => 'x';
+      const wrapped = operators.wrap(x, undefined, '() => 0');
+
+      expect(stringify(wrapped)).toEqual('x');
+    });
+
+    test("Doesn't define toReplString if stringified is undefined", () => {
+      const x = () => 0;
+      const wrapped = operators.wrap(x, undefined);
+
+      expect(wrapped).not.toHaveProperty('toReplString');
+    });
+
+    test("Doesn't redefine minArgsNeeded when present", () => {
+      const x = () => 0;
+      const x1 = operators.wrap(x, 2);
+      const x2 = operators.wrap(x1, 1);
+
+      expect(operators.callIfFuncAndRightArgs(x2, 0, 0, null, undefined, 'x', 'y')).toEqual(0);
+
+      expect(() => operators.callIfFuncAndRightArgs(x2, 0, 0, null, undefined, 'x')).toThrow(
+        'x: Expected 2 or more arguments, but got 1.',
+      );
+    });
+  });
+
+  describe('Wrapped nullary function tests', () => {
     const x = () => 0;
-    const wrapped = operators.wrap(x, '() => 0', undefined, null);
+    const wrapped = operators.wrap(x, undefined, '() => 0');
 
     test('toReplString is set correctly', () => {
       expect(stringify(wrapped)).toEqual('() => 0');
@@ -24,9 +53,9 @@ describe('Wrapping and Calling functions', () => {
     });
   });
 
-  describe('wrapped varargs function test', () => {
+  describe('Wrapped varargs function test', () => {
     const f = (x: any, ...args: any[]) => [x, ...args];
-    const wrapped = operators.wrap(f, '(x, ...args) => [x, ...args]', 1, null);
+    const wrapped = operators.wrap(f, 1, '(x, ...args) => [x, ...args]');
 
     test('toReplString is set correctly', () => {
       expect(stringify(wrapped)).toEqual('(x, ...args) => [x, ...args]');
@@ -49,7 +78,7 @@ describe('Wrapping and Calling functions', () => {
     });
   });
 
-  describe('throwing runtime errors from inside and outside of a prelude', () => {
+  describe('Throwing runtime errors from inside and outside of a prelude', () => {
     test('throwing error with known location inside non prelude function', () => {
       const dummy = locationDummyNode(1, 1, null);
 
@@ -76,8 +105,8 @@ describe('Wrapping and Calling functions', () => {
         () => {
           throw new GeneralRuntimeError('', dummy);
         },
-        '() => { ... }',
         undefined,
+        '() => { ... }',
         'prelude',
       );
 
@@ -98,11 +127,11 @@ describe('Wrapping and Calling functions', () => {
         () => {
           throw new GeneralRuntimeError('');
         },
-        '() => {...}',
         undefined,
+        '() => {...}',
         null,
       );
-      const notPrelude = operators.wrap(() => prelude(), '() => {...}', undefined, 'prelude');
+      const notPrelude = operators.wrap(() => prelude(), undefined, '() => {...}', 'prelude');
 
       try {
         operators.callIfFuncAndRightArgs(notPrelude, 2, 2, null, undefined);

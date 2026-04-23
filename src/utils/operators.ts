@@ -131,11 +131,10 @@ function getFunctionDetails(f: Function): FunctionDetails {
 }
 
 /**
- * Limitations for current properTailCalls implementation:
- * Obviously, if objects ({}) are reintroduced,
- * we have to change this for a more stringent check,
- * as isTail and transformedFunctions are properties
- * and may be added by Source code.
+ * Calls the provided value as if it were a function being called from the `line` and `column`
+ * within the provided `source` file, checking for argument count.
+ *
+ * - If `nativeStorage` is provided, then infinite recursion protection is also added.
  */
 export function callIfFuncAndRightArgs(
   f: unknown,
@@ -218,6 +217,11 @@ export function callIfFuncAndRightArgs(
       throw new ExceptionError(error);
     }
 
+    // Limitations for current properTailCalls implementation:
+    // Obviously, if objects ({}) are reintroduced,
+    // we have to change this for a more stringent check,
+    // as isTail and transformedFunctions are properties
+    // and may be added by Source code.
     if (res === null || res === undefined) {
       return res;
     } else if (res.isTail === true) {
@@ -238,17 +242,23 @@ export function callIfFuncAndRightArgs(
 
 /**
  * Augment the given function with the necessary information for it to be called
- * properly by {@link callIfFuncAndRightArgs}.
+ * properly by {@link callIfFuncAndRightArgs}. It won't redefine any existing details
+ * that the function has already been wrapped with.
  *
- * If `hasVarArgs` is `false` or `undefined`, then `f` is assumed not to have variadic args.
- * If `hasVarArgs` is `true`, `minArgsNeeded` is inferred from `f.length`.
- * If `hasVarArgs` is a number, it is used for `minArgsNeeded`.
+ * - `hasVarArgs`
+ *   - If `hasVarArgs` is `false` or `undefined`, then `f` is assumed not to have variadic args.
+ *   - If `hasVarArgs` is `true`, `minArgsNeeded` is inferred from `f.length`.
+ *   - If `hasVarArgs` is a number, it is used for `minArgsNeeded`.
+ *
+ * - If `stringified` is `undefined`, the function won't try to define `toReplString`.
+ * - If `funcName` is `undefined`, the function won't try to define the `name` property.
  */
 export function wrap<T extends (...args: any[]) => any>(
   f: T,
-  stringified: string,
   hasVarArgs: boolean | undefined | number,
-  source: string | null,
+  stringified?: string,
+  source: string | null = null,
+  funcName?: string,
 ): T {
   let minArgsNeeded: number | undefined;
   if (hasVarArgs === true) {
@@ -257,13 +267,29 @@ export function wrap<T extends (...args: any[]) => any>(
     minArgsNeeded = hasVarArgs;
   }
 
-  (f as any)[funcDetSymbol] = {
-    minArgsNeeded,
-    source,
-  };
+  if (funcName !== undefined && f.name === undefined) {
+    Object.defineProperty(f, 'name', { value: funcName });
+  }
 
-  if (!('toReplString' in f)) {
-    // Don't override toReplString if was already defined
+  if (!(funcDetSymbol in f)) {
+    (f as any)[funcDetSymbol] = {
+      minArgsNeeded,
+      source,
+    };
+  } else {
+    const funcDets = getFunctionDetails(f);
+
+    if (typeof funcDets.minArgsNeeded !== 'number') {
+      funcDets.minArgsNeeded = minArgsNeeded;
+    }
+
+    if (typeof funcDets.source !== 'string') {
+      funcDets.source = source;
+    }
+  }
+
+  if (stringified !== undefined && !('toReplString' in f)) {
+    // Don't override toReplString if it was already defined
     // @ts-expect-error toReplString is not a known property of functions
     f.toReplString = () => stringified;
   }
