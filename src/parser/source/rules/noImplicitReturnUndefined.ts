@@ -1,7 +1,7 @@
 import type { ReturnStatement } from 'estree';
 import { stripIndent } from '../../../utils/formatters';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class NoImplicitReturnUndefinedError extends RuleError<ReturnStatement> {
   public override explain() {
@@ -18,18 +18,12 @@ export class NoImplicitReturnUndefinedError extends RuleError<ReturnStatement> {
   }
 }
 
-const noImplicitReturnUndefined: Rule<ReturnStatement> = {
-  name: 'no-implicit-return-undefined',
-
-  checkers: {
-    ReturnStatement(node) {
-      if (!node.argument) {
-        return [new NoImplicitReturnUndefinedError(node)];
-      } else {
-        return [];
-      }
-    },
+export default defineRule('no-implicit-return-undefined', {
+  ReturnStatement(node) {
+    if (!node.argument) {
+      return [new NoImplicitReturnUndefinedError(node)];
+    } else {
+      return [];
+    }
   },
-};
-
-export default noImplicitReturnUndefined;
+});

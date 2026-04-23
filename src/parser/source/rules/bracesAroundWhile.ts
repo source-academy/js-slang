@@ -1,7 +1,7 @@
 import { generate } from 'astring';
 import type { WhileStatement } from 'estree';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class BracesAroundWhileError extends RuleError<WhileStatement> {
   public explain() {
@@ -16,18 +16,12 @@ export class BracesAroundWhileError extends RuleError<WhileStatement> {
   }
 }
 
-const bracesAroundWhile: Rule<WhileStatement> = {
-  name: 'braces-around-while',
-
-  checkers: {
-    WhileStatement(node) {
-      if (node.body.type !== 'BlockStatement') {
-        return [new BracesAroundWhileError(node)];
-      } else {
-        return [];
-      }
-    },
+export default defineRule('braces-around-while', {
+  WhileStatement(node) {
+    if (node.body.type !== 'BlockStatement') {
+      return [new BracesAroundWhileError(node)];
+    } else {
+      return [];
+    }
   },
-};
-
-export default bracesAroundWhile;
+});

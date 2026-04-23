@@ -1,6 +1,6 @@
 import type { MaybeNamedFunctionDeclaration } from 'estree';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class NoFunctionDeclarationWithoutIdentifierError extends RuleError<MaybeNamedFunctionDeclaration> {
   public override explain() {
@@ -12,17 +12,11 @@ export class NoFunctionDeclarationWithoutIdentifierError extends RuleError<Maybe
   }
 }
 
-const noFunctionDeclarationWithoutIdentifier: Rule<MaybeNamedFunctionDeclaration> = {
-  name: 'no-function-declaration-without-identifier',
-
-  checkers: {
-    FunctionDeclaration(node) {
-      if (node.id === null) {
-        return [new NoFunctionDeclarationWithoutIdentifierError(node)];
-      }
-      return [];
-    },
+export default defineRule('no-function-declaration-without-identifier', {
+  FunctionDeclaration(node) {
+    if (node.id === null) {
+      return [new NoFunctionDeclarationWithoutIdentifierError(node)];
+    }
+    return [];
   },
-};
-
-export default noFunctionDeclarationWithoutIdentifier;
+});

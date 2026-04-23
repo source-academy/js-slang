@@ -1,7 +1,7 @@
 import type { ImportSpecifier } from 'estree';
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 import syntaxBlacklist from '../syntax';
 
 export class NoImportSpecifierWithDefaultError extends RuleError<ImportSpecifier> {
@@ -14,11 +14,9 @@ export class NoImportSpecifierWithDefaultError extends RuleError<ImportSpecifier
   }
 }
 
-const noImportSpecifierWithDefault: Rule<ImportSpecifier> = {
-  name: 'no-declare-mutable',
-  disableFromChapter: syntaxBlacklist['ImportDefaultSpecifier'],
-
-  checkers: {
+export default defineRule(
+  'no-import-with-default',
+  {
     ImportSpecifier(node) {
       if (node.imported.name === defaultExportLookupName) {
         return [new NoImportSpecifierWithDefaultError(node)];
@@ -26,6 +24,5 @@ const noImportSpecifierWithDefault: Rule<ImportSpecifier> = {
       return [];
     },
   },
-};
-
-export default noImportSpecifierWithDefault;
+  syntaxBlacklist['ImportDefaultSpecifier'],
+);

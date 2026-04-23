@@ -1,6 +1,6 @@
 import type { AssignmentExpression, BinaryExpression, UnaryExpression } from 'estree';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 type ExpressionNodeType = AssignmentExpression | BinaryExpression | UnaryExpression;
 
@@ -35,44 +35,38 @@ export class StrictEqualityError extends NoUnspecifiedOperatorError<BinaryExpres
   }
 }
 
-const noUnspecifiedOperator: Rule<BinaryExpression | UnaryExpression> = {
-  name: 'no-unspecified-operator',
+export default defineRule('no-unspecified-operator', {
+  BinaryExpression(node) {
+    const permittedOperators: BinaryExpression['operator'][] = [
+      '+',
+      '-',
+      '*',
+      '/',
+      '%',
+      '===',
+      '!==',
+      '<',
+      '>',
+      '<=',
+      '>=',
+      // '&&',
+      // '||'
+    ];
 
-  checkers: {
-    BinaryExpression(node) {
-      const permittedOperators: BinaryExpression['operator'][] = [
-        '+',
-        '-',
-        '*',
-        '/',
-        '%',
-        '===',
-        '!==',
-        '<',
-        '>',
-        '<=',
-        '>=',
-        // '&&',
-        // '||'
-      ];
-
-      if (node.operator === '!=' || node.operator === '==') {
-        return [new StrictEqualityError(node)];
-      } else if (!permittedOperators.includes(node.operator)) {
-        return [new NoUnspecifiedOperatorError(node)];
-      } else {
-        return [];
-      }
-    },
-    UnaryExpression(node) {
-      const permittedOperators = ['-', '!', 'typeof'];
-      if (!permittedOperators.includes(node.operator)) {
-        return [new NoUnspecifiedOperatorError(node)];
-      } else {
-        return [];
-      }
-    },
+    if (node.operator === '!=' || node.operator === '==') {
+      return [new StrictEqualityError(node)];
+    } else if (!permittedOperators.includes(node.operator)) {
+      return [new NoUnspecifiedOperatorError(node)];
+    } else {
+      return [];
+    }
   },
-};
-
-export default noUnspecifiedOperator;
+  UnaryExpression(node) {
+    const permittedOperators = ['-', '!', 'typeof'];
+    if (!permittedOperators.includes(node.operator)) {
+      return [new NoUnspecifiedOperatorError(node)];
+    } else {
+      return [];
+    }
+  },
+});

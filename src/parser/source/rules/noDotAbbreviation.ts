@@ -1,7 +1,7 @@
 import type { MemberExpression } from 'estree';
 import { Chapter } from '../../../langs';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class NoDotAbbreviationError extends RuleError<MemberExpression> {
   public override explain() {
@@ -14,12 +14,9 @@ export class NoDotAbbreviationError extends RuleError<MemberExpression> {
   }
 }
 
-const noDotAbbreviation: Rule<MemberExpression> = {
-  name: 'no-dot-abbreviation',
-
-  disableFromChapter: Chapter.LIBRARY_PARSER,
-
-  checkers: {
+export default defineRule(
+  'no-dot-abbreviation',
+  {
     MemberExpression(node) {
       if (!node.computed) {
         return [new NoDotAbbreviationError(node)];
@@ -28,6 +25,5 @@ const noDotAbbreviation: Rule<MemberExpression> = {
       }
     },
   },
-};
-
-export default noDotAbbreviation;
+  Chapter.LIBRARY_PARSER,
+);

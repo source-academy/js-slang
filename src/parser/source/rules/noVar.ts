@@ -2,7 +2,7 @@ import { generate } from 'astring';
 import type { VariableDeclaration } from 'estree';
 import { getSourceVariableDeclaration } from '../../../utils/ast/helpers';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class NoVarError extends RuleError<VariableDeclaration> {
   public override explain() {
@@ -20,18 +20,12 @@ export class NoVarError extends RuleError<VariableDeclaration> {
   }
 }
 
-const noVar: Rule<VariableDeclaration> = {
-  name: 'no-var',
-
-  checkers: {
-    VariableDeclaration(node) {
-      if (node.kind === 'var') {
-        return [new NoVarError(node)];
-      } else {
-        return [];
-      }
-    },
+export default defineRule('no-var', {
+  VariableDeclaration(node) {
+    if (node.kind === 'var') {
+      return [new NoVarError(node)];
+    } else {
+      return [];
+    }
   },
-};
-
-export default noVar;
+});

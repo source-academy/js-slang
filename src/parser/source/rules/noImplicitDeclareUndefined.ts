@@ -1,8 +1,8 @@
-import type { Identifier, VariableDeclaration } from 'estree';
+import type { Identifier } from 'estree';
 import { stripIndent } from '../../../utils/formatters';
 import { mapAndFilter } from '../../../utils/misc';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class NoImplicitDeclareUndefinedError extends RuleError<Identifier> {
   public override explain() {
@@ -21,24 +21,18 @@ export class NoImplicitDeclareUndefinedError extends RuleError<Identifier> {
   }
 }
 
-const noImplicitDeclareUndefined: Rule<VariableDeclaration> = {
-  name: 'no-implicit-declare-undefined',
-
-  checkers: {
-    VariableDeclaration(node, ancestors) {
-      if (ancestors.length > 1) {
-        switch (ancestors[ancestors.length - 2].type) {
-          case 'ForOfStatement':
-          case 'ForInStatement':
-            return [];
-        }
+export default defineRule('no-implicit-declare-undefined', {
+  VariableDeclaration(node, ancestors) {
+    if (ancestors.length > 1) {
+      switch (ancestors[ancestors.length - 2].type) {
+        case 'ForOfStatement':
+        case 'ForInStatement':
+          return [];
       }
+    }
 
-      return mapAndFilter(node.declarations, decl =>
-        decl.init ? undefined : new NoImplicitDeclareUndefinedError(decl.id as Identifier),
-      );
-    },
+    return mapAndFilter(node.declarations, decl =>
+      decl.init ? undefined : new NoImplicitDeclareUndefinedError(decl.id as Identifier),
+    );
   },
-};
-
-export default noImplicitDeclareUndefined;
+});

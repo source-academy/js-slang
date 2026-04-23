@@ -1,9 +1,10 @@
 import type { Rule } from '../../types';
+import type { Node } from '../../../types';
 import bracesAroundFor from './bracesAroundFor';
 import bracesAroundIfElse from './bracesAroundIfElse';
 import bracesAroundWhile from './bracesAroundWhile';
 import forStatementMustHaveAllParts from './forStatementMustHaveAllParts';
-import { noConstDeclarationInForLoopInit } from './noConstDeclarationInForLoopInit';
+import noConstDeclarationInForLoopInit from './noConstDeclarationInForLoopInit';
 import noDeclareMutable from './noDeclareMutable';
 import noDotAbbreviation from './noDotAbbreviation';
 import noEval from './noEval';
@@ -25,7 +26,7 @@ import noUpdateAssignment from './noUpdateAssignment';
 import noVar from './noVar';
 import singleVariableDeclaration from './singleVariableDeclaration';
 
-const rules: Rule<any>[] = [
+const rules: Rule<Node>[] = [
   bracesAroundFor,
   bracesAroundIfElse,
   bracesAroundWhile,

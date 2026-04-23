@@ -1,7 +1,7 @@
 import { generate } from 'astring';
 import type { VariableDeclaration } from 'estree';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
   private readonly fixs: VariableDeclaration[];
@@ -26,18 +26,12 @@ export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
   }
 }
 
-const singleVariableDeclaration: Rule<VariableDeclaration> = {
-  name: 'single-variable-declaration',
-
-  checkers: {
-    VariableDeclaration(node) {
-      if (node.declarations.length > 1) {
-        return [new MultipleDeclarationsError(node)];
-      } else {
-        return [];
-      }
-    },
+export default defineRule('single-variable-declaration', {
+  VariableDeclaration(node) {
+    if (node.declarations.length > 1) {
+      return [new MultipleDeclarationsError(node)];
+    } else {
+      return [];
+    }
   },
-};
-
-export default singleVariableDeclaration;
+});

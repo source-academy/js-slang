@@ -1,7 +1,7 @@
 import type { ForStatement } from 'estree';
 import { stripIndent } from '../../../utils/formatters';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class NoConstDeclarationInForLoopInit extends RuleError<ForStatement> {
   public override explain(): string {
@@ -13,18 +13,13 @@ export class NoConstDeclarationInForLoopInit extends RuleError<ForStatement> {
     `;
   }
 }
-const noConstDeclarationInForLoopInit: Rule<ForStatement> = {
-  name: 'no-const-declaration-in-for-loop-init',
 
-  checkers: {
-    ForStatement(node) {
-      if (node.init && node.init.type === 'VariableDeclaration' && node.init.kind === 'const') {
-        return [new NoConstDeclarationInForLoopInit(node)];
-      }
+export default defineRule('no-const-declaration-in-for-loop-init', {
+  ForStatement(node) {
+    if (node.init && node.init.type === 'VariableDeclaration' && node.init.kind === 'const') {
+      return [new NoConstDeclarationInForLoopInit(node)];
+    }
 
-      return [];
-    },
+    return [];
   },
-};
-
-export { noConstDeclarationInForLoopInit };
+});

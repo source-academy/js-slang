@@ -1,7 +1,7 @@
 import { generate } from 'astring';
 import type { ForStatement } from 'estree';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class BracesAroundForError extends RuleError<ForStatement> {
   public override explain() {
@@ -19,18 +19,12 @@ export class BracesAroundForError extends RuleError<ForStatement> {
   }
 }
 
-const bracesAroundFor: Rule<ForStatement> = {
-  name: 'braces-around-for',
-
-  checkers: {
-    ForStatement(node) {
-      if (node.body.type !== 'BlockStatement') {
-        return [new BracesAroundForError(node)];
-      } else {
-        return [];
-      }
-    },
+export default defineRule('braces-around-for', {
+  ForStatement(node) {
+    if (node.body.type !== 'BlockStatement') {
+      return [new BracesAroundForError(node)];
+    } else {
+      return [];
+    }
   },
-};
-
-export default bracesAroundFor;
+});

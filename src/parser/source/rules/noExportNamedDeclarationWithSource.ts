@@ -1,7 +1,7 @@
 import type { ExportNamedDeclaration } from 'estree';
 import { specifierToString } from '../../../utils/ast/helpers';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class NoExportNamedDeclarationWithSourceError extends RuleError<ExportNamedDeclaration> {
   public override explain() {
@@ -23,16 +23,11 @@ export class NoExportNamedDeclarationWithSourceError extends RuleError<ExportNam
   }
 }
 
-const noExportNamedDeclarationWithSource: Rule<ExportNamedDeclaration> = {
-  name: 'no-export-named-declaration-with-source',
-  checkers: {
-    ExportNamedDeclaration(node) {
-      if (node.source !== null) {
-        return [new NoExportNamedDeclarationWithSourceError(node)];
-      }
-      return [];
-    },
+export default defineRule('no-export-named-declaration-with-source', {
+  ExportNamedDeclaration(node) {
+    if (node.source !== null) {
+      return [new NoExportNamedDeclarationWithSourceError(node)];
+    }
+    return [];
   },
-};
-
-export default noExportNamedDeclarationWithSource;
+});

@@ -43,6 +43,7 @@ type TypeOfConstants =
   | 'number'
   | 'null'
   | 'object'
+  | 'regexp'
   | 'string'
   | 'undefined';
 
@@ -52,6 +53,7 @@ type TypeOfConstants =
 export function typeOf(v: boolean): 'boolean';
 export function typeOf(v: bigint): 'bigint';
 export function typeOf(v: number): 'number';
+export function typeOf(v: RegExp): 'regexp';
 export function typeOf(v: string): 'string';
 export function typeOf(v: (...args: any[]) => any): 'function';
 export function typeOf(v: null): 'null';
@@ -64,6 +66,8 @@ export function typeOf(v: unknown) {
     return 'null';
   } else if (Array.isArray(v)) {
     return 'array';
+  } else if (v instanceof RegExp) {
+    return 'regexp';
   } else {
     return typeof v;
   }
