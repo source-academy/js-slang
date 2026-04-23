@@ -17,7 +17,7 @@ export interface Parser<TOptions> {
   validate(ast: Program, context: Context, throwOnError?: boolean): boolean;
 }
 
-export interface Rule<T extends Node, U extends string> {
+export interface Rule<T extends Node, U extends string = string> {
   name: U;
   disableFromChapter?: Chapter;
   disableForVariants?: Variant[];
