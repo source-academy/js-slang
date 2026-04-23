@@ -58,7 +58,7 @@ export function getBuiltinFunction(
 
   const calledFunction = builtinFunctions[name as keyof typeof builtinFunctions];
 
-  if (calledFunction.arity != args.length && name !== 'list') {
+  if (calledFunction.arity !== args.length && name !== 'list') {
     // brute force way to fix this issue
     throw new InvalidNumberOfArgumentsError(call, calledFunction.arity, args.length);
   }

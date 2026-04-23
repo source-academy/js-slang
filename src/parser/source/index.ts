@@ -66,7 +66,7 @@ export class SourceParser implements Parser<AcornOptions> {
     const validationWalkers: Map<string, AncestorWalkerFn<any>> = new Map();
     this.getDisallowedSyntaxes().forEach((syntaxNodeName: string) => {
       validationWalkers.set(syntaxNodeName, (node: Node, _state: any, _ancestors: [Node]) => {
-        if (node.type != syntaxNodeName) return;
+        if (node.type !== syntaxNodeName) return;
 
         const error: DisallowedConstructError = new DisallowedConstructError(node);
         if (throwOnError) throw error;
@@ -96,7 +96,7 @@ export class SourceParser implements Parser<AcornOptions> {
       });
 
     ancestor(ast as Node, mapToObj(validationWalkers), undefined, undefined);
-    return context.errors.length == 0;
+    return context.errors.length === 0;
   }
 
   toString(): string {

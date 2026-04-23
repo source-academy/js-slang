@@ -36,7 +36,7 @@ export class Stack<T> implements IStack<T> {
   }
 
   public isEmpty(): boolean {
-    return this.size() == 0;
+    return this.size() === 0;
   }
 
   public getStack(): T[] {

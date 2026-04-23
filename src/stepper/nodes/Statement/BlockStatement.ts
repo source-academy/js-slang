@@ -105,7 +105,7 @@ export class StepperBlockStatement
     }
 
     // If the first statement is constant declaration, gracefully handle it!
-    if (this.body[0].type == 'VariableDeclaration') {
+    if (this.body[0].type === 'VariableDeclaration') {
       const declarations = assignMuTerms(this.body[0].declarations);
       const afterSubstitutedScope = this.body
         .slice(1)
@@ -157,7 +157,7 @@ export class StepperBlockStatement
     const firstValueStatement = this.body[0];
     // After this stage, the first statement is a value statement. Now, proceed until getting the second value statement.
     // if the second statement is return statement, remove the first statement
-    if (this.body.length >= 2 && this.body[1].type == 'ReturnStatement') {
+    if (this.body.length >= 2 && this.body[1].type === 'ReturnStatement') {
       redex.preRedex = [this.body[0]];
       const afterSubstitutedScope = this.body.slice(1);
       redex.postRedex = [];
@@ -199,7 +199,7 @@ export class StepperBlockStatement
     }
 
     // If the second statement is constant declaration, gracefully handle it!
-    if (this.body.length >= 2 && this.body[1].type == 'VariableDeclaration') {
+    if (this.body.length >= 2 && this.body[1].type === 'VariableDeclaration') {
       const declarations = assignMuTerms(this.body[1].declarations);
       const afterSubstitutedScope = this.body
         .slice(2)
@@ -226,7 +226,7 @@ export class StepperBlockStatement
     }
 
     // If the second statement is function declaration, also gracefully handle it!
-    if (this.body.length >= 2 && this.body[1].type == 'FunctionDeclaration') {
+    if (this.body.length >= 2 && this.body[1].type === 'FunctionDeclaration') {
       const arrowFunction = this.body[1].getArrowFunctionExpression();
       const functionIdentifier = this.body[1].id;
       const afterSubstitutedScope = this.body

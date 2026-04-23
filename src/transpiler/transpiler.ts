@@ -540,7 +540,7 @@ export function transpile(
 ): TranspiledResult {
   if (context.chapter === Chapter.FULL_JS) {
     return transpileToFullJS(program, context, true);
-  } else if (context.variant == Variant.NATIVE) {
+  } else if (context.variant === Variant.NATIVE) {
     return transpileToFullJS(program, context, false);
   } else {
     return transpileToSource(program, context, skipUndefined, isPrelude);

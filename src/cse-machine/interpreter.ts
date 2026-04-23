@@ -637,7 +637,7 @@ const cmdEvaluators: CommandEvaluators = {
   },
 
   StatementSequence({ command, context, control, stash, isPrelude }) {
-    if (command.body.length == 1) {
+    if (command.body.length === 1) {
       // If sequence only consists of one statement, evaluate it immediately
       const next = command.body[0];
       callEvaluator(next, context, control, stash, isPrelude);
@@ -1009,9 +1009,9 @@ const cmdEvaluators: CommandEvaluators = {
 
   [InstrType.BREAK]({ command, control }) {
     const next = control.pop() as ControlItem;
-    if (isInstr(next) && next.instrType == InstrType.BREAK_MARKER) {
+    if (isInstr(next) && next.instrType === InstrType.BREAK_MARKER) {
       // Encountered break mark, stop popping
-    } else if (isInstr(next) && next.instrType == InstrType.ENVIRONMENT) {
+    } else if (isInstr(next) && next.instrType === InstrType.ENVIRONMENT) {
       control.push(command);
       control.push(next); // Let instruction evaluate to restore env
     } else {
@@ -1024,9 +1024,9 @@ const cmdEvaluators: CommandEvaluators = {
 
   [InstrType.CONTINUE]({ command, control }) {
     const next = control.pop() as ControlItem;
-    if (isInstr(next) && next.instrType == InstrType.CONTINUE_MARKER) {
+    if (isInstr(next) && next.instrType === InstrType.CONTINUE_MARKER) {
       // Encountered continue mark, stop popping
-    } else if (isInstr(next) && next.instrType == InstrType.ENVIRONMENT) {
+    } else if (isInstr(next) && next.instrType === InstrType.ENVIRONMENT) {
       control.push(command);
       control.push(next); // Let instruction evaluate to restore env
     } else {

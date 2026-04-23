@@ -24,6 +24,7 @@ export default defineConfig(
       import: importPlugin
     },
     rules: {
+      'eqeqeq': ['error', 'always', { null: 'ignore' }],
       'import/first': 'warn',
       'import/newline-after-import': 'warn',
       'import/no-duplicates': ['warn', { 'prefer-inline': true }],

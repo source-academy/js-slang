@@ -527,16 +527,16 @@ export function HighlightRulesSelector(
             regex: '[{}]',
             // @ts-ignore
             onMatch: function (val, state, stack) {
-              this.next = val == '{' ? this.nextState : '';
-              if (val == '{' && stack.length) {
+              this.next = val === '{' ? this.nextState : '';
+              if (val === '{' && stack.length) {
                 stack.unshift('start', state);
-              } else if (val == '}' && stack.length) {
+              } else if (val === '}' && stack.length) {
                 stack.shift();
                 this.next = stack.shift();
-                if (this.next.indexOf('string') != -1 || this.next.indexOf('jsx') != -1)
+                if (this.next.indexOf('string') !== -1 || this.next.indexOf('jsx') !== -1)
                   return 'paren.quasi.end';
               }
-              return val == '{' ? 'paren.lparen' : 'paren.rparen';
+              return val === '{' ? 'paren.lparen' : 'paren.rparen';
             },
             nextState: 'start',
           },
@@ -565,7 +565,7 @@ export function HighlightRulesSelector(
           },
         );
 
-        if (!options || options.jsx != false)
+        if (!options || options.jsx !== false)
           // @ts-ignore
           JSX.call(this);
 
@@ -604,13 +604,13 @@ export function HighlightRulesSelector(
       const jsxTag = {
         // @ts-ignore
         onMatch: function (val, state, stack) {
-          const offset = val.charAt(1) == '/' ? 2 : 1;
-          if (offset == 1) {
-            if (state != this.nextState) stack.unshift(this.next, this.nextState, 0);
+          const offset = val.charAt(1) === '/' ? 2 : 1;
+          if (offset === 1) {
+            if (state !== this.nextState) stack.unshift(this.next, this.nextState, 0);
             else stack.unshift(this.next);
             stack[2]++;
-          } else if (offset == 2) {
-            if (state == this.nextState) {
+          } else if (offset === 2) {
+            if (state === this.nextState) {
               stack[1]--;
               if (!stack[1] || stack[1] < 0) {
                 stack.shift();
@@ -620,7 +620,7 @@ export function HighlightRulesSelector(
           }
           return [
             {
-              type: 'meta.tag.punctuation.' + (offset == 1 ? '' : 'end-') + 'tag-open.xml',
+              type: 'meta.tag.punctuation.' + (offset === 1 ? '' : 'end-') + 'tag-open.xml',
               value: val.slice(0, offset),
             },
             {
@@ -649,9 +649,9 @@ export function HighlightRulesSelector(
           regex: '/?>',
           // @ts-ignore
           onMatch: function (value, currentState, stack) {
-            if (currentState == stack[0]) stack.shift();
-            if (value.length == 2) {
-              if (stack[0] == this.nextState) stack[1]--;
+            if (currentState === stack[0]) stack.shift();
+            if (value.length === 2) {
+              if (stack[0] === this.nextState) stack[1]--;
               if (!stack[1] || stack[1] < 0) {
                 stack.splice(0, 2);
               }
@@ -798,17 +798,17 @@ export function ModeSelector(
         const tokens = tokenizedLine.tokens;
         const endState = tokenizedLine.state;
 
-        if (tokens.length && tokens[tokens.length - 1].type == 'comment') {
+        if (tokens.length && tokens[tokens.length - 1].type === 'comment') {
           return indent;
         }
 
-        if (state == 'start' || state == 'no_regex') {
+        if (state === 'start' || state === 'no_regex') {
           const match = line.match(/^.*(?:\bcase\b.*:|[\{\(\[])\s*$/);
           if (match) {
             indent += tab;
           }
-        } else if (state == 'doc-start') {
-          if (endState == 'start' || endState == 'no_regex') {
+        } else if (state === 'doc-start') {
+          if (endState === 'start' || endState === 'no_regex') {
             return '';
           }
           const match = line.match(/^\s*(\/?)\*/);

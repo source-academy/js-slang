@@ -34,9 +34,9 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
       ? false // unlike BlockStatement
       : this.body[0].isOneStepPossible(redex) ||
           this.body.length >= 2 ||
-          (this.body.length == 1 &&
-            (this.body[0].type == 'VariableDeclaration' ||
-              this.body[0].type == 'FunctionDeclaration'));
+          (this.body.length === 1 &&
+            (this.body[0].type === 'VariableDeclaration' ||
+              this.body[0].type === 'FunctionDeclaration'));
   }
 
   public override contract(): StepperProgram {
@@ -57,7 +57,7 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
     }
 
     // If the first statement is constant declaration, gracefully handle it!
-    if (this.body[0].type == 'VariableDeclaration') {
+    if (this.body[0].type === 'VariableDeclaration') {
       const declarations = assignMuTerms(this.body[0].declarations); // for arrow function expression
       const afterSubstitutedScope = this.body
         .slice(1)
@@ -77,7 +77,7 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
     }
 
     // If the first statement is function declaration, also gracefully handle it!
-    if (this.body[0].type == 'FunctionDeclaration') {
+    if (this.body[0].type === 'FunctionDeclaration') {
       const arrowFunction = this.body[0].getArrowFunctionExpression();
       const functionIdentifier = this.body[0].id;
       const afterSubstitutedScope = this.body
@@ -110,7 +110,7 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
     }
 
     // If the second statement is constant declaration, gracefully handle it!
-    if (this.body.length >= 2 && this.body[1].type == 'VariableDeclaration') {
+    if (this.body.length >= 2 && this.body[1].type === 'VariableDeclaration') {
       const declarations = assignMuTerms(this.body[1].declarations);
       const afterSubstitutedScope = this.body
         .slice(2)
@@ -132,7 +132,7 @@ export class StepperProgram extends StepperBaseNode<Program> implements Program 
     }
 
     // If the second statement is function declaration, also gracefully handle it!
-    if (this.body.length >= 2 && this.body[1].type == 'FunctionDeclaration') {
+    if (this.body.length >= 2 && this.body[1].type === 'FunctionDeclaration') {
       const arrowFunction = this.body[1].getArrowFunctionExpression();
       const functionIdentifier = this.body[1].id;
       const afterSubstitutedScope = this.body

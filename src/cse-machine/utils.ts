@@ -96,7 +96,7 @@ export const isStatementSequence = (node: ControlItem): node is StatementSequenc
  * @returns true if node is an esRestElement, false otherwise.
  */
 export const isRestElement = (node: Node): node is es.RestElement => {
-  return node.type == 'RestElement';
+  return node.type === 'RestElement';
 };
 
 /**
@@ -529,7 +529,7 @@ export const checkNumberOfArguments = (
     return undefined;
   } else {
     // Pre-built functions
-    const hasVarArgs = callee.minArgsNeeded != undefined;
+    const hasVarArgs = callee.minArgsNeeded != null;
     if (hasVarArgs ? callee.minArgsNeeded > args.length : callee.length !== args.length) {
       return handleRuntimeError(
         context,
