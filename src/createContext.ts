@@ -228,13 +228,13 @@ export function defineBuiltin(
       minArgsNeeded,
       `function ${name} {\n\t[implementation hidden]\n}`,
       null,
+      funName,
     );
 
     // value.toString = () => repr;
     // value.minArgsNeeded = minArgsNeeded;
     value.funName = funName;
     value.funParameters = funParameters;
-    Object.defineProperty(value, 'name', { value: funName });
 
     defineSymbol(context, funName, wrapped);
   } else {

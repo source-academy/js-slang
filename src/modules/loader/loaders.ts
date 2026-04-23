@@ -141,7 +141,7 @@ export async function loadModuleBundleAsync(
     const { default: partialBundle } = await importer(moduleName, node);
     const loadedBundle = partialBundle(getRequireProvider(context));
 
-    return mapValues(loadedBundle, value => {
+    return mapValues(loadedBundle, (value, key) => {
       if (typeof value !== 'function') return value;
 
       const name = value.name;
@@ -150,7 +150,7 @@ export async function loadModuleBundleAsync(
         false,
         `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`,
         moduleName,
-        name,
+        name ?? key, // Ensure that names are provided if forgotten
       );
     });
   } catch (error) {

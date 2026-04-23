@@ -251,7 +251,9 @@ export function callIfFuncAndRightArgs(
  *   - If `hasVarArgs` is a number, it is used for `minArgsNeeded`.
  *
  * - If `stringified` is `undefined`, the function won't try to define `toReplString`.
- * - If `funcName` is `undefined`, the function won't try to define the `name` property.
+ * - `funcName`
+ *   - If `funcName` is `undefined`, the function won't try to define the `name` property.
+ *   - If `funcName` is provided, the `name` property will get overriden.
  */
 export function wrap<T extends (...args: any[]) => any>(
   f: T,
@@ -267,7 +269,7 @@ export function wrap<T extends (...args: any[]) => any>(
     minArgsNeeded = hasVarArgs;
   }
 
-  if (funcName !== undefined && f.name === undefined) {
+  if (funcName !== undefined) {
     Object.defineProperty(f, 'name', { value: funcName });
   }
 
