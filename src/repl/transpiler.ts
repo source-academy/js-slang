@@ -5,11 +5,18 @@ import { Command } from '@commander-js/extra-typings';
 import { generate } from 'astring';
 
 import { createContext, parseError } from '../index';
-import { Chapter, isSourceLanguage, Variant } from '../langs';
+import { Chapter, Variant } from '../langs';
 import defaultBundler from '../modules/preprocessor/bundler';
 import parseProgramsAndConstructImportGraph from '../modules/preprocessor/linker';
 import { transpile } from '../transpiler/transpiler';
-import { chapterParser, getChapterOption, getLanguageOption, getVariantOption } from './utils';
+import {
+  assertLanguageCombo,
+  chapterParser,
+  getChapterOption,
+  getLanguageOption,
+  getVariantOption,
+  nodeFileGetter,
+} from './utils';
 
 export const getTranspilerCommand = () =>
   new Command('transpiler')
@@ -23,24 +30,13 @@ export const getTranspilerCommand = () =>
     .option('-o, --out <outFile>', 'Specify a file to write to')
     .argument('<filename>')
     .action(async (fileName, opts) => {
-      if (!isSourceLanguage(opts)) {
-        console.log('Invalid language combination!');
-        return;
-      }
+      assertLanguageCombo(opts);
 
       const context = createContext(opts.chapter, opts.variant, opts.languageOptions);
       const entrypointFilePath = pathlib.resolve(fileName);
 
       const linkerResult = await parseProgramsAndConstructImportGraph(
-        async p => {
-          try {
-            const text = await fs.readFile(p, 'utf-8');
-            return text;
-          } catch (error) {
-            if (error.code === 'ENOENT') return undefined;
-            throw error;
-          }
-        },
+        nodeFileGetter,
         entrypointFilePath,
         context,
         {},
@@ -58,7 +54,7 @@ export const getTranspilerCommand = () =>
       try {
         const transpiled = opts.pretranspile
           ? generate(bundledProgram)
-          : transpile(bundledProgram, context).transpiled;
+          : transpile(bundledProgram, context, false).transpiled;
 
         if (opts.out) {
           await fs.writeFile(opts.out, transpiled);

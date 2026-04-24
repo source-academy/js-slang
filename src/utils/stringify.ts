@@ -1,6 +1,8 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants';
 import Closure from '../cse-machine/closure';
+import { InternalRuntimeError } from '../errors/base';
 import type { Type, Value } from '../types';
+import { callIfFuncAndRightArgs } from './operators';
 
 export interface ArrayLike {
   replPrefix: string;
@@ -8,7 +10,7 @@ export interface ArrayLike {
   replArrayContents: () => Value[];
 }
 
-function isArrayLike(v: Value) {
+function isArrayLike(v: Value): v is ArrayLike {
   return (
     typeof v.replPrefix === 'string' &&
     typeof v.replSuffix === 'string' &&
@@ -16,13 +18,13 @@ function isArrayLike(v: Value) {
   );
 }
 
-export const stringify = (
+export function stringify(
   value: Value,
   indent: number | string = 2,
   splitlineThreshold = 80,
-): string => {
+): string {
   if (typeof indent === 'string') {
-    throw 'stringify with arbitrary indent string not supported';
+    throw new InternalRuntimeError(`${stringify.name} with arbitrary indent string not supported`);
   }
   let indentN: number = indent;
   if (indent > 10) {
@@ -31,7 +33,7 @@ export const stringify = (
   return lineTreeToString(
     stringDagToLineTree(valueToStringDag(value), indentN, splitlineThreshold),
   );
-};
+}
 
 export function typeToString(type: Type): string {
   return niceTypeToString(type);
@@ -431,12 +433,16 @@ export function valueToStringDag(value: Value): StringDag {
     } else if (typeof v === 'string') {
       const str = JSON.stringify(v);
       return [{ type: 'terminal', str, length: str.length }, false];
+    } else if (typeof v.toReplString === 'function') {
+      // callIfFuncAndRight args is necessary because if we implement toReplString as a function
+      // in Source, it gets wrapped by the transpiler
+      // this allows object literals to implement toReplString
+      const reprValue = callIfFuncAndRightArgs(v.toReplString.bind(v), -1, -1, null, undefined);
+      return convertRepr(reprValue);
     } else if (typeof v !== 'object') {
       return convertRepr(v.toString());
     } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
       return [{ type: 'terminal', str: '...<truncated>', length: 14 }, false];
-    } else if (typeof v.toReplString === 'function') {
-      return convertRepr(v.toReplString());
     } else if (Array.isArray(v)) {
       if (v.length === 2) {
         return convertPair(v);

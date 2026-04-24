@@ -2,7 +2,7 @@ import { type NullableMappedPosition, type RawSourceMap, SourceMapConsumer } fro
 
 import { UNKNOWN_LOCATION } from '../constants';
 import type { SourceError } from '../errors/base';
-import { ConstAssignment, ExceptionError, UndefinedVariable } from '../errors/errors';
+import { ConstAssignmentError, ExceptionError, UndefinedVariableError } from '../errors/errors';
 import { locationDummyNode } from '../utils/ast/astCreator';
 
 enum BrowserType {
@@ -86,6 +86,25 @@ function getErrorLocation(
   return undefined;
 }
 
+export async function getPositionWithSourceMap(
+  line: number,
+  column: number,
+  sourceMap: RawSourceMap,
+) {
+  const originalPosition: NullableMappedPosition = await SourceMapConsumer.with(
+    sourceMap,
+    null,
+    consumer => consumer.originalPositionFor({ line, column }),
+  );
+
+  return {
+    line: originalPosition.line ?? -1, // use -1 in place of null
+    column: originalPosition.column ?? -1,
+    identifier: originalPosition.name ?? 'UNKNOWN',
+    source: originalPosition.source ?? null,
+  };
+}
+
 /**
  * Converts native errors to SourceError
  *
@@ -104,16 +123,11 @@ export async function toSourceError(error: Error, sourceMap?: RawSourceMap): Pro
   let source: string | null = null;
 
   if (sourceMap && !(line === -1 || column === -1)) {
-    // Get original lines, column and identifier
-    const originalPosition: NullableMappedPosition = await SourceMapConsumer.with(
+    ({ line, column, source, identifier } = await getPositionWithSourceMap(
+      line,
+      column,
       sourceMap,
-      null,
-      consumer => consumer.originalPositionFor({ line, column }),
-    );
-    line = originalPosition.line ?? -1; // use -1 in place of null
-    column = originalPosition.column ?? -1;
-    identifier = originalPosition.name ?? identifier;
-    source = originalPosition.source ?? null;
+    ));
   }
 
   const errorMessage: string = error.message;
@@ -121,9 +135,9 @@ export async function toSourceError(error: Error, sourceMap?: RawSourceMap): Pro
     possibleMessages.some(possibleMessage => errorMessage.includes(possibleMessage));
 
   if (errorMessageContains(ASSIGNMENT_TO_CONST_ERROR_MESSAGES)) {
-    return new ConstAssignment(locationDummyNode(line, column, source), identifier);
+    return new ConstAssignmentError(locationDummyNode(line, column, source), identifier);
   } else if (errorMessageContains(UNDEFINED_VARIABLE_MESSAGES)) {
-    return new UndefinedVariable(identifier, locationDummyNode(line, column, source));
+    return new UndefinedVariableError(identifier, locationDummyNode(line, column, source));
   } else {
     const location =
       line === -1 || column === -1

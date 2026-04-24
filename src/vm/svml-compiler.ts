@@ -1,7 +1,7 @@
-import es, { type BinaryExpression, type UnaryExpression } from 'estree';
+import type es from 'estree';
 
 import { UNKNOWN_LOCATION } from '../constants';
-import { ConstAssignment, UndefinedVariable } from '../errors/errors';
+import { ConstAssignmentError, UndefinedVariableError } from '../errors/errors';
 import { parse } from '../parser/parser';
 import {
   CONSTANT_PRIMITIVES,
@@ -16,12 +16,12 @@ import { getSourceVariableDeclaration } from '../utils/ast/helpers';
 import { recursive, simple } from '../utils/ast/walkers';
 import OpCodes from './opcodes';
 
-const VALID_UNARY_OPERATORS: { [op in UnaryExpression['operator']]?: OpCodes } = {
+const VALID_UNARY_OPERATORS: { [op in es.UnaryOperator]?: OpCodes } = {
   '!': OpCodes.NOTG,
   '-': OpCodes.NEGG,
 };
 
-const VALID_BINARY_OPERATORS: { [op in BinaryExpression['operator']]?: OpCodes } = {
+const VALID_BINARY_OPERATORS: { [op in es.BinaryOperator]?: OpCodes } = {
   '+': OpCodes.ADDG,
   '-': OpCodes.SUBG,
   '*': OpCodes.MULG,
@@ -155,7 +155,7 @@ function indexOf(indexTable: Map<string, EnvEntry>[], node: es.Identifier) {
       return { envLevel, index, isVar, type };
     }
   }
-  throw new UndefinedVariable(name, node);
+  throw new UndefinedVariableError(name, node);
 }
 
 // a small complication: the toplevel function
@@ -546,7 +546,7 @@ const compilers: Compilers = {
     if (node.left.type === 'Identifier') {
       const { envLevel, index, isVar } = indexOf(indexTable, node.left);
       if (!isVar) {
-        throw new ConstAssignment(node.left, node.left.name);
+        throw new ConstAssignmentError(node, node.left.name);
       }
       const { maxStackSize } = compile(node.right, indexTable, false);
       if (envLevel === 0) {

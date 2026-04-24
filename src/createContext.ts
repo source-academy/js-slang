@@ -3,7 +3,10 @@
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants';
 import { call_with_current_continuation } from './cse-machine/continuations';
 import Heap from './cse-machine/heap';
+import { GeneralRuntimeError } from './errors/base';
+import { InvalidParameterTypeError } from './errors/rttcErrors';
 import { Chapter, Variant, type LanguageOptions } from './langs';
+import { createEmptyModuleContexts } from './modules/utils';
 import * as list from './stdlib/list';
 import { list_to_vector } from './stdlib/list';
 import { listPrelude } from './stdlib/list.prelude';
@@ -146,7 +149,7 @@ export const createEmptyContext = <T>(
     executionMethod: 'auto',
     variant,
     languageOptions,
-    moduleContexts: {},
+    moduleContexts: createEmptyModuleContexts(),
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
     previousPrograms: [],
@@ -171,13 +174,17 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   }
 };
 
-export const defineSymbol = (context: Context, name: string, value: Value) => {
+export function defineSymbol(context: Context, name: string, value: Value) {
   const globalEnvironment = context.runtime.environments[0];
-  Object.defineProperty(globalEnvironment.head, name, {
-    value,
-    writable: false,
-    enumerable: true,
-  });
+
+  if (!(name in globalEnvironment.head)) {
+    Object.defineProperty(globalEnvironment.head, name, {
+      value,
+      writable: false,
+      enumerable: true,
+    });
+  }
+
   context.nativeStorage.builtins.set(name, value);
   const typeEnv = context.typeEnvironment[0];
   // if the global type env doesn't already have the imported symbol,
@@ -186,27 +193,15 @@ export const defineSymbol = (context: Context, name: string, value: Value) => {
     typeEnv.typeMap.set(name, tForAll(tVar('T1')));
     typeEnv.declKindMap.set(name, 'const');
   }
-};
+}
 
-export function defineBuiltin(
-  context: Context,
-  name: string, // enforce minArgsNeeded
-  value: Value,
-  minArgsNeeded: number,
-): void;
-export function defineBuiltin(
-  context: Context,
-  name: string,
-  value: Value,
-  minArgsNeeded?: number,
-): void;
 // Defines a builtin in the given context
 // If the builtin is a function, wrap it such that its toString hides the implementation
 export function defineBuiltin(
   context: Context,
   name: string,
   value: Value,
-  minArgsNeeded: undefined | number = undefined,
+  minArgsNeeded?: number,
 ) {
   function extractName(name: string): string {
     return name.split('(')[0].trim();
@@ -227,13 +222,21 @@ export function defineBuiltin(
   if (typeof value === 'function') {
     const funName = extractName(name);
     const funParameters = extractParameters(name);
-    const repr = `function ${name} {\n\t[implementation hidden]\n}`;
-    value.toString = () => repr;
-    value.minArgsNeeded = minArgsNeeded;
+
+    const wrapped = operators.wrap(
+      value,
+      minArgsNeeded,
+      `function ${name} {\n\t[implementation hidden]\n}`,
+      null,
+      funName,
+    );
+
+    // value.toString = () => repr;
+    // value.minArgsNeeded = minArgsNeeded;
     value.funName = funName;
     value.funParameters = funParameters;
 
-    defineSymbol(context, funName, value);
+    defineSymbol(context, funName, wrapped);
   } else {
     defineSymbol(context, name, value);
   }
@@ -250,35 +253,44 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
 /**
  * Imports builtins from standard and external libraries.
  */
-export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
+export function importBuiltins(context: Context, externalBuiltIns: Partial<CustomBuiltIns> = {}) {
   ensureGlobalEnvironmentExist(context);
   const rawDisplay = (v: Value, ...s: string[]) =>
-    externalBuiltIns.rawDisplay(v, s[0], context.externalContext);
+    (externalBuiltIns.rawDisplay ?? defaultBuiltIns.rawDisplay)(v, s[0], context.externalContext);
+
   const display = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
-      throw new TypeError('display expects the second argument to be a string');
+      throw new InvalidParameterTypeError('string', s[0], display.name, 'second argument');
     }
-    return (rawDisplay(stringify(v), s[0]), v);
+
+    rawDisplay(stringify(v), s[0]);
+    return v;
   };
-  const displayList = (v: Value, ...s: string[]) => {
+
+  const display_list = (v: Value, ...s: string[]) => {
     if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
-      throw new TypeError('display_list expects the second argument to be a string');
+      throw new InvalidParameterTypeError('string', s[0], display_list.name, 'second argument');
     }
     return list.rawDisplayList(display, v, s[0]);
   };
+
   const prompt = (v: Value) => {
     const start = Date.now();
-    const promptResult = externalBuiltIns.prompt(v, '', context.externalContext);
+    const promptResult = (externalBuiltIns.prompt ?? defaultBuiltIns.prompt)(
+      v,
+      '',
+      context.externalContext,
+    );
     context.nativeStorage.maxExecTime += Date.now() - start;
     return promptResult;
   };
   const alert = (v: Value) => {
     const start = Date.now();
-    externalBuiltIns.alert(v, '', context.externalContext);
+    (externalBuiltIns.alert ?? defaultBuiltIns.alert)(v, '', context.externalContext);
     context.nativeStorage.maxExecTime += Date.now() - start;
   };
-  const visualiseList = (...v: Value) => {
-    externalBuiltIns.visualiseList(v, context.externalContext);
+  const visualise_list = (...v: Value[]) => {
+    (externalBuiltIns.visualiseList ?? defaultBuiltIns.visualiseList)(v, context.externalContext);
     return v[0];
   };
 
@@ -330,8 +342,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'tail(xs)', list.tail);
     defineBuiltin(context, 'is_null(val)', list.is_null);
     defineBuiltin(context, 'list(...values)', list.list, 0);
-    defineBuiltin(context, 'draw_data(...xs)', visualiseList, 1);
-    defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList, 0);
+    defineBuiltin(context, 'draw_data(...xs)', visualise_list, 1);
+    defineBuiltin(context, 'display_list(val, prepend = undefined)', display_list, 0);
     defineBuiltin(context, 'is_list(val)', list.is_list);
   }
 
@@ -350,7 +362,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       parser.parse(str, createContext(context.chapter)),
     );
     defineBuiltin(context, 'tokenize(program_string)', (str: string) =>
-      parser.tokenize(str, createContext(context.chapter)),
+      parser.tokenize(str, createContext(context.chapter), true),
     );
     defineBuiltin(
       context,
@@ -365,7 +377,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         'call_cc(f)',
         context.variant === Variant.EXPLICIT_CONTROL
           ? call_with_current_continuation
-          : (f: any) => {
+          : (_f: any) => {
               throw new Error('call_cc is only available in Explicit-Control variant');
             },
       );
@@ -378,10 +390,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property);
     defineBuiltin(context, 'alert(val)', alert);
     defineBuiltin(context, 'timed(fun)', (f: Function) =>
-      misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay),
+      misc.timed(
+        context,
+        f,
+        context.externalContext,
+        externalBuiltIns.rawDisplay ?? defaultBuiltIns.rawDisplay,
+      ),
     );
   }
-};
+}
 
 function importPrelude(context: Context) {
   let prelude = '';
@@ -398,14 +415,14 @@ function importPrelude(context: Context) {
   }
 }
 
-const defaultBuiltIns: CustomBuiltIns = {
+export const defaultBuiltIns: CustomBuiltIns = {
   rawDisplay: misc.rawDisplay,
   // See issue #5
   prompt: misc.rawDisplay,
   // See issue #11
   alert: misc.rawDisplay,
   visualiseList: (_v: Value) => {
-    throw new Error('List visualizer is not enabled');
+    throw new GeneralRuntimeError('List visualizer is not enabled');
   },
 };
 
@@ -415,7 +432,7 @@ const createContext = <T>(
   languageOptions: LanguageOptions = {},
   externalSymbols: string[] = [],
   externalContext?: T,
-  externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
+  externalBuiltIns: Partial<CustomBuiltIns> = {},
 ): Context => {
   if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS) {
     // fullJS will include all builtins and preludes of source 4
@@ -431,6 +448,7 @@ const createContext = <T>(
       chapter,
     } as Context;
   }
+
   const context = createEmptyContext(
     chapter,
     variant,

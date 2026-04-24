@@ -4,17 +4,18 @@ import replLib from 'repl';
 import { Command } from '@commander-js/extra-typings';
 
 import { createContext, type IOptions } from '..';
-import { Chapter, isSupportedLanguageCombo, Variant } from '../langs';
+import { Chapter, Variant } from '../langs';
 import { setModulesStaticURL } from '../modules/loader';
-import type { FileGetter } from '../modules/moduleTypes';
 import { runCodeInSource, sourceFilesRunner } from '../runner';
 import type { RecursivePartial } from '../types';
 import {
+  assertLanguageCombo,
   chapterParser,
   getChapterOption,
   getLanguageOption,
   getVariantOption,
   handleResult,
+  nodeFileGetter,
 } from './utils';
 
 export const getReplCommand = () =>
@@ -28,10 +29,7 @@ export const getReplCommand = () =>
     .option('--optionsFile <file>', 'Specify a JSON file to read options from')
     .argument('[filename]')
     .action(async (filename, { modulesBackend, optionsFile, repl, verbose, ...lang }) => {
-      if (!isSupportedLanguageCombo(lang)) {
-        console.log('Invalid language combination!');
-        return;
-      }
+      assertLanguageCombo(lang);
 
       const context = createContext(lang.chapter, lang.variant, lang.languageOptions);
 
@@ -45,20 +43,10 @@ export const getReplCommand = () =>
         options = JSON.parse(rawText);
       }
 
-      const fileGetter: FileGetter = async p => {
-        try {
-          const text = await fs.readFile(p, 'utf-8');
-          return text;
-        } catch (error) {
-          if (error.code === 'ENOENT') return undefined;
-          throw error;
-        }
-      };
-
       if (filename !== undefined) {
         const entrypointFilePath = pathlib.resolve(filename);
         const { result, verboseErrors } = await sourceFilesRunner(
-          fileGetter,
+          nodeFileGetter,
           entrypointFilePath,
           context,
           {
@@ -78,7 +66,7 @@ export const getReplCommand = () =>
         {
           eval: (cmd, unusedContext, unusedFilename, callback) => {
             context.errors = [];
-            runCodeInSource(cmd, context, options, '/default.js', fileGetter)
+            runCodeInSource(cmd, context, options, '/default.js', nodeFileGetter)
               .then(obj => {
                 callback(null, obj);
               })

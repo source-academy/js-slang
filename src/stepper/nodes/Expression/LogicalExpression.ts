@@ -1,44 +1,34 @@
 import type { Comment, LogicalExpression, LogicalOperator, SourceLocation } from 'estree';
 import type { StepperExpression, StepperPattern } from '..';
-import { redex } from '../..';
+import type { RedexInfo } from '../..';
 import { convert } from '../../generator';
-import type { StepperBaseNode } from '../../interface';
+import { StepperBaseNode } from '../../interface';
+import assert from '../../../utils/assert';
+import { checkIfStatement } from '../../../utils/rttc';
+import { InternalRuntimeError } from '../../../errors/base';
 import { StepperLiteral } from './Literal';
 
-export class StepperLogicalExpression implements LogicalExpression, StepperBaseNode {
-  type: 'LogicalExpression';
-  operator: LogicalOperator;
-  left: StepperExpression;
-  right: StepperExpression;
-  leadingComments?: Comment[];
-  trailingComments?: Comment[];
-  loc?: SourceLocation | null;
-  range?: [number, number];
-
+export class StepperLogicalExpression
+  extends StepperBaseNode<LogicalExpression>
+  implements LogicalExpression
+{
   constructor(
-    operator: LogicalOperator,
-    left: StepperExpression,
-    right: StepperExpression,
+    public readonly operator: LogicalOperator,
+    public readonly left: StepperExpression,
+    public readonly right: StepperExpression,
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
     range?: [number, number],
   ) {
-    this.type = 'LogicalExpression';
-    this.operator = operator;
-    this.left = left;
-    this.right = right;
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
+    super('LogicalExpression', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: LogicalExpression) {
     return new StepperLogicalExpression(
       node.operator,
-      convert(node.left) as StepperExpression,
-      convert(node.right) as StepperExpression,
+      convert(node.left),
+      convert(node.right),
       node.leadingComments,
       node.trailingComments,
       node.loc,
@@ -46,18 +36,9 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     );
   }
 
-  isContractible(): boolean {
+  public override isContractible(redex: RedexInfo): boolean {
     if (this.left.type === 'Literal') {
-      const leftType = typeof this.left.value;
-
-      if (leftType !== 'boolean') {
-        throw new Error(
-          `Line ${
-            this.loc?.start.line || 0
-          }: Expected boolean on left hand side of operation, got ${leftType}.`,
-        );
-      }
-
+      checkIfStatement(this, this.left.value);
       redex.preRedex = [this];
       return true;
     }
@@ -65,15 +46,18 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     return false;
   }
 
-  isOneStepPossible(): boolean {
-    return this.isContractible() || this.left.isOneStepPossible() || this.right.isOneStepPossible();
+  public override isOneStepPossible(redex: RedexInfo): boolean {
+    return (
+      this.isContractible(redex) ||
+      this.left.isOneStepPossible(redex) ||
+      this.right.isOneStepPossible(redex)
+    );
   }
 
-  contract(): StepperExpression {
+  public override contract(redex: RedexInfo): StepperExpression {
     redex.preRedex = [this];
 
-    if (this.left.type !== 'Literal') throw new Error('Left operand must be a literal to contract');
-
+    assert(this.left.type === 'Literal', 'Left operand must be a literal to contract');
     const leftValue = this.left.value;
 
     if (this.operator === '&&' && !leftValue) {
@@ -103,39 +87,43 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     }
   }
 
-  oneStep(): StepperExpression {
-    if (this.isContractible()) {
-      return this.contract();
-    } else if (this.left.isOneStepPossible()) {
+  public override oneStep(redex: RedexInfo): StepperExpression {
+    if (this.isContractible(redex)) {
+      return this.contract(redex);
+    } else if (this.left.isOneStepPossible(redex)) {
       return new StepperLogicalExpression(
         this.operator,
-        this.left.oneStep(),
+        this.left.oneStep(redex),
         this.right,
         this.leadingComments,
         this.trailingComments,
         this.loc,
         this.range,
       );
-    } else if (this.right.isOneStepPossible()) {
+    } else if (this.right.isOneStepPossible(redex)) {
       return new StepperLogicalExpression(
         this.operator,
         this.left,
-        this.right.oneStep(),
+        this.right.oneStep(redex),
         this.leadingComments,
         this.trailingComments,
         this.loc,
         this.range,
       );
-    } else {
-      throw new Error('No step possible');
     }
+
+    throw new InternalRuntimeError('Cannot oneStep ineligible LogicalExpression', this);
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperExpression {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo,
+  ): StepperExpression {
     return new StepperLogicalExpression(
       this.operator,
-      this.left.substitute(id, value),
-      this.right.substitute(id, value),
+      this.left.substitute(id, value, redex),
+      this.right.substitute(id, value, redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -143,15 +131,15 @@ export class StepperLogicalExpression implements LogicalExpression, StepperBaseN
     );
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return Array.from(new Set([this.left.freeNames(), this.right.freeNames()].flat()));
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return Array.from(new Set([this.left.allNames(), this.right.allNames()].flat()));
   }
 
-  rename(before: string, after: string): StepperExpression {
+  public override rename(before: string, after: string): StepperExpression {
     return new StepperLogicalExpression(
       this.operator,
       this.left.rename(before, after),

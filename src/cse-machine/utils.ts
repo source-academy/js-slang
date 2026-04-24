@@ -2,7 +2,7 @@ import type es from 'estree';
 import { isFunction } from 'lodash';
 
 import * as errors from '../errors/errors';
-import { RuntimeSourceError } from '../errors/runtimeSourceError';
+import { RuntimeSourceError } from '../errors/base';
 import type {
   Context,
   Environment,
@@ -12,7 +12,9 @@ import type {
   Value,
 } from '../types';
 import * as ast from '../utils/ast/astCreator';
-import { isIdentifier, isImportDeclaration } from '../utils/ast/typeGuards';
+import { isIdentifier, isImportDeclaration, isVariableDeclaration } from '../utils/ast/typeGuards';
+import assert from '../utils/assert';
+import { extractDeclarations } from '../utils/ast/helpers';
 import Closure from './closure';
 import { Continuation, isCallWithCurrentContinuation } from './continuations';
 import Heap from './heap';
@@ -94,7 +96,7 @@ export const isStatementSequence = (node: ControlItem): node is StatementSequenc
  * @returns true if node is an esRestElement, false otherwise.
  */
 export const isRestElement = (node: Node): node is es.RestElement => {
-  return node.type == 'RestElement';
+  return node.type === 'RestElement';
 };
 
 /**
@@ -343,16 +345,29 @@ const UNASSIGNED_LET = Symbol('let declaration');
 export function declareIdentifier(
   context: Context,
   name: string,
-  node: Node,
+  node:
+    | es.Declaration
+    | es.ImportSpecifier
+    | es.ImportDefaultSpecifier
+    | es.ImportNamespaceSpecifier,
   environment: Environment,
   constant: boolean = false,
 ) {
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head);
 
+    if (isVariableDeclaration(node)) {
+      return handleRuntimeError(
+        context,
+        new errors.VariableRedeclarationError(node, name, !!descriptors[name].writable),
+      );
+    }
+
+    assert(descriptors[name].writable === false, `${node.type} should not be reassignable`);
+
     return handleRuntimeError(
       context,
-      new errors.VariableRedeclaration(node, name, descriptors[name].writable),
+      new errors.VariableRedeclarationError(node, name, descriptors[name].writable),
     );
   }
   environment.head[name] = constant ? UNASSIGNED_CONST : UNASSIGNED_LET;
@@ -364,10 +379,10 @@ function declareVariables(
   node: es.VariableDeclaration,
   environment: Environment,
 ) {
-  for (const declaration of node.declarations) {
-    // Retrieve declaration type from node
-    const constant = node.kind === 'const';
-    declareIdentifier(context, (declaration.id as es.Identifier).name, node, environment, constant);
+  // Retrieve declaration type from node
+  const constant = node.kind === 'const';
+  for (const id of extractDeclarations(node)) {
+    declareIdentifier(context, id.name, node, environment, constant);
   }
 }
 
@@ -394,12 +409,20 @@ export function defineVariable(
   name: string,
   value: Value,
   constant = false,
-  node: es.VariableDeclaration | es.ImportDeclaration,
+  node:
+    | es.VariableDeclaration
+    | es.ImportSpecifier
+    | es.ImportDefaultSpecifier
+    | es.ImportNamespaceSpecifier
+    | es.FunctionDeclaration,
 ) {
   const environment = currentEnvironment(context);
 
   if (environment.head[name] !== UNASSIGNED_CONST && environment.head[name] !== UNASSIGNED_LET) {
-    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant));
+    return handleRuntimeError(
+      context,
+      new errors.VariableRedeclarationError(node, name, !constant),
+    );
   }
 
   if (constant && value instanceof Closure) {
@@ -423,7 +446,7 @@ export const getVariable = (context: Context, name: string, node: es.Identifier)
         environment.head[name] === UNASSIGNED_CONST ||
         environment.head[name] === UNASSIGNED_LET
       ) {
-        return handleRuntimeError(context, new errors.UnassignedVariable(name, node));
+        return handleRuntimeError(context, new errors.UnassignedVariableError(name, node));
       } else {
         return environment.head[name];
       }
@@ -431,7 +454,7 @@ export const getVariable = (context: Context, name: string, node: es.Identifier)
       environment = environment.tail;
     }
   }
-  return handleRuntimeError(context, new errors.UndefinedVariable(name, node));
+  return handleRuntimeError(context, new errors.UndefinedVariableError(name, node));
 };
 
 export const setVariable = (
@@ -454,18 +477,18 @@ export const setVariable = (
         environment.head[name] = value;
         return undefined;
       }
-      return handleRuntimeError(context, new errors.ConstAssignment(node, name));
+      return handleRuntimeError(context, new errors.ConstAssignmentError(node, name));
     } else {
       environment = environment.tail;
     }
   }
-  return handleRuntimeError(context, new errors.UndefinedVariable(name, node));
+  return handleRuntimeError(context, new errors.UndefinedVariableError(name, node));
 };
 
-export const handleRuntimeError = (context: Context, error: RuntimeSourceError) => {
+export function handleRuntimeError(context: Context, error: RuntimeSourceError<any>) {
   context.errors.push(error);
   throw error;
-};
+}
 
 export const checkNumberOfArguments = (
   context: Context,
@@ -480,10 +503,11 @@ export const checkNumberOfArguments = (
     if (hasVarArgs ? params.length - 1 > args.length : params.length !== args.length) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(
+        new errors.InvalidNumberOfArgumentsError(
           exp,
           hasVarArgs ? params.length - 1 : params.length,
           args.length,
+          undefined,
           hasVarArgs,
         ),
       );
@@ -493,7 +517,7 @@ export const checkNumberOfArguments = (
     if (args.length !== 1) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(exp, 1, args.length, false),
+        new errors.InvalidNumberOfArgumentsError(exp, 1, args.length, undefined, false),
       );
     }
     return undefined;
@@ -505,14 +529,15 @@ export const checkNumberOfArguments = (
     return undefined;
   } else {
     // Pre-built functions
-    const hasVarArgs = callee.minArgsNeeded != undefined;
+    const hasVarArgs = callee.minArgsNeeded != null;
     if (hasVarArgs ? callee.minArgsNeeded > args.length : callee.length !== args.length) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(
+        new errors.InvalidNumberOfArgumentsError(
           exp,
           hasVarArgs ? callee.minArgsNeeded : callee.length,
           args.length,
+          undefined,
           hasVarArgs,
         ),
       );
@@ -533,7 +558,7 @@ export const checkStackOverFlow = (context: Context, control: Control) => {
     let counter = 0;
     for (
       let i = 0;
-      counter < errors.MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW &&
+      counter < errors.MaximumStackLimitExceededError.MAX_CALLS_TO_SHOW &&
       i < context.runtime.environments.length;
       i++
     ) {
@@ -544,7 +569,7 @@ export const checkStackOverFlow = (context: Context, control: Control) => {
     }
     handleRuntimeError(
       context,
-      new errors.MaximumStackLimitExceeded(context.runtime.nodes[0], stacks),
+      new errors.MaximumStackLimitExceededError(context.runtime.nodes[0], stacks),
     );
   }
 };
@@ -637,7 +662,7 @@ type GetNodeKeys<T extends ControlItem> = {
 type KeysOfNodeProperties<T extends ControlItem> = GetNodeKeys<T>[keyof GetNodeKeys<T>];
 
 /**
- * To provide a specifcation on how to calculate whether a ControlItem is env dependent or not:
+ * To provide a specification on how to calculate whether a ControlItem is env dependent or not:
  * - If a boolean is provided, that value is used directly
  * - If a string is provided, it is treated as the name of a property. `isEnvDependent` is then called on the value of that property.
  * - If an array of strings is provided, all values are treated as names of properties and `isEnvDependent` is called on all

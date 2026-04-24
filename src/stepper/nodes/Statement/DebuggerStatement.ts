@@ -1,26 +1,19 @@
 import type { Comment, DebuggerStatement, SourceLocation } from 'estree';
-import { StepperExpression, StepperPattern, undefinedNode } from '..';
-import { redex } from '../..';
-import type { StepperBaseNode } from '../../interface';
+import { type StepperExpression, type StepperPattern, undefinedNode } from '..';
+import { StepperBaseNode } from '../../interface';
+import type { RedexInfo } from '../..';
 
-export class StepperDebuggerStatement implements DebuggerStatement, StepperBaseNode {
-  type: 'DebuggerStatement';
-  leadingComments?: Comment[] | undefined;
-  trailingComments?: Comment[] | undefined;
-  loc?: SourceLocation | null | undefined;
-  range?: [number, number] | undefined;
-
+export class StepperDebuggerStatement
+  extends StepperBaseNode<DebuggerStatement>
+  implements DebuggerStatement
+{
   constructor(
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined,
   ) {
-    this.type = 'DebuggerStatement';
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
+    super('DebuggerStatement', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: DebuggerStatement) {
@@ -32,37 +25,41 @@ export class StepperDebuggerStatement implements DebuggerStatement, StepperBaseN
     );
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return true;
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return true;
   }
 
-  contract(): StepperBaseNode {
+  contractEmpty(redex: RedexInfo) {
     redex.preRedex = [this];
     redex.postRedex = [];
+  }
+
+  public override contract(): typeof undefinedNode {
     return undefinedNode;
   }
 
-  oneStep(): StepperBaseNode {
-    return this.contract();
+  public override oneStep(redex: RedexInfo): typeof undefinedNode {
+    this.contractEmpty(redex);
+    return undefinedNode;
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(_id: StepperPattern, _value: StepperExpression): StepperBaseNode {
     return this;
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return [];
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return [];
   }
 
-  rename(before: string, after: string): StepperBaseNode {
+  public override rename(_before: string, _after: string): StepperBaseNode {
     return this;
   }
 }

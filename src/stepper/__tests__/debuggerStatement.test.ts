@@ -2,10 +2,10 @@ import * as astring from 'astring';
 import { parse } from 'acorn';
 import { describe, expect, test } from 'vitest';
 import createContext from '../../createContext';
-import { redex } from '..';
+import type { RedexInfo } from '..';
 import { convert, explain } from '../generator';
 import type { StepperBaseNode } from '../interface';
-import { undefinedNode } from '../nodes';
+import { type StepperStatement, undefinedNode } from '../nodes';
 import { StepperIdentifier } from '../nodes/Expression/Identifier';
 import { StepperLiteral } from '../nodes/Expression/Literal';
 import { StepperDebuggerStatement } from '../nodes/Statement/DebuggerStatement';
@@ -14,10 +14,10 @@ import { getSteps } from '../steppers';
 const stringify = (ast: StepperBaseNode) =>
   astring.generate(ast).replace(/\n/g, '').replace(/\s+/g, ' ');
 
-describe('DebuggerStatement', () => {
+describe(StepperDebuggerStatement, () => {
   test('covers DebuggerStatement node methods', () => {
     const program = parse('debugger;', { ecmaVersion: 10, locations: true }) as any;
-    const node = convert(program.body[0]) as StepperDebuggerStatement;
+    const node = convert(program.body[0] as StepperStatement) as StepperDebuggerStatement;
 
     expect(node.type).toBe('DebuggerStatement');
     expect(node.isContractible()).toBe(true);
@@ -26,11 +26,15 @@ describe('DebuggerStatement', () => {
 
     expect(node.contract()).toBe(undefinedNode);
 
-    redex.preRedex = [];
-    redex.postRedex = [];
-    expect(node.oneStep()).toBe(undefinedNode);
+    const redex: RedexInfo = { preRedex: [], postRedex: [] };
+    node.contractEmpty(redex);
     expect(redex.preRedex[0]).toBe(node);
     expect(redex.postRedex).toEqual([]);
+
+    const redex2: RedexInfo = { preRedex: [], postRedex: [] };
+    expect(node.oneStep(redex2)).toBe(undefinedNode);
+    expect(redex2.preRedex[0]).toBe(node);
+    expect(redex2.postRedex).toEqual([]);
 
     const id = new StepperIdentifier('x');
     const value = new StepperLiteral(1, '1');

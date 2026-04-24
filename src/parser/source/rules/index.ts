@@ -1,10 +1,10 @@
-import { Node } from '../../../types';
-import { Rule } from '../../types';
+import type { Rule } from '../../types';
+import type { Node } from '../../../types';
 import bracesAroundFor from './bracesAroundFor';
 import bracesAroundIfElse from './bracesAroundIfElse';
 import bracesAroundWhile from './bracesAroundWhile';
 import forStatementMustHaveAllParts from './forStatementMustHaveAllParts';
-import { noConstDeclarationInForLoopInit } from './noConstDeclarationInForLoopInit';
+import noConstDeclarationInForLoopInit from './noConstDeclarationInForLoopInit';
 import noDeclareMutable from './noDeclareMutable';
 import noDotAbbreviation from './noDotAbbreviation';
 import noEval from './noEval';

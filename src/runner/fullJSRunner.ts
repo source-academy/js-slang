@@ -3,7 +3,7 @@ import type es from 'estree';
 import { RawSourceMap } from 'source-map';
 
 import { NATIVE_STORAGE_ID } from '../constants';
-import { RuntimeSourceError } from '../errors/runtimeSourceError';
+import { RuntimeSourceError } from '../errors/base';
 import { parse } from '../parser/parser';
 import {
   evallerReplacer,
@@ -43,7 +43,7 @@ function containsPrevEval(context: Context): boolean {
   return context.nativeStorage.evaller != null;
 }
 
-const fullJSRunner: Runner = async (program, context) => {
+const fullJSRunner: Runner = async (program, context, { isPrelude }) => {
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
   const prelude = preparePrelude(context);
@@ -71,7 +71,7 @@ const fullJSRunner: Runner = async (program, context) => {
   let transpiled;
   let sourceMapJson: RawSourceMap | undefined;
   try {
-    ({ transpiled, sourceMapJson } = transpile(program, context));
+    ({ transpiled, sourceMapJson } = transpile(program, context, isPrelude));
     return {
       status: 'finished',
       context,

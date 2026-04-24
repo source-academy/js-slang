@@ -1,6 +1,6 @@
 import type { Context } from '../..';
 import type { Chapter, LanguageOptions, Variant } from '../../langs';
-import { Value } from '../../types';
+import { CustomBuiltIns, Value } from '../../types';
 
 export type TestOptions =
   | {
@@ -20,6 +20,6 @@ export interface TestResults {
 
 export type TestContext = Context<any> & TestResults;
 
-export interface TestBuiltins {
+export type TestBuiltins = {
   [builtinName: string]: any;
-}
+} & Partial<CustomBuiltIns>;

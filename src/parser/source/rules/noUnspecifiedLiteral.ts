@@ -1,6 +1,7 @@
 import type { Literal } from 'estree';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
+import { typeOf } from '../../../utils/rttc';
 
 const specifiedLiterals = ['boolean', 'string', 'number'];
 
@@ -10,7 +11,7 @@ export class NoUnspecifiedLiteral extends RuleError<Literal> {
      * A check is used for RegExp to ensure that only RegExp are caught.
      * Any other unspecified literal value should not be caught.
      */
-    const literal = this.node.value instanceof RegExp ? 'RegExp' : '';
+    const literal = typeOf(this.node.value);
     return `'${literal}' literals are not allowed.`;
   }
 
@@ -19,17 +20,12 @@ export class NoUnspecifiedLiteral extends RuleError<Literal> {
   }
 }
 
-const noUnspecifiedLiteral: Rule<Literal> = {
-  name: 'no-unspecified-literal',
-  checkers: {
-    Literal(node) {
-      if (node.value !== null && !specifiedLiterals.includes(typeof node.value)) {
-        return [new NoUnspecifiedLiteral(node)];
-      } else {
-        return [];
-      }
-    },
+export default defineRule('no-unspecified-literal', {
+  Literal(node) {
+    if (node.value !== null && !specifiedLiterals.includes(typeof node.value)) {
+      return [new NoUnspecifiedLiteral(node)];
+    } else {
+      return [];
+    }
   },
-};
-
-export default noUnspecifiedLiteral;
+});

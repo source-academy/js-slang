@@ -5,7 +5,12 @@ import { partition } from 'lodash';
 import { UNKNOWN_LOCATION } from '../constants';
 import { findAncestors, findIdentifierNode } from '../finder';
 import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from '../modules/loader';
-import type { ModuleDocsEntry } from '../modules/moduleTypes';
+import type {
+  Importer,
+  ManifestImporter,
+  ModuleDocsEntry,
+  ModuleDocumentation,
+} from '../modules/moduleTypes';
 import { isSourceModule } from '../modules/utils';
 import syntaxBlacklist from '../parser/source/syntax';
 import type { Context, Node } from '../types';
@@ -134,6 +139,11 @@ export function getKeywords(
   return keywordSuggestions;
 }
 
+export interface GetProgramNamesOptions {
+  docsImporter: Importer<ModuleDocumentation>;
+  manifestImporter: ManifestImporter;
+}
+
 /**
  * Retrieve the list of names present within the program. If the cursor is within a comment,
  * or when the user is declaring a variable or function arguments, suggestions should not be displayed,
@@ -148,6 +158,7 @@ export async function getProgramNames(
   prog: Node,
   comments: acorn.Comment[],
   cursorLoc: es.Position,
+  options: Partial<GetProgramNamesOptions> = {},
 ): Promise<[NameDeclaration[], boolean]> {
   function before(first: es.Position, second: es.Position) {
     return (
@@ -209,7 +220,7 @@ export async function getProgramNames(
   const res: Record<string, NameDeclaration> = {};
   let idx = 0;
   for (const node of nameQueue) {
-    const names = await getNames(node, n => cursorInLoc(n.loc));
+    const names = await getNames(node, n => cursorInLoc(n.loc), options);
     names.forEach(decl => {
       // Deduplicate, ensure deeper declarations overwrite
       res[decl.name] = { ...decl, score: idx };
@@ -345,7 +356,11 @@ function docsToHtml(
  * is located within the node, false otherwise
  * @returns List of found names
  */
-async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<NameDeclaration[]> {
+async function getNames(
+  node: Node,
+  locTest: (node: Node) => boolean,
+  options: Partial<GetProgramNamesOptions> = {},
+): Promise<NameDeclaration[]> {
   switch (node.type) {
     case 'ImportDeclaration':
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name));
@@ -372,7 +387,7 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
 
       try {
         const [namespaceSpecs, otherSpecs] = partition(specs, isNamespaceSpecifier);
-        const manifest = await memoizedGetModuleManifestAsync();
+        const manifest = await memoizedGetModuleManifestAsync(options.manifestImporter);
 
         if (!(moduleName in manifest)) {
           // Unknown module
@@ -402,7 +417,7 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
         // loading the documentation
         if (otherSpecs.length === 0) return namespaceDecls;
 
-        const docs = await memoizedGetModuleDocsAsync(moduleName, true);
+        const docs = await memoizedGetModuleDocsAsync(moduleName, true, options.docsImporter);
         return namespaceDecls.concat(
           (otherSpecs as (es.ImportSpecifier | es.ImportDefaultSpecifier)[]).map(spec => {
             const importedName = getImportedName(spec);

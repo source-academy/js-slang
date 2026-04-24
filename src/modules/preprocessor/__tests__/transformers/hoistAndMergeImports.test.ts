@@ -15,7 +15,7 @@ describe(hoistAndMergeImports, () => {
 
     if (!actualProgram || !expectedProgram) {
       // console.log(actualContext.errors)
-      throw new Error('Failed to parse expected code or actual code');
+      expect.fail('Failed to parse expected code or actual code');
     }
 
     hoistAndMergeImports(actualProgram);

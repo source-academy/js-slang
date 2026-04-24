@@ -9,9 +9,7 @@ import type es from 'estree';
 import { isArray } from 'lodash';
 
 import type { IOptions } from '..';
-import { UNKNOWN_LOCATION } from '../constants';
 import * as errors from '../errors/errors';
-import { RuntimeSourceError } from '../errors/runtimeSourceError';
 import { checkEditorBreakpoints } from '../stdlib/inspector';
 import type {
   Context,
@@ -29,7 +27,11 @@ import {
   hasNoDeclarations,
   hasNoImportDeclarations,
 } from '../utils/ast/helpers';
-import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators';
+import {
+  callIfFuncAndRightArgs,
+  evaluateBinaryExpression,
+  evaluateUnaryExpression,
+} from '../utils/operators';
 import * as rttc from '../utils/rttc';
 import * as seq from '../utils/statementSeqTransform';
 import { checkProgramForUndefinedVariables } from '../validator/validator';
@@ -102,7 +104,7 @@ export class Control extends Stack<ControlItem> {
     return this.numEnvDependentItems;
   }
 
-  public pop(): ControlItem | undefined {
+  public override pop(): ControlItem | undefined {
     const item = super.pop();
     if (item !== undefined && isEnvDependent(item)) {
       this.numEnvDependentItems--;
@@ -110,7 +112,7 @@ export class Control extends Stack<ControlItem> {
     return item;
   }
 
-  public push(...items: ControlItem[]): void {
+  public override push(...items: ControlItem[]): void {
     const itemsNew: ControlItem[] = Control.simplifyBlocksWithoutDeclarations(...items);
     itemsNew.forEach((item: ControlItem) => {
       if (isEnvDependent(item)) {
@@ -230,7 +232,7 @@ function evaluateImports(program: es.Program, context: Context) {
       const functions = context.nativeStorage.loadedModules[moduleName];
       for (const node of nodes) {
         for (const spec of node.specifiers) {
-          declareIdentifier(context, spec.local.name, node, environment);
+          declareIdentifier(context, spec.local.name, spec, environment);
           let obj: any;
 
           switch (spec.type) {
@@ -248,7 +250,7 @@ function evaluateImports(program: es.Program, context: Context) {
             }
           }
 
-          defineVariable(context, spec.local.name, obj, true, node);
+          defineVariable(context, spec.local.name, obj, true, spec);
         }
       }
     }
@@ -635,7 +637,7 @@ const cmdEvaluators: CommandEvaluators = {
   },
 
   StatementSequence({ command, context, control, stash, isPrelude }) {
-    if (command.body.length == 1) {
+    if (command.body.length === 1) {
       // If sequence only consists of one statement, evaluate it immediately
       const next = command.body[0];
       callEvaluator(next, context, control, stash, isPrelude);
@@ -770,7 +772,7 @@ const cmdEvaluators: CommandEvaluators = {
     const func: Closure | Function = stash.pop();
 
     if (!(func instanceof Closure || func instanceof Function)) {
-      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode));
+      handleRuntimeError(context, new errors.CallingNonFunctionValueError(func, command.srcNode));
     }
 
     if (isCallWithCurrentContinuation(func)) {
@@ -882,11 +884,11 @@ const cmdEvaluators: CommandEvaluators = {
     }
 
     // Value is a built-in function
-    // Check for number of arguments mismatch error
-    checkNumberOfArguments(context, func, args, command.srcNode);
     // Directly stash result of applying pre-built functions without the CSE machine.
     try {
-      const result = func(...args);
+      const line = command.srcNode.loc?.start?.line ?? -1;
+      const col = command.srcNode.loc?.start?.column ?? -1;
+      const result = callIfFuncAndRightArgs(func, line, col, null, undefined, ...args);
 
       if (isStreamFn(func, result)) {
         // This is a special case for the `stream` built-in function, since it returns pairs
@@ -916,13 +918,7 @@ const cmdEvaluators: CommandEvaluators = {
 
       stash.push(result);
     } catch (error) {
-      if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
-        // The error could've arisen when the builtin called a source function which errored.
-        // If the cause was a source error, we don't want to include the error.
-        // However if the error came from the builtin itself, we need to handle it.
-        const loc = command.srcNode.loc ?? UNKNOWN_LOCATION;
-        handleRuntimeError(context, new errors.ExceptionError(error, loc));
-      }
+      handleRuntimeError(context, error);
     }
   },
 
@@ -930,16 +926,14 @@ const cmdEvaluators: CommandEvaluators = {
     const index = stash.pop();
     const array = stash.pop();
 
-    //Check if the index is legal
-    const indexRangeError = rttc.checkoutofRange(command.srcNode, index, context.chapter);
-    if (indexRangeError) {
-      handleRuntimeError(context, indexRangeError);
-    }
+    try {
+      // Check if the index is legal
+      rttc.checkoutofRange(command.srcNode, index, context.chapter);
 
-    // Check if left-hand side is array
-    const lhsArrayCheckError = rttc.checkArray(command.srcNode, array, context.chapter);
-    if (lhsArrayCheckError) {
-      handleRuntimeError(context, lhsArrayCheckError);
+      // Check if left-hand side is array
+      rttc.checkArray(command.srcNode, array, context.chapter);
+    } catch (error) {
+      handleRuntimeError(context, error);
     }
 
     // Check if index is out-of-bounds with array, in which case, returns undefined as per spec
@@ -979,16 +973,12 @@ const cmdEvaluators: CommandEvaluators = {
   [InstrType.BINARY_OP]({ command, context, stash }) {
     const right = stash.pop();
     const left = stash.pop();
-    const error = rttc.checkBinaryExpression(
-      command.srcNode,
-      command.symbol,
-      context.chapter,
-      left,
-      right,
-    );
-    if (error) {
+    try {
+      rttc.checkBinaryExpression(command.srcNode, command.symbol, context.chapter, [left, right]);
+    } catch (error) {
       handleRuntimeError(context, error);
     }
+
     stash.push(evaluateBinaryExpression(command.symbol, left, right));
   },
 
@@ -996,8 +986,9 @@ const cmdEvaluators: CommandEvaluators = {
     const test = stash.pop();
 
     // Check if test condition is a boolean
-    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter);
-    if (error) {
+    try {
+      rttc.checkIfStatement(command.srcNode, test, context.chapter);
+    } catch (error) {
       handleRuntimeError(context, error);
     }
 
@@ -1018,9 +1009,9 @@ const cmdEvaluators: CommandEvaluators = {
 
   [InstrType.BREAK]({ command, control }) {
     const next = control.pop() as ControlItem;
-    if (isInstr(next) && next.instrType == InstrType.BREAK_MARKER) {
+    if (isInstr(next) && next.instrType === InstrType.BREAK_MARKER) {
       // Encountered break mark, stop popping
-    } else if (isInstr(next) && next.instrType == InstrType.ENVIRONMENT) {
+    } else if (isInstr(next) && next.instrType === InstrType.ENVIRONMENT) {
       control.push(command);
       control.push(next); // Let instruction evaluate to restore env
     } else {
@@ -1033,9 +1024,9 @@ const cmdEvaluators: CommandEvaluators = {
 
   [InstrType.CONTINUE]({ command, control }) {
     const next = control.pop() as ControlItem;
-    if (isInstr(next) && next.instrType == InstrType.CONTINUE_MARKER) {
+    if (isInstr(next) && next.instrType === InstrType.CONTINUE_MARKER) {
       // Encountered continue mark, stop popping
-    } else if (isInstr(next) && next.instrType == InstrType.ENVIRONMENT) {
+    } else if (isInstr(next) && next.instrType === InstrType.ENVIRONMENT) {
       control.push(command);
       control.push(next); // Let instruction evaluate to restore env
     } else {
@@ -1057,8 +1048,9 @@ const cmdEvaluators: CommandEvaluators = {
     const test = stash.pop();
 
     // Check if test condition is a boolean
-    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter);
-    if (error) {
+    try {
+      rttc.checkIfStatement(command.srcNode, test, context.chapter);
+    } catch (error) {
       handleRuntimeError(context, error);
     }
 
@@ -1095,9 +1087,10 @@ const cmdEvaluators: CommandEvaluators = {
     const array = stash.pop();
 
     // Check if right-hand side is array
-    const rhsArrayCheckError = rttc.checkArray(command.srcNode, array, context.chapter);
-    if (rhsArrayCheckError) {
-      handleRuntimeError(context, rhsArrayCheckError);
+    try {
+      rttc.checkArray(command.srcNode, array, context.chapter);
+    } catch (error) {
+      handleRuntimeError(context, error);
     }
 
     // spread array
@@ -1119,13 +1112,9 @@ const cmdEvaluators: CommandEvaluators = {
 
   [InstrType.UNARY_OP]({ command, context, stash }) {
     const argument = stash.pop();
-    const error = rttc.checkUnaryExpression(
-      command.srcNode,
-      command.symbol,
-      argument,
-      context.chapter,
-    );
-    if (error) {
+    try {
+      rttc.checkUnaryExpression(command.srcNode, command.symbol, argument, context.chapter);
+    } catch (error) {
       handleRuntimeError(context, error);
     }
     stash.push(evaluateUnaryExpression(command.symbol, argument));
@@ -1135,8 +1124,9 @@ const cmdEvaluators: CommandEvaluators = {
     const test = stash.pop();
 
     // Check if test condition is a boolean
-    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter);
-    if (error) {
+    try {
+      rttc.checkIfStatement(command.srcNode, test, context.chapter);
+    } catch (error) {
       handleRuntimeError(context, error);
     }
 

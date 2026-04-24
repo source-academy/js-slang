@@ -1,7 +1,12 @@
+/**
+ * This whole transpiler includes many many many many hacks to get stuff working.
+ * Order in which certain functions are called matter as well.
+ * There should be an explanation on it coming up soon.
+ */
 import { generate } from 'astring';
 import type es from 'estree';
 import { type RawSourceMap, SourceMapGenerator } from 'source-map';
-
+import cloneDeep from 'lodash/cloneDeep';
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants';
 import { Chapter, Variant } from '../langs';
 import type { Context, NativeStorage, Node } from '../types';
@@ -22,12 +27,6 @@ import {
   type NativeIds,
 } from '../utils/uniqueIds';
 import { checkForUndefinedVariables } from '../validator/validator';
-
-/**
- * This whole transpiler includes many many many many hacks to get stuff working.
- * Order in which certain functions are called matter as well.
- * There should be an explanation on it coming up soon.
- */
 
 export function transformImportDeclarations(
   program: es.Program,
@@ -114,10 +113,10 @@ function transformFunctionDeclarationsToArrowFunctions(
 ) {
   simple(program, {
     FunctionDeclaration(node) {
-      const { id, params, body } = node as es.FunctionDeclaration;
+      const { id, params, body, loc } = node as es.FunctionDeclaration;
       node.type = 'VariableDeclaration';
       node = node as es.VariableDeclaration;
-      const asArrowFunction = create.blockArrowFunction(params as es.Identifier[], body);
+      const asArrowFunction = create.blockArrowFunction(params as es.Identifier[], body, loc);
       functionsToStringMap.set(asArrowFunction, functionsToStringMap.get(node)!);
       node.declarations = [
         {
@@ -148,6 +147,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   program: es.Program,
   functionsToStringMap: Map<Node, string>,
   globalIds: NativeIds,
+  isPrelude: boolean,
 ) {
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
@@ -155,10 +155,9 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
       if (functionsToStringMap.get(node)! !== undefined) {
         create.mutateToCallExpression(node, globalIds.wrap, [
           { ...node },
-          create.literal(functionsToStringMap.get(node)!),
           create.literal(node.params[node.params.length - 1]?.type === 'RestElement'),
-
-          globalIds.native,
+          create.literal(functionsToStringMap.get(node)!),
+          create.literal(isPrelude ? 'prelude' : null),
         ]);
       }
     },
@@ -243,6 +242,7 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program, globalId
         create.literal(line),
         create.literal(column),
         create.literal(source),
+        globalIds.native,
         ...args,
       ];
 
@@ -423,13 +423,16 @@ function getDeclarationsToAccessTranspilerInternals(
 export type TranspiledResult = { transpiled: string; sourceMapJson?: RawSourceMap };
 
 function transpileToSource(
-  program: es.Program,
+  originalProgram: es.Program,
   context: Context,
   skipUndefined: boolean,
+  isPrelude: boolean,
 ): TranspiledResult {
-  if (program.body.length === 0) {
+  if (originalProgram.body.length === 0) {
     return { transpiled: '' };
   }
+
+  const program = cloneDeep(originalProgram);
 
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
@@ -448,7 +451,12 @@ function transpileToSource(
   checkForUndefinedVariables(program, context, globalIds, skipUndefined);
   // checkProgramForUndefinedVariables(program, context, skipUndefined)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap);
-  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds);
+  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
+    program,
+    functionsToStringMap,
+    globalIds,
+    isPrelude,
+  );
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers);
 
   const [importNodes, otherNodes] = transformImportDeclarations(
@@ -480,10 +488,16 @@ function transpileToSource(
 }
 
 function transpileToFullJS(
-  program: es.Program,
+  originalProgram: es.Program,
   context: Context,
   skipUndefined: boolean,
 ): TranspiledResult {
+  if (originalProgram.body.length === 0) {
+    return { transpiled: '' };
+  }
+
+  const program = cloneDeep(originalProgram);
+
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage),
@@ -521,13 +535,14 @@ function transpileToFullJS(
 export function transpile(
   program: es.Program,
   context: Context,
+  isPrelude: boolean,
   skipUndefined = false,
 ): TranspiledResult {
   if (context.chapter === Chapter.FULL_JS) {
     return transpileToFullJS(program, context, true);
-  } else if (context.variant == Variant.NATIVE) {
+  } else if (context.variant === Variant.NATIVE) {
     return transpileToFullJS(program, context, false);
   } else {
-    return transpileToSource(program, context, skipUndefined);
+    return transpileToSource(program, context, skipUndefined, isPrelude);
   }
 }

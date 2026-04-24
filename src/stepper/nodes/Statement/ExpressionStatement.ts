@@ -1,35 +1,26 @@
 import type { Comment, ExpressionStatement, SourceLocation } from 'estree';
 import type { StepperExpression, StepperPattern } from '..';
-import { redex } from '../..';
 import { convert } from '../../generator';
-import type { StepperBaseNode } from '../../interface';
+import { StepperBaseNode } from '../../interface';
+import type { RedexInfo } from '../..';
 
-export class StepperExpressionStatement implements ExpressionStatement, StepperBaseNode {
-  type: 'ExpressionStatement';
-  expression: StepperExpression;
-  leadingComments?: Comment[] | undefined;
-  trailingComments?: Comment[] | undefined;
-  loc?: SourceLocation | null | undefined;
-  range?: [number, number] | undefined;
-
+export class StepperExpressionStatement
+  extends StepperBaseNode<ExpressionStatement>
+  implements ExpressionStatement
+{
   constructor(
-    expression: StepperExpression,
+    public readonly expression: StepperExpression,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined,
   ) {
-    this.type = 'ExpressionStatement';
-    this.expression = expression;
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
+    super('ExpressionStatement', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: ExpressionStatement) {
     return new StepperExpressionStatement(
-      convert(node.expression) as StepperExpression,
+      convert(node.expression),
       node.leadingComments,
       node.trailingComments,
       node.loc,
@@ -37,15 +28,17 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
     );
   }
 
-  isContractible(): boolean {
-    return this.expression.isContractible();
+  public override isContractible(redex: RedexInfo): boolean {
+    return this.expression.isContractible(redex);
   }
-  isOneStepPossible(): boolean {
-    return this.expression.isOneStepPossible();
+
+  public override isOneStepPossible(redex: RedexInfo): boolean {
+    return this.expression.isOneStepPossible(redex);
   }
-  contract(): StepperExpressionStatement {
+
+  public override contract(redex: RedexInfo): StepperExpressionStatement {
     return new StepperExpressionStatement(
-      this.expression.oneStep(),
+      this.expression.oneStep(redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -53,15 +46,15 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
     );
   }
 
-  contractEmpty() {
+  contractEmpty(redex: RedexInfo) {
     // Handle cases such as 1; 2; -> 2;
     redex.preRedex = [this];
     redex.postRedex = [];
   }
 
-  oneStep(): StepperExpressionStatement {
+  public override oneStep(redex: RedexInfo): StepperExpressionStatement {
     return new StepperExpressionStatement(
-      this.expression.oneStep(),
+      this.expression.oneStep(redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -69,9 +62,13 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
     );
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo,
+  ): StepperBaseNode {
     return new StepperExpressionStatement(
-      this.expression.substitute(id, value),
+      this.expression.substitute(id, value, redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -79,15 +76,15 @@ export class StepperExpressionStatement implements ExpressionStatement, StepperB
     );
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return this.expression.freeNames();
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return this.expression.allNames();
   }
 
-  rename(before: string, after: string): StepperExpressionStatement {
+  public override rename(before: string, after: string): StepperExpressionStatement {
     return new StepperExpressionStatement(
       this.expression.rename(before, after),
       this.leadingComments,

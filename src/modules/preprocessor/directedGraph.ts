@@ -1,3 +1,4 @@
+import { InternalRuntimeError } from '../../errors/base';
 import assert from '../../utils/assert';
 
 /**
@@ -38,7 +39,7 @@ export class DirectedGraph {
    */
   public addEdge(sourceNode: string, destinationNode: string): void {
     if (sourceNode === destinationNode) {
-      throw new Error('Edges that connect a node to itself are not allowed.');
+      throw new InternalRuntimeError('Edges that connect a node to itself are not allowed.');
     }
 
     const neighbours = this.adjacencyList.get(sourceNode) ?? new Set();
@@ -62,7 +63,7 @@ export class DirectedGraph {
    */
   public hasEdge(sourceNode: string, destinationNode: string): boolean {
     if (sourceNode === destinationNode) {
-      throw new Error('Edges that connect a node to itself are not allowed.');
+      throw new InternalRuntimeError('Edges that connect a node to itself are not allowed.');
     }
 
     const neighbours = this.adjacencyList.get(sourceNode) ?? new Set();

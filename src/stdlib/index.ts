@@ -7,7 +7,7 @@ import * as parser from './parser';
 import * as stream from './stream';
 
 export const chapter_1 = {
-  get_time: misc.error_message,
+  get_time: misc.get_time,
   error_message: misc.error_message,
   is_number: misc.is_number,
   is_string: misc.is_string,

@@ -4,24 +4,32 @@
  * Plus, we can customize our own assert messages and handling
  */
 
-import { RuntimeSourceError } from '../errors/runtimeSourceError';
+import { InternalRuntimeError } from '../errors/base';
+import type { Node } from '../types';
 
-export class AssertionError extends RuntimeSourceError {
-  constructor(public readonly message: string) {
-    super();
-  }
-
-  public explain(): string {
-    return this.message;
-  }
-
-  public elaborate(): string {
-    return 'Please contact the administrators to let them know that this error has occurred';
+/**
+ * Subclass of {@link InternalRuntimeError} thrown by the {@link assert} function.
+ */
+export class AssertionError extends InternalRuntimeError {
+  constructor(explanation: string, node?: Node) {
+    super(
+      explanation,
+      node,
+      'Please contact the administrators to let them know that this error has occurred',
+    );
   }
 }
 
-export default function assert(condition: boolean, message: string): asserts condition {
+/**
+ * Throws an {@link AssertionError} if the provided condition is false. This error should only be thrown
+ * when internal `js-slang` code enters an unexpected state. This should never be thrown by user code.
+ */
+export default function assert(
+  condition: boolean,
+  message: string,
+  node?: Node,
+): asserts condition {
   if (!condition) {
-    throw new AssertionError(message);
+    throw new AssertionError(message, node);
   }
 }

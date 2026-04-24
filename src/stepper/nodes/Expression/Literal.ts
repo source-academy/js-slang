@@ -1,6 +1,7 @@
 import type { Comment, SimpleLiteral, SourceLocation } from 'estree';
-import type { StepperExpression, StepperPattern } from '..';
-import type { StepperBaseNode } from '../../interface';
+import type { StepperExpression } from '..';
+import { StepperBaseNode } from '../../interface';
+import { InternalRuntimeError } from '../../../errors/base';
 
 /**
  * This class represents a literal node in the stepper's AST (Abstract Syntax Tree).
@@ -13,30 +14,16 @@ import type { StepperBaseNode } from '../../interface';
  * @method contract() Throws an error as contraction is not implemented.
  * @method oneStep() Throws an error as one-step evaluation is not implemented.
  */
-export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
-  type: 'Literal';
-  value: string | number | boolean | null;
-  raw?: string;
-  leadingComments?: Comment[];
-  trailingComments?: Comment[];
-  loc?: SourceLocation | null;
-  range?: [number, number];
-
+export class StepperLiteral extends StepperBaseNode<SimpleLiteral> implements SimpleLiteral {
   constructor(
-    value: string | number | boolean | null,
-    raw?: string,
+    public readonly value: string | number | boolean | null,
+    public readonly raw?: string,
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
     range?: [number, number],
   ) {
-    this.type = 'Literal';
-    this.value = value;
-    this.raw = raw;
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
+    super('Literal', leadingComments, trailingComments, loc, range);
   }
 
   static create(literal: SimpleLiteral) {
@@ -50,35 +37,35 @@ export class StepperLiteral implements SimpleLiteral, StepperBaseNode {
     );
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return false;
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return false;
   }
 
-  contract(): StepperLiteral {
-    throw new Error('Method not implemented.');
+  public override contract(): StepperLiteral {
+    throw new InternalRuntimeError('Cannot contract Literal', this);
   }
 
-  oneStep(): StepperLiteral {
-    throw new Error('Method not implemented.');
+  public override oneStep(): StepperLiteral {
+    throw new InternalRuntimeError('Cannot oneStep Literal', this);
   }
 
-  substitute(_id: StepperPattern, _value: StepperExpression): StepperLiteral {
+  public override substitute(): StepperLiteral {
     return this;
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return [];
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return [];
   }
 
-  rename(_before: string, _after: string): StepperExpression {
+  public override rename(_before: string, _after: string): StepperExpression {
     return new StepperLiteral(
       this.value,
       this.raw,

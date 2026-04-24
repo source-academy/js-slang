@@ -1,14 +1,13 @@
-import * as _ from 'lodash';
 import type { RawSourceMap } from 'source-map';
 
 import { JSSLANG_PROPERTIES } from '../constants';
 import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter';
 import { ExceptionError } from '../errors/errors';
-import { RuntimeSourceError } from '../errors/runtimeSourceError';
 import { TimeoutError } from '../errors/timeoutErrors';
 import { getSteps } from '../stepper/steppers';
 import { sandboxedEval } from '../transpiler/evalContainer';
 import { transpile } from '../transpiler/transpiler';
+import { SourceErrorWithNode } from '../errors/base';
 import { toSourceError } from './errors';
 import fullJSRunner from './fullJSRunner';
 import type { Runner } from './types';
@@ -40,15 +39,11 @@ const runners = {
       }
     }
 
-    // For whatever reason, the transpiler mutates the state of the AST as it is transpiling and inserts
-    // a bunch of global identifiers to it. Once that happens, the infinite loop detection instrumentation
-    // ends up generating code that has syntax errors. As such, we need to make a deep copy here to preserve
-    // the original AST for future use, such as with the infinite loop detector.
-    const transpiledProgram = _.cloneDeep(program);
-    let transpiled;
     let sourceMapJson: RawSourceMap | undefined;
     try {
-      ({ transpiled, sourceMapJson } = transpile(transpiledProgram, context));
+      let transpiled: string;
+      ({ transpiled, sourceMapJson } = transpile(program, context, options.isPrelude));
+
       let value = sandboxedEval(transpiled, context.nativeStorage);
 
       if (!options.isPrelude) {
@@ -61,13 +56,6 @@ const runners = {
         value,
       };
     } catch (error) {
-      if (error instanceof RuntimeSourceError) {
-        context.errors.push(error);
-        if (error instanceof TimeoutError) {
-          isPreviousCodeTimeoutError = true;
-        }
-        return { status: 'error', context };
-      }
       if (error instanceof ExceptionError) {
         // if we know the location of the error, just throw it
         if (error.location.start.line !== -1) {
@@ -76,6 +64,15 @@ const runners = {
         } else {
           error = error.error; // else we try to get the location from source map
         }
+      }
+
+      if (error instanceof SourceErrorWithNode) {
+        if (error instanceof TimeoutError) {
+          isPreviousCodeTimeoutError = true;
+        }
+
+        context.errors.push(error);
+        return { status: 'error', context };
       }
 
       const sourceError = await toSourceError(error, sourceMapJson);

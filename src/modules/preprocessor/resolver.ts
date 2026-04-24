@@ -1,12 +1,12 @@
 import { posix as posixPath } from 'path';
 import { memoizedGetModuleManifestAsync } from '../loader';
-import type { FileGetter } from '../moduleTypes';
+import type { FileGetter, ManifestImporter, ModuleInfo } from '../moduleTypes';
 import { isSourceModule } from '../utils';
 
 /**
  * Options for resolving modules given a path
  */
-export type ImportResolutionOptions = {
+export interface ImportResolutionOptions {
   /**
    * If `null`, the resolver will only match exact files
    * Otherwise, the resolver will first try to match an exact path,
@@ -17,16 +17,20 @@ export type ImportResolutionOptions = {
    * match `./a`, `./a.js` and then `./a.ts`
    */
   extensions: string[] | null;
-};
+
+  /**
+   * Custom importer for the modules manifest. Set to `undefined` to use the default importer.
+   */
+  manifestImporter?: ManifestImporter;
+}
 
 export const defaultResolutionOptions: ImportResolutionOptions = {
   extensions: ['js'],
+  manifestImporter: undefined,
 };
 
 export type ResolverResult =
-  | {
-      type: 'source';
-    }
+  | ({ type: 'source' } & ModuleInfo)
   | {
       type: 'local';
       absPath: string;
@@ -43,8 +47,15 @@ export default async function resolveFile(
   options: Partial<ImportResolutionOptions> = defaultResolutionOptions,
 ): Promise<ResolverResult | undefined> {
   if (isSourceModule(toPath)) {
-    const manifest = await memoizedGetModuleManifestAsync();
-    return toPath in manifest ? { type: 'source' } : undefined;
+    const manifest = await memoizedGetModuleManifestAsync(options.manifestImporter);
+    if (!(toPath in manifest)) return undefined;
+
+    const info = manifest[toPath];
+    return {
+      type: 'source',
+      name: toPath,
+      ...info,
+    };
   }
 
   const absPath = posixPath.resolve(fromPath, '..', toPath);

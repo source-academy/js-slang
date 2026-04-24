@@ -1,21 +1,27 @@
 import type es from 'estree';
-import type { Context, IOptions } from '..';
-import { UndefinedVariable } from '../errors/errors';
+import { parseError, type Context, type IOptions } from '..';
+import { UndefinedVariableError } from '../errors/errors';
 import { checkProgramForUndefinedVariables } from '../validator/validator';
+import { RuntimeSourceError } from '../errors/base';
+import type { StepperProgram } from './nodes/Program';
 import { prelude } from './builtins';
 import { explain } from './generator';
 import type { StepperBaseNode } from './interface';
 import { undefinedNode } from './nodes';
-import type { StepperProgram } from './nodes/Program';
 import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement';
-import { type IStepperPropContents, type Marker, redex } from '.';
+import type { IStepperPropContents, Marker, RedexInfo } from '.';
 
 export function getSteps(
   inputNode: es.BaseNode,
   context: Context,
   { stepLimit }: Pick<IOptions, 'stepLimit'>,
 ): IStepperPropContents[] {
-  const node: StepperBaseNode = prelude(inputNode);
+  const redex: RedexInfo = {
+    preRedex: [],
+    postRedex: [],
+  };
+
+  const node = prelude(inputNode, redex);
   const steps: IStepperPropContents[] = [];
   const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1;
   let hasError = false;
@@ -23,49 +29,48 @@ export function getSteps(
   let numSteps = 1;
   function evaluate(node: StepperBaseNode): StepperBaseNode {
     try {
-      const isOneStepPossible = node.isOneStepPossible();
-      if (isOneStepPossible) {
-        const oldNode = node;
-        let newNode: StepperBaseNode;
-        newNode = node.oneStep();
+      if (node.isOneStepPossible(redex)) {
+        const newNode = node.oneStep(redex);
 
-        if (redex) {
-          const explanations: string[] = redex.preRedex.map(explain);
-          const beforeMarkers: Marker[] = redex.preRedex.map((redex, index) => ({
+        const explanations = redex.preRedex.map(explain);
+        const beforeMarkers = redex.preRedex.map(
+          (redex, index): Marker => ({
             redex,
             redexType: 'beforeMarker',
             explanation: explanations[index],
-          }));
-          numSteps += 1;
-          if (numSteps >= limit) {
-            return node;
-          }
-          steps.push({
-            ast: oldNode,
-            markers: beforeMarkers,
-          });
-          const afterMarkers: Marker[] =
-            redex.postRedex.length > 0
-              ? redex.postRedex.map((redex, index) => ({
-                  redex,
-                  redexType: 'afterMarker',
-                  explanation: explanations[index],
-                }))
-              : [
-                  {
-                    redexType: 'afterMarker',
-                    explanation: explanations[0], // use explanation based on preRedex
-                  },
-                ];
-          numSteps += 1;
-          if (numSteps >= limit) {
-            return node;
-          }
-          steps.push({
-            ast: newNode,
-            markers: afterMarkers,
-          });
+          }),
+        );
+        numSteps += 1;
+        if (numSteps >= limit) {
+          return node;
         }
+        steps.push({
+          ast: node,
+          markers: beforeMarkers,
+        });
+
+        const afterMarkers: Marker[] =
+          redex.postRedex.length > 0
+            ? redex.postRedex.map((redex, index) => ({
+                redex,
+                redexType: 'afterMarker',
+                explanation: explanations[index],
+              }))
+            : [
+                {
+                  redexType: 'afterMarker',
+                  explanation: explanations[0], // use explanation based on preRedex
+                },
+              ];
+        numSteps += 1;
+        if (numSteps >= limit) {
+          return node;
+        }
+        steps.push({
+          ast: newNode,
+          markers: afterMarkers,
+        });
+
         // reset
         redex.preRedex = [];
         redex.postRedex = [];
@@ -74,6 +79,12 @@ export function getSteps(
         return node;
       }
     } catch (error) {
+      if (!(error instanceof RuntimeSourceError)) {
+        throw error;
+      }
+
+      const errStr = parseError([error]);
+
       // Handle error during step evaluation
       hasError = true;
       steps.push({
@@ -81,7 +92,7 @@ export function getSteps(
         markers: [
           {
             redexType: 'beforeMarker',
-            explanation: error instanceof Error ? error.message : String(error),
+            explanation: errStr,
           },
         ],
       });
@@ -108,8 +119,8 @@ export function getSteps(
         {
           redexType: 'beforeMarker',
           explanation:
-            error instanceof UndefinedVariable
-              ? `Line ${error.location.start.line}: Name ${error.name} not declared.`
+            error instanceof UndefinedVariableError
+              ? `Line ${error.location.start.line}: Name ${error.varname} not declared.`
               : String(error),
         },
       ],

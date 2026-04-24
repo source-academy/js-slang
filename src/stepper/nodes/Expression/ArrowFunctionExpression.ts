@@ -1,52 +1,37 @@
-import type { ArrowFunctionExpression, Comment, SourceLocation } from 'estree';
+import type { ArrowFunctionExpression, Comment, Expression, SourceLocation } from 'estree';
 import type { StepperExpression, StepperPattern } from '..';
 import { convert } from '../../generator';
-import type { StepperBaseNode } from '../../interface';
+import { StepperBaseNode } from '../../interface';
 import { getFreshName } from '../../utils';
-import { StepperBlockStatement } from '../Statement/BlockStatement';
+import type { StepperBlockStatement } from '../Statement/BlockStatement';
+import { InternalRuntimeError } from '../../../errors/base';
+import type { RedexInfo } from '../..';
+import { mapAndFilter } from '../../../utils/misc';
+import { isIdentifier } from '../../../utils/ast/typeGuards';
 
-export class StepperArrowFunctionExpression implements ArrowFunctionExpression, StepperBaseNode {
-  type: 'ArrowFunctionExpression';
-  params: StepperPattern[];
-  body: StepperExpression;
-  expression: boolean;
-  generator: boolean;
-  async: boolean;
-  name?: string;
-  leadingComments?: Comment[];
-  trailingComments?: Comment[];
-  loc?: SourceLocation | null;
-  range?: [number, number];
-
+export class StepperArrowFunctionExpression
+  extends StepperBaseNode<ArrowFunctionExpression>
+  implements ArrowFunctionExpression
+{
   constructor(
-    params: StepperPattern[],
-    body: StepperExpression,
-    name?: string,
-    expression: boolean = true,
-    generator: boolean = false,
-    async: boolean = false,
+    public readonly params: StepperPattern[],
+    public readonly body: StepperExpression,
+    public readonly name?: string,
+    public readonly expression: boolean = true,
+    public readonly generator: boolean = false,
+    public readonly async: boolean = false,
     leadingComments?: Comment[],
     trailingComments?: Comment[],
     loc?: SourceLocation | null,
     range?: [number, number],
   ) {
-    this.type = 'ArrowFunctionExpression';
-    this.params = params;
-    this.expression = expression;
-    this.generator = generator;
-    this.async = async;
-    this.name = name;
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
-    this.body = body;
+    super('ArrowFunctionExpression', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: ArrowFunctionExpression) {
     return new StepperArrowFunctionExpression(
-      node.params.map(param => convert(param) as StepperPattern),
-      convert(node.body) as StepperExpression,
+      node.params.map(param => convert(param)),
+      convert(node.body as Expression),
       undefined,
       node.expression,
       node.generator,
@@ -58,20 +43,20 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     );
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return false;
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return false;
   }
 
-  contract(): StepperExpression {
-    throw new Error('Cannot contract an arrow function expression');
+  public override contract(): StepperExpression {
+    throw new InternalRuntimeError('Cannot contract an arrow function expression', this);
   }
 
-  oneStep(): StepperExpression {
-    throw new Error('Cannot step an arrow function expression');
+  public override oneStep(): StepperExpression {
+    throw new InternalRuntimeError('Cannot step an arrow function expression', this);
   }
 
   assignName(name: string): StepperArrowFunctionExpression {
@@ -105,9 +90,10 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
   }
 
   // TODO: Fix name handling for lambda
-  substitute(
+  public override substitute(
     id: StepperPattern,
     value: StepperExpression,
+    redex: RedexInfo,
     upperBoundName?: string[],
   ): StepperExpression {
     const valueFreeNames = value.freeNames();
@@ -132,6 +118,7 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
       currentArrowFunction.body.substitute(
         id,
         value,
+        redex,
         currentArrowFunction.params.flatMap(p => p.allNames()),
       ),
       currentArrowFunction.name,
@@ -145,21 +132,21 @@ export class StepperArrowFunctionExpression implements ArrowFunctionExpression, 
     );
   }
 
-  freeNames(): string[] {
-    const paramNames = this.params
-      .filter(param => param.type === 'Identifier')
-      .map(param => param.name);
+  public override freeNames(): string[] {
+    const paramNames = mapAndFilter(this.params, param =>
+      isIdentifier(param) ? param.name : undefined,
+    );
     return this.body.freeNames().filter(name => !paramNames.includes(name));
   }
 
-  allNames(): string[] {
-    const paramNames = this.params
-      .filter(param => param.type === 'Identifier')
-      .map(param => param.name);
+  public override allNames(): string[] {
+    const paramNames = mapAndFilter(this.params, param =>
+      isIdentifier(param) ? param.name : undefined,
+    );
     return Array.from(new Set([paramNames, this.body.allNames()].flat()));
   }
 
-  rename(before: string, after: string): StepperExpression {
+  public override rename(before: string, after: string): StepperExpression {
     return new StepperArrowFunctionExpression(
       this.params.map(param => param.rename(before, after)),
       this.body.rename(before, after),

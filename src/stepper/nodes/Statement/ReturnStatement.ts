@@ -1,35 +1,27 @@
 import type { Comment, ReturnStatement, SourceLocation } from 'estree';
 import type { StepperExpression, StepperPattern } from '..';
-import { redex } from '../..';
 import { convert } from '../../generator';
-import type { StepperBaseNode } from '../../interface';
+import { StepperBaseNode } from '../../interface';
+import type { RedexInfo } from '../..';
+import assert from '../../../utils/assert';
 
-export class StepperReturnStatement implements ReturnStatement, StepperBaseNode {
-  type: 'ReturnStatement';
-  argument: StepperExpression | null;
-  leadingComments?: Comment[] | undefined;
-  trailingComments?: Comment[] | undefined;
-  loc?: SourceLocation | null | undefined;
-  range?: [number, number] | undefined;
-
+export class StepperReturnStatement
+  extends StepperBaseNode<ReturnStatement>
+  implements ReturnStatement
+{
   constructor(
-    argument: StepperExpression | null,
+    public readonly argument: StepperExpression | null,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined,
   ) {
-    this.type = 'ReturnStatement';
-    this.argument = argument;
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
+    super('ReturnStatement', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: ReturnStatement) {
     return new StepperReturnStatement(
-      node.argument ? (convert(node.argument) as StepperExpression) : null,
+      node.argument ? convert(node.argument) : null,
       node.leadingComments,
       node.trailingComments,
       node.loc,
@@ -37,38 +29,39 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
     );
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return true;
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return true;
   }
 
-  contract(): StepperExpression {
-    if (!this.argument) {
-      throw new Error('Cannot contract return statement without argument');
-    }
+  public override contract(redex: RedexInfo): StepperExpression {
+    assert(!!this.argument, 'Cannot contract return statement without argument', this);
+
     redex.preRedex = [this];
     redex.postRedex = [this.argument];
     return this.argument;
   }
 
-  contractEmpty() {
+  contractEmpty(redex: RedexInfo) {
     redex.preRedex = [this];
     redex.postRedex = [];
   }
 
-  oneStep(): StepperExpression {
-    if (!this.argument) {
-      throw new Error('Cannot step return statement without argument');
-    }
-    return this.contract();
+  public override oneStep(redex: RedexInfo): StepperExpression {
+    assert(!!this.argument, 'Cannot step return statement without argument', this);
+    return this.contract(redex);
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo,
+  ): StepperBaseNode {
     return new StepperReturnStatement(
-      this.argument ? this.argument.substitute(id, value) : null,
+      this.argument ? this.argument.substitute(id, value, redex) : null,
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -76,15 +69,15 @@ export class StepperReturnStatement implements ReturnStatement, StepperBaseNode 
     );
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return this.argument ? this.argument.freeNames() : [];
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return this.argument ? this.argument.allNames() : [];
   }
 
-  rename(before: string, after: string): StepperReturnStatement {
+  public override rename(before: string, after: string): StepperReturnStatement {
     return new StepperReturnStatement(
       this.argument ? this.argument.rename(before, after) : null,
       this.leadingComments,

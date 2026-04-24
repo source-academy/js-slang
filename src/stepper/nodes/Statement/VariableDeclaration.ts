@@ -1,39 +1,28 @@
 import type { Comment, SourceLocation, VariableDeclaration, VariableDeclarator } from 'estree';
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..';
-import { redex } from '../..';
 import { convert } from '../../generator';
-import type { StepperBaseNode } from '../../interface';
+import { StepperBaseNode } from '../../interface';
+import type { RedexInfo } from '../..';
 
-export class StepperVariableDeclarator implements VariableDeclarator, StepperBaseNode {
-  type: 'VariableDeclarator';
-  id: StepperPattern;
-  init?: StepperExpression | null | undefined;
-  leadingComments?: Comment[] | undefined;
-  trailingComments?: Comment[] | undefined;
-  loc?: SourceLocation | null | undefined;
-  range?: [number, number] | undefined;
-
+export class StepperVariableDeclarator
+  extends StepperBaseNode<VariableDeclarator>
+  implements VariableDeclarator
+{
   constructor(
-    id: StepperPattern,
-    init: StepperExpression | null | undefined,
+    public readonly id: StepperPattern,
+    public readonly init: StepperExpression | null | undefined,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined,
   ) {
-    this.type = 'VariableDeclarator';
-    this.id = id;
-    this.init = init;
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
+    super('VariableDeclarator', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: VariableDeclarator) {
     return new StepperVariableDeclarator(
-      convert(node.id) as StepperPattern,
-      node.init ? (convert(node.init) as StepperExpression) : node.init,
+      convert(node.id),
+      node.init ? convert(node.init) : node.init,
       node.leadingComments,
       node.trailingComments,
       node.loc,
@@ -41,18 +30,18 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
     );
   }
 
-  isContractible(): boolean {
-    return this.init ? this.init.isContractible() : false;
+  public override isContractible(redex: RedexInfo): boolean {
+    return this.init ? this.init.isContractible(redex) : false;
   }
 
-  isOneStepPossible(): boolean {
-    return this.init ? this.init.isOneStepPossible() : false;
+  public override isOneStepPossible(redex: RedexInfo): boolean {
+    return this.init ? this.init.isOneStepPossible(redex) : false;
   }
 
-  contract(): StepperVariableDeclarator {
+  public override contract(redex: RedexInfo): StepperVariableDeclarator {
     return new StepperVariableDeclarator(
       this.id,
-      this.init!.oneStep(),
+      this.init!.oneStep(redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -60,10 +49,10 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
     );
   }
 
-  oneStep(): StepperVariableDeclarator {
+  public override oneStep(redex: RedexInfo): StepperVariableDeclarator {
     return new StepperVariableDeclarator(
       this.id,
-      this.init!.oneStep(),
+      this.init!.oneStep(redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -71,10 +60,14 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
     );
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo,
+  ): StepperBaseNode {
     return new StepperVariableDeclarator(
       this.id,
-      this.init!.substitute(id, value),
+      this.init!.substitute(id, value, redex),
       this.leadingComments,
       this.trailingComments,
       this.loc,
@@ -82,15 +75,15 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
     );
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return this.init!.freeNames();
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return this.init!.allNames();
   }
 
-  rename(before: string, after: string): StepperVariableDeclarator {
+  public override rename(before: string, after: string): StepperVariableDeclarator {
     return new StepperVariableDeclarator(
       this.id.rename(before, after),
       this.init!.rename(before, after),
@@ -104,35 +97,24 @@ export class StepperVariableDeclarator implements VariableDeclarator, StepperBas
 
 // After all variable declarators have been contracted,
 // StepperVariableDeclaration::contract triggers substitution
-export class StepperVariableDeclaration implements VariableDeclaration, StepperBaseNode {
-  type: 'VariableDeclaration';
-  declarations: StepperVariableDeclarator[];
-  kind: 'var' | 'let' | 'const';
-  leadingComments?: Comment[] | undefined;
-  trailingComments?: Comment[] | undefined;
-  loc?: SourceLocation | null | undefined;
-  range?: [number, number] | undefined;
-
+export class StepperVariableDeclaration
+  extends StepperBaseNode<VariableDeclaration>
+  implements VariableDeclaration
+{
   constructor(
-    declarations: StepperVariableDeclarator[],
-    kind: 'var' | 'let' | 'const',
+    public readonly declarations: StepperVariableDeclarator[],
+    public readonly kind: VariableDeclaration['kind'],
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined,
   ) {
-    this.type = 'VariableDeclaration';
-    this.declarations = declarations;
-    this.kind = kind;
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
+    super('VariableDeclaration', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: VariableDeclaration) {
     return new StepperVariableDeclaration(
-      node.declarations.map(node => convert(node) as StepperVariableDeclarator),
+      node.declarations.map(StepperVariableDeclarator.create),
       node.kind,
       node.leadingComments,
       node.trailingComments,
@@ -141,34 +123,38 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
     );
   }
 
-  isContractible(): boolean {
+  public override isContractible(): boolean {
     return false;
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(redex: RedexInfo): boolean {
     return this.declarations
-      .map(x => x.isOneStepPossible())
+      .map(x => x.isOneStepPossible(redex))
       .reduce((acc, next) => acc || next, false);
   }
 
-  contract(): typeof undefinedNode {
+  public override contract(redex: RedexInfo): typeof undefinedNode {
     redex.preRedex = [this];
     redex.postRedex = [];
     return undefinedNode;
   }
 
-  contractEmpty() {
+  contractEmpty(redex: RedexInfo) {
     redex.preRedex = [this];
     redex.postRedex = [];
   }
 
-  oneStep(): StepperVariableDeclaration | typeof undefinedNode {
+  public override oneStep(redex: RedexInfo): StepperVariableDeclaration | typeof undefinedNode {
     // Find the one that is not contractible.
     for (let i = 0; i < this.declarations.length; i++) {
       const ast = this.declarations[i];
-      if (ast.isOneStepPossible()) {
+      if (ast.isOneStepPossible(redex)) {
         return new StepperVariableDeclaration(
-          [this.declarations.slice(0, i), ast.oneStep(), this.declarations.slice(i + 1)].flat(),
+          [
+            this.declarations.slice(0, i),
+            ast.oneStep(redex),
+            this.declarations.slice(i + 1),
+          ].flat(),
           this.kind,
           this.leadingComments,
           this.trailingComments,
@@ -181,10 +167,14 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
     return this;
   }
 
-  substitute(id: StepperPattern, value: StepperExpression): StepperBaseNode {
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo,
+  ): StepperBaseNode {
     return new StepperVariableDeclaration(
       this.declarations.map(
-        declaration => declaration.substitute(id, value) as StepperVariableDeclarator,
+        declaration => declaration.substitute(id, value, redex) as StepperVariableDeclarator,
       ),
       this.kind,
       this.leadingComments,
@@ -194,11 +184,11 @@ export class StepperVariableDeclaration implements VariableDeclaration, StepperB
     );
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     return Array.from(new Set(this.declarations.flatMap(ast => ast.freeNames())));
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return Array.from(new Set(this.declarations.flatMap(ast => ast.allNames())));
   }
 

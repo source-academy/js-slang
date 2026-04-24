@@ -21,7 +21,7 @@ describe('transformImportedFile', () => {
     const actualProgram = parse(actualCode, actualContext);
     const expectedProgram = parse(expectedCode, expectedContext);
     if (actualProgram === null || expectedProgram === null) {
-      throw new Error('Failed to parse either expected code or actual code');
+      expect.fail('Failed to parse either expected code or actual code');
     }
 
     const actualFunctionDeclaration = transformProgramToFunctionDeclaration(

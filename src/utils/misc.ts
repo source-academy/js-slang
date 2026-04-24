@@ -1,11 +1,16 @@
-import { RuntimeSourceError } from '../errors/runtimeSourceError';
-import { Chapter } from '../langs';
+import { TimeoutError } from '../errors/timeoutErrors';
+import type { Node } from '../types';
+import { Chapter, Variant } from '../langs';
 
-export class PromiseTimeoutError extends RuntimeSourceError {}
+export class PromiseTimeoutError extends TimeoutError {
+  public override explain() {
+    return 'An internal operation timed out while executing.';
+  }
+}
 
-export const timeoutPromise = <T>(promise: Promise<T>, timeout: number) =>
+export const timeoutPromise = <T>(promise: Promise<T>, timeout: number, node?: Node) =>
   new Promise<T>((resolve, reject) => {
-    const timeoutid = setTimeout(() => reject(new PromiseTimeoutError()), timeout);
+    const timeoutid = setTimeout(() => reject(new PromiseTimeoutError(node)), timeout);
 
     promise
       .then(res => {
@@ -42,4 +47,11 @@ export function objectKeys<T extends string | number | symbol>(obj: Record<T, an
  */
 export function getChapterName(chapter: Chapter) {
   return objectKeys(Chapter).find(name => Chapter[name] === chapter)!;
+}
+
+/**
+ * Given the variant value, return the string name of that variant
+ */
+export function getVariantName(variant: Variant) {
+  return objectKeys(Variant).find(name => Variant[name] === variant)!;
 }

@@ -3,14 +3,14 @@ import type { IfStatement } from 'estree';
 import { Chapter } from '../../../langs';
 import { stripIndent } from '../../../utils/formatters';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class NoIfWithoutElseError extends RuleError<IfStatement> {
-  public explain() {
+  public override explain() {
     return 'Missing "else" in "if-else" statement.';
   }
 
-  public elaborate() {
+  public override elaborate() {
     return stripIndent`
       This "if" block requires corresponding "else" block which will be
       evaluated when ${generate(this.node.test)} expression evaluates to false.
@@ -21,10 +21,9 @@ export class NoIfWithoutElseError extends RuleError<IfStatement> {
   }
 }
 
-const noIfWithoutElse: Rule<IfStatement> = {
-  name: 'no-if-without-else',
-  disableFromChapter: Chapter.SOURCE_3,
-  checkers: {
+export default defineRule(
+  'no-if-without-else',
+  {
     IfStatement(node) {
       if (!node.alternate) {
         return [new NoIfWithoutElseError(node)];
@@ -33,6 +32,5 @@ const noIfWithoutElse: Rule<IfStatement> = {
       }
     },
   },
-};
-
-export default noIfWithoutElse;
+  Chapter.SOURCE_3,
+);

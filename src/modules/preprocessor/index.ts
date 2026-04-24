@@ -1,9 +1,9 @@
 import type es from 'estree';
 // import * as TypedES from '../../typeChecker/tsESTree'
 
-import type { Context, IOptions } from '../..';
+import type { IOptions } from '../..';
 import { Variant } from '../../langs';
-import { RecursivePartial } from '../../types';
+import type { Context, RecursivePartial } from '../../types';
 import loadSourceModules, { loadSourceModuleTypes } from '../loader';
 import type { FileGetter } from '../moduleTypes';
 import analyzeImportsAndExports from './analyzer';
@@ -39,18 +39,24 @@ export type PreprocessResult =
  * @param entrypointFilePath The absolute path of the entrypoint file.
  * @param context            The information associated with the program evaluation.
  */
-const preprocessFileImports = async (
+export default async function preprocessFileImports(
   files: FileGetter,
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {},
   bundler: Bundler = defaultBundler,
-): Promise<PreprocessResult> => {
+): Promise<PreprocessResult> {
+  const importOptions = options?.importOptions;
+
   if (context.variant === Variant.TYPED) {
     // Load typed source modules into context first to ensure that the type checker has access to all types.
     // TODO: This is a temporary solution, and we should consider a better way to handle this.
     try {
-      await loadSourceModuleTypes(new Set<string>(['rune', 'curve']), context);
+      await loadSourceModuleTypes(
+        new Set<string>(['rune', 'curve']),
+        context,
+        importOptions?.sourceBundleImporter,
+      );
     } catch (error) {
       context.errors.push(error);
       return {
@@ -65,10 +71,10 @@ const preprocessFileImports = async (
     files,
     entrypointFilePath,
     context,
-    options?.importOptions,
+    importOptions,
     !!options?.shouldAddFileName,
   );
-  // Return 'undefined' if there are errors while parsing.
+  // Return if there are errors while parsing.
   if (!linkerResult.ok) {
     return linkerResult;
   }
@@ -76,17 +82,13 @@ const preprocessFileImports = async (
   const { programs, topoOrder, sourceModulesToImport } = linkerResult;
 
   try {
-    await loadSourceModules(
-      sourceModulesToImport,
-      context,
-      options.importOptions?.loadTabs ?? true,
-    );
+    await loadSourceModules(sourceModulesToImport, context, importOptions);
     // Run type checking on the programs after loading the source modules and their types.
     const linkerResult = await parseProgramsAndConstructImportGraph(
       files,
       entrypointFilePath,
       context,
-      options?.importOptions,
+      importOptions,
       !!options?.shouldAddFileName,
     );
     // Return 'undefined' if there are errors while parsing.
@@ -94,13 +96,7 @@ const preprocessFileImports = async (
       return linkerResult;
     }
 
-    analyzeImportsAndExports(
-      programs,
-      entrypointFilePath,
-      topoOrder,
-      context,
-      options?.importOptions,
-    );
+    analyzeImportsAndExports(programs, entrypointFilePath, topoOrder, context, importOptions);
 
     const program = bundler(programs, entrypointFilePath, topoOrder, context);
     return {
@@ -116,6 +112,4 @@ const preprocessFileImports = async (
       verboseErrors: linkerResult.verboseErrors,
     };
   }
-};
-
-export default preprocessFileImports;
+}

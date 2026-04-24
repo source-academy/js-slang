@@ -17,7 +17,7 @@ export const listBuiltinFunctions = {
   },
   is_pair: {
     definition: (arg: StepperExpression[]): StepperExpression => {
-      return new StepperLiteral(arg[0].type === 'ArrayExpression' && arg[0].elements.length == 2);
+      return new StepperLiteral(arg[0].type === 'ArrayExpression' && arg[0].elements.length === 2);
     },
     arity: 1,
   },

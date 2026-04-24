@@ -3,16 +3,16 @@ import type { VariableDeclaration } from 'estree';
 import { Chapter } from '../../../langs';
 import { getSourceVariableDeclaration } from '../../../utils/ast/helpers';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 const mutableDeclarators: VariableDeclaration['kind'][] = ['let', 'var'];
 
 export class NoDeclareMutableError extends RuleError<VariableDeclaration> {
-  public explain() {
+  public override explain() {
     return `Mutable variable declaration using keyword '${this.node.kind}' is not allowed.`;
   }
 
-  public elaborate() {
+  public override elaborate() {
     const {
       id: { name },
       init,
@@ -23,11 +23,9 @@ export class NoDeclareMutableError extends RuleError<VariableDeclaration> {
   }
 }
 
-const noDeclareMutable: Rule<VariableDeclaration> = {
-  name: 'no-declare-mutable',
-  disableFromChapter: Chapter.SOURCE_3,
-
-  checkers: {
+export default defineRule(
+  'no-declare-mutable',
+  {
     VariableDeclaration(node) {
       if (mutableDeclarators.includes(node.kind)) {
         return [new NoDeclareMutableError(node)];
@@ -36,6 +34,5 @@ const noDeclareMutable: Rule<VariableDeclaration> = {
       }
     },
   },
-};
-
-export default noDeclareMutable;
+  Chapter.SOURCE_3,
+);

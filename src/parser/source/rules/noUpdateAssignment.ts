@@ -1,6 +1,6 @@
 import { generate } from 'astring';
 import type { AssignmentExpression } from 'estree';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 import { NoUnspecifiedOperatorError } from './noUnspecifiedOperator';
 
 export class NoUpdateAssignment extends NoUnspecifiedOperatorError<AssignmentExpression> {
@@ -23,18 +23,12 @@ export class NoUpdateAssignment extends NoUnspecifiedOperatorError<AssignmentExp
   }
 }
 
-const noUpdateAssignment: Rule<AssignmentExpression> = {
-  name: 'no-update-assignment',
-
-  checkers: {
-    AssignmentExpression(node) {
-      if (node.operator !== '=') {
-        return [new NoUpdateAssignment(node)];
-      } else {
-        return [];
-      }
-    },
+export default defineRule('no-update-assignment', {
+  AssignmentExpression(node) {
+    if (node.operator !== '=') {
+      return [new NoUpdateAssignment(node)];
+    } else {
+      return [];
+    }
   },
-};
-
-export default noUpdateAssignment;
+});

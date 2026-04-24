@@ -1,13 +1,10 @@
-import type { UnaryExpression } from 'estree';
 import { Variant } from '../../../langs';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 import { NoUnspecifiedOperatorError } from './noUnspecifiedOperator';
 
-const noTypeofOperator: Rule<UnaryExpression> = {
-  name: 'no-typeof-operator',
-  disableForVariants: [Variant.TYPED],
-
-  checkers: {
+export default defineRule(
+  'no-typeof-operator',
+  {
     UnaryExpression(node) {
       if (node.operator === 'typeof') {
         return [new NoUnspecifiedOperatorError(node)];
@@ -16,6 +13,6 @@ const noTypeofOperator: Rule<UnaryExpression> = {
       }
     },
   },
-};
-
-export default noTypeofOperator;
+  undefined,
+  [Variant.TYPED],
+);

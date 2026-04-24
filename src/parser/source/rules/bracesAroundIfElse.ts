@@ -2,7 +2,7 @@ import { generate } from 'astring';
 import type { IfStatement } from 'estree';
 import { stripIndent } from '../../../utils/formatters';
 import { RuleError } from '../../errors';
-import type { Rule } from '../../types';
+import { defineRule } from '../../types';
 
 export class BracesAroundIfElseError extends RuleError<IfStatement> {
   constructor(
@@ -12,7 +12,7 @@ export class BracesAroundIfElseError extends RuleError<IfStatement> {
     super(node);
   }
 
-  public explain() {
+  public override explain() {
     if (this.branch === 'consequent') {
       return 'Missing curly braces around "if" block.';
     } else {
@@ -20,7 +20,7 @@ export class BracesAroundIfElseError extends RuleError<IfStatement> {
     }
   }
 
-  public elaborate() {
+  public override elaborate() {
     let ifOrElse;
     let header;
     let body;
@@ -66,25 +66,19 @@ export class BracesAroundIfElseError extends RuleError<IfStatement> {
   }
 }
 
-const bracesAroundIfElse: Rule<IfStatement> = {
-  name: 'braces-around-if-else',
-
-  checkers: {
-    IfStatement(node) {
-      const errors: BracesAroundIfElseError[] = [];
-      if (node.consequent && node.consequent.type !== 'BlockStatement') {
-        errors.push(new BracesAroundIfElseError(node, 'consequent'));
+export default defineRule('braces-around-if-else', {
+  IfStatement(node) {
+    const errors: BracesAroundIfElseError[] = [];
+    if (node.consequent && node.consequent.type !== 'BlockStatement') {
+      errors.push(new BracesAroundIfElseError(node, 'consequent'));
+    }
+    if (node.alternate) {
+      const notBlock = node.alternate.type !== 'BlockStatement';
+      const notIf = node.alternate.type !== 'IfStatement';
+      if (notBlock && notIf) {
+        errors.push(new BracesAroundIfElseError(node, 'alternate'));
       }
-      if (node.alternate) {
-        const notBlock = node.alternate.type !== 'BlockStatement';
-        const notIf = node.alternate.type !== 'IfStatement';
-        if (notBlock && notIf) {
-          errors.push(new BracesAroundIfElseError(node, 'alternate'));
-        }
-      }
-      return errors;
-    },
+    }
+    return errors;
   },
-};
-
-export default bracesAroundIfElse;
+});

@@ -1,7 +1,6 @@
 import type { SourceLocation } from 'estree';
 
-import { UNKNOWN_LOCATION } from '../constants';
-import { ErrorSeverity, ErrorType, type SourceError } from '../errors/base';
+import { ErrorSeverity, ErrorType, SourceErrorWithNode, type SourceError } from '../errors/base';
 import type { Node } from '../types';
 import { stripIndent } from '../utils/formatters';
 
@@ -50,17 +49,14 @@ export class FatalSyntaxError implements SourceError {
   }
 }
 
-export class DisallowedConstructError implements SourceError {
+export class DisallowedConstructError extends SourceErrorWithNode<Node> {
   public type = ErrorType.SYNTAX;
   public severity = ErrorSeverity.ERROR;
   public nodeType: string;
 
-  constructor(public node: Node) {
+  constructor(node: Node) {
+    super(node);
     this.nodeType = this.formatNodeType(this.node.type);
-  }
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION;
   }
 
   public explain() {
@@ -95,16 +91,7 @@ export class DisallowedConstructError implements SourceError {
   }
 }
 
-export abstract class RuleError<T extends Node> implements SourceError {
-  public type = ErrorType.SYNTAX;
-  public severity = ErrorSeverity.ERROR;
-
-  constructor(public readonly node: T) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION;
-  }
-
-  public abstract explain(): string;
-  public abstract elaborate(): string;
+export abstract class RuleError<T extends Node> extends SourceErrorWithNode<T> {
+  type = ErrorType.SYNTAX;
+  severity = ErrorSeverity.ERROR;
 }

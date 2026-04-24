@@ -2,6 +2,11 @@ import type es from 'estree';
 
 import type { AllowedDeclarations, Node, StatementSequence } from '../../types';
 
+export const debuggerStatement = (loc?: es.SourceLocation | null): es.DebuggerStatement => ({
+  type: 'DebuggerStatement',
+  loc,
+});
+
 export const locationDummyNode = (line: number, column: number, source: string | null) =>
   literal('Dummy', { start: { line, column }, end: { line, column }, source });
 

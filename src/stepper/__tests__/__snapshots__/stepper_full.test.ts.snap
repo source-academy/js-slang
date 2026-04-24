@@ -4773,48 +4773,6 @@ function foo(a) { return a;}foo(1, 2, 3);
 "
 `;
 
-exports[`Error handling on calling functions > Literal function should error 1`] = `
-"(1)(2);
-[noMarker] Start of evaluation
-
-(1)(2);
-[beforeMarker] Line 2: Calling non-function value 1
-
-(1)(2);
-[noMarker] Evaluation stuck
-"
-`;
-
-exports[`Error handling on calling functions > Literal function should error 2 1`] = `
-"(1 * 3)(2 * 3 + 10);
-[noMarker] Start of evaluation
-
-(1 * 3)(2 * 3 + 10);
-[beforeMarker] Binary expression 1 * 3 evaluated
-
-(3)(2 * 3 + 10);
-[afterMarker] Binary expression 1 * 3 evaluated
-
-(3)(2 * 3 + 10);
-[beforeMarker] Binary expression 2 * 3 evaluated
-
-(3)(6 + 10);
-[afterMarker] Binary expression 2 * 3 evaluated
-
-(3)(6 + 10);
-[beforeMarker] Binary expression 6 + 10 evaluated
-
-(3)(16);
-[afterMarker] Binary expression 6 + 10 evaluated
-
-(3)(16);
-[beforeMarker] Line 2: Calling non-function value 3
-
-(3)(16);
-[noMarker] Evaluation stuck
-"
-`;
-
 exports[`Evaluation of empty code and imports > Evaluate empty program 1`] = `
 "
 [noMarker] Start of evaluation
@@ -14606,7 +14564,7 @@ math_pow(2, 20) || NaN;
 [afterMarker] math_pow runs
 
 1048576 || NaN;
-[beforeMarker] Line 2: Expected boolean on left hand side of operation, got number.
+[beforeMarker] Line 2: Expected boolean as condition, got number.
 
 1048576 || NaN;
 [noMarker] Evaluation stuck
@@ -15083,7 +15041,7 @@ exports[`Test catching errors from built in function > Incorrect number of argum
 [noMarker] Start of evaluation
 
 pair(2);
-[beforeMarker] Expected 2 arguments, but got 1.
+[beforeMarker] Line 1: Expected 2 arguments, but got 1.
 
 pair(2);
 [noMarker] Evaluation stuck
@@ -15095,7 +15053,7 @@ exports[`Test catching errors from built in function > Incorrect type of argumen
 [noMarker] Start of evaluation
 
 math_sin(true);
-[beforeMarker] Math functions must be called with number arguments
+[beforeMarker] Line 2: math_sin: Expected number, got true.
 
 math_sin(true);
 [noMarker] Evaluation stuck
@@ -15119,7 +15077,7 @@ exports[`Test catching undefined variables > Name declared later but not yet ass
 [noMarker] Start of evaluation
 
 x;const x = 1;x;
-[beforeMarker] Name x declared later in current scope but not yet assigned
+[beforeMarker] Line 2: Name x declared later in current scope but not yet assigned
 
 x;const x = 1;x;
 [noMarker] Evaluation stuck
@@ -15509,7 +15467,7 @@ exports[`Test runtime errors > Incompatible types operation 1`] = `
 [afterMarker] Binary expression 2 * 3 evaluated
 
 \\"1\\" + 6;
-[beforeMarker] Line 0: Expected string on right hand side of operation, got number.
+[beforeMarker] Expected string on right hand side of operation, got number.
 
 \\"1\\" + 6;
 [noMarker] Evaluation stuck

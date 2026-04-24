@@ -68,7 +68,7 @@ describe('Test throwing import validation errors', () => {
     }
 
     const { programs, topoOrder, sourceModulesToImport } = importGraphResult;
-    await loadSourceModules(sourceModulesToImport, context, false);
+    await loadSourceModules(sourceModulesToImport, context, { loadTabs: false });
 
     analyzeImportsAndExports(programs, entrypointFilePath as string, topoOrder, context, {
       allowUndefinedImports,
@@ -125,7 +125,7 @@ describe('Test throwing import validation errors', () => {
   }
 
   type FullTestCase = [string, Files, `/${string}`, ErrorInfo | boolean];
-  function testCases<T extends Files>(desc: string, cases: ImportTestCase<T>[]) {
+  const testCases = vi.defineHelper(<T extends Files>(desc: string, cases: ImportTestCase<T>[]) => {
     const [allNoCases, allYesCases] = cases.reduce(
       ([noThrow, yesThrow], [desc, files, entry, errorInfo], i) => {
         return [
@@ -169,7 +169,7 @@ describe('Test throwing import validation errors', () => {
       test.each(allNoCases)('%s', caseTester));
     describe(`${desc} with allowUndefinedimports false`, () =>
       test.each(allYesCases)('%s', caseTester));
-  }
+  });
 
   describe('Test regular imports', () => {
     testCases('Local imports', [
@@ -647,7 +647,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     | [string, Record<string, Program>, true, string | undefined]
     | [string, Record<string, Program>, false, undefined];
 
-  function testCases<T extends Files>(desc: string, cases: TestCase<T>[]) {
+  const testCases = vi.defineHelper(<T extends Files>(desc: string, cases: TestCase<T>[]) => {
     const [allNoCases, allYesCases] = cases.reduce(
       ([noThrow, yesThrow], c, i) => {
         const context = mockContext(Chapter.LIBRARY_PARSER);
@@ -656,7 +656,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
             const parsed = parse(file!, context, { sourceFile: name });
             if (!parsed) {
               console.error(context.errors[0]);
-              throw new Error('Failed to parse code!');
+              expect.fail('Failed to parse code!');
             }
             return {
               ...res,
@@ -715,7 +715,20 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       const context = mockContext(Chapter.FULL_JS);
       const [entrypointFilePath, ...topoOrder] = objectKeys(programs);
 
-      await loadSourceModules(new Set(['one_module', 'another_module']), context, false);
+      await loadSourceModules(
+        {
+          one_module: {
+            name: 'one_module',
+            tabs: [],
+          },
+          another_module: {
+            name: 'another_module',
+            tabs: [],
+          },
+        },
+        context,
+        { loadTabs: false },
+      );
 
       const runTest = () =>
         analyzeImportsAndExports(programs, entrypointFilePath, topoOrder, context, {
@@ -744,7 +757,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       test.each(allNoCases)('%s', caseTester));
     describe(`${desc} with throwOnDuplicateImports true`, () =>
       test.each(allYesCases)('%s', caseTester));
-  }
+  });
 
   testCases('Imports from different modules', [
     [

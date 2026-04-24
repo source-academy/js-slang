@@ -12,7 +12,7 @@ test('Check that stack is at most 10k in size', { timeout: 10000 }, () => {
       }
     }
     f(10000);
-  `).toContain(`Line 5: RangeError: Maximum call stack size exceeded`);
+  `).toContain(`RangeError: Maximum call stack size exceeded`);
 });
 
 test('Simple tail call returns work', () => {

@@ -11,6 +11,7 @@
     // "isolatedModules": true, Temporarily disabled
     "noEmit": true,
     "noImplicitAny": true,
+    "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
@@ -25,8 +26,6 @@
   },
   "include": ["src", "vitest.config.ts"],
   "exclude": [
-    "src/stdlib/metacircular-interpreter",
-    "src/stdlib/**/*.js",
     "node_modules",
     "dist",
     "sicp_publish"

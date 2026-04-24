@@ -1,42 +1,30 @@
 import type { BlockStatement, Comment, SourceLocation } from 'estree';
 import { type StepperExpression, type StepperPattern, undefinedNode } from '..';
-import { redex } from '../..';
+import type { RedexInfo } from '../..';
 import { convert } from '../../generator';
-import type { StepperBaseNode } from '../../interface';
+import { StepperBaseNode } from '../../interface';
 import { assignMuTerms, getFreshName } from '../../utils';
-import { StepperFunctionDeclaration } from './FunctionDeclaration';
-import { StepperVariableDeclaration } from './VariableDeclaration';
-import { StepperStatement } from '.';
+import { InternalRuntimeError } from '../../../errors/base';
+import type { StepperStatement } from '.';
 
-export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
-  type: 'BlockStatement';
-  body: StepperStatement[];
-  innerComments?: Comment[] | undefined;
-  leadingComments?: Comment[] | undefined;
-  trailingComments?: Comment[] | undefined;
-  loc?: SourceLocation | null | undefined;
-  range?: [number, number] | undefined;
-
+export class StepperBlockStatement
+  extends StepperBaseNode<BlockStatement>
+  implements BlockStatement
+{
   constructor(
-    body: StepperStatement[],
-    innerComments?: Comment[] | undefined,
+    public readonly body: StepperStatement[],
+    public readonly innerComments?: Comment[] | undefined,
     leadingComments?: Comment[] | undefined,
     trailingComments?: Comment[] | undefined,
     loc?: SourceLocation | null | undefined,
     range?: [number, number] | undefined,
   ) {
-    this.type = 'BlockStatement';
-    this.body = body;
-    this.innerComments = innerComments;
-    this.leadingComments = leadingComments;
-    this.trailingComments = trailingComments;
-    this.loc = loc;
-    this.range = range;
+    super('BlockStatement', leadingComments, trailingComments, loc, range);
   }
 
   static create(node: BlockStatement) {
     return new StepperBlockStatement(
-      node.body.map(ast => convert(ast) as StepperStatement),
+      node.body.map(node => convert(node)),
       node.innerComments,
       node.leadingComments,
       node.trailingComments,
@@ -45,15 +33,19 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     );
   }
 
-  isContractible(): boolean {
-    return this.body.length === 0 || (this.body.length === 1 && !this.body[0].isContractible());
+  public override isContractible(redex: RedexInfo): boolean {
+    return (
+      this.body.length === 0 || (this.body.length === 1 && !this.body[0].isContractible(redex))
+    );
   }
 
-  isOneStepPossible(): boolean {
+  public override isOneStepPossible(): boolean {
     return true;
   }
 
-  contract(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
+  public override contract(
+    redex: RedexInfo,
+  ): StepperBlockStatement | StepperStatement | typeof undefinedNode {
     if (this.body.length === 0) {
       redex.preRedex = [this];
       redex.postRedex = [];
@@ -66,17 +58,19 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       return this.body[0];
     }
 
-    throw new Error('Not implemented');
+    throw new InternalRuntimeError('Cannot contract BlockStatement with body length > 1', this);
   }
 
-  contractEmpty() {
+  contractEmpty(redex: RedexInfo) {
     redex.preRedex = [this];
     redex.postRedex = [];
   }
 
-  oneStep(): StepperBlockStatement | StepperStatement | typeof undefinedNode {
-    if (this.isContractible()) {
-      return this.contract();
+  public override oneStep(
+    redex: RedexInfo,
+  ): StepperBlockStatement | StepperStatement | typeof undefinedNode {
+    if (this.isContractible(redex)) {
+      return this.contract(redex);
     }
 
     if (this.body[0].type === 'ReturnStatement') {
@@ -87,12 +81,12 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     }
 
     // reduce the first statement
-    if (this.body[0].isOneStepPossible()) {
-      const firstStatementOneStep = this.body[0].oneStep();
+    if (this.body[0].isOneStepPossible(redex)) {
+      const firstStatementOneStep = this.body[0].oneStep(redex);
       const afterSubstitutedScope = this.body.slice(1);
       if (firstStatementOneStep === undefinedNode) {
         return new StepperBlockStatement(
-          [afterSubstitutedScope].flat(),
+          afterSubstitutedScope,
           this.innerComments,
           this.leadingComments,
           this.trailingComments,
@@ -111,7 +105,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     }
 
     // If the first statement is constant declaration, gracefully handle it!
-    if (this.body[0].type == 'VariableDeclaration') {
+    if (this.body[0].type === 'VariableDeclaration') {
       const declarations = assignMuTerms(this.body[0].declarations);
       const afterSubstitutedScope = this.body
         .slice(1)
@@ -120,7 +114,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
             .filter(declarator => declarator.init)
             .reduce(
               (statement, declarator) =>
-                statement.substitute(declarator.id, declarator.init!) as StepperStatement,
+                statement.substitute(declarator.id, declarator.init!, redex) as StepperStatement,
               current,
             ),
         );
@@ -138,13 +132,14 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     }
 
     // If the first statement is function declaration, also gracefully handle it!
-    if (this.body[0].type == 'FunctionDeclaration') {
+    if (this.body[0].type === 'FunctionDeclaration') {
       const arrowFunction = this.body[0].getArrowFunctionExpression();
       const functionIdentifier = this.body[0].id;
       const afterSubstitutedScope = this.body
         .slice(1)
         .map(
-          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement,
+          statement =>
+            statement.substitute(functionIdentifier, arrowFunction, redex) as StepperStatement,
         );
       const substitutedProgram = new StepperBlockStatement(
         afterSubstitutedScope,
@@ -162,7 +157,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     const firstValueStatement = this.body[0];
     // After this stage, the first statement is a value statement. Now, proceed until getting the second value statement.
     // if the second statement is return statement, remove the first statement
-    if (this.body.length >= 2 && this.body[1].type == 'ReturnStatement') {
+    if (this.body.length >= 2 && this.body[1].type === 'ReturnStatement') {
       redex.preRedex = [this.body[0]];
       const afterSubstitutedScope = this.body.slice(1);
       redex.postRedex = [];
@@ -176,8 +171,8 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       );
     }
 
-    if (this.body.length >= 2 && this.body[1].isOneStepPossible()) {
-      const secondStatementOneStep = this.body[1].oneStep();
+    if (this.body.length >= 2 && this.body[1].isOneStepPossible(redex)) {
+      const secondStatementOneStep = this.body[1].oneStep(redex);
       const afterSubstitutedScope = this.body.slice(2);
       if (secondStatementOneStep === undefinedNode) {
         return new StepperBlockStatement(
@@ -204,7 +199,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     }
 
     // If the second statement is constant declaration, gracefully handle it!
-    if (this.body.length >= 2 && this.body[1].type == 'VariableDeclaration') {
+    if (this.body.length >= 2 && this.body[1].type === 'VariableDeclaration') {
       const declarations = assignMuTerms(this.body[1].declarations);
       const afterSubstitutedScope = this.body
         .slice(2)
@@ -213,7 +208,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
             .filter(declarator => declarator.init)
             .reduce(
               (statement, declarator) =>
-                statement.substitute(declarator.id, declarator.init!) as StepperStatement,
+                statement.substitute(declarator.id, declarator.init!, redex) as StepperStatement,
               current,
             ),
         );
@@ -231,13 +226,14 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     }
 
     // If the second statement is function declaration, also gracefully handle it!
-    if (this.body.length >= 2 && this.body[1].type == 'FunctionDeclaration') {
+    if (this.body.length >= 2 && this.body[1].type === 'FunctionDeclaration') {
       const arrowFunction = this.body[1].getArrowFunctionExpression();
       const functionIdentifier = this.body[1].id;
       const afterSubstitutedScope = this.body
         .slice(2)
         .map(
-          statement => statement.substitute(functionIdentifier, arrowFunction) as StepperStatement,
+          statement =>
+            statement.substitute(functionIdentifier, arrowFunction, redex) as StepperStatement,
         );
       const substitutedProgram = new StepperBlockStatement(
         [firstValueStatement, afterSubstitutedScope].flat(),
@@ -253,7 +249,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     }
 
     // After this stage, we have two value inducing statement. Remove the first one.
-    this.body[0].contractEmpty(); // update the contracted statement onto redex
+    this.body[0].contractEmpty(redex); // update the contracted statement onto redex
     return new StepperBlockStatement(
       this.body.slice(1),
       this.innerComments,
@@ -264,9 +260,10 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     );
   }
 
-  substitute(
+  public override substitute(
     id: StepperPattern,
     value: StepperExpression,
+    redex: RedexInfo,
     upperBoundName?: string[],
   ): StepperBaseNode {
     // Alpha renaming
@@ -292,7 +289,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
     }
     return new StepperBlockStatement(
       currentBlockStatement.body.map(
-        statement => statement.substitute(id, value) as StepperStatement,
+        statement => statement.substitute(id, value, redex) as StepperStatement,
       ),
       this.innerComments,
       this.leadingComments,
@@ -305,7 +302,7 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
   scanAllDeclarationNames(): string[] {
     return this.body
       .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
-      .flatMap((ast: StepperVariableDeclaration | StepperFunctionDeclaration) => {
+      .flatMap(ast => {
         if (ast.type === 'VariableDeclaration') {
           return ast.declarations.map(ast => ast.id.name);
         } else {
@@ -315,17 +312,17 @@ export class StepperBlockStatement implements BlockStatement, StepperBaseNode {
       });
   }
 
-  freeNames(): string[] {
+  public override freeNames(): string[] {
     const names = new Set(this.body.flatMap(ast => ast.freeNames()));
     this.scanAllDeclarationNames().forEach(name => names.delete(name));
     return Array.from(names);
   }
 
-  allNames(): string[] {
+  public override allNames(): string[] {
     return Array.from(new Set(this.body.flatMap(ast => ast.allNames())));
   }
 
-  rename(before: string, after: string): StepperBlockStatement {
+  public override rename(before: string, after: string): StepperBlockStatement {
     return new StepperBlockStatement(
       this.body.map(statement => statement.rename(before, after) as StepperStatement),
       this.innerComments,
