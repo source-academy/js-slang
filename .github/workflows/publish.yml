@@ -1,0 +1,94 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Verify NPM_TOKEN is available
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "NPM_TOKEN secret is not reachable from this repo."
+            echo "If it is set as an organization secret, confirm this repo is in its allowed-repos list."
+            exit 1
+          fi
+          echo "NPM_TOKEN is present."
+
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Read package.json version
+        id: pkg
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "package.json version: $VERSION"
+
+      - name: Check whether version is already on npm
+        id: check
+        run: |
+          PUBLISHED=$(npm view js-slang@${{ steps.pkg.outputs.version }} version 2>/dev/null || true)
+          if [ -n "$PUBLISHED" ]; then
+            echo "js-slang@${{ steps.pkg.outputs.version }} is already published — nothing to do."
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "js-slang@${{ steps.pkg.outputs.version }} is not yet on npm — will publish."
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install system dependencies for docs
+        if: steps.check.outputs.should_publish == 'true'
+        run: |
+          sudo apt-get update && \
+          sudo apt-get install -y --no-install-recommends \
+          texlive texlive-fonts-extra texlive-lang-cjk latexmk latex-cjk-all
+
+      - name: Enable corepack for Yarn
+        if: steps.check.outputs.should_publish == 'true'
+        run: corepack enable
+
+      - name: Setup Node
+        if: steps.check.outputs.should_publish == 'true'
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: yarn
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        if: steps.check.outputs.should_publish == 'true'
+        run: yarn install --immutable
+
+      - name: Build
+        if: steps.check.outputs.should_publish == 'true'
+        run: yarn build
+
+      - name: Publish to npm
+        if: steps.check.outputs.should_publish == 'true'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Tag the release
+        if: steps.check.outputs.should_publish == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          TAG="v${{ steps.pkg.outputs.version }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists locally — skipping."
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
