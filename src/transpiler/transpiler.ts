@@ -5,8 +5,8 @@
  */
 import { generate } from 'astring';
 import type es from 'estree';
-import { type RawSourceMap, SourceMapGenerator } from 'source-map';
 import cloneDeep from 'lodash/cloneDeep';
+import { type RawSourceMap, SourceMapGenerator } from 'source-map';
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants';
 import { Chapter, Variant } from '../langs';
 import type { Context, NativeStorage, Node } from '../types';
@@ -112,10 +112,10 @@ function transformFunctionDeclarationsToArrowFunctions(
   functionsToStringMap: Map<Node, string>,
 ) {
   simple(program, {
-    FunctionDeclaration(node) {
-      const { id, params, body, loc } = node as es.FunctionDeclaration;
+    FunctionDeclaration(node: es.VariableDeclaration) {
+      const { id, params, body, loc } = node as es.FunctionDeclaration & es.VariableDeclaration;
       node.type = 'VariableDeclaration';
-      node = node as es.VariableDeclaration;
+      node = node;
       const asArrowFunction = create.blockArrowFunction(params as es.Identifier[], body, loc);
       functionsToStringMap.set(asArrowFunction, functionsToStringMap.get(node)!);
       node.declarations = [
@@ -193,7 +193,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
           expression.loc,
         );
       case 'CallExpression':
-        expression = expression as es.CallExpression;
+        expression = expression;
         const { line, column } = (expression.loc ?? UNKNOWN_LOCATION).start;
         const source = expression.loc?.source ?? null;
         const functionName =
