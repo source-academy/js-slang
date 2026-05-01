@@ -525,10 +525,9 @@ const compilers: Compilers = {
         ? node.body
         : create.blockStatement([create.returnStatement(node.body)]);
     const names = new Map<string, EnvEntry>();
-    for (let param of node.params) {
-      param = param as es.Identifier;
+    for (const param of node.params) {
       const index = names.size;
-      names.set(param.name, { index, isVar: true });
+      names.set((param as es.Identifier).name, { index, isVar: true });
     }
     extractAndRenameNames(bodyNode, names);
     const extendedIndexTable = extendIndexTable(indexTable, names);
@@ -1007,9 +1006,9 @@ function transformForLoopsToWhileLoops(program: es.Program) {
       const newLoop = create.whileStatement(newLoopBody, test!) as TaggedWhileStatement;
       newLoop.isFor = true;
       const newBlockBody = [assignment1, newLoop];
-      node = node as es.BlockStatement;
-      node.body = newBlockBody;
-      node.type = 'BlockStatement';
+      const mutatedNode = node as es.BlockStatement;
+      mutatedNode.body = newBlockBody;
+      mutatedNode.type = 'BlockStatement';
     },
   });
 }
