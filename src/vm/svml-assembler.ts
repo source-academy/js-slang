@@ -70,7 +70,7 @@ function serialiseFunction(f: SVMFunction): ImFunction {
     switch (opcode) {
       case OpCodes.LDCI:
       case OpCodes.LGCI:
-        if (!Number.isInteger(instr[1] as number)) {
+        if (!Number.isInteger(instr[1])) {
           throw new Error(
             `Non-integral operand to LDCI/LDGI: ${instr[1]} (this is a compiler bug)`,
           );

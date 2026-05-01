@@ -199,9 +199,9 @@ export const mutateToCallExpression = (
   args: es.Expression[],
 ) => {
   node.type = 'CallExpression';
-  node = node as es.CallExpression;
-  node.callee = callee;
-  node.arguments = args;
+  const mutatedNode = node as es.CallExpression;
+  mutatedNode.callee = callee;
+  mutatedNode.arguments = args;
 };
 
 export const mutateToAssignmentExpression = (
@@ -210,30 +210,30 @@ export const mutateToAssignmentExpression = (
   right: es.Expression,
 ) => {
   node.type = 'AssignmentExpression';
-  node = node as es.AssignmentExpression;
-  node.operator = '=';
-  node.left = left;
-  node.right = right;
+  const mutatedNode = node as es.AssignmentExpression;
+  mutatedNode.operator = '=';
+  mutatedNode.left = left;
+  mutatedNode.right = right;
 };
 
 export const mutateToExpressionStatement = (node: Node, expr: es.Expression) => {
   node.type = 'ExpressionStatement';
-  node = node as es.ExpressionStatement;
-  node.expression = expr;
+  const mutatedNode = node as es.ExpressionStatement;
+  mutatedNode.expression = expr;
 };
 
 export const mutateToReturnStatement = (node: Node, expr: es.Expression) => {
   node.type = 'ReturnStatement';
-  node = node as es.ReturnStatement;
-  node.argument = expr;
+  const mutatedNode = node as es.ReturnStatement;
+  mutatedNode.argument = expr;
 };
 
 export const mutateToMemberExpression = (node: Node, obj: es.Expression, prop: es.Expression) => {
   node.type = 'MemberExpression';
-  node = node as es.MemberExpression;
-  node.object = obj;
-  node.property = prop;
-  node.computed = false;
+  const mutatedNode = node as es.MemberExpression;
+  mutatedNode.object = obj;
+  mutatedNode.property = prop;
+  mutatedNode.computed = false;
 };
 
 export const logicalExpression = (
@@ -256,10 +256,11 @@ export const mutateToConditionalExpression = (
   alternate: es.Expression,
 ) => {
   node.type = 'ConditionalExpression';
-  node = node as es.ConditionalExpression;
-  node.test = test;
-  node.consequent = consequent;
-  node.alternate = alternate;
+  node = node;
+  const mutatedNode = node as es.ConditionalExpression;
+  mutatedNode.test = test;
+  mutatedNode.consequent = consequent;
+  mutatedNode.alternate = alternate;
 };
 
 export const conditionalExpression = (

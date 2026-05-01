@@ -28,7 +28,7 @@ export const getSVMCCommand = () =>
       ast: Parse and pretty-print the AST. For debugging the parser.`,
       )
         .choices(compileToChoices)
-        .default('binary' as (typeof compileToChoices)[number]),
+        .default('binary'),
     )
     .option(
       '-o, --out <outFile>',
