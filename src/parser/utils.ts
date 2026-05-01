@@ -112,7 +112,7 @@ export function looseParse(programStr: string, context: Context): Program {
   return acornLooseParse(
     programStr,
     createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors),
-  ) as unknown as Program;
+  );
 }
 
 /**

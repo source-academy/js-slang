@@ -157,7 +157,7 @@ export class StepperFunctionDeclaration
   public override rename(before: string, after: string): StepperFunctionDeclaration {
     return new StepperFunctionDeclaration(
       this.id.rename(before, after),
-      this.body.rename(before, after) as unknown as StepperBlockStatement,
+      this.body.rename(before, after),
       this.params.map(param => param.rename(before, after)),
       this.generator,
       this.async,

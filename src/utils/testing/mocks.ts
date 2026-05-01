@@ -77,7 +77,7 @@ export function mockClosure(): Closure {
         type: 'BlockStatement',
         body: [],
       },
-    } as es.ArrowFunctionExpression,
+    },
     mockEnvironment(context),
     context,
   );

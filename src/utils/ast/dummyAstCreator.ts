@@ -21,7 +21,7 @@ export const dummyLiteral = (): es.Literal => ({
   loc: dummyLocation(),
 });
 
-export const dummyExpression = (): es.Expression => dummyLiteral() as es.Expression;
+export const dummyExpression = (): es.Expression => dummyLiteral();
 
 export const dummyCallExpression = (): es.CallExpression => ({
   type: 'CallExpression',
@@ -37,7 +37,7 @@ export const dummyExpressionStatement = (): es.ExpressionStatement => ({
   loc: dummyLocation(),
 });
 
-export const dummyStatement = (): es.Statement => dummyExpressionStatement() as es.Statement;
+export const dummyStatement = (): es.Statement => dummyExpressionStatement();
 
 export const dummyBlockStatement = (): es.BlockStatement => ({
   type: 'BlockStatement',
