@@ -1,3 +1,4 @@
+import { generate as astringGenerate, GENERATOR } from 'astring';
 import { StepperVariableDeclarator } from './nodes/Statement/VariableDeclaration';
 
 /*
@@ -34,3 +35,36 @@ export function assignMuTerms(
       : declarator,
   );
 }
+
+export const customGenerator = {
+  ...GENERATOR,
+  ArrowFunctionExpression(node: any, state: any) {
+    if (node.name) {
+      state.write(node.name);
+    } else {
+      GENERATOR.ArrowFunctionExpression!(node, state);
+    }
+  },
+  CallExpression(node: any, state: any) {
+    const callee = node.callee;
+    if (callee.type === 'ArrowFunctionExpression' && callee.name) {
+      GENERATOR.CallExpression!({
+        ...node,
+        callee: {
+          type: 'Identifier',
+          name: callee.name
+        }
+      }, state);
+    } else {
+      GENERATOR.CallExpression!(node, state);
+    }
+  }
+};
+
+export function generate(node: any, options?: any) {
+  return astringGenerate(node, {
+    generator: customGenerator,
+    ...options
+  });
+}
+

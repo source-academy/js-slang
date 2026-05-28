@@ -7,8 +7,8 @@ Every class should have the following properties
 - static create: factory method to parse estree to StepperAST
 */
 
-import { generate } from 'astring';
 import type es from 'estree';
+import { generate } from './utils';
 import assert from '../utils/assert';
 import { isBuiltinFunction } from './builtins';
 import type { StepperBaseNode } from './interface';

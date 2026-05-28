@@ -1,5 +1,5 @@
 import * as acorn from 'acorn';
-import * as astring from 'astring';
+import { generate as customGenerate } from '../utils';
 import { describe, expect, test } from 'vitest';
 import createContext from '../../createContext';
 import { mockContext } from '../../utils/testing/mocks';
@@ -17,7 +17,7 @@ function codify(node: StepperBaseNode) {
     if (ast === undefined || ast.type === undefined) {
       return '';
     }
-    return astring.generate(ast);
+    return customGenerate(ast);
   };
   return steps.map(prop => {
     const code = stringify(prop.ast).replace(/\n/g, '').replace(/\s+/g, ' ');
@@ -1624,7 +1624,7 @@ describe('Error handling on calling functions', () => {
     const steps = codify(acornParser(code));
     expect(steps.join('\n')).toMatchSnapshot();
     expect(steps[steps.length - 1]).toEqual(
-      '(a => { return a;})();\n[noMarker] Evaluation stuck\n',
+      'foo();\n[noMarker] Evaluation stuck\n',
     );
   });
 
@@ -1638,7 +1638,7 @@ describe('Error handling on calling functions', () => {
     const steps = codify(acornParser(code));
     expect(steps.join('\n')).toMatchSnapshot();
     expect(steps[steps.length - 1]).toEqual(
-      '(a => { return a;})(1, 2, 3);\n[noMarker] Evaluation stuck\n',
+      'foo(1, 2, 3);\n[noMarker] Evaluation stuck\n',
     );
   });
 });
@@ -1749,3 +1749,25 @@ describe('Test catching undefined variables', () => {
     expect(steps[steps.length - 1].includes('not declared')).toBe(false);
   });
 });
+
+describe('Higher-order recursion display bug (#1805)', () => {
+  test('Stepper trace for nested recursive function', () => {
+    const code = `
+      function h(f, x) {
+          function h(g, x) {
+              return x <= 1 ? 1 : 3 * g(f, x - 1);
+          }
+          return x <= 1 ? 1 : 2 * f(h, x - 1);
+      }
+      h(h, 5);
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toMatchSnapshot();
+
+    // Verify it doesn't leak the raw anonymous lambda code inside the returned explanation
+    const stepWithNestedCall = steps.find(step => step.includes('1 <= 1 ? 1 : 2 * h('));
+    expect(stepWithNestedCall).toBeDefined();
+    expect(stepWithNestedCall).not.toContain('((g, x) => {');
+  });
+});
+
