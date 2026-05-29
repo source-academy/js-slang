@@ -42,11 +42,14 @@ export function objectKeys<T extends string | number | symbol>(obj: Record<T, an
   return Object.keys(obj) as T[];
 }
 
+type EnumKeys<T> = T extends Record<infer K, any> ? K : never;
+type ChapterStrings = EnumKeys<typeof Chapter>;
+
 /**
  * Given the chapter value, return the string name of that chapter
  */
 export function getChapterName(chapter: Chapter) {
-  return objectKeys(Chapter).find(name => Chapter[name] === chapter)!;
+  return Chapter[chapter] as ChapterStrings;
 }
 
 /**

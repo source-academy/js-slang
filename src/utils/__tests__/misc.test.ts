@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { Chapter } from '../../langs';
-import { getChapterName, PromiseTimeoutError, timeoutPromise } from '../misc';
+import { Chapter, Variant } from '../../langs';
+import { getChapterName, getVariantName, PromiseTimeoutError, timeoutPromise } from '../misc';
 
 describe(timeoutPromise, () => {
   const timedResolvedPromise = (duration: number) =>
@@ -38,3 +38,13 @@ describe(getChapterName, () =>
     ['FULL_JS', Chapter.FULL_JS],
   ])('%s', (expected, input) => expect(getChapterName(input)).toEqual(expected)),
 );
+
+describe(getVariantName, () => {
+  test.each([
+    ['DEFAULT', Variant.DEFAULT],
+    ['TYPED', Variant.TYPED],
+    ['NATIVE', Variant.NATIVE],
+    ['WASM', Variant.WASM],
+    ['EXPLICIT_CONTROL', Variant.EXPLICIT_CONTROL],
+  ])('%s', (expected, input) => expect(getVariantName(input)).toEqual(expected));
+});
