@@ -1623,9 +1623,7 @@ describe('Error handling on calling functions', () => {
     `;
     const steps = codify(acornParser(code));
     expect(steps.join('\n')).toMatchSnapshot();
-    expect(steps[steps.length - 1]).toEqual(
-      'foo();\n[noMarker] Evaluation stuck\n',
-    );
+    expect(steps[steps.length - 1]).toEqual('foo();\n[noMarker] Evaluation stuck\n');
   });
 
   test('Incorrect number of argument (more)', () => {
@@ -1637,9 +1635,7 @@ describe('Error handling on calling functions', () => {
     `;
     const steps = codify(acornParser(code));
     expect(steps.join('\n')).toMatchSnapshot();
-    expect(steps[steps.length - 1]).toEqual(
-      'foo(1, 2, 3);\n[noMarker] Evaluation stuck\n',
-    );
+    expect(steps[steps.length - 1]).toEqual('foo(1, 2, 3);\n[noMarker] Evaluation stuck\n');
   });
 });
 
@@ -1771,3 +1767,21 @@ describe('Higher-order recursion display bug (#1805)', () => {
   });
 });
 
+describe('Named nullary functions', () => {
+  test('Named nullary function with block body explanation', () => {
+    const code = `
+      function f() {
+        return 42;
+      }
+      f();
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toMatchSnapshot();
+
+    // The explanation should say "f runs" instead of "() => {...} runs"
+    const stepWithRuns = steps.find(step => step.includes('runs'));
+    expect(stepWithRuns).toBeDefined();
+    expect(stepWithRuns).toContain('f runs');
+    expect(stepWithRuns).not.toContain('() => {...}');
+  });
+});

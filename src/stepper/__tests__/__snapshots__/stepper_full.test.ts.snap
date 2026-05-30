@@ -11,10 +11,10 @@ const a = () => {};\\"other statement\\";a();\\"Gets returned by normal run\\";
 [afterMarker] Constant a declared and substituted into the rest of block
 
 \\"other statement\\";a();\\"Gets returned by normal run\\";
-[beforeMarker] () => {...} runs
+[beforeMarker] a runs
 
 \\"other statement\\";{};\\"Gets returned by normal run\\";
-[afterMarker] () => {...} runs
+[afterMarker] a runs
 
 \\"other statement\\";{};\\"Gets returned by normal run\\";
 [beforeMarker] Empty block expression evaluated
@@ -50,10 +50,10 @@ function a() {}\\"other statement\\";a();\\"Gets returned by normal run\\";
 [afterMarker] Function a declared, parameter(s)  required
 
 \\"other statement\\";a();\\"Gets returned by normal run\\";
-[beforeMarker] () => {...} runs
+[beforeMarker] a runs
 
 \\"other statement\\";{};\\"Gets returned by normal run\\";
-[afterMarker] () => {...} runs
+[afterMarker] a runs
 
 \\"other statement\\";{};\\"Gets returned by normal run\\";
 [beforeMarker] Empty block expression evaluated
@@ -3196,28 +3196,28 @@ function f(x_3) { function h(x_3) { return x_2 + g(); } return h;}const x_2 = 0;
 function f(x_3) { function h(x_3) { return x_2 + g(); } return h;}const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Function f declared, parameter(s) x_3 required
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Function f declared, parameter(s) x_3 required
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+const x = 1;f(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+const x = 1;f(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+f(1)(1);
 [beforeMarker] Function f takes in 1 as input x_3
 
 { function h(x_3) { return 0 + g(); } return h;}(1);
@@ -3226,10 +3226,10 @@ const x = 1;(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
 { function h(x_3) { return 0 + g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_3 required
 
-{ return x_3 => { return 0 + g(); };}(1);
+{ return h;}(1);
 [afterMarker] Function h declared, parameter(s) x_3 required
 
-{ return x_3 => { return 0 + g(); };}(1);
+{ return h;}(1);
 [beforeMarker] h returned
 
 h(1);
@@ -3242,10 +3242,10 @@ h(1);
 [afterMarker] Function h takes in 1 as input x_3
 
 0 + g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 0 + (1 + 2);
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 0 + (1 + 2);
 [beforeMarker] Binary expression 1 + 2 evaluated
@@ -3271,34 +3271,34 @@ exports[`Alpha renaming > multiple clash 2 for function expression 1`] = `
 function f(x) { function h(x_1) { return x_2 + g(); } return h;}function g() { return x + x_1;}const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Function f declared, parameter(s) x required
 
-function g() { return x + x_1;}const x_2 = 0;const x_1 = 2;const x = 1;(x => { function h(x_1) { return x_2 + g(); } return h;})(1)(1);
+function g() { return x + x_1;}const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Function f declared, parameter(s) x required
 
-function g() { return x + x_1;}const x_2 = 0;const x_1 = 2;const x = 1;(x => { function h(x_1) { return x_2 + g(); } return h;})(1)(1);
+function g() { return x + x_1;}const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+const x = 1;f(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+const x = 1;f(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
+f(1)(1);
 [beforeMarker] Function f takes in 1 as input x_3
 
 { function h(x_3) { return 0 + g(); } return h;}(1);
@@ -3307,10 +3307,10 @@ const x = 1;(x_3 => { function h(x_3) { return 0 + g(); } return h;})(1)(1);
 { function h(x_3) { return 0 + g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_3 required
 
-{ return x_3 => { return 0 + g(); };}(1);
+{ return h;}(1);
 [afterMarker] Function h declared, parameter(s) x_3 required
 
-{ return x_3 => { return 0 + g(); };}(1);
+{ return h;}(1);
 [beforeMarker] h returned
 
 h(1);
@@ -3323,10 +3323,10 @@ h(1);
 [afterMarker] Function h takes in 1 as input x_3
 
 0 + g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 0 + (1 + 2);
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 0 + (1 + 2);
 [beforeMarker] Binary expression 1 + 2 evaluated
@@ -3352,34 +3352,34 @@ exports[`Alpha renaming > multiple clash 2 for lambda function 1`] = `
 const f = x => x_1 => x_2 + g();const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;(x => x_1 => x_2 + g())(1)(1);
+const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;(x => x_1 => x_2 + g())(1)(1);
+const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => x_4 => x_2 + g())(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => x_4 => x_2 + g())(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_3 => x_4 => 0 + g())(1)(1);
+const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_3 => x_4 => 0 + g())(1)(1);
+const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_3 => x_4 => 0 + g())(1)(1);
+const x = 1;f(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_3 => x_4 => 0 + g())(1)(1);
+const x = 1;f(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_3 => x_4 => 0 + g())(1)(1);
+f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_3 => x_4 => 0 + g())(1)(1);
+f(1)(1);
 [beforeMarker] 1 substituted into x_3 of f
 
 (x_4 => 0 + g())(1);
@@ -3427,28 +3427,28 @@ function f(x_5) { function h(x_5) { return x_4 + g(); } return h;}const x_3 = 0;
 function f(x_5) { function h(x_5) { return x_4 + g(); } return h;}const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Function f declared, parameter(s) x_5 required
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [afterMarker] Function f declared, parameter(s) x_5 required
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_2 = 2;const x_4 = 2;f(1)(1);
 [afterMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_4 = 2;f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_4 = 2;f(1)(1);
 [beforeMarker] Constant x_4 declared and substituted into the rest of block
 
-(x_5 => { function h(x_5) { return 2 + g(); } return h;})(1)(1);
+f(1)(1);
 [afterMarker] Constant x_4 declared and substituted into the rest of block
 
-(x_5 => { function h(x_5) { return 2 + g(); } return h;})(1)(1);
+f(1)(1);
 [beforeMarker] Function f takes in 1 as input x_5
 
 { function h(x_5) { return 2 + g(); } return h;}(1);
@@ -3457,10 +3457,10 @@ const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
 { function h(x_5) { return 2 + g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_5 required
 
-{ return x_5 => { return 2 + g(); };}(1);
+{ return h;}(1);
 [afterMarker] Function h declared, parameter(s) x_5 required
 
-{ return x_5 => { return 2 + g(); };}(1);
+{ return h;}(1);
 [beforeMarker] h returned
 
 h(1);
@@ -3473,10 +3473,10 @@ h(1);
 [afterMarker] Function h takes in 1 as input x_5
 
 2 + g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 2 + (2 + 0);
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 2 + (2 + 0);
 [beforeMarker] Binary expression 2 + 0 evaluated
@@ -3502,34 +3502,34 @@ exports[`Alpha renaming > multiple clash for function expression 1`] = `
 function f(x_2) { function h(x_3) { return x_4 + g(); } return h;}function g() { return x_2 + x_3;}const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Function f declared, parameter(s) x_2 required
 
-function g() { return x_2 + x_3;}const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_2 => { function h(x_3) { return x_4 + g(); } return h;})(1)(1);
+function g() { return x_2 + x_3;}const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [afterMarker] Function f declared, parameter(s) x_2 required
 
-function g() { return x_2 + x_3;}const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_2 => { function h(x_3) { return x_4 + g(); } return h;})(1)(1);
+function g() { return x_2 + x_3;}const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_2 = 2;const x_4 = 2;f(1)(1);
 [afterMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_4 = 2;f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
+const x_4 = 2;f(1)(1);
 [beforeMarker] Constant x_4 declared and substituted into the rest of block
 
-(x_5 => { function h(x_5) { return 2 + g(); } return h;})(1)(1);
+f(1)(1);
 [afterMarker] Constant x_4 declared and substituted into the rest of block
 
-(x_5 => { function h(x_5) { return 2 + g(); } return h;})(1)(1);
+f(1)(1);
 [beforeMarker] Function f takes in 1 as input x_5
 
 { function h(x_5) { return 2 + g(); } return h;}(1);
@@ -3538,10 +3538,10 @@ const x_4 = 2;(x_5 => { function h(x_5) { return x_4 + g(); } return h;})(1)(1);
 { function h(x_5) { return 2 + g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_5 required
 
-{ return x_5 => { return 2 + g(); };}(1);
+{ return h;}(1);
 [afterMarker] Function h declared, parameter(s) x_5 required
 
-{ return x_5 => { return 2 + g(); };}(1);
+{ return h;}(1);
 [beforeMarker] h returned
 
 h(1);
@@ -3554,10 +3554,10 @@ h(1);
 [afterMarker] Function h takes in 1 as input x_5
 
 2 + g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 2 + (2 + 0);
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 2 + (2 + 0);
 [beforeMarker] Binary expression 2 + 0 evaluated
@@ -3583,34 +3583,34 @@ exports[`Alpha renaming > multiple clash for lambda function 1`] = `
 const f = x_2 => x_3 => x_4 + g();const g = () => x_2 + x_3;const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const g = () => x_2 + x_3;const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_2 => x_3 => x_4 + g())(1)(1);
+const g = () => x_2 + x_3;const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const g = () => x_2 + x_3;const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_2 => x_3 => x_4 + g())(1)(1);
+const g = () => x_2 + x_3;const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => x_6 => x_4 + g())(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const x_3 = 0;const x_2 = 2;const x_4 = 2;(x_5 => x_6 => x_4 + g())(1)(1);
+const x_3 = 0;const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x_5 => x_6 => x_4 + g())(1)(1);
+const x_2 = 2;const x_4 = 2;f(1)(1);
 [afterMarker] Constant x_3 declared and substituted into the rest of block
 
-const x_2 = 2;const x_4 = 2;(x_5 => x_6 => x_4 + g())(1)(1);
+const x_2 = 2;const x_4 = 2;f(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x_5 => x_6 => x_4 + g())(1)(1);
+const x_4 = 2;f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_4 = 2;(x_5 => x_6 => x_4 + g())(1)(1);
+const x_4 = 2;f(1)(1);
 [beforeMarker] Constant x_4 declared and substituted into the rest of block
 
-(x_5 => x_6 => 2 + g())(1)(1);
+f(1)(1);
 [afterMarker] Constant x_4 declared and substituted into the rest of block
 
-(x_5 => x_6 => 2 + g())(1)(1);
+f(1)(1);
 [beforeMarker] 1 substituted into x_5 of f
 
 (x_6 => 2 + g())(1);
@@ -3652,34 +3652,34 @@ exports[`Alpha renaming > multiple clash for lambda function with block expressi
 const f = x => { const x_1 = 1; return x_1 => x_2 + g();};const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;(x => { const x_1 = 1; return x_1 => x_2 + g();})(1)(1);
+const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;(x => { const x_1 = 1; return x_1 => x_2 + g();})(1)(1);
+const g = () => x + x_1;const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { const x_4 = 1; return x_4 => x_2 + g();})(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const x_2 = 0;const x_1 = 2;const x = 1;(x_3 => { const x_4 = 1; return x_4 => x_2 + g();})(1)(1);
+const x_2 = 0;const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_3 => { const x_4 = 1; return x_4 => 0 + g();})(1)(1);
+const x_1 = 2;const x = 1;f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-const x_1 = 2;const x = 1;(x_3 => { const x_4 = 1; return x_4 => 0 + g();})(1)(1);
+const x_1 = 2;const x = 1;f(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_3 => { const x_4 = 1; return x_4 => 0 + g();})(1)(1);
+const x = 1;f(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 1;(x_3 => { const x_4 = 1; return x_4 => 0 + g();})(1)(1);
+const x = 1;f(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_3 => { const x_4 = 1; return x_4 => 0 + g();})(1)(1);
+f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_3 => { const x_4 = 1; return x_4 => 0 + g();})(1)(1);
+f(1)(1);
 [beforeMarker] Function f takes in 1 as input x_3
 
 { const x_4 = 1; return x_4 => 0 + g();}(1);
@@ -3739,34 +3739,34 @@ function f(x_3) { function h(x_3) { return g(); } return h;}const x_1 = 0;const 
 function f(x_3) { function h(x_3) { return g(); } return h;}const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Function f declared, parameter(s) x_3 required
 
-const x_1 = 0;const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
+const x_1 = 0;const x_2 = 0;f(1)(1);
 [afterMarker] Function f declared, parameter(s) x_3 required
 
-const x_1 = 0;const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
+const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
+const x_2 = 0;f(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
+const x_2 = 0;f(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-(x_3 => { function h(x_3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
+f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-(x_3 => { function h(x_3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
+f(1)(1);
 [beforeMarker] Function f takes in 1 as input x_3
 
-{ function h(x_3) { return (() => { return 0 + 0; })(); } return h;}(1);
+{ function h(x_3) { return g(); } return h;}(1);
 [afterMarker] Function f takes in 1 as input x_3
 
-{ function h(x_3) { return (() => { return 0 + 0; })(); } return h;}(1);
+{ function h(x_3) { return g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_3 required
 
-{ return x_3 => { return (() => { return 0 + 0; })(); };}(1);
+{ return h;}(1);
 [afterMarker] Function h declared, parameter(s) x_3 required
 
-{ return x_3 => { return (() => { return 0 + 0; })(); };}(1);
+{ return h;}(1);
 [beforeMarker] h returned
 
 h(1);
@@ -3779,10 +3779,10 @@ g();
 [afterMarker] Function h takes in 1 as input x_3
 
 g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 0 + 0;
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 0 + 0;
 [beforeMarker] Binary expression 0 + 0 evaluated
@@ -3802,40 +3802,40 @@ exports[`Alpha renaming > renaming clash in replacement for function expression 
 function f(x_1) { function h(x_2) { return g(); } return h;}function g() { return x_1 + x_2;}const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Function f declared, parameter(s) x_1 required
 
-function g() { return x_1 + x_2;}const x_1 = 0;const x_2 = 0;(x_1 => { function h(x_2) { return g(); } return h;})(1)(1);
+function g() { return x_1 + x_2;}const x_1 = 0;const x_2 = 0;f(1)(1);
 [afterMarker] Function f declared, parameter(s) x_1 required
 
-function g() { return x_1 + x_2;}const x_1 = 0;const x_2 = 0;(x_1 => { function h(x_2) { return g(); } return h;})(1)(1);
+function g() { return x_1 + x_2;}const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-const x_1 = 0;const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
+const x_1 = 0;const x_2 = 0;f(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-const x_1 = 0;const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return x_1 + x_2; })(); } return h;})(1)(1);
+const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
+const x_2 = 0;f(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x_3 => { function h(x_3) { return (() => { return 0 + x_2; })(); } return h;})(1)(1);
+const x_2 = 0;f(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-(x_3 => { function h(x_3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
+f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-(x_3 => { function h(x_3) { return (() => { return 0 + 0; })(); } return h;})(1)(1);
+f(1)(1);
 [beforeMarker] Function f takes in 1 as input x_3
 
-{ function h(x_3) { return (() => { return 0 + 0; })(); } return h;}(1);
+{ function h(x_3) { return g(); } return h;}(1);
 [afterMarker] Function f takes in 1 as input x_3
 
-{ function h(x_3) { return (() => { return 0 + 0; })(); } return h;}(1);
+{ function h(x_3) { return g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_3 required
 
-{ return x_3 => { return (() => { return 0 + 0; })(); };}(1);
+{ return h;}(1);
 [afterMarker] Function h declared, parameter(s) x_3 required
 
-{ return x_3 => { return (() => { return 0 + 0; })(); };}(1);
+{ return h;}(1);
 [beforeMarker] h returned
 
 h(1);
@@ -3848,10 +3848,10 @@ g();
 [afterMarker] Function h takes in 1 as input x_3
 
 g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 0 + 0;
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 0 + 0;
 [beforeMarker] Binary expression 0 + 0 evaluated
@@ -3871,38 +3871,38 @@ exports[`Alpha renaming > renaming clash in replacement for lambda function 1`] 
 const g = () => x_1 + x_2;const f = x_1 => x_2 => g();const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const f = x_3 => x_4 => (() => x_1 + x_2)();const x_1 = 0;const x_2 = 0;f(1)(1);
+const f = x_3 => x_4 => g();const x_1 = 0;const x_2 = 0;f(1)(1);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const f = x_3 => x_4 => (() => x_1 + x_2)();const x_1 = 0;const x_2 = 0;f(1)(1);
+const f = x_3 => x_4 => g();const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const x_1 = 0;const x_2 = 0;(x_3 => x_4 => (() => x_1 + x_2)())(1)(1);
+const x_1 = 0;const x_2 = 0;f(1)(1);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const x_1 = 0;const x_2 = 0;(x_3 => x_4 => (() => x_1 + x_2)())(1)(1);
+const x_1 = 0;const x_2 = 0;f(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x_3 => x_4 => (() => 0 + x_2)())(1)(1);
+const x_2 = 0;f(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x_2 = 0;(x_3 => x_4 => (() => 0 + x_2)())(1)(1);
+const x_2 = 0;f(1)(1);
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
 
-(x_3 => x_4 => (() => 0 + 0)())(1)(1);
+f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
-(x_3 => x_4 => (() => 0 + 0)())(1)(1);
+f(1)(1);
 [beforeMarker] 1 substituted into x_3 of f
 
-(x_4 => (() => 0 + 0)())(1);
+(x_4 => g())(1);
 [afterMarker] 1 substituted into x_3 of f
 
-(x_4 => (() => 0 + 0)())(1);
-[beforeMarker] 1 substituted into x_4 of x_4 => (() => 0 + 0)()
+(x_4 => g())(1);
+[beforeMarker] 1 substituted into x_4 of x_4 => g()
 
 g();
-[afterMarker] 1 substituted into x_4 of x_4 => (() => 0 + 0)()
+[afterMarker] 1 substituted into x_4 of x_4 => g()
 
 g();
 [beforeMarker] g runs
@@ -3928,22 +3928,22 @@ exports[`Alpha renaming > renaming clash test for functions 1`] = `
 function f(w_8) { function h(w_9) { return w_8 + w_9 + g(); } return h;}function g() { return w_9;}const w_9 = 0;f(1)(2);
 [beforeMarker] Function f declared, parameter(s) w_8 required
 
-function g() { return w_9;}const w_9 = 0;(w_8 => { function h(w_9) { return w_8 + w_9 + g(); } return h;})(1)(2);
+function g() { return w_9;}const w_9 = 0;f(1)(2);
 [afterMarker] Function f declared, parameter(s) w_8 required
 
-function g() { return w_9;}const w_9 = 0;(w_8 => { function h(w_9) { return w_8 + w_9 + g(); } return h;})(1)(2);
+function g() { return w_9;}const w_9 = 0;f(1)(2);
 [beforeMarker] Function g declared, parameter(s)  required
 
-const w_9 = 0;(w_8 => { function h(w_10) { return w_8 + w_10 + g(); } return h;})(1)(2);
+const w_9 = 0;f(1)(2);
 [afterMarker] Function g declared, parameter(s)  required
 
-const w_9 = 0;(w_8 => { function h(w_10) { return w_8 + w_10 + g(); } return h;})(1)(2);
+const w_9 = 0;f(1)(2);
 [beforeMarker] Constant w_9 declared and substituted into the rest of block
 
-(w_8 => { function h(w_10) { return w_8 + w_10 + g(); } return h;})(1)(2);
+f(1)(2);
 [afterMarker] Constant w_9 declared and substituted into the rest of block
 
-(w_8 => { function h(w_10) { return w_8 + w_10 + g(); } return h;})(1)(2);
+f(1)(2);
 [beforeMarker] Function f takes in 1 as input w_8
 
 { function h(w_10) { return 1 + w_10 + g(); } return h;}(2);
@@ -3952,10 +3952,10 @@ const w_9 = 0;(w_8 => { function h(w_10) { return w_8 + w_10 + g(); } return h;}
 { function h(w_10) { return 1 + w_10 + g(); } return h;}(2);
 [beforeMarker] Function h declared, parameter(s) w_10 required
 
-{ return w_10 => { return 1 + w_10 + g(); };}(2);
+{ return h;}(2);
 [afterMarker] Function h declared, parameter(s) w_10 required
 
-{ return w_10 => { return 1 + w_10 + g(); };}(2);
+{ return h;}(2);
 [beforeMarker] h returned
 
 h(2);
@@ -3974,10 +3974,10 @@ h(2);
 [afterMarker] Binary expression 1 + 2 evaluated
 
 3 + g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 3 + 0;
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 3 + 0;
 [beforeMarker] Binary expression 3 + 0 evaluated
@@ -3997,22 +3997,22 @@ exports[`Alpha renaming > renaming clash test for lambda function 1`] = `
 const f = w_11 => w_10 => w_11 + w_10 + g();const g = () => w_10;const w_10 = 0;f(1)(2);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const g = () => w_10;const w_10 = 0;(w_11 => w_10 => w_11 + w_10 + g())(1)(2);
+const g = () => w_10;const w_10 = 0;f(1)(2);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const g = () => w_10;const w_10 = 0;(w_11 => w_10 => w_11 + w_10 + g())(1)(2);
+const g = () => w_10;const w_10 = 0;f(1)(2);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const w_10 = 0;(w_11 => w_12 => w_11 + w_12 + g())(1)(2);
+const w_10 = 0;f(1)(2);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const w_10 = 0;(w_11 => w_12 => w_11 + w_12 + g())(1)(2);
+const w_10 = 0;f(1)(2);
 [beforeMarker] Constant w_10 declared and substituted into the rest of block
 
-(w_11 => w_12 => w_11 + w_12 + g())(1)(2);
+f(1)(2);
 [afterMarker] Constant w_10 declared and substituted into the rest of block
 
-(w_11 => w_12 => w_11 + w_12 + g())(1)(2);
+f(1)(2);
 [beforeMarker] 1 substituted into w_11 of f
 
 (w_12 => 1 + w_12 + g())(2);
@@ -4060,22 +4060,22 @@ function f(x_2) { function h(x_3) { return x_2 + g(); } return h;}const x_1 = 0;
 function f(x_2) { function h(x_3) { return x_2 + g(); } return h;}const x_1 = 0;const x = 0;f(1)(1);
 [beforeMarker] Function f declared, parameter(s) x_2 required
 
-const x_1 = 0;const x = 0;(x_2 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
+const x_1 = 0;const x = 0;f(1)(1);
 [afterMarker] Function f declared, parameter(s) x_2 required
 
-const x_1 = 0;const x = 0;(x_2 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
+const x_1 = 0;const x = 0;f(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 0;(x_2 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
+const x = 0;f(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 0;(x_2 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
+const x = 0;f(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_2 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
+f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_2 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
+f(1)(1);
 [beforeMarker] Function f takes in 1 as input x_2
 
 { function h(x_3) { return 1 + g(); } return h;}(1);
@@ -4084,10 +4084,10 @@ const x = 0;(x_2 => { function h(x_3) { return x_2 + g(); } return h;})(1)(1);
 { function h(x_3) { return 1 + g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_3 required
 
-{ return x_3 => { return 1 + g(); };}(1);
+{ return h;}(1);
 [afterMarker] Function h declared, parameter(s) x_3 required
 
-{ return x_3 => { return 1 + g(); };}(1);
+{ return h;}(1);
 [beforeMarker] h returned
 
 h(1);
@@ -4100,10 +4100,10 @@ h(1);
 [afterMarker] Function h takes in 1 as input x_3
 
 1 + g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 1 + { const x_2 = 2; return 0 + x_2 + 0;};
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 1 + { const x_2 = 2; return 0 + x_2 + 0;};
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
@@ -4147,40 +4147,40 @@ exports[`Alpha renaming > renaming clash with declaration in replacement for fun
 function f(x) { function h(x_1) { return g(); } return h;}function g() { const x_2 = 2; return x_1 + x_2 + x;}const x_1 = 0;const x = 0;f(1)(1);
 [beforeMarker] Function f declared, parameter(s) x required
 
-function g() { const x_2 = 2; return x_1 + x_2 + x;}const x_1 = 0;const x = 0;(x => { function h(x_1) { return g(); } return h;})(1)(1);
+function g() { const x_2 = 2; return x_1 + x_2 + x;}const x_1 = 0;const x = 0;f(1)(1);
 [afterMarker] Function f declared, parameter(s) x required
 
-function g() { const x_2 = 2; return x_1 + x_2 + x;}const x_1 = 0;const x = 0;(x => { function h(x_1) { return g(); } return h;})(1)(1);
+function g() { const x_2 = 2; return x_1 + x_2 + x;}const x_1 = 0;const x = 0;f(1)(1);
 [beforeMarker] Function g declared, parameter(s)  required
 
-const x_1 = 0;const x = 0;(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
+const x_1 = 0;const x = 0;f(1)(1);
 [afterMarker] Function g declared, parameter(s)  required
 
-const x_1 = 0;const x = 0;(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return x_1 + x_2 + x; })(); } return h;})(1)(1);
+const x_1 = 0;const x = 0;f(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 0;(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + x; })(); } return h;})(1)(1);
+const x = 0;f(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-const x = 0;(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + x; })(); } return h;})(1)(1);
+const x = 0;f(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;})(1)(1);
+f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-(x_2 => { function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;})(1)(1);
+f(1)(1);
 [beforeMarker] Function f takes in 1 as input x_2
 
-{ function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;}(1);
+{ function h(x_2) { return g(); } return h;}(1);
 [afterMarker] Function f takes in 1 as input x_2
 
-{ function h(x_2) { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); } return h;}(1);
+{ function h(x_2) { return g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_2 required
 
-{ return x_2 => { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); };}(1);
+{ return h;}(1);
 [afterMarker] Function h declared, parameter(s) x_2 required
 
-{ return x_2 => { return (() => { const x_2 = 2; return 0 + x_2 + 0; })(); };}(1);
+{ return h;}(1);
 [beforeMarker] h returned
 
 h(1);
@@ -4193,10 +4193,10 @@ g();
 [afterMarker] Function h takes in 1 as input x_2
 
 g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 { const x_2 = 2; return 0 + x_2 + 0;};
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 { const x_2 = 2; return 0 + x_2 + 0;};
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
@@ -4234,50 +4234,44 @@ exports[`Alpha renaming > renaming clash with declaration in replacement for lam
 const f = x => x_1 => g();const g = () => { const x_2 = 2; return x_1 + x + x_2;};const x = 0;const x_1 = 0;f(1)(1);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const g = () => { const x_2 = 2; return x_1 + x + x_2;};const x = 0;const x_1 = 0;(x => x_1 => g())(1)(1);
+const g = () => { const x_2 = 2; return x_1 + x + x_2;};const x = 0;const x_1 = 0;f(1)(1);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const g = () => { const x_2 = 2; return x_1 + x + x_2;};const x = 0;const x_1 = 0;(x => x_1 => g())(1)(1);
+const g = () => { const x_2 = 2; return x_1 + x + x_2;};const x = 0;const x_1 = 0;f(1)(1);
 [beforeMarker] Constant g declared and substituted into the rest of block
 
-const x = 0;const x_1 = 0;(x_2 => x_3 => (() => { const x_2 = 2; return x_1 + x + x_2;})())(1)(1);
+const x = 0;const x_1 = 0;f(1)(1);
 [afterMarker] Constant g declared and substituted into the rest of block
 
-const x = 0;const x_1 = 0;(x_2 => x_3 => (() => { const x_2 = 2; return x_1 + x + x_2;})())(1)(1);
+const x = 0;const x_1 = 0;f(1)(1);
 [beforeMarker] Constant x declared and substituted into the rest of block
 
-const x_1 = 0;(x_2 => x_3 => (() => { const x_2 = 2; return x_1 + 0 + x_2;})())(1)(1);
+const x_1 = 0;f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
-const x_1 = 0;(x_2 => x_3 => (() => { const x_2 = 2; return x_1 + 0 + x_2;})())(1)(1);
+const x_1 = 0;f(1)(1);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-(x_2 => x_3 => (() => { const x_2 = 2; return 0 + 0 + x_2;})())(1)(1);
+f(1)(1);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-(x_2 => x_3 => (() => { const x_2 = 2; return 0 + 0 + x_2;})())(1)(1);
+f(1)(1);
 [beforeMarker] 1 substituted into x_2 of f
 
-(x_3 => (() => { const x_2 = 2; return 0 + 0 + x_2;})())(1);
+(x_3 => g())(1);
 [afterMarker] 1 substituted into x_2 of f
 
-(x_3 => (() => { const x_2 = 2; return 0 + 0 + x_2;})())(1);
-[beforeMarker] 1 substituted into x_3 of x_3 => (() => {
-  const x_2 = 2;
-  return 0 + 0 + x_2;
-})()
+(x_3 => g())(1);
+[beforeMarker] 1 substituted into x_3 of x_3 => g()
 
 g();
-[afterMarker] 1 substituted into x_3 of x_3 => (() => {
-  const x_2 = 2;
-  return 0 + 0 + x_2;
-})()
+[afterMarker] 1 substituted into x_3 of x_3 => g()
 
 g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 { const x_2 = 2; return 0 + 0 + x_2;};
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 { const x_2 = 2; return 0 + 0 + x_2;};
 [beforeMarker] Constant x_2 declared and substituted into the rest of block
@@ -4321,16 +4315,16 @@ function f(x_3) { function h(x_2) { return x_3 + g(); } return h;}const x_1 = 1;
 function f(x_3) { function h(x_2) { return x_3 + g(); } return h;}const x_1 = 1;f(3)(2);
 [beforeMarker] Function f declared, parameter(s) x_3 required
 
-const x_1 = 1;(x_3 => { function h(x_2) { return x_3 + g(); } return h;})(3)(2);
+const x_1 = 1;f(3)(2);
 [afterMarker] Function f declared, parameter(s) x_3 required
 
-const x_1 = 1;(x_3 => { function h(x_2) { return x_3 + g(); } return h;})(3)(2);
+const x_1 = 1;f(3)(2);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-(x_3 => { function h(x_2) { return x_3 + g(); } return h;})(3)(2);
+f(3)(2);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-(x_3 => { function h(x_2) { return x_3 + g(); } return h;})(3)(2);
+f(3)(2);
 [beforeMarker] Function f takes in 3 as input x_3
 
 { function h(x_2) { return 3 + g(); } return h;}(2);
@@ -4339,10 +4333,10 @@ const x_1 = 1;(x_3 => { function h(x_2) { return x_3 + g(); } return h;})(3)(2);
 { function h(x_2) { return 3 + g(); } return h;}(2);
 [beforeMarker] Function h declared, parameter(s) x_2 required
 
-{ return x_2 => { return 3 + g(); };}(2);
+{ return h;}(2);
 [afterMarker] Function h declared, parameter(s) x_2 required
 
-{ return x_2 => { return 3 + g(); };}(2);
+{ return h;}(2);
 [beforeMarker] h returned
 
 h(2);
@@ -4355,10 +4349,10 @@ h(2);
 [afterMarker] Function h takes in 2 as input x_2
 
 3 + g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 3 + 1;
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 3 + 1;
 [beforeMarker] Binary expression 3 + 1 evaluated
@@ -4384,16 +4378,16 @@ const f = x_3 => { const h = x_2 => x_3 + g(); return h;};const x_1 = 1;f(3)(2);
 const f = x_3 => { const h = x_2 => x_3 + g(); return h;};const x_1 = 1;f(3)(2);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const x_1 = 1;(x_3 => { const h = x_2 => x_3 + g(); return h;})(3)(2);
+const x_1 = 1;f(3)(2);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const x_1 = 1;(x_3 => { const h = x_2 => x_3 + g(); return h;})(3)(2);
+const x_1 = 1;f(3)(2);
 [beforeMarker] Constant x_1 declared and substituted into the rest of block
 
-(x_3 => { const h = x_2 => x_3 + g(); return h;})(3)(2);
+f(3)(2);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
-(x_3 => { const h = x_2 => x_3 + g(); return h;})(3)(2);
+f(3)(2);
 [beforeMarker] Function f takes in 3 as input x_3
 
 { const h = x_2 => 3 + g(); return h;}(2);
@@ -4402,10 +4396,10 @@ const x_1 = 1;(x_3 => { const h = x_2 => x_3 + g(); return h;})(3)(2);
 { const h = x_2 => 3 + g(); return h;}(2);
 [beforeMarker] Constant h declared and substituted into the rest of block
 
-{ return x_2 => 3 + g();}(2);
+{ return h;}(2);
 [afterMarker] Constant h declared and substituted into the rest of block
 
-{ return x_2 => 3 + g();}(2);
+{ return h;}(2);
 [beforeMarker] h returned
 
 h(2);
@@ -4447,16 +4441,16 @@ const f = w_3 => w_2 => w_3 + g();const w_1 = 0;f(1)(1);
 const f = w_3 => w_2 => w_3 + g();const w_1 = 0;f(1)(1);
 [beforeMarker] Constant f declared and substituted into the rest of block
 
-const w_1 = 0;(w_3 => w_2 => w_3 + g())(1)(1);
+const w_1 = 0;f(1)(1);
 [afterMarker] Constant f declared and substituted into the rest of block
 
-const w_1 = 0;(w_3 => w_2 => w_3 + g())(1)(1);
+const w_1 = 0;f(1)(1);
 [beforeMarker] Constant w_1 declared and substituted into the rest of block
 
-(w_3 => w_2 => w_3 + g())(1)(1);
+f(1)(1);
 [afterMarker] Constant w_1 declared and substituted into the rest of block
 
-(w_3 => w_2 => w_3 + g())(1)(1);
+f(1)(1);
 [beforeMarker] 1 substituted into w_3 of f
 
 (w_2 => 1 + g())(1);
@@ -4549,46 +4543,46 @@ decode(inc(inc(one))) === 3;
 decode(inc(inc(one))) === 3;
 [beforeMarker] one substituted into a of inc
 
-decode(inc(f => x => f((f => x => f(x))(f)(x)))) === 3;
+decode(inc(f => x => f(one(f)(x)))) === 3;
 [afterMarker] one substituted into a of inc
 
-decode(inc(f => x => f((f => x => f(x))(f)(x)))) === 3;
-[beforeMarker] f => x => f((f => x => f(x))(f)(x)) substituted into a of inc
+decode(inc(f => x => f(one(f)(x)))) === 3;
+[beforeMarker] f => x => f(one(f)(x)) substituted into a of inc
 
-decode(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))) === 3;
-[afterMarker] f => x => f((f => x => f(x))(f)(x)) substituted into a of inc
+decode(f => x => f((f => x => f(one(f)(x)))(f)(x))) === 3;
+[afterMarker] f => x => f(one(f)(x)) substituted into a of inc
 
-decode(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))) === 3;
-[beforeMarker] f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)) substituted into a of decode
+decode(f => x => f((f => x => f(one(f)(x)))(f)(x))) === 3;
+[beforeMarker] f => x => f((f => x => f(one(f)(x)))(f)(x)) substituted into a of decode
 
-(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)))(x => x + 1)(0) === 3;
-[afterMarker] f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)) substituted into a of decode
+(f => x => f((f => x => f(one(f)(x)))(f)(x)))(x => x + 1)(0) === 3;
+[afterMarker] f => x => f((f => x => f(one(f)(x)))(f)(x)) substituted into a of decode
 
-(f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x)))(x => x + 1)(0) === 3;
-[beforeMarker] x => x + 1 substituted into f of f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))
+(f => x => f((f => x => f(one(f)(x)))(f)(x)))(x => x + 1)(0) === 3;
+[beforeMarker] x => x + 1 substituted into f of f => x => f((f => x => f(one(f)(x)))(f)(x))
 
-(x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x)))(0) === 3;
-[afterMarker] x => x + 1 substituted into f of f => x => f((f => x => f((f => x => f(x))(f)(x)))(f)(x))
+(x => (x => x + 1)((f => x => f(one(f)(x)))(x => x + 1)(x)))(0) === 3;
+[afterMarker] x => x + 1 substituted into f of f => x => f((f => x => f(one(f)(x)))(f)(x))
 
-(x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x)))(0) === 3;
-[beforeMarker] 0 substituted into x of x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x))
+(x => (x => x + 1)((f => x => f(one(f)(x)))(x => x + 1)(x)))(0) === 3;
+[beforeMarker] 0 substituted into x of x => (x => x + 1)((f => x => f(one(f)(x)))(x => x + 1)(x))
 
-(x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(0)) === 3;
-[afterMarker] 0 substituted into x of x => (x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(x))
+(x => x + 1)((f => x => f(one(f)(x)))(x => x + 1)(0)) === 3;
+[afterMarker] 0 substituted into x of x => (x => x + 1)((f => x => f(one(f)(x)))(x => x + 1)(x))
 
-(x => x + 1)((f => x => f((f => x => f(x))(f)(x)))(x => x + 1)(0)) === 3;
-[beforeMarker] x => x + 1 substituted into f of f => x => f((f => x => f(x))(f)(x))
+(x => x + 1)((f => x => f(one(f)(x)))(x => x + 1)(0)) === 3;
+[beforeMarker] x => x + 1 substituted into f of f => x => f(one(f)(x))
 
-(x => x + 1)((x => (x => x + 1)((f => x => f(x))(x => x + 1)(x)))(0)) === 3;
-[afterMarker] x => x + 1 substituted into f of f => x => f((f => x => f(x))(f)(x))
+(x => x + 1)((x => (x => x + 1)(one(x => x + 1)(x)))(0)) === 3;
+[afterMarker] x => x + 1 substituted into f of f => x => f(one(f)(x))
 
-(x => x + 1)((x => (x => x + 1)((f => x => f(x))(x => x + 1)(x)))(0)) === 3;
-[beforeMarker] 0 substituted into x of x => (x => x + 1)((f => x => f(x))(x => x + 1)(x))
+(x => x + 1)((x => (x => x + 1)(one(x => x + 1)(x)))(0)) === 3;
+[beforeMarker] 0 substituted into x of x => (x => x + 1)(one(x => x + 1)(x))
 
-(x => x + 1)((x => x + 1)((f => x => f(x))(x => x + 1)(0))) === 3;
-[afterMarker] 0 substituted into x of x => (x => x + 1)((f => x => f(x))(x => x + 1)(x))
+(x => x + 1)((x => x + 1)(one(x => x + 1)(0))) === 3;
+[afterMarker] 0 substituted into x of x => (x => x + 1)(one(x => x + 1)(x))
 
-(x => x + 1)((x => x + 1)((f => x => f(x))(x => x + 1)(0))) === 3;
+(x => x + 1)((x => x + 1)(one(x => x + 1)(0))) === 3;
 [beforeMarker] x => x + 1 substituted into f of one
 
 (x => x + 1)((x => x + 1)((x => (x => x + 1)(x))(0))) === 3;
@@ -5270,10 +5264,10 @@ f();
 [afterMarker] Function f declared, parameter(s)  required
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 { const x = 2; if (true) { 5 + x; return 2; } else {}};
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 { const x = 2; if (true) { 5 + x; return 2; } else {}};
 [beforeMarker] Constant x declared and substituted into the rest of block
@@ -5701,10 +5695,10 @@ exports[`Lambda expression > Currying 1`] = `
 const add = x => y => x + y;add(2)(3);
 [beforeMarker] Constant add declared and substituted into the rest of block
 
-(x => y => x + y)(2)(3);
+add(2)(3);
 [afterMarker] Constant add declared and substituted into the rest of block
 
-(x => y => x + y)(2)(3);
+add(2)(3);
 [beforeMarker] 2 substituted into x of add
 
 (y => 2 + y)(3);
@@ -10977,6 +10971,27 @@ true;
 "
 `;
 
+exports[`Named nullary functions > Named nullary function with block body explanation 1`] = `
+"function f() { return 42;}f();
+[noMarker] Start of evaluation
+
+function f() { return 42;}f();
+[beforeMarker] Function f declared, parameter(s)  required
+
+f();
+[afterMarker] Function f declared, parameter(s)  required
+
+f();
+[beforeMarker] f runs
+
+42;
+[afterMarker] f runs
+
+42;
+[noMarker] Evaluation complete
+"
+`;
+
 exports[`Programs > Eliminate-constant-declaration test case 1 1`] = `
 "const x = 0;
 [noMarker] Start of evaluation
@@ -11171,2992 +11186,2992 @@ f();
 [afterMarker] Function f declared, parameter(s)  required
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 f();
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 f();
 [noMarker] Maximum number of steps exceeded
@@ -15131,10 +15146,10 @@ f();
 [afterMarker] Function f declared, parameter(s)  required
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 { 'value'; 'also a value'; return 'another value';};
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 { 'value'; 'also a value'; return 'another value';};
 [beforeMarker] 'value' finished evaluating
@@ -15275,10 +15290,10 @@ f();
 [afterMarker] Function f declared, parameter(s)  required
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 { 'value'; const x = 10; return 'another value';};
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 { 'value'; const x = 10; return 'another value';};
 [beforeMarker] Constant x declared and substituted into the rest of block
@@ -15329,10 +15344,10 @@ f();
 [afterMarker] Function f declared, parameter(s)  required
 
 f();
-[beforeMarker] () => {...} runs
+[beforeMarker] f runs
 
 { 3; {}};
-[afterMarker] () => {...} runs
+[afterMarker] f runs
 
 { 3; {}};
 [beforeMarker] Empty block expression evaluated
@@ -15977,10 +15992,10 @@ g();
 [afterMarker] g() returned
 
 g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 1;
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 1;
 [noMarker] Evaluation complete
@@ -16028,10 +16043,10 @@ g();
 [afterMarker] Function f takes in 0 as input w
 
 g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 1;
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 1;
 [noMarker] Evaluation complete
@@ -16067,10 +16082,10 @@ f(0);
 [afterMarker] Function f takes in 0 as input x_1
 
 { g();};
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 { { 1; };};
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 { { 1; };};
 [beforeMarker] 1; finished evaluating
@@ -16118,10 +16133,10 @@ g();
 [afterMarker] Function f takes in 0 as input x_1
 
 g();
-[beforeMarker] () => {...} runs
+[beforeMarker] g runs
 
 1;
-[afterMarker] () => {...} runs
+[afterMarker] g runs
 
 1;
 [noMarker] Evaluation complete

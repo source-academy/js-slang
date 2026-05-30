@@ -42,29 +42,32 @@ export const customGenerator = {
     if (node.name) {
       state.write(node.name);
     } else {
-      GENERATOR.ArrowFunctionExpression!(node, state);
+      GENERATOR.ArrowFunctionExpression!.call(this, node, state);
     }
   },
   CallExpression(node: any, state: any) {
     const callee = node.callee;
     if (callee.type === 'ArrowFunctionExpression' && callee.name) {
-      GENERATOR.CallExpression!({
-        ...node,
-        callee: {
-          type: 'Identifier',
-          name: callee.name
-        }
-      }, state);
+      GENERATOR.CallExpression!.call(
+        this,
+        {
+          ...node,
+          callee: {
+            type: 'Identifier',
+            name: callee.name,
+          },
+        },
+        state,
+      );
     } else {
-      GENERATOR.CallExpression!(node, state);
+      GENERATOR.CallExpression!.call(this, node, state);
     }
-  }
+  },
 };
 
 export function generate(node: any, options?: any) {
   return astringGenerate(node, {
+    ...options,
     generator: customGenerator,
-    ...options
   });
 }
-
