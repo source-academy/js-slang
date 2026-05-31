@@ -99,7 +99,7 @@ const explainers: {
       // @ts-expect-error func.body.type can be StepperBlockExpression
     } else if (func.body.type === 'BlockStatement') {
       if (func.params.length === 0) {
-        return (func.name ? func.name : '() => {...}') + ' runs';
+        return (func.name ?? '() => {...}') + ' runs';
       }
       const paramDisplay = func.params.map(x => x.name).join(', ');
       const argDisplay: string = node.arguments
