@@ -7,6 +7,7 @@ import { Chapter } from '../../../langs';
 import assert from '../../../utils/assert';
 import type { RedexInfo } from '../..';
 import { StepperLiteral } from './Literal';
+import { getStepperNodeValue, isStepperValue } from './utils';
 
 export class StepperBinaryExpression
   extends StepperBaseNode<BinaryExpression>
@@ -37,6 +38,27 @@ export class StepperBinaryExpression
   }
 
   public override isContractible(redex: RedexInfo): boolean {
+    const leftFullyReduced = !this.left.isOneStepPossible(redex);
+    const rightFullyReduced = !this.right.isOneStepPossible(redex);
+
+    // If either side can still be reduced, this expression is not yet contractible.
+    if (!leftFullyReduced || !rightFullyReduced) {
+      return false;
+    }
+
+    // Both sides are fully reduced. Perform runtime type checking only if both sides
+    // are recognized stepper values (Literals, functions, arrays). Stuck identifiers
+    // (e.g., builtin function names) are not type-checked here.
+    if (isStepperValue(this.left) && isStepperValue(this.right)) {
+      const leftValue = getStepperNodeValue(this.left);
+      const rightValue = getStepperNodeValue(this.right);
+
+      // checkBinaryExpression will throw a RuntimeTypeError if the types are incompatible.
+      // This error propagates up to the stepper loop, which catches it and shows "Evaluation stuck".
+      checkBinaryExpression(this, this.operator, Chapter.SOURCE_2, [leftValue, rightValue]);
+    }
+
+    // Only contract if both are Literals with compatible types.
     if (this.left.type !== 'Literal' || this.right.type !== 'Literal') {
       return false;
     }
@@ -48,11 +70,6 @@ export class StepperBinaryExpression
       redex.preRedex = [this];
       return true;
     };
-
-    checkBinaryExpression(this, this.operator, Chapter.SOURCE_2, [
-      this.left.value,
-      this.right.value,
-    ]);
 
     if (leftType === 'string' && rightType === 'string') {
       if (['+', '===', '!==', '<', '>', '<=', '>='].includes(this.operator)) {
@@ -71,9 +88,9 @@ export class StepperBinaryExpression
 
   public override isOneStepPossible(redex: RedexInfo): boolean {
     return (
-      this.isContractible(redex) ||
       this.left.isOneStepPossible(redex) ||
-      this.right.isOneStepPossible(redex)
+      this.right.isOneStepPossible(redex) ||
+      this.isContractible(redex)
     );
   }
 

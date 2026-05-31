@@ -720,7 +720,7 @@ describe('List operations', () => {
   });
 });
 
-test('triple equals work on function', () => {
+test('triple equals on functions should show runtime type error in Source 2', () => {
   const code = `
     function f() { return g(); } function g() { return f(); }
     f === f;
@@ -728,6 +728,9 @@ test('triple equals work on function', () => {
     f === g;
   `;
   const steps = codify(acornParser(code));
+  // In Source 2, === is restricted to string/number operands.
+  // Using it on functions should result in a runtime type error.
+  expect(steps.join('\n')).toContain('Evaluation stuck');
   expect(steps.join('\n')).toMatchSnapshot();
 });
 
@@ -1783,5 +1786,47 @@ describe('Named nullary functions', () => {
     expect(stepWithRuns).toBeDefined();
     expect(stepWithRuns).toContain('f runs');
     expect(stepWithRuns).not.toContain('() => {...}');
+  });
+});
+
+describe('Runtime type errors on non-literal values (#1983)', () => {
+  test('Binary operation on two functions should show runtime type error (#1983)', () => {
+    const code = `
+      const f = () => 1;
+      f + f;
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('Evaluation stuck');
+    expect(steps.join('\n')).toMatchSnapshot();
+  });
+
+  test('Unary negation on a function should show runtime type error (#1983)', () => {
+    const code = `
+      const f = () => 1;
+      -f;
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('Evaluation stuck');
+    expect(steps.join('\n')).toMatchSnapshot();
+  });
+
+  test('Boolean negation on a function should show runtime type error (#1983)', () => {
+    const code = `
+      const f = () => 1;
+      !f;
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('Evaluation stuck');
+    expect(steps.join('\n')).toMatchSnapshot();
+  });
+
+  test('Binary operation on function and number should show runtime type error (#1983)', () => {
+    const code = `
+      const f = () => 1;
+      f + 1;
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('Evaluation stuck');
+    expect(steps.join('\n')).toMatchSnapshot();
   });
 });

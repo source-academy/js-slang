@@ -11103,6 +11103,78 @@ exports[`Programs > Program-reduce test case 1`] = `
 "
 `;
 
+exports[`Runtime type errors on non-literal values (#1983) > Binary operation on function and number should show runtime type error (#1983) 1`] = `
+"const f = () => 1;f + 1;
+[noMarker] Start of evaluation
+
+const f = () => 1;f + 1;
+[beforeMarker] Constant f declared and substituted into the rest of block
+
+(f) + 1;
+[afterMarker] Constant f declared and substituted into the rest of block
+
+(f) + 1;
+[beforeMarker] Line 3: Expected string or number on left hand side of operation, got function.
+
+(f) + 1;
+[noMarker] Evaluation stuck
+"
+`;
+
+exports[`Runtime type errors on non-literal values (#1983) > Binary operation on two functions should show runtime type error (#1983) 1`] = `
+"const f = () => 1;f + f;
+[noMarker] Start of evaluation
+
+const f = () => 1;f + f;
+[beforeMarker] Constant f declared and substituted into the rest of block
+
+(f) + (f);
+[afterMarker] Constant f declared and substituted into the rest of block
+
+(f) + (f);
+[beforeMarker] Line 3: Expected string or number on left hand side of operation, got function.
+
+(f) + (f);
+[noMarker] Evaluation stuck
+"
+`;
+
+exports[`Runtime type errors on non-literal values (#1983) > Boolean negation on a function should show runtime type error (#1983) 1`] = `
+"const f = () => 1;!f;
+[noMarker] Start of evaluation
+
+const f = () => 1;!f;
+[beforeMarker] Constant f declared and substituted into the rest of block
+
+!(f);
+[afterMarker] Constant f declared and substituted into the rest of block
+
+!(f);
+[beforeMarker] Line 3: Expected boolean, got function.
+
+!(f);
+[noMarker] Evaluation stuck
+"
+`;
+
+exports[`Runtime type errors on non-literal values (#1983) > Unary negation on a function should show runtime type error (#1983) 1`] = `
+"const f = () => 1;-f;
+[noMarker] Start of evaluation
+
+const f = () => 1;-f;
+[beforeMarker] Constant f declared and substituted into the rest of block
+
+-(f);
+[afterMarker] Constant f declared and substituted into the rest of block
+
+-(f);
+[beforeMarker] Line 3: Expected number, got function.
+
+-(f);
+[noMarker] Evaluation stuck
+"
+`;
+
 exports[`SOURCE 0 (Tests from previous stepper) > 1 + math_sin 1`] = `
 "1 + math_sin;
 [noMarker] Start of evaluation
@@ -14540,7 +14612,10 @@ math_sin(1) + undefined;
 [afterMarker] math_sin runs
 
 0.8414709848078965 + undefined;
-[noMarker] Evaluation complete
+[beforeMarker] Expected number on right hand side of operation, got undefined.
+
+0.8414709848078965 + undefined;
+[noMarker] Evaluation stuck
 "
 `;
 
@@ -16416,7 +16491,7 @@ false ? 1 : 2 * h(h, 5 - 1);
 "
 `;
 
-exports[`triple equals work on function 1`] = `
+exports[`triple equals on functions should show runtime type error in Source 2 1`] = `
 "function f() { return g();}function g() { return f();}f === f;g === g;f === g;
 [noMarker] Start of evaluation
 
@@ -16433,18 +16508,9 @@ function g() { return f();}(f) === (f);g === g;(f) === g;
 [afterMarker] Function g declared, parameter(s)  required
 
 (f) === (f);(g) === (g);(f) === (g);
-[beforeMarker] (f) === (f) finished evaluating
+[beforeMarker] Line 3: Expected string or number on left hand side of operation, got function.
 
-(g) === (g);(f) === (g);
-[afterMarker] (f) === (f) finished evaluating
-
-(g) === (g);(f) === (g);
-[beforeMarker] (g) === (g) finished evaluating
-
-(f) === (g);
-[afterMarker] (g) === (g) finished evaluating
-
-(f) === (g);
-[noMarker] Evaluation complete
+(f) === (f);(g) === (g);(f) === (g);
+[noMarker] Evaluation stuck
 "
 `;
