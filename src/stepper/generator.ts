@@ -92,36 +92,33 @@ const explainers: {
       throw new Error('`callee` should be function expression.');
     }
 
-    // Determine whether the called function is built-in or not and create explanation accordingly
+    if (node.callee.type === 'Identifier' && isBuiltinFunction(node.callee.name)) {
+      return `${node.callee.name} runs`;
+    }
+
     const func: StepperArrowFunctionExpression = node.callee as StepperArrowFunctionExpression;
-    if (func.name && isBuiltinFunction(func.name)) {
-      return `${func.name} runs`;
-      // @ts-expect-error func.body.type can be StepperBlockExpression
-    } else if (func.body.type === 'BlockStatement') {
-      if (func.params.length === 0) {
-        return (func.name ?? '() => {...}') + ' runs';
-      }
-      const paramDisplay = func.params.map(x => x.name).join(', ');
-      const argDisplay: string = node.arguments
-        .map(x =>
-          (x.type === 'ArrowFunctionExpression' || x.type === 'Identifier') && x.name !== undefined
-            ? x.name
-            : generate(x),
-        )
-        .join(', ');
-      return 'Function ' + func.name + ' takes in ' + argDisplay + ' as input ' + paramDisplay;
-    } else {
-      if (func.params.length === 0) {
+    if (func.params.length === 0) {
+      // @ts-expect-error func.body.type can be StepperBlockStatement
+      if (func.body.type === 'BlockStatement' && !func.name) {
+        return '() => {...} runs';
+      } else {
         return generate(func) + ' runs';
       }
-      return (
-        node.arguments.map(x => generate(x)).join(', ') +
-        ' substituted into ' +
-        func.params.map(x => x.name).join(', ') +
-        ' of ' +
-        generate(func)
-      );
     }
+
+    const paramDisplay = func.params.map(x => x.name).join(', ');
+    const argDisplay = node.arguments.map(x => generate(x)).join(', ');
+
+    let functionDisplay = '';
+    // @ts-expect-error func.body.type can be StepperBlockStatement
+    if (func.body.type === 'BlockStatement' && !func.name) {
+      functionDisplay =
+        func.params.length === 1 ? `${paramDisplay} => {...}` : `(${paramDisplay}) => {...}`;
+    } else {
+      functionDisplay = generate(func);
+    }
+
+    return `${argDisplay} substituted into ${paramDisplay} of ${functionDisplay}`;
   },
   ConditionalExpression(node) {
     const test = node.test; // test should have typeof literal

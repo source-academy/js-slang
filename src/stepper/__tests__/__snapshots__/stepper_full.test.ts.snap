@@ -89,10 +89,10 @@ factorial(100);
 [afterMarker] Function factorial declared, parameter(s) n required
 
 factorial(100);
-[beforeMarker] Function factorial takes in 100 as input n
+[beforeMarker] 100 substituted into n of factorial
 
 100 === 1 ? 1 : 100 * factorial(100 - 1);
-[afterMarker] Function factorial takes in 100 as input n
+[afterMarker] 100 substituted into n of factorial
 
 100 === 1 ? 1 : 100 * factorial(100 - 1);
 [beforeMarker] Binary expression 100 === 1 evaluated
@@ -113,10 +113,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 100 - 1 evaluated
 
 100 * factorial(99);
-[beforeMarker] Function factorial takes in 99 as input n
+[beforeMarker] 99 substituted into n of factorial
 
 100 * (99 === 1 ? 1 : 99 * factorial(99 - 1));
-[afterMarker] Function factorial takes in 99 as input n
+[afterMarker] 99 substituted into n of factorial
 
 100 * (99 === 1 ? 1 : 99 * factorial(99 - 1));
 [beforeMarker] Binary expression 99 === 1 evaluated
@@ -137,10 +137,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 99 - 1 evaluated
 
 100 * (99 * factorial(98));
-[beforeMarker] Function factorial takes in 98 as input n
+[beforeMarker] 98 substituted into n of factorial
 
 100 * (99 * (98 === 1 ? 1 : 98 * factorial(98 - 1)));
-[afterMarker] Function factorial takes in 98 as input n
+[afterMarker] 98 substituted into n of factorial
 
 100 * (99 * (98 === 1 ? 1 : 98 * factorial(98 - 1)));
 [beforeMarker] Binary expression 98 === 1 evaluated
@@ -161,10 +161,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 98 - 1 evaluated
 
 100 * (99 * (98 * factorial(97)));
-[beforeMarker] Function factorial takes in 97 as input n
+[beforeMarker] 97 substituted into n of factorial
 
 100 * (99 * (98 * (97 === 1 ? 1 : 97 * factorial(97 - 1))));
-[afterMarker] Function factorial takes in 97 as input n
+[afterMarker] 97 substituted into n of factorial
 
 100 * (99 * (98 * (97 === 1 ? 1 : 97 * factorial(97 - 1))));
 [beforeMarker] Binary expression 97 === 1 evaluated
@@ -185,10 +185,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 97 - 1 evaluated
 
 100 * (99 * (98 * (97 * factorial(96))));
-[beforeMarker] Function factorial takes in 96 as input n
+[beforeMarker] 96 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 === 1 ? 1 : 96 * factorial(96 - 1)))));
-[afterMarker] Function factorial takes in 96 as input n
+[afterMarker] 96 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 === 1 ? 1 : 96 * factorial(96 - 1)))));
 [beforeMarker] Binary expression 96 === 1 evaluated
@@ -209,10 +209,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 96 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * factorial(95)))));
-[beforeMarker] Function factorial takes in 95 as input n
+[beforeMarker] 95 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 === 1 ? 1 : 95 * factorial(95 - 1))))));
-[afterMarker] Function factorial takes in 95 as input n
+[afterMarker] 95 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 === 1 ? 1 : 95 * factorial(95 - 1))))));
 [beforeMarker] Binary expression 95 === 1 evaluated
@@ -233,10 +233,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 95 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * factorial(94))))));
-[beforeMarker] Function factorial takes in 94 as input n
+[beforeMarker] 94 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 === 1 ? 1 : 94 * factorial(94 - 1)))))));
-[afterMarker] Function factorial takes in 94 as input n
+[afterMarker] 94 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 === 1 ? 1 : 94 * factorial(94 - 1)))))));
 [beforeMarker] Binary expression 94 === 1 evaluated
@@ -257,10 +257,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 94 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * factorial(93)))))));
-[beforeMarker] Function factorial takes in 93 as input n
+[beforeMarker] 93 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 === 1 ? 1 : 93 * factorial(93 - 1))))))));
-[afterMarker] Function factorial takes in 93 as input n
+[afterMarker] 93 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 === 1 ? 1 : 93 * factorial(93 - 1))))))));
 [beforeMarker] Binary expression 93 === 1 evaluated
@@ -281,10 +281,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 93 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * factorial(92))))))));
-[beforeMarker] Function factorial takes in 92 as input n
+[beforeMarker] 92 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 === 1 ? 1 : 92 * factorial(92 - 1)))))))));
-[afterMarker] Function factorial takes in 92 as input n
+[afterMarker] 92 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 === 1 ? 1 : 92 * factorial(92 - 1)))))))));
 [beforeMarker] Binary expression 92 === 1 evaluated
@@ -305,10 +305,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 92 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * factorial(91)))))))));
-[beforeMarker] Function factorial takes in 91 as input n
+[beforeMarker] 91 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 === 1 ? 1 : 91 * factorial(91 - 1))))))))));
-[afterMarker] Function factorial takes in 91 as input n
+[afterMarker] 91 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 === 1 ? 1 : 91 * factorial(91 - 1))))))))));
 [beforeMarker] Binary expression 91 === 1 evaluated
@@ -329,10 +329,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 91 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * factorial(90))))))))));
-[beforeMarker] Function factorial takes in 90 as input n
+[beforeMarker] 90 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 === 1 ? 1 : 90 * factorial(90 - 1)))))))))));
-[afterMarker] Function factorial takes in 90 as input n
+[afterMarker] 90 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 === 1 ? 1 : 90 * factorial(90 - 1)))))))))));
 [beforeMarker] Binary expression 90 === 1 evaluated
@@ -353,10 +353,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 90 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * factorial(89)))))))))));
-[beforeMarker] Function factorial takes in 89 as input n
+[beforeMarker] 89 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 === 1 ? 1 : 89 * factorial(89 - 1))))))))))));
-[afterMarker] Function factorial takes in 89 as input n
+[afterMarker] 89 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 === 1 ? 1 : 89 * factorial(89 - 1))))))))))));
 [beforeMarker] Binary expression 89 === 1 evaluated
@@ -377,10 +377,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 89 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * factorial(88))))))))))));
-[beforeMarker] Function factorial takes in 88 as input n
+[beforeMarker] 88 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 === 1 ? 1 : 88 * factorial(88 - 1)))))))))))));
-[afterMarker] Function factorial takes in 88 as input n
+[afterMarker] 88 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 === 1 ? 1 : 88 * factorial(88 - 1)))))))))))));
 [beforeMarker] Binary expression 88 === 1 evaluated
@@ -401,10 +401,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 88 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * factorial(87)))))))))))));
-[beforeMarker] Function factorial takes in 87 as input n
+[beforeMarker] 87 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 === 1 ? 1 : 87 * factorial(87 - 1))))))))))))));
-[afterMarker] Function factorial takes in 87 as input n
+[afterMarker] 87 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 === 1 ? 1 : 87 * factorial(87 - 1))))))))))))));
 [beforeMarker] Binary expression 87 === 1 evaluated
@@ -425,10 +425,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 87 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * factorial(86))))))))))))));
-[beforeMarker] Function factorial takes in 86 as input n
+[beforeMarker] 86 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 === 1 ? 1 : 86 * factorial(86 - 1)))))))))))))));
-[afterMarker] Function factorial takes in 86 as input n
+[afterMarker] 86 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 === 1 ? 1 : 86 * factorial(86 - 1)))))))))))))));
 [beforeMarker] Binary expression 86 === 1 evaluated
@@ -449,10 +449,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 86 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * factorial(85)))))))))))))));
-[beforeMarker] Function factorial takes in 85 as input n
+[beforeMarker] 85 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 === 1 ? 1 : 85 * factorial(85 - 1))))))))))))))));
-[afterMarker] Function factorial takes in 85 as input n
+[afterMarker] 85 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 === 1 ? 1 : 85 * factorial(85 - 1))))))))))))))));
 [beforeMarker] Binary expression 85 === 1 evaluated
@@ -473,10 +473,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 85 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * factorial(84))))))))))))))));
-[beforeMarker] Function factorial takes in 84 as input n
+[beforeMarker] 84 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 === 1 ? 1 : 84 * factorial(84 - 1)))))))))))))))));
-[afterMarker] Function factorial takes in 84 as input n
+[afterMarker] 84 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 === 1 ? 1 : 84 * factorial(84 - 1)))))))))))))))));
 [beforeMarker] Binary expression 84 === 1 evaluated
@@ -497,10 +497,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 84 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * factorial(83)))))))))))))))));
-[beforeMarker] Function factorial takes in 83 as input n
+[beforeMarker] 83 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 === 1 ? 1 : 83 * factorial(83 - 1))))))))))))))))));
-[afterMarker] Function factorial takes in 83 as input n
+[afterMarker] 83 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 === 1 ? 1 : 83 * factorial(83 - 1))))))))))))))))));
 [beforeMarker] Binary expression 83 === 1 evaluated
@@ -521,10 +521,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 83 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * factorial(82))))))))))))))))));
-[beforeMarker] Function factorial takes in 82 as input n
+[beforeMarker] 82 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 === 1 ? 1 : 82 * factorial(82 - 1)))))))))))))))))));
-[afterMarker] Function factorial takes in 82 as input n
+[afterMarker] 82 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 === 1 ? 1 : 82 * factorial(82 - 1)))))))))))))))))));
 [beforeMarker] Binary expression 82 === 1 evaluated
@@ -545,10 +545,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 82 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * factorial(81)))))))))))))))))));
-[beforeMarker] Function factorial takes in 81 as input n
+[beforeMarker] 81 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 === 1 ? 1 : 81 * factorial(81 - 1))))))))))))))))))));
-[afterMarker] Function factorial takes in 81 as input n
+[afterMarker] 81 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 === 1 ? 1 : 81 * factorial(81 - 1))))))))))))))))))));
 [beforeMarker] Binary expression 81 === 1 evaluated
@@ -569,10 +569,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 81 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * factorial(80))))))))))))))))))));
-[beforeMarker] Function factorial takes in 80 as input n
+[beforeMarker] 80 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 === 1 ? 1 : 80 * factorial(80 - 1)))))))))))))))))))));
-[afterMarker] Function factorial takes in 80 as input n
+[afterMarker] 80 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 === 1 ? 1 : 80 * factorial(80 - 1)))))))))))))))))))));
 [beforeMarker] Binary expression 80 === 1 evaluated
@@ -593,10 +593,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 80 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * factorial(79)))))))))))))))))))));
-[beforeMarker] Function factorial takes in 79 as input n
+[beforeMarker] 79 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 === 1 ? 1 : 79 * factorial(79 - 1))))))))))))))))))))));
-[afterMarker] Function factorial takes in 79 as input n
+[afterMarker] 79 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 === 1 ? 1 : 79 * factorial(79 - 1))))))))))))))))))))));
 [beforeMarker] Binary expression 79 === 1 evaluated
@@ -617,10 +617,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 79 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * factorial(78))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 78 as input n
+[beforeMarker] 78 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 === 1 ? 1 : 78 * factorial(78 - 1)))))))))))))))))))))));
-[afterMarker] Function factorial takes in 78 as input n
+[afterMarker] 78 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 === 1 ? 1 : 78 * factorial(78 - 1)))))))))))))))))))))));
 [beforeMarker] Binary expression 78 === 1 evaluated
@@ -641,10 +641,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 78 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * factorial(77)))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 77 as input n
+[beforeMarker] 77 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 === 1 ? 1 : 77 * factorial(77 - 1))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 77 as input n
+[afterMarker] 77 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 === 1 ? 1 : 77 * factorial(77 - 1))))))))))))))))))))))));
 [beforeMarker] Binary expression 77 === 1 evaluated
@@ -665,10 +665,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 77 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * factorial(76))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 76 as input n
+[beforeMarker] 76 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 === 1 ? 1 : 76 * factorial(76 - 1)))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 76 as input n
+[afterMarker] 76 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 === 1 ? 1 : 76 * factorial(76 - 1)))))))))))))))))))))))));
 [beforeMarker] Binary expression 76 === 1 evaluated
@@ -689,10 +689,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 76 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * factorial(75)))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 75 as input n
+[beforeMarker] 75 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 === 1 ? 1 : 75 * factorial(75 - 1))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 75 as input n
+[afterMarker] 75 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 === 1 ? 1 : 75 * factorial(75 - 1))))))))))))))))))))))))));
 [beforeMarker] Binary expression 75 === 1 evaluated
@@ -713,10 +713,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 75 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * factorial(74))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 74 as input n
+[beforeMarker] 74 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 === 1 ? 1 : 74 * factorial(74 - 1)))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 74 as input n
+[afterMarker] 74 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 === 1 ? 1 : 74 * factorial(74 - 1)))))))))))))))))))))))))));
 [beforeMarker] Binary expression 74 === 1 evaluated
@@ -737,10 +737,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 74 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * factorial(73)))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 73 as input n
+[beforeMarker] 73 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 === 1 ? 1 : 73 * factorial(73 - 1))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 73 as input n
+[afterMarker] 73 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 === 1 ? 1 : 73 * factorial(73 - 1))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 73 === 1 evaluated
@@ -761,10 +761,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 73 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * factorial(72))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 72 as input n
+[beforeMarker] 72 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 === 1 ? 1 : 72 * factorial(72 - 1)))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 72 as input n
+[afterMarker] 72 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 === 1 ? 1 : 72 * factorial(72 - 1)))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 72 === 1 evaluated
@@ -785,10 +785,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 72 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * factorial(71)))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 71 as input n
+[beforeMarker] 71 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 === 1 ? 1 : 71 * factorial(71 - 1))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 71 as input n
+[afterMarker] 71 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 === 1 ? 1 : 71 * factorial(71 - 1))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 71 === 1 evaluated
@@ -809,10 +809,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 71 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * factorial(70))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 70 as input n
+[beforeMarker] 70 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 === 1 ? 1 : 70 * factorial(70 - 1)))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 70 as input n
+[afterMarker] 70 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 === 1 ? 1 : 70 * factorial(70 - 1)))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 70 === 1 evaluated
@@ -833,10 +833,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 70 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * factorial(69)))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 69 as input n
+[beforeMarker] 69 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 === 1 ? 1 : 69 * factorial(69 - 1))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 69 as input n
+[afterMarker] 69 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 === 1 ? 1 : 69 * factorial(69 - 1))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 69 === 1 evaluated
@@ -857,10 +857,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 69 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * factorial(68))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 68 as input n
+[beforeMarker] 68 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 === 1 ? 1 : 68 * factorial(68 - 1)))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 68 as input n
+[afterMarker] 68 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 === 1 ? 1 : 68 * factorial(68 - 1)))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 68 === 1 evaluated
@@ -881,10 +881,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 68 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * factorial(67)))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 67 as input n
+[beforeMarker] 67 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 === 1 ? 1 : 67 * factorial(67 - 1))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 67 as input n
+[afterMarker] 67 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 === 1 ? 1 : 67 * factorial(67 - 1))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 67 === 1 evaluated
@@ -905,10 +905,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 67 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * factorial(66))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 66 as input n
+[beforeMarker] 66 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 === 1 ? 1 : 66 * factorial(66 - 1)))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 66 as input n
+[afterMarker] 66 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 === 1 ? 1 : 66 * factorial(66 - 1)))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 66 === 1 evaluated
@@ -929,10 +929,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 66 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * factorial(65)))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 65 as input n
+[beforeMarker] 65 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 === 1 ? 1 : 65 * factorial(65 - 1))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 65 as input n
+[afterMarker] 65 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 === 1 ? 1 : 65 * factorial(65 - 1))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 65 === 1 evaluated
@@ -953,10 +953,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 65 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * factorial(64))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 64 as input n
+[beforeMarker] 64 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 === 1 ? 1 : 64 * factorial(64 - 1)))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 64 as input n
+[afterMarker] 64 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 === 1 ? 1 : 64 * factorial(64 - 1)))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 64 === 1 evaluated
@@ -977,10 +977,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 64 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * factorial(63)))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 63 as input n
+[beforeMarker] 63 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 === 1 ? 1 : 63 * factorial(63 - 1))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 63 as input n
+[afterMarker] 63 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 === 1 ? 1 : 63 * factorial(63 - 1))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 63 === 1 evaluated
@@ -1001,10 +1001,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 63 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * factorial(62))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 62 as input n
+[beforeMarker] 62 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 === 1 ? 1 : 62 * factorial(62 - 1)))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 62 as input n
+[afterMarker] 62 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 === 1 ? 1 : 62 * factorial(62 - 1)))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 62 === 1 evaluated
@@ -1025,10 +1025,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 62 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * factorial(61)))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 61 as input n
+[beforeMarker] 61 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 === 1 ? 1 : 61 * factorial(61 - 1))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 61 as input n
+[afterMarker] 61 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 === 1 ? 1 : 61 * factorial(61 - 1))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 61 === 1 evaluated
@@ -1049,10 +1049,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 61 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * factorial(60))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 60 as input n
+[beforeMarker] 60 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 === 1 ? 1 : 60 * factorial(60 - 1)))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 60 as input n
+[afterMarker] 60 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 === 1 ? 1 : 60 * factorial(60 - 1)))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 60 === 1 evaluated
@@ -1073,10 +1073,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 60 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * factorial(59)))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 59 as input n
+[beforeMarker] 59 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 === 1 ? 1 : 59 * factorial(59 - 1))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 59 as input n
+[afterMarker] 59 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 === 1 ? 1 : 59 * factorial(59 - 1))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 59 === 1 evaluated
@@ -1097,10 +1097,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 59 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * factorial(58))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 58 as input n
+[beforeMarker] 58 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 === 1 ? 1 : 58 * factorial(58 - 1)))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 58 as input n
+[afterMarker] 58 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 === 1 ? 1 : 58 * factorial(58 - 1)))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 58 === 1 evaluated
@@ -1121,10 +1121,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 58 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * factorial(57)))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 57 as input n
+[beforeMarker] 57 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 === 1 ? 1 : 57 * factorial(57 - 1))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 57 as input n
+[afterMarker] 57 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 === 1 ? 1 : 57 * factorial(57 - 1))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 57 === 1 evaluated
@@ -1145,10 +1145,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 57 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * factorial(56))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 56 as input n
+[beforeMarker] 56 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 === 1 ? 1 : 56 * factorial(56 - 1)))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 56 as input n
+[afterMarker] 56 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 === 1 ? 1 : 56 * factorial(56 - 1)))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 56 === 1 evaluated
@@ -1169,10 +1169,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 56 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * factorial(55)))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 55 as input n
+[beforeMarker] 55 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 === 1 ? 1 : 55 * factorial(55 - 1))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 55 as input n
+[afterMarker] 55 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 === 1 ? 1 : 55 * factorial(55 - 1))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 55 === 1 evaluated
@@ -1193,10 +1193,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 55 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * factorial(54))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 54 as input n
+[beforeMarker] 54 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 === 1 ? 1 : 54 * factorial(54 - 1)))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 54 as input n
+[afterMarker] 54 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 === 1 ? 1 : 54 * factorial(54 - 1)))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 54 === 1 evaluated
@@ -1217,10 +1217,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 54 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * factorial(53)))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 53 as input n
+[beforeMarker] 53 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 === 1 ? 1 : 53 * factorial(53 - 1))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 53 as input n
+[afterMarker] 53 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 === 1 ? 1 : 53 * factorial(53 - 1))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 53 === 1 evaluated
@@ -1241,10 +1241,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 53 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * factorial(52))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 52 as input n
+[beforeMarker] 52 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 === 1 ? 1 : 52 * factorial(52 - 1)))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 52 as input n
+[afterMarker] 52 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 === 1 ? 1 : 52 * factorial(52 - 1)))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 52 === 1 evaluated
@@ -1265,10 +1265,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 52 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * factorial(51)))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 51 as input n
+[beforeMarker] 51 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 === 1 ? 1 : 51 * factorial(51 - 1))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 51 as input n
+[afterMarker] 51 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 === 1 ? 1 : 51 * factorial(51 - 1))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 51 === 1 evaluated
@@ -1289,10 +1289,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 51 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * factorial(50))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 50 as input n
+[beforeMarker] 50 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 === 1 ? 1 : 50 * factorial(50 - 1)))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 50 as input n
+[afterMarker] 50 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 === 1 ? 1 : 50 * factorial(50 - 1)))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 50 === 1 evaluated
@@ -1313,10 +1313,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 50 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * factorial(49)))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 49 as input n
+[beforeMarker] 49 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 === 1 ? 1 : 49 * factorial(49 - 1))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 49 as input n
+[afterMarker] 49 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 === 1 ? 1 : 49 * factorial(49 - 1))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 49 === 1 evaluated
@@ -1337,10 +1337,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 49 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * factorial(48))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 48 as input n
+[beforeMarker] 48 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 === 1 ? 1 : 48 * factorial(48 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 48 as input n
+[afterMarker] 48 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 === 1 ? 1 : 48 * factorial(48 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 48 === 1 evaluated
@@ -1361,10 +1361,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 48 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * factorial(47)))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 47 as input n
+[beforeMarker] 47 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 === 1 ? 1 : 47 * factorial(47 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 47 as input n
+[afterMarker] 47 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 === 1 ? 1 : 47 * factorial(47 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 47 === 1 evaluated
@@ -1385,10 +1385,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 47 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * factorial(46))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 46 as input n
+[beforeMarker] 46 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 === 1 ? 1 : 46 * factorial(46 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 46 as input n
+[afterMarker] 46 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 === 1 ? 1 : 46 * factorial(46 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 46 === 1 evaluated
@@ -1409,10 +1409,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 46 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * factorial(45)))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 45 as input n
+[beforeMarker] 45 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 === 1 ? 1 : 45 * factorial(45 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 45 as input n
+[afterMarker] 45 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 === 1 ? 1 : 45 * factorial(45 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 45 === 1 evaluated
@@ -1433,10 +1433,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 45 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * factorial(44))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 44 as input n
+[beforeMarker] 44 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 === 1 ? 1 : 44 * factorial(44 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 44 as input n
+[afterMarker] 44 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 === 1 ? 1 : 44 * factorial(44 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 44 === 1 evaluated
@@ -1457,10 +1457,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 44 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * factorial(43)))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 43 as input n
+[beforeMarker] 43 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 === 1 ? 1 : 43 * factorial(43 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 43 as input n
+[afterMarker] 43 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 === 1 ? 1 : 43 * factorial(43 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 43 === 1 evaluated
@@ -1481,10 +1481,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 43 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * factorial(42))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 42 as input n
+[beforeMarker] 42 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 === 1 ? 1 : 42 * factorial(42 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 42 as input n
+[afterMarker] 42 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 === 1 ? 1 : 42 * factorial(42 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 42 === 1 evaluated
@@ -1505,10 +1505,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 42 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * factorial(41)))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 41 as input n
+[beforeMarker] 41 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 === 1 ? 1 : 41 * factorial(41 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 41 as input n
+[afterMarker] 41 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 === 1 ? 1 : 41 * factorial(41 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 41 === 1 evaluated
@@ -1529,10 +1529,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 41 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * factorial(40))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 40 as input n
+[beforeMarker] 40 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 === 1 ? 1 : 40 * factorial(40 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 40 as input n
+[afterMarker] 40 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 === 1 ? 1 : 40 * factorial(40 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 40 === 1 evaluated
@@ -1553,10 +1553,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 40 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * factorial(39)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 39 as input n
+[beforeMarker] 39 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 === 1 ? 1 : 39 * factorial(39 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 39 as input n
+[afterMarker] 39 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 === 1 ? 1 : 39 * factorial(39 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 39 === 1 evaluated
@@ -1577,10 +1577,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 39 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * factorial(38))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 38 as input n
+[beforeMarker] 38 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 === 1 ? 1 : 38 * factorial(38 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 38 as input n
+[afterMarker] 38 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 === 1 ? 1 : 38 * factorial(38 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 38 === 1 evaluated
@@ -1601,10 +1601,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 38 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * factorial(37)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 37 as input n
+[beforeMarker] 37 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 === 1 ? 1 : 37 * factorial(37 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 37 as input n
+[afterMarker] 37 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 === 1 ? 1 : 37 * factorial(37 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 37 === 1 evaluated
@@ -1625,10 +1625,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 37 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * factorial(36))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 36 as input n
+[beforeMarker] 36 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 === 1 ? 1 : 36 * factorial(36 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 36 as input n
+[afterMarker] 36 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 === 1 ? 1 : 36 * factorial(36 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 36 === 1 evaluated
@@ -1649,10 +1649,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 36 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * factorial(35)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 35 as input n
+[beforeMarker] 35 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 === 1 ? 1 : 35 * factorial(35 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 35 as input n
+[afterMarker] 35 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 === 1 ? 1 : 35 * factorial(35 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 35 === 1 evaluated
@@ -1673,10 +1673,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 35 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * factorial(34))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 34 as input n
+[beforeMarker] 34 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 === 1 ? 1 : 34 * factorial(34 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 34 as input n
+[afterMarker] 34 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 === 1 ? 1 : 34 * factorial(34 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 34 === 1 evaluated
@@ -1697,10 +1697,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 34 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * factorial(33)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 33 as input n
+[beforeMarker] 33 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 === 1 ? 1 : 33 * factorial(33 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 33 as input n
+[afterMarker] 33 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 === 1 ? 1 : 33 * factorial(33 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 33 === 1 evaluated
@@ -1721,10 +1721,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 33 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * factorial(32))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 32 as input n
+[beforeMarker] 32 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 === 1 ? 1 : 32 * factorial(32 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 32 as input n
+[afterMarker] 32 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 === 1 ? 1 : 32 * factorial(32 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 32 === 1 evaluated
@@ -1745,10 +1745,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 32 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * factorial(31)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 31 as input n
+[beforeMarker] 31 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 === 1 ? 1 : 31 * factorial(31 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 31 as input n
+[afterMarker] 31 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 === 1 ? 1 : 31 * factorial(31 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 31 === 1 evaluated
@@ -1769,10 +1769,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 31 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * factorial(30))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 30 as input n
+[beforeMarker] 30 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 === 1 ? 1 : 30 * factorial(30 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 30 as input n
+[afterMarker] 30 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 === 1 ? 1 : 30 * factorial(30 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 30 === 1 evaluated
@@ -1793,10 +1793,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 30 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * factorial(29)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 29 as input n
+[beforeMarker] 29 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 === 1 ? 1 : 29 * factorial(29 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 29 as input n
+[afterMarker] 29 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 === 1 ? 1 : 29 * factorial(29 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 29 === 1 evaluated
@@ -1817,10 +1817,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 29 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * factorial(28))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 28 as input n
+[beforeMarker] 28 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 === 1 ? 1 : 28 * factorial(28 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 28 as input n
+[afterMarker] 28 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 === 1 ? 1 : 28 * factorial(28 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 28 === 1 evaluated
@@ -1841,10 +1841,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 28 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * factorial(27)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 27 as input n
+[beforeMarker] 27 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 === 1 ? 1 : 27 * factorial(27 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 27 as input n
+[afterMarker] 27 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 === 1 ? 1 : 27 * factorial(27 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 27 === 1 evaluated
@@ -1865,10 +1865,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 27 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * factorial(26))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 26 as input n
+[beforeMarker] 26 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 === 1 ? 1 : 26 * factorial(26 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 26 as input n
+[afterMarker] 26 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 === 1 ? 1 : 26 * factorial(26 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 26 === 1 evaluated
@@ -1889,10 +1889,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 26 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * factorial(25)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 25 as input n
+[beforeMarker] 25 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 === 1 ? 1 : 25 * factorial(25 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 25 as input n
+[afterMarker] 25 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 === 1 ? 1 : 25 * factorial(25 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 25 === 1 evaluated
@@ -1913,10 +1913,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 25 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * factorial(24))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 24 as input n
+[beforeMarker] 24 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 === 1 ? 1 : 24 * factorial(24 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 24 as input n
+[afterMarker] 24 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 === 1 ? 1 : 24 * factorial(24 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 24 === 1 evaluated
@@ -1937,10 +1937,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 24 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * factorial(23)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 23 as input n
+[beforeMarker] 23 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 === 1 ? 1 : 23 * factorial(23 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 23 as input n
+[afterMarker] 23 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 === 1 ? 1 : 23 * factorial(23 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 23 === 1 evaluated
@@ -1961,10 +1961,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 23 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * factorial(22))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 22 as input n
+[beforeMarker] 22 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 === 1 ? 1 : 22 * factorial(22 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 22 as input n
+[afterMarker] 22 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 === 1 ? 1 : 22 * factorial(22 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 22 === 1 evaluated
@@ -1985,10 +1985,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 22 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * factorial(21)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 21 as input n
+[beforeMarker] 21 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 === 1 ? 1 : 21 * factorial(21 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 21 as input n
+[afterMarker] 21 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 === 1 ? 1 : 21 * factorial(21 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 21 === 1 evaluated
@@ -2009,10 +2009,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 21 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * factorial(20))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 20 as input n
+[beforeMarker] 20 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 === 1 ? 1 : 20 * factorial(20 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 20 as input n
+[afterMarker] 20 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 === 1 ? 1 : 20 * factorial(20 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 20 === 1 evaluated
@@ -2033,10 +2033,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 20 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * factorial(19)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 19 as input n
+[beforeMarker] 19 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 === 1 ? 1 : 19 * factorial(19 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 19 as input n
+[afterMarker] 19 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 === 1 ? 1 : 19 * factorial(19 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 19 === 1 evaluated
@@ -2057,10 +2057,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 19 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * factorial(18))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 18 as input n
+[beforeMarker] 18 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 === 1 ? 1 : 18 * factorial(18 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 18 as input n
+[afterMarker] 18 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 === 1 ? 1 : 18 * factorial(18 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 18 === 1 evaluated
@@ -2081,10 +2081,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 18 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * factorial(17)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 17 as input n
+[beforeMarker] 17 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 === 1 ? 1 : 17 * factorial(17 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 17 as input n
+[afterMarker] 17 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 === 1 ? 1 : 17 * factorial(17 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 17 === 1 evaluated
@@ -2105,10 +2105,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 17 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * factorial(16))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 16 as input n
+[beforeMarker] 16 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 === 1 ? 1 : 16 * factorial(16 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 16 as input n
+[afterMarker] 16 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 === 1 ? 1 : 16 * factorial(16 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 16 === 1 evaluated
@@ -2129,10 +2129,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 16 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * factorial(15)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 15 as input n
+[beforeMarker] 15 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 === 1 ? 1 : 15 * factorial(15 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 15 as input n
+[afterMarker] 15 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 === 1 ? 1 : 15 * factorial(15 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 15 === 1 evaluated
@@ -2153,10 +2153,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 15 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * factorial(14))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 14 as input n
+[beforeMarker] 14 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 === 1 ? 1 : 14 * factorial(14 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 14 as input n
+[afterMarker] 14 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 === 1 ? 1 : 14 * factorial(14 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 14 === 1 evaluated
@@ -2177,10 +2177,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 14 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * factorial(13)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 13 as input n
+[beforeMarker] 13 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 === 1 ? 1 : 13 * factorial(13 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 13 as input n
+[afterMarker] 13 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 === 1 ? 1 : 13 * factorial(13 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 13 === 1 evaluated
@@ -2201,10 +2201,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 13 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * factorial(12))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 12 as input n
+[beforeMarker] 12 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 === 1 ? 1 : 12 * factorial(12 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 12 as input n
+[afterMarker] 12 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 === 1 ? 1 : 12 * factorial(12 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 12 === 1 evaluated
@@ -2225,10 +2225,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 12 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * factorial(11)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 11 as input n
+[beforeMarker] 11 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 === 1 ? 1 : 11 * factorial(11 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 11 as input n
+[afterMarker] 11 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 === 1 ? 1 : 11 * factorial(11 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 11 === 1 evaluated
@@ -2249,10 +2249,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 11 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * factorial(10))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 10 as input n
+[beforeMarker] 10 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 === 1 ? 1 : 10 * factorial(10 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 10 as input n
+[afterMarker] 10 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 === 1 ? 1 : 10 * factorial(10 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 10 === 1 evaluated
@@ -2273,10 +2273,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 10 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * factorial(9)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 9 as input n
+[beforeMarker] 9 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 === 1 ? 1 : 9 * factorial(9 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 9 as input n
+[afterMarker] 9 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 === 1 ? 1 : 9 * factorial(9 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 9 === 1 evaluated
@@ -2297,10 +2297,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 9 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * factorial(8))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 8 as input n
+[beforeMarker] 8 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 === 1 ? 1 : 8 * factorial(8 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 8 as input n
+[afterMarker] 8 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 === 1 ? 1 : 8 * factorial(8 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 8 === 1 evaluated
@@ -2321,10 +2321,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 8 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * factorial(7)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 7 as input n
+[beforeMarker] 7 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 === 1 ? 1 : 7 * factorial(7 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 7 as input n
+[afterMarker] 7 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 === 1 ? 1 : 7 * factorial(7 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 7 === 1 evaluated
@@ -2345,10 +2345,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 7 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * factorial(6))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 6 as input n
+[beforeMarker] 6 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 === 1 ? 1 : 6 * factorial(6 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 6 as input n
+[afterMarker] 6 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 === 1 ? 1 : 6 * factorial(6 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 6 === 1 evaluated
@@ -2369,10 +2369,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 6 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * factorial(5)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 5 as input n
+[beforeMarker] 5 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 === 1 ? 1 : 5 * factorial(5 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 5 as input n
+[afterMarker] 5 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 === 1 ? 1 : 5 * factorial(5 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 5 === 1 evaluated
@@ -2393,10 +2393,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 5 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * factorial(4))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 4 as input n
+[beforeMarker] 4 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 === 1 ? 1 : 4 * factorial(4 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 4 as input n
+[afterMarker] 4 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 === 1 ? 1 : 4 * factorial(4 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 4 === 1 evaluated
@@ -2417,10 +2417,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 4 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 * factorial(3)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 3 as input n
+[beforeMarker] 3 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 * (3 === 1 ? 1 : 3 * factorial(3 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 3 as input n
+[afterMarker] 3 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 * (3 === 1 ? 1 : 3 * factorial(3 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 3 === 1 evaluated
@@ -2441,10 +2441,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 3 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 * (3 * factorial(2))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 2 as input n
+[beforeMarker] 2 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 * (3 * (2 === 1 ? 1 : 2 * factorial(2 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 2 as input n
+[afterMarker] 2 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 * (3 * (2 === 1 ? 1 : 2 * factorial(2 - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 2 === 1 evaluated
@@ -2465,10 +2465,10 @@ false ? 1 : 100 * factorial(100 - 1);
 [afterMarker] Binary expression 2 - 1 evaluated
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 * (3 * (2 * factorial(1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[beforeMarker] Function factorial takes in 1 as input n
+[beforeMarker] 1 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 * (3 * (2 * (1 === 1 ? 1 : 1 * factorial(1 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
-[afterMarker] Function factorial takes in 1 as input n
+[afterMarker] 1 substituted into n of factorial
 
 100 * (99 * (98 * (97 * (96 * (95 * (94 * (93 * (92 * (91 * (90 * (89 * (88 * (87 * (86 * (85 * (84 * (83 * (82 * (81 * (80 * (79 * (78 * (77 * (76 * (75 * (74 * (73 * (72 * (71 * (70 * (69 * (68 * (67 * (66 * (65 * (64 * (63 * (62 * (61 * (60 * (59 * (58 * (57 * (56 * (55 * (54 * (53 * (52 * (51 * (50 * (49 * (48 * (47 * (46 * (45 * (44 * (43 * (42 * (41 * (40 * (39 * (38 * (37 * (36 * (35 * (34 * (33 * (32 * (31 * (30 * (29 * (28 * (27 * (26 * (25 * (24 * (23 * (22 * (21 * (20 * (19 * (18 * (17 * (16 * (15 * (14 * (13 * (12 * (11 * (10 * (9 * (8 * (7 * (6 * (5 * (4 * (3 * (2 * (1 === 1 ? 1 : 1 * factorial(1 - 1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 [beforeMarker] Binary expression 1 === 1 evaluated
@@ -3218,10 +3218,10 @@ f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
 f(1)(1);
-[beforeMarker] Function f takes in 1 as input x_3
+[beforeMarker] 1 substituted into x_3 of f
 
 { function h(x_3) { return 0 + g(); } return h;}(1);
-[afterMarker] Function f takes in 1 as input x_3
+[afterMarker] 1 substituted into x_3 of f
 
 { function h(x_3) { return 0 + g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_3 required
@@ -3236,10 +3236,10 @@ h(1);
 [afterMarker] h returned
 
 h(1);
-[beforeMarker] Function h takes in 1 as input x_3
+[beforeMarker] 1 substituted into x_3 of h
 
 0 + g();
-[afterMarker] Function h takes in 1 as input x_3
+[afterMarker] 1 substituted into x_3 of h
 
 0 + g();
 [beforeMarker] g runs
@@ -3299,10 +3299,10 @@ f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
 f(1)(1);
-[beforeMarker] Function f takes in 1 as input x_3
+[beforeMarker] 1 substituted into x_3 of f
 
 { function h(x_3) { return 0 + g(); } return h;}(1);
-[afterMarker] Function f takes in 1 as input x_3
+[afterMarker] 1 substituted into x_3 of f
 
 { function h(x_3) { return 0 + g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_3 required
@@ -3317,10 +3317,10 @@ h(1);
 [afterMarker] h returned
 
 h(1);
-[beforeMarker] Function h takes in 1 as input x_3
+[beforeMarker] 1 substituted into x_3 of h
 
 0 + g();
-[afterMarker] Function h takes in 1 as input x_3
+[afterMarker] 1 substituted into x_3 of h
 
 0 + g();
 [beforeMarker] g runs
@@ -3449,10 +3449,10 @@ f(1)(1);
 [afterMarker] Constant x_4 declared and substituted into the rest of block
 
 f(1)(1);
-[beforeMarker] Function f takes in 1 as input x_5
+[beforeMarker] 1 substituted into x_5 of f
 
 { function h(x_5) { return 2 + g(); } return h;}(1);
-[afterMarker] Function f takes in 1 as input x_5
+[afterMarker] 1 substituted into x_5 of f
 
 { function h(x_5) { return 2 + g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_5 required
@@ -3467,10 +3467,10 @@ h(1);
 [afterMarker] h returned
 
 h(1);
-[beforeMarker] Function h takes in 1 as input x_5
+[beforeMarker] 1 substituted into x_5 of h
 
 2 + g();
-[afterMarker] Function h takes in 1 as input x_5
+[afterMarker] 1 substituted into x_5 of h
 
 2 + g();
 [beforeMarker] g runs
@@ -3530,10 +3530,10 @@ f(1)(1);
 [afterMarker] Constant x_4 declared and substituted into the rest of block
 
 f(1)(1);
-[beforeMarker] Function f takes in 1 as input x_5
+[beforeMarker] 1 substituted into x_5 of f
 
 { function h(x_5) { return 2 + g(); } return h;}(1);
-[afterMarker] Function f takes in 1 as input x_5
+[afterMarker] 1 substituted into x_5 of f
 
 { function h(x_5) { return 2 + g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_5 required
@@ -3548,10 +3548,10 @@ h(1);
 [afterMarker] h returned
 
 h(1);
-[beforeMarker] Function h takes in 1 as input x_5
+[beforeMarker] 1 substituted into x_5 of h
 
 2 + g();
-[afterMarker] Function h takes in 1 as input x_5
+[afterMarker] 1 substituted into x_5 of h
 
 2 + g();
 [beforeMarker] g runs
@@ -3680,10 +3680,10 @@ f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
 f(1)(1);
-[beforeMarker] Function f takes in 1 as input x_3
+[beforeMarker] 1 substituted into x_3 of f
 
 { const x_4 = 1; return x_4 => 0 + g();}(1);
-[afterMarker] Function f takes in 1 as input x_3
+[afterMarker] 1 substituted into x_3 of f
 
 { const x_4 = 1; return x_4 => 0 + g();}(1);
 [beforeMarker] Constant x_4 declared and substituted into the rest of block
@@ -3755,10 +3755,10 @@ f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
 f(1)(1);
-[beforeMarker] Function f takes in 1 as input x_3
+[beforeMarker] 1 substituted into x_3 of f
 
 { function h(x_3) { return g(); } return h;}(1);
-[afterMarker] Function f takes in 1 as input x_3
+[afterMarker] 1 substituted into x_3 of f
 
 { function h(x_3) { return g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_3 required
@@ -3773,10 +3773,10 @@ h(1);
 [afterMarker] h returned
 
 h(1);
-[beforeMarker] Function h takes in 1 as input x_3
+[beforeMarker] 1 substituted into x_3 of h
 
 g();
-[afterMarker] Function h takes in 1 as input x_3
+[afterMarker] 1 substituted into x_3 of h
 
 g();
 [beforeMarker] g runs
@@ -3824,10 +3824,10 @@ f(1)(1);
 [afterMarker] Constant x_2 declared and substituted into the rest of block
 
 f(1)(1);
-[beforeMarker] Function f takes in 1 as input x_3
+[beforeMarker] 1 substituted into x_3 of f
 
 { function h(x_3) { return g(); } return h;}(1);
-[afterMarker] Function f takes in 1 as input x_3
+[afterMarker] 1 substituted into x_3 of f
 
 { function h(x_3) { return g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_3 required
@@ -3842,10 +3842,10 @@ h(1);
 [afterMarker] h returned
 
 h(1);
-[beforeMarker] Function h takes in 1 as input x_3
+[beforeMarker] 1 substituted into x_3 of h
 
 g();
-[afterMarker] Function h takes in 1 as input x_3
+[afterMarker] 1 substituted into x_3 of h
 
 g();
 [beforeMarker] g runs
@@ -3944,10 +3944,10 @@ f(1)(2);
 [afterMarker] Constant w_9 declared and substituted into the rest of block
 
 f(1)(2);
-[beforeMarker] Function f takes in 1 as input w_8
+[beforeMarker] 1 substituted into w_8 of f
 
 { function h(w_10) { return 1 + w_10 + g(); } return h;}(2);
-[afterMarker] Function f takes in 1 as input w_8
+[afterMarker] 1 substituted into w_8 of f
 
 { function h(w_10) { return 1 + w_10 + g(); } return h;}(2);
 [beforeMarker] Function h declared, parameter(s) w_10 required
@@ -3962,10 +3962,10 @@ h(2);
 [afterMarker] h returned
 
 h(2);
-[beforeMarker] Function h takes in 2 as input w_10
+[beforeMarker] 2 substituted into w_10 of h
 
 1 + 2 + g();
-[afterMarker] Function h takes in 2 as input w_10
+[afterMarker] 2 substituted into w_10 of h
 
 1 + 2 + g();
 [beforeMarker] Binary expression 1 + 2 evaluated
@@ -4076,10 +4076,10 @@ f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
 f(1)(1);
-[beforeMarker] Function f takes in 1 as input x_2
+[beforeMarker] 1 substituted into x_2 of f
 
 { function h(x_3) { return 1 + g(); } return h;}(1);
-[afterMarker] Function f takes in 1 as input x_2
+[afterMarker] 1 substituted into x_2 of f
 
 { function h(x_3) { return 1 + g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_3 required
@@ -4094,10 +4094,10 @@ h(1);
 [afterMarker] h returned
 
 h(1);
-[beforeMarker] Function h takes in 1 as input x_3
+[beforeMarker] 1 substituted into x_3 of h
 
 1 + g();
-[afterMarker] Function h takes in 1 as input x_3
+[afterMarker] 1 substituted into x_3 of h
 
 1 + g();
 [beforeMarker] g runs
@@ -4169,10 +4169,10 @@ f(1)(1);
 [afterMarker] Constant x declared and substituted into the rest of block
 
 f(1)(1);
-[beforeMarker] Function f takes in 1 as input x_2
+[beforeMarker] 1 substituted into x_2 of f
 
 { function h(x_2) { return g(); } return h;}(1);
-[afterMarker] Function f takes in 1 as input x_2
+[afterMarker] 1 substituted into x_2 of f
 
 { function h(x_2) { return g(); } return h;}(1);
 [beforeMarker] Function h declared, parameter(s) x_2 required
@@ -4187,10 +4187,10 @@ h(1);
 [afterMarker] h returned
 
 h(1);
-[beforeMarker] Function h takes in 1 as input x_2
+[beforeMarker] 1 substituted into x_2 of h
 
 g();
-[afterMarker] Function h takes in 1 as input x_2
+[afterMarker] 1 substituted into x_2 of h
 
 g();
 [beforeMarker] g runs
@@ -4325,10 +4325,10 @@ f(3)(2);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
 f(3)(2);
-[beforeMarker] Function f takes in 3 as input x_3
+[beforeMarker] 3 substituted into x_3 of f
 
 { function h(x_2) { return 3 + g(); } return h;}(2);
-[afterMarker] Function f takes in 3 as input x_3
+[afterMarker] 3 substituted into x_3 of f
 
 { function h(x_2) { return 3 + g(); } return h;}(2);
 [beforeMarker] Function h declared, parameter(s) x_2 required
@@ -4343,10 +4343,10 @@ h(2);
 [afterMarker] h returned
 
 h(2);
-[beforeMarker] Function h takes in 2 as input x_2
+[beforeMarker] 2 substituted into x_2 of h
 
 3 + g();
-[afterMarker] Function h takes in 2 as input x_2
+[afterMarker] 2 substituted into x_2 of h
 
 3 + g();
 [beforeMarker] g runs
@@ -4388,10 +4388,10 @@ f(3)(2);
 [afterMarker] Constant x_1 declared and substituted into the rest of block
 
 f(3)(2);
-[beforeMarker] Function f takes in 3 as input x_3
+[beforeMarker] 3 substituted into x_3 of f
 
 { const h = x_2 => 3 + g(); return h;}(2);
-[afterMarker] Function f takes in 3 as input x_3
+[afterMarker] 3 substituted into x_3 of f
 
 { const h = x_2 => 3 + g(); return h;}(2);
 [beforeMarker] Constant h declared and substituted into the rest of block
@@ -5177,10 +5177,10 @@ foo(0);
 [afterMarker] Function foo declared, parameter(s) x required
 
 foo(0);
-[beforeMarker] Function foo takes in 0 as input x
+[beforeMarker] 0 substituted into x of foo
 
 {};
-[afterMarker] Function foo takes in 0 as input x
+[afterMarker] 0 substituted into x of foo
 
 {};
 [beforeMarker] Empty block expression evaluated
@@ -5204,10 +5204,10 @@ foo(0);
 [afterMarker] Function foo declared, parameter(s) x required
 
 foo(0);
-[beforeMarker] Function foo takes in 0 as input x
+[beforeMarker] 0 substituted into x of foo
 
 { 1 + 1;};
-[afterMarker] Function foo takes in 0 as input x
+[afterMarker] 0 substituted into x of foo
 
 { 1 + 1;};
 [beforeMarker] Binary expression 1 + 1 evaluated
@@ -5237,10 +5237,10 @@ foo(0);
 [afterMarker] Function foo declared, parameter(s) x required
 
 foo(0);
-[beforeMarker] Function foo takes in 0 as input x
+[beforeMarker] 0 substituted into x of foo
 
 { 1;};
-[afterMarker] Function foo takes in 0 as input x
+[afterMarker] 0 substituted into x of foo
 
 { 1;};
 [beforeMarker] 1; finished evaluating
@@ -5327,10 +5327,10 @@ h(h, 5);
 [afterMarker] Function h declared, parameter(s) f,x required
 
 h(h, 5);
-[beforeMarker] Function h takes in h, 5 as input f, x
+[beforeMarker] h, 5 substituted into f, x of h
 
 { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 5 <= 1 ? 1 : 2 * h(h, 5 - 1);};
-[afterMarker] Function h takes in h, 5 as input f, x
+[afterMarker] h, 5 substituted into f, x of h
 
 { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 5 <= 1 ? 1 : 2 * h(h, 5 - 1);};
 [beforeMarker] Function h declared, parameter(s) g,x required
@@ -5363,10 +5363,10 @@ false ? 1 : 2 * h(h, 5 - 1);
 [afterMarker] Binary expression 5 - 1 evaluated
 
 2 * h(h, 4);
-[beforeMarker] Function h takes in h, 4 as input f, x
+[beforeMarker] h, 4 substituted into f, x of h
 
 2 * { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 4 <= 1 ? 1 : 2 * h(h, 4 - 1);};
-[afterMarker] Function h takes in h, 4 as input f, x
+[afterMarker] h, 4 substituted into f, x of h
 
 2 * { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 4 <= 1 ? 1 : 2 * h(h, 4 - 1);};
 [beforeMarker] Function h declared, parameter(s) g,x required
@@ -5399,10 +5399,10 @@ false ? 1 : 2 * h(h, 5 - 1);
 [afterMarker] Binary expression 4 - 1 evaluated
 
 2 * (2 * h(h, 3));
-[beforeMarker] Function h takes in h, 3 as input g, x
+[beforeMarker] h, 3 substituted into g, x of h
 
 2 * (2 * (3 <= 1 ? 1 : 3 * h(h, 3 - 1)));
-[afterMarker] Function h takes in h, 3 as input g, x
+[afterMarker] h, 3 substituted into g, x of h
 
 2 * (2 * (3 <= 1 ? 1 : 3 * h(h, 3 - 1)));
 [beforeMarker] Binary expression 3 <= 1 evaluated
@@ -5423,10 +5423,10 @@ false ? 1 : 2 * h(h, 5 - 1);
 [afterMarker] Binary expression 3 - 1 evaluated
 
 2 * (2 * (3 * h(h, 2)));
-[beforeMarker] Function h takes in h, 2 as input g, x
+[beforeMarker] h, 2 substituted into g, x of h
 
 2 * (2 * (3 * (2 <= 1 ? 1 : 3 * h(h, 2 - 1))));
-[afterMarker] Function h takes in h, 2 as input g, x
+[afterMarker] h, 2 substituted into g, x of h
 
 2 * (2 * (3 * (2 <= 1 ? 1 : 3 * h(h, 2 - 1))));
 [beforeMarker] Binary expression 2 <= 1 evaluated
@@ -5447,10 +5447,10 @@ false ? 1 : 2 * h(h, 5 - 1);
 [afterMarker] Binary expression 2 - 1 evaluated
 
 2 * (2 * (3 * (3 * h(h, 1))));
-[beforeMarker] Function h takes in h, 1 as input f, x
+[beforeMarker] h, 1 substituted into f, x of h
 
 2 * (2 * (3 * (3 * { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 1 <= 1 ? 1 : 2 * h(h, 1 - 1);})));
-[afterMarker] Function h takes in h, 1 as input f, x
+[afterMarker] h, 1 substituted into f, x of h
 
 2 * (2 * (3 * (3 * { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 1 <= 1 ? 1 : 2 * h(h, 1 - 1);})));
 [beforeMarker] Function h declared, parameter(s) g,x required
@@ -9161,10 +9161,10 @@ equal(subsets([1, [2, null]]), list(null, list(2), list(1), list(1, 2)));
 [afterMarker] list runs
 
 equal(subsets([1, [2, null]]), list(null, list(2), list(1), list(1, 2)));
-[beforeMarker] Function subsets takes in [1, [2, null]] as input s
+[beforeMarker] [1, [2, null]] substituted into s of subsets
 
 equal({ if (is_null([1, [2, null]])) { return list(null); } else { const rest = subsets(tail([1, [2, null]])); return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[afterMarker] Function subsets takes in [1, [2, null]] as input s
+[afterMarker] [1, [2, null]] substituted into s of subsets
 
 equal({ if (is_null([1, [2, null]])) { return list(null); } else { const rest = subsets(tail([1, [2, null]])); return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
 [beforeMarker] is_null runs
@@ -9185,10 +9185,10 @@ equal({ { undefined; const rest = subsets([2, null]); return append(rest, map(x 
 [afterMarker] tail runs
 
 equal({ { undefined; const rest = subsets([2, null]); return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[beforeMarker] Function subsets takes in [2, null] as input s
+[beforeMarker] [2, null] substituted into s of subsets
 
 equal({ { undefined; const rest = { if (is_null([2, null])) { return list(null); } else { const rest = subsets(tail([2, null])); return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[afterMarker] Function subsets takes in [2, null] as input s
+[afterMarker] [2, null] substituted into s of subsets
 
 equal({ { undefined; const rest = { if (is_null([2, null])) { return list(null); } else { const rest = subsets(tail([2, null])); return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
 [beforeMarker] is_null runs
@@ -9209,10 +9209,10 @@ equal({ { undefined; const rest = { { undefined; const rest = subsets(null); ret
 [afterMarker] tail runs
 
 equal({ { undefined; const rest = { { undefined; const rest = subsets(null); return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[beforeMarker] Function subsets takes in null as input s
+[beforeMarker] null substituted into s of subsets
 
 equal({ { undefined; const rest = { { undefined; const rest = { if (is_null(null)) { return list(null); } else { const rest = subsets(tail(null)); return append(rest, map(x => pair(head(null), x), rest)); } }; return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
-[afterMarker] Function subsets takes in null as input s
+[afterMarker] null substituted into s of subsets
 
 equal({ { undefined; const rest = { { undefined; const rest = { if (is_null(null)) { return list(null); } else { const rest = subsets(tail(null)); return append(rest, map(x => pair(head(null), x), rest)); } }; return append(rest, map(x => pair(head([2, null]), x), rest)); } }; return append(rest, map(x => pair(head([1, [2, null]]), x), rest)); }}, list(null, list(2), list(1), list(1, 2)));
 [beforeMarker] is_null runs
@@ -14267,10 +14267,10 @@ expmod(4, 3, 5);
 [afterMarker] Function expmod declared, parameter(s) base,exp,m required
 
 expmod(4, 3, 5);
-[beforeMarker] Function expmod takes in 4, 3, 5 as input base, exp, m
+[beforeMarker] 4, 3, 5 substituted into base, exp, m of expmod
 
 { if (3 === 0) { return 1; } else { if (is_even(3)) { const to_half = expmod(4, 3 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 3 - 1, 5) % 5; } }};
-[afterMarker] Function expmod takes in 4, 3, 5 as input base, exp, m
+[afterMarker] 4, 3, 5 substituted into base, exp, m of expmod
 
 { if (3 === 0) { return 1; } else { if (is_even(3)) { const to_half = expmod(4, 3 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 3 - 1, 5) % 5; } }};
 [beforeMarker] Binary expression 3 === 0 evaluated
@@ -14285,10 +14285,10 @@ expmod(4, 3, 5);
 [afterMarker] If statement evaluated, condition false, proceed to else block
 
 { { undefined; if (is_even(3)) { const to_half = expmod(4, 3 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 3 - 1, 5) % 5; } }};
-[beforeMarker] Function is_even takes in 3 as input n
+[beforeMarker] 3 substituted into n of is_even
 
 { { undefined; if (3 % 2 === 0) { const to_half = expmod(4, 3 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 3 - 1, 5) % 5; } }};
-[afterMarker] Function is_even takes in 3 as input n
+[afterMarker] 3 substituted into n of is_even
 
 { { undefined; if (3 % 2 === 0) { const to_half = expmod(4, 3 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 3 - 1, 5) % 5; } }};
 [beforeMarker] Binary expression 3 % 2 evaluated
@@ -14345,10 +14345,10 @@ expmod(4, 3, 5);
 [afterMarker] Binary expression 3 - 1 evaluated
 
 4 * expmod(4, 2, 5) % 5;
-[beforeMarker] Function expmod takes in 4, 2, 5 as input base, exp, m
+[beforeMarker] 4, 2, 5 substituted into base, exp, m of expmod
 
 4 * { if (2 === 0) { return 1; } else { if (is_even(2)) { const to_half = expmod(4, 2 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 2 - 1, 5) % 5; } }} % 5;
-[afterMarker] Function expmod takes in 4, 2, 5 as input base, exp, m
+[afterMarker] 4, 2, 5 substituted into base, exp, m of expmod
 
 4 * { if (2 === 0) { return 1; } else { if (is_even(2)) { const to_half = expmod(4, 2 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 2 - 1, 5) % 5; } }} % 5;
 [beforeMarker] Binary expression 2 === 0 evaluated
@@ -14363,10 +14363,10 @@ expmod(4, 3, 5);
 [afterMarker] If statement evaluated, condition false, proceed to else block
 
 4 * { { undefined; if (is_even(2)) { const to_half = expmod(4, 2 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 2 - 1, 5) % 5; } }} % 5;
-[beforeMarker] Function is_even takes in 2 as input n
+[beforeMarker] 2 substituted into n of is_even
 
 4 * { { undefined; if (2 % 2 === 0) { const to_half = expmod(4, 2 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 2 - 1, 5) % 5; } }} % 5;
-[afterMarker] Function is_even takes in 2 as input n
+[afterMarker] 2 substituted into n of is_even
 
 4 * { { undefined; if (2 % 2 === 0) { const to_half = expmod(4, 2 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 2 - 1, 5) % 5; } }} % 5;
 [beforeMarker] Binary expression 2 % 2 evaluated
@@ -14393,10 +14393,10 @@ expmod(4, 3, 5);
 [afterMarker] Binary expression 2 / 2 evaluated
 
 4 * { { undefined; { undefined; const to_half = expmod(4, 1, 5); return to_half * to_half % 5; } }} % 5;
-[beforeMarker] Function expmod takes in 4, 1, 5 as input base, exp, m
+[beforeMarker] 4, 1, 5 substituted into base, exp, m of expmod
 
 4 * { { undefined; { undefined; const to_half = { if (1 === 0) { return 1; } else { if (is_even(1)) { const to_half = expmod(4, 1 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
-[afterMarker] Function expmod takes in 4, 1, 5 as input base, exp, m
+[afterMarker] 4, 1, 5 substituted into base, exp, m of expmod
 
 4 * { { undefined; { undefined; const to_half = { if (1 === 0) { return 1; } else { if (is_even(1)) { const to_half = expmod(4, 1 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
 [beforeMarker] Binary expression 1 === 0 evaluated
@@ -14411,10 +14411,10 @@ expmod(4, 3, 5);
 [afterMarker] If statement evaluated, condition false, proceed to else block
 
 4 * { { undefined; { undefined; const to_half = { { undefined; if (is_even(1)) { const to_half = expmod(4, 1 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
-[beforeMarker] Function is_even takes in 1 as input n
+[beforeMarker] 1 substituted into n of is_even
 
 4 * { { undefined; { undefined; const to_half = { { undefined; if (1 % 2 === 0) { const to_half = expmod(4, 1 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
-[afterMarker] Function is_even takes in 1 as input n
+[afterMarker] 1 substituted into n of is_even
 
 4 * { { undefined; { undefined; const to_half = { { undefined; if (1 % 2 === 0) { const to_half = expmod(4, 1 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 1 - 1, 5) % 5; } } }; return to_half * to_half % 5; } }} % 5;
 [beforeMarker] Binary expression 1 % 2 evaluated
@@ -14471,10 +14471,10 @@ expmod(4, 3, 5);
 [afterMarker] Binary expression 1 - 1 evaluated
 
 4 * { { undefined; { undefined; const to_half = 4 * expmod(4, 0, 5) % 5; return to_half * to_half % 5; } }} % 5;
-[beforeMarker] Function expmod takes in 4, 0, 5 as input base, exp, m
+[beforeMarker] 4, 0, 5 substituted into base, exp, m of expmod
 
 4 * { { undefined; { undefined; const to_half = 4 * { if (0 === 0) { return 1; } else { if (is_even(0)) { const to_half = expmod(4, 0 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 0 - 1, 5) % 5; } } } % 5; return to_half * to_half % 5; } }} % 5;
-[afterMarker] Function expmod takes in 4, 0, 5 as input base, exp, m
+[afterMarker] 4, 0, 5 substituted into base, exp, m of expmod
 
 4 * { { undefined; { undefined; const to_half = 4 * { if (0 === 0) { return 1; } else { if (is_even(0)) { const to_half = expmod(4, 0 / 2, 5); return to_half * to_half % 5; } else { return 4 * expmod(4, 0 - 1, 5) % 5; } } } % 5; return to_half * to_half % 5; } }} % 5;
 [beforeMarker] Binary expression 0 === 0 evaluated
@@ -14774,10 +14774,10 @@ foo(0);
 [afterMarker] Function foo declared, parameter(s) x required
 
 foo(0);
-[beforeMarker] Function foo takes in 0 as input x
+[beforeMarker] 0 substituted into x of foo
 
 { if (false) { 1; } else { 2; }};
-[afterMarker] Function foo takes in 0 as input x
+[afterMarker] 0 substituted into x of foo
 
 { if (false) { 1; } else { 2; }};
 [beforeMarker] If statement evaluated, condition false, proceed to else block
@@ -14819,10 +14819,10 @@ foo(0);
 [afterMarker] Function foo declared, parameter(s) x required
 
 foo(0);
-[beforeMarker] Function foo takes in 0 as input x
+[beforeMarker] 0 substituted into x of foo
 
 { 3; if (false) { 1; } else { 2; }};
-[afterMarker] Function foo takes in 0 as input x
+[afterMarker] 0 substituted into x of foo
 
 { 3; if (false) { 1; } else { 2; }};
 [beforeMarker] If statement evaluated, condition false, proceed to else block
@@ -14870,10 +14870,10 @@ foo(0);
 [afterMarker] Function foo declared, parameter(s) x required
 
 foo(0);
-[beforeMarker] Function foo takes in 0 as input x
+[beforeMarker] 0 substituted into x of foo
 
 { if (true) { 1; } else { 2; }};
-[afterMarker] Function foo takes in 0 as input x
+[afterMarker] 0 substituted into x of foo
 
 { if (true) { 1; } else { 2; }};
 [beforeMarker] If statement evaluated, condition true, proceed to if block
@@ -14915,10 +14915,10 @@ foo(0);
 [afterMarker] Function foo declared, parameter(s) x required
 
 foo(0);
-[beforeMarker] Function foo takes in 0 as input x
+[beforeMarker] 0 substituted into x of foo
 
 { 3; if (true) { 1; } else { 2; }};
-[afterMarker] Function foo takes in 0 as input x
+[afterMarker] 0 substituted into x of foo
 
 { 3; if (true) { 1; } else { 2; }};
 [beforeMarker] If statement evaluated, condition true, proceed to if block
@@ -15563,10 +15563,10 @@ f(undefined);
 [afterMarker] Function f declared, parameter(s) g required
 
 f(undefined);
-[beforeMarker] Function f takes in undefined as input g
+[beforeMarker] undefined substituted into g of f
 
 { const z = 3; return (y => z + z)(z);};
-[afterMarker] Function f takes in undefined as input g
+[afterMarker] undefined substituted into g of f
 
 { const z = 3; return (y => z + z)(z);};
 [beforeMarker] Constant z declared and substituted into the rest of block
@@ -15614,10 +15614,10 @@ f(y => y + 1);
 [afterMarker] Function f declared, parameter(s) g required
 
 f(y => y + 1);
-[beforeMarker] Function f takes in y => y + 1 as input g
+[beforeMarker] y => y + 1 substituted into g of f
 
 { const z = 3; return (y => y + 1)(z);};
-[afterMarker] Function f takes in y => y + 1 as input g
+[afterMarker] y => y + 1 substituted into g of f
 
 { const z = 3; return (y => y + 1)(z);};
 [beforeMarker] Constant z declared and substituted into the rest of block
@@ -15665,10 +15665,10 @@ repeat_pattern(5, plus_one, 0);
 [afterMarker] Function plus_one declared, parameter(s) x required
 
 repeat_pattern(5, plus_one, 0);
-[beforeMarker] Function repeat_pattern takes in 5, plus_one, 0 as input n, p, r
+[beforeMarker] 5, plus_one, 0 substituted into n, p, r of repeat_pattern
 
 { function twice_p(r) { return plus_one(plus_one(r)); } return 5 === 0 ? 0 : 5 % 2 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);};
-[afterMarker] Function repeat_pattern takes in 5, plus_one, 0 as input n, p, r
+[afterMarker] 5, plus_one, 0 substituted into n, p, r of repeat_pattern
 
 { function twice_p(r) { return plus_one(plus_one(r)); } return 5 === 0 ? 0 : 5 % 2 !== 0 ? repeat_pattern(5 - 1, plus_one, plus_one(0)) : repeat_pattern(5 / 2, twice_p, 0);};
 [beforeMarker] Function twice_p declared, parameter(s) r required
@@ -15719,10 +15719,10 @@ repeat_pattern(4, plus_one, plus_one(0));
 [afterMarker] Binary expression 5 - 1 evaluated
 
 repeat_pattern(4, plus_one, plus_one(0));
-[beforeMarker] Function plus_one takes in 0 as input x
+[beforeMarker] 0 substituted into x of plus_one
 
 repeat_pattern(4, plus_one, 0 + 1);
-[afterMarker] Function plus_one takes in 0 as input x
+[afterMarker] 0 substituted into x of plus_one
 
 repeat_pattern(4, plus_one, 0 + 1);
 [beforeMarker] Binary expression 0 + 1 evaluated
@@ -15731,10 +15731,10 @@ repeat_pattern(4, plus_one, 1);
 [afterMarker] Binary expression 0 + 1 evaluated
 
 repeat_pattern(4, plus_one, 1);
-[beforeMarker] Function repeat_pattern takes in 4, plus_one, 1 as input n, p, r
+[beforeMarker] 4, plus_one, 1 substituted into n, p, r of repeat_pattern
 
 { function twice_p(r) { return plus_one(plus_one(r)); } return 4 === 0 ? 1 : 4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);};
-[afterMarker] Function repeat_pattern takes in 4, plus_one, 1 as input n, p, r
+[afterMarker] 4, plus_one, 1 substituted into n, p, r of repeat_pattern
 
 { function twice_p(r) { return plus_one(plus_one(r)); } return 4 === 0 ? 1 : 4 % 2 !== 0 ? repeat_pattern(4 - 1, plus_one, plus_one(1)) : repeat_pattern(4 / 2, twice_p, 1);};
 [beforeMarker] Function twice_p declared, parameter(s) r required
@@ -15785,10 +15785,10 @@ repeat_pattern(2, twice_p, 1);
 [afterMarker] Binary expression 4 / 2 evaluated
 
 repeat_pattern(2, twice_p, 1);
-[beforeMarker] Function repeat_pattern takes in 2, twice_p, 1 as input n, p, r
+[beforeMarker] 2, twice_p, 1 substituted into n, p, r of repeat_pattern
 
 { function twice_p(r) { return twice_p(twice_p(r)); } return 2 === 0 ? 1 : 2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);};
-[afterMarker] Function repeat_pattern takes in 2, twice_p, 1 as input n, p, r
+[afterMarker] 2, twice_p, 1 substituted into n, p, r of repeat_pattern
 
 { function twice_p(r) { return twice_p(twice_p(r)); } return 2 === 0 ? 1 : 2 % 2 !== 0 ? repeat_pattern(2 - 1, twice_p, twice_p(1)) : repeat_pattern(2 / 2, twice_p, 1);};
 [beforeMarker] Function twice_p declared, parameter(s) r required
@@ -15839,10 +15839,10 @@ repeat_pattern(1, twice_p, 1);
 [afterMarker] Binary expression 2 / 2 evaluated
 
 repeat_pattern(1, twice_p, 1);
-[beforeMarker] Function repeat_pattern takes in 1, twice_p, 1 as input n, p, r
+[beforeMarker] 1, twice_p, 1 substituted into n, p, r of repeat_pattern
 
 { function twice_p(r) { return twice_p(twice_p(r)); } return 1 === 0 ? 1 : 1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);};
-[afterMarker] Function repeat_pattern takes in 1, twice_p, 1 as input n, p, r
+[afterMarker] 1, twice_p, 1 substituted into n, p, r of repeat_pattern
 
 { function twice_p(r) { return twice_p(twice_p(r)); } return 1 === 0 ? 1 : 1 % 2 !== 0 ? repeat_pattern(1 - 1, twice_p, twice_p(1)) : repeat_pattern(1 / 2, twice_p, 1);};
 [beforeMarker] Function twice_p declared, parameter(s) r required
@@ -15893,22 +15893,22 @@ repeat_pattern(0, twice_p, twice_p(1));
 [afterMarker] Binary expression 1 - 1 evaluated
 
 repeat_pattern(0, twice_p, twice_p(1));
-[beforeMarker] Function twice_p takes in 1 as input r
+[beforeMarker] 1 substituted into r of twice_p
 
 repeat_pattern(0, twice_p, twice_p(twice_p(1)));
-[afterMarker] Function twice_p takes in 1 as input r
+[afterMarker] 1 substituted into r of twice_p
 
 repeat_pattern(0, twice_p, twice_p(twice_p(1)));
-[beforeMarker] Function twice_p takes in 1 as input r
+[beforeMarker] 1 substituted into r of twice_p
 
 repeat_pattern(0, twice_p, twice_p(plus_one(plus_one(1))));
-[afterMarker] Function twice_p takes in 1 as input r
+[afterMarker] 1 substituted into r of twice_p
 
 repeat_pattern(0, twice_p, twice_p(plus_one(plus_one(1))));
-[beforeMarker] Function plus_one takes in 1 as input x
+[beforeMarker] 1 substituted into x of plus_one
 
 repeat_pattern(0, twice_p, twice_p(plus_one(1 + 1)));
-[afterMarker] Function plus_one takes in 1 as input x
+[afterMarker] 1 substituted into x of plus_one
 
 repeat_pattern(0, twice_p, twice_p(plus_one(1 + 1)));
 [beforeMarker] Binary expression 1 + 1 evaluated
@@ -15917,10 +15917,10 @@ repeat_pattern(0, twice_p, twice_p(plus_one(2)));
 [afterMarker] Binary expression 1 + 1 evaluated
 
 repeat_pattern(0, twice_p, twice_p(plus_one(2)));
-[beforeMarker] Function plus_one takes in 2 as input x
+[beforeMarker] 2 substituted into x of plus_one
 
 repeat_pattern(0, twice_p, twice_p(2 + 1));
-[afterMarker] Function plus_one takes in 2 as input x
+[afterMarker] 2 substituted into x of plus_one
 
 repeat_pattern(0, twice_p, twice_p(2 + 1));
 [beforeMarker] Binary expression 2 + 1 evaluated
@@ -15929,16 +15929,16 @@ repeat_pattern(0, twice_p, twice_p(3));
 [afterMarker] Binary expression 2 + 1 evaluated
 
 repeat_pattern(0, twice_p, twice_p(3));
-[beforeMarker] Function twice_p takes in 3 as input r
+[beforeMarker] 3 substituted into r of twice_p
 
 repeat_pattern(0, twice_p, plus_one(plus_one(3)));
-[afterMarker] Function twice_p takes in 3 as input r
+[afterMarker] 3 substituted into r of twice_p
 
 repeat_pattern(0, twice_p, plus_one(plus_one(3)));
-[beforeMarker] Function plus_one takes in 3 as input x
+[beforeMarker] 3 substituted into x of plus_one
 
 repeat_pattern(0, twice_p, plus_one(3 + 1));
-[afterMarker] Function plus_one takes in 3 as input x
+[afterMarker] 3 substituted into x of plus_one
 
 repeat_pattern(0, twice_p, plus_one(3 + 1));
 [beforeMarker] Binary expression 3 + 1 evaluated
@@ -15947,10 +15947,10 @@ repeat_pattern(0, twice_p, plus_one(4));
 [afterMarker] Binary expression 3 + 1 evaluated
 
 repeat_pattern(0, twice_p, plus_one(4));
-[beforeMarker] Function plus_one takes in 4 as input x
+[beforeMarker] 4 substituted into x of plus_one
 
 repeat_pattern(0, twice_p, 4 + 1);
-[afterMarker] Function plus_one takes in 4 as input x
+[afterMarker] 4 substituted into x of plus_one
 
 repeat_pattern(0, twice_p, 4 + 1);
 [beforeMarker] Binary expression 4 + 1 evaluated
@@ -15959,10 +15959,10 @@ repeat_pattern(0, twice_p, 5);
 [afterMarker] Binary expression 4 + 1 evaluated
 
 repeat_pattern(0, twice_p, 5);
-[beforeMarker] Function repeat_pattern takes in 0, twice_p, 5 as input n, p, r
+[beforeMarker] 0, twice_p, 5 substituted into n, p, r of repeat_pattern
 
 { function twice_p(r) { return twice_p(twice_p(r)); } return 0 === 0 ? 5 : 0 % 2 !== 0 ? repeat_pattern(0 - 1, twice_p, twice_p(5)) : repeat_pattern(0 / 2, twice_p, 5);};
-[afterMarker] Function repeat_pattern takes in 0, twice_p, 5 as input n, p, r
+[afterMarker] 0, twice_p, 5 substituted into n, p, r of repeat_pattern
 
 { function twice_p(r) { return twice_p(twice_p(r)); } return 0 === 0 ? 5 : 0 % 2 !== 0 ? repeat_pattern(0 - 1, twice_p, twice_p(5)) : repeat_pattern(0 / 2, twice_p, 5);};
 [beforeMarker] Function twice_p declared, parameter(s) r required
@@ -16004,10 +16004,10 @@ f(0);
 [afterMarker] Function f declared, parameter(s) x required
 
 f(0);
-[beforeMarker] Function f takes in 0 as input x
+[beforeMarker] 0 substituted into x of f
 
 { { return 1; }};
-[afterMarker] Function f takes in 0 as input x
+[afterMarker] 0 substituted into x of f
 
 { { return 1; }};
 [beforeMarker] return 1; finished evaluating
@@ -16049,10 +16049,10 @@ f(0);
 [afterMarker] Constant y declared and substituted into the rest of block
 
 f(0);
-[beforeMarker] Function f takes in 0 as input x
+[beforeMarker] 0 substituted into x of f
 
 { const y_1 = 0; return g();};
-[afterMarker] Function f takes in 0 as input x
+[afterMarker] 0 substituted into x of f
 
 { const y_1 = 0; return g();};
 [beforeMarker] Constant y_1 declared and substituted into the rest of block
@@ -16088,10 +16088,10 @@ h(1);
 [afterMarker] Function h declared, parameter(s) w required
 
 h(1);
-[beforeMarker] Function h takes in 1 as input w
+[beforeMarker] 1 substituted into w of h
 
 { function f(w) { return g(); } function g() { return 1; } return f(0);};
-[afterMarker] Function h takes in 1 as input w
+[afterMarker] 1 substituted into w of h
 
 { function f(w) { return g(); } function g() { return 1; } return f(0);};
 [beforeMarker] Function f declared, parameter(s) w required
@@ -16112,10 +16112,10 @@ f(0);
 [afterMarker] f(0) returned
 
 f(0);
-[beforeMarker] Function f takes in 0 as input w
+[beforeMarker] 0 substituted into w of f
 
 g();
-[afterMarker] Function f takes in 0 as input w
+[afterMarker] 0 substituted into w of f
 
 g();
 [beforeMarker] g runs
@@ -16151,10 +16151,10 @@ f(0);
 [afterMarker] Constant x declared and substituted into the rest of block
 
 f(0);
-[beforeMarker] Function f takes in 0 as input x_1
+[beforeMarker] 0 substituted into x_1 of f
 
 { g();};
-[afterMarker] Function f takes in 0 as input x_1
+[afterMarker] 0 substituted into x_1 of f
 
 { g();};
 [beforeMarker] g runs
@@ -16202,10 +16202,10 @@ f(0);
 [afterMarker] Constant x declared and substituted into the rest of block
 
 f(0);
-[beforeMarker] Function f takes in 0 as input x_1
+[beforeMarker] 0 substituted into x_1 of f
 
 g();
-[afterMarker] Function f takes in 0 as input x_1
+[afterMarker] 0 substituted into x_1 of f
 
 g();
 [beforeMarker] g runs
@@ -16313,10 +16313,10 @@ h(h, 5);
 [afterMarker] Function h declared, parameter(s) f,x required
 
 h(h, 5);
-[beforeMarker] Function h takes in h, 5 as input f, x
+[beforeMarker] h, 5 substituted into f, x of h
 
 { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 5 <= 1 ? 1 : 2 * h(h, 5 - 1);};
-[afterMarker] Function h takes in h, 5 as input f, x
+[afterMarker] h, 5 substituted into f, x of h
 
 { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 5 <= 1 ? 1 : 2 * h(h, 5 - 1);};
 [beforeMarker] Function h declared, parameter(s) g,x required
@@ -16349,10 +16349,10 @@ false ? 1 : 2 * h(h, 5 - 1);
 [afterMarker] Binary expression 5 - 1 evaluated
 
 2 * h(h, 4);
-[beforeMarker] Function h takes in h, 4 as input f, x
+[beforeMarker] h, 4 substituted into f, x of h
 
 2 * { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 4 <= 1 ? 1 : 2 * h(h, 4 - 1);};
-[afterMarker] Function h takes in h, 4 as input f, x
+[afterMarker] h, 4 substituted into f, x of h
 
 2 * { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 4 <= 1 ? 1 : 2 * h(h, 4 - 1);};
 [beforeMarker] Function h declared, parameter(s) g,x required
@@ -16385,10 +16385,10 @@ false ? 1 : 2 * h(h, 5 - 1);
 [afterMarker] Binary expression 4 - 1 evaluated
 
 2 * (2 * h(h, 3));
-[beforeMarker] Function h takes in h, 3 as input g, x
+[beforeMarker] h, 3 substituted into g, x of h
 
 2 * (2 * (3 <= 1 ? 1 : 3 * h(h, 3 - 1)));
-[afterMarker] Function h takes in h, 3 as input g, x
+[afterMarker] h, 3 substituted into g, x of h
 
 2 * (2 * (3 <= 1 ? 1 : 3 * h(h, 3 - 1)));
 [beforeMarker] Binary expression 3 <= 1 evaluated
@@ -16409,10 +16409,10 @@ false ? 1 : 2 * h(h, 5 - 1);
 [afterMarker] Binary expression 3 - 1 evaluated
 
 2 * (2 * (3 * h(h, 2)));
-[beforeMarker] Function h takes in h, 2 as input g, x
+[beforeMarker] h, 2 substituted into g, x of h
 
 2 * (2 * (3 * (2 <= 1 ? 1 : 3 * h(h, 2 - 1))));
-[afterMarker] Function h takes in h, 2 as input g, x
+[afterMarker] h, 2 substituted into g, x of h
 
 2 * (2 * (3 * (2 <= 1 ? 1 : 3 * h(h, 2 - 1))));
 [beforeMarker] Binary expression 2 <= 1 evaluated
@@ -16433,10 +16433,10 @@ false ? 1 : 2 * h(h, 5 - 1);
 [afterMarker] Binary expression 2 - 1 evaluated
 
 2 * (2 * (3 * (3 * h(h, 1))));
-[beforeMarker] Function h takes in h, 1 as input f, x
+[beforeMarker] h, 1 substituted into f, x of h
 
 2 * (2 * (3 * (3 * { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 1 <= 1 ? 1 : 2 * h(h, 1 - 1);})));
-[afterMarker] Function h takes in h, 1 as input f, x
+[afterMarker] h, 1 substituted into f, x of h
 
 2 * (2 * (3 * (3 * { function h(g, x) { return x <= 1 ? 1 : 3 * g(h, x - 1); } return 1 <= 1 ? 1 : 2 * h(h, 1 - 1);})));
 [beforeMarker] Function h declared, parameter(s) g,x required

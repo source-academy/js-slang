@@ -1830,3 +1830,33 @@ describe('Runtime type errors on non-literal values (#1983)', () => {
     expect(steps.join('\n')).toMatchSnapshot();
   });
 });
+
+describe('Consistency and unnamed function explanations (#1981, #1982)', () => {
+  test('Named function with block body uses substitution phrasing (#1982)', () => {
+    const code = `
+      const f = x => { return x + 1; };
+      f(2);
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('2 substituted into x of f');
+    expect(steps.join('\n')).not.toContain('takes in');
+  });
+
+  test('Unnamed function with block body uses substitution phrasing with lambda representation (#1981, #1982)', () => {
+    const code = `
+      (x => { return x + 1; })(1);
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('1 substituted into x of x => {...}');
+    expect(steps.join('\n')).not.toContain('undefined');
+  });
+
+  test('Multi-parameter unnamed function with block body uses substitution phrasing with lambda representation (#1981, #1982)', () => {
+    const code = `
+      ((x, y) => { return x + y; })(1, 2);
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('1, 2 substituted into x, y of (x, y) => {...}');
+    expect(steps.join('\n')).not.toContain('undefined');
+  });
+});
