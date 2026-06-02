@@ -7,6 +7,7 @@ import assert from '../../../utils/assert';
 import { GeneralRuntimeError } from '../../../errors/base';
 import type { RedexInfo } from '../..';
 import { StepperLiteral } from './Literal';
+import { getStepperNodeValue, isStepperValue } from './utils';
 
 export class StepperUnaryExpression
   extends StepperBaseNode<UnaryExpression>
@@ -62,6 +63,24 @@ export class StepperUnaryExpression
   }
 
   public override isContractible(redex: RedexInfo): boolean {
+    const argumentFullyReduced = !this.argument.isOneStepPossible(redex);
+
+    // If the argument can still be reduced, this expression is not yet contractible.
+    if (!argumentFullyReduced) {
+      return false;
+    }
+
+    // The argument is fully reduced. Perform runtime type checking only if the argument
+    // is a recognized stepper value (Literal, function, array). Stuck identifiers
+    // (e.g., builtin function names) are not type-checked here.
+    if (isStepperValue(this.argument)) {
+      const argValue = getStepperNodeValue(this.argument);
+
+      // checkUnaryExpression will throw a RuntimeTypeError if the type is incompatible.
+      checkUnaryExpression(this, this.operator, argValue);
+    }
+
+    // Only contract if the argument is a Literal with a compatible type.
     if (this.argument.type !== 'Literal') return false;
 
     const valueType = typeof this.argument.value;
@@ -69,8 +88,6 @@ export class StepperUnaryExpression
       redex.preRedex = [this];
       return true;
     };
-
-    checkUnaryExpression(this, this.operator, this.argument.value);
 
     if (this.operator === '!' && valueType === 'boolean') {
       return markContractible();
@@ -84,7 +101,7 @@ export class StepperUnaryExpression
   }
 
   public override isOneStepPossible(redex: RedexInfo): boolean {
-    return this.isContractible(redex) || this.argument.isOneStepPossible(redex);
+    return this.argument.isOneStepPossible(redex) || this.isContractible(redex);
   }
 
   public override contract(redex: RedexInfo): StepperLiteral {

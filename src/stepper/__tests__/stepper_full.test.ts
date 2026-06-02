@@ -1,5 +1,5 @@
 import * as acorn from 'acorn';
-import * as astring from 'astring';
+import { generate as customGenerate } from '../utils';
 import { describe, expect, test } from 'vitest';
 import createContext from '../../createContext';
 import { mockContext } from '../../utils/testing/mocks';
@@ -17,7 +17,7 @@ function codify(node: StepperBaseNode) {
     if (ast === undefined || ast.type === undefined) {
       return '';
     }
-    return astring.generate(ast);
+    return customGenerate(ast);
   };
   return steps.map(prop => {
     const code = stringify(prop.ast).replace(/\n/g, '').replace(/\s+/g, ' ');
@@ -720,7 +720,7 @@ describe('List operations', () => {
   });
 });
 
-test('triple equals work on function', () => {
+test('triple equals on functions should show runtime type error in Source 2', () => {
   const code = `
     function f() { return g(); } function g() { return f(); }
     f === f;
@@ -728,6 +728,9 @@ test('triple equals work on function', () => {
     f === g;
   `;
   const steps = codify(acornParser(code));
+  // In Source 2, === is restricted to string/number operands.
+  // Using it on functions should result in a runtime type error.
+  expect(steps.join('\n')).toContain('Evaluation stuck');
   expect(steps.join('\n')).toMatchSnapshot();
 });
 
@@ -1623,9 +1626,7 @@ describe('Error handling on calling functions', () => {
     `;
     const steps = codify(acornParser(code));
     expect(steps.join('\n')).toMatchSnapshot();
-    expect(steps[steps.length - 1]).toEqual(
-      '(a => { return a;})();\n[noMarker] Evaluation stuck\n',
-    );
+    expect(steps[steps.length - 1]).toEqual('foo();\n[noMarker] Evaluation stuck\n');
   });
 
   test('Incorrect number of argument (more)', () => {
@@ -1637,9 +1638,7 @@ describe('Error handling on calling functions', () => {
     `;
     const steps = codify(acornParser(code));
     expect(steps.join('\n')).toMatchSnapshot();
-    expect(steps[steps.length - 1]).toEqual(
-      '(a => { return a;})(1, 2, 3);\n[noMarker] Evaluation stuck\n',
-    );
+    expect(steps[steps.length - 1]).toEqual('foo(1, 2, 3);\n[noMarker] Evaluation stuck\n');
   });
 });
 
@@ -1747,5 +1746,117 @@ describe('Test catching undefined variables', () => {
     const steps = codify(acornParser(code));
     expect(steps.join('\n')).toMatchSnapshot();
     expect(steps[steps.length - 1].includes('not declared')).toBe(false);
+  });
+});
+
+describe('Higher-order recursion display bug (#1805)', () => {
+  test('Stepper trace for nested recursive function', () => {
+    const code = `
+      function h(f, x) {
+          function h(g, x) {
+              return x <= 1 ? 1 : 3 * g(f, x - 1);
+          }
+          return x <= 1 ? 1 : 2 * f(h, x - 1);
+      }
+      h(h, 5);
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toMatchSnapshot();
+
+    // Verify it doesn't leak the raw anonymous lambda code inside the returned explanation
+    const stepWithNestedCall = steps.find(step => step.includes('1 <= 1 ? 1 : 2 * h('));
+    expect(stepWithNestedCall).toBeDefined();
+    expect(stepWithNestedCall).not.toContain('((g, x) => {');
+  });
+});
+
+describe('Named nullary functions', () => {
+  test('Named nullary function with block body explanation', () => {
+    const code = `
+      function f() {
+        return 42;
+      }
+      f();
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toMatchSnapshot();
+
+    // The explanation should say "f runs" instead of "() => {...} runs"
+    const stepWithRuns = steps.find(step => step.includes('runs'));
+    expect(stepWithRuns).toBeDefined();
+    expect(stepWithRuns).toContain('f runs');
+    expect(stepWithRuns).not.toContain('() => {...}');
+  });
+});
+
+describe('Runtime type errors on non-literal values (#1983)', () => {
+  test('Binary operation on two functions should show runtime type error (#1983)', () => {
+    const code = `
+      const f = () => 1;
+      f + f;
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('Evaluation stuck');
+    expect(steps.join('\n')).toMatchSnapshot();
+  });
+
+  test('Unary negation on a function should show runtime type error (#1983)', () => {
+    const code = `
+      const f = () => 1;
+      -f;
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('Evaluation stuck');
+    expect(steps.join('\n')).toMatchSnapshot();
+  });
+
+  test('Boolean negation on a function should show runtime type error (#1983)', () => {
+    const code = `
+      const f = () => 1;
+      !f;
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('Evaluation stuck');
+    expect(steps.join('\n')).toMatchSnapshot();
+  });
+
+  test('Binary operation on function and number should show runtime type error (#1983)', () => {
+    const code = `
+      const f = () => 1;
+      f + 1;
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('Evaluation stuck');
+    expect(steps.join('\n')).toMatchSnapshot();
+  });
+});
+
+describe('Consistency and unnamed function explanations (#1981, #1982)', () => {
+  test('Named function with block body uses substitution phrasing (#1982)', () => {
+    const code = `
+      const f = x => { return x + 1; };
+      f(2);
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('2 substituted into x of f');
+    expect(steps.join('\n')).not.toContain('takes in');
+  });
+
+  test('Unnamed function with block body uses substitution phrasing with lambda representation (#1981, #1982)', () => {
+    const code = `
+      (x => { return x + 1; })(1);
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('1 substituted into x of x => {...}');
+    expect(steps.join('\n')).not.toContain('undefined');
+  });
+
+  test('Multi-parameter unnamed function with block body uses substitution phrasing with lambda representation (#1981, #1982)', () => {
+    const code = `
+      ((x, y) => { return x + y; })(1, 2);
+    `;
+    const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toContain('1, 2 substituted into x, y of (x, y) => {...}');
+    expect(steps.join('\n')).not.toContain('undefined');
   });
 });
