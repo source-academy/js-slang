@@ -101,6 +101,14 @@ export function getSourceVariableDeclaration(decl: es.VariableDeclaration) {
   };
 }
 
+/**
+ * Get the name of an import/export specifier endpoint. ES2022 allows these to be
+ * string literals (e.g. `export { x as "y" }`); Source only supports identifier
+ * names, so fall back to the literal's stringified value.
+ */
+export const getSpecifierName = (node: es.Identifier | es.Literal): string =>
+  node.type === 'Identifier' ? node.name : `${node.value}`;
+
 export const getImportedName = (
   spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier,
 ) => {
@@ -108,9 +116,9 @@ export const getImportedName = (
     case 'ImportDefaultSpecifier':
       return 'default';
     case 'ImportSpecifier':
-      return spec.imported.name;
+      return getSpecifierName(spec.imported);
     case 'ExportSpecifier':
-      return spec.local.name;
+      return getSpecifierName(spec.local);
   }
 };
 
@@ -119,18 +127,18 @@ export const specifierToString = (
 ) => {
   switch (spec.type) {
     case 'ImportSpecifier': {
-      if (spec.imported.name === spec.local.name) {
-        return spec.imported.name;
+      if (getSpecifierName(spec.imported) === spec.local.name) {
+        return getSpecifierName(spec.imported);
       }
-      return `${spec.imported.name} as ${spec.local.name}`;
+      return `${getSpecifierName(spec.imported)} as ${spec.local.name}`;
     }
     case 'ImportDefaultSpecifier':
       return `default as ${spec.local.name}`;
     case 'ExportSpecifier': {
-      if (spec.local.name === spec.exported.name) {
-        return spec.local.name;
+      if (getSpecifierName(spec.local) === getSpecifierName(spec.exported)) {
+        return getSpecifierName(spec.local);
       }
-      return `${spec.local.name} as ${spec.exported.name}`;
+      return `${getSpecifierName(spec.local)} as ${getSpecifierName(spec.exported)}`;
     }
   }
 };

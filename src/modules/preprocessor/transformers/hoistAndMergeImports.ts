@@ -2,7 +2,7 @@ import type es from 'estree';
 import { partition } from 'lodash';
 
 import * as create from '../../../utils/ast/astCreator';
-import { getModuleDeclarationSource } from '../../../utils/ast/helpers';
+import { getModuleDeclarationSource, getSpecifierName } from '../../../utils/ast/helpers';
 import { isImportDeclaration } from '../../../utils/ast/typeGuards';
 import Dict from '../../../utils/dict';
 import { isSourceModule } from '../../utils';
@@ -47,7 +47,7 @@ export default function hoistAndMergeImports(program: es.Program) {
           break;
         }
         case 'ImportSpecifier': {
-          const importedName = spec.imported.name;
+          const importedName = getSpecifierName(spec.imported);
           regularSpecifiers.setdefault(importedName, new Set()).add(declaredName);
           break;
         }

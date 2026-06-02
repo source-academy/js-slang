@@ -1,5 +1,6 @@
 import type { ImportSpecifier } from 'estree';
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude';
+import { getSpecifierName } from '../../../utils/ast/helpers';
 import { RuleError } from '../../errors';
 import { defineRule } from '../../types';
 import syntaxBlacklist from '../syntax';
@@ -18,7 +19,7 @@ export default defineRule(
   'no-import-with-default',
   {
     ImportSpecifier(node) {
-      if (node.imported.name === defaultExportLookupName) {
+      if (getSpecifierName(node.imported) === defaultExportLookupName) {
         return [new NoImportSpecifierWithDefaultError(node)];
       }
       return [];

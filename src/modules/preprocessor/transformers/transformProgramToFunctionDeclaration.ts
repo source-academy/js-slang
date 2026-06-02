@@ -4,7 +4,7 @@ import type es from 'estree';
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude';
 import assert from '../../../utils/assert';
 import * as create from '../../../utils/ast/astCreator';
-import { getModuleDeclarationSource } from '../../../utils/ast/helpers';
+import { getModuleDeclarationSource, getSpecifierName } from '../../../utils/ast/helpers';
 import {
   isDeclaration,
   isDirective,
@@ -130,8 +130,10 @@ const getExportedNameToIdentifierMap = (
       // Exported names can be renamed using the 'as' keyword. As such, the
       // exported names and their corresponding identifiers might be different.
       node.specifiers.forEach((node: es.ExportSpecifier): void => {
-        const exportedName = node.exported.name;
-        const identifier = node.local;
+        const exportedName = getSpecifierName(node.exported);
+        // Source only supports identifier locals (string-literal re-exports are
+        // not part of the language), so this is always an Identifier.
+        const identifier = node.local as es.Identifier;
         exportedNameToIdentifierMap[exportedName] = identifier;
       });
     }
@@ -200,7 +202,7 @@ export const createAccessImportStatements = (
           importDeclaration = createImportedNameDeclaration(
             invokedFunctionResultVariableName,
             importSpecifier.local,
-            importSpecifier.imported.name,
+            getSpecifierName(importSpecifier.imported),
           );
           break;
         case 'ImportDefaultSpecifier':

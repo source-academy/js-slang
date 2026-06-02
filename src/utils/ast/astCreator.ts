@@ -24,6 +24,7 @@ export const importDeclaration = (
   type: 'ImportDeclaration',
   source: literal(source),
   specifiers,
+  attributes: [],
   loc,
 });
 

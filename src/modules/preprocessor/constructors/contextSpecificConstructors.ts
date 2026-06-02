@@ -2,6 +2,7 @@ import type es from 'estree';
 
 import { accessExportFunctionName } from '../../../stdlib/localImport.prelude';
 import * as create from '../../../utils/ast/astCreator';
+import { getSpecifierName } from '../../../utils/ast/helpers';
 
 /**
  * Constructs a call to the `pair` function.
@@ -78,7 +79,7 @@ export const cloneAndStripImportSpecifier = (
       return {
         type: 'ImportSpecifier',
         local: create.identifier(importSpecifier.local.name),
-        imported: create.identifier(importSpecifier.imported.name),
+        imported: create.identifier(getSpecifierName(importSpecifier.imported)),
       };
     case 'ImportDefaultSpecifier':
       return {

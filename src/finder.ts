@@ -10,6 +10,7 @@ import type {
 } from 'estree';
 
 import type { Context, Node } from './types';
+import { getSpecifierName } from './utils/ast/helpers';
 import {
   ancestor,
   base,
@@ -90,7 +91,7 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
         }
       },
       ImportSpecifier(node: ImportSpecifier, _state: any, _callback: WalkerCallback<any>) {
-        if (node.imported.name === identifier.name) {
+        if (getSpecifierName(node.imported) === identifier.name) {
           declarations.push(node.imported);
         }
       },

@@ -1,5 +1,6 @@
 import type { ExportNamedDeclaration } from 'estree';
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude';
+import { getSpecifierName } from '../../../utils/ast/helpers';
 import { mapAndFilter } from '../../../utils/misc';
 import { RuleError } from '../../errors';
 import { defineRule } from '../../types';
@@ -20,7 +21,7 @@ export default defineRule(
   {
     ExportNamedDeclaration(node) {
       return mapAndFilter(node.specifiers, specifier =>
-        specifier.exported.name === defaultExportLookupName
+        getSpecifierName(specifier.exported) === defaultExportLookupName
           ? new NoExportNamedDeclarationWithDefaultError(node)
           : undefined,
       );

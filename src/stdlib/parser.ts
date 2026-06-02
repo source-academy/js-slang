@@ -4,7 +4,7 @@ import { parse as sourceParse } from '../parser/parser';
 import { SourceParser } from '../parser/source';
 import { libraryParserLanguage } from '../parser/source/syntax';
 import type { Context, ContiguousArrayElements, Node, NodeTypeToNode, Value } from '../types';
-import { getSourceVariableDeclaration } from '../utils/ast/helpers';
+import { getSourceVariableDeclaration, getSpecifierName } from '../utils/ast/helpers';
 import { isDeclaration } from '../utils/ast/typeGuards';
 import { oneLine } from '../utils/formatters';
 import { RuntimeSourceError } from '../errors/base';
@@ -135,7 +135,7 @@ const transformers: ASTTransformers = {
       declaration ? this.transform(declaration) : specifiers.map(this.transform),
     ]);
   },
-  ExportSpecifier: node => vector_to_list(['name', node.exported.name]),
+  ExportSpecifier: node => vector_to_list(['name', getSpecifierName(node.exported)]),
   ExpressionStatement({ expression }) {
     return this.transform(expression);
   },
@@ -180,7 +180,7 @@ const transformers: ASTTransformers = {
     ]);
   },
   ImportDefaultSpecifier: () => vector_to_list(['default']),
-  ImportSpecifier: node => vector_to_list(['name', node.imported.name]),
+  ImportSpecifier: node => vector_to_list(['name', getSpecifierName(node.imported)]),
   Literal: ({ value }) => vector_to_list(['literal', value]),
   LogicalExpression(node) {
     return vector_to_list([

@@ -1,4 +1,4 @@
-import type { BinaryExpression, BinaryOperator, Comment, SourceLocation } from 'estree';
+import type { BinaryExpression, BinaryOperator, Comment, Expression, SourceLocation } from 'estree';
 import type { StepperExpression, StepperPattern } from '..';
 import { convert } from '../../generator';
 import { StepperBaseNode } from '../../interface';
@@ -28,7 +28,9 @@ export class StepperBinaryExpression
   static create(node: BinaryExpression) {
     return new StepperBinaryExpression(
       node.operator,
-      convert(node.left),
+      // `left` is `Expression | PrivateIdentifier`; private-in expressions are
+      // not valid in Source, so the operand is always an Expression.
+      convert(node.left as Expression),
       convert(node.right),
       node.leadingComments,
       node.trailingComments,

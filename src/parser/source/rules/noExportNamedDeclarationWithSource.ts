@@ -1,5 +1,5 @@
 import type { ExportNamedDeclaration } from 'estree';
-import { specifierToString } from '../../../utils/ast/helpers';
+import { getSpecifierName, specifierToString } from '../../../utils/ast/helpers';
 import { RuleError } from '../../errors';
 import { defineRule } from '../../types';
 
@@ -11,7 +11,7 @@ export class NoExportNamedDeclarationWithSourceError extends RuleError<ExportNam
   public override elaborate() {
     const [imports, exps] = this.node.specifiers.reduce(
       ([ins, outs], spec) => [
-        [...ins, spec.local.name],
+        [...ins, getSpecifierName(spec.local)],
         [...outs, specifierToString(spec)],
       ],
       [[], []] as [string[], string[]],
