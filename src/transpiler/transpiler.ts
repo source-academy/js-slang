@@ -293,7 +293,9 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
       create.mutateToCallExpression(node, globalIds.binaryOp, [
         create.literal(operator),
         create.literal(chapter),
-        left,
+        // `left` is `Expression | PrivateIdentifier`; private-in expressions are
+        // not valid in Source, so the operand is always an Expression.
+        left as es.Expression,
         right,
         create.literal(line),
         create.literal(column),

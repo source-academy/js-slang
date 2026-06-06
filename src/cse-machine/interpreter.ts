@@ -24,6 +24,7 @@ import * as ast from '../utils/ast/astCreator';
 import {
   filterImportDeclarations,
   getSourceVariableDeclaration,
+  getSpecifierName,
   hasNoDeclarations,
   hasNoImportDeclarations,
 } from '../utils/ast/helpers';
@@ -237,7 +238,7 @@ function evaluateImports(program: es.Program, context: Context) {
 
           switch (spec.type) {
             case 'ImportSpecifier': {
-              obj = functions[spec.imported.name];
+              obj = functions[getSpecifierName(spec.imported)];
               break;
             }
             case 'ImportDefaultSpecifier': {

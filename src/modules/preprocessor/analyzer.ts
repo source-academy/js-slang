@@ -7,6 +7,7 @@ import {
   getIdsFromDeclaration,
   getImportedName,
   getModuleDeclarationSource,
+  getSpecifierName,
 } from '../../utils/ast/helpers';
 import { isModuleDeclaration, isNamespaceSpecifier } from '../../utils/ast/typeGuards';
 import Dict, { ArrayMap } from '../../utils/dict';
@@ -87,7 +88,7 @@ export default function analyzeImportsAndExports(
         }
 
         for (const spec of node.specifiers) {
-          moduleDocs[sourceModule].add(spec.exported.name);
+          moduleDocs[sourceModule].add(getSpecifierName(spec.exported));
         }
 
         if (!node.source) continue;
@@ -103,7 +104,7 @@ export default function analyzeImportsAndExports(
           if (dstModuleDocs.size === 0) throw new UndefinedNamespaceImportError(dstModule, node);
 
           if (node.exported) {
-            moduleDocs[sourceModule].add(node.exported.name);
+            moduleDocs[sourceModule].add(getSpecifierName(node.exported));
           } else {
             for (const each of dstModuleDocs) {
               if (each === 'default') {
