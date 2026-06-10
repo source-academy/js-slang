@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.prod.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "declaration": false,
+    "incremental": false,
+    "composite": false,
+    "noEmit": false,
+    "sourceMap": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "sicp_publish",
+    "src/**/__tests__/**",
+    "src/**/__mocks__/**",
+    "src/utils/testing"
+  ]
+}
