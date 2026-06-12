@@ -241,6 +241,19 @@ export function callIfFuncAndRightArgs(
 }
 
 /**
+ * Convenience wrapper for {@link callIfFuncAndRightArgs} that doesn't require any
+ * extra metadata to be passed into the function.
+ */
+export function callWithoutMetadata<T extends (...args: any[]) => any>(
+  f: T,
+  ...args: Parameters<T>
+): ReturnType<T>;
+export function callWithoutMetadata(f: unknown, ...args: any[]): unknown;
+export function callWithoutMetadata(f: unknown, ...args: any[]) {
+  return callIfFuncAndRightArgs(f, -1, -1, null, undefined, ...args);
+}
+
+/**
  * Augment the given function with the necessary information for it to be called
  * properly by {@link callIfFuncAndRightArgs}. It won't redefine any existing details
  * that the function has already been wrapped with.
