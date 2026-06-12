@@ -247,9 +247,7 @@ export function callIfFuncAndRightArgs(
 export function callWithoutMetadata<T extends (...args: any[]) => any>(
   f: T,
   ...args: Parameters<T>
-): ReturnType<T>;
-export function callWithoutMetadata(f: unknown, ...args: any[]): unknown;
-export function callWithoutMetadata(f: unknown, ...args: any[]) {
+): ReturnType<T> {
   return callIfFuncAndRightArgs(f, -1, -1, null, undefined, ...args);
 }
 
