@@ -37,21 +37,41 @@ export class RuntimeTypeError extends RuntimeSourceError<Node> {
 
 type TypeOfConstants =
   | 'array'
-  | 'boolean'
   | 'bigint'
+  | 'boolean'
   | 'function'
-  | 'number'
   | 'null'
+  | 'number'
   | 'object'
   | 'regexp'
   | 'string'
   | 'undefined';
 
+type TypeOfConstantToType<T extends TypeOfConstants> = T extends 'array'
+  ? unknown[]
+  : T extends 'bigint'
+    ? bigint
+    : T extends 'boolean'
+      ? boolean
+      : T extends 'function'
+        ? (...args: any[]) => any
+        : T extends 'null'
+          ? null
+          : T extends 'number'
+            ? number
+            : T extends 'object'
+              ? object
+              : T extends 'string'
+                ? string
+                : T extends 'undefined'
+                  ? undefined
+                  : never;
+
 /**
  * A wrapper around the typeof operator to account for `null` and arrays.
  */
-export function typeOf(v: boolean): 'boolean';
 export function typeOf(v: bigint): 'bigint';
+export function typeOf(v: boolean): 'boolean';
 export function typeOf(v: number): 'number';
 export function typeOf(v: RegExp): 'regexp';
 export function typeOf(v: string): 'string';
@@ -344,13 +364,33 @@ export function assertFunctionOfLength(
 }
 
 /**
- * Function for checking if the given `obj` is a tuple of the given length.
+ * Function for checking if the given `obj` is a tuple of the given length. Optionally, providing a type guard
+ * function or string can type check the entire tuple.
  */
 export function isTupleOfLength<T extends number, U>(obj: U[], l: T): obj is TupleOfLength<T, U>;
+export function isTupleOfLength<T extends number, U>(
+  obj: unknown,
+  l: T,
+  guard: (arg: unknown) => arg is U,
+): obj is TupleOfLength<T, U>;
+export function isTupleOfLength<T extends number, U extends TypeOfConstants>(
+  obj: unknown,
+  l: T,
+  guard: U,
+): obj is TupleOfLength<T, TypeOfConstantToType<U>>;
 export function isTupleOfLength<T extends number>(obj: unknown, l: T): obj is TupleOfLength<T>;
-export function isTupleOfLength<T extends number>(obj: unknown, l: T): obj is TupleOfLength<T> {
+export function isTupleOfLength<T extends number>(
+  obj: unknown,
+  l: T,
+  guard?: ((arg: unknown) => boolean) | TypeOfConstants,
+): boolean {
   if (!Array.isArray(obj)) return false;
-  return obj.length === l;
+  if (obj.length !== l) return false;
+
+  if (typeof guard === 'string') return obj.every(each => typeOf(each) === guard);
+  else if (guard !== undefined) return obj.every(guard);
+
+  return true;
 }
 
 /**

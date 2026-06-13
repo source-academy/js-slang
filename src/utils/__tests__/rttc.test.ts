@@ -422,6 +422,24 @@ describe(rttc.isTupleOfLength, () => {
     const tup: unknown = [0, 0];
     expect(rttc.isTupleOfLength(tup, 1)).toEqual(false);
   });
+
+  test('with predicate type guard', () => {
+    const tup: unknown = [0, 0];
+    if (rttc.isTupleOfLength(tup, 2, x => typeof x === 'number')) {
+      expectTypeOf(tup).toEqualTypeOf<[number, number]>();
+    } else {
+      expect.fail();
+    }
+  });
+
+  test('with string type guard', () => {
+    const tup: unknown = [0, 0];
+    if (rttc.isTupleOfLength(tup, 2, 'number')) {
+      expectTypeOf(tup).toEqualTypeOf<[number, number]>();
+    } else {
+      expect.fail();
+    }
+  });
 });
 
 describe(rttc.isNumberWithinRange, () => {
