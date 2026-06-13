@@ -47,7 +47,7 @@ type TypeOfConstants =
   | 'string'
   | 'undefined';
 
-type TypeOfConstantToType<T extends TypeOfConstants> = T extends 'array'
+export type TypeOfConstantToType<T extends TypeOfConstants> = T extends 'array'
   ? unknown[]
   : T extends 'bigint'
     ? bigint
@@ -61,11 +61,13 @@ type TypeOfConstantToType<T extends TypeOfConstants> = T extends 'array'
             ? number
             : T extends 'object'
               ? object
-              : T extends 'string'
-                ? string
-                : T extends 'undefined'
-                  ? undefined
-                  : never;
+              : T extends 'regexp'
+                ? RegExp
+                : T extends 'string'
+                  ? string
+                  : T extends 'undefined'
+                    ? undefined
+                    : never;
 
 /**
  * A wrapper around the typeof operator to account for `null` and arrays.

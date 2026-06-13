@@ -30,6 +30,19 @@ describe('rttc Type Guards', () => {
       expect(rttc.typeOf(obj)).toEqual('object');
     });
   });
+
+  test('TypeofConstantsToType', () => {
+    expectTypeOf<rttc.TypeOfConstantToType<'array'>>().toEqualTypeOf<unknown[]>();
+    expectTypeOf<rttc.TypeOfConstantToType<'bigint'>>().toEqualTypeOf<bigint>();
+    expectTypeOf<rttc.TypeOfConstantToType<'boolean'>>().toEqualTypeOf<boolean>();
+    expectTypeOf<rttc.TypeOfConstantToType<'function'>>().toEqualTypeOf<(...args: any[]) => any>();
+    expectTypeOf<rttc.TypeOfConstantToType<'regexp'>>().toEqualTypeOf<RegExp>();
+    expectTypeOf<rttc.TypeOfConstantToType<'null'>>().toEqualTypeOf<null>();
+    expectTypeOf<rttc.TypeOfConstantToType<'number'>>().toEqualTypeOf<number>();
+    expectTypeOf<rttc.TypeOfConstantToType<'object'>>().toEqualTypeOf<object>();
+    expectTypeOf<rttc.TypeOfConstantToType<'string'>>().toEqualTypeOf<string>();
+    expectTypeOf<rttc.TypeOfConstantToType<'undefined'>>().toEqualTypeOf<undefined>();
+  })
 });
 
 interface Fixtures {
