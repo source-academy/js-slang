@@ -171,6 +171,7 @@ describe('test name extractor functionality on imports', () => {
   const mockImportDecl: ImportDeclaration = {
     type: 'ImportDeclaration',
     specifiers: [],
+    attributes: [],
     source: {
       type: 'Literal',
       value: 'nothing',

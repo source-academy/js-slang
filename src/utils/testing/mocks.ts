@@ -26,6 +26,7 @@ export function mockImportDeclaration(): es.ImportDeclaration {
         },
       },
     ],
+    attributes: [],
     source: {
       type: 'Literal',
       value: 'mock-path',

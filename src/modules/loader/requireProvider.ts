@@ -7,6 +7,7 @@ import type { Context, Node } from '../../types';
 import * as types from '../../types';
 import * as assert from '../../utils/assert';
 import * as stringify from '../../utils/stringify';
+import * as operators from '../../utils/operators';
 import * as errorBase from '../../errors/base';
 import * as rttcErrors from '../../errors/rttcErrors';
 import * as rttc from '../../utils/rttc';
@@ -39,8 +40,9 @@ export function getRequireProvider(context: Context) {
         types,
         utils: {
           assert,
-          stringify,
+          operators,
           rttc,
+          stringify,
         },
       },
       context,
