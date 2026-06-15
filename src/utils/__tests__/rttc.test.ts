@@ -42,7 +42,7 @@ describe('rttc Type Guards', () => {
     expectTypeOf<rttc.TypeOfConstantToType<'object'>>().toEqualTypeOf<object>();
     expectTypeOf<rttc.TypeOfConstantToType<'string'>>().toEqualTypeOf<string>();
     expectTypeOf<rttc.TypeOfConstantToType<'undefined'>>().toEqualTypeOf<undefined>();
-  })
+  });
 });
 
 interface Fixtures {
