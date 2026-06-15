@@ -402,6 +402,10 @@ describe(rttc.isFunctionOfLength, () => {
       expect.fail('Type guard failed unexpectedly');
     }
   });
+
+  test('returns false for non function', () => {
+    expect(rttc.isFunctionOfLength(0, 1)).toEqual(false);
+  });
 });
 
 describe(rttc.assertFunctionOfLength, () => {
@@ -452,6 +456,14 @@ describe(rttc.isTupleOfLength, () => {
     } else {
       expect.fail();
     }
+  });
+});
+
+describe(rttc.assertTupleOfLength, () => {
+  test('throws correct error', () => {
+    expect(() => rttc.assertTupleOfLength(0, 1, 'foo')).toThrow(
+      'foo: Expected tuple of length 0, got 0.',
+    );
   });
 });
 
