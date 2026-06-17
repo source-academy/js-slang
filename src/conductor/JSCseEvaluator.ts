@@ -15,8 +15,8 @@ import {
   type CseSerializedInstruction,
   type CseSerializedValue,
   type CseSnapshot,
-  JsCseMachinePlugin,
-} from './plugins/JsCseMachinePlugin';
+} from '@sourceacademy/common-cse-machine';
+import { CseMachinePlugin } from '@sourceacademy/runner-cse-machine';
 
 // ── Value serialisation ───────────────────────────────────────────────────────
 
@@ -359,11 +359,16 @@ async function collectSnapshots(context: Context, control: Control, stash: Stash
 abstract class JSCseEvaluatorBase extends BasicEvaluator {
   protected abstract readonly chapter: Chapter;
   protected context!: Context;
-  private readonly csePlugin: JsCseMachinePlugin;
+  private readonly csePlugin: CseMachinePlugin;
 
   constructor(conductor: IRunnerPlugin) {
     super(conductor);
-    this.csePlugin = conductor.registerPlugin(JsCseMachinePlugin);
+    // Cast bridges the IPlugin type difference between this repo's (local/portal)
+    // conductor and the one @sourceacademy/runner-cse-machine builds against. Once both
+    // use the same published conductor, the cast can be removed.
+    this.csePlugin = conductor.registerPlugin(
+      CseMachinePlugin as never,
+    ) as unknown as CseMachinePlugin;
   }
 
   protected initContext(): void {

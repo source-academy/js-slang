@@ -1176,9 +1176,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sourceacademy/common-cse-machine@portal:../plugins/src/common/cse-machine::locator=js-slang%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@sourceacademy/common-cse-machine@portal:../plugins/src/common/cse-machine::locator=js-slang%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "@sourceacademy/conductor@portal:../conductor::locator=js-slang%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "@sourceacademy/conductor@portal:../conductor::locator=js-slang%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@sourceacademy/runner-cse-machine@portal:../plugins/src/runner/cse-machine::locator=js-slang%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@sourceacademy/runner-cse-machine@portal:../plugins/src/runner/cse-machine::locator=js-slang%40workspace%3A."
+  peerDependencies:
+    "@sourceacademy/conductor": ">=0.3.0"
   languageName: node
   linkType: soft
 
@@ -3842,7 +3856,9 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^16.0.1"
     "@rollup/plugin-replace": "npm:^6.0.3"
     "@rollup/plugin-terser": "npm:^1.0.0"
+    "@sourceacademy/common-cse-machine": "portal:../plugins/src/common/cse-machine"
     "@sourceacademy/conductor": "portal:../conductor"
+    "@sourceacademy/runner-cse-machine": "portal:../plugins/src/runner/cse-machine"
     "@ts-morph/bootstrap": "npm:^0.18.0"
     "@types/estree": "npm:^1.0.5"
     "@types/lodash": "npm:^4.14.202"
