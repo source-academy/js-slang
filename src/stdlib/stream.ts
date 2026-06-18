@@ -1,6 +1,6 @@
 import { GeneralRuntimeError } from '../errors/base';
 import { InvalidParameterTypeError } from '../errors/rttcErrors';
-import { wrap } from '../utils/operators';
+import { callWithoutMetadata, wrap } from '../utils/operators';
 import { head, is_null, is_pair, type List, type Pair, pair, tail } from './list';
 import { arity } from './misc';
 
@@ -79,7 +79,7 @@ export function integers_from(n: number): Stream<number> {
  */
 export function build_stream<T>(f: (n: number) => T, n: number): Stream<T> {
   function build(i: number): Stream<T> {
-    return i >= n ? null : pair(f(i), () => build(i + 1));
+    return i >= n ? null : pair(callWithoutMetadata(f, i), () => build(i + 1));
   }
 
   return build(0);
@@ -92,7 +92,9 @@ export function build_stream<T>(f: (n: number) => T, n: number): Stream<T> {
  * forced by the resulting stream.
  */
 export function stream_map<T, U>(f: (arg: T) => U, s: Stream<T>): Stream<U> {
-  return is_null(s) ? null : pair(f(head(s)), () => stream_map(f, stream_tail(s)));
+  return is_null(s)
+    ? null
+    : pair(callWithoutMetadata(f, head(s)), () => stream_map(f, stream_tail(s)));
 }
 
 /**
@@ -105,7 +107,7 @@ export function stream_filter<T>(f: (arg: T) => boolean, s: Stream<T>): Stream<T
 export function stream_filter<T>(f: (arg: T) => boolean, s: Stream<T>): Stream<T> {
   if (is_null(s)) return null;
 
-  const should = f(head(s));
+  const should = callWithoutMetadata(f, head(s));
 
   return should
     ? pair(head(s), () => stream_filter(f, stream_tail(s)))
@@ -121,7 +123,7 @@ export function stream_for_each<T>(f: (arg: T) => void, s: Stream<T>) {
   if (is_null(s)) {
     return true;
   } else {
-    f(head(s));
+    callWithoutMetadata(f, head(s));
     return stream_for_each(f, stream_tail(s));
   }
 }
@@ -146,7 +148,7 @@ export function stream_accumulate<T, U>(
 
   while (!is_null(entry)) {
     const element = head(entry);
-    res = f(element, res);
+    res = callWithoutMetadata(f, element, res);
     entry = stream_tail(entry);
   }
 
