@@ -41,7 +41,7 @@ function isStepperNode(value: unknown): value is StepperBaseNode {
 function serializeStep(step: IStepperPropContents): SerializedStepperStep {
   let counter = 0;
   const ids = new Map<StepperBaseNode, string>();
-  const onPath = new Set<StepperBaseNode>();
+  const onPath = new Set<object>();
 
   function idOf(node: StepperBaseNode): string {
     let id = ids.get(node);
