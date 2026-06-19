@@ -70,15 +70,23 @@ function serializeStep(step: IStepperPropContents): SerializedStepperStep {
 
   function serializeValue(value: unknown): unknown {
     if (value === null || typeof value !== 'object') return value;
-    if (typeof value === 'function') return undefined;
-    if (Array.isArray(value)) return value.map(serializeValue);
     if (isStepperNode(value)) return serializeNode(value);
-    // A plain data sub-object: copy its own data properties shallowly.
-    const out: Record<string, unknown> = {};
-    for (const key of Object.keys(value as Record<string, unknown>)) {
-      if (SKIP_KEYS.has(key)) continue;
-      out[key] = serializeValue((value as Record<string, unknown>)[key]);
+    // Cycle guard for plain objects and arrays.
+    if (onPath.has(value)) return undefined;
+    onPath.add(value);
+    let out: unknown;
+    if (Array.isArray(value)) {
+      out = value.map(serializeValue);
+    } else {
+      // A plain data sub-object: copy its own data properties shallowly.
+      const objOut: Record<string, unknown> = {};
+      for (const key of Object.keys(value as Record<string, unknown>)) {
+        if (SKIP_KEYS.has(key)) continue;
+        objOut[key] = serializeValue((value as Record<string, unknown>)[key]);
+      }
+      out = objOut;
     }
+    onPath.delete(value);
     return out;
   }
 

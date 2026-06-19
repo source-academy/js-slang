@@ -38,14 +38,23 @@ abstract class SourceStepperEvaluatorBase extends BasicEvaluator {
    *  - we never let the base class send an `undefined` result (which crashes the host saga channel).
    */
   override async startEvaluator(entryPoint: string): Promise<void> {
-    const code = await this.conductor.requestFile(entryPoint);
-    if (code === undefined) {
-      this.conductor.sendError(new ConductorError('Cannot load entrypoint file'));
-    } else {
-      await this.runChunk(code);
+    try {
+      const code = await this.conductor.requestFile(entryPoint);
+      if (code === undefined) {
+        this.conductor.sendError(new ConductorError('Cannot load entrypoint file'));
+      } else {
+        await this.runChunk(code);
+      }
+    } catch (error) {
+      this.conductor.sendError(
+        error instanceof ConductorError
+          ? error
+          : new ConductorError(error instanceof Error ? error.message : String(error)),
+      );
+    } finally {
+      // Signal that this run has finished so the host stops waiting and cleans up.
+      this.conductor.updateStatus(RunnerStatus.STOPPED, true);
     }
-    // Signal that this run has finished so the host stops waiting and cleans up.
-    this.conductor.updateStatus(RunnerStatus.STOPPED, true);
   }
 
   private async runChunk(chunk: string): Promise<void> {
@@ -69,6 +78,8 @@ abstract class SourceStepperEvaluatorBase extends BasicEvaluator {
         this.conductor.sendResult(stringify(result.value));
       } else if (result.status === 'error') {
         this.conductor.sendError(new ConductorError(parseError(runContext.errors)));
+      } else {
+        this.conductor.sendError(new ConductorError(`Unexpected evaluation status: ${result.status}`));
       }
     } catch (error) {
       this.conductor.sendError(

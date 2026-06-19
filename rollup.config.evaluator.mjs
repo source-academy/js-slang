@@ -29,14 +29,13 @@ function rewriteStaticRequires(modules) {
   return {
     name: 'rewrite-static-requires',
     transform(code) {
-      if (!pattern.test(code)) return null;
-      pattern.lastIndex = 0;
       const imports = new Map();
       const replaced = code.replace(pattern, (_match, _quote, name) => {
         const local = `__req_${name.replace(/[^a-zA-Z0-9]/g, '_')}`;
         imports.set(name, local);
         return local;
       });
+      if (imports.size === 0) return null;
       const header = [...imports].map(([name, local]) => `import ${local} from '${name}';`).join('\n');
       return { code: `${header}\n${replaced}`, map: null };
     },

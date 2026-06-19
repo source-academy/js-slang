@@ -16,6 +16,7 @@ function buildTarget(target) {
       if (code === 0) resolve();
       else reject(new Error(`Build failed for ${target} (exit ${code})`));
     });
+    child.on('error', reject);
   });
 }
 
