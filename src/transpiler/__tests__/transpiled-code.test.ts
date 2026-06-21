@@ -41,6 +41,19 @@ test('Ensure no name clashes', () => {
   expect(replacedGlobalsLine).toMatchSnapshot();
 });
 
+describe('Wrapping call expressions', () => {
+  test('when callee is a member expression', () => {
+    const code = stripIndent`
+      const obj = {};
+      obj.foo();
+    `;
+    const context = mockContext(Chapter.LIBRARY_PARSER);
+    const { transpiled } = transpile(parse(code, context)!, context, false);
+
+    expect(transpiled).toMatchSnapshot();
+  });
+});
+
 describe(transformImportDeclarations, () => {
   type TestCase = [actualCode: string, expectedCode: string];
 

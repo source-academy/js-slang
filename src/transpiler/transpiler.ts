@@ -17,7 +17,7 @@ import {
   getSourceVariableDeclaration,
 } from '../utils/ast/helpers';
 import { isNamespaceSpecifier, isVariableDeclaration } from '../utils/ast/typeGuards';
-import { simple } from '../utils/ast/walkers';
+import { ancestor, simple } from '../utils/ast/walkers';
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -342,18 +342,37 @@ function transformPropertyAssignment(program: es.Program, globalIds: NativeIds) 
 }
 
 function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
-  simple(program, {
-    MemberExpression(node: es.MemberExpression) {
+  ancestor(program, {
+    MemberExpression(node: es.MemberExpression, _state, ancestors) {
+      const lastAncestor = ancestors[ancestors.length - 2];
       const { object, property, computed, loc } = node;
       const { line, column } = (loc ?? UNKNOWN_LOCATION).start;
       const source = loc?.source ?? null;
-      create.mutateToCallExpression(node, globalIds.getProp, [
-        object as es.Expression,
-        getComputedProperty(computed, property as es.Expression),
-        create.literal(line),
-        create.literal(column),
-        create.literal(source),
-      ]);
+
+      if (lastAncestor.type === 'CallExpression') {
+        create.mutateToCallExpression(
+          node,
+          create.memberExpression(
+            create.callExpression(globalIds.getProp, [
+              object as es.Expression,
+              getComputedProperty(computed, property as es.Expression),
+              create.literal(line),
+              create.literal(column),
+              create.literal(source),
+            ]),
+            'bind',
+          ),
+          [object as es.Expression],
+        );
+      } else {
+        create.mutateToCallExpression(node, globalIds.getProp, [
+          object as es.Expression,
+          getComputedProperty(computed, property as es.Expression),
+          create.literal(line),
+          create.literal(column),
+          create.literal(source),
+        ]);
+      }
     },
   });
 }
