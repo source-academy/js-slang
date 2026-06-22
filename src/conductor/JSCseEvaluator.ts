@@ -35,7 +35,7 @@ function serializeValue(v: Value, depth = 0): CseSerializedValue {
 
   if (Array.isArray(v)) {
     if (depth > 2) return { displayValue: '[...]', label: 'array' };
-    const items = (v).map(el => serializeValue(el, depth + 1));
+    const items = v.map(el => serializeValue(el, depth + 1));
     return {
       displayValue: stringify(v),
       label: 'array',
@@ -419,9 +419,7 @@ abstract class JSCseEvaluatorBase extends BasicEvaluator {
     // Cast bridges the IPlugin type difference between this repo's (local/portal)
     // conductor and the one @sourceacademy/runner-cse-machine builds against. Once both
     // use the same published conductor, the cast can be removed.
-    this.csePlugin = conductor.registerPlugin(
-      CseMachinePlugin,
-    );
+    this.csePlugin = conductor.registerPlugin(CseMachinePlugin);
   }
 
   protected initContext(): void {
