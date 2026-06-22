@@ -17,7 +17,7 @@ import {
   getSourceVariableDeclaration,
 } from '../utils/ast/helpers';
 import { isNamespaceSpecifier, isVariableDeclaration } from '../utils/ast/typeGuards';
-import { ancestor, simple } from '../utils/ast/walkers';
+import { simple } from '../utils/ast/walkers';
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -342,35 +342,11 @@ function transformPropertyAssignment(program: es.Program, globalIds: NativeIds) 
 }
 
 function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
-  ancestor(program, {
-    MemberExpression(node: es.MemberExpression, _state, ancestors) {
-      const lastAncestor = ancestors[ancestors.length - 2];
+  simple(program, {
+    MemberExpression(node: es.MemberExpression) {
       const { object, property, computed, loc } = node;
       const { line, column } = (loc ?? UNKNOWN_LOCATION).start;
       const source = loc?.source ?? null;
-
-      if (lastAncestor.type === 'CallExpression') {
-        if (
-          lastAncestor.callee.type === 'Identifier' &&
-          lastAncestor.callee.name === globalIds.callIfFuncAndRightArgs.name
-        ) {
-          create.mutateToCallExpression(
-            node,
-            create.memberExpression(
-              create.callExpression(globalIds.getProp, [
-                object as es.Expression,
-                getComputedProperty(computed, property as es.Expression),
-                create.literal(line),
-                create.literal(column),
-                create.literal(source),
-              ]),
-              'bind',
-            ),
-            [object as es.Expression],
-          );
-          return;
-        }
-      }
 
       create.mutateToCallExpression(node, globalIds.getProp, [
         object as es.Expression,
