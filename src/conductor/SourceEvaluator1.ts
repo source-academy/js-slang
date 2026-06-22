@@ -1,4 +1,4 @@
-import { BasicEvaluator, IRunnerPlugin } from '@sourceacademy/conductor/runner';
+import { BasicEvaluator } from '@sourceacademy/conductor/runner';
 import { createContext, runFilesInContext } from '../index';
 import { Chapter } from '../langs';
 
