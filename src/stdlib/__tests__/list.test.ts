@@ -99,13 +99,13 @@ describe(list.build_list, () => {
 
     it('throws error when given a negative integer', () => {
       expect(() => list.build_list(x => x, -1)).toThrow(
-        'build_list: Expected integer greater than 0, got -1.',
+        'build_list: Expected integer >= 0, got -1.',
       );
     });
 
     it('throws error when given a float', () => {
       expect(() => list.build_list(x => x, 0.5)).toThrow(
-        'build_list: Expected integer greater than 0, got 0.5.',
+        'build_list: Expected integer >= 0, got 0.5.',
       );
     });
   });
@@ -130,7 +130,7 @@ describe(list.build_list, () => {
     // skipped as implementation does not check types, causing infinite recursion.
     test.todo('build_list with float', () => {
       return expectParsedError(`build_list(x => x, 1.5); `, Chapter.SOURCE_2).toEqual(
-        'Line 1: build_list: Expected an integer greater than 0 for n, got 1.5.',
+        'Line 1: build_list: Expected an integer >= 0 for n, got 1.5.',
       );
     });
 
@@ -162,7 +162,7 @@ describe(list.enum_list, () => {
 
     it('throws an error when end < start', () => {
       expect(() => list.enum_list(1, -1)).toThrow(
-        'enum_list: Expected number greater than 1 for end, got -1.',
+        'enum_list: Expected number >= 1 for end, got -1.',
       );
     });
 
@@ -174,7 +174,7 @@ describe(list.enum_list, () => {
 
     it('throws an error when end is not a number', () => {
       expect(() => list.enum_list(0, '0' as any)).toThrow(
-        'enum_list: Expected number greater than 0 for end, got "0".',
+        'enum_list: Expected number >= 0 for end, got "0".',
       );
     });
   });
