@@ -9,7 +9,7 @@ function buildTarget(target) {
   return new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,
-      ['--max-old-space-size=4096', './node_modules/.bin/rollup', '-c', 'rollup.config.evaluator.mjs'],
+      ['--max-old-space-size=4096', 'node_modules/rollup/dist/bin/rollup', '-c', 'rollup.config.evaluator.mjs'],
       {
         env: { ...process.env, EVALUATOR: target },
         stdio: 'inherit',

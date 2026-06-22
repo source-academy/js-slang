@@ -305,7 +305,7 @@ function serializeEnvChain(
     // from a function before being assigned) that the visualizer shows as dangling arrows
     // from the frame — getUnreferencedObjects() looks them up via env.heap.
     const headValues = new Set(Object.values(env.head));
-    const heapObjects = isGlobalEnv
+    const heapObjects = isGlobalEnv || !env.heap
       ? []
       : [...env.heap.getHeap()]
           .filter(obj => obj instanceof Closure && !headValues.has(obj))
@@ -453,9 +453,14 @@ abstract class JSCseEvaluatorBase extends BasicEvaluator {
 
     try {
       const configRaw = await this.conductor.requestFile('/__cse_config__');
-      const maxSnapshots: number = configRaw
-        ? ((JSON.parse(configRaw) as { stepLimit?: number }).stepLimit ?? 1000)
-        : 1000;
+      let maxSnapshots = 1000;
+      if (configRaw) {
+        try {
+          maxSnapshots = (JSON.parse(configRaw) as { stepLimit?: number }).stepLimit ?? 1000;
+        } catch {
+          // malformed config — fall back to default
+        }
+      }
       const snapshots = collectSnapshots(this.context, control, stash, chunk, maxSnapshots);
       this.csePlugin.sendSnapshots(snapshots);
 
