@@ -305,11 +305,12 @@ function serializeEnvChain(
     // from a function before being assigned) that the visualizer shows as dangling arrows
     // from the frame — getUnreferencedObjects() looks them up via env.heap.
     const headValues = new Set(Object.values(env.head));
-    const heapObjects = isGlobalEnv || !env.heap
-      ? []
-      : [...env.heap.getHeap()]
-          .filter(obj => obj instanceof Closure && !headValues.has(obj))
-          .map(obj => serializeValue(obj as Value));
+    const heapObjects =
+      isGlobalEnv || !env.heap
+        ? []
+        : [...env.heap.getHeap()]
+            .filter(obj => obj instanceof Closure && !headValues.has(obj))
+            .map(obj => serializeValue(obj as Value));
 
     return {
       id: env.id,
