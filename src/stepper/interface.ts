@@ -1,6 +1,6 @@
 import type { BaseNode, Comment, SourceLocation } from 'estree';
-import { generate } from './utils';
 import type { Node, ReplResult } from '../types';
+import { generate } from './utils';
 import type { StepperExpression, StepperPattern } from './nodes';
 import type { RedexInfo } from '.';
 

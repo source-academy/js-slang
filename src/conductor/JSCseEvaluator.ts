@@ -1,6 +1,13 @@
 import { BasicEvaluator, IRunnerPlugin } from '@sourceacademy/conductor/runner';
 import type { Identifier, RestElement } from 'estree';
 
+import type {
+  CseSerializedEnvFrame,
+  CseSerializedInstruction,
+  CseSerializedValue,
+  CseSnapshot,
+} from '@sourceacademy/common-cse-machine';
+import { CseMachinePlugin } from '@sourceacademy/runner-cse-machine';
 import Closure from '../cse-machine/closure';
 import { Control, generateCSEMachineStateStream, Stash } from '../cse-machine/interpreter';
 import { InstrType } from '../cse-machine/types';
@@ -10,13 +17,6 @@ import preprocessFileImports from '../modules/preprocessor';
 import type { Context, Environment, Value } from '../types';
 import { stringify } from '../utils/stringify';
 import * as seq from '../utils/statementSeqTransform';
-import {
-  type CseSerializedEnvFrame,
-  type CseSerializedInstruction,
-  type CseSerializedValue,
-  type CseSnapshot,
-} from '@sourceacademy/common-cse-machine';
-import { CseMachinePlugin } from '@sourceacademy/runner-cse-machine';
 
 // ── Value serialisation ───────────────────────────────────────────────────────
 
@@ -35,7 +35,7 @@ function serializeValue(v: Value, depth = 0): CseSerializedValue {
 
   if (Array.isArray(v)) {
     if (depth > 2) return { displayValue: '[...]', label: 'array' };
-    const items = (v as Value[]).map(el => serializeValue(el, depth + 1));
+    const items = (v).map(el => serializeValue(el, depth + 1));
     return {
       displayValue: stringify(v),
       label: 'array',
@@ -51,38 +51,43 @@ function serializeValue(v: Value, depth = 0): CseSerializedValue {
   if (v === undefined) return { displayValue: 'undefined', label: 'undefined' };
 
   switch (typeof v) {
-    case 'number':  return { displayValue: String(v), label: 'number' };
-    case 'string':  return { displayValue: `"${v}"`, label: 'string' };
-    case 'boolean': return { displayValue: String(v), label: 'boolean' };
+    case 'number':
+      return { displayValue: String(v), label: 'number' };
+    case 'string':
+      return { displayValue: `"${v}"`, label: 'string' };
+    case 'boolean':
+      return { displayValue: String(v), label: 'boolean' };
     // Native (builtin) functions reach here — label them 'builtin' so the adapter
     // doesn't try to reconstruct them as closures (which would produce null environments).
-    case 'function': return { displayValue: stringify(v), label: 'builtin' };
-    default:        return { displayValue: stringify(v), label: typeof v };
+    case 'function':
+      return { displayValue: stringify(v), label: 'builtin' };
+    default:
+      return { displayValue: stringify(v), label: typeof v };
   }
 }
 
 // ── Control serialisation ─────────────────────────────────────────────────────
 
 const INSTR_DISPLAY: Partial<Record<InstrType, string>> = {
-  [InstrType.RESET]:            'return',
-  [InstrType.POP]:              'pop',
-  [InstrType.ASSIGNMENT]:       'assign',
-  [InstrType.UNARY_OP]:         'unary op',
-  [InstrType.BINARY_OP]:        'binary op',
-  [InstrType.APPLICATION]:      'call',
-  [InstrType.BRANCH]:           'branch',
-  [InstrType.WHILE]:            'while',
-  [InstrType.FOR]:              'for',
-  [InstrType.CONTINUE]:         'continue',
-  [InstrType.CONTINUE_MARKER]:  'mark',
-  [InstrType.BREAK]:            'break',
-  [InstrType.BREAK_MARKER]:     'mark',
-  [InstrType.ARRAY_LITERAL]:    'arr lit',
-  [InstrType.ARRAY_ACCESS]:     'arr acc',
+  [InstrType.RESET]: 'return',
+  [InstrType.POP]: 'pop',
+  [InstrType.ASSIGNMENT]: 'assign',
+  [InstrType.UNARY_OP]: 'unary op',
+  [InstrType.BINARY_OP]: 'binary op',
+  [InstrType.APPLICATION]: 'call',
+  [InstrType.BRANCH]: 'branch',
+  [InstrType.WHILE]: 'while',
+  [InstrType.FOR]: 'for',
+  [InstrType.CONTINUE]: 'continue',
+  [InstrType.CONTINUE_MARKER]: 'mark',
+  [InstrType.BREAK]: 'break',
+  [InstrType.BREAK_MARKER]: 'mark',
+  [InstrType.ARRAY_LITERAL]: 'arr lit',
+  [InstrType.ARRAY_ACCESS]: 'arr acc',
   [InstrType.ARRAY_ASSIGNMENT]: 'arr asgn',
-  [InstrType.ARRAY_LENGTH]:     'arr len',
-  [InstrType.MARKER]:           'marker',
-  [InstrType.SPREAD]:           'spread',
+  [InstrType.ARRAY_LENGTH]: 'arr len',
+  [InstrType.MARKER]: 'marker',
+  [InstrType.SPREAD]: 'spread',
 };
 
 // Extract the full source text between two positions (multi-line aware).
@@ -114,13 +119,16 @@ function nodeToString(node: any): string {
       return `${node.kind ?? 'const'} ${id}${init !== undefined ? ` = ${init}` : ''}`;
     }
     case 'ArrowFunctionExpression': {
-      const params = (node.params ?? []).map((p: any) =>
-        p.type === 'RestElement' ? `...${p.argument?.name ?? '?'}` : (p.name ?? '?'),
-      ).join(', ');
+      const params = (node.params ?? [])
+        .map((p: any) =>
+          p.type === 'RestElement' ? `...${p.argument?.name ?? '?'}` : (p.name ?? '?'),
+        )
+        .join(', ');
       const paramsStr = (node.params?.length ?? 0) === 1 ? params : `(${params})`;
-      const body = node.body?.type === 'BlockStatement'
-        ? `{\n${(node.body.body ?? []).map((s: any) => '  ' + nodeToString(s)).join('\n')}\n}`
-        : nodeToString(node.body);
+      const body =
+        node.body?.type === 'BlockStatement'
+          ? `{\n${(node.body.body ?? []).map((s: any) => '  ' + nodeToString(s)).join('\n')}\n}`
+          : nodeToString(node.body);
       return `${paramsStr} => ${body}`;
     }
     case 'BlockStatement':
@@ -129,8 +137,10 @@ function nodeToString(node: any): string {
       return `return${node.argument ? ' ' + nodeToString(node.argument) : ''};`;
     case 'ExpressionStatement':
       return nodeToString(node.expression) + ';';
-    case 'Identifier': return node.name ?? '?';
-    case 'Literal':    return JSON.stringify(node.value);
+    case 'Identifier':
+      return node.name ?? '?';
+    case 'Literal':
+      return JSON.stringify(node.value);
     case 'BinaryExpression':
       return `${nodeToString(node.left)} ${node.operator} ${nodeToString(node.right)}`;
     case 'UnaryExpression':
@@ -145,7 +155,8 @@ function nodeToString(node: any): string {
       return node.computed
         ? `${nodeToString(node.object)}[${nodeToString(node.property)}]`
         : `${nodeToString(node.object)}.${nodeToString(node.property)}`;
-    default: return node.type ?? '?';
+    default:
+      return node.type ?? '?';
   }
 }
 
@@ -156,14 +167,23 @@ function serializeControlItem(item: any, source?: string): CseSerializedInstruct
       return { displayText: 'ENVIRONMENT', metadata: { envId: item.env.id as string } };
     }
     if (item.instrType === InstrType.ASSIGNMENT && item.symbol) {
-      return { displayText: `assign ${item.symbol}`, metadata: { instrType: item.instrType, symbol: item.symbol as string } };
+      return {
+        displayText: `assign ${item.symbol}`,
+        metadata: { instrType: item.instrType, symbol: item.symbol as string },
+      };
     }
     if (item.instrType === InstrType.APPLICATION && item.numOfArgs !== undefined) {
-      return { displayText: `call ${item.numOfArgs}`, metadata: { instrType: item.instrType, numOfArgs: item.numOfArgs as number } };
+      return {
+        displayText: `call ${item.numOfArgs}`,
+        metadata: { instrType: item.instrType, numOfArgs: item.numOfArgs as number },
+      };
     }
     // ArrLitInstr uses .arity (not .numOfElements)
     if (item.instrType === InstrType.ARRAY_LITERAL && item.arity !== undefined) {
-      return { displayText: `arr lit ${item.arity}`, metadata: { instrType: item.instrType, arity: item.arity as number } };
+      return {
+        displayText: `arr lit ${item.arity}`,
+        metadata: { instrType: item.instrType, arity: item.arity as number },
+      };
     }
     if (item.instrType === InstrType.BINARY_OP && item.symbol) {
       return { displayText: item.symbol as string, metadata: { instrType: item.instrType } };
@@ -182,7 +202,10 @@ function serializeControlItem(item: any, source?: string): CseSerializedInstruct
     if (item.type === 'BlockStatement' || item.type === 'Program') {
       const body = extractSourceRange(source ?? '', loc);
       displayText = body
-        ? `{\n${body.split('\n').map(l => '  ' + l).join('\n')}\n}`
+        ? `{\n${body
+            .split('\n')
+            .map(l => '  ' + l)
+            .join('\n')}\n}`
         : '{ ... }';
     } else if (item.type === 'StatementSequence') {
       displayText = extractSourceRange(source ?? '', loc) ?? '...';
@@ -196,7 +219,10 @@ function serializeControlItem(item: any, source?: string): CseSerializedInstruct
 
     // Serialize node type metadata so the adapter can reconstruct proper fake nodes
     // for the animation system (instead of falling back to a generic Identifier).
-    const isBlockLike = item.type === 'BlockStatement' || item.type === 'Program' || item.type === 'StatementSequence';
+    const isBlockLike =
+      item.type === 'BlockStatement' ||
+      item.type === 'Program' ||
+      item.type === 'StatementSequence';
     const animMeta: Record<string, unknown> = { nodeType: item.type as string };
     if (isBlockLike && Array.isArray(item.body)) {
       animMeta.bodyLength = item.body.length;
@@ -204,7 +230,14 @@ function serializeControlItem(item: any, source?: string): CseSerializedInstruct
     }
 
     if (loc?.start && loc?.end) {
-      return { displayText, metadata: { ...animMeta, startLine: loc.start.line as number, endLine: loc.end.line as number } };
+      return {
+        displayText,
+        metadata: {
+          ...animMeta,
+          startLine: loc.start.line as number,
+          endLine: loc.end.line as number,
+        },
+      };
     }
     return { displayText, metadata: animMeta };
   }
@@ -251,17 +284,19 @@ function serializeEnvChain(
     const bindings = isGlobalEnv
       ? []
       : Object.entries(Object.getOwnPropertyDescriptors(env.head))
-          .filter(([, desc]) =>
-            // Hide native builtin functions (not Closure instances)
-            !(typeof desc.value === 'function' && !(desc.value instanceof Closure)),
+          .filter(
+            ([, desc]) =>
+              // Hide native builtin functions (not Closure instances)
+              !(typeof desc.value === 'function' && !(desc.value instanceof Closure)),
           )
           .map(([name, desc]) => ({
             name,
             // Uninitialized const placeholder (Symbol) — pass as special 'unassigned' label
             // so the adapter can reconstruct Symbol('const declaration') for Frame.tsx.
-            value: typeof desc.value === 'symbol'
-              ? { displayValue: '', label: 'unassigned' }
-              : serializeValue(desc.value as Value),
+            value:
+              typeof desc.value === 'symbol'
+                ? { displayValue: '', label: 'unassigned' }
+                : serializeValue(desc.value),
             isConst: desc.writable === false,
           }));
 
@@ -296,13 +331,19 @@ function serializeEnvChain(
 function snapshotFingerprint(snap: CseSnapshot): string {
   const ctrl = snap.control.map(i => i.displayText).join('|');
   const stsh = snap.stash.map(v => v.displayValue).join('|');
-  const envs = snap.environments.map(e =>
-    e.id + ':' + e.bindings.map(b => b.name + '=' + b.value.displayValue).join(','),
-  ).join(';');
+  const envs = snap.environments
+    .map(e => e.id + ':' + e.bindings.map(b => b.name + '=' + b.value.displayValue).join(','))
+    .join(';');
   return `${ctrl}§${stsh}§${envs}`;
 }
 
-async function collectSnapshots(context: Context, control: Control, stash: Stash, source: string, maxSnapshots: number = 1000): Promise<CseSnapshot[]> {
+function collectSnapshots(
+  context: Context,
+  control: Control,
+  stash: Stash,
+  source: string,
+  maxSnapshots: number = 1000,
+): CseSnapshot[] {
   const snapshots: CseSnapshot[] = [];
 
   // Capture the initial state BEFORE the generator runs its first step.
@@ -311,14 +352,20 @@ async function collectSnapshots(context: Context, control: Control, stash: Stash
   // the "opened" block. We manually capture the Program node on control here so the user
   // sees step 1 as { <literal source> } — matching the non-conductor CSE machine.
   const initRawControl = control.getStack();
-  const initRawStash   = stash.getStack();
+  const initRawStash = stash.getStack();
   // Step 0: nothing evaluated yet, so the "current node" is the program node sitting
   // on top of control (matches non-conductor, which highlights the program's line 1).
   const initTop = initRawControl[initRawControl.length - 1];
   const initSnap: CseSnapshot = {
     stepIndex: 0,
-    control: initRawControl.slice().reverse().map(item => serializeControlItem(item, source)),
-    stash:   initRawStash.slice().reverse().map(v => serializeValue(v)),
+    control: initRawControl
+      .slice()
+      .reverse()
+      .map(item => serializeControlItem(item, source)),
+    stash: initRawStash
+      .slice()
+      .reverse()
+      .map(v => serializeValue(v)),
     environments: serializeEnvChain(context.runtime.environments, initRawStash, initRawControl),
     currentLine: (initTop as any)?.loc?.start?.line,
   };
@@ -339,8 +386,14 @@ async function collectSnapshots(context: Context, control: Control, stash: Stash
     const currentNode = context.runtime.nodes[0] as any;
     const snap: CseSnapshot = {
       stepIndex: steps - 1,
-      control: rawControl.slice().reverse().map(item => serializeControlItem(item, source)),
-      stash:   rawStash.slice().reverse().map(v => serializeValue(v)),
+      control: rawControl
+        .slice()
+        .reverse()
+        .map(item => serializeControlItem(item, source)),
+      stash: rawStash
+        .slice()
+        .reverse()
+        .map(v => serializeValue(v)),
       environments: serializeEnvChain(context.runtime.environments, rawStash, rawControl),
       currentLine: currentNode?.loc?.start?.line,
     };
@@ -367,8 +420,8 @@ abstract class JSCseEvaluatorBase extends BasicEvaluator {
     // conductor and the one @sourceacademy/runner-cse-machine builds against. Once both
     // use the same published conductor, the cast can be removed.
     this.csePlugin = conductor.registerPlugin(
-      CseMachinePlugin as never,
-    ) as unknown as CseMachinePlugin;
+      CseMachinePlugin,
+    );
   }
 
   protected initContext(): void {
@@ -397,15 +450,15 @@ abstract class JSCseEvaluatorBase extends BasicEvaluator {
 
     const control = new Control(program);
     const stash = new Stash();
-    this.context.runtime.control = control as any;
-    this.context.runtime.stash = stash as any;
+    this.context.runtime.control = control;
+    this.context.runtime.stash = stash;
 
     try {
       const configRaw = await this.conductor.requestFile('/__cse_config__');
       const maxSnapshots: number = configRaw
-        ? (JSON.parse(configRaw) as { stepLimit?: number }).stepLimit ?? 1000
+        ? ((JSON.parse(configRaw) as { stepLimit?: number }).stepLimit ?? 1000)
         : 1000;
-      const snapshots = await collectSnapshots(this.context, control, stash, chunk, maxSnapshots);
+      const snapshots = collectSnapshots(this.context, control, stash, chunk, maxSnapshots);
       this.csePlugin.sendSnapshots(snapshots);
 
       // Return the final stash value so BasicEvaluator.startEvaluator sends it as the result.
@@ -414,9 +467,12 @@ abstract class JSCseEvaluatorBase extends BasicEvaluator {
       const finalStash = stash.getStack();
       return finalStash[finalStash.length - 1];
     } catch (e) {
-      const msg = this.context.errors.length > 0
-        ? parseError(this.context.errors)
-        : e instanceof Error ? e.message : String(e);
+      const msg =
+        this.context.errors.length > 0
+          ? parseError(this.context.errors)
+          : e instanceof Error
+            ? e.message
+            : String(e);
       this.conductor.sendOutput(`Error: ${msg}`);
       this.context.errors = [];
       return undefined;
@@ -428,10 +484,16 @@ abstract class JSCseEvaluatorBase extends BasicEvaluator {
 
 export class JSCseEvaluator3 extends JSCseEvaluatorBase {
   protected readonly chapter = Chapter.SOURCE_3;
-  constructor(conductor: IRunnerPlugin) { super(conductor); this.initContext(); }
+  constructor(conductor: IRunnerPlugin) {
+    super(conductor);
+    this.initContext();
+  }
 }
 
 export class JSCseEvaluator4 extends JSCseEvaluatorBase {
   protected readonly chapter = Chapter.SOURCE_4;
-  constructor(conductor: IRunnerPlugin) { super(conductor); this.initContext(); }
+  constructor(conductor: IRunnerPlugin) {
+    super(conductor);
+    this.initContext();
+  }
 }

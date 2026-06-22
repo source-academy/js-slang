@@ -1,6 +1,6 @@
 import * as acorn from 'acorn';
-import { generate as customGenerate } from '../utils';
 import { describe, expect, test } from 'vitest';
+import { generate as customGenerate } from '../utils';
 import createContext from '../../createContext';
 import { mockContext } from '../../utils/testing/mocks';
 import { convert } from '../generator';
