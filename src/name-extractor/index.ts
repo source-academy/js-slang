@@ -116,7 +116,7 @@ export function getKeywords(
   function addAllowedKeywords(keywords: { [key: string]: NameDeclaration[] }) {
     Object.entries(keywords)
       .filter(([nodeType]) => context.chapter >= syntaxBlacklist[nodeType])
-      .forEach(([_nodeType, decl]) => keywordSuggestions.push(...decl));
+      .forEach(([, decl]) => keywordSuggestions.push(...decl));
   }
 
   // The rest of the keywords are only valid at the beginning of a statement
@@ -126,12 +126,12 @@ export function getKeywords(
   ) {
     addAllowedKeywords(keywordsInBlock);
     // Keywords only allowed in functions
-    if (ancestors.some(node => isFunction(node))) {
+    if (ancestors.some(isFunction)) {
       addAllowedKeywords(keywordsInFunction);
     }
 
     // Keywords only allowed in loops
-    if (ancestors.some(node => isLoop(node))) {
+    if (ancestors.some(isLoop)) {
       addAllowedKeywords(keywordsInLoop);
     }
   }
@@ -243,9 +243,8 @@ function isNotNullOrUndefined<T>(x: T): x is Exclude<T, null | undefined> {
 
 function getNodeChildren(node: Node): es.Node[] {
   switch (node.type) {
-    case 'Program':
-      return node.body;
     case 'BlockStatement':
+    case 'Program':
       return node.body;
     case 'WhileStatement':
       return [node.test, node.body];
@@ -253,34 +252,25 @@ function getNodeChildren(node: Node): es.Node[] {
       return [node.init, node.test, node.update, node.body].filter(isNotNullOrUndefined);
     case 'ExpressionStatement':
       return [node.expression];
-    case 'IfStatement':
-      const children = [node.test, node.consequent];
-      if (isNotNullOrUndefined(node.alternate)) {
-        children.push(node.alternate);
-      }
-      return children;
     case 'ReturnStatement':
       return node.argument ? [node.argument] : [];
-    case 'FunctionDeclaration':
-      return [node.body];
     case 'VariableDeclaration':
       return node.declarations.flatMap(getNodeChildren);
     case 'VariableDeclarator':
       return node.init ? [node.init] : [];
     case 'ArrowFunctionExpression':
-      return [node.body];
+    case 'FunctionDeclaration':
     case 'FunctionExpression':
       return [node.body];
     case 'UnaryExpression':
       return [node.argument];
+    case 'AssignmentExpression':
     case 'BinaryExpression':
-      return [node.left, node.right];
     case 'LogicalExpression':
       return [node.left, node.right];
+    case 'IfStatement':
     case 'ConditionalExpression':
-      return [node.test, node.alternate, node.consequent];
-    case 'CallExpression':
-      return [...node.arguments, node.callee];
+      return [node.test, node.alternate, node.consequent].filter(isNotNullOrUndefined);
     // case 'Identifier':
     // case 'DebuggerStatement':
     // case 'BreakStatement':
@@ -288,14 +278,13 @@ function getNodeChildren(node: Node): es.Node[] {
     // case 'MemberPattern':
     case 'ArrayExpression':
       return node.elements.filter(isNotNull);
-    case 'AssignmentExpression':
-      return [node.left, node.right];
     case 'MemberExpression':
       return [node.object, node.property];
     case 'Property':
       return [node.key, node.value];
     case 'ObjectExpression':
-      return [...node.properties];
+      return node.properties;
+    case 'CallExpression':
     case 'NewExpression':
       return [...node.arguments, node.callee];
     default:

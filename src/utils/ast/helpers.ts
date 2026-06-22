@@ -14,36 +14,36 @@ export function getModuleDeclarationSource(node: ModuleDeclarationWithSource): s
   return node.source.value;
 }
 
+export function extractIdsFromPattern(pattern: es.Pattern): es.Identifier[] {
+  switch (pattern.type) {
+    case 'ArrayPattern':
+      return pattern.elements.flatMap(extractIdsFromPattern);
+    case 'AssignmentPattern':
+      return extractIdsFromPattern(pattern.left);
+    case 'Identifier':
+      return [pattern];
+    case 'ObjectPattern':
+      return pattern.properties.flatMap(prop => {
+        if (prop.type === 'Property') {
+          return extractIdsFromPattern(prop.value);
+        }
+        return extractIdsFromPattern(prop);
+      });
+    case 'RestElement':
+      return extractIdsFromPattern(pattern.argument);
+    default:
+      throw new InternalRuntimeError(
+        `Should not encounter a ${pattern.type} in ${extractIdsFromPattern.name}`,
+        pattern,
+      );
+  }
+}
+
 /**
  * Extracts all the identifiers being declared by a VariableDeclaration
  */
 export function extractDeclarations(decl: es.VariableDeclaration) {
-  function recurser(pattern: es.Pattern): es.Identifier[] {
-    switch (pattern.type) {
-      case 'ArrayPattern':
-        return pattern.elements.flatMap(recurser);
-      case 'AssignmentPattern':
-        return recurser(pattern.left);
-      case 'Identifier':
-        return [pattern];
-      case 'ObjectPattern':
-        return pattern.properties.flatMap(prop => {
-          if (prop.type === 'Property') {
-            return recurser(prop.value);
-          }
-          return recurser(prop);
-        });
-      case 'RestElement':
-        return recurser(pattern.argument);
-      default:
-        throw new InternalRuntimeError(
-          `Should not encounter a ${pattern.type} in ${extractDeclarations.name}`,
-          pattern,
-        );
-    }
-  }
-
-  return decl.declarations.flatMap(({ id }) => recurser(id));
+  return decl.declarations.flatMap(({ id }) => extractIdsFromPattern(id));
 }
 
 /**

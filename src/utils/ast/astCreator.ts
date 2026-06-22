@@ -69,12 +69,15 @@ export const literal = (
 export const memberExpression = (
   object: es.Expression,
   property: string | number,
+  optional: boolean = false,
+  loc?: es.SourceLocation | null,
 ): es.MemberExpression => ({
   type: 'MemberExpression',
   object,
   computed: typeof property === 'number',
-  optional: false,
+  optional,
   property: typeof property === 'number' ? literal(property) : identifier(property),
+  loc,
 });
 
 export const declaration = (
