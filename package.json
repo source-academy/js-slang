@@ -31,9 +31,9 @@
   "dependencies": {
     "@babel/parser": "^7.19.4",
     "@commander-js/extra-typings": "^14.0.0",
-    "@sourceacademy/common-cse-machine": "portal:../plugins/src/common/cse-machine",
+    "@sourceacademy/common-cse-machine": "^0.1.0",
     "@sourceacademy/conductor": "https://github.com/source-academy/conductor.git#0.5.0",
-    "@sourceacademy/runner-cse-machine": "portal:../plugins/src/runner/cse-machine",
+    "@sourceacademy/runner-cse-machine": "^1.0.0",
     "@ts-morph/bootstrap": "^0.18.0",
     "acorn": "^8.8.2",
     "acorn-class-fields": "^1.0.0",

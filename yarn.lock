@@ -1176,25 +1176,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sourceacademy/common-cse-machine@portal:../plugins/src/common/cse-machine::locator=js-slang%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sourceacademy/common-cse-machine@portal:../plugins/src/common/cse-machine::locator=js-slang%40workspace%3A."
+"@sourceacademy/common-cse-machine@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@sourceacademy/common-cse-machine@npm:0.1.0"
+  checksum: 10c0/7c31a0629e15b6d1c9d8a67228d290555003c4862e7298ef591fe4a33cb2ccc3372675d7165029af3ad47dd68b6cc116f4ca8843e5a8306c0f62531c5c01fd4a
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@sourceacademy/conductor@portal:../conductor::locator=js-slang%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sourceacademy/conductor@portal:../conductor::locator=js-slang%40workspace%3A."
+"@sourceacademy/conductor@https://github.com/source-academy/conductor.git#0.5.0":
+  version: 0.5.0
+  resolution: "@sourceacademy/conductor@https://github.com/source-academy/conductor.git#commit=2349aa912b32ff4f8b5bad2666243c6adad5677e"
+  checksum: 10c0/6f17b0f9bbd4630d73a3c4df043e05140f9c77b735fba4956442d3574c54f5918dd6113b3d52b1ed4238febc9ff2c03676c0200f7f1c5b5a3bc5eea92ecebea9
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@sourceacademy/runner-cse-machine@portal:../plugins/src/runner/cse-machine::locator=js-slang%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sourceacademy/runner-cse-machine@portal:../plugins/src/runner/cse-machine::locator=js-slang%40workspace%3A."
+"@sourceacademy/runner-cse-machine@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@sourceacademy/runner-cse-machine@npm:1.0.0"
   peerDependencies:
+    "@sourceacademy/common-cse-machine": ">=0.1.0"
     "@sourceacademy/conductor": ">=0.3.0"
+  checksum: 10c0/9ff119df2783e9c2fc21a8107c5e87df26a914880bda442a9ddd562c39bb56b3889ee88bdaa1810a10206184ab15fabf6d6a95644e88d5dbe206525cbf409930
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@standard-schema/spec@npm:^1.1.0":
   version: 1.1.0
@@ -3856,9 +3860,9 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^16.0.1"
     "@rollup/plugin-replace": "npm:^6.0.3"
     "@rollup/plugin-terser": "npm:^1.0.0"
-    "@sourceacademy/common-cse-machine": "portal:../plugins/src/common/cse-machine"
-    "@sourceacademy/conductor": "portal:../conductor"
-    "@sourceacademy/runner-cse-machine": "portal:../plugins/src/runner/cse-machine"
+    "@sourceacademy/common-cse-machine": "npm:^0.1.0"
+    "@sourceacademy/conductor": "https://github.com/source-academy/conductor.git#0.5.0"
+    "@sourceacademy/runner-cse-machine": "npm:^1.0.0"
     "@ts-morph/bootstrap": "npm:^0.18.0"
     "@types/estree": "npm:^1.0.5"
     "@types/lodash": "npm:^4.14.202"
