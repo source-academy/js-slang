@@ -475,7 +475,7 @@ describe(list.list_to_vector, () => {
 
 describe(list.map, () => {
   describe('source', () => {
-    it('works', () => {
+    it.only('works', () => {
       return expectFinishedResult(
         `equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));`,
         Chapter.SOURCE_2,

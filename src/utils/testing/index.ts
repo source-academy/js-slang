@@ -102,7 +102,8 @@ export async function testInContext(code: string, rawOptions: TestOptions) {
 export async function testSuccess(code: string, options: TestOptions = {}) {
   const { context, result } = await testInContext(code, options);
   if (result.status !== 'finished') {
-    console.log(context.errors);
+    const errStr = parseError(context.errors);
+    expect.fail(`Program exited with error: ${errStr}`);
   }
 
   assertIsFinished(result);

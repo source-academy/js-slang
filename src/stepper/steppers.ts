@@ -1,8 +1,8 @@
 import type es from 'estree';
 import { parseError, type Context, type IOptions } from '..';
 import { UndefinedVariableError } from '../errors/errors';
-import { checkProgramForUndefinedVariables } from '../validator/validator';
 import { RuntimeSourceError } from '../errors/base';
+import { checkForUndefinedVariables } from '../validator/validator';
 import type { StepperProgram } from './nodes/Program';
 import { prelude } from './builtins';
 import { explain } from './generator';
@@ -111,7 +111,7 @@ export function getSteps(
   });
   // check for undefined variables
   try {
-    checkProgramForUndefinedVariables(inputNode as es.Program, context);
+    checkForUndefinedVariables(inputNode as es.Program, context, false);
   } catch (error) {
     steps.push({
       ast: node,

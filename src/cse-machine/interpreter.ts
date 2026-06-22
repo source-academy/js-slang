@@ -35,7 +35,7 @@ import {
 } from '../utils/operators';
 import * as rttc from '../utils/rttc';
 import * as seq from '../utils/statementSeqTransform';
-import { checkProgramForUndefinedVariables } from '../validator/validator';
+import { checkForUndefinedVariables } from '../validator/validator';
 import Closure from './closure';
 import {
   Continuation,
@@ -178,7 +178,7 @@ export class Stash extends Stack<Value> {
  */
 export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
   try {
-    checkProgramForUndefinedVariables(program, context);
+    checkForUndefinedVariables(program, context, false);
   } catch (error) {
     context.errors.push(error);
     return new CseError(error);

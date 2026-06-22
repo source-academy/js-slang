@@ -1,34 +1,135 @@
-/**
- * This whole transpiler includes many many many many hacks to get stuff working.
- * Order in which certain functions are called matter as well.
- * There should be an explanation on it coming up soon.
- */
 import { generate } from 'astring';
 import type es from 'estree';
-import cloneDeep from 'lodash/cloneDeep';
 import { type RawSourceMap, SourceMapGenerator } from 'source-map';
+import type { Context, NativeStorage, Node } from '../types';
+import type * as operators from '../utils/operators';
+import * as create from '../utils/ast/astCreator';
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants';
 import { Chapter, Variant } from '../langs';
-import type { Context, NativeStorage, Node } from '../types';
-import * as create from '../utils/ast/astCreator';
+import assert from '../utils/assert';
 import {
+  extractDeclarations,
   filterImportDeclarations,
   getImportedName,
-  getSourceVariableDeclaration,
 } from '../utils/ast/helpers';
 import { isNamespaceSpecifier, isVariableDeclaration } from '../utils/ast/typeGuards';
-import { ancestor, simple } from '../utils/ast/walkers';
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
-  getNativeIds,
   getUniqueId,
-  type NativeIds,
 } from '../utils/uniqueIds';
 import { checkForUndefinedVariables } from '../validator/validator';
 
-export function transformImportDeclarations(
+interface TranspilationContext {
+  nativeIds: NativeIds;
+  chapter: Chapter;
+  isPrelude: boolean;
+  usedIdentifiers: Set<string>;
+}
+
+const nativeIdKeys = [
+  'native',
+  'callIfFuncAndRightArgs',
+  'boolOrErr',
+  'wrap',
+  'unaryOp',
+  'binaryOp',
+  'throwIfTimeout',
+  'setProp',
+  'getProp',
+  // 'builtins',
+] satisfies (keyof typeof operators | 'native')[];
+
+type NativeIds = Record<(typeof nativeIdKeys)[number], es.Identifier>;
+
+function getNodeLoc({ loc }: Node) {
+  const { line, column } = (loc ?? UNKNOWN_LOCATION).start;
+  const source = loc?.source ?? null;
+
+  return { line, column, source };
+}
+
+/**
+ * Assign each nativeId a unique identifier. Updates the
+ * set of used identifiers.
+ */
+function getNativeIds(usedIdentifiers: Set<string>): NativeIds {
+  return nativeIdKeys.reduce(
+    (res, identifier) => ({
+      ...res,
+      [identifier]: create.identifier(getUniqueId(usedIdentifiers, identifier)),
+    }),
+    {} as NativeIds,
+  );
+}
+
+/**
+ * Returns all the names of variables declared at the top top-level of the program
+ */
+function getGloballyDeclaredIdentifiers(statements: es.Statement[]): string[] {
+  return statements.flatMap(decl => {
+    if (isVariableDeclaration(decl)) {
+      return extractDeclarations(decl).map(({ name }) => name);
+    }
+    return [];
+  });
+}
+
+/**
+ * The evaller function is used to evaluate new code within the current evaluation context. This function
+ * returns the ast representation of the "evaller", which looks like this
+ * in code: `native.evaller = program0 => eval(program0)`.
+ */
+function getEvallerReplacer(
+  nativeStorageId: NativeIds['native'],
+  usedIdentifiers: Set<string>,
+): es.ExpressionStatement {
+  const arg = create.identifier(getUniqueId(usedIdentifiers, 'program'));
+  return create.expressionStatement(
+    create.assignmentExpression(
+      create.memberExpression(nativeStorageId, 'evaller'),
+      create.arrowFunctionExpression(
+        [arg],
+        create.callExpression(create.identifier('eval'), [arg]),
+      ),
+    ),
+  );
+}
+
+/**
+ * Appends a variable declaration declaring the given builtin. Each builtin can be found inside the `builtins` map
+ * on the `nativeStorage` object, so it would look like this:
+ * - `const math_PI = nativeStorage.builtins.get('math_PI');`
+ * Then, it wraps the user program within a BlockStatement to prevent identifiers from user code from clashing
+ * with builtin code. This BlockStatement gets appended to the builtin declarations.
+ */
+function wrapWithBuiltins(progStmts: es.Statement[], nativeStorage: NativeStorage) {
+  const builtinDeclarations: es.Statement[] = [];
+
+  for (const builtin of nativeStorage.builtins.keys()) {
+    builtinDeclarations.push(
+      create.constantDeclaration(
+        builtin,
+        create.callExpression(
+          // These are always at the top level of the program, so the 'native' alternate identifier
+          // is not in scope
+          create.memberExpression(
+            create.memberExpression(create.identifier(NATIVE_STORAGE_ID), 'builtins'),
+            'get',
+          ),
+          [create.literal(builtin)],
+        ),
+      ),
+    );
+  }
+
+  builtinDeclarations.push(create.blockStatement(progStmts));
+
+  return builtinDeclarations;
+}
+
+function transformImportDeclarations(
   program: es.Program,
   moduleExpr: es.Expression,
 ): [es.VariableDeclaration[], Exclude<es.Program['body'][0], es.ImportDeclaration>[]] {
@@ -49,397 +150,380 @@ export function transformImportDeclarations(
   return [declNodes, otherNodes];
 }
 
-export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
-  return program.body.filter(isVariableDeclaration).map(decl => {
-    const {
-      id: { name },
-    } = getSourceVariableDeclaration(decl);
-    return name;
-  });
+/**
+ * BinaryExpressions get transformed to calls to {@link operators.binaryOp| the binaryOp function}, which provides type checking.
+ * For example: `1 + 1` gets transformed to `binaryOp('+', Chapter.SOURCE_4, 1, 1);`
+ */
+function transformBinaryExpression(node: es.BinaryExpression, ctx: TranspilationContext) {
+  const { line, column, source } = getNodeLoc(node);
+
+  return create.callExpression(ctx.nativeIds.binaryOp, [
+    create.literal(node.operator),
+    create.literal(ctx.chapter),
+    // `left` is `Expression | PrivateIdentifier`; private-in expressions are
+    // not valid in Source, so the operand is always an Expression.
+    transformNode(node.left as es.Expression, ctx),
+    transformNode(node.right, ctx),
+    create.literal(line),
+    create.literal(column),
+    create.literal(source),
+  ]);
 }
 
-export function getBuiltins(nativeStorage: NativeStorage): es.Statement[] {
-  const builtinsStatements: es.Statement[] = [];
-  nativeStorage.builtins.forEach((_unused, name: string) => {
-    builtinsStatements.push(
-      create.constantDeclaration(
-        name,
-        create.callExpression(
-          create.memberExpression(
-            create.memberExpression(create.identifier(NATIVE_STORAGE_ID), 'builtins'),
-            'get',
-          ),
-          [create.literal(name)],
-        ),
-      ),
-    );
-  });
+/**
+ * UnaryExpressions get transformed to calls to {@link operators.unaryOp|the unaryOp function}, which provides type checking.
+ * For example: `!true` gets transformed to `unaryOp('!', true)`
+ */
+function transformUnaryExpression(node: es.UnaryExpression, ctx: TranspilationContext) {
+  const { line, column, source } = getNodeLoc(node);
 
-  return builtinsStatements;
-}
-
-export function evallerReplacer(
-  nativeStorageId: NativeIds['native'],
-  usedIdentifiers: Set<string>,
-): es.ExpressionStatement {
-  const arg = create.identifier(getUniqueId(usedIdentifiers, 'program'));
-  return create.expressionStatement(
-    create.assignmentExpression(
-      create.memberExpression(nativeStorageId, 'evaller'),
-      create.arrowFunctionExpression(
-        [arg],
-        create.callExpression(create.identifier('eval'), [arg]),
-      ),
-    ),
+  return create.callExpression(
+    ctx.nativeIds.unaryOp,
+    [
+      create.literal(node.operator),
+      transformNode(node.argument, ctx),
+      create.literal(line),
+      create.literal(column),
+      create.literal(source),
+    ],
+    node.loc,
   );
 }
 
-function generateFunctionsToStringMap(program: es.Program) {
-  const map: Map<Node, string> = new Map();
-  simple(program, {
-    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      map.set(node, generate(node));
-    },
-    FunctionDeclaration(node: es.FunctionDeclaration) {
-      map.set(node, generate(node));
-    },
-  });
-  return map;
-}
-
-function transformFunctionDeclarationsToArrowFunctions(
-  program: es.Program,
-  functionsToStringMap: Map<Node, string>,
+/**
+ * Certain node types require boolean expressions. For example, the `test` portion of a while loop should be a boolean.
+ * These test expressions get transformed to calls to {@link operators.boolOrErr | boolOrErr} to ensure that
+ * they do indeed evaluate to a boolean at runtime.
+ * For example:
+ * ```js
+ * if (x && y) { return 0; }
+ * ```
+ * gets transformed to
+ * ```js
+ * if (boolOrErr(x && y)) { return 0; }
+ * ```
+ * This function only transforms the test expression.
+ */
+function transformBooleanTest(
+  node:
+    | es.IfStatement
+    | es.ConditionalExpression
+    | es.LogicalExpression
+    | es.ForStatement
+    | es.WhileStatement,
+  ctx: TranspilationContext,
 ) {
-  simple(program, {
-    FunctionDeclaration(node: es.VariableDeclaration) {
-      const { id, params, body, loc } = node as es.FunctionDeclaration & es.VariableDeclaration;
-      node.type = 'VariableDeclaration';
-      node = node;
-      const asArrowFunction = create.blockArrowFunction(params as es.Identifier[], body, loc);
-      functionsToStringMap.set(asArrowFunction, functionsToStringMap.get(node)!);
-      node.declarations = [
-        {
-          type: 'VariableDeclarator',
-          id,
-          init: asArrowFunction,
-        },
-      ];
-      node.kind = 'const';
-    },
-  });
+  // We have to pass in the entire node because we want the location information of the
+  // parent of the test
+  const { line, column, source } = getNodeLoc(node);
+
+  return create.callExpression(ctx.nativeIds.boolOrErr, [
+    transformNode(
+      node.type === 'LogicalExpression' ? node.left : (node.test as es.Expression),
+      ctx,
+    ),
+    create.literal(line),
+    create.literal(column),
+    create.literal(source),
+  ]);
 }
 
 /**
- * Transforms all arrow functions
- * (arg1, arg2, ...) => { statement1; statement2; return statement3; }
+ * Property assignment expressions get transformed to calls to {@link operators.getProp | getProp} to ensure that array
+ * indices are correct/the desired property exists on the target expression
  *
- * to
- *
- * <NATIVE STORAGE>.operators.wrap((arg1, arg2, ...) => {
- *   statement1;statement2;return statement3;
- * })
- *
- * to allow for iterative processes to take place
+ * `obj.foo` gets transpiled to `getProp(obj, 'foo')`
  */
+function transformPropertyAccess(node: es.MemberExpression, ctx: TranspilationContext) {
+  const { line, column, source } = getNodeLoc(node);
 
-function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
-  program: es.Program,
-  functionsToStringMap: Map<Node, string>,
-  globalIds: NativeIds,
-  isPrelude: boolean,
-) {
-  simple(program, {
-    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      // If it's undefined then we're dealing with a thunk
-      if (functionsToStringMap.get(node)! !== undefined) {
-        create.mutateToCallExpression(node, globalIds.wrap, [
-          { ...node },
-          create.literal(node.params[node.params.length - 1]?.type === 'RestElement'),
-          create.literal(functionsToStringMap.get(node)!),
-          create.literal(isPrelude ? 'prelude' : null),
-        ]);
-      }
-    },
-  });
+  // Ignore super.foo
+  if (node.object.type === 'Super') {
+    const newNode: es.MemberExpression = {
+      ...node,
+      object: transformNode(node, ctx),
+      property: transformNode(node, ctx),
+    };
+    return newNode;
+  }
+
+  return create.callExpression(ctx.nativeIds.getProp, [
+    transformNode(node.object, ctx),
+    node.property.type === 'Identifier'
+      ? create.literal(node.property.name)
+      : transformNode(node.property as es.Expression, ctx),
+    create.literal(line),
+    create.literal(column),
+    create.literal(source),
+  ]);
 }
 
 /**
- * Transforms all return statements (including expression arrow functions) to return an intermediate value
- * return nonFnCall + 1;
- *  =>
- * return {isTail: false, value: nonFnCall + 1};
- *
- * return fnCall(arg1, arg2);
- * => return {isTail: true, function: fnCall, arguments: [arg1, arg2]}
- *
- * conditional and logical expressions will be recursively looped through as well
+ * Assignment to member expressions get transformed into calls to {@link operators.setProp|setProp}, which provides
+ * type checking (i.e arrays must be indexed with numbers).
+ * For example:
+ * ```js
+ * a[0] = "a";
+ * // gets transformed into
+ * setProp(a, 0, "a");
+ * ```
  */
-function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
-  function transformLogicalExpression(expression: es.Expression): es.Expression {
-    switch (expression.type) {
-      case 'LogicalExpression':
-        return create.logicalExpression(
-          expression.operator,
-          expression.left,
-          transformLogicalExpression(expression.right),
-          expression.loc,
-        );
-      case 'ConditionalExpression':
-        return create.conditionalExpression(
-          expression.test,
-          transformLogicalExpression(expression.consequent),
-          transformLogicalExpression(expression.alternate),
-          expression.loc,
-        );
-      case 'CallExpression':
-        expression = expression;
-        const { line, column } = (expression.loc ?? UNKNOWN_LOCATION).start;
-        const source = expression.loc?.source ?? null;
-        const functionName =
-          expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>';
+function transformPropertyAssignment(node: es.AssignmentExpression, ctx: TranspilationContext) {
+  const { line, column, source } = getNodeLoc(node);
 
-        const args = expression.arguments;
+  assert(node.operator === '=', `Unsupported assignment operator: ${node.operator}`, node);
 
+  if (node.left.type !== 'MemberExpression') {
+    const newNode: es.AssignmentExpression = {
+      ...node,
+      right: transformNode(node.right, ctx),
+    };
+    return newNode;
+  }
+
+  const memberExpr = node.left;
+
+  return create.callExpression(ctx.nativeIds.setProp, [
+    memberExpr.object as es.Expression,
+    memberExpr.property.type === 'Identifier'
+      ? create.literal(memberExpr.property.name)
+      : transformNode(memberExpr.property as es.Expression, ctx),
+    transformNode(node.right, ctx),
+    create.literal(line),
+    create.literal(column),
+    create.literal(source),
+  ]);
+}
+
+/**
+ * CallExpressions get transformed into a call to {@link operators.callIfFuncAndRightArgs}. This provides type
+ * checking and argument length verification.
+ * ```js
+ * foo("a", "b");
+ * // gets transformed into
+ * callIfFuncAndRightArgs(foo, 1, 1, null, nativeStorage, "a", "b");
+ * ```
+ *
+ * A special case occurs when MemberExpressions are called. The bound version also called instead:
+ * ```js
+ * obj.foo("a", "b");
+ * // gets transformed into
+ * callIfFuncAndRightArgs(foo.bind(obj), 1, 1, null, nativeStorage, "a", "b");
+ * ```
+ */
+function transformCallExpression(node: es.CallExpression, ctx: TranspilationContext) {
+  const { line, column, source } = getNodeLoc(node);
+
+  let callee: es.Expression;
+  if (node.callee.type === 'Identifier') {
+    const calleeName = node.callee.name;
+
+    if (Object.values(ctx.nativeIds).some(({ name }) => name === calleeName)) {
+      // Any calls to transpiler internals don't need to get wrapped
+      return node;
+    }
+    callee = node.callee;
+  }
+  // else if (node.callee.type === 'MemberExpression') {
+  // TODO: Probably need a more robust solution for this
+  // const oldObject = transformNode(node.callee.object as es.Expression, ctx);
+  // callee = create.callExpression(
+  //   create.memberExpression(
+  //     transformPropertyAccess(
+  //       {
+  //         ...node.callee,
+  //         type: 'MemberExpression',
+  //         property: node.callee.property,
+  //         object: oldObject,
+  //       },
+  //       ctx
+  //     ),
+  //     'bind',
+  //     true
+  //   ),
+  //   [oldObject]
+  // )
+  // }
+  else {
+    callee = transformNode(node.callee as es.Expression, ctx);
+  }
+
+  return create.callExpression(ctx.nativeIds.callIfFuncAndRightArgs, [
+    callee,
+    create.literal(line),
+    create.literal(column),
+    create.literal(source),
+    ctx.nativeIds.native,
+    ...node.arguments.map(each => transformNode(each as any, ctx)),
+  ]);
+}
+
+/**
+ * For functions that need to recursively call themselves, we must augment their return values to allow
+ * proper tail calls. This function should be used on the `argument` of a ReturnStatement or on the body
+ * of an expression returning ArrowFunctionExpression.
+ */
+function transformReturnExpression(node: es.Expression, ctx: TranspilationContext): es.Expression {
+  switch (node.type) {
+    case 'LogicalExpression': {
+      return {
+        ...node,
+        left: transformBooleanTest(node, ctx),
+        right: transformReturnExpression(node.right, ctx),
+      };
+    }
+    case 'ConditionalExpression': {
+      // We need to transform each branch first, because if we don't if the either the consequent
+      // or alternate were function calls, they might get transformed into CallExpressions (like property access)
+      // when they were not previously, erroneously triggering the CallExpression block below
+      const newConsequent = transformNode(transformReturnExpression(node.consequent, ctx), ctx);
+      const newAlternate = transformNode(transformReturnExpression(node.alternate, ctx), ctx);
+      const newTest = transformBooleanTest(node, ctx);
+      return create.conditionalExpression(newTest, newConsequent, newAlternate, node.loc);
+      
+      // const transformed = transformNode(node, ctx) as es.ConditionalExpression;
+      // return {
+      //   ...transformed,
+      //   consequent: transformNode(transformed.consequent, ctx),
+      //   alternate: transformNode(transformed.alternate, ctx)
+      // }
+    }
+    case 'CallExpression': {
+      const { line, column, source } = getNodeLoc(node);
+
+      const functionName = node.callee.type === 'Identifier' ? node.callee.name : '<anonymous>';
+      
+      if (!Object.values(ctx.nativeIds).some(({ name }) => name === functionName)) {
+        const newCallee = transformNode(node.callee as es.Expression, ctx);
+        const newArgs = node.arguments.map(each => transformNode(each as any, ctx));
+        
         return create.objectExpression([
           create.property('isTail', create.literal(true)),
-          create.property('function', expression.callee as es.Expression),
+          create.property('function', newCallee),
           create.property('functionName', create.literal(functionName)),
-          create.property('arguments', create.arrayExpression(args as es.Expression[])),
+          create.property('arguments', create.arrayExpression(newArgs)),
           create.property('line', create.literal(line)),
           create.property('column', create.literal(column)),
           create.property('source', create.literal(source)),
         ]);
-      default:
-        return create.objectExpression([
-          create.property('isTail', create.literal(false)),
-          create.property('value', expression),
-        ]);
-    }
-  }
-
-  simple(program, {
-    ReturnStatement(node: es.ReturnStatement) {
-      node.argument = transformLogicalExpression(node.argument!);
-    },
-    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
-      if (node.expression) {
-        node.body = transformLogicalExpression(node.body as es.Expression);
       }
-    },
-  });
+    }
+    default:
+      return create.objectExpression([
+        create.property('isTail', create.literal(false)),
+        create.property('value', transformNode(node, ctx)),
+      ]);
+  }
 }
 
-function transformCallExpressionsToCheckIfFunction(program: es.Program, globalIds: NativeIds) {
-  simple(program, {
-    CallExpression(node: es.CallExpression) {
-      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start;
-      const source = node.loc?.source ?? null;
-      const args = node.arguments;
+/**
+ * All functions in Source get transformed into ArrowFunctionExpressions.
+ * Wherever ArrowFunctionExpressions are declared, they get wrapped with a call to {@link operators.wrap|wrap} that
+ * provides varargs information to Source and stringification.
+ *
+ * Each return statement must also be transformed by {@link transformReturnExpression}.
+ * ```js
+ * function foo(x) {
+ *   return x;
+ * }
+ * // roughly becomes
+ * const foo = wrap(x => ({
+ *  isTail: false,
+ *   value: x
+ * }), false, "function foo(x) { return x; } ");
+ * ```
+ */
+function transformFunction(
+  f: es.MaybeNamedFunctionDeclaration | es.FunctionExpression | es.ArrowFunctionExpression,
+  ctx: TranspilationContext,
+): es.CallExpression {
+  const newBody =
+    f.body.type === 'BlockStatement'
+      ? transformNode(f.body, ctx)
+      : transformReturnExpression(f.body, ctx);
 
-      node.arguments = [
-        node.callee as es.Expression,
-        create.literal(line),
-        create.literal(column),
-        create.literal(source),
-        globalIds.native,
-        ...args,
-      ];
-
-      node.callee = globalIds.callIfFuncAndRightArgs;
-    },
-  });
+  return create.callExpression(
+    ctx.nativeIds.wrap,
+    [
+      {
+        ...f,
+        type: 'ArrowFunctionExpression',
+        expression: f.type === 'ArrowFunctionExpression' && f.expression,
+        body: newBody,
+      },
+      create.literal(f.params[f.params.length - 1]?.type === 'RestElement'),
+      create.literal(generate(f)),
+      create.literal(ctx.isPrelude ? 'prelude' : null),
+    ],
+    f.loc,
+  );
 }
 
-function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds: NativeIds) {
-  function transform(
-    node:
-      | es.IfStatement
-      | es.ConditionalExpression
-      | es.LogicalExpression
-      | es.ForStatement
-      | es.WhileStatement,
-  ) {
-    const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start;
-    const source = node.loc?.source ?? null;
-    const test = node.type === 'LogicalExpression' ? 'left' : 'test';
-    (node as any)[test] = create.callExpression(globalIds.boolOrErr, [
-      (node as any)[test],
+/**
+ * Before each loop, we call `get_time` and store when the loop first began executing. Then, before we execute
+ * each iteration, we check that the time since we started looping hasn't yet exceeded the maxExecTime via a call
+ * to {@link operators.throwIfTimeout|throwIfTimeout}.
+ *
+ * This function returns the transformed loop body and the start time declaration.
+ *
+ * ```js
+ * while (true) x = x + 1;
+ * // gets transformed into
+ *
+ * const startTime = get_time();
+ * while (true) {
+ *   throwIfTimeout(native, startTime, get_time(), 1, 1, null);
+ *   x = x + 1;
+ * }
+ * ```
+ */
+function addInfiniteLoopProtection(
+  node: es.ForStatement | es.WhileStatement,
+  ctx: TranspilationContext,
+): [es.VariableDeclaration, es.BlockStatement] {
+  const getTimeAst = () => create.callExpression(create.identifier('get_time'), []);
+
+  const { line, column, source } = getNodeLoc(node);
+  const startTimeConst = getUniqueId(ctx.usedIdentifiers, 'startTime');
+
+  const throwIfTimeoutCall = create.expressionStatement(
+    create.callExpression(ctx.nativeIds.throwIfTimeout, [
+      ctx.nativeIds.native,
+      create.identifier(startTimeConst),
+      getTimeAst(),
       create.literal(line),
       create.literal(column),
       create.literal(source),
-    ]);
-  }
+    ]),
+  );
 
-  simple(program, {
-    IfStatement: transform,
-    ConditionalExpression: transform,
-    LogicalExpression: transform,
-    ForStatement: transform,
-    WhileStatement: transform,
-  });
+  const { body } = node;
+  return [
+    create.constantDeclaration(startTimeConst, getTimeAst()),
+    create.blockStatement(
+      body.type === 'BlockStatement'
+        ? [throwIfTimeoutCall, ...transformNode(body, ctx).body]
+        : [throwIfTimeoutCall, transformNode(body, ctx)],
+    ),
+  ];
 }
 
-function transformUnaryAndBinaryOperationsToFunctionCalls(
-  program: es.Program,
-  globalIds: NativeIds,
-  chapter: Chapter,
-) {
-  simple(program, {
-    BinaryExpression(node: es.BinaryExpression) {
-      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start;
-      const source = node.loc?.source ?? null;
-      const { operator, left, right } = node;
-      create.mutateToCallExpression(node, globalIds.binaryOp, [
-        create.literal(operator),
-        create.literal(chapter),
-        // `left` is `Expression | PrivateIdentifier`; private-in expressions are
-        // not valid in Source, so the operand is always an Expression.
-        left as es.Expression,
-        right,
-        create.literal(line),
-        create.literal(column),
-        create.literal(source),
-      ]);
-    },
-    UnaryExpression(node: es.UnaryExpression) {
-      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start;
-      const source = node.loc?.source ?? null;
-      const { operator, argument } = node;
-      create.mutateToCallExpression(node, globalIds.unaryOp, [
-        create.literal(operator),
-        argument,
-        create.literal(line),
-        create.literal(column),
-        create.literal(source),
-      ]);
-    },
-  });
-}
-
-function getComputedProperty(computed: boolean, property: es.Expression): es.Expression {
-  return computed ? property : create.literal((property as es.Identifier).name);
-}
-
-function transformPropertyAssignment(program: es.Program, globalIds: NativeIds) {
-  simple(program, {
-    AssignmentExpression(node: es.AssignmentExpression) {
-      if (node.left.type === 'MemberExpression') {
-        const { object, property, computed, loc } = node.left;
-        const { line, column } = (loc ?? UNKNOWN_LOCATION).start;
-        const source = loc?.source ?? null;
-        create.mutateToCallExpression(node, globalIds.setProp, [
-          object as es.Expression,
-          getComputedProperty(computed, property as es.Expression),
-          node.right,
-          create.literal(line),
-          create.literal(column),
-          create.literal(source),
-        ]);
-      }
-    },
-  });
-}
-
-function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
-  ancestor(program, {
-    MemberExpression(node: es.MemberExpression, _state, ancestors) {
-      const lastAncestor = ancestors[ancestors.length - 2];
-      const { object, property, computed, loc } = node;
-      const { line, column } = (loc ?? UNKNOWN_LOCATION).start;
-      const source = loc?.source ?? null;
-
-      if (lastAncestor.type === 'CallExpression') {
-        if (
-          lastAncestor.callee.type === 'Identifier' &&
-          lastAncestor.callee.name === globalIds.callIfFuncAndRightArgs.name
-        ) {
-          create.mutateToCallExpression(
-            node,
-            create.memberExpression(
-              create.callExpression(globalIds.getProp, [
-                object as es.Expression,
-                getComputedProperty(computed, property as es.Expression),
-                create.literal(line),
-                create.literal(column),
-                create.literal(source),
-              ]),
-              'bind',
-            ),
-            [object as es.Expression],
-          );
-          return;
-        }
-      }
-
-      create.mutateToCallExpression(node, globalIds.getProp, [
-        object as es.Expression,
-        getComputedProperty(computed, property as es.Expression),
-        create.literal(line),
-        create.literal(column),
-        create.literal(source),
-      ]);
-    },
-  });
-}
-
-function addInfiniteLoopProtection(
-  program: es.Program,
-  globalIds: NativeIds,
-  usedIdentifiers: Set<string>,
-) {
-  const getTimeAst = () => create.callExpression(create.identifier('get_time'), []);
-
-  function instrumentLoops(node: es.Program | es.BlockStatement) {
-    const newStatements = [];
-    for (const statement of node.body) {
-      if (statement.type === 'ForStatement' || statement.type === 'WhileStatement') {
-        const startTimeConst = getUniqueId(usedIdentifiers, 'startTime');
-        newStatements.push(create.constantDeclaration(startTimeConst, getTimeAst()));
-        if (statement.body.type === 'BlockStatement') {
-          const { line, column } = (statement.loc ?? UNKNOWN_LOCATION).start;
-          const source = statement.loc?.source ?? null;
-          statement.body.body.unshift(
-            create.expressionStatement(
-              create.callExpression(globalIds.throwIfTimeout, [
-                globalIds.native,
-                create.identifier(startTimeConst),
-                getTimeAst(),
-                create.literal(line),
-                create.literal(column),
-                create.literal(source),
-              ]),
-            ),
-          );
-        }
-      }
-      newStatements.push(statement);
-    }
-    node.body = newStatements;
-  }
-
-  simple(program, {
-    Program: instrumentLoops,
-    BlockStatement: instrumentLoops,
-  });
-}
-
-function wrapWithBuiltins(statements: es.Statement[], nativeStorage: NativeStorage) {
-  return create.blockStatement([...getBuiltins(nativeStorage), create.blockStatement(statements)]);
-}
-
+/**
+ * There are a set of internal functions and variables that the transpiler must have access to. This
+ * function creates a VariableDeclaration for every single internal that is required.
+ */
 function getDeclarationsToAccessTranspilerInternals(
-  globalIds: NativeIds,
+  nativeIds: NativeIds,
 ): es.VariableDeclaration[] {
-  return Object.entries(globalIds).map(([key, { name }]) => {
+  return Object.entries(nativeIds).map(([key, { name }]) => {
     let value: es.Expression;
     if (key === 'native') {
       value = create.identifier(NATIVE_STORAGE_ID);
     } else if (key === 'globals') {
-      value = create.memberExpression(globalIds.native, 'globals');
+      value = create.memberExpression(nativeIds.native, 'globals');
     } else {
       value = create.callExpression(
-        create.memberExpression(create.memberExpression(globalIds.native, 'operators'), 'get'),
+        create.memberExpression(create.memberExpression(nativeIds.native, 'operators'), 'get'),
         [create.literal(key)],
       );
     }
@@ -447,109 +531,223 @@ function getDeclarationsToAccessTranspilerInternals(
   });
 }
 
-export type TranspiledResult = { transpiled: string; sourceMapJson?: RawSourceMap };
+function transformStatements(stmts: es.Statement[], ctx: TranspilationContext): es.Statement[] {
+  return stmts.flatMap(node => {
+    switch (node.type) {
+      case 'ForStatement': {
+        const [startTimeDecl, newBody] = addInfiniteLoopProtection(node, ctx);
+        return [
+          startTimeDecl,
+          {
+            ...node,
+            init: node.init ? transformNode(node.init as any, ctx) : undefined,
+            test: node.test ? transformBooleanTest(node, ctx) : undefined,
+            update: node.update ? transformNode(node.update, ctx) : undefined,
+            body: newBody,
+          },
+        ];
+      }
+      case 'WhileStatement': {
+        const newTest = transformBooleanTest(node, ctx);
+        const [startTimeDecl, newBody] = addInfiniteLoopProtection(node, ctx);
+        return [
+          startTimeDecl,
+          {
+            ...node,
+            test: newTest,
+            body: newBody,
+          },
+        ];
+      }
+      default:
+        return [transformNode(node, ctx)];
+    }
+  });
+}
+
+export function transformNode(node: es.Expression, ctx: TranspilationContext): es.Expression;
+export function transformNode(
+  node: es.BlockStatement,
+  ctx: TranspilationContext,
+): es.BlockStatement;
+export function transformNode(node: es.Statement, ctx: TranspilationContext): es.Statement;
+export function transformNode(node: Exclude<Node, es.Program>, ctx: TranspilationContext): Node {
+  switch (node.type) {
+    case 'ArrowFunctionExpression':
+    case 'FunctionExpression':
+      return transformFunction(node, ctx);
+    case 'AssignmentExpression':
+      return transformPropertyAssignment(node, ctx);
+    // case 'BinaryExpression':
+    //   return transformBinaryExpression(node, ctx);
+    case 'CallExpression':
+      return node
+      // return transformCallExpression(node, ctx);
+    // case 'ConditionalExpression':
+    //   return {
+    //     ...node,
+    //     alternate: transformNode(node.consequent, ctx),
+    //     consequent: transformNode(node.consequent, ctx),
+    //     test: transformBooleanTest(node, ctx),
+    //   };
+    // case 'LogicalExpression':
+    //   return {
+    //     ...node,
+    //     left: transformBooleanTest(node, ctx),
+    //     right: transformNode(node.right, ctx),
+    //   };
+    case 'MemberExpression':
+      return transformPropertyAccess(node, ctx);
+    case 'UnaryExpression':
+      return transformUnaryExpression(node, ctx);
+
+    case 'BlockStatement':
+      return {
+        ...node,
+        body: transformStatements(node.body, ctx),
+      };
+    case 'ExpressionStatement':
+      return {
+        ...node,
+        expression: transformNode(node.expression, ctx),
+      };
+    case 'FunctionDeclaration': {
+      const newFunc = transformFunction(node, ctx);
+
+      if (node.id) {
+        return create.constantDeclaration(node.id.name, newFunc);
+      } else {
+        return newFunc;
+      }
+    }
+    case 'IfStatement':
+      return {
+        ...node,
+        test: transformBooleanTest(node, ctx),
+        alternate: node.alternate ? transformNode(node.alternate, ctx) : undefined,
+        consequent: transformNode(node.consequent, ctx),
+      };
+    case 'ReturnStatement':
+      return {
+        ...node,
+        argument: node.argument ? transformReturnExpression(node.argument, ctx) : undefined,
+      };
+    case 'VariableDeclaration':
+      return {
+        ...node,
+        declarations: node.declarations.map(each => ({
+          ...each,
+          init: each.init ? transformNode(each.init, ctx) : undefined,
+        })),
+      };
+    default:
+      return node;
+  }
+}
+
+export interface TranspiledResult {
+  transpiled: string;
+  sourceMapJson?: RawSourceMap;
+}
 
 function transpileToSource(
-  originalProgram: es.Program,
+  program: es.Program,
   context: Context,
   skipUndefined: boolean,
-  isPrelude: boolean,
+  isPrelude: boolean = false,
 ): TranspiledResult {
-  if (originalProgram.body.length === 0) {
+  if (program.body.length === 0) {
     return { transpiled: '' };
   }
 
-  const program = cloneDeep(originalProgram);
+  checkForUndefinedVariables(program, context, skipUndefined);
 
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage),
   ]);
-  const globalIds = getNativeIds(program, usedIdentifiers);
-
-  const functionsToStringMap = generateFunctionsToStringMap(program);
-
-  transformReturnStatementsToAllowProperTailCalls(program);
-  transformCallExpressionsToCheckIfFunction(program, globalIds);
-  transformUnaryAndBinaryOperationsToFunctionCalls(program, globalIds, context.chapter);
-  transformSomeExpressionsToCheckIfBoolean(program, globalIds);
-  transformPropertyAssignment(program, globalIds);
-  transformPropertyAccess(program, globalIds);
-  checkForUndefinedVariables(program, context, globalIds, skipUndefined);
-  // checkProgramForUndefinedVariables(program, context, skipUndefined)
-  transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap);
-  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
-    program,
-    functionsToStringMap,
-    globalIds,
-    isPrelude,
-  );
-  addInfiniteLoopProtection(program, globalIds, usedIdentifiers);
+  const nativeIds = getNativeIds(usedIdentifiers);
 
   const [importNodes, otherNodes] = transformImportDeclarations(
     program,
-    create.memberExpression(globalIds.native, 'loadedModules'),
+    create.memberExpression(nativeIds.native, 'loadedModules'),
   );
 
-  program.body = (importNodes as es.Program['body']).concat(otherNodes);
+  const transformedNodes = transformStatements(otherNodes as es.Statement[], {
+    isPrelude,
+    chapter: context.chapter,
+    usedIdentifiers,
+    nativeIds,
+  });
 
-  getGloballyDeclaredIdentifiers(program).forEach(id =>
+  // We collect all globally declared identifiers here since this won't
+  // include any internals
+  getGloballyDeclaredIdentifiers([...importNodes, ...transformedNodes]).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id),
   );
+
   const newStatements = [
-    ...getDeclarationsToAccessTranspilerInternals(globalIds),
-    evallerReplacer(globalIds.native, usedIdentifiers),
+    // First, transpiler internals are declared
+    ...getDeclarationsToAccessTranspilerInternals(nativeIds),
+    // Then, the evaller replacer is added
+    getEvallerReplacer(nativeIds.native, usedIdentifiers),
+    // This `undefined` is required so that if the user program is empty
+    // the entire program evaluates to undefined, as it should
     create.expressionStatement(create.identifier('undefined')),
-    ...(program.body as es.Statement[]),
+    // Then, everything declared as an import
+    ...importNodes,
+    // Then, the transformed program body
+    ...transformedNodes,
   ];
 
-  program.body =
+  // If this isn't the first time we're evaluating using this context, then
+  // we don't need to redeclare all our builtins
+  const newBody =
     context.nativeStorage.evaller === null
-      ? [wrapWithBuiltins(newStatements, context.nativeStorage)]
+      ? wrapWithBuiltins(newStatements, context.nativeStorage)
       : [create.blockStatement(newStatements)];
 
   const map = new SourceMapGenerator({ file: 'source' });
-  const transpiled = generate(program, { sourceMap: map });
+  const transpiled = generate(create.program(newBody), { sourceMap: map });
   const sourceMapJson = map.toJSON();
   return { transpiled, sourceMapJson };
 }
 
 function transpileToFullJS(
-  originalProgram: es.Program,
+  program: es.Program,
   context: Context,
   skipUndefined: boolean,
 ): TranspiledResult {
-  if (originalProgram.body.length === 0) {
+  if (program.body.length === 0) {
     return { transpiled: '' };
   }
-
-  const program = cloneDeep(originalProgram);
 
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage),
   ]);
 
-  const globalIds = getNativeIds(program, usedIdentifiers);
-  checkForUndefinedVariables(program, context, globalIds, skipUndefined);
+  const nativeIds = getNativeIds(usedIdentifiers);
+  checkForUndefinedVariables(program, context, skipUndefined);
 
   const [importNodes, otherNodes] = transformImportDeclarations(
     program,
     create.memberExpression(create.identifier(NATIVE_STORAGE_ID), 'loadedModules'),
   );
 
-  program.body = (importNodes as es.Program['body']).concat(otherNodes);
+  const userCode = [...importNodes, ...(otherNodes as es.Statement[])];
+
   getFunctionDeclarationNamesInProgram(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id),
   );
-  getGloballyDeclaredIdentifiers(program).forEach(id =>
+
+  getGloballyDeclaredIdentifiers(userCode).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id),
   );
   const transpiledProgram: es.Program = create.program([
-    evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
+    getEvallerReplacer(nativeIds.native, new Set()),
     create.expressionStatement(create.identifier('undefined')),
-    ...(importNodes as es.Statement[]),
-    ...(otherNodes as es.Statement[]),
+    ...userCode,
   ]);
 
   const sourceMap = new SourceMapGenerator({ file: 'source' });

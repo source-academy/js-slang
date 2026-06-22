@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import type { RawSourceMap } from 'source-map';
 
 import { JSSLANG_PROPERTIES } from '../constants';
@@ -6,8 +7,8 @@ import { ExceptionError } from '../errors/errors';
 import { TimeoutError } from '../errors/timeoutErrors';
 import { getSteps } from '../stepper/steppers';
 import { sandboxedEval } from '../transpiler/evalContainer';
-import { transpile } from '../transpiler/transpiler';
 import { SourceErrorWithNode } from '../errors/base';
+import { transpile } from '../transpiler/transpiler';
 import { toSourceError } from './errors';
 import fullJSRunner from './fullJSRunner';
 import type { Runner } from './types';
@@ -43,6 +44,11 @@ const runners = {
     try {
       let transpiled: string;
       ({ transpiled, sourceMapJson } = transpile(program, context, options.isPrelude));
+      console.log(transpiled);
+
+      if (options.isPrelude) {
+        await fs.writeFile('prelude.js', transpiled);
+      }
 
       let value = sandboxedEval(transpiled, context.nativeStorage);
 

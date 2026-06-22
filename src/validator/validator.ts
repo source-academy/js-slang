@@ -6,13 +6,7 @@ import { parse } from '../parser/parser';
 import type { Context, Node, NodeWithInferredType } from '../types';
 import { getSourceVariableDeclaration } from '../utils/ast/helpers';
 import { ancestor, base, type FullWalkerCallback } from '../utils/ast/walkers';
-import {
-  getFunctionDeclarationNamesInProgram,
-  getIdentifiersInNativeStorage,
-  getIdentifiersInProgram,
-  getNativeIds,
-  type NativeIds,
-} from '../utils/uniqueIds';
+import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds';
 import assert from '../utils/assert';
 
 class Declaration {
@@ -155,19 +149,17 @@ export function validateAndAnnotate(
   return program;
 }
 
-export function checkProgramForUndefinedVariables(program: es.Program, context: Context) {
-  const usedIdentifiers = new Set<string>([
-    ...getIdentifiersInProgram(program),
-    ...getIdentifiersInNativeStorage(context.nativeStorage),
-  ]);
-  const globalIds = getNativeIds(program, usedIdentifiers);
-  return checkForUndefinedVariables(program, context, globalIds, false);
-}
+// export function checkProgramForUndefinedVariables(program: es.Program, context: Context) {
+//   const usedIdentifiers = new Set<string>([
+//     ...getIdentifiersInProgram(program),
+//     ...getIdentifiersInNativeStorage(context.nativeStorage),
+//   ]);
+//   return checkForUndefinedVariables(program, context, false);
+// }
 
 export function checkForUndefinedVariables(
   program: es.Program,
   context: Context,
-  globalIds: NativeIds,
   skipUndefined: boolean,
 ) {
   const preludes = context.prelude
@@ -178,6 +170,7 @@ export function checkForUndefinedVariables(
 
   const builtins = context.nativeStorage.builtins;
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>();
+
   function processBlock(node: es.Program | es.BlockStatement) {
     const identifiers = new Set<string>();
     for (const statement of node.body) {
@@ -201,6 +194,7 @@ export function checkForUndefinedVariables(
     }
     identifiersIntroducedByNode.set(node, identifiers);
   }
+
   function processFunction(
     node: es.FunctionDeclaration | es.ArrowFunctionExpression,
     _ancestors: es.Node[],
@@ -244,7 +238,7 @@ export function checkForUndefinedVariables(
       }
     },
   });
-  const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name));
+  // const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name));
 
   for (const [identifier, ancestors] of identifiersToAncestors) {
     const name = identifier.name;
@@ -268,9 +262,12 @@ export function checkForUndefinedVariables(
     if (isInEnv) {
       continue;
     }
-    const isNativeId = nativeInternalNames.has(name);
-    if (!isNativeId && !skipUndefined) {
+
+    if (!skipUndefined) {
       throw new UndefinedVariableError(name, identifier);
     }
+    //   const isNativeId = nativeInternalNames.has(name);
+    //   if (!isNativeId && !skipUndefined) {
+    //   }
   }
 }
