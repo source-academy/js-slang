@@ -99,13 +99,13 @@ describe(list.build_list, () => {
 
     it('throws error when given a negative integer', () => {
       expect(() => list.build_list(x => x, -1)).toThrow(
-        'build_list: Expected integer >= 0, got -1.',
+        'build_list: Expected integer ≥ 0, got -1.',
       );
     });
 
     it('throws error when given a float', () => {
       expect(() => list.build_list(x => x, 0.5)).toThrow(
-        'build_list: Expected integer >= 0, got 0.5.',
+        'build_list: Expected integer ≥ 0, got 0.5.',
       );
     });
   });
@@ -162,7 +162,7 @@ describe(list.enum_list, () => {
 
     it('throws an error when end < start', () => {
       expect(() => list.enum_list(1, -1)).toThrow(
-        'enum_list: Expected number >= 1 for end, got -1.',
+        'enum_list: Expected number ≥ 1 for end, got -1.',
       );
     });
 
@@ -174,7 +174,7 @@ describe(list.enum_list, () => {
 
     it('throws an error when end is not a number', () => {
       expect(() => list.enum_list(0, '0' as any)).toThrow(
-        'enum_list: Expected number >= 0 for end, got "0".',
+        'enum_list: Expected number ≥ 0 for end, got "0".',
       );
     });
   });
@@ -293,7 +293,7 @@ describe(list.for_each, () => {
 describe(list.head, () => {
   describe('javascript', () => {
     it('throws an error when argument is not a pair', () => {
-      expect(() => list.head(0 as any)).toThrowError('head: Expected pair, got 0.');
+      expect(() => list.head(0 as any)).toThrow('head: Expected pair, got 0.');
     });
   });
 
@@ -423,13 +423,11 @@ describe(list.list_ref, () => {
     });
 
     it('throws error when given empty list', () => {
-      expect(() => list.list_ref(null, 0)).toThrowError('list_ref: Index 0 is out of bounds');
+      expect(() => list.list_ref(null, 0)).toThrow('list_ref: Index 0 is out of bounds');
     });
 
     test('throwing out of bounds for populated list', () => {
-      expect(() => list.list_ref(list.list(1, 2), 2)).toThrowError(
-        'list_ref: Index 2 is out of bounds',
-      );
+      expect(() => list.list_ref(list.list(1, 2), 2)).toThrow('list_ref: Index 2 is out of bounds');
     });
   });
 

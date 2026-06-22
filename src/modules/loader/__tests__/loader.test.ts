@@ -243,7 +243,7 @@ describe('module loading', () => {
         },
         context,
       ),
-    ).rejects.toThrowError(WrongChapterForModuleError);
+    ).rejects.toThrow(WrongChapterForModuleError);
     expect(moduleMocker).not.toHaveBeenCalledOnce();
   });
 

@@ -564,7 +564,7 @@ describe(rttc.isNumberWithinRange, () => {
 describe(rttc.assertNumberWithinRange, () => {
   test('throws InvalidNumberParameterError', () => {
     expect(() => rttc.assertNumberWithinRange(0, 'foo', 1)).toThrow(
-      'foo: Expected integer >= 1, got 0.',
+      'foo: Expected integer ≥ 1, got 0.',
     );
   });
 });

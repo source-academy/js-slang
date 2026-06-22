@@ -350,29 +350,35 @@ function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
       const source = loc?.source ?? null;
 
       if (lastAncestor.type === 'CallExpression') {
-        create.mutateToCallExpression(
-          node,
-          create.memberExpression(
-            create.callExpression(globalIds.getProp, [
-              object as es.Expression,
-              getComputedProperty(computed, property as es.Expression),
-              create.literal(line),
-              create.literal(column),
-              create.literal(source),
-            ]),
-            'bind',
-          ),
-          [object as es.Expression],
-        );
-      } else {
-        create.mutateToCallExpression(node, globalIds.getProp, [
-          object as es.Expression,
-          getComputedProperty(computed, property as es.Expression),
-          create.literal(line),
-          create.literal(column),
-          create.literal(source),
-        ]);
+        if (
+          lastAncestor.callee.type === 'Identifier' &&
+          lastAncestor.callee.name === globalIds.callIfFuncAndRightArgs.name
+        ) {
+          create.mutateToCallExpression(
+            node,
+            create.memberExpression(
+              create.callExpression(globalIds.getProp, [
+                object as es.Expression,
+                getComputedProperty(computed, property as es.Expression),
+                create.literal(line),
+                create.literal(column),
+                create.literal(source),
+              ]),
+              'bind',
+            ),
+            [object as es.Expression],
+          );
+          return;
+        }
       }
+
+      create.mutateToCallExpression(node, globalIds.getProp, [
+        object as es.Expression,
+        getComputedProperty(computed, property as es.Expression),
+        create.literal(line),
+        create.literal(column),
+        create.literal(source),
+      ]);
     },
   });
 }

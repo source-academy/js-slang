@@ -60,13 +60,13 @@ describe('char_at', () => {
 
   test('char_at with non nonnegative integer second argument errors', () => {
     return expectParsedError(`char_at('', -1);`).toEqual(
-      'Line 1: char_at: Expected integer >= 0 for index, got -1.',
+      'Line 1: char_at: Expected integer ≥ 0 for index, got -1.',
     );
   });
 
   test('char_at with string for second argument errors', () => {
     return expectParsedError(`char_at('', "");`).toEqual(
-      'Line 1: char_at: Expected integer >= 0 for index, got "".',
+      'Line 1: char_at: Expected integer ≥ 0 for index, got "".',
     );
   });
 

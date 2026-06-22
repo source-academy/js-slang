@@ -118,9 +118,9 @@ export class InvalidNumberParameterError extends InvalidParameterTypeError {
       const typeStr = integer ? 'integer' : 'number';
 
       if (max !== undefined) {
-        expectedStr = min === undefined ? `${typeStr} <= ${max}` : `${typeStr} ∈ [${min}, ${max}]`;
+        expectedStr = min === undefined ? `${typeStr} ≤ ${max}` : `${typeStr} ∈ [${min}, ${max}]`;
       } else {
-        expectedStr = min === undefined ? typeStr : `${typeStr} >= ${min}`;
+        expectedStr = min === undefined ? typeStr : `${typeStr} ≥ ${min}`;
       }
     }
 

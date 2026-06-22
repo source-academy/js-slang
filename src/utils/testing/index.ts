@@ -133,7 +133,7 @@ export const expectFinishedResult = vi.defineHelper(
         testInContext(code, options).then(({ result, context }) => {
           if (result.status === 'error') {
             const errStr = parseError(context.errors);
-            console.log(errStr);
+            expect.fail(`Program exited with error: ${errStr}`);
           }
           assertIsFinished(result);
           return result.value;
