@@ -3,7 +3,7 @@ import { parseError, runInContext } from '../..';
 import createContext, { defineBuiltin } from '../../createContext';
 import { Chapter } from '../../langs';
 import type { CustomBuiltIns } from '../../types';
-import { assertIsFinished, processTestOptions } from './misc';
+import { processTestOptions } from './misc';
 import { mockContext } from './mocks';
 import type { TestContext, TestOptions, TestResults } from './types';
 
@@ -101,12 +101,17 @@ export async function testInContext(code: string, rawOptions: TestOptions) {
  */
 export async function testSuccess(code: string, options: TestOptions = {}) {
   const { context, result } = await testInContext(code, options);
-  if (result.status !== 'finished') {
-    const errStr = parseError(context.errors);
-    expect.fail(`Program exited with error: ${errStr}`);
+
+  switch (result.status) {
+    case 'error': {
+      const errStr = parseError(context.errors);
+      expect.fail(errStr);
+      // expect.fail(`Program exited with error: ${errStr}`);
+    }
+    case 'suspended-cse-eval':
+      expect.fail(`Program was suspended!`);
   }
 
-  assertIsFinished(result);
   return {
     context,
     result,
@@ -130,16 +135,7 @@ export async function testFailure(code: string, options: TestOptions = {}) {
 export const expectFinishedResult = vi.defineHelper(
   (code: string, options: TestOptions = {}): RemoveMatcher<Promisify<Assertion<Promise<any>>>> => {
     return removeMatcher(
-      expect(
-        testInContext(code, options).then(({ result, context }) => {
-          if (result.status === 'error') {
-            const errStr = parseError(context.errors);
-            expect.fail(`Program exited with error: ${errStr}`);
-          }
-          assertIsFinished(result);
-          return result.value;
-        }),
-      ).resolves,
+      expect(testSuccess(code, options).then(({ result }) => result.value)).resolves,
     );
   },
 );

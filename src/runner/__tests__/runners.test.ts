@@ -118,6 +118,23 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
   },
 ];
 
+test('Simulate Source REPL', async () => {
+  const fullJSContext = mockContext(Chapter.SOURCE_4, Variant.DEFAULT);
+  const replStatements: [string, any][] = [
+    ['const x = 1;', undefined],
+    ['x;', 1],
+    ['const y = x + 1;', undefined],
+    ['y;', 2],
+  ];
+
+  for (const replStatement of replStatements) {
+    const [statement, expectedResult] = replStatement;
+    const result = await runInContext(statement, fullJSContext);
+    assertFinishedResultValue(result, expectedResult);
+    expect(fullJSContext.errors).toStrictEqual([]);
+  }
+});
+
 // FullJS Unit Tests
 
 test('Source builtins are accessible in fullJS program', async () => {

@@ -12,7 +12,11 @@ import {
   filterImportDeclarations,
   getImportedName,
 } from '../utils/ast/helpers';
-import { isNamespaceSpecifier, isVariableDeclaration } from '../utils/ast/typeGuards';
+import {
+  isDeclaration,
+  isNamespaceSpecifier,
+  isVariableDeclaration,
+} from '../utils/ast/typeGuards';
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -65,9 +69,10 @@ function getNativeIds(usedIdentifiers: Set<string>): NativeIds {
 }
 
 /**
- * Returns all the names of variables declared at the top top-level of the program
+ * Returns all the names of variables declared within the set of statements. Will not
+ * do it recursively.
  */
-export function getGloballyDeclaredIdentifiers(statements: es.Statement[]): string[] {
+export function getDeclaredIdentifiers(statements: es.Statement[]): string[] {
   return statements.flatMap(decl => {
     if (isVariableDeclaration(decl)) {
       return extractDeclarations(decl).map(({ name }) => name);
@@ -125,6 +130,19 @@ export function getEvallerReplacer(
   );
 }
 
+/**
+ * Separates out all the import declarations within the given program.
+ *
+ * Loaded modules are stored into a variable that's accessible within the program,
+ * so they can simply be declared at the top level of the program as VariableDeclarations.
+ * Each specifier is given its own declaration.
+ *
+ * ```js
+ * import { repeat as r } from 'repeat';
+ * // becomes
+ * const r = nativeStorage.loadedModules.repeat.repeat;
+ * ```
+ */
 export function transformImportDeclarations(
   program: es.Program,
   moduleExpr: es.Expression,
@@ -567,13 +585,10 @@ function transformStatements(stmts: es.Statement[], ctx: TranspilationContext): 
   });
 }
 
-export function transformNode(node: es.Expression, ctx: TranspilationContext): es.Expression;
-export function transformNode(
-  node: es.BlockStatement,
-  ctx: TranspilationContext,
-): es.BlockStatement;
-export function transformNode(node: es.Statement, ctx: TranspilationContext): es.Statement;
-export function transformNode(node: Exclude<Node, es.Program>, ctx: TranspilationContext): Node {
+function transformNode(node: es.Expression, ctx: TranspilationContext): es.Expression;
+function transformNode(node: es.BlockStatement, ctx: TranspilationContext): es.BlockStatement;
+function transformNode(node: es.Statement, ctx: TranspilationContext): es.Statement;
+function transformNode(node: Exclude<Node, es.Program>, ctx: TranspilationContext): Node {
   switch (node.type) {
     // Expressions
     case 'ArrowFunctionExpression':
@@ -672,6 +687,7 @@ function transpileToSource(
   ]);
   const nativeIds = getNativeIds(usedIdentifiers);
 
+  // Separate out import nodes so that we can collate them together
   const [importNodes, otherNodes] = transformImportDeclarations(
     program,
     create.memberExpression(nativeIds.native, 'loadedModules'),
@@ -686,7 +702,7 @@ function transpileToSource(
 
   // We collect all globally declared identifiers here since this won't
   // include any internals
-  getGloballyDeclaredIdentifiers([...importNodes, ...transformedNodes]).forEach(id =>
+  getDeclaredIdentifiers([...importNodes, ...transformedNodes]).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id),
   );
 
@@ -718,7 +734,7 @@ function transpileToSource(
   return { transpiled, sourceMapJson };
 }
 
-function transpileToFullJS(
+export function transpileToFullJS(
   program: es.Program,
   context: Context,
   skipUndefined: boolean,
@@ -740,13 +756,56 @@ function transpileToFullJS(
     context.nativeStorage.previousProgramsIdentifiers.add(id),
   );
 
-  getGloballyDeclaredIdentifiers(userCode).forEach(id =>
+  getDeclaredIdentifiers(userCode).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id),
   );
+
+  /*
+   * Because of the weird and funky way fullJSRunner works, the builtins get evaluated as if they were a user
+   * program. Normally, the evaller replacer sits at the top of the user program, followed by an `undefined` expression,
+   * then any user code:
+   * ```
+   * {
+   *   native.evaller = program => eval(program)
+   *   undefined;
+   *   const x = 0;
+   * }
+   * ```
+   * But one of the builtins that gets declared is `undefined`, which means we get a ReferenceError if we try to transpile
+   * the builtins program normally:
+   * ```
+   * {
+   *   native.evaller = program => eval(program)
+   *   undefined; // Can't access undefined before initialization
+   *   const undefined = native.builtins.get('undefined');
+   * }
+   * ```
+   * We need to have the `undefined` there, because when the user program gets evaluated, declaration statements don't produce
+   * values, so the program evaluates to <Function anonymous> because of the evaller replacer.
+   * ```
+   * {
+   *   native.evaller = program => eval(program)
+   *   undefined;
+   *   const x = 0;
+   * }
+   * // evaluates to <Function anonymous>
+   * ```
+   * So what we need to do is
+   * Check if the program only consists of declarations. If so, append `undefined` to the end of the program.
+   * `undefined` is either declared as part of the previous program, or declared by one of the declarations above, so no ReferenceError
+   *
+   * If there are value producing statements, we don't need to append `undefined`, as the last value producing statement will
+   * hide the value of the evaller.
+   */
+  const wrappedStatements = userCode.some(each => !isDeclaration(each))
+    ? userCode
+    : [...userCode, create.expressionStatement(create.identifier('undefined'))];
+
   const transpiledProgram: es.Program = create.program([
-    getEvallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
-    create.expressionStatement(create.identifier('undefined')),
-    create.blockStatement(userCode),
+    create.blockStatement([
+      getEvallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
+      ...wrappedStatements,
+    ]),
   ]);
 
   const sourceMap = new SourceMapGenerator({ file: 'source' });
@@ -760,13 +819,14 @@ export function transpile(
   program: es.Program,
   context: Context,
   isPrelude: boolean,
-  skipUndefined = false,
+  skipUndefined?: boolean,
 ): TranspiledResult {
   if (context.chapter === Chapter.FULL_JS) {
-    return transpileToFullJS(program, context, true);
+    return transpileToFullJS(program, context, skipUndefined ?? true);
   } else if (context.variant === Variant.NATIVE) {
-    return transpileToFullJS(program, context, false);
+    return transpileToFullJS(program, context, skipUndefined ?? false);
   } else {
-    return transpileToSource(program, context, skipUndefined, isPrelude);
+    console.log('transpiling to source');
+    return transpileToSource(program, context, skipUndefined ?? false, isPrelude);
   }
 }
