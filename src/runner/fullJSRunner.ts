@@ -6,8 +6,8 @@ import { NATIVE_STORAGE_ID } from '../constants';
 import { RuntimeSourceError } from '../errors/base';
 import { parse } from '../parser/parser';
 import {
-  evallerReplacer,
   getBuiltins,
+  getEvallerReplacer,
   getGloballyDeclaredIdentifiers,
   transpile,
 } from '../transpiler/transpiler';
@@ -57,12 +57,12 @@ const fullJSRunner: Runner = async (program, context, { isPrelude }) => {
   // evaluate and create a separate block for preludes and builtins
   const preEvalProgram: es.Program = create.program([
     ...preludeAndBuiltins,
-    evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
+    getEvallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
   ]);
   getFunctionDeclarationNamesInProgram(preEvalProgram).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id),
   );
-  getGloballyDeclaredIdentifiers(preEvalProgram).forEach(id =>
+  getGloballyDeclaredIdentifiers(preEvalProgram.body as es.Statement[]).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id),
   );
   const preEvalCode: string = generate(preEvalProgram);
