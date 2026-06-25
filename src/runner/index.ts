@@ -55,16 +55,14 @@ async function sourceRunner(
   const theOptions = _.merge({ ...DEFAULT_SOURCE_OPTIONS }, options);
   context.variant = determineVariant(context, options);
 
-  if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.FULL_TS) {
-    return runners.fulljs(program, context, theOptions);
-  }
-
-  validateAndAnnotate(program, context);
-  if (context.errors.length > 0) {
-    return {
-      status: 'error',
-      context,
-    };
+  if (context.chapter !== Chapter.FULL_JS && context.chapter !== Chapter.FULL_TS) {
+    validateAndAnnotate(program, context);
+    if (context.errors.length > 0) {
+      return {
+        status: 'error',
+        context,
+      };
+    }
   }
 
   if (theOptions.useSubst) {
@@ -74,9 +72,9 @@ async function sourceRunner(
   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled);
 
   // native, don't evaluate prelude
-  if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return runners.fulljs(program, context, theOptions);
-  }
+  // if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
+  //   return runners.fulljs(program, context, theOptions);
+  // }
 
   // All runners after this point evaluate the prelude.
   if (context.prelude !== null && !options.isPrelude) {
@@ -86,6 +84,10 @@ async function sourceRunner(
     if (prelude === null) return { status: 'error', context };
 
     await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true });
+  }
+
+  if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
+    return runners.fulljs(program, context, theOptions);
   }
 
   if (context.variant === Variant.EXPLICIT_CONTROL || context.executionMethod === 'cse-machine') {

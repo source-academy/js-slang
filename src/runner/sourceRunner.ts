@@ -7,7 +7,7 @@ import { TimeoutError } from '../errors/timeoutErrors';
 import { getSteps } from '../stepper/steppers';
 import { sandboxedEval } from '../transpiler/evalContainer';
 import { SourceErrorWithNode } from '../errors/base';
-import { transpile } from '../transpiler/transpiler';
+import { transpileToSource } from '../transpiler/transpiler';
 import { toSourceError } from './errors';
 import fullJSRunner from './fullJSRunner';
 import type { Runner } from './types';
@@ -42,7 +42,7 @@ const runners = {
     let sourceMapJson: RawSourceMap | undefined;
     try {
       let transpiled: string;
-      ({ transpiled, sourceMapJson } = transpile(program, context, options.isPrelude));
+      ({ transpiled, sourceMapJson } = transpileToSource(program, context, false, options.isPrelude));
 
       let value = sandboxedEval(transpiled, context.nativeStorage);
 

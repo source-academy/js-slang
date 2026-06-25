@@ -669,7 +669,7 @@ export interface TranspiledResult {
   sourceMapJson?: RawSourceMap;
 }
 
-function transpileToSource(
+export function transpileToSource(
   program: es.Program,
   context: Context,
   skipUndefined: boolean,
