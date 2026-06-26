@@ -27,6 +27,11 @@ export interface CustomBuiltIns {
  * `toString` behaviour
  */
 export interface ReplResult {
+  // toReplString is marked as internal so that documentation generators can be
+  // configured to exclude it for cadet facing types
+  /**
+   * @internal
+   */
   toReplString: () => string;
 }
 
