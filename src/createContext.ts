@@ -223,10 +223,11 @@ export function defineBuiltin(
     const funName = extractName(name);
     const funParameters = extractParameters(name);
 
+    // @ts-expect-error Intentionally break wrap type safety
     const wrapped = operators.wrap(
       value,
-      funName,
       optArgs,
+      funName,
       `function ${name} {\n\t[implementation hidden]\n}`,
       null,
     );
@@ -297,9 +298,9 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
   if (context.chapter >= 1) {
     defineBuiltin(context, 'get_time()', misc.get_time);
     defineBuiltin(context, 'display(val, prepend = undefined)', display, 2);
-    defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay, 2);
-    defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify, 3);
-    defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message, 2);
+    defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay, 1);
+    defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify, 2);
+    defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message, 1);
     defineBuiltin(context, 'prompt(str)', prompt);
     defineBuiltin(context, 'is_number(val)', misc.is_number);
     defineBuiltin(context, 'is_string(val)', misc.is_string);
@@ -352,7 +353,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     defineBuiltin(context, 'is_null(val)', list.is_null);
     defineBuiltin(context, 'list(...values)', list.list, true);
     defineBuiltin(context, 'draw_data(x1, ...xs)', visualise_list, true);
-    defineBuiltin(context, 'display_list(val, prepend = undefined)', display_list, 2);
+    defineBuiltin(context, 'display_list(val, prepend = undefined)', display_list, 1);
     defineBuiltin(context, 'is_list(val)', list.is_list);
   }
 

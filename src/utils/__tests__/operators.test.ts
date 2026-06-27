@@ -16,19 +16,20 @@ describe('Wrapping and Calling functions', () => {
 
     test("Doesn't define toReplString if stringified is undefined", () => {
       const x = () => 0;
-      const wrapped = operators.wrap(x, undefined, 0);
+      const wrapped = operators.wrap(x);
 
       expect(wrapped).not.toHaveProperty('toReplString');
     });
 
     test("Doesn't redefine maxArgs when present", () => {
       const x = (u: number, v = 0) => u + v;
-      const x1 = operators.wrap(x, 'x', 1);
-      const x2: any = operators.wrap(x1, 'x1', 1);
+      const x1 = operators.wrap(x, 1, 'x');
+      // @ts-expect-error Intentionally breaking wrap type safety
+      const x2 = operators.wrap(x1, 2, 'x1');
 
       expect(operators.callWithoutMetadata(x1, 1)).toEqual(1);
 
-      expect(() => operators.callWithoutMetadata(x2, 1, 2, 3)).toThrow(
+      expect(() => operators.callWithoutMetadata(x2 as any, 1, 2, 3)).toThrow(
         'x1: Expected 2 or fewer arguments, but got 3.',
       );
     });
@@ -55,7 +56,7 @@ describe('Wrapping and Calling functions', () => {
 
   describe('Wrapped varargs function test', () => {
     const f = (x: any, ...args: any[]) => [x, ...args];
-    const wrapped = operators.wrap(f, 'f', true, '(x, ...args) => [x, ...args]');
+    const wrapped = operators.wrap(f, true, 'f', '(x, ...args) => [x, ...args]');
 
     test('toReplString is set correctly', () => {
       expect(stringify(wrapped)).toEqual('(x, ...args) => [x, ...args]');
@@ -103,8 +104,8 @@ describe('Wrapping and Calling functions', () => {
         () => {
           throw new GeneralRuntimeError('', dummy);
         },
-        'f',
         undefined,
+        'f',
         '() => { ... }',
         'prelude',
       );
@@ -126,15 +127,15 @@ describe('Wrapping and Calling functions', () => {
         () => {
           throw new GeneralRuntimeError('');
         },
-        'prelude',
         undefined,
+        'prelude',
         '() => {...}',
         null,
       );
       const notPrelude = operators.wrap(
         () => prelude(),
-        'notPrelude',
         undefined,
+        'notPrelude',
         '() => {...}',
         'prelude',
       );

@@ -11,14 +11,17 @@ export type TupleOfLength<T extends number, U = unknown> = TupleOfLengthHelper<T
  * Checks that the given provided tuple T has at least MinArgs arguments
  * before a rest element
  */
-export type CheckRestTuple<T extends any[], MinArgs extends number, V extends any[] = []> =
-  T extends [infer First, ...infer Rest]
-    ? CheckRestTuple<Rest, MinArgs, [First, ...V]>
-    : number extends T['length']
-      ? V['length'] extends MinArgs
-        ? true
-        : false
-      : false;
+export type CheckRestTuple<
+  T extends any[],
+  MinArgs extends number,
+  V extends any[] = [],
+> = T extends [infer First, ...infer Rest]
+  ? CheckRestTuple<Rest, MinArgs, [First, ...V]>
+  : number extends T['length']
+    ? V['length'] extends MinArgs
+      ? true
+      : false
+    : false;
 
 /**
  * Given the number of required and optional elements, evaluates to true if the specified tuple
@@ -26,22 +29,17 @@ export type CheckRestTuple<T extends any[], MinArgs extends number, V extends an
  */
 type CheckTupleHelper<
   T extends any[],
-  ReqArgs extends number,
   OptArgs extends number,
-  RequiredElements extends any[],
-  OptionalElements extends any[]
-> = 
-  T extends []
-    ? RequiredElements['length'] extends ReqArgs
-      ? OptionalElements['length'] extends OptArgs
-        ? true
-        : false
-      : false
-    : Partial<T> extends T
-      ? CheckTupleHelper<[], ReqArgs, OptArgs, RequiredElements, Required<T>>
-      : T extends [infer First, ...infer Rest]
-        ? CheckTupleHelper<Rest, ReqArgs, OptArgs, [First, ...RequiredElements], []>
-        : never
+  OptionalElements extends any[],
+> = T extends []
+  ? OptionalElements['length'] extends OptArgs
+    ? true
+    : false
+  : Partial<T> extends T
+    ? CheckTupleHelper<[], OptArgs, Required<T>>
+    : T extends [any, ...infer Rest]
+      ? CheckTupleHelper<Rest, OptArgs, []>
+      : never;
 
 /**
  * Given the number of required and optional
@@ -50,10 +48,15 @@ type CheckTupleHelper<
  */
 export type HasCorrectParameters<
   T extends (...args: any[]) => any,
-  ReqArgs extends number,
-  OptArgs extends number | true
+  OptArgs extends number | true,
 > = OptArgs extends number
   ? number extends Parameters<T>['length']
     ? never
-    : CheckTupleHelper<Parameters<T>, ReqArgs, OptArgs, [], []> extends true ? T : never
-  : CheckRestTuple<Parameters<T>, ReqArgs> extends true ? T : never
+    : CheckTupleHelper<Parameters<T>, OptArgs, []> extends true
+      ? T
+      : never
+  : number extends Parameters<T>['length']
+    ? T
+    : never;
+
+// CheckRestTuple<Parameters<T>, ReqArgs> extends true ? T : never

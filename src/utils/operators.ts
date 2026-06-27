@@ -273,51 +273,41 @@ export function callWithoutMetadata<T extends (...args: any[]) => any>(
  * properly by {@link callIfFuncAndRightArgs}. It won't redefine any existing details
  * that the function has already been wrapped with.
  *
- * - `hasVarArgs`
- *   - If `hasVarArgs` is `false` or `undefined`, then `f` is assumed not to have variadic args.
- *   - If `hasVarArgs` is `true`, `minArgsNeeded` is inferred from `f.length`.
- *   - If `hasVarArgs` is a number, it is used for `minArgsNeeded`.
+ * - `optArgCount`: Represents the number of optional arguments the function has
+ *   - If set to `undefined`, it will be assumed to be 0
+ *   - If set to a number, that will be taken to be the number of optional arguments
+ *   - If set to `true`, the function is assumed to have a rest argument
  *
  * - If `stringified` is `undefined`, the function won't try to define `toReplString`.
  * - `funcName`
  *   - If `funcName` is `undefined`, the function won't try to define the `name` property.
  *   - If `funcName` is provided, the `name` property will get overriden.
  */
-export function wrap<
-  T extends (...args: any[]) => any,
-  OptArgs extends number
->(
-  f: HasCorrectParameters<T, number, OptArgs>,
-  funcName: string,
+export function wrap<T extends (...args: any[]) => any, OptArgs extends number>(
+  f: HasCorrectParameters<T, OptArgs>,
   optArgCount: OptArgs,
+  funcName?: string,
   stringified?: string,
   source?: string | null,
 ): T;
 export function wrap<T extends (...args: any[]) => any>(
-  f: HasCorrectParameters<T, number, true>,
-  funcName: string,
+  f: HasCorrectParameters<T, true>,
   optArgCount: true,
+  funcName?: string,
   stringified?: string,
   source?: string | null,
 ): T;
 export function wrap<T extends (...args: any[]) => any>(
   f: (...args: any[]) => any,
-  funcName: string,
   optArgCount?: undefined,
+  funcName?: string,
   stringified?: string,
   source?: string | null,
 ): T;
-// export function wrap(
-//   f: unknown,
-//   funcName?: string,
-//   optArgCount?: number | true,
-//   stringified?: string,
-//   source?: string | null,
-// ): (...args: any[]) => any 
 export function wrap(
   f: (...args: any[]) => any,
-  funcName?: string,
   optArgCount?: number | true,
+  funcName?: string,
   stringified?: string,
   source: string | null = null,
 ) {
@@ -325,11 +315,8 @@ export function wrap(
     Object.defineProperty(f, 'name', { value: funcName });
   }
 
-  const maxArgsAllowed = optArgCount === true
-    ? true
-    : optArgCount === undefined
-      ? f.length
-      : f.length + optArgCount
+  const maxArgsAllowed =
+    optArgCount === true ? true : optArgCount === undefined ? f.length : f.length + optArgCount;
 
   if (!(funcDetSymbol in f)) {
     const details: FunctionDetails = {

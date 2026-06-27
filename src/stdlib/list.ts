@@ -119,7 +119,6 @@ export function list<T>(...elements: T[]): List<T> {
   return elements.reduceRight((res, each) => pair(each, res), null);
 }
 
-
 /**
  * recurses down the list and checks that it ends with the empty list null\
  * LOW-LEVEL FUNCTION, NOT SOURCE
