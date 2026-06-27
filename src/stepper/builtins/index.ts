@@ -3,7 +3,7 @@ import { convert } from '../generator';
 import type { StepperExpression } from '../nodes';
 import { StepperIdentifier } from '../nodes/Expression/Identifier';
 import { StepperLiteral } from '../nodes/Expression/Literal';
-import { InvalidNumberOfArgumentsError } from '../../errors/errors';
+import { TooFewArgumentsError, TooManyArgumentsError } from '../../errors/errors';
 import type { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication';
 import type { RedexInfo } from '..';
 import { InvalidParameterTypeError } from '../../errors/rttcErrors';
@@ -58,9 +58,15 @@ export function getBuiltinFunction(
 
   const calledFunction = builtinFunctions[name as keyof typeof builtinFunctions];
 
-  if (calledFunction.arity !== args.length && name !== 'list') {
+  if (name !== 'list') {
     // brute force way to fix this issue
-    throw new InvalidNumberOfArgumentsError(call, calledFunction.arity, args.length);
+    if (calledFunction.arity > args.length) {
+      throw new TooFewArgumentsError(call, args.length, calledFunction.arity, false);
+    }
+
+    if (calledFunction.arity < args.length) {
+      throw new TooManyArgumentsError(call, args.length, calledFunction.arity, false);
+    }
   }
 
   return calledFunction.definition(args);

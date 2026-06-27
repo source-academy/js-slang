@@ -6,7 +6,8 @@ import { StepperBaseNode } from '../../interface';
 import { StepperBlockStatement } from '../Statement/BlockStatement';
 import {
   CallingNonFunctionValueError,
-  InvalidNumberOfArgumentsError,
+  TooFewArgumentsError,
+  TooManyArgumentsError,
 } from '../../../errors/errors';
 import { GeneralRuntimeError, InternalRuntimeError } from '../../../errors/base';
 import type { RedexInfo } from '../..';
@@ -62,11 +63,22 @@ export class StepperFunctionApplication
 
     if (this.callee.type === 'ArrowFunctionExpression') {
       const arrowFunction = this.callee;
-      if (arrowFunction.params.length !== this.arguments.length) {
-        throw new InvalidNumberOfArgumentsError(
+
+      if (arrowFunction.params.length > this.arguments.length) {
+        throw new TooFewArgumentsError(
           this,
-          arrowFunction.params.length,
           this.arguments.length,
+          arrowFunction.params.length,
+          false,
+        );
+      }
+
+      if (arrowFunction.params.length < this.arguments.length) {
+        throw new TooManyArgumentsError(
+          this,
+          this.arguments.length,
+          arrowFunction.params.length,
+          false,
         );
       }
     }

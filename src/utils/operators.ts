@@ -4,7 +4,8 @@ import {
   CallingNonFunctionValueError,
   ExceptionError,
   GetInheritedPropertyError,
-  InvalidNumberOfArgumentsError,
+  TooFewArgumentsError,
+  TooManyArgumentsError,
 } from '../errors/errors';
 import { RuntimeSourceError } from '../errors/base';
 import {
@@ -16,6 +17,7 @@ import type { NativeStorage } from '../types';
 import * as create from './ast/astCreator';
 import { callExpression, locationDummyNode } from './ast/astCreator';
 import * as rttc from './rttc';
+import { HasCorrectParameters } from './typeUtils';
 
 export function throwIfTimeout(
   nativeStorage: NativeStorage,
@@ -114,7 +116,7 @@ interface FunctionDetails {
    * was originally defined in
    */
   source: string | null;
-  minArgsNeeded?: number;
+  maxArgsAllowed: number | true;
 }
 
 const funcDetSymbol = Symbol();
@@ -125,7 +127,7 @@ function getFunctionDetails(f: Function): FunctionDetails {
   }
 
   return {
-    minArgsNeeded: f.length, // no way to check if the function hasVarArgs
+    maxArgsAllowed: f.length, // no way to check if the function hasVarArgs
     source: null,
   };
 }
@@ -161,9 +163,9 @@ export function callIfFuncAndRightArgs(
       );
     }
 
-    const expectedLength = f.length;
     const receivedLength = args.length;
-    const { minArgsNeeded, source: funcSource } = getFunctionDetails(f);
+    const { maxArgsAllowed, source: funcSource } = getFunctionDetails(f);
+    // console.log(f.name, f.length, maxArgsAllowed, receivedLength);
 
     if (funcSource === 'prelude') {
       // Once we call into a prelude function, everything that follows
@@ -171,18 +173,33 @@ export function callIfFuncAndRightArgs(
       isPrelude = true;
     }
 
-    const hasVarArgs = minArgsNeeded !== undefined;
-    if (hasVarArgs ? minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
-      throw new InvalidNumberOfArgumentsError(
+    const hasVarArgs = maxArgsAllowed === true || maxArgsAllowed !== f.length;
+
+    if (receivedLength < f.length) {
+      throw new TooFewArgumentsError(
         callExpression(dummy, args, {
           start: { line, column },
           end: { line, column },
           source,
         }),
-        hasVarArgs ? minArgsNeeded : expectedLength,
         receivedLength,
-        f.name,
+        f.length,
         hasVarArgs,
+        f.name,
+      );
+    }
+
+    if (typeof maxArgsAllowed === 'number' && receivedLength > maxArgsAllowed) {
+      throw new TooManyArgumentsError(
+        callExpression(dummy, args, {
+          start: { line, column },
+          end: { line, column },
+          source,
+        }),
+        receivedLength,
+        maxArgsAllowed,
+        hasVarArgs,
+        f.name,
       );
     }
 
@@ -266,34 +283,66 @@ export function callWithoutMetadata<T extends (...args: any[]) => any>(
  *   - If `funcName` is `undefined`, the function won't try to define the `name` property.
  *   - If `funcName` is provided, the `name` property will get overriden.
  */
+export function wrap<
+  T extends (...args: any[]) => any,
+  OptArgs extends number
+>(
+  f: HasCorrectParameters<T, number, OptArgs>,
+  funcName: string,
+  optArgCount: OptArgs,
+  stringified?: string,
+  source?: string | null,
+): T;
 export function wrap<T extends (...args: any[]) => any>(
-  f: T,
-  hasVarArgs: boolean | undefined | number,
+  f: HasCorrectParameters<T, number, true>,
+  funcName: string,
+  optArgCount: true,
+  stringified?: string,
+  source?: string | null,
+): T;
+export function wrap<T extends (...args: any[]) => any>(
+  f: (...args: any[]) => any,
+  funcName: string,
+  optArgCount?: undefined,
+  stringified?: string,
+  source?: string | null,
+): T;
+// export function wrap(
+//   f: unknown,
+//   funcName?: string,
+//   optArgCount?: number | true,
+//   stringified?: string,
+//   source?: string | null,
+// ): (...args: any[]) => any 
+export function wrap(
+  f: (...args: any[]) => any,
+  funcName?: string,
+  optArgCount?: number | true,
   stringified?: string,
   source: string | null = null,
-  funcName?: string,
-): T {
-  let minArgsNeeded: number | undefined;
-  if (hasVarArgs === true) {
-    minArgsNeeded = f.length;
-  } else if (typeof hasVarArgs === 'number') {
-    minArgsNeeded = hasVarArgs;
-  }
-
+) {
   if (funcName !== undefined) {
     Object.defineProperty(f, 'name', { value: funcName });
   }
 
+  const maxArgsAllowed = optArgCount === true
+    ? true
+    : optArgCount === undefined
+      ? f.length
+      : f.length + optArgCount
+
   if (!(funcDetSymbol in f)) {
-    (f as any)[funcDetSymbol] = {
-      minArgsNeeded,
+    const details: FunctionDetails = {
+      maxArgsAllowed,
       source,
     };
+
+    (f as any)[funcDetSymbol] = details;
   } else {
     const funcDets = getFunctionDetails(f);
 
-    if (typeof funcDets.minArgsNeeded !== 'number') {
-      funcDets.minArgsNeeded = minArgsNeeded;
+    if (typeof funcDets.maxArgsAllowed !== 'number' && funcDets.maxArgsAllowed !== true) {
+      funcDets.maxArgsAllowed = maxArgsAllowed;
     }
 
     if (typeof funcDets.source !== 'string') {

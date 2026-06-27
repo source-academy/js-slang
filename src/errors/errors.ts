@@ -178,32 +178,66 @@ export class UnassignedVariableError extends RuntimeSourceError<Node> {
  * Error thrown when a function is called with the incorrect number of arguments. Usually thrown by
  * `callIfRightFuncAndArgs`
  */
-export class InvalidNumberOfArgumentsError extends RuntimeSourceError<es.CallExpression> {
-  private readonly calleeStr: string;
+abstract class InvalidNumberOfArgumentsError extends RuntimeSourceError<es.CallExpression> {
+  protected readonly calleeStr: string;
 
   constructor(
     node: es.CallExpression,
-    private readonly expected: number,
-    private readonly got: number,
-    private readonly funcName?: string,
-    private readonly hasVarArgs = false,
+    /**
+     * Number of arguments the function was called with
+     */
+    protected readonly received: number,
+    /**
+     * Number of arguments (either minimum or maximum) the function
+     * was expecting
+     */
+    protected readonly requirement: number,
+    /**
+     * Set this to true if the function can take in varying numbers of arguments (including both
+     * rest arguments and default arguments)
+     */
+    protected readonly isVarArgs: boolean,
+    /**
+     * Name of the function
+     */
+    protected readonly funcName?: string,
   ) {
     super(node);
-    this.calleeStr = generate(node.callee);
-  }
-
-  public override explain() {
-    const funcStr = this.funcName !== undefined ? `${this.funcName}: ` : '';
-    return `${funcStr}Expected ${this.expected} ${this.hasVarArgs ? 'or more ' : ''}arguments, but got ${
-      this.got
-    }.`;
+    this.calleeStr = node.callee.type === 'Identifier' ? node.callee.name : 'the function';
   }
 
   public override elaborate() {
-    const calleeStr = this.calleeStr;
-    const pluralS = this.expected === 1 ? '' : 's';
+    const pluralS = this.requirement === 1 ? '' : 's';
 
-    return `Try calling function ${calleeStr} again, but with ${this.expected} argument${pluralS} instead. Remember that arguments are separated by a ',' (comma).`;
+    return `Try calling ${this.calleeStr} again, but with ${this.requirement} argument${pluralS} instead. Remember that arguments are separated by a ',' (comma).`;
+  }
+}
+
+/**
+ * Error thrown by {@link callIfFuncAndRightArgs} when a function is called with too few arguments.
+ */
+export class TooFewArgumentsError extends InvalidNumberOfArgumentsError {
+  public override explain() {
+    const funcStr = this.funcName !== undefined ? `${this.funcName}: ` : '';
+    return `${funcStr}Expected ${this.requirement} ${this.isVarArgs ? 'or more ' : ''}arguments, but got ${this.received}.`;
+  }
+}
+
+/**
+ * Error thrown by {@link callIfFuncAndRightArgs} when a function is called with too many arguments.
+ */
+export class TooManyArgumentsError extends InvalidNumberOfArgumentsError {
+  public override explain() {
+    const funcStr = this.funcName !== undefined ? `${this.funcName}: ` : '';
+    return `${funcStr}Expected ${this.requirement} ${this.isVarArgs ? 'or fewer ' : ''}arguments, but got ${this.received}.`;
+  }
+
+  public override elaborate(): string {
+    if (this.requirement === 0) {
+      return `Try calling ${this.calleeStr} again without arguments.`;
+    }
+
+    return super.elaborate();
   }
 }
 

@@ -499,25 +499,38 @@ export const checkNumberOfArguments = (
   if (callee instanceof Closure) {
     // User-defined or Pre-defined functions
     const params = callee.node.params;
-    const hasVarArgs = params[params.length - 1]?.type === 'RestElement';
-    if (hasVarArgs ? params.length - 1 > args.length : params.length !== args.length) {
+    const hasRest = params[params.length - 1]?.type === 'RestElement';
+
+    if (!hasRest) {
+      if (args.length > params.length) {
+        return handleRuntimeError(
+          context,
+          new errors.TooManyArgumentsError(exp, args.length, params.length, false),
+        );
+      }
+    }
+
+    const minArgs = params.filter(
+      each => each.type !== 'AssignmentPattern' && each.type !== 'RestElement',
+    ).length;
+
+    if (args.length < minArgs) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArgumentsError(
-          exp,
-          hasVarArgs ? params.length - 1 : params.length,
-          args.length,
-          undefined,
-          hasVarArgs,
-        ),
+        new errors.TooFewArgumentsError(exp, args.length, minArgs, hasRest),
       );
     }
   } else if (isCallWithCurrentContinuation(callee)) {
     // call/cc should have a single argument
-    if (args.length !== 1) {
+    if (args.length < 1) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArgumentsError(exp, 1, args.length, undefined, false),
+        new errors.TooFewArgumentsError(exp, args.length, 1, false),
+      );
+    } else if (args.length > 1) {
+      return handleRuntimeError(
+        context,
+        new errors.TooManyArgumentsError(exp, args.length, 1, false),
       );
     }
     return undefined;
@@ -527,22 +540,8 @@ export const checkNumberOfArguments = (
     // TODO: in future, if we can somehow check the number of arguments
     // expected by the continuation, we can add a check here.
     return undefined;
-  } else {
-    // Pre-built functions
-    const hasVarArgs = callee.minArgsNeeded != null;
-    if (hasVarArgs ? callee.minArgsNeeded > args.length : callee.length !== args.length) {
-      return handleRuntimeError(
-        context,
-        new errors.InvalidNumberOfArgumentsError(
-          exp,
-          hasVarArgs ? callee.minArgsNeeded : callee.length,
-          args.length,
-          undefined,
-          hasVarArgs,
-        ),
-      );
-    }
   }
+  // No need to check args for builtins, checking is done by callIfFuncAndRightArgs
   return undefined;
 };
 

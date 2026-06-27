@@ -8,6 +8,7 @@ import {
 import { RuntimeSourceError } from '../errors/base';
 import { Chapter } from '../langs';
 import type { Node, Value } from '../types';
+import { TupleOfLength } from './typeUtils';
 
 const LHS = ' on left hand side of operation';
 const RHS = ' on right hand side of operation';
@@ -303,15 +304,6 @@ export function checkArray(
     throw new RuntimeTypeError(node, '', 'array', typeOf(maybeArray), chapter);
   }
 }
-
-type TupleOfLengthHelper<T extends number, U, V extends U[] = []> = V['length'] extends T
-  ? V
-  : TupleOfLengthHelper<T, U, [...V, U]>;
-
-/**
- * Utility type that represents a tuple of a specific length
- */
-export type TupleOfLength<T extends number, U = unknown> = TupleOfLengthHelper<T, U>;
 
 /**
  * Type guard for checking that the provided value is a function and that it has the specified number of parameters.

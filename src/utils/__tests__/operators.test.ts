@@ -9,45 +9,45 @@ describe('Wrapping and Calling functions', () => {
     test("Doesn't redefine toReplString if it is already present", () => {
       const x = () => 0;
       x.toReplString = () => 'x';
-      const wrapped = operators.wrap(x, undefined, '() => 0');
+      const wrapped = operators.wrap(x, 0, undefined, '() => 0');
 
       expect(stringify(wrapped)).toEqual('x');
     });
 
     test("Doesn't define toReplString if stringified is undefined", () => {
       const x = () => 0;
-      const wrapped = operators.wrap(x, undefined);
+      const wrapped = operators.wrap(x, undefined, 0);
 
       expect(wrapped).not.toHaveProperty('toReplString');
     });
 
-    test("Doesn't redefine minArgsNeeded when present", () => {
-      const x = () => 0;
-      const x1 = operators.wrap(x, 2);
-      const x2 = operators.wrap(x1, 1);
+    test("Doesn't redefine maxArgs when present", () => {
+      const x = (u: number, v = 0) => u + v;
+      const x1 = operators.wrap(x, 'x', 1);
+      const x2: any = operators.wrap(x1, 'x1', 1);
 
-      expect(operators.callIfFuncAndRightArgs(x2, 0, 0, null, undefined, 'x', 'y')).toEqual(0);
+      expect(operators.callWithoutMetadata(x1, 1)).toEqual(1);
 
-      expect(() => operators.callIfFuncAndRightArgs(x2, 0, 0, null, undefined, 'x')).toThrow(
-        'x: Expected 2 or more arguments, but got 1.',
+      expect(() => operators.callWithoutMetadata(x2, 1, 2, 3)).toThrow(
+        'x1: Expected 2 or fewer arguments, but got 3.',
       );
     });
   });
 
   describe('Wrapped nullary function tests', () => {
     const x = () => 0;
-    const wrapped = operators.wrap(x, undefined, '() => 0');
+    const wrapped = operators.wrap(x, undefined, undefined, '() => 0');
 
     test('toReplString is set correctly', () => {
       expect(stringify(wrapped)).toEqual('() => 0');
     });
 
     test('calling with correct number of function parameters', () => {
-      expect(operators.callIfFuncAndRightArgs(wrapped, 0, 0, null, undefined)).toEqual(0);
+      expect(operators.callWithoutMetadata(wrapped)).toEqual(0);
     });
 
     test('calling with too many parameters', () => {
-      expect(() => operators.callIfFuncAndRightArgs(wrapped, 0, 0, null, undefined, 1)).toThrow(
+      expect(() => operators.callWithoutMetadata(wrapped as any, 1)).toThrow(
         'x: Expected 0 arguments, but got 1.',
       );
     });
@@ -55,24 +55,22 @@ describe('Wrapping and Calling functions', () => {
 
   describe('Wrapped varargs function test', () => {
     const f = (x: any, ...args: any[]) => [x, ...args];
-    const wrapped = operators.wrap(f, 1, '(x, ...args) => [x, ...args]');
+    const wrapped = operators.wrap(f, 'f', true, '(x, ...args) => [x, ...args]');
 
     test('toReplString is set correctly', () => {
       expect(stringify(wrapped)).toEqual('(x, ...args) => [x, ...args]');
     });
 
     test('calling with 1 parameter', () => {
-      expect(operators.callIfFuncAndRightArgs(wrapped, 0, 0, null, undefined, 1)).toEqual([1]);
+      expect(operators.callWithoutMetadata(wrapped, 1)).toEqual([1]);
     });
 
     test('calling with 2 parameters', () => {
-      expect(operators.callIfFuncAndRightArgs(wrapped, 0, 0, null, undefined, 1, 2)).toEqual([
-        1, 2,
-      ]);
+      expect(operators.callWithoutMetadata(wrapped, 1, 2)).toEqual([1, 2]);
     });
 
     test('calling with 0 parameters', () => {
-      expect(() => operators.callIfFuncAndRightArgs(wrapped, 0, 0, null, undefined)).toThrow(
+      expect(() => operators.callWithoutMetadata(wrapped as any)).toThrow(
         'f: Expected 1 or more arguments, but got 0.',
       );
     });
@@ -105,6 +103,7 @@ describe('Wrapping and Calling functions', () => {
         () => {
           throw new GeneralRuntimeError('', dummy);
         },
+        'f',
         undefined,
         '() => { ... }',
         'prelude',
@@ -127,11 +126,18 @@ describe('Wrapping and Calling functions', () => {
         () => {
           throw new GeneralRuntimeError('');
         },
+        'prelude',
         undefined,
         '() => {...}',
         null,
       );
-      const notPrelude = operators.wrap(() => prelude(), undefined, '() => {...}', 'prelude');
+      const notPrelude = operators.wrap(
+        () => prelude(),
+        'notPrelude',
+        undefined,
+        '() => {...}',
+        'prelude',
+      );
 
       try {
         operators.callIfFuncAndRightArgs(notPrelude, 2, 2, null, undefined);

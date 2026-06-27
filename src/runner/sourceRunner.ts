@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import type { RawSourceMap } from 'source-map';
 
 import { JSSLANG_PROPERTIES } from '../constants';
@@ -43,6 +44,10 @@ const runners = {
     try {
       let transpiled: string;
       ({ transpiled, sourceMapJson } = transpile(program, context, options.isPrelude));
+
+      if (options.isPrelude) {
+        await fs.writeFile('prelude.js', transpiled);
+      }
 
       let value = sandboxedEval(transpiled, context.nativeStorage);
 

@@ -494,7 +494,7 @@ test('Error when calling function with too few arguments - verbose', async ({ ex
 
   expect(errStr).toMatchInlineSnapshot(`
             "Line 5, Column 2: Expected 1 arguments, but got 0.
-            Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+            Try calling f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
           `);
 });
@@ -525,7 +525,7 @@ test('Error when calling function with too many arguments - verbose', async ({ e
 
   expect(errStr).toMatchInlineSnapshot(`
             "Line 5, Column 2: Expected 1 arguments, but got 2.
-            Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+            Try calling f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
           `);
 });
@@ -551,7 +551,7 @@ test('Error when calling arrow function with too few arguments - verbose', async
   );
   expect(errStr).toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected 1 arguments, but got 0.
-            Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+            Try calling f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
           `);
 });
@@ -577,7 +577,7 @@ test('Error when calling arrow function with too many arguments - verbose', asyn
   );
   expect(errStr).toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected 1 arguments, but got 2.
-            Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+            Try calling f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
           `);
 });
@@ -605,7 +605,7 @@ test('Error when calling function from member expression with too many arguments
   );
   expect(errStr).toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected 1 arguments, but got 2.
-            Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+            Try calling the function again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
           `);
 });
@@ -622,7 +622,7 @@ test('Error when calling arrow function in tail call with too many arguments - v
   );
   expect(errStr).toMatchInlineSnapshot(`
             "Line 3, Column 15: Expected 0 arguments, but got 1.
-            Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
+            Try calling g again without arguments.
             "
           `);
 });

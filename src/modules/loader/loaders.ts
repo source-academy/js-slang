@@ -147,10 +147,10 @@ export async function loadModuleBundleAsync(
       const name = value.name;
       return wrap(
         value as (...args: any[]) => any,
-        false,
+        name ?? key, // Ensure that names are provided if forgotten
+        undefined,
         `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`,
         moduleName,
-        name ?? key, // Ensure that names are provided if forgotten
       );
     });
   } catch (error) {
