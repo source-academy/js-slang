@@ -223,8 +223,7 @@ export function defineBuiltin(
     const funName = extractName(name);
     const funParameters = extractParameters(name);
 
-    // @ts-expect-error Intentionally break wrap type safety
-    const wrapped = operators.wrap(
+    const wrapped = operators.wrapUnsafe(
       value,
       optArgs,
       funName,

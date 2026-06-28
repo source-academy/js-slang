@@ -345,6 +345,21 @@ export function wrap(
   return f;
 }
 
+/**
+ * A type-agnostic version of {@link wrap} to make it easier
+ * when the function type not known.
+ */
+export function wrapUnsafe<T extends (...args: any[]) => any>(
+  f: T,
+  optArgCount?: number | true,
+  funcName?: string,
+  stringified?: string,
+  source?: string | null,
+) {
+  // @ts-expect-error Ignore type safety
+  return wrap(f, optArgCount, funcName, stringified, source);
+}
+
 export function setProp(
   obj: any,
   prop: any,
