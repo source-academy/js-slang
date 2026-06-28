@@ -83,6 +83,15 @@ const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
     value: 1,
     errors: [],
   },
+  {
+    name: 'DEFAULT ARGS',
+    snippet: `
+      function f(x, y = 0) { return x + y; }
+      f(5);
+    `,
+    value: 5,
+    errors: []
+  }
 ];
 
 const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
