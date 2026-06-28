@@ -305,6 +305,8 @@ export function checkArray(
   }
 }
 
+type FunctionOfLength<T extends number> = (...args: [...TupleOfLength<T>, ...unknown[]]) => unknown;
+
 /**
  * Type guard for checking that the provided value is a function and that it has the specified number of parameters.
  * Of course at runtime parameter types are not checked, so this is only useful when combined with TypeScript types.
@@ -313,10 +315,7 @@ export function isFunctionOfLength<T extends (...args: any[]) => any>(
   f: (...args: any) => any,
   l: Parameters<T>['length'],
 ): f is T;
-export function isFunctionOfLength<T extends number>(
-  f: unknown,
-  l: T,
-): f is (...args: TupleOfLength<T>) => unknown;
+export function isFunctionOfLength<T extends number>(f: unknown, l: T): f is FunctionOfLength<T>;
 export function isFunctionOfLength(f: unknown, l: number) {
   // TODO: Need a variation for rest parameters
   return typeof f === 'function' && f.length === l;
@@ -344,7 +343,7 @@ export function assertFunctionOfLength<T extends number>(
   func_name: string,
   type_name?: string,
   param_name?: string,
-): asserts f is (...args: TupleOfLength<T>) => unknown;
+): asserts f is FunctionOfLength<T>;
 export function assertFunctionOfLength(
   f: unknown,
   l: number,

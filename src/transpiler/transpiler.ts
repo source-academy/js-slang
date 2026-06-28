@@ -152,9 +152,7 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
       const hasRestElement = node.params[node.params.length - 1]?.type === 'RestElement';
-      const optionalParams = node.params.filter(
-        x => x.type === 'AssignmentPattern',
-      );
+      const optionalParams = node.params.filter(x => x.type === 'AssignmentPattern');
 
       // If it's undefined then we're dealing with a thunk
       if (functionsToStringMap.get(node)! !== undefined) {

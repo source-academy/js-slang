@@ -14,7 +14,7 @@ import {
   defaultSourceBundleImporter,
   defaultSourceTabImporter,
 } from '../modules/loader/importers';
-import type { RecursivePartial } from '../types';
+import type { RecursivePartial } from '../utils/typeUtils';
 import runners from './sourceRunner';
 import { determineExecutionMethod, determineVariant } from './utils';
 

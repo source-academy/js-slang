@@ -145,6 +145,7 @@ export async function loadModuleBundleAsync(
       if (typeof value !== 'function') return value;
 
       const name = value.name;
+      // @ts-expect-error Intentionally ignore wrap type safety
       return wrap(
         value as (...args: any[]) => any,
         undefined,

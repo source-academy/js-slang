@@ -3,7 +3,8 @@ import type es from 'estree';
 
 import type { IOptions } from '../..';
 import { Variant } from '../../langs';
-import type { Context, RecursivePartial } from '../../types';
+import type { Context } from '../../types';
+import type { RecursivePartial } from '../../utils/typeUtils';
 import loadSourceModules, { loadSourceModuleTypes } from '../loader';
 import type { FileGetter } from '../moduleTypes';
 import analyzeImportsAndExports from './analyzer';

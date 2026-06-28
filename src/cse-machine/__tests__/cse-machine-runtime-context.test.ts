@@ -4,7 +4,7 @@ import type { IOptions } from '../..';
 import { Chapter } from '../../langs';
 import { parse } from '../../parser/parser';
 import { runCodeInSource } from '../../runner';
-import type { RecursivePartial } from '../../types';
+import type { RecursivePartial } from '../../utils/typeUtils';
 import { stripIndent } from '../../utils/formatters';
 import { mockContext } from '../../utils/testing/mocks';
 import { Control, Stash, generateCSEMachineStateStream } from '../interpreter';

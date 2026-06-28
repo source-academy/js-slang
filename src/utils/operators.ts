@@ -298,7 +298,7 @@ export function wrap<T extends (...args: any[]) => any>(
   source?: string | null,
 ): T;
 export function wrap<T extends (...args: any[]) => any>(
-  f: (...args: any[]) => any,
+  f: HasCorrectParameters<T, 0>,
   optArgCount?: undefined,
   funcName?: string,
   stringified?: string,

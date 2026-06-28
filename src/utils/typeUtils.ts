@@ -8,22 +8,6 @@ type TupleOfLengthHelper<T extends number, U, V extends U[] = []> = V['length'] 
 export type TupleOfLength<T extends number, U = unknown> = TupleOfLengthHelper<T, U>;
 
 /**
- * Checks that the given provided tuple T has at least MinArgs arguments
- * before a rest element
- */
-export type CheckRestTuple<
-  T extends any[],
-  MinArgs extends number,
-  V extends any[] = [],
-> = T extends [infer First, ...infer Rest]
-  ? CheckRestTuple<Rest, MinArgs, [First, ...V]>
-  : number extends T['length']
-    ? V['length'] extends MinArgs
-      ? true
-      : false
-    : false;
-
-/**
  * Given the number of required and optional elements, evaluates to true if the specified tuple
  * indeed has the specified number of elements, false otherwise.
  */
@@ -59,4 +43,21 @@ export type HasCorrectParameters<
     ? T
     : never;
 
-// CheckRestTuple<Parameters<T>, ReqArgs> extends true ? T : never
+/**
+ * Helper type to recursively make properties that are also objects
+ * partial
+ *
+ * By default, `Partial<Array<T>>` is equivalent to `Array<T | undefined>`. For this type, `Array<T>` will be
+ * transformed to Array<Partial<T>> instead
+ */
+export type RecursivePartial<T> =
+  T extends Array<any>
+    ? Array<RecursivePartial<T[number]>>
+    : // to records?
+      T extends (...args: any[]) => any
+      ? T
+      : T extends Record<any, any>
+        ? Partial<{
+            [K in keyof T]: RecursivePartial<T[K]>;
+          }>
+        : T;
