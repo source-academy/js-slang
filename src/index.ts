@@ -76,7 +76,7 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
     const column = error.location?.start?.column ?? -1;
 
     if (!error.explain) {
-      console.error(error);
+      console.error('Unhandled error', error);
     }
 
     const explanation = error.explain();
