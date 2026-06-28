@@ -273,6 +273,11 @@ export function callWithoutMetadata<T extends (...args: any[]) => any>(
  * properly by {@link callIfFuncAndRightArgs}. It won't redefine any existing details
  * that the function has already been wrapped with.
  *
+ * @example
+ * ```ts
+ * export const wrapped = wrap((...args: any[]) => args.length, true, 'wrapped');
+ * ```
+ *
  * - `optArgCount`: Represents the number of optional arguments the function has
  *   - If set to `undefined`, it will be assumed to be 0
  *   - If set to a number, that will be taken to be the number of optional arguments
