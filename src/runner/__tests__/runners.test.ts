@@ -90,8 +90,8 @@ const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
       f(5);
     `,
     value: 5,
-    errors: []
-  }
+    errors: [],
+  },
 ];
 
 const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [

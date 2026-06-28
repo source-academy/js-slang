@@ -32,9 +32,9 @@ describe('importing builtins', () => {
   });
 
   describe('check builtins being wrapped correctly', () => {
-    test('math_max and math_min', async  () => {
+    test('math_max and math_min', async () => {
       await expectFinishedResult('math_max(1, 2, 3);').resolves.toEqual(3);
       await expectFinishedResult('math_min(1, 2, 3);').resolves.toEqual(1);
-    })
-  })
+    });
+  });
 });

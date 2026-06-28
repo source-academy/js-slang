@@ -207,9 +207,7 @@ export function checkForUndefinedVariables(
   ) {
     identifiersIntroducedByNode.set(
       node,
-      new Set(
-        node.params.flatMap(each => extractIdsFromPattern(each).map(({ name }) => name)),
-      ),
+      new Set(node.params.flatMap(each => extractIdsFromPattern(each).map(({ name }) => name))),
     );
   }
   const identifiersToAncestors = new Map<es.Identifier, es.Node[]>();
