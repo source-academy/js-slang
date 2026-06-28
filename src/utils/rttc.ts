@@ -305,7 +305,9 @@ export function checkArray(
   }
 }
 
-type FunctionOfLength<T extends number> = (...args: [...TupleOfLength<T>, ...unknown[]]) => unknown;
+// TODO: Should it be the "proper" signature?
+// type FunctionOfLength<T extends number> = (...args: [...TupleOfLength<T>, ...unknown[]]) => unknown;
+type FunctionOfLength<T extends number> = (...args: TupleOfLength<T>) => unknown;
 
 /**
  * Type guard for checking that the provided value is a function and that it has the specified number of parameters.
