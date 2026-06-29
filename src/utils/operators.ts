@@ -1,4 +1,4 @@
-import type { BinaryOperator, UnaryOperator } from 'estree';
+import type { BinaryOperator, CallExpression, UnaryOperator } from 'estree';
 
 import {
   CallingNonFunctionValueError,
@@ -18,6 +18,7 @@ import * as create from './ast/astCreator';
 import { callExpression, locationDummyNode } from './ast/astCreator';
 import * as rttc from './rttc';
 import { HasCorrectParameters } from './typeUtils';
+import assert from './assert';
 
 export function throwIfTimeout(
   nativeStorage: NativeStorage,
@@ -133,6 +134,75 @@ function getFunctionDetails(f: Function): FunctionDetails {
 }
 
 /**
+ * Check that the number of arguments provided falls within the range specified.
+ *
+ * You can call it with a {@link CallExpression}, in which case its `callee` should be either a
+ * {@link FunctionExpression} or {@link ArrowFunctionExpression}.
+ *
+ * Otherwise, you can manually specify the parameters to the function.
+ *
+ * - If `maxArgs` is true, then there is no maximum number of arguments. Useful for functions
+ * with a rest parameter.
+ * - If `maxArgs` is a number, then that value is the maximum number of arguments.
+ * - If `maxArgs` is `undefined` or not provided, then the maximum number of arguments is assumed
+ * to be `minArgs`.
+ */
+export function validateFunctionArgCount(exp: CallExpression): void;
+export function validateFunctionArgCount(
+  exp: CallExpression,
+  received: number,
+  minArgs: number,
+  maxArgs?: number | true,
+  funcName?: string,
+): void;
+export function validateFunctionArgCount(
+  exp: CallExpression,
+  received?: number,
+  rawMinArgs?: number,
+  rawMaxArgs?: number | true,
+  funcName?: string,
+) {
+  let minArgs: number;
+  let maxArgs: number | true;
+
+  if (received === undefined) {
+    assert(
+      exp.callee.type === 'ArrowFunctionExpression' || exp.callee.type === 'FunctionExpression',
+      `${validateFunctionArgCount.name}: When called with CallExpression only, callee must be a function node`,
+    );
+
+    const func = exp.callee;
+    received = exp.arguments.length;
+    minArgs = func.params.filter(
+      x => x.type !== 'AssignmentPattern' && x.type !== 'RestElement',
+    ).length;
+    maxArgs = func.params.length;
+  } else {
+    minArgs = rawMinArgs!;
+    maxArgs = rawMaxArgs ?? rawMinArgs!;
+  }
+
+  assert(
+    typeof maxArgs !== 'number' || maxArgs >= minArgs,
+    `MaxArgs was a number (${maxArgs}) but less than MinArgs = ${minArgs}`,
+  );
+
+  if (received < minArgs) {
+    throw new TooFewArgumentsError(
+      exp,
+      received,
+      minArgs,
+      maxArgs === true || maxArgs !== minArgs,
+      funcName,
+    );
+  }
+
+  if (maxArgs !== true && received > maxArgs) {
+    throw new TooManyArgumentsError(exp, received, maxArgs, maxArgs !== minArgs, funcName);
+  }
+}
+
+/**
  * Calls the provided value as if it were a function being called from the `line` and `column`
  * within the provided `source` file, checking for argument count.
  *
@@ -165,7 +235,6 @@ export function callIfFuncAndRightArgs(
 
     const receivedLength = args.length;
     const { maxArgsAllowed, source: funcSource } = getFunctionDetails(f);
-    // console.log(f.name, f.length, maxArgsAllowed, receivedLength);
 
     if (funcSource === 'prelude') {
       // Once we call into a prelude function, everything that follows
@@ -173,35 +242,17 @@ export function callIfFuncAndRightArgs(
       isPrelude = true;
     }
 
-    const hasVarArgs = maxArgsAllowed === true || maxArgsAllowed !== f.length;
-
-    if (receivedLength < f.length) {
-      throw new TooFewArgumentsError(
-        callExpression(dummy, args, {
-          start: { line, column },
-          end: { line, column },
-          source,
-        }),
-        receivedLength,
-        f.length,
-        hasVarArgs,
-        f.name,
-      );
-    }
-
-    if (typeof maxArgsAllowed === 'number' && receivedLength > maxArgsAllowed) {
-      throw new TooManyArgumentsError(
-        callExpression(dummy, args, {
-          start: { line, column },
-          end: { line, column },
-          source,
-        }),
-        receivedLength,
-        maxArgsAllowed,
-        hasVarArgs,
-        f.name,
-      );
-    }
+    validateFunctionArgCount(
+      callExpression(dummy, args, {
+        start: { line, column },
+        end: { line, column },
+        source,
+      }),
+      receivedLength,
+      f.length,
+      maxArgsAllowed,
+      f.name,
+    );
 
     let res;
     try {

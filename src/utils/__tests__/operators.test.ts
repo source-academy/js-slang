@@ -1,8 +1,8 @@
-import { assert, describe, expect, test } from 'vitest';
+import { assert, describe, expect, it, test } from 'vitest';
 import * as operators from '../operators';
 import { stringify } from '../stringify';
 import { GeneralRuntimeError, RuntimeSourceError } from '../../errors/base';
-import { locationDummyNode } from '../ast/astCreator';
+import { callExpression, locationDummyNode } from '../ast/astCreator';
 
 describe('Wrapping and Calling functions', () => {
   describe('No redefine tests', () => {
@@ -152,4 +152,98 @@ describe('Wrapping and Calling functions', () => {
       }
     });
   });
+});
+
+describe(operators.validateFunctionArgCount, () => {
+  const dummyCall = callExpression({} as any, [], {
+    start: { line: 1, column: 1 },
+    end: { line: 1, column: 1 },
+  });
+
+  // Error case when only a TooFew error is thrown
+  type MinOnlyErrorCase = [received: number, minArgs: number, maxArgs: true, error?: 'min'];
+
+  // Error case when either a TooFew or TooMany error is thrown
+  type MinMaxErrorCase = [
+    received: number,
+    minArgs: number,
+    maxArgs: number | undefined,
+    error?: 'min' | 'max',
+  ];
+
+  type TestCase = MinMaxErrorCase | MinOnlyErrorCase;
+
+  function isMinOnly(c: TestCase): c is MinOnlyErrorCase {
+    const [, , max] = c;
+    return max === true;
+  }
+
+  function testCases(cases: TestCase[]) {
+    it.for(cases)('received = %d, min = %d, max = %s, error = %s', c => {
+      if (isMinOnly(c)) {
+        const [received, min, max, error] = c;
+        if (error === 'min') {
+          // TooFew error expected
+          expect(() =>
+            operators.validateFunctionArgCount(dummyCall, received, min, max, 'f'),
+          ).toThrow(`f: Expected ${min} or more arguments, but got ${received}.`);
+          return;
+        } else {
+          // No error expected
+          expect(() =>
+            operators.validateFunctionArgCount(dummyCall, received, min, max, 'f'),
+          ).not.toThrow();
+          return;
+        }
+      } else {
+        const [received, min, max, error] = c;
+        const expectedMax = max ?? min;
+
+        switch (error) {
+          case 'min': {
+            // TooFew error expected
+            expect(() =>
+              operators.validateFunctionArgCount(dummyCall, received, min, max, 'f'),
+            ).toThrow(
+              `f: Expected ${min} ${min !== expectedMax ? 'or more ' : ''}arguments, but got ${received}.`,
+            );
+            return;
+          }
+          case 'max': {
+            // TooMany error expected
+            expect(() =>
+              operators.validateFunctionArgCount(dummyCall, received, min, max, 'f'),
+            ).toThrow(
+              `f: Expected ${expectedMax} ${min !== expectedMax ? 'or fewer ' : ''}arguments, but got ${received}.`,
+            );
+            return;
+          }
+          default: {
+            // No error expected
+            expect(() =>
+              operators.validateFunctionArgCount(dummyCall, received, min, max, 'f'),
+            ).not.toThrow();
+            return;
+          }
+        }
+      }
+    });
+  }
+
+  testCases([
+    // No error cases
+    [2, 2, undefined],
+    [2, 2, 2],
+    [2, 1, 2],
+    [20, 1, true],
+
+    // Min error cases
+    [0, 1, undefined, 'min'],
+    [0, 1, 3, 'min'],
+    [0, 1, true, 'min'],
+
+    // Max error cases
+    [10, 1, undefined, 'max'],
+    [10, 1, 4, 'max'],
+  ]);
 });
