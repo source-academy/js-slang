@@ -34,11 +34,38 @@ export type LoadedBundle = {
   [name: string]: unknown;
 };
 
+type ParamType = 'regular' | 'optional' | 'rest';
+
+interface BaseParam<T extends ParamType> {
+  paramType: T;
+  name: string;
+  type: string;
+}
+
+/**
+ * Represents a rest parameter
+ */
+export type RestParam = BaseParam<'rest'>;
+
+/**
+ * Represents an optional parameter, i.e `x1?: number`.
+ */
+export type OptionalParam = BaseParam<'optional'>;
+
+/**
+ * Represents a regular parameter
+ */
+export interface RegularParam extends BaseParam<'regular'> {
+  defaultValue?: string;
+}
+
+type ParamSpecifier = RegularParam | RestParam | OptionalParam;
+
 export interface FunctionDocumentation {
   kind: 'function';
   retType: string;
   description: string;
-  params: [name: string, type: string][];
+  params: ParamSpecifier[];
 }
 
 export interface VariableDocumentation {
