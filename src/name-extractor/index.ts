@@ -321,7 +321,7 @@ function cursorInIdentifier(node: Node, locTest: (node: Node) => boolean): boole
   }
 }
 
-function docsToHtml(
+export function docsToHtml(
   spec: es.ImportSpecifier | es.ImportDefaultSpecifier,
   obj: ModuleDocsEntry,
 ): string {
