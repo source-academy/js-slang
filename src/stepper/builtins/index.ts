@@ -76,7 +76,7 @@ export function getBuiltinFunction(
     args.length,
     calledFunction.arity,
     name === 'list' ? true : undefined,
-    name
+    name,
   );
 
   return calledFunction.definition(args);
