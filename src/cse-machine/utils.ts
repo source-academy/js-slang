@@ -15,6 +15,7 @@ import * as ast from '../utils/ast/astCreator';
 import { isIdentifier, isImportDeclaration, isVariableDeclaration } from '../utils/ast/typeGuards';
 import assert from '../utils/assert';
 import { extractDeclarations } from '../utils/ast/helpers';
+import { validateFunctionArgCount } from '../utils/operators';
 import Closure from './closure';
 import { Continuation, isCallWithCurrentContinuation } from './continuations';
 import Heap from './heap';
@@ -500,38 +501,21 @@ export const checkNumberOfArguments = (
     // User-defined or Pre-defined functions
     const params = callee.node.params;
     const hasRest = params[params.length - 1]?.type === 'RestElement';
-
-    if (!hasRest) {
-      if (args.length > params.length) {
-        return handleRuntimeError(
-          context,
-          new errors.TooManyArgumentsError(exp, args.length, params.length, false),
-        );
-      }
-    }
-
     const minArgs = params.filter(
       each => each.type !== 'AssignmentPattern' && each.type !== 'RestElement',
     ).length;
 
-    if (args.length < minArgs) {
-      return handleRuntimeError(
-        context,
-        new errors.TooFewArgumentsError(exp, args.length, minArgs, hasRest),
-      );
+    try {
+      validateFunctionArgCount(exp, args.length, minArgs, hasRest || params.length);
+    } catch (error) {
+      return handleRuntimeError(context, error);
     }
   } else if (isCallWithCurrentContinuation(callee)) {
     // call/cc should have a single argument
-    if (args.length < 1) {
-      return handleRuntimeError(
-        context,
-        new errors.TooFewArgumentsError(exp, args.length, 1, false),
-      );
-    } else if (args.length > 1) {
-      return handleRuntimeError(
-        context,
-        new errors.TooManyArgumentsError(exp, args.length, 1, false),
-      );
+    try {
+      validateFunctionArgCount(exp, args.length, 1);
+    } catch (error) {
+      return handleRuntimeError(context, error);
     }
     return undefined;
   } else if (callee instanceof Continuation) {

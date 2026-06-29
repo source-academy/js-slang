@@ -7,6 +7,7 @@ import { TooFewArgumentsError, TooManyArgumentsError } from '../../errors/errors
 import type { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication';
 import type { RedexInfo } from '..';
 import { InvalidParameterTypeError } from '../../errors/rttcErrors';
+import { validateFunctionArgCount } from '../../utils/operators';
 import { auxiliaryBuiltinFunctions } from './auxiliary';
 import { listBuiltinFunctions } from './lists';
 import { miscBuiltinFunctions } from './misc';
@@ -33,6 +34,10 @@ export function prelude(node: es.BaseNode, redex: RedexInfo) {
   return inputNode;
 }
 
+/**
+ * Retrieves the builtin with the given name. Also verifies
+ * the argument count
+ */
 export function getBuiltinFunction(
   name: string,
   call: StepperFunctionApplication,
@@ -41,9 +46,18 @@ export function getBuiltinFunction(
 
   if (name.startsWith('math_')) {
     const mathFnName = name.split('_')[1];
-
     if (mathFnName in Math) {
+      // Is a math function
       const fn = (Math as any)[mathFnName];
+
+      if (mathFnName === 'min' || mathFnName === 'max') {
+        // Assume that only min and max have varargs
+        validateFunctionArgCount(call, args.length, 0, true, name);
+      } else {
+        // And use f.length for everything else
+        validateFunctionArgCount(call, args.length, fn.length, undefined, name);
+      }
+
       const argVal = args.map(arg => (arg as StepperLiteral).value);
       argVal.forEach(arg => {
         if (typeof arg !== 'number' && typeof arg !== 'bigint') {

@@ -176,7 +176,9 @@ export function validateFunctionArgCount(
     minArgs = func.params.filter(
       x => x.type !== 'AssignmentPattern' && x.type !== 'RestElement',
     ).length;
-    maxArgs = func.params.length;
+    maxArgs =
+      (func.params.length > 0 && func.params[func.params.length - 1].type === 'RestElement') ||
+      func.params.length;
   } else {
     minArgs = rawMinArgs!;
     maxArgs = rawMaxArgs ?? rawMinArgs!;

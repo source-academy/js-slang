@@ -4488,18 +4488,45 @@ exports[`Builtin math > PI returns its value 1`] = `
 "
 `;
 
-exports[`Builtin math > math_sin() returns NaN 1`] = `
+exports[`Builtin math > math_max with no arguments 1`] = `
+"math_max();
+[noMarker] Start of evaluation
+
+math_max();
+[beforeMarker] math_max runs
+
+-Infinity;
+[afterMarker] math_max runs
+
+-Infinity;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Builtin math > math_min with multiple arguments 1`] = `
+"math_min(1, 2, 3);
+[noMarker] Start of evaluation
+
+math_min(1, 2, 3);
+[beforeMarker] math_min runs
+
+1;
+[afterMarker] math_min runs
+
+1;
+[noMarker] Evaluation complete
+"
+`;
+
+exports[`Builtin math > math_sin() with no arguments is error 1`] = `
 "math_sin();
 [noMarker] Start of evaluation
 
 math_sin();
-[beforeMarker] math_sin runs
+[beforeMarker] Line 1: math_sin: Expected 1 arguments, but got 0.
 
-NaN;
-[afterMarker] math_sin runs
-
-NaN;
-[noMarker] Evaluation complete
+math_sin();
+[noMarker] Evaluation stuck
 "
 `;
 

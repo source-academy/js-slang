@@ -1,8 +1,11 @@
-import { assert, describe, expect, it, test } from 'vitest';
+import { parse } from 'acorn';
+import type { Program } from 'estree';
+import { assert, describe, expect, it, test, vi } from 'vitest';
 import * as operators from '../operators';
 import { stringify } from '../stringify';
 import { GeneralRuntimeError, RuntimeSourceError } from '../../errors/base';
 import { callExpression, locationDummyNode } from '../ast/astCreator';
+import { ACORN_PARSE_OPTIONS } from '../../constants';
 
 describe('Wrapping and Calling functions', () => {
   describe('No redefine tests', () => {
@@ -155,30 +158,46 @@ describe('Wrapping and Calling functions', () => {
 });
 
 describe(operators.validateFunctionArgCount, () => {
-  const dummyCall = callExpression({} as any, [], {
-    start: { line: 1, column: 1 },
-    end: { line: 1, column: 1 },
-  });
+  describe('Calling manually', () => {
+    const dummyCall = callExpression({} as any, [], {
+      start: { line: 1, column: 1 },
+      end: { line: 1, column: 1 },
+    });
 
-  // Error case when only a TooFew error is thrown
-  type MinOnlyErrorCase = [received: number, minArgs: number, maxArgs: true, error?: 'min'];
+    // Error case when only a TooFew error is thrown
+    type MinOnlyErrorCase = [received: number, minArgs: number, maxArgs: true, error?: 'min'];
 
-  // Error case when either a TooFew or TooMany error is thrown
-  type MinMaxErrorCase = [
-    received: number,
-    minArgs: number,
-    maxArgs: number | undefined,
-    error?: 'min' | 'max',
-  ];
+    // Error case when either a TooFew or TooMany error is thrown
+    type MinMaxErrorCase = [
+      received: number,
+      minArgs: number,
+      maxArgs: number | undefined,
+      error?: 'min' | 'max',
+    ];
 
-  type TestCase = MinMaxErrorCase | MinOnlyErrorCase;
+    type TestCase = MinMaxErrorCase | MinOnlyErrorCase;
 
-  function isMinOnly(c: TestCase): c is MinOnlyErrorCase {
-    const [, , max] = c;
-    return max === true;
-  }
+    function isMinOnly(c: TestCase): c is MinOnlyErrorCase {
+      const [, , max] = c;
+      return max === true;
+    }
+    const cases: TestCase[] = [
+      // No error cases
+      [2, 2, undefined],
+      [2, 2, 2],
+      [2, 1, 2],
+      [20, 1, true],
 
-  function testCases(cases: TestCase[]) {
+      // Min error cases
+      [0, 1, undefined, 'min'],
+      [0, 1, 3, 'min'],
+      [0, 1, true, 'min'],
+
+      // Max error cases
+      [10, 1, undefined, 'max'],
+      [10, 1, 4, 'max'],
+    ];
+
     it.for(cases)('received = %d, min = %d, max = %s, error = %s', c => {
       if (isMinOnly(c)) {
         const [received, min, max, error] = c;
@@ -228,22 +247,93 @@ describe(operators.validateFunctionArgCount, () => {
         }
       }
     });
-  }
+  });
 
-  testCases([
-    // No error cases
-    [2, 2, undefined],
-    [2, 2, 2],
-    [2, 1, 2],
-    [20, 1, true],
+  describe('Calling with call expression', () => {
+    const getNode = vi.defineHelper((code: string) => {
+      const program = parse(code, ACORN_PARSE_OPTIONS) as Program;
+      const node0 = program.body[0];
+      assert(
+        node0.type === 'ExpressionStatement',
+        'Expected first node of program to be ExpressionStatement',
+      );
+      assert(
+        node0.expression.type === 'CallExpression',
+        'Expected first node to be call to function',
+      );
+      return node0.expression;
+    });
 
-    // Min error cases
-    [0, 1, undefined, 'min'],
-    [0, 1, 3, 'min'],
-    [0, 1, true, 'min'],
+    type TestCase = [code: string, error?: 'min' | 'max'];
 
-    // Max error cases
-    [10, 1, undefined, 'max'],
-    [10, 1, 4, 'max'],
-  ]);
+    const cases: TestCase[] = [
+      ['(() => {})()'],
+      ['(x => {})(x)'],
+      ['((x, y) => {})(x, y)'],
+      ['((x, y = 0) => {})(x)'],
+      ['((x, y = 0) => {})(x, y)'],
+      ['((...x) => {})()'],
+      ['((...x) => {})(x, y)'],
+
+      // Min Errors
+      ['(x => {})()', 'min'],
+      ['((x, y) => {})()', 'min'],
+      ['((x, y = 0) => {})()', 'min'],
+      ['((x, ...y) => {})()', 'min'],
+
+      // Max Errors
+      ['(() => {})(x)', 'max'],
+      ['((x = 0) => {})(x, y)', 'max'],
+
+      // Case for invalid call expression
+      ['eval();'],
+    ];
+
+    it.for(cases)('%s', ([code, error]) => {
+      const expr = getNode(code);
+      const { callee } = expr;
+
+      if (callee.type !== 'ArrowFunctionExpression' && callee.type !== 'FunctionExpression') {
+        expect(() => operators.validateFunctionArgCount(expr)).toThrow(
+          'validateFunctionArgCount: When called with CallExpression only, callee must be a function node',
+        );
+        return;
+      }
+
+      const min = callee.params.filter(
+        x => x.type !== 'AssignmentPattern' && x.type !== 'RestElement',
+      ).length;
+      const max =
+        (callee.params.length > 0 &&
+          callee.params[callee.params.length - 1].type === 'RestElement') ||
+        callee.params.length;
+      const received = expr.arguments.length;
+
+      switch (error) {
+        case 'min': {
+          // Expected a TooFew error
+          expect(() => operators.validateFunctionArgCount(expr)).toThrow(
+            `Expected ${min} ${min !== max ? 'or more ' : ''}arguments, but got ${received}.`,
+          );
+          return;
+        }
+        case 'max': {
+          if (max === true) {
+            expect.fail('Node has rest param, but TooMany error was expected.');
+          }
+
+          // TooMany error expected
+          expect(() => operators.validateFunctionArgCount(expr)).toThrow(
+            `Expected ${max} ${min !== max ? 'or fewer ' : ''}arguments, but got ${received}.`,
+          );
+          return;
+        }
+        default: {
+          // No error expected
+          expect(() => operators.validateFunctionArgCount(expr)).not.toThrow();
+          return;
+        }
+      }
+    });
+  });
 });
