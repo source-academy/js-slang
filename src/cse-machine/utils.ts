@@ -506,14 +506,20 @@ export const checkNumberOfArguments = (
     ).length;
 
     try {
-      validateFunctionArgCount(exp, args.length, minArgs, hasRest || params.length);
+      validateFunctionArgCount(
+        exp,
+        args.length,
+        minArgs,
+        hasRest || params.length,
+        callee.declaredName,
+      );
     } catch (error) {
       return handleRuntimeError(context, error);
     }
   } else if (isCallWithCurrentContinuation(callee)) {
     // call/cc should have a single argument
     try {
-      validateFunctionArgCount(exp, args.length, 1);
+      validateFunctionArgCount(exp, args.length, 1, undefined, 'call_cc');
     } catch (error) {
       return handleRuntimeError(context, error);
     }

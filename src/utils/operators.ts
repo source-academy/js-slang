@@ -136,10 +136,11 @@ function getFunctionDetails(f: Function): FunctionDetails {
 /**
  * Check that the number of arguments provided falls within the range specified.
  *
- * You can call it with a {@link CallExpression}, in which case its `callee` should be either a
+ * You can call it with just a {@link CallExpression}, in which case its `callee` should be either a
  * {@link FunctionExpression} or {@link ArrowFunctionExpression}.
  *
- * Otherwise, you can manually specify the parameters to the function.
+ * Otherwise, the node is just used for location information and you have to manually specify
+ * everything else.
  *
  * - If `maxArgs` is true, then there is no maximum number of arguments. Useful for functions
  * with a rest parameter.
@@ -405,7 +406,7 @@ export function wrap(
 
 /**
  * A type-agnostic version of {@link wrap} to make it easier
- * when the function type not known.
+ * when the function type is not known.
  */
 export function wrapUnsafe<T extends (...args: any[]) => any>(
   f: T,
