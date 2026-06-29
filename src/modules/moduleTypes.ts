@@ -4,6 +4,9 @@ import type { RequireProvider } from './loader/requireProvider';
 import type { ImportAnalysisOptions } from './preprocessor/analyzer';
 import type { LinkerOptions } from './preprocessor/linker';
 
+/**
+ * Represents a {@link es.Node|Node} that refers to an import "source".
+ */
 export type ModuleDeclarationWithSource =
   | es.ImportDeclaration
   | es.ExportNamedDeclaration
@@ -61,6 +64,9 @@ export interface RegularParam extends BaseParam<'regular'> {
 
 export type ParamSpecifier = RegularParam | RestParam | OptionalParam;
 
+/**
+ * Represents a doc entry documenting a function
+ */
 export interface FunctionDocumentation {
   kind: 'function';
   retType: string;
@@ -68,12 +74,19 @@ export interface FunctionDocumentation {
   params: ParamSpecifier[];
 }
 
+/**
+ * Represents a doc entry documenting a variable
+ */
 export interface VariableDocumentation {
   kind: 'variable';
   type: string;
   description: string;
 }
 
+/**
+ * Represents a doc entry for something that isn't
+ * a variable or function.
+ */
 export interface UnknownDocumentation {
   kind: 'unknown';
 }

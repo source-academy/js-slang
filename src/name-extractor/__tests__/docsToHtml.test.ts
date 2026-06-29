@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { docsToHtml } from '..';
-import { FunctionDocumentation } from '../../modules/moduleTypes';
+import type { FunctionDocumentation } from '../../modules/moduleTypes';
 import { importSpecifier } from '../../utils/ast/astCreator';
 
 describe(docsToHtml, () => {
