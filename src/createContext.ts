@@ -296,7 +296,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
 
   if (context.chapter >= 1) {
     defineBuiltin(context, 'get_time()', misc.get_time);
-    defineBuiltin(context, 'display(val, prepend = undefined)', display, 2);
+    defineBuiltin(context, 'display(val, prepend = undefined)', display, 1);
     defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay, 1);
     defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify, 2);
     defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message, 1);

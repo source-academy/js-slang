@@ -15101,7 +15101,7 @@ exports[`Test catching errors from built in function > Incorrect number of argum
 [noMarker] Start of evaluation
 
 pair(2);
-[beforeMarker] Line 1: Expected 2 arguments, but got 1.
+[beforeMarker] Line 1: pair: Expected 2 arguments, but got 1.
 
 pair(2);
 [noMarker] Evaluation stuck
