@@ -59,7 +59,7 @@ export interface RegularParam extends BaseParam<'regular'> {
   defaultValue?: string;
 }
 
-type ParamSpecifier = RegularParam | RestParam | OptionalParam;
+export type ParamSpecifier = RegularParam | RestParam | OptionalParam;
 
 export interface FunctionDocumentation {
   kind: 'function';
