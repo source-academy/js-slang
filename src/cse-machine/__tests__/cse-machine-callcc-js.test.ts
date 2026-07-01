@@ -35,7 +35,7 @@ test('call_cc throws error when given no arguments', () => {
         1 + 2 + call_cc() + 4;
         `,
     optionEC4,
-  ).toEqual('Line 1: Expected 1 arguments, but got 0.');
+  ).toEqual('Line 1: call_cc: Expected 1 arguments, but got 0.');
 });
 
 test('call_cc throws error when given > 1 arguments', () => {
@@ -45,7 +45,7 @@ test('call_cc throws error when given > 1 arguments', () => {
         1 + 2 + call_cc(f,f) + 4;
         `,
     optionEC4,
-  ).toEqual('Line 2: Expected 1 arguments, but got 2.');
+  ).toEqual('Line 2: call_cc: Expected 1 arguments, but got 2.');
 });
 
 test('continuations can be stored as a value', async ({ expect }) => {

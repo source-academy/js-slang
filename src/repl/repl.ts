@@ -7,7 +7,7 @@ import { createContext, type IOptions } from '..';
 import { Chapter, Variant } from '../langs';
 import { setModulesStaticURL } from '../modules/loader';
 import { runCodeInSource, sourceFilesRunner } from '../runner';
-import type { RecursivePartial } from '../types';
+import type { RecursivePartial } from '../utils/typeUtils';
 import {
   assertLanguageCombo,
   chapterParser,

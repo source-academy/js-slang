@@ -1,6 +1,6 @@
 import mapValues from 'lodash/mapValues';
 import type { Context } from '../../types';
-import { wrap } from '../../utils/operators';
+import { wrapUnsafe } from '../../utils/operators';
 import { ModuleConnectionError, ModuleInternalError } from '../errors';
 import type {
   ModuleDocumentation,
@@ -145,12 +145,12 @@ export async function loadModuleBundleAsync(
       if (typeof value !== 'function') return value;
 
       const name = value.name;
-      return wrap(
+      return wrapUnsafe(
         value as (...args: any[]) => any,
-        false,
+        undefined,
+        name ?? key, // Ensure that names are provided if forgotten
         `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`,
         moduleName,
-        name ?? key, // Ensure that names are provided if forgotten
       );
     });
   } catch (error) {

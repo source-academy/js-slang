@@ -27,6 +27,11 @@ export interface CustomBuiltIns {
  * `toString` behaviour
  */
 export interface ReplResult {
+  // toReplString is marked as internal so that documentation generators can be
+  // configured to exclude it for cadet facing types
+  /**
+   * @internal
+   */
   toReplString: () => string;
 }
 
@@ -391,26 +396,6 @@ export type TypeEnvironment = {
   declKindMap: Map<string, AllowedDeclarations>;
   typeAliasMap: Map<string, Type | ForAll>;
 }[];
-
-/**
- * Helper type to recursively make properties that are also objects
- * partial
- *
- * By default, `Partial<Array<T>>` is equivalent to `Array<T | undefined>`. For this type, `Array<T>` will be
- * transformed to Array<Partial<T>> instead
- */
-export type RecursivePartial<T> =
-  T extends Array<any>
-    ? Array<RecursivePartial<T[number]>>
-    : // Apparently typescript considers functions assignable
-      // to records?
-      T extends (...args: any[]) => any
-      ? T
-      : T extends Record<any, any>
-        ? Partial<{
-            [K in keyof T]: RecursivePartial<T[K]>;
-          }>
-        : T;
 
 /**
  * Utility type for selecting extracting the specific Node type when provided

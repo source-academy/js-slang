@@ -8,6 +8,7 @@
 import { GeneralRuntimeError } from '../errors/base';
 import { InvalidParameterTypeError } from '../errors/rttcErrors';
 import type { Value } from '../types';
+import { callWithoutMetadata } from '../utils/operators';
 import { assertFunctionOfLength, assertNumberWithinRange } from '../utils/rttc';
 import type { ArrayLike } from '../utils/stringify';
 
@@ -162,7 +163,9 @@ export function vector_to_list<T>(vector: T[]): List<T> {
 export function accumulate<T, U>(op: (each: T, result: U) => U, initial: U, sequence: List<T>): U {
   // Use CPS to prevent stack overflow
   function $accumulate(xs: typeof sequence, cont: (each: U) => U): U {
-    return is_null(xs) ? cont(initial) : $accumulate(tail(xs), x => cont(op(head(xs), x)));
+    return is_null(xs)
+      ? cont(initial)
+      : $accumulate(tail(xs), x => cont(callWithoutMetadata(op, head(xs), x)));
   }
   return $accumulate(sequence, x => x);
 }
@@ -188,7 +191,9 @@ export function build_list<T>(f: (arg: number) => T, n: number): List<T> {
   assertFunctionOfLength(f, 1, build_list.name);
 
   function $build_list(i: number, already_built: List<T>): List<T> {
-    return i < 0 ? already_built : $build_list(i - 1, pair(f(i), already_built));
+    return i < 0
+      ? already_built
+      : $build_list(i - 1, pair(callWithoutMetadata(f, i), already_built));
   }
 
   return $build_list(n - 1, null);
@@ -216,7 +221,11 @@ export function enum_list(start: number, end: number): List<number> {
 export function filter<T, U extends T>(pred: (arg: T) => arg is U, xs: List<T>): List<U>;
 export function filter<T>(pred: (arg: T) => boolean, xs: List<T>): List<T>;
 export function filter<T>(pred: (arg: T) => boolean, xs: List<T>): List<T> {
-  return accumulate((each, result) => (pred(each) ? pair(each, result) : result), list(), xs);
+  return accumulate(
+    (each, result) => (callWithoutMetadata(pred, each) ? pair(each, result) : result),
+    list(),
+    xs,
+  );
 }
 
 /**
@@ -224,7 +233,7 @@ export function filter<T>(pred: (arg: T) => boolean, xs: List<T>): List<T> {
  */
 export function for_each<T>(op: (arg: T) => void, xs: List<T>): true {
   if (is_null(xs)) return true;
-  op(head(xs));
+  callWithoutMetadata(op, head(xs));
   return for_each(op, tail(xs));
 }
 
@@ -268,7 +277,11 @@ export function list_ref<T>(xs: List<T>, n: number) {
  * a new list containing the results
  */
 export function map<T, U>(op: (each: T) => U, sequence: List<T>): List<U> {
-  return accumulate((each, result) => pair(op(each), result), list(), sequence);
+  return accumulate(
+    (each, result) => pair(callWithoutMetadata(op, each), result),
+    list(),
+    sequence,
+  );
 }
 
 /**

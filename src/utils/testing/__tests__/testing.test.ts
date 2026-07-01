@@ -150,17 +150,15 @@ describe('Extra test results', () => {
       context: { visualiseListResult },
     } = await testSuccess(`draw_data(list(1, 2));`, Chapter.SOURCE_2);
     expect(visualiseListResult).toMatchInlineSnapshot(`
-Array [
-  Array [
-    Array [
-      1,
       Array [
-        2,
-        null,
-      ],
-    ],
-  ],
-]
-`);
+        Array [
+          1,
+          Array [
+            2,
+            null,
+          ],
+        ],
+      ]
+    `);
   });
 });

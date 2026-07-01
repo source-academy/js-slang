@@ -1,6 +1,6 @@
 import { TimeoutError } from '../errors/timeoutErrors';
 import type { Node } from '../types';
-import { Chapter, Variant } from '../langs';
+import { Chapter, type ChapterStrings, Variant } from '../langs';
 
 export class PromiseTimeoutError extends TimeoutError {
   public override explain() {
@@ -46,7 +46,7 @@ export function objectKeys<T extends string | number | symbol>(obj: Record<T, an
  * Given the chapter value, return the string name of that chapter
  */
 export function getChapterName(chapter: Chapter) {
-  return objectKeys(Chapter).find(name => Chapter[name] === chapter)!;
+  return Chapter[chapter] as ChapterStrings;
 }
 
 /**

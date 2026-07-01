@@ -2,7 +2,7 @@ import { MAX_LIST_DISPLAY_LENGTH } from '../constants';
 import Closure from '../cse-machine/closure';
 import { InternalRuntimeError } from '../errors/base';
 import type { Type, Value } from '../types';
-import { callIfFuncAndRightArgs } from './operators';
+import { callWithoutMetadata } from './operators';
 
 export interface ArrayLike {
   replPrefix: string;
@@ -437,7 +437,7 @@ export function valueToStringDag(value: Value): StringDag {
       // callIfFuncAndRight args is necessary because if we implement toReplString as a function
       // in Source, it gets wrapped by the transpiler
       // this allows object literals to implement toReplString
-      const reprValue = callIfFuncAndRightArgs(v.toReplString.bind(v), -1, -1, null, undefined);
+      const reprValue = callWithoutMetadata(v.toReplString.bind(v));
       return convertRepr(reprValue);
     } else if (typeof v !== 'object') {
       return convertRepr(v.toString());

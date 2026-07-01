@@ -4,6 +4,9 @@ import type { RequireProvider } from './loader/requireProvider';
 import type { ImportAnalysisOptions } from './preprocessor/analyzer';
 import type { LinkerOptions } from './preprocessor/linker';
 
+/**
+ * Represents a {@link es.Node|Node} that refers to an import "source".
+ */
 export type ModuleDeclarationWithSource =
   | es.ImportDeclaration
   | es.ExportNamedDeclaration
@@ -34,19 +37,56 @@ export type LoadedBundle = {
   [name: string]: unknown;
 };
 
+type ParamType = 'regular' | 'optional' | 'rest';
+
+interface BaseParam<T extends ParamType> {
+  paramType: T;
+  name: string;
+  type: string;
+}
+
+/**
+ * Represents a rest parameter
+ */
+export type RestParam = BaseParam<'rest'>;
+
+/**
+ * Represents an optional parameter, i.e `x1?: number`.
+ */
+export type OptionalParam = BaseParam<'optional'>;
+
+/**
+ * Represents a regular parameter
+ */
+export interface RegularParam extends BaseParam<'regular'> {
+  defaultValue?: string;
+}
+
+export type ParamSpecifier = RegularParam | RestParam | OptionalParam;
+
+/**
+ * Represents a doc entry documenting a function
+ */
 export interface FunctionDocumentation {
   kind: 'function';
   retType: string;
   description: string;
-  params: [name: string, type: string][];
+  params: ParamSpecifier[];
 }
 
+/**
+ * Represents a doc entry documenting a variable
+ */
 export interface VariableDocumentation {
   kind: 'variable';
   type: string;
   description: string;
 }
 
+/**
+ * Represents a doc entry for something that isn't
+ * a variable or function.
+ */
 export interface UnknownDocumentation {
   kind: 'unknown';
 }

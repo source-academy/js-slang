@@ -2,7 +2,8 @@ import type es from 'estree';
 
 import { parse } from '../../parser/parser';
 import { parseAt } from '../../parser/utils';
-import type { Context, RecursivePartial } from '../../types';
+import type { Context } from '../../types';
+import type { RecursivePartial } from '../../utils/typeUtils';
 import { getModuleDeclarationSource } from '../../utils/ast/helpers';
 import { isDirective } from '../../utils/ast/typeGuards';
 import { mapAndFilter } from '../../utils/misc';

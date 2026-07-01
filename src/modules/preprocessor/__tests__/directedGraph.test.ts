@@ -4,7 +4,7 @@ import { DirectedGraph } from '../directedGraph';
 describe('addEdge', () => {
   it('throws an error if the source and destination nodes are the same', () => {
     const graph = new DirectedGraph();
-    expect(() => graph.addEdge('A', 'A')).toThrowError(
+    expect(() => graph.addEdge('A', 'A')).toThrow(
       'Edges that connect a node to itself are not allowed.',
     );
   });

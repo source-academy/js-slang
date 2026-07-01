@@ -11,6 +11,8 @@ export enum Chapter {
   LIBRARY_PARSER = 100,
 }
 
+export type ChapterStrings = keyof typeof Chapter;
+
 export enum Variant {
   DEFAULT = 'default',
   TYPED = 'typed',

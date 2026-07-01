@@ -28,25 +28,25 @@ describe('parse_int', () => {
 
   test('parse_int with non-integer arg radix throws error', () => {
     return expectParsedError(`parse_int('42', 2.1);`).toEqual(
-      'Line 1: parse_int: Expected integer between 2 and 36 for radix, got 2.1.',
+      'Line 1: parse_int: Expected integer ∈ [2, 36] for radix, got 2.1.',
     );
   });
 
   test('parse_int with radix outside [2, 36] throws error, radix=1', () => {
     return expectParsedError(`parse_int('10', 1);`).toEqual(
-      'Line 1: parse_int: Expected integer between 2 and 36 for radix, got 1.',
+      'Line 1: parse_int: Expected integer ∈ [2, 36] for radix, got 1.',
     );
   });
 
   test('parse_int with radix outside [2, 36] throws error, radix=37', () => {
     return expectParsedError(`parse_int('10', 37);`).toEqual(
-      'Line 1: parse_int: Expected integer between 2 and 36 for radix, got 37.',
+      'Line 1: parse_int: Expected integer ∈ [2, 36] for radix, got 37.',
     );
   });
 
   test('parse_int with string arg radix throws error', () => {
     return expectParsedError(`parse_int('42', '2'); `).toEqual(
-      'Line 1: parse_int: Expected integer between 2 and 36 for radix, got "2".',
+      'Line 1: parse_int: Expected integer ∈ [2, 36] for radix, got "2".',
     );
   });
 });
@@ -60,13 +60,13 @@ describe('char_at', () => {
 
   test('char_at with non nonnegative integer second argument errors', () => {
     return expectParsedError(`char_at('', -1);`).toEqual(
-      'Line 1: char_at: Expected integer greater than 0 for index, got -1.',
+      'Line 1: char_at: Expected integer ≥ 0 for index, got -1.',
     );
   });
 
   test('char_at with string for second argument errors', () => {
     return expectParsedError(`char_at('', "");`).toEqual(
-      'Line 1: char_at: Expected integer greater than 0 for index, got "".',
+      'Line 1: char_at: Expected integer ≥ 0 for index, got "".',
     );
   });
 

@@ -201,7 +201,7 @@ export function defineBuiltin(
   context: Context,
   name: string,
   value: Value,
-  minArgsNeeded?: number,
+  optArgs?: number | true,
 ) {
   function extractName(name: string): string {
     return name.split('(')[0].trim();
@@ -223,12 +223,12 @@ export function defineBuiltin(
     const funName = extractName(name);
     const funParameters = extractParameters(name);
 
-    const wrapped = operators.wrap(
+    const wrapped = operators.wrapUnsafe(
       value,
-      minArgsNeeded,
+      optArgs,
+      funName,
       `function ${name} {\n\t[implementation hidden]\n}`,
       null,
-      funName,
     );
 
     // value.toString = () => repr;
@@ -289,16 +289,16 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     (externalBuiltIns.alert ?? defaultBuiltIns.alert)(v, '', context.externalContext);
     context.nativeStorage.maxExecTime += Date.now() - start;
   };
-  const visualise_list = (...v: Value[]) => {
-    (externalBuiltIns.visualiseList ?? defaultBuiltIns.visualiseList)(v, context.externalContext);
-    return v[0];
+  const visualise_list = (v0: Value, ..._v: Value[]) => {
+    (externalBuiltIns.visualiseList ?? defaultBuiltIns.visualiseList)(v0, context.externalContext);
+    return v0;
   };
 
   if (context.chapter >= 1) {
     defineBuiltin(context, 'get_time()', misc.get_time);
     defineBuiltin(context, 'display(val, prepend = undefined)', display, 1);
     defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay, 1);
-    defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify, 1);
+    defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify, 2);
     defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message, 1);
     defineBuiltin(context, 'prompt(str)', prompt);
     defineBuiltin(context, 'is_number(val)', misc.is_number);
@@ -319,15 +319,24 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     for (const name of mathLibraryNames) {
       const value = Math[name as keyof typeof Math];
       if (typeof value === 'function') {
-        let paramString: string;
-        let minArgsNeeded = undefined;
-        if (name === 'max' || name === 'min') {
-          paramString = '...values';
-          minArgsNeeded = 0;
+        if (name === 'max') {
+          defineBuiltin(
+            context,
+            'math_max(...values)',
+            (...args: number[]) => Math.max(...args),
+            true,
+          );
+        } else if (name === 'min') {
+          defineBuiltin(
+            context,
+            'math_min(...values)',
+            (...args: number[]) => Math.min(...args),
+            true,
+          );
         } else {
-          paramString = parameterNames.slice(0, value.length).join(', ');
+          const paramString = parameterNames.slice(0, value.length).join(', ');
+          defineBuiltin(context, `math_${name}(${paramString})`, value);
         }
-        defineBuiltin(context, `math_${name}(${paramString})`, value, minArgsNeeded);
       } else {
         defineBuiltin(context, `math_${name}`, value);
       }
@@ -341,9 +350,9 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     defineBuiltin(context, 'head(xs)', list.head);
     defineBuiltin(context, 'tail(xs)', list.tail);
     defineBuiltin(context, 'is_null(val)', list.is_null);
-    defineBuiltin(context, 'list(...values)', list.list, 0);
-    defineBuiltin(context, 'draw_data(...xs)', visualise_list, 1);
-    defineBuiltin(context, 'display_list(val, prepend = undefined)', display_list, 0);
+    defineBuiltin(context, 'list(...values)', list.list, true);
+    defineBuiltin(context, 'draw_data(x1, ...xs)', visualise_list, true);
+    defineBuiltin(context, 'display_list(val, prepend = undefined)', display_list, 1);
     defineBuiltin(context, 'is_list(val)', list.is_list);
   }
 
@@ -354,7 +363,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     defineBuiltin(context, 'is_array(val)', misc.is_array);
 
     // Stream library
-    defineBuiltin(context, 'stream(...values)', stream.stream, 0);
+    defineBuiltin(context, 'stream(...values)', stream.stream, true);
   }
 
   if (context.chapter >= 4) {

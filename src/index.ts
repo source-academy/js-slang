@@ -12,11 +12,11 @@ import type {
   Context,
   ExecutionMethod,
   Finished,
-  RecursivePartial,
   Result,
   Error as ResultError,
   SVMProgram,
 } from './types';
+import type { RecursivePartial } from './utils/typeUtils';
 import type { ModuleContext, ImportOptions } from './modules/moduleTypes';
 import { assemble } from './vm/svml-assembler';
 import { compileToIns } from './vm/svml-compiler';
@@ -74,6 +74,11 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
     const filePath = error.location?.source ? `[${error.location.source}] ` : '';
     const line = error.location?.start?.line ?? -1;
     const column = error.location?.start?.column ?? -1;
+
+    if (!error.explain) {
+      console.error('Unhandled error', error);
+    }
+
     const explanation = error.explain();
 
     if (verbose) {

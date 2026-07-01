@@ -29,13 +29,13 @@ describe(getSourceVariableDeclaration, () => {
   test('throws an error when given a declaration with multiple declarators', () => {
     expect(() =>
       getSourceVariableDeclaration(getAst('const x = 0, y = 0;') as VariableDeclaration),
-    ).toThrowError('Variable Declarations in Source should only have 1 declarator!');
+    ).toThrow('Variable Declarations in Source should only have 1 declarator!');
   });
 
   test('throws an error when given an uninitialized declaration', () => {
-    expect(() =>
-      getSourceVariableDeclaration(getAst('let x;') as VariableDeclaration),
-    ).toThrowError('Variable declarations in Source must be initialized!');
+    expect(() => getSourceVariableDeclaration(getAst('let x;') as VariableDeclaration)).toThrow(
+      'Variable declarations in Source must be initialized!',
+    );
   });
 });
 

@@ -37,17 +37,17 @@ describe(errors.InvalidNumberParameterError, () => {
       { max: 2, min: 0, integer: true },
       'foo',
     );
-    expect(error.explain()).toEqual('foo: Expected integer between 0 and 2, got -1.');
+    expect(error.explain()).toEqual('foo: Expected integer ∈ [0, 2], got -1.');
   });
 
   test('integer with only maximum', () => {
     const error = new errors.InvalidNumberParameterError(3, { max: 2 }, 'foo');
-    expect(error.explain()).toEqual('foo: Expected integer less than 2, got 3.');
+    expect(error.explain()).toEqual('foo: Expected integer ≤ 2, got 3.');
   });
 
   test('integer with only minimum', () => {
     const error = new errors.InvalidNumberParameterError(1, { min: 2 }, 'foo');
-    expect(error.explain()).toEqual('foo: Expected integer greater than 2, got 1.');
+    expect(error.explain()).toEqual('foo: Expected integer ≥ 2, got 1.');
   });
 
   test('integer with neither minimum nor maximum', () => {
@@ -61,17 +61,17 @@ describe(errors.InvalidNumberParameterError, () => {
       { max: 2, min: 0, integer: false },
       'foo',
     );
-    expect(error.explain()).toEqual('foo: Expected number between 0 and 2, got -1.');
+    expect(error.explain()).toEqual('foo: Expected number ∈ [0, 2], got -1.');
   });
 
   test('non-integer with only maximum', () => {
     const error = new errors.InvalidNumberParameterError(3, { max: 2, integer: false }, 'foo');
-    expect(error.explain()).toEqual('foo: Expected number less than 2, got 3.');
+    expect(error.explain()).toEqual('foo: Expected number ≤ 2, got 3.');
   });
 
   test('non-integer with only minimum', () => {
     const error = new errors.InvalidNumberParameterError(1, { min: 2, integer: false }, 'foo');
-    expect(error.explain()).toEqual('foo: Expected number greater than 2, got 1.');
+    expect(error.explain()).toEqual('foo: Expected number ≥ 2, got 1.');
   });
 
   test('non-integer with neither minimum nor maximum', () => {

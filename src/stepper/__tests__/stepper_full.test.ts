@@ -1,6 +1,6 @@
 import * as acorn from 'acorn';
-import { generate as customGenerate } from '../utils';
 import { describe, expect, test } from 'vitest';
+import { generate as customGenerate } from '../utils';
 import createContext from '../../createContext';
 import { mockContext } from '../../utils/testing/mocks';
 import { convert } from '../generator';
@@ -627,17 +627,33 @@ describe('Builtin math', () => {
     expect(steps[steps.length - 1]).toEqual('3.141592653589793;\n[noMarker] Evaluation complete\n');
     expect(steps.join('\n')).toMatchSnapshot();
   });
-  test('math_sin() returns NaN', () => {
+
+  test('math_sin() with no arguments is error', () => {
     const code = 'math_sin();';
     const steps = codify(acornParser(code));
-    expect(steps[steps.length - 1]).toEqual('NaN;\n[noMarker] Evaluation complete\n');
+    expect(steps[steps.length - 1]).toEqual('math_sin();\n[noMarker] Evaluation stuck\n');
     expect(steps.join('\n')).toMatchSnapshot();
   });
+
   test('negative numbers as arguments', () => {
     const code = `
     math_sin(-1);
     `;
     const steps = codify(acornParser(code));
+    expect(steps.join('\n')).toMatchSnapshot();
+  });
+
+  test('math_max with no arguments', () => {
+    const code = 'math_max();';
+    const steps = codify(acornParser(code));
+    expect(steps[steps.length - 1]).toEqual('-Infinity;\n[noMarker] Evaluation complete\n');
+    expect(steps.join('\n')).toMatchSnapshot();
+  });
+
+  test('math_min with multiple arguments', () => {
+    const code = 'math_min(1, 2, 3);';
+    const steps = codify(acornParser(code));
+    expect(steps[steps.length - 1]).toEqual('1;\n[noMarker] Evaluation complete\n');
     expect(steps.join('\n')).toMatchSnapshot();
   });
 });
