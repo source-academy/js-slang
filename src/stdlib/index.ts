@@ -1,12 +1,13 @@
-import createContext from '../createContext'
-import { Chapter, type Value } from '../types'
-import * as list from './list'
-import * as misc from './misc'
-import * as parser from './parser'
-import * as stream from './stream'
+import createContext from '../createContext';
+import { Chapter } from '../langs';
+import type { Value } from '../types';
+import * as list from './list';
+import * as misc from './misc';
+import * as parser from './parser';
+import * as stream from './stream';
 
 export const chapter_1 = {
-  get_time: misc.error_message,
+  get_time: misc.get_time,
   error_message: misc.error_message,
   is_number: misc.is_number,
   is_string: misc.is_string,
@@ -16,10 +17,10 @@ export const chapter_1 = {
   parse_int: misc.parse_int,
   char_at: misc.char_at,
   arity: misc.arity,
-  undefined: undefined,
-  NaN: NaN,
-  Infinity: Infinity
-}
+  undefined,
+  NaN,
+  Infinity,
+};
 
 export const chapter_2 = {
   ...chapter_1,
@@ -31,8 +32,8 @@ export const chapter_2 = {
   list: list.list,
   // defineBuiltin(context, 'draw_data(...xs)', visualiseList, 1)
   // defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList, 0)
-  is_list: list.is_list
-}
+  is_list: list.is_list,
+};
 
 export const chapter_3 = {
   ...chapter_2,
@@ -42,36 +43,34 @@ export const chapter_3 = {
   is_array: misc.is_array,
 
   // Stream library
-  stream: stream.stream
-}
+  stream: stream.stream,
+};
 
 export const chapter_4 = {
   ...chapter_3,
   parse: (str: string, chapter: Chapter) => parser.parse(str, createContext(chapter)),
   tokenize: (str: string, chapter: Chapter) => parser.tokenize(str, createContext(chapter)),
-  // tslint:disable-next-line:ban-types
   apply_in_underlying_javascript: (fun: Function, args: Value) =>
-    fun.apply(fun, list.list_to_vector(args))
-}
+    fun.apply(fun, list.list_to_vector(args)),
+};
 
 export const chapter_library_parser = {
   ...chapter_4,
   is_object: misc.is_object,
   is_NaN: misc.is_NaN,
-  has_own_property: misc.has_own_property
+  has_own_property: misc.has_own_property,
   // defineBuiltin(context, 'alert(val)', alert)
-  // tslint:disable-next-line:ban-types
   // timed: (f: Function: context: Context) => misc.timed(context, f, context.externalContext, externalBuiltIns.rawDisplay),
-}
+};
 
 export default {
   [Chapter.SOURCE_1]: chapter_1,
   [Chapter.SOURCE_2]: chapter_2,
   [Chapter.SOURCE_3]: chapter_3,
   [Chapter.SOURCE_4]: chapter_4,
-  [Chapter.LIBRARY_PARSER]: chapter_library_parser
-}
+  [Chapter.LIBRARY_PARSER]: chapter_library_parser,
+};
 
-export * as list from './list'
-export * as misc from './misc'
-export * as stream from './stream'
+export * as list from './list';
+export * as misc from './misc';
+export * as stream from './stream';

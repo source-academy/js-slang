@@ -1,36 +1,36 @@
-import { generate } from 'astring'
-import type { IfStatement } from 'estree'
-import type { Rule } from '../../types'
-import { stripIndent } from '../../../utils/formatters'
-import { RuleError } from '../../errors'
+import { generate } from 'astring';
+import type { IfStatement } from 'estree';
+import { stripIndent } from '../../../utils/formatters';
+import { RuleError } from '../../errors';
+import { defineRule } from '../../types';
 
 export class BracesAroundIfElseError extends RuleError<IfStatement> {
   constructor(
     node: IfStatement,
-    private readonly branch: 'consequent' | 'alternate'
+    private readonly branch: 'consequent' | 'alternate',
   ) {
-    super(node)
+    super(node);
   }
 
-  public explain() {
+  public override explain() {
     if (this.branch === 'consequent') {
-      return 'Missing curly braces around "if" block.'
+      return 'Missing curly braces around "if" block.';
     } else {
-      return 'Missing curly braces around "else" block.'
+      return 'Missing curly braces around "else" block.';
     }
   }
 
-  public elaborate() {
-    let ifOrElse
-    let header
-    let body
+  public override elaborate() {
+    let ifOrElse;
+    let header;
+    let body;
     if (this.branch === 'consequent') {
-      ifOrElse = 'if'
-      header = `if (${generate(this.node.test)})`
-      body = this.node.consequent
+      ifOrElse = 'if';
+      header = `if (${generate(this.node.test)})`;
+      body = this.node.consequent;
     } else {
-      ifOrElse = header = 'else'
-      body = this.node.alternate
+      ifOrElse = header = 'else';
+      body = this.node.alternate;
     }
 
     return stripIndent`
@@ -62,29 +62,23 @@ export class BracesAroundIfElseError extends RuleError<IfStatement> {
         hello();
       world();
 
-    `
+    `;
   }
 }
 
-const bracesAroundIfElse: Rule<IfStatement> = {
-  name: 'braces-around-if-else',
-
-  checkers: {
-    IfStatement(node) {
-      const errors: BracesAroundIfElseError[] = []
-      if (node.consequent && node.consequent.type !== 'BlockStatement') {
-        errors.push(new BracesAroundIfElseError(node, 'consequent'))
-      }
-      if (node.alternate) {
-        const notBlock = node.alternate.type !== 'BlockStatement'
-        const notIf = node.alternate.type !== 'IfStatement'
-        if (notBlock && notIf) {
-          errors.push(new BracesAroundIfElseError(node, 'alternate'))
-        }
-      }
-      return errors
+export default defineRule('braces-around-if-else', {
+  IfStatement(node) {
+    const errors: BracesAroundIfElseError[] = [];
+    if (node.consequent && node.consequent.type !== 'BlockStatement') {
+      errors.push(new BracesAroundIfElseError(node, 'consequent'));
     }
-  }
-}
-
-export default bracesAroundIfElse
+    if (node.alternate) {
+      const notBlock = node.alternate.type !== 'BlockStatement';
+      const notIf = node.alternate.type !== 'IfStatement';
+      if (notBlock && notIf) {
+        errors.push(new BracesAroundIfElseError(node, 'alternate'));
+      }
+    }
+    return errors;
+  },
+});

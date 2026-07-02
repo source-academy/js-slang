@@ -1,38 +1,33 @@
-import type { ExportNamedDeclaration } from 'estree'
-import type { Rule } from '../../types'
-import { RuleError } from '../../errors'
-import { speciferToString } from '../../../utils/ast/helpers'
+import type { ExportNamedDeclaration } from 'estree';
+import { getSpecifierName, specifierToString } from '../../../utils/ast/helpers';
+import { RuleError } from '../../errors';
+import { defineRule } from '../../types';
 
 export class NoExportNamedDeclarationWithSourceError extends RuleError<ExportNamedDeclaration> {
-  public explain() {
-    return 'exports of the form `export { a } from "./file.js";` are not allowed.'
+  public override explain() {
+    return 'exports of the form `export { a } from "./file.js";` are not allowed.';
   }
 
-  public elaborate() {
+  public override elaborate() {
     const [imports, exps] = this.node.specifiers.reduce(
       ([ins, outs], spec) => [
-        [...ins, spec.local.name],
-        [...outs, speciferToString(spec)]
+        [...ins, getSpecifierName(spec.local)],
+        [...outs, specifierToString(spec)],
       ],
-      [[], []] as [string[], string[]]
-    )
-    const importStr = `import { ${imports.join(', ')} } from "${this.node.source!.value}";`
-    const exportStr = `export { ${exps.join(', ')} };`
+      [[], []] as [string[], string[]],
+    );
+    const importStr = `import { ${imports.join(', ')} } from "${this.node.source!.value}";`;
+    const exportStr = `export { ${exps.join(', ')} };`;
 
-    return `Import what you are trying to export, then export it again, like this:\n${importStr}\n${exportStr}`
+    return `Import what you are trying to export, then export it again, like this:\n${importStr}\n${exportStr}`;
   }
 }
 
-const noExportNamedDeclarationWithSource: Rule<ExportNamedDeclaration> = {
-  name: 'no-export-named-declaration-with-source',
-  checkers: {
-    ExportNamedDeclaration(node) {
-      if (node.source !== null) {
-        return [new NoExportNamedDeclarationWithSourceError(node)]
-      }
-      return []
+export default defineRule('no-export-named-declaration-with-source', {
+  ExportNamedDeclaration(node) {
+    if (node.source !== null) {
+      return [new NoExportNamedDeclarationWithSourceError(node)];
     }
-  }
-}
-
-export default noExportNamedDeclarationWithSource
+    return [];
+  },
+});

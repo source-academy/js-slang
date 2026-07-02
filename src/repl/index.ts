@@ -1,4 +1,6 @@
-#!/bin/env/node
-import { getMainCommand } from './main'
+#!/usr/bin/env node
+/* istanbul ignore file */
 
-getMainCommand().parseAsync()
+import { getMainCommand } from './main';
+
+getMainCommand().parseAsync();

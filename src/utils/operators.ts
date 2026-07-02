@@ -1,21 +1,24 @@
-import type { BinaryOperator, UnaryOperator } from 'estree'
+import type { BinaryOperator, CallExpression, UnaryOperator } from 'estree';
 
 import {
-  CallingNonFunctionValue,
+  CallingNonFunctionValueError,
   ExceptionError,
   GetInheritedPropertyError,
-  InvalidNumberOfArguments
-} from '../errors/errors'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+  TooFewArgumentsError,
+  TooManyArgumentsError,
+} from '../errors/errors';
+import { RuntimeSourceError } from '../errors/base';
 import {
   PotentialInfiniteLoopError,
-  PotentialInfiniteRecursionError
-} from '../errors/timeoutErrors'
-import { Chapter, type NativeStorage } from '../types'
-import * as create from './ast/astCreator'
-import { callExpression, locationDummyNode } from './ast/astCreator'
-import { makeWrapper } from './makeWrapper'
-import * as rttc from './rttc'
+  PotentialInfiniteRecursionError,
+} from '../errors/timeoutErrors';
+import type { Chapter } from '../langs';
+import type { NativeStorage } from '../types';
+import * as create from './ast/astCreator';
+import { callExpression, locationDummyNode } from './ast/astCreator';
+import * as rttc from './rttc';
+import type { HasCorrectParameters } from './typeUtils';
+import assert from './assert';
 
 export function throwIfTimeout(
   nativeStorage: NativeStorage,
@@ -23,66 +26,19 @@ export function throwIfTimeout(
   current: number,
   line: number,
   column: number,
-  source: string | null
+  source: string | null,
 ) {
   if (current - start > nativeStorage.maxExecTime) {
     throw new PotentialInfiniteLoopError(
       create.locationDummyNode(line, column, source),
-      nativeStorage.maxExecTime
-    )
-  }
-}
-
-export function callIfFuncAndRightArgs(
-  candidate: any,
-  line: number,
-  column: number,
-  source: string | null,
-  ...args: any[]
-) {
-  const dummy = create.callExpression(create.locationDummyNode(line, column, source), args, {
-    start: { line, column },
-    end: { line, column }
-  })
-
-  if (typeof candidate === 'function') {
-    const originalCandidate = candidate
-    if (candidate.transformedFunction !== undefined) {
-      candidate = candidate.transformedFunction
-    }
-    const expectedLength = candidate.length
-    const receivedLength = args.length
-    const hasVarArgs = candidate.minArgsNeeded !== undefined
-    if (hasVarArgs ? candidate.minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
-      throw new InvalidNumberOfArguments(
-        dummy,
-        hasVarArgs ? candidate.minArgsNeeded : expectedLength,
-        receivedLength,
-        hasVarArgs
-      )
-    }
-    try {
-      return originalCandidate(...args)
-    } catch (error) {
-      // if we already handled the error, simply pass it on
-      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-        throw new ExceptionError(error, dummy.loc)
-      } else {
-        throw error
-      }
-    }
-  } else {
-    throw new CallingNonFunctionValue(candidate, dummy)
+      nativeStorage.maxExecTime,
+    );
   }
 }
 
 export function boolOrErr(candidate: any, line: number, column: number, source: string | null) {
-  const error = rttc.checkIfStatement(create.locationDummyNode(line, column, source), candidate)
-  if (error === undefined) {
-    return candidate
-  } else {
-    throw error
-  }
+  rttc.checkIfStatement(create.locationDummyNode(line, column, source), candidate);
+  return candidate;
 }
 
 export function unaryOp(
@@ -90,29 +46,22 @@ export function unaryOp(
   argument: any,
   line: number,
   column: number,
-  source: string | null
+  source: string | null,
 ) {
-  const error = rttc.checkUnaryExpression(
-    create.locationDummyNode(line, column, source),
-    operator,
-    argument
-  )
-  if (error === undefined) {
-    return evaluateUnaryExpression(operator, argument)
-  } else {
-    throw error
-  }
+  rttc.checkUnaryExpression(create.locationDummyNode(line, column, source), operator, argument);
+
+  return evaluateUnaryExpression(operator, argument);
 }
 
 export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
   if (operator === '!') {
-    return !value
+    return !value;
   } else if (operator === '-') {
-    return -value
+    return -value;
   } else if (operator === 'typeof') {
-    return typeof value
+    return typeof value;
   } else {
-    return +value
+    return +value;
   }
 }
 
@@ -123,170 +72,373 @@ export function binaryOp(
   right: any,
   line: number,
   column: number,
-  source: string | null
+  source: string | null,
 ) {
-  const error = rttc.checkBinaryExpression(
-    create.locationDummyNode(line, column, source),
-    operator,
-    chapter,
+  rttc.checkBinaryExpression(create.locationDummyNode(line, column, source), operator, chapter, [
     left,
-    right
-  )
-  if (error === undefined) {
-    return evaluateBinaryExpression(operator, left, right)
-  } else {
-    throw error
-  }
+    right,
+  ]);
+
+  return evaluateBinaryExpression(operator, left, right);
 }
 
 export function evaluateBinaryExpression(operator: BinaryOperator, left: any, right: any) {
   switch (operator) {
     case '+':
-      return left + right
+      return left + right;
     case '-':
-      return left - right
+      return left - right;
     case '*':
-      return left * right
+      return left * right;
     case '/':
-      return left / right
+      return left / right;
     case '%':
-      return left % right
+      return left % right;
     case '===':
-      return left === right
+      return left === right;
     case '!==':
-      return left !== right
+      return left !== right;
     case '<=':
-      return left <= right
+      return left <= right;
     case '<':
-      return left < right
+      return left < right;
     case '>':
-      return left > right
+      return left > right;
     case '>=':
-      return left >= right
+      return left >= right;
     default:
-      return undefined
+      return undefined;
+  }
+}
+
+interface FunctionDetails {
+  /**
+   * Name of the file/module that the function
+   * was originally defined in
+   */
+  source: string | null;
+  maxArgsAllowed: number | true;
+}
+
+const funcDetSymbol = Symbol();
+
+function getFunctionDetails(f: Function): FunctionDetails {
+  if (funcDetSymbol in f) {
+    return f[funcDetSymbol] as FunctionDetails;
+  }
+
+  return {
+    maxArgsAllowed: f.length, // no way to check if the function hasVarArgs
+    source: null,
+  };
+}
+
+/**
+ * Check that the number of arguments provided falls within the range specified.
+ *
+ * You can call it with just a {@link CallExpression}, in which case its `callee` should be either a
+ * {@link FunctionExpression} or {@link ArrowFunctionExpression}.
+ *
+ * Otherwise, the node is just used for location information and you have to manually specify
+ * everything else.
+ *
+ * - If `maxArgs` is true, then there is no maximum number of arguments. Useful for functions
+ * with a rest parameter.
+ * - If `maxArgs` is a number, then that value is the maximum number of arguments.
+ * - If `maxArgs` is `undefined` or not provided, then the maximum number of arguments is assumed
+ * to be `minArgs`.
+ */
+export function validateFunctionArgCount(exp: CallExpression): void;
+export function validateFunctionArgCount(
+  exp: CallExpression,
+  received: number,
+  minArgs: number,
+  maxArgs?: number | true,
+  funcName?: string,
+): void;
+export function validateFunctionArgCount(
+  exp: CallExpression,
+  received?: number,
+  rawMinArgs?: number,
+  rawMaxArgs?: number | true,
+  funcName?: string,
+) {
+  let minArgs: number;
+  let maxArgs: number | true;
+
+  if (received === undefined) {
+    assert(
+      exp.callee.type === 'ArrowFunctionExpression' || exp.callee.type === 'FunctionExpression',
+      `${validateFunctionArgCount.name}: When called with CallExpression only, callee must be a function node`,
+    );
+
+    const func = exp.callee;
+    received = exp.arguments.length;
+    minArgs = func.params.filter(
+      x => x.type !== 'AssignmentPattern' && x.type !== 'RestElement',
+    ).length;
+    maxArgs =
+      (func.params.length > 0 && func.params[func.params.length - 1].type === 'RestElement') ||
+      func.params.length;
+  } else {
+    minArgs = rawMinArgs!;
+    maxArgs = rawMaxArgs ?? rawMinArgs!;
+  }
+
+  assert(
+    typeof maxArgs !== 'number' || maxArgs >= minArgs,
+    `MaxArgs was a number (${maxArgs}) but less than MinArgs = ${minArgs}`,
+  );
+
+  if (received < minArgs) {
+    throw new TooFewArgumentsError(
+      exp,
+      received,
+      minArgs,
+      maxArgs === true || maxArgs !== minArgs,
+      funcName,
+    );
+  }
+
+  if (maxArgs !== true && received > maxArgs) {
+    throw new TooManyArgumentsError(exp, received, maxArgs, maxArgs !== minArgs, funcName);
   }
 }
 
 /**
- * Limitations for current properTailCalls implementation:
- * Obviously, if objects ({}) are reintroduced,
- * we have to change this for a more stringent check,
- * as isTail and transformedFunctions are properties
- * and may be added by Source code.
+ * Calls the provided value as if it were a function being called from the `line` and `column`
+ * within the provided `source` file, checking for argument count.
+ *
+ * - If `nativeStorage` is provided, then infinite recursion protection is also added.
  */
-export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: any[]) => {
-  let line = -1
-  let column = -1
-  let source: string | null = null
-  const startTime = Date.now()
-  const pastCalls: [string, any[]][] = []
+export function callIfFuncAndRightArgs(
+  f: unknown,
+  line: number,
+  column: number,
+  source: string | null,
+  nativeStorage: NativeStorage | undefined,
+  ...args: any[]
+) {
+  const startTime = Date.now();
+  const pastCalls: [string, any[]][] = [];
+  let isPrelude = source === 'prelude';
+
   while (true) {
-    const dummy = locationDummyNode(line, column, source)
-    if (typeof f === 'function') {
-      if (f.transformedFunction !== undefined) {
-        f = f.transformedFunction
-      }
-      const expectedLength = f.length
-      const receivedLength = args.length
-      const hasVarArgs = f.minArgsNeeded !== undefined
-      if (hasVarArgs ? f.minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
-        throw new InvalidNumberOfArguments(
-          callExpression(dummy, args, {
-            start: { line, column },
-            end: { line, column },
-            source
-          }),
-          hasVarArgs ? f.minArgsNeeded : expectedLength,
-          receivedLength,
-          hasVarArgs
-        )
-      }
-    } else {
-      throw new CallingNonFunctionValue(f, dummy)
+    const dummy = locationDummyNode(line, column, source);
+    if (typeof f !== 'function') {
+      throw new CallingNonFunctionValueError(
+        f,
+        callExpression(dummy, args, {
+          start: { line, column },
+          end: { line, column },
+          source,
+        }),
+      );
     }
-    let res
+
+    const receivedLength = args.length;
+    const { maxArgsAllowed, source: funcSource } = getFunctionDetails(f);
+
+    if (funcSource === 'prelude') {
+      // Once we call into a prelude function, everything that follows
+      // is in prelude code
+      isPrelude = true;
+    }
+
+    validateFunctionArgCount(
+      callExpression(dummy, args, {
+        start: { line, column },
+        end: { line, column },
+        source,
+      }),
+      receivedLength,
+      f.length,
+      maxArgsAllowed,
+      f.name,
+    );
+
+    let res;
     try {
-      res = f(...args)
-      if (Date.now() - startTime > nativeStorage.maxExecTime) {
-        throw new PotentialInfiniteRecursionError(dummy, pastCalls, nativeStorage.maxExecTime)
+      res = f(...args);
+
+      if (nativeStorage && Date.now() - startTime > nativeStorage.maxExecTime) {
+        throw new PotentialInfiniteRecursionError(dummy, pastCalls, nativeStorage.maxExecTime);
       }
     } catch (error) {
       // if we already handled the error, simply pass it on
-      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-        throw new ExceptionError(error, dummy.loc)
-      } else {
-        throw error
+      if (error instanceof ExceptionError) throw error;
+
+      if (error instanceof RuntimeSourceError) {
+        if (!error.node) {
+          error.node = locationDummyNode(line, column, isPrelude ? 'prelude' : funcSource);
+        } else if (funcSource) {
+          if (!error.node.loc) {
+            error.node.loc = {
+              start: { line, column },
+              end: { line, column },
+              source: isPrelude ? 'prelude' : funcSource,
+            };
+          } else {
+            error.node.loc.source = isPrelude ? 'prelude' : funcSource;
+          }
+        }
+        throw error;
       }
+
+      throw new ExceptionError(error);
     }
+
+    // Limitations for current properTailCalls implementation:
+    // Obviously, if objects ({}) are reintroduced,
+    // we have to change this for a more stringent check,
+    // as isTail and transformedFunctions are properties
+    // and may be added by Source code.
     if (res === null || res === undefined) {
-      return res
+      return res;
     } else if (res.isTail === true) {
-      f = res.function
-      args = res.arguments
-      line = res.line
-      column = res.column
-      source = res.source
-      pastCalls.push([res.functionName, args])
+      f = res.function;
+      args = res.arguments;
+      source = res.source;
+      line = res.line;
+      column = res.column;
+      pastCalls.push([res.functionName, args]);
+      // Then go back to the top of the while loop
     } else if (res.isTail === false) {
-      return res.value
+      return res.value;
     } else {
-      return res
+      return res;
     }
   }
 }
 
-export const wrap = (
-  f: (...args: any[]) => any,
-  stringified: string,
-  hasVarArgs: boolean,
-  nativeStorage: NativeStorage
-) => {
-  if (hasVarArgs) {
-    // @ts-ignore
-    f.minArgsNeeded = f.length
-  }
-  const wrapped = (...args: any[]) => callIteratively(f, nativeStorage, ...args)
-  makeWrapper(f, wrapped)
-  wrapped.transformedFunction = f
-  ;(wrapped as any)[Symbol.toStringTag] = () => stringified
-  wrapped.toString = () => stringified
-  return wrapped
+/**
+ * Convenience wrapper for {@link callIfFuncAndRightArgs} that doesn't require any
+ * extra metadata to be passed into the function.
+ */
+export function callWithoutMetadata<T extends (...args: any[]) => any>(
+  f: T,
+  ...args: Parameters<T>
+): ReturnType<T> {
+  return callIfFuncAndRightArgs(f, -1, -1, null, undefined, ...args);
 }
 
-export const setProp = (
+/**
+ * Augment the given function with the necessary information for it to be called
+ * properly by {@link callIfFuncAndRightArgs}. It won't redefine any existing details
+ * that the function has already been wrapped with.
+ *
+ * @example
+ * ```ts
+ * export const wrapped = wrap((...args: any[]) => args.length, true, 'wrapped');
+ * ```
+ *
+ * - `optArgCount`: Represents the number of optional arguments the function has
+ *   - If set to `undefined`, it will be assumed to be 0
+ *   - If set to a number, that will be taken to be the number of optional arguments
+ *   - If set to `true`, the function is assumed to have a rest argument
+ *
+ * - If `stringified` is `undefined`, the function won't try to define `toReplString`.
+ * - `funcName`
+ *   - If `funcName` is `undefined`, the function won't try to define the `name` property.
+ *   - If `funcName` is provided, the `name` property will get overriden.
+ */
+export function wrap<T extends (...args: any[]) => any, OptArgs extends number>(
+  f: HasCorrectParameters<T, OptArgs>,
+  optArgCount: OptArgs,
+  funcName?: string,
+  stringified?: string,
+  source?: string | null,
+): T;
+export function wrap<T extends (...args: any[]) => any>(
+  f: HasCorrectParameters<T, true>,
+  optArgCount: true,
+  funcName?: string,
+  stringified?: string,
+  source?: string | null,
+): T;
+export function wrap<T extends (...args: any[]) => any>(
+  f: HasCorrectParameters<T, 0>,
+  optArgCount?: undefined,
+  funcName?: string,
+  stringified?: string,
+  source?: string | null,
+): T;
+export function wrap(
+  f: (...args: any[]) => any,
+  optArgCount?: number | true,
+  funcName?: string,
+  stringified?: string,
+  source: string | null = null,
+) {
+  if (funcName !== undefined) {
+    Object.defineProperty(f, 'name', { value: funcName });
+  }
+
+  const maxArgsAllowed =
+    optArgCount === true ? true : optArgCount === undefined ? f.length : f.length + optArgCount;
+
+  if (!(funcDetSymbol in f)) {
+    const details: FunctionDetails = {
+      maxArgsAllowed,
+      source,
+    };
+
+    (f as any)[funcDetSymbol] = details;
+  } else {
+    const funcDets = getFunctionDetails(f);
+
+    if (typeof funcDets.maxArgsAllowed !== 'number' && funcDets.maxArgsAllowed !== true) {
+      funcDets.maxArgsAllowed = maxArgsAllowed;
+    }
+
+    if (typeof funcDets.source !== 'string') {
+      funcDets.source = source;
+    }
+  }
+
+  if (stringified !== undefined && !('toReplString' in f)) {
+    // Don't override toReplString if it was already defined
+    // @ts-expect-error toReplString is not a known property of functions
+    f.toReplString = () => stringified;
+  }
+  return f;
+}
+
+/**
+ * A type-agnostic version of {@link wrap} to make it easier
+ * when the function type is not known.
+ */
+export function wrapUnsafe<T extends (...args: any[]) => any>(
+  f: T,
+  optArgCount?: number | true,
+  funcName?: string,
+  stringified?: string,
+  source?: string | null,
+) {
+  // @ts-expect-error Ignore type safety
+  return wrap(f, optArgCount, funcName, stringified, source);
+}
+
+export function setProp(
   obj: any,
   prop: any,
   value: any,
   line: number,
   column: number,
-  source: string | null
-) => {
-  const dummy = locationDummyNode(line, column, source)
-  const error = rttc.checkMemberAccess(dummy, obj, prop)
-  if (error === undefined) {
-    return (obj[prop] = value)
-  } else {
-    throw error
-  }
+  source: string | null,
+) {
+  const dummy = locationDummyNode(line, column, source);
+  rttc.checkMemberAccess(dummy, [obj, prop]);
+  return (obj[prop] = value);
 }
 
-export const getProp = (
-  obj: any,
-  prop: any,
-  line: number,
-  column: number,
-  source: string | null
-) => {
-  const dummy = locationDummyNode(line, column, source)
-  const error = rttc.checkMemberAccess(dummy, obj, prop)
-  if (error === undefined) {
-    if (obj[prop] !== undefined && !obj.hasOwnProperty(prop)) {
-      throw new GetInheritedPropertyError(dummy, obj, prop)
-    } else {
-      return obj[prop]
-    }
+export function getProp(obj: any, prop: any, line: number, column: number, source: string | null) {
+  const dummy = locationDummyNode(line, column, source);
+  rttc.checkMemberAccess(dummy, [obj, prop]);
+
+  if (obj[prop] !== undefined && !obj.hasOwnProperty(prop)) {
+    throw new GetInheritedPropertyError(dummy, obj, prop);
   } else {
-    throw error
+    return obj[prop];
   }
 }

@@ -1,0 +1,339 @@
+import { parse } from 'acorn';
+import type { Program } from 'estree';
+import { assert, describe, expect, it, test, vi } from 'vitest';
+import * as operators from '../operators';
+import { stringify } from '../stringify';
+import { GeneralRuntimeError, RuntimeSourceError } from '../../errors/base';
+import { callExpression, locationDummyNode } from '../ast/astCreator';
+import { ACORN_PARSE_OPTIONS } from '../../constants';
+
+describe('Wrapping and Calling functions', () => {
+  describe('No redefine tests', () => {
+    test("Doesn't redefine toReplString if it is already present", () => {
+      const x = () => 0;
+      x.toReplString = () => 'x';
+      const wrapped = operators.wrap(x, 0, undefined, '() => 0');
+
+      expect(stringify(wrapped)).toEqual('x');
+    });
+
+    test("Doesn't define toReplString if stringified is undefined", () => {
+      const x = () => 0;
+      const wrapped = operators.wrap(x);
+
+      expect(wrapped).not.toHaveProperty('toReplString');
+    });
+
+    test("Doesn't redefine maxArgs when present", () => {
+      const x = (u: number, v = 0) => u + v;
+      const x1 = operators.wrap(x, 1, 'x');
+      // @ts-expect-error Intentionally breaking wrap type safety
+      const x2 = operators.wrap(x1, 2, 'x1');
+
+      expect(operators.callWithoutMetadata(x1, 1)).toEqual(1);
+
+      expect(() => operators.callWithoutMetadata(x2 as any, 1, 2, 3)).toThrow(
+        'x1: Expected 2 or fewer arguments, but got 3.',
+      );
+    });
+  });
+
+  describe('Wrapped nullary function tests', () => {
+    const x = () => 0;
+    const wrapped = operators.wrap(x, undefined, undefined, '() => 0');
+
+    test('toReplString is set correctly', () => {
+      expect(stringify(wrapped)).toEqual('() => 0');
+    });
+
+    test('calling with correct number of function parameters', () => {
+      expect(operators.callWithoutMetadata(wrapped)).toEqual(0);
+    });
+
+    test('calling with too many parameters', () => {
+      expect(() => operators.callWithoutMetadata(wrapped as any, 1)).toThrow(
+        'x: Expected 0 arguments, but got 1.',
+      );
+    });
+  });
+
+  describe('Wrapped varargs function test', () => {
+    const f = (x: any, ...args: any[]) => [x, ...args];
+    const wrapped = operators.wrap(f, true, 'f', '(x, ...args) => [x, ...args]');
+
+    test('toReplString is set correctly', () => {
+      expect(stringify(wrapped)).toEqual('(x, ...args) => [x, ...args]');
+    });
+
+    test('calling with 1 parameter', () => {
+      expect(operators.callWithoutMetadata(wrapped, 1)).toEqual([1]);
+    });
+
+    test('calling with 2 parameters', () => {
+      expect(operators.callWithoutMetadata(wrapped, 1, 2)).toEqual([1, 2]);
+    });
+
+    test('calling with 0 parameters', () => {
+      expect(() => operators.callWithoutMetadata(wrapped as any)).toThrow(
+        'f: Expected 1 or more arguments, but got 0.',
+      );
+    });
+  });
+
+  describe('Throwing runtime errors from inside and outside of a prelude', () => {
+    test('throwing error with known location inside non prelude function', () => {
+      const dummy = locationDummyNode(1, 1, null);
+
+      function f() {
+        throw new GeneralRuntimeError('', dummy);
+      }
+
+      try {
+        operators.callIfFuncAndRightArgs(f, 2, 2, null, undefined);
+        expect.fail('Expected function to throw!');
+      } catch (error) {
+        assert(error instanceof RuntimeSourceError);
+
+        expect(error.location).toHaveProperty('start.line', 1);
+        expect(error.location).toHaveProperty('start.column', 1);
+        expect(error.location).toHaveProperty('source', null);
+      }
+    });
+
+    test('throwing error with known location inside prelude function', () => {
+      const dummy = locationDummyNode(1, 1, null);
+
+      const f = operators.wrap(
+        () => {
+          throw new GeneralRuntimeError('', dummy);
+        },
+        undefined,
+        'f',
+        '() => { ... }',
+        'prelude',
+      );
+
+      try {
+        operators.callIfFuncAndRightArgs(f, 2, 2, null, undefined);
+        expect.fail('Expected function to throw!');
+      } catch (error) {
+        assert(error instanceof RuntimeSourceError);
+
+        expect(error.location).toHaveProperty('start.line', 1);
+        expect(error.location).toHaveProperty('start.column', 1);
+        expect(error.location).toHaveProperty('source', 'prelude');
+      }
+    });
+
+    test('throwing error from non-prelude through prelude function', () => {
+      const prelude = operators.wrap(
+        () => {
+          throw new GeneralRuntimeError('');
+        },
+        undefined,
+        'prelude',
+        '() => {...}',
+        null,
+      );
+      const notPrelude = operators.wrap(
+        () => prelude(),
+        undefined,
+        'notPrelude',
+        '() => {...}',
+        'prelude',
+      );
+
+      try {
+        operators.callIfFuncAndRightArgs(notPrelude, 2, 2, null, undefined);
+        expect.fail('Expected function to throw!');
+      } catch (error) {
+        assert(error instanceof RuntimeSourceError);
+
+        expect(error.location).toHaveProperty('start.line', 2);
+        expect(error.location).toHaveProperty('start.column', 2);
+        expect(error.location).toHaveProperty('source', 'prelude');
+      }
+    });
+  });
+});
+
+describe(operators.validateFunctionArgCount, () => {
+  describe('Calling manually', () => {
+    const dummyCall = callExpression({} as any, [], {
+      start: { line: 1, column: 1 },
+      end: { line: 1, column: 1 },
+    });
+
+    // Error case when only a TooFew error is thrown
+    type MinOnlyErrorCase = [received: number, minArgs: number, maxArgs: true, error?: 'min'];
+
+    // Error case when either a TooFew or TooMany error is thrown
+    type MinMaxErrorCase = [
+      received: number,
+      minArgs: number,
+      maxArgs: number | undefined,
+      error?: 'min' | 'max',
+    ];
+
+    type TestCase = MinMaxErrorCase | MinOnlyErrorCase;
+
+    function isMinOnly(c: TestCase): c is MinOnlyErrorCase {
+      const [, , max] = c;
+      return max === true;
+    }
+    const cases: TestCase[] = [
+      // No error cases
+      [2, 2, undefined],
+      [2, 2, 2],
+      [2, 1, 2],
+      [20, 1, true],
+
+      // Min error cases
+      [0, 1, undefined, 'min'],
+      [0, 1, 3, 'min'],
+      [0, 1, true, 'min'],
+
+      // Max error cases
+      [10, 1, undefined, 'max'],
+      [10, 1, 4, 'max'],
+    ];
+
+    it.for(cases)('received = %d, min = %d, max = %s, error = %s', c => {
+      if (isMinOnly(c)) {
+        const [received, min, max, error] = c;
+        if (error === 'min') {
+          // TooFew error expected
+          expect(() =>
+            operators.validateFunctionArgCount(dummyCall, received, min, max, 'f'),
+          ).toThrow(`f: Expected ${min} or more arguments, but got ${received}.`);
+          return;
+        } else {
+          // No error expected
+          expect(() =>
+            operators.validateFunctionArgCount(dummyCall, received, min, max, 'f'),
+          ).not.toThrow();
+          return;
+        }
+      } else {
+        const [received, min, max, error] = c;
+        const expectedMax = max ?? min;
+
+        switch (error) {
+          case 'min': {
+            // TooFew error expected
+            expect(() =>
+              operators.validateFunctionArgCount(dummyCall, received, min, max, 'f'),
+            ).toThrow(
+              `f: Expected ${min} ${min !== expectedMax ? 'or more ' : ''}arguments, but got ${received}.`,
+            );
+            return;
+          }
+          case 'max': {
+            // TooMany error expected
+            expect(() =>
+              operators.validateFunctionArgCount(dummyCall, received, min, max, 'f'),
+            ).toThrow(
+              `f: Expected ${expectedMax} ${min !== expectedMax ? 'or fewer ' : ''}arguments, but got ${received}.`,
+            );
+            return;
+          }
+          default: {
+            // No error expected
+            expect(() =>
+              operators.validateFunctionArgCount(dummyCall, received, min, max, 'f'),
+            ).not.toThrow();
+            return;
+          }
+        }
+      }
+    });
+  });
+
+  describe('Calling with call expression', () => {
+    const getNode = vi.defineHelper((code: string) => {
+      const program = parse(code, ACORN_PARSE_OPTIONS) as Program;
+      const node0 = program.body[0];
+      assert(
+        node0.type === 'ExpressionStatement',
+        'Expected first node of program to be ExpressionStatement',
+      );
+      assert(
+        node0.expression.type === 'CallExpression',
+        'Expected first node to be call to function',
+      );
+      return node0.expression;
+    });
+
+    type TestCase = [code: string, error?: 'min' | 'max'];
+
+    const cases: TestCase[] = [
+      ['(() => {})()'],
+      ['(x => {})(x)'],
+      ['((x, y) => {})(x, y)'],
+      ['((x, y = 0) => {})(x)'],
+      ['((x, y = 0) => {})(x, y)'],
+      ['((...x) => {})()'],
+      ['((...x) => {})(x, y)'],
+
+      // Min Errors
+      ['(x => {})()', 'min'],
+      ['((x, y) => {})()', 'min'],
+      ['((x, y = 0) => {})()', 'min'],
+      ['((x, ...y) => {})()', 'min'],
+
+      // Max Errors
+      ['(() => {})(x)', 'max'],
+      ['((x = 0) => {})(x, y)', 'max'],
+
+      // Case for invalid call expression
+      ['eval();'],
+    ];
+
+    it.for(cases)('%s', ([code, error]) => {
+      const expr = getNode(code);
+      const { callee } = expr;
+
+      if (callee.type !== 'ArrowFunctionExpression' && callee.type !== 'FunctionExpression') {
+        expect(() => operators.validateFunctionArgCount(expr)).toThrow(
+          'validateFunctionArgCount: When called with CallExpression only, callee must be a function node',
+        );
+        return;
+      }
+
+      const min = callee.params.filter(
+        x => x.type !== 'AssignmentPattern' && x.type !== 'RestElement',
+      ).length;
+      const max =
+        (callee.params.length > 0 &&
+          callee.params[callee.params.length - 1].type === 'RestElement') ||
+        callee.params.length;
+      const received = expr.arguments.length;
+
+      switch (error) {
+        case 'min': {
+          // Expected a TooFew error
+          expect(() => operators.validateFunctionArgCount(expr)).toThrow(
+            `Expected ${min} ${min !== max ? 'or more ' : ''}arguments, but got ${received}.`,
+          );
+          return;
+        }
+        case 'max': {
+          if (max === true) {
+            expect.fail('Node has rest param, but TooMany error was expected.');
+          }
+
+          // TooMany error expected
+          expect(() => operators.validateFunctionArgCount(expr)).toThrow(
+            `Expected ${max} ${min !== max ? 'or fewer ' : ''}arguments, but got ${received}.`,
+          );
+          return;
+        }
+        default: {
+          // No error expected
+          expect(() => operators.validateFunctionArgCount(expr)).not.toThrow();
+          return;
+        }
+      }
+    });
+  });
+});

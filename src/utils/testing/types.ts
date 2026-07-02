@@ -1,24 +1,26 @@
-import type { Context } from '../..'
-import type { Chapter, LanguageOptions, Variant, Value } from '../../types'
+import type { Context } from '../..';
+import type { Chapter, LanguageOptions, Variant } from '../../langs';
+import type { CustomBuiltIns, Value } from '../../types';
 
 export type TestOptions =
   | {
-      chapter?: Chapter
-      variant?: Variant
-      testBuiltins?: TestBuiltins
-      languageOptions?: LanguageOptions
+      chapter?: Chapter;
+      variant?: Variant;
+      testBuiltins?: TestBuiltins;
+      languageOptions?: LanguageOptions;
+      verboseErrors?: boolean;
     }
-  | Chapter
+  | Chapter;
 
 export interface TestResults {
-  displayResult: string[]
-  promptResult: string[]
-  alertResult: string[]
-  visualiseListResult: Value[]
+  displayResult: string[];
+  promptResult: string[];
+  alertResult: string[];
+  visualiseListResult: Value[];
 }
 
-export type TestContext = Context<any> & TestResults
+export type TestContext = Context<any> & TestResults;
 
-export interface TestBuiltins {
-  [builtinName: string]: any
-}
+export type TestBuiltins = {
+  [builtinName: string]: any;
+} & Partial<CustomBuiltIns>;

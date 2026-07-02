@@ -1,37 +1,8 @@
-import * as es from 'estree'
-import type { Context, Environment } from '../types'
-import { Control, Stash, Transformers } from './interpreter'
-import { uniqueId } from './utils'
+import type es from 'estree';
 
-/**
- * A dummy function used to detect for the apply function object.
- * If the interpreter sees this specific function, it applies the function
- * with the given arguments to apply.
- *
- * We need this to be a metaprocedure so that it can properly handle
- * the arguments passed to it, even if they are continuations.
- */
-export class Apply extends Function {
-  private static instance: Apply = new Apply()
-
-  private constructor() {
-    super()
-  }
-
-  public static get(): Apply {
-    return Apply.instance
-  }
-
-  public toString(): string {
-    return 'apply'
-  }
-}
-
-export const apply = Apply.get()
-
-export function isApply(value: any): boolean {
-  return value === apply
-}
+import type { Context, Environment } from '../types';
+import type { Control, Stash } from './interpreter';
+import { uniqueId } from './utils';
 
 /**
  * A dummy function used to detect for the call/cc function object.
@@ -39,25 +10,25 @@ export function isApply(value: any): boolean {
  * point of evaluation is executed instead of a regular function call.
  */
 export class Call_cc extends Function {
-  private static instance: Call_cc = new Call_cc()
+  private static instance: Call_cc = new Call_cc();
 
   private constructor() {
-    super()
+    super();
   }
 
   public static get(): Call_cc {
-    return Call_cc.instance
+    return Call_cc.instance;
   }
 
-  public toString(): string {
-    return 'call/cc'
+  public override toString(): string {
+    return 'call/cc';
   }
 }
 
-export const call_with_current_continuation = Call_cc.get()
+export const call_with_current_continuation = Call_cc.get();
 
 export function isCallWithCurrentContinuation(value: any): boolean {
-  return value === call_with_current_continuation
+  return value === call_with_current_continuation;
 }
 
 /**
@@ -69,53 +40,41 @@ export function isCallWithCurrentContinuation(value: any): boolean {
  * the typechecker so that they can be first-class values.
  */
 export class Continuation extends Function {
-  private control: Control
-  private stash: Stash
-  private env: Environment[]
-  private transformers: Transformers
+  private control: Control;
+  private stash: Stash;
+  private env: Environment[];
 
   /** Unique ID defined for continuation */
-  public readonly id: string
+  public readonly id: string;
 
-  constructor(
-    context: Context,
-    control: Control,
-    stash: Stash,
-    env: Environment[],
-    transformers: Transformers
-  ) {
-    super()
-    this.control = control.copy()
-    this.stash = stash.copy()
-    this.env = [...env]
-    this.transformers = transformers
-    this.id = uniqueId(context)
+  constructor(context: Context, control: Control, stash: Stash, env: Environment[]) {
+    super();
+    this.control = control.copy();
+    this.stash = stash.copy();
+    this.env = [...env];
+    this.id = uniqueId(context);
   }
 
   // As the continuation needs to be immutable (we can call it several times)
   // we need to copy its elements whenever we access them
   public getControl(): Control {
-    return this.control.copy()
+    return this.control.copy();
   }
 
   public getStash(): Stash {
-    return this.stash.copy()
+    return this.stash.copy();
   }
 
   public getEnv(): Environment[] {
-    return [...this.env]
+    return [...this.env];
   }
 
-  public getTransformers(): Transformers {
-    return this.transformers
-  }
-
-  public toString(): string {
-    return 'continuation'
+  public override toString(): string {
+    return 'continuation';
   }
 
   public equals(other: Continuation): boolean {
-    return this === other
+    return this === other;
   }
 }
 
@@ -130,13 +89,13 @@ export function makeDummyContCallExpression(callee: string, argument: string): e
     optional: false,
     callee: {
       type: 'Identifier',
-      name: callee
+      name: callee,
     },
     arguments: [
       {
         type: 'Identifier',
-        name: argument
-      }
-    ]
-  }
+        name: argument,
+      },
+    ],
+  };
 }

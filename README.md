@@ -20,27 +20,19 @@ Open-source implementations of the programming language _Source_. Source is a se
 
 ## Prerequisites
 
-- NodeJS v20
+- NodeJS v22
 - Python: On MacBook Pro with chip Apple M1 Pro, use python 3.10.12. Here is [the correct way to set Python 3 as default on a Mac](https://opensource.com/article/19/5/python-3-default-mac).
 - yarn: use the version specified in `package.json`. On macos, you may need to run `corepack enable`.
+
 ## Usage
 
 To build,
 
 ```bash
-$ git clone --recurse-submodules https://github.com/source-academy/js-slang.git
+$ git clone https://github.com/source-academy/js-slang.git
 $ cd js-slang
 $ yarn
 $ yarn build
-```
-
-This repository uses git submodules. To update existing repositories with a submodule,
-
-```bash
-# Init is only required on the very first time.
-$ git submodule update --init --recursive
-# Required subsequently every time you want to update the submodules.
-$ git submodule update --recursive --remote
 ```
 
 To add \"js-slang\" to your PATH, build it as per the above instructions, then run

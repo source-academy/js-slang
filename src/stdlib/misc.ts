@@ -1,6 +1,10 @@
-import Closure from '../cse-machine/closure'
-import type { Context, Value } from '../types'
-import { stringify } from '../utils/stringify'
+import Closure from '../cse-machine/closure';
+import { GeneralRuntimeError } from '../errors/base';
+import { InvalidParameterTypeError } from '../errors/rttcErrors';
+import type { Context, Value } from '../types';
+import { assertNumberWithinRange } from '../utils/rttc';
+import { stringify } from '../utils/stringify';
+import * as list from './list';
 
 /**
  * A function that displays to console.log by default (for a REPL).
@@ -10,70 +14,68 @@ import { stringify } from '../utils/stringify'
  *   any information required for external use (optional).
  */
 export function rawDisplay(value: Value, str: string, _externalContext: any) {
-  // tslint:disable-next-line:no-console
-  console.log((str === undefined ? '' : str + ' ') + value.toString())
-  return value
+  console.log((str === undefined ? '' : str + ' ') + value.toString());
+  return value;
 }
 
 export function error_message(value: Value, ...strs: string[]) {
-  const output = (strs[0] === undefined ? '' : strs[0] + ' ') + stringify(value)
-  throw new Error(output)
+  const output = (strs[0] === undefined ? '' : strs[0] + ' ') + stringify(value);
+  throw new GeneralRuntimeError(`Error: ${output}`);
 }
 
 export function timed(
   context: Context,
-  // tslint:disable-next-line:ban-types
   f: Function,
   externalContext: any,
-  displayBuiltin: (value: Value, str: string, externalContext: any) => Value
+  displayBuiltin: (value: Value, str: string, externalContext: any) => Value,
 ) {
   return (...args: any[]) => {
-    const start = get_time()
-    const result = f(...args)
-    const diff = get_time() - start
-    displayBuiltin('Duration: ' + Math.round(diff) + 'ms', '', externalContext)
-    return result
-  }
+    const start = get_time();
+    const result = f(...args);
+    const diff = get_time() - start;
+    displayBuiltin('Duration: ' + Math.round(diff) + 'ms', '', externalContext);
+    return result;
+  };
 }
 
 export function is_number(v: Value) {
-  return typeof v === 'number'
+  return typeof v === 'number';
 }
 
 export function is_undefined(xs: Value) {
-  return typeof xs === 'undefined'
+  return typeof xs === 'undefined';
 }
 
 export function is_string(xs: Value) {
-  return typeof xs === 'string'
+  return typeof xs === 'string';
 }
 
 export function is_boolean(xs: Value) {
-  return typeof xs === 'boolean'
+  return typeof xs === 'boolean';
 }
 
 export function is_object(xs: Value) {
-  return typeof xs === 'object' || is_function(xs)
+  return typeof xs === 'object' || is_function(xs);
 }
 
 export function is_function(xs: Value) {
-  return typeof xs === 'function'
+  return typeof xs === 'function';
 }
 
 export function is_NaN(x: Value) {
-  return is_number(x) && isNaN(x)
+  return is_number(x) && isNaN(x);
 }
 
 export function has_own_property(obj: Value, p: Value) {
-  return obj.hasOwnProperty(p)
+  return obj.hasOwnProperty(p);
 }
 
 export function is_array(a: Value) {
-  return a instanceof Array
+  return a instanceof Array;
 }
 
 export function array_length(xs: Value[]) {
-  return xs.length
+  return xs.length;
 }
 
 /**
@@ -86,28 +88,30 @@ export function array_length(xs: Value[]) {
  * integer within the range 2, 36 inclusive.
  */
 export function parse_int(str: string, radix: number) {
-  if (
-    typeof str === 'string' &&
-    typeof radix === 'number' &&
-    Number.isInteger(radix) &&
-    2 <= radix &&
-    radix <= 36
-  ) {
-    return parseInt(str, radix)
-  } else {
-    throw new Error(
-      'parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.'
-    )
+  if (typeof str !== 'string') {
+    throw new InvalidParameterTypeError('string', str, parse_int.name, 'str');
   }
+
+  assertNumberWithinRange(radix, parse_int.name, 2, 36, true, 'radix');
+  return parseInt(str, radix);
 }
 
+/**
+ * Returns the character at the given index of the given string. If the `index` is out of bounds,
+ * returns `undefined`.
+ */
 export function char_at(str: string, index: number) {
   if (typeof str !== 'string') {
-    throw new Error('char_at expects the first argument to be a string.')
-  } else if (typeof index !== 'number' || !Number.isInteger(index) || index < 0) {
-    throw new Error('char_at expects the second argument to be a nonnegative integer.')
+    throw new InvalidParameterTypeError('string', str, char_at.name, 'str');
   }
-  return str[index]
+
+  assertNumberWithinRange(index, char_at.name, 0, undefined, true, 'index');
+
+  if (index >= str.length) {
+    return undefined;
+  }
+
+  return str[index];
 }
 
 /**
@@ -119,16 +123,42 @@ export function char_at(str: string, index: number) {
  */
 export function arity(f: Function) {
   if (f instanceof Closure) {
-    const params = f.node.params
-    const hasVarArgs = params[params.length - 1]?.type === 'RestElement'
-    return hasVarArgs ? params.length - 1 : params.length
+    const params = f.node.params;
+    const hasVarArgs = params[params.length - 1]?.type === 'RestElement';
+    return hasVarArgs ? params.length - 1 : params.length;
   } else if (typeof f === 'function') {
-    return f.length
-  } else {
-    throw new Error('arity expects a function as argument')
+    return f.length;
   }
+
+  throw new InvalidParameterTypeError('function', f, arity.name);
 }
 
+/**
+ * Gets the current time as returned by `new Date().getTime()`
+ */
 export function get_time() {
-  return new Date().getTime()
+  return new Date().getTime();
+}
+
+/**
+ * Compute structural equality for the two provided arguments.
+ */
+export function equal(xs: any, ys: any): boolean {
+  return list.is_pair(xs)
+    ? list.is_pair(ys) && equal(list.head(xs), list.head(ys)) && equal(list.tail(xs), list.tail(ys))
+    : list.is_null(xs)
+      ? list.is_null(ys)
+      : is_number(xs)
+        ? is_number(ys) && xs === ys
+        : is_boolean(xs)
+          ? is_boolean(ys) && ((xs && ys) || (!xs && !ys))
+          : is_string(xs)
+            ? is_string(ys) && xs === ys
+            : is_undefined(xs)
+              ? is_undefined(ys)
+              : is_function(xs)
+                ? // we know now that xs is a function,
+                  // but we use an if check anyway to make use of the type predicate
+                  is_function(ys) && xs === ys
+                : false;
 }

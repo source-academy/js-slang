@@ -18,5 +18,9 @@
 
 <!-- Please delete options that are not relevant. -->
 
-- [ ] I have tested this code
+- [ ] I have tested this code.
+  - [ ] Tests pass with `yarn test`
+  - [ ] `js-slang` executable is verified to work
+  - [ ] Did I have to reduce the strength of some tests?
+    - If so, why...
 - [ ] I have updated the documentation

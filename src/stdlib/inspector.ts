@@ -1,25 +1,25 @@
-import type { Context, Node } from '../types'
+import type { Context, Node } from '../types';
 
 export const setBreakpointAtLine = (lines: string[]): void => {
-  breakpoints = lines
-}
+  breakpoints = lines;
+};
 
-let breakpoints: string[] = []
-let moved: boolean = true
-let prevStoppedLine: number = -1
+let breakpoints: string[] = [];
+let moved: boolean = true;
+let prevStoppedLine: number = -1;
 
 export const checkEditorBreakpoints = (context: Context, node: Node): void => {
   if (node.loc) {
-    const currentLine = node.loc.start.line - 1
+    const currentLine = node.loc.start.line - 1;
     if (!moved && currentLine !== prevStoppedLine) {
-      moved = true
+      moved = true;
     }
     if (context.runtime.debuggerOn && breakpoints[currentLine] !== undefined && moved) {
-      moved = false
-      prevStoppedLine = currentLine
-      context.runtime.break = true
+      moved = false;
+      prevStoppedLine = currentLine;
+      context.runtime.break = true;
     }
   }
-}
+};
 
-export const areBreakpointsSet = () => breakpoints.length > 0
+export const areBreakpointsSet = () => breakpoints.length > 0;

@@ -1,0 +1,335 @@
+import type { BlockStatement, Comment, SourceLocation } from 'estree';
+import { type StepperExpression, type StepperPattern, undefinedNode } from '..';
+import type { RedexInfo } from '../..';
+import { convert } from '../../generator';
+import { StepperBaseNode } from '../../interface';
+import { assignMuTerms, getFreshName } from '../../utils';
+import { InternalRuntimeError } from '../../../errors/base';
+import type { StepperStatement } from '.';
+
+export class StepperBlockStatement
+  extends StepperBaseNode<BlockStatement>
+  implements BlockStatement
+{
+  constructor(
+    public readonly body: StepperStatement[],
+    public readonly innerComments?: Comment[] | undefined,
+    leadingComments?: Comment[] | undefined,
+    trailingComments?: Comment[] | undefined,
+    loc?: SourceLocation | null | undefined,
+    range?: [number, number] | undefined,
+  ) {
+    super('BlockStatement', leadingComments, trailingComments, loc, range);
+  }
+
+  static create(node: BlockStatement) {
+    return new StepperBlockStatement(
+      node.body.map(node => convert(node)),
+      node.innerComments,
+      node.leadingComments,
+      node.trailingComments,
+      node.loc,
+      node.range,
+    );
+  }
+
+  public override isContractible(redex: RedexInfo): boolean {
+    return (
+      this.body.length === 0 || (this.body.length === 1 && !this.body[0].isContractible(redex))
+    );
+  }
+
+  public override isOneStepPossible(): boolean {
+    return true;
+  }
+
+  public override contract(
+    redex: RedexInfo,
+  ): StepperBlockStatement | StepperStatement | typeof undefinedNode {
+    if (this.body.length === 0) {
+      redex.preRedex = [this];
+      redex.postRedex = [];
+      return undefinedNode;
+    }
+
+    if (this.body.length === 1) {
+      redex.preRedex = [this];
+      redex.postRedex = [this.body[0]];
+      return this.body[0];
+    }
+
+    throw new InternalRuntimeError('Cannot contract BlockStatement with body length > 1', this);
+  }
+
+  contractEmpty(redex: RedexInfo) {
+    redex.preRedex = [this];
+    redex.postRedex = [];
+  }
+
+  public override oneStep(
+    redex: RedexInfo,
+  ): StepperBlockStatement | StepperStatement | typeof undefinedNode {
+    if (this.isContractible(redex)) {
+      return this.contract(redex);
+    }
+
+    if (this.body[0].type === 'ReturnStatement') {
+      const returnStmt = this.body[0];
+      redex.preRedex = [this];
+      redex.postRedex = [returnStmt];
+      return returnStmt;
+    }
+
+    // reduce the first statement
+    if (this.body[0].isOneStepPossible(redex)) {
+      const firstStatementOneStep = this.body[0].oneStep(redex);
+      const afterSubstitutedScope = this.body.slice(1);
+      if (firstStatementOneStep === undefinedNode) {
+        return new StepperBlockStatement(
+          afterSubstitutedScope,
+          this.innerComments,
+          this.leadingComments,
+          this.trailingComments,
+          this.loc,
+          this.range,
+        );
+      }
+      return new StepperBlockStatement(
+        [firstStatementOneStep as StepperStatement, afterSubstitutedScope].flat(),
+        this.innerComments,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range,
+      );
+    }
+
+    // If the first statement is constant declaration, gracefully handle it!
+    if (this.body[0].type === 'VariableDeclaration') {
+      const declarations = assignMuTerms(this.body[0].declarations);
+      const afterSubstitutedScope = this.body
+        .slice(1)
+        .map(current =>
+          declarations
+            .filter(declarator => declarator.init)
+            .reduce(
+              (statement, declarator) =>
+                statement.substitute(declarator.id, declarator.init!, redex) as StepperStatement,
+              current,
+            ),
+        );
+      const substitutedProgram = new StepperBlockStatement(
+        afterSubstitutedScope,
+        this.innerComments,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range,
+      );
+      redex.preRedex = [this.body[0]];
+      redex.postRedex = declarations.map(x => x.id);
+      return substitutedProgram;
+    }
+
+    // If the first statement is function declaration, also gracefully handle it!
+    if (this.body[0].type === 'FunctionDeclaration') {
+      const arrowFunction = this.body[0].getArrowFunctionExpression();
+      const functionIdentifier = this.body[0].id;
+      const afterSubstitutedScope = this.body
+        .slice(1)
+        .map(
+          statement =>
+            statement.substitute(functionIdentifier, arrowFunction, redex) as StepperStatement,
+        );
+      const substitutedProgram = new StepperBlockStatement(
+        afterSubstitutedScope,
+        this.innerComments,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range,
+      );
+      redex.preRedex = [this.body[0]];
+      redex.postRedex = afterSubstitutedScope;
+      return substitutedProgram;
+    }
+
+    const firstValueStatement = this.body[0];
+    // After this stage, the first statement is a value statement. Now, proceed until getting the second value statement.
+    // if the second statement is return statement, remove the first statement
+    if (this.body.length >= 2 && this.body[1].type === 'ReturnStatement') {
+      redex.preRedex = [this.body[0]];
+      const afterSubstitutedScope = this.body.slice(1);
+      redex.postRedex = [];
+      return new StepperBlockStatement(
+        afterSubstitutedScope,
+        this.innerComments,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range,
+      );
+    }
+
+    if (this.body.length >= 2 && this.body[1].isOneStepPossible(redex)) {
+      const secondStatementOneStep = this.body[1].oneStep(redex);
+      const afterSubstitutedScope = this.body.slice(2);
+      if (secondStatementOneStep === undefinedNode) {
+        return new StepperBlockStatement(
+          [firstValueStatement, afterSubstitutedScope].flat(),
+          this.innerComments,
+          this.leadingComments,
+          this.trailingComments,
+          this.loc,
+          this.range,
+        );
+      }
+      return new StepperBlockStatement(
+        [
+          firstValueStatement,
+          secondStatementOneStep as StepperStatement,
+          afterSubstitutedScope,
+        ].flat(),
+        this.innerComments,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range,
+      );
+    }
+
+    // If the second statement is constant declaration, gracefully handle it!
+    if (this.body.length >= 2 && this.body[1].type === 'VariableDeclaration') {
+      const declarations = assignMuTerms(this.body[1].declarations);
+      const afterSubstitutedScope = this.body
+        .slice(2)
+        .map(current =>
+          declarations
+            .filter(declarator => declarator.init)
+            .reduce(
+              (statement, declarator) =>
+                statement.substitute(declarator.id, declarator.init!, redex) as StepperStatement,
+              current,
+            ),
+        );
+      const substitutedProgram = new StepperBlockStatement(
+        [firstValueStatement, afterSubstitutedScope].flat(),
+        this.innerComments,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range,
+      );
+      redex.preRedex = [this.body[1]];
+      redex.postRedex = declarations.map(x => x.id);
+      return substitutedProgram;
+    }
+
+    // If the second statement is function declaration, also gracefully handle it!
+    if (this.body.length >= 2 && this.body[1].type === 'FunctionDeclaration') {
+      const arrowFunction = this.body[1].getArrowFunctionExpression();
+      const functionIdentifier = this.body[1].id;
+      const afterSubstitutedScope = this.body
+        .slice(2)
+        .map(
+          statement =>
+            statement.substitute(functionIdentifier, arrowFunction, redex) as StepperStatement,
+        );
+      const substitutedProgram = new StepperBlockStatement(
+        [firstValueStatement, afterSubstitutedScope].flat(),
+        this.innerComments,
+        this.leadingComments,
+        this.trailingComments,
+        this.loc,
+        this.range,
+      );
+      redex.preRedex = [this.body[1]];
+      redex.postRedex = afterSubstitutedScope;
+      return substitutedProgram;
+    }
+
+    // After this stage, we have two value inducing statement. Remove the first one.
+    this.body[0].contractEmpty(redex); // update the contracted statement onto redex
+    return new StepperBlockStatement(
+      this.body.slice(1),
+      this.innerComments,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range,
+    );
+  }
+
+  public override substitute(
+    id: StepperPattern,
+    value: StepperExpression,
+    redex: RedexInfo,
+    upperBoundName?: string[],
+  ): StepperBaseNode {
+    // Alpha renaming
+    // Check whether should be renamed
+    // Renaming stage should not be counted as one step.
+    const valueFreeNames = value.freeNames();
+    const scopeNames = this.scanAllDeclarationNames();
+    const repeatedNames = valueFreeNames.filter(name => scopeNames.includes(name));
+    let protectedNamesSet = new Set([this.allNames(), upperBoundName ?? []].flat());
+    repeatedNames.forEach(name => protectedNamesSet.delete(name));
+    const protectedNames = Array.from(protectedNamesSet);
+    const newNames = getFreshName(repeatedNames, protectedNames);
+
+    const currentBlockStatement = newNames.reduce(
+      (current: StepperBlockStatement, name: string, index: number) =>
+        current.rename(repeatedNames[index], name),
+      this,
+    );
+
+    if (currentBlockStatement.scanAllDeclarationNames().includes(id.name)) {
+      // DO nothing
+      return currentBlockStatement;
+    }
+    return new StepperBlockStatement(
+      currentBlockStatement.body.map(
+        statement => statement.substitute(id, value, redex) as StepperStatement,
+      ),
+      this.innerComments,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range,
+    );
+  }
+
+  scanAllDeclarationNames(): string[] {
+    return this.body
+      .filter(ast => ast.type === 'VariableDeclaration' || ast.type === 'FunctionDeclaration')
+      .flatMap(ast => {
+        if (ast.type === 'VariableDeclaration') {
+          return ast.declarations.map(ast => ast.id.name);
+        } else {
+          // Function Declaration
+          return [ast.id.name];
+        }
+      });
+  }
+
+  public override freeNames(): string[] {
+    const names = new Set(this.body.flatMap(ast => ast.freeNames()));
+    this.scanAllDeclarationNames().forEach(name => names.delete(name));
+    return Array.from(names);
+  }
+
+  public override allNames(): string[] {
+    return Array.from(new Set(this.body.flatMap(ast => ast.allNames())));
+  }
+
+  public override rename(before: string, after: string): StepperBlockStatement {
+    return new StepperBlockStatement(
+      this.body.map(statement => statement.rename(before, after) as StepperStatement),
+      this.innerComments,
+      this.leadingComments,
+      this.trailingComments,
+      this.loc,
+      this.range,
+    );
+  }
+}

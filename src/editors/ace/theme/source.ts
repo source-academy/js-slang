@@ -10,8 +10,8 @@
 
 // @ts-ignore
 function theme(acequire, exports, _module) {
-  exports.isDark = true
-  exports.cssClass = 'ace-source'
+  exports.isDark = true;
+  exports.cssClass = 'ace-source';
   exports.cssText =
     '.ace-source .ace_gutter {\
                         background: #011e3a;\
@@ -161,11 +161,11 @@ function theme(acequire, exports, _module) {
                         .ace_tooltip.ace_doc-tooltip a {\
                         color: #48aff0;\
                         }\
-                        '
+                        ';
 
-  const dom = acequire('../lib/dom')
-  dom.importCssString(exports.cssText, exports.cssClass)
+  const dom = acequire('../lib/dom');
+  dom.importCssString(exports.cssText, exports.cssClass);
 }
 
 // @ts-ignore
-ace.define('ace/theme/source', ['require', 'exports', 'module', 'ace/lib/dom'], theme)
+ace.define('ace/theme/source', ['require', 'exports', 'module', 'ace/lib/dom'], theme);

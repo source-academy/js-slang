@@ -21,9 +21,9 @@ jobs:
       - name: Enable corepack for Yarn
         run: corepack enable
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: yarn
       - name: Install yarn dependencies
         run: yarn install --immutable
@@ -38,5 +38,8 @@ jobs:
           publish_dir: docs/source
           external_repository: source-academy/docs.sourceacademy.org
           publish_branch: master
-          force_orphan: true
+          # Do not wipe the branch: keep files published by other sources
+          # (e.g. py-slang's Python docs under /python). Previously this used
+          # force_orphan: true, which replaced the whole branch on every deploy.
+          keep_files: true
           cname: docs.sourceacademy.org

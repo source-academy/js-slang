@@ -1,7 +1,7 @@
-import { OpCodes } from './opcodes'
-import type { Program } from './svml-compiler'
+import { OpCodes } from './opcodes';
+import type { Program } from './svml-compiler';
 
-const OPCODES_STR = {
+const OPCODES_STR: { [K in OpCodes]?: string } = {
   [OpCodes.NOP]: 'NOP   ',
   [OpCodes.LDCI]: 'LDCI  ',
   [OpCodes.LGCI]: 'LGCI  ',
@@ -146,33 +146,34 @@ const OPCODES_STR = {
   // Concurrency Opcodes
   [OpCodes.EXECUTE]: 'EXEC  ',
   [OpCodes.TEST_AND_SET]: 'T&S   ',
-  [OpCodes.CLEAR]: 'CLEAR '
-}
+  [OpCodes.CLEAR]: 'CLEAR ',
+};
 
-// get name of opcode for debugging
-export function getName(op: number) {
-  return OPCODES_STR[op as keyof typeof OPCODES_STR] // need to add guard in case op does not exist
+/**
+ * Returns name of opcode for debugging
+ */
+export function getName(op: OpCodes) {
+  return OPCODES_STR[op];
 }
 
 // pretty-print the program
 export function stringifyProgram(P: Program) {
-  const functions = P[1]
-  let programStr = ''
-  programStr += 'Entry function: ' + P[0] + '\n'
+  const functions = P[1];
+  let programStr = '';
+  programStr += 'Entry function: ' + P[0] + '\n';
   for (let i = 0; i < functions.length; i++) {
-    const f = functions[i]
-    let s =
-      '#' + i + ':\nStack Size: ' + f[0] + '\nEnv Size: ' + f[1] + '\nNum Args: ' + f[2] + '\n'
+    const f = functions[i];
+    let s = `#${i}:\nStack Size: ${f[0]}\nEnv Size: ${f[1]}\nNum Args: ${f[2]}\n`;
     for (let j = 0; j < f[3].length; j++) {
-      s += j
-      const ins = f[3][j]
-      s += ': ' + getName(ins[0])
+      s += j;
+      const ins = f[3][j];
+      s += ': ' + getName(ins[0]);
       for (let k = 1; k < ins.length; k++) {
-        s += ' ' + ins[k]
+        s += ' ' + ins[k];
       }
-      s += '\n'
+      s += '\n';
     }
-    programStr += s + '\n'
+    programStr += s + '\n';
   }
-  return programStr
+  return programStr;
 }

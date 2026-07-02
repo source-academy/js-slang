@@ -1,0 +1,51 @@
+import { describe, test, vi } from 'vitest';
+import { Chapter, Variant } from '../../langs';
+import { getChapterName } from '../../utils/misc';
+import { expectFinishedResult } from '../../utils/testing';
+
+vi.mock(import('../../modules/loader/loaders'));
+
+type DescribeCase = [string, Chapter[], Variant[], string];
+const describeCases: DescribeCase[] = [
+  [
+    'javascript',
+    [
+      Chapter.SOURCE_1,
+      Chapter.SOURCE_2,
+      Chapter.SOURCE_3,
+      Chapter.SOURCE_4,
+      Chapter.FULL_JS,
+      Chapter.FULL_TS,
+      Chapter.LIBRARY_PARSER,
+    ],
+    [
+      Variant.DEFAULT,
+      Variant.DEFAULT,
+      Variant.DEFAULT,
+      Variant.DEFAULT,
+      Variant.DEFAULT,
+      Variant.DEFAULT,
+      Variant.DEFAULT,
+    ],
+    'import { foo } from "one_module"; foo();',
+  ],
+];
+
+describe.each(describeCases)(
+  'Ensuring that %s chapters are able to load modules',
+  (_, chapters, variants, code) => {
+    const chapterCases = chapters.map((chapterVal, index) => {
+      const chapterName = getChapterName(chapterVal);
+      const variant = variants[index];
+      return [`Testing ${chapterName}`, chapterVal, variant] as [string, Chapter, Variant];
+    });
+
+    test.each(chapterCases)(
+      '%s',
+      { timeout: process.env.GITHUB_ACTIONS ? 20_000 : 10_000 },
+      (_, chapter, variant) => {
+        return expectFinishedResult(code, { chapter, variant }).toEqual('foo');
+      },
+    );
+  },
+);

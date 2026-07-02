@@ -1,45 +1,34 @@
-import * as es from 'estree'
-import { isArray, isFunction } from 'lodash'
-import type { Context } from '..'
-import { _Symbol } from '../alt-langs/scheme/scm-slang/src/stdlib/base'
-import { is_number } from '../alt-langs/scheme/scm-slang/src/stdlib/core-math'
-import * as errors from '../errors/errors'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { Chapter, type Environment, type Node, type StatementSequence, type Value } from '../types'
-import * as ast from '../utils/ast/astCreator'
-import Closure from './closure'
-import { Continuation, isCallWithCurrentContinuation } from './continuations'
-import Heap from './heap'
-import * as instr from './instrCreator'
-import { Control, Transformers } from './interpreter'
-import { isApply, isEval } from './scheme-macros'
+import type es from 'estree';
+import { isFunction } from 'lodash';
+
+import * as errors from '../errors/errors';
+import { RuntimeSourceError } from '../errors/base';
+import type {
+  Context,
+  Environment,
+  Node,
+  NodeTypeToNode,
+  StatementSequence,
+  Value,
+} from '../types';
+import * as ast from '../utils/ast/astCreator';
+import { isIdentifier, isImportDeclaration, isVariableDeclaration } from '../utils/ast/typeGuards';
+import assert from '../utils/assert';
+import { extractDeclarations } from '../utils/ast/helpers';
+import { validateFunctionArgCount } from '../utils/operators';
+import Closure from './closure';
+import { Continuation, isCallWithCurrentContinuation } from './continuations';
+import Heap from './heap';
+import * as instr from './instrCreator';
+import type { Control } from './interpreter';
 import {
-  InstrType,
   type AppInstr,
-  type BranchInstr,
   type ControlItem,
   type EnvArray,
-  type ForInstr,
   type Instr,
-  type WhileInstr
-} from './types'
-
-/**
- * Typeguard for commands to check if they are scheme values.
- *
- * @param command A ControlItem
- * @returns true if the ControlItem is a scheme value, false otherwise.
- */
-export const isSchemeValue = (command: ControlItem): boolean => {
-  return (
-    command === null ||
-    typeof command === 'string' ||
-    typeof command === 'boolean' ||
-    isArray(command) ||
-    command instanceof _Symbol ||
-    is_number(command)
-  )
-}
+  InstrType,
+  type InstrTypeToInstr,
+} from './types';
 
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
@@ -48,12 +37,8 @@ export const isSchemeValue = (command: ControlItem): boolean => {
  * @returns true if the ControlItem is an instruction and false otherwise.
  */
 export const isInstr = (command: ControlItem): command is Instr => {
-  // this prevents us from reading properties of null
-  if (isSchemeValue(command)) {
-    return false
-  }
-  return (command as Instr).instrType !== undefined
-}
+  return 'instrType' in command;
+};
 
 /**
  * Typeguard for Node to distinguish between program statements and instructions.
@@ -62,22 +47,8 @@ export const isInstr = (command: ControlItem): command is Instr => {
  * @returns true if the ControlItem is a Node or StatementSequence, false if it is an instruction.
  */
 export const isNode = (command: ControlItem): command is Node => {
-  // this prevents us from reading properties of null
-  if (isSchemeValue(command)) {
-    return false
-  }
-  return (command as Node).type !== undefined
-}
-
-/**
- * Typeguard for esIdentifier. To verify if a Node is an esIdentifier.
- *
- * @param node a Node
- * @returns true if node is an esIdentifier, false otherwise.
- */
-export const isIdentifier = (node: Node): node is es.Identifier => {
-  return (node as es.Identifier).name !== undefined
-}
+  return 'type' in command;
+};
 
 /**
  * Typeguard for esReturnStatement. To verify if a Node is an esReturnStatement.
@@ -86,8 +57,8 @@ export const isIdentifier = (node: Node): node is es.Identifier => {
  * @returns true if node is an esReturnStatement, false otherwise.
  */
 export const isReturnStatement = (node: Node): node is es.ReturnStatement => {
-  return (node as es.ReturnStatement).type == 'ReturnStatement'
-}
+  return node.type === 'ReturnStatement';
+};
 
 /**
  * Typeguard for esIfStatement. To verify if a Node is an esIfStatement.
@@ -96,8 +67,8 @@ export const isReturnStatement = (node: Node): node is es.ReturnStatement => {
  * @returns true if node is an esIfStatement, false otherwise.
  */
 export const isIfStatement = (node: Node): node is es.IfStatement => {
-  return (node as es.IfStatement).type == 'IfStatement'
-}
+  return node.type === 'IfStatement';
+};
 
 /**
  * Typeguard for esBlockStatement. To verify if a Node is a block statement.
@@ -106,8 +77,8 @@ export const isIfStatement = (node: Node): node is es.IfStatement => {
  * @returns true if node is an esBlockStatement, false otherwise.
  */
 export const isBlockStatement = (node: Node): node is es.BlockStatement => {
-  return (node as es.BlockStatement).type == 'BlockStatement'
-}
+  return node.type === 'BlockStatement';
+};
 
 /**
  * Typeguard for StatementSequence. To verify if a ControlItem is a statement sequence.
@@ -116,8 +87,8 @@ export const isBlockStatement = (node: Node): node is es.BlockStatement => {
  * @returns true if node is a StatementSequence, false otherwise.
  */
 export const isStatementSequence = (node: ControlItem): node is StatementSequence => {
-  return (node as StatementSequence).type == 'StatementSequence'
-}
+  return isNode(node) && node.type === 'StatementSequence';
+};
 
 /**
  * Typeguard for esRestElement. To verify if a Node is a block statement.
@@ -126,8 +97,8 @@ export const isStatementSequence = (node: ControlItem): node is StatementSequenc
  * @returns true if node is an esRestElement, false otherwise.
  */
 export const isRestElement = (node: Node): node is es.RestElement => {
-  return (node as es.RestElement).type == 'RestElement'
-}
+  return node.type === 'RestElement';
+};
 
 /**
  * Generate a unique id, for use in environments, arrays and closures.
@@ -136,19 +107,19 @@ export const isRestElement = (node: Node): node is es.RestElement => {
  * @returns a unique id
  */
 export const uniqueId = (context: Context): string => {
-  return `${context.runtime.objectCount++}`
-}
+  return `${context.runtime.objectCount++}`;
+};
 
 /**
  * Returns whether `item` is an array with `id` and `environment` properties already attached.
  */
 export const isEnvArray = (item: any): item is EnvArray => {
   return (
-    isArray(item) &&
+    Array.isArray(item) &&
     {}.hasOwnProperty.call(item, 'id') &&
     {}.hasOwnProperty.call(item, 'environment')
-  )
-}
+  );
+};
 
 /**
  * Returns whether `item` is a non-closure function that returns a stream.
@@ -156,13 +127,13 @@ export const isEnvArray = (item: any): item is EnvArray => {
  * pass it in here as a 2nd argument for stronger checking
  */
 export const isStreamFn = (item: any, result?: any): result is [any, () => any] => {
-  if (result == null || !isArray(result) || result.length !== 2) return false
+  if (result == null || !Array.isArray(result) || result.length !== 2) return false;
   return (
     isFunction(item) &&
     !(item instanceof Closure) &&
     (item.name === 'stream' || {}.hasOwnProperty.call(item, 'environment'))
-  )
-}
+  );
+};
 
 /**
  * Adds the properties `id` and `environment` to the given array, and adds the array to the
@@ -174,19 +145,19 @@ export const isStreamFn = (item: any, result?: any): result is [any, () => any] 
 export const handleArrayCreation = (
   context: Context,
   array: any[],
-  envOverride?: Environment
+  envOverride?: Environment,
 ): void => {
-  const environment = envOverride ?? currentEnvironment(context)
+  const environment = envOverride ?? currentEnvironment(context);
   // Both id and environment are non-enumerable so iterating
   // through the array will not return these values
   Object.defineProperties(array, {
     id: { value: uniqueId(context) },
     // Make environment writable as there are cases on the frontend where
     // environments of objects need to be modified
-    environment: { value: environment, writable: true }
-  })
-  environment.heap.add(array as EnvArray)
-}
+    environment: { value: environment, writable: true },
+  });
+  environment.heap.add(array as EnvArray);
+};
 
 /**
  * A helper function for handling sequences of statements.
@@ -197,35 +168,35 @@ export const handleArrayCreation = (
  * @param seq Array of statements.
  * @returns Array of commands to be pushed into control.
  */
-export const handleSequence = (seq: es.Statement[]): ControlItem[] => {
-  const result: ControlItem[] = []
-  let valueProduced = false
+export const handleSequence = (seq: es.Program['body']): ControlItem[] => {
+  const result: ControlItem[] = [];
+  let valueProduced = false;
   for (const command of seq) {
     if (!isImportDeclaration(command)) {
       if (valueProducing(command)) {
         // Value producing statements have an extra pop instruction
         if (valueProduced) {
-          result.push(instr.popInstr(command))
+          result.push(instr.popInstr(command));
         } else {
-          valueProduced = true
+          valueProduced = true;
         }
       }
-      result.push(command)
+      result.push(command);
     }
   }
   // Push statements in reverse order
-  return result.reverse()
-}
+  return result.reverse();
+};
 
 /**
  * This function is used for ConditionalExpressions and IfStatements, to create the sequence
  * of control items to be added.
  */
 export const reduceConditional = (
-  node: es.IfStatement | es.ConditionalExpression
+  node: es.IfStatement | es.ConditionalExpression,
 ): ControlItem[] => {
-  return [instr.branchInstr(node.consequent, node.alternate, node), node.test]
-}
+  return [instr.branchInstr(node.consequent, node.alternate, node), node.test];
+};
 
 /**
  * To determine if a control item is value producing. JavaScript distinguishes value producing
@@ -236,7 +207,7 @@ export const reduceConditional = (
  * @returns true if it is value producing, false otherwise.
  */
 export const valueProducing = (command: Node): boolean => {
-  const type = command.type
+  const type = command.type;
   return (
     type !== 'VariableDeclaration' &&
     type !== 'FunctionDeclaration' &&
@@ -244,8 +215,8 @@ export const valueProducing = (command: Node): boolean => {
     type !== 'BreakStatement' &&
     type !== 'DebuggerStatement' &&
     (type !== 'BlockStatement' || command.body.some(valueProducing))
-  )
-}
+  );
+};
 
 /**
  * To determine if a control item changes the environment.
@@ -262,31 +233,32 @@ export const valueProducing = (command: Node): boolean => {
  */
 export const envChanging = (command: ControlItem): boolean => {
   if (isNode(command)) {
-    const type = command.type
+    const type = command.type;
     return (
       type === 'Program' ||
       type === 'BlockStatement' ||
       type === 'ArrowFunctionExpression' ||
       (type === 'ExpressionStatement' && command.expression.type === 'ArrowFunctionExpression')
-    )
+    );
   } else if (isInstr(command)) {
-    const type = command.instrType
+    const type = command.instrType;
     return (
       type === InstrType.ENVIRONMENT ||
       type === InstrType.ARRAY_LITERAL ||
       type === InstrType.ASSIGNMENT ||
       type === InstrType.ARRAY_ASSIGNMENT ||
       (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs > 0)
-    )
+    );
   } else {
     // TODO deal with scheme control items
     // for now, as per the CSE machine paper,
     // we decide to ignore environment optimizations
     // for scheme control items :P
-    return true
+    return true;
   }
-}
+};
 
+// TODO: This type guard does not seem to be doing what it thinks its doing
 /**
  * To determine if the function is simple.
  * Simple functions contain a single return statement.
@@ -296,34 +268,24 @@ export const envChanging = (command: ControlItem): boolean => {
  */
 export const isSimpleFunction = (node: any) => {
   if (node.body.type !== 'BlockStatement' && node.body.type !== 'StatementSequence') {
-    return true
+    return true;
   } else {
-    const block = node.body
-    return block.body.length === 1 && block.body[0].type === 'ReturnStatement'
+    const block = node.body;
+    return block.body.length === 1 && block.body[0].type === 'ReturnStatement';
   }
-}
-
-/**
- * Transformers
- */
-export const currentTransformers = (context: Context) =>
-  context.runtime.transformers as Transformers
-
-export const setTransformers = (context: Context, transformers: Transformers) => {
-  context.runtime.transformers = transformers
-}
+};
 
 /**
  * Environments
  */
 
-export const currentEnvironment = (context: Context) => context.runtime.environments[0]
+export const currentEnvironment = (context: Context) => context.runtime.environments[0];
 
 export const createEnvironment = (
   context: Context,
   closure: Closure,
   args: Value[],
-  callExpression: es.CallExpression
+  callExpression: es.CallExpression,
 ): Environment => {
   const environment: Environment = {
     name: isIdentifier(callExpression.callee)
@@ -335,127 +297,112 @@ export const createEnvironment = (
     id: uniqueId(context),
     callExpression: {
       ...callExpression,
-      arguments: args.map(ast.primitive)
-    }
-  }
+      arguments: args.map(ast.primitive),
+    },
+  };
   closure.node.params.forEach((param, index) => {
     if (isRestElement(param)) {
-      const array = args.slice(index)
-      handleArrayCreation(context, array, environment)
-      environment.head[(param.argument as es.Identifier).name] = array
+      const array = args.slice(index);
+      handleArrayCreation(context, array, environment);
+      environment.head[(param.argument as es.Identifier).name] = array;
     } else {
-      environment.head[(param as es.Identifier).name] = args[index]
+      environment.head[(param as es.Identifier).name] = args[index];
     }
-  })
-  return environment
-}
+  });
+  return environment;
+};
 
-export const popEnvironment = (context: Context) => context.runtime.environments.shift()
+export const popEnvironment = (context: Context) => context.runtime.environments.shift();
 
 export const pushEnvironment = (context: Context, environment: Environment) => {
-  context.runtime.environments.unshift(environment)
-  context.runtime.environmentTree.insert(environment)
-}
+  context.runtime.environments.unshift(environment);
+  context.runtime.environmentTree.insert(environment);
+};
 
 export const createBlockEnvironment = (
   context: Context,
-  name = 'blockEnvironment'
+  name = 'blockEnvironment',
 ): Environment => {
   return {
     name,
     tail: currentEnvironment(context),
     head: {},
     heap: new Heap(),
-    id: uniqueId(context)
-  }
-}
+    id: uniqueId(context),
+  };
+};
 
 export const createProgramEnvironment = (context: Context, isPrelude: boolean): Environment => {
-  return createBlockEnvironment(context, isPrelude ? 'prelude' : 'programEnvironment')
-}
+  return createBlockEnvironment(context, isPrelude ? 'prelude' : 'programEnvironment');
+};
 
 /**
  * Variables
  */
 
-const UNASSIGNED_CONST = Symbol('const declaration')
-const UNASSIGNED_LET = Symbol('let declaration')
+const UNASSIGNED_CONST = Symbol('const declaration');
+const UNASSIGNED_LET = Symbol('let declaration');
 
 export function declareIdentifier(
   context: Context,
   name: string,
-  node: Node,
+  node:
+    | es.Declaration
+    | es.ImportSpecifier
+    | es.ImportDefaultSpecifier
+    | es.ImportNamespaceSpecifier,
   environment: Environment,
-  constant: boolean = false
+  constant: boolean = false,
 ) {
   if (environment.head.hasOwnProperty(name)) {
-    const descriptors = Object.getOwnPropertyDescriptors(environment.head)
+    const descriptors = Object.getOwnPropertyDescriptors(environment.head);
+
+    if (isVariableDeclaration(node)) {
+      return handleRuntimeError(
+        context,
+        new errors.VariableRedeclarationError(node, name, !!descriptors[name].writable),
+      );
+    }
+
+    assert(descriptors[name].writable === false, `${node.type} should not be reassignable`);
 
     return handleRuntimeError(
       context,
-      new errors.VariableRedeclaration(node, name, descriptors[name].writable)
-    )
+      new errors.VariableRedeclarationError(node, name, descriptors[name].writable),
+    );
   }
-  environment.head[name] = constant ? UNASSIGNED_CONST : UNASSIGNED_LET
-  return environment
+  environment.head[name] = constant ? UNASSIGNED_CONST : UNASSIGNED_LET;
+  return environment;
 }
 
 function declareVariables(
   context: Context,
   node: es.VariableDeclaration,
-  environment: Environment
+  environment: Environment,
 ) {
-  for (const declaration of node.declarations) {
-    // Retrieve declaration type from node
-    const constant = node.kind === 'const'
-    declareIdentifier(context, (declaration.id as es.Identifier).name, node, environment, constant)
+  // Retrieve declaration type from node
+  const constant = node.kind === 'const';
+  for (const id of extractDeclarations(node)) {
+    declareIdentifier(context, id.name, node, environment, constant);
   }
 }
 
 export function declareFunctionsAndVariables(
   context: Context,
-  node: es.BlockStatement,
-  environment: Environment
+  node: es.BlockStatement | es.Program,
+  environment: Environment,
 ) {
   for (const statement of node.body) {
     switch (statement.type) {
       case 'VariableDeclaration':
-        declareVariables(context, statement, environment)
-        break
+        declareVariables(context, statement, environment);
+        break;
       case 'FunctionDeclaration':
         // FunctionDeclaration is always of type constant
-        declareIdentifier(
-          context,
-          (statement.id as es.Identifier).name,
-          statement,
-          environment,
-          true
-        )
-        break
+        declareIdentifier(context, statement.id.name, statement, environment, true);
+        break;
     }
   }
-}
-
-export function hasDeclarations(node: es.BlockStatement): boolean {
-  for (const statement of node.body) {
-    if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
-      return true
-    }
-  }
-  return false
-}
-
-export function hasImportDeclarations(node: es.BlockStatement): boolean {
-  for (const statement of (node as unknown as es.Program).body) {
-    if (statement.type === 'ImportDeclaration') {
-      return true
-    }
-  }
-  return false
-}
-
-function isImportDeclaration(node: Node): boolean {
-  return node.type === 'ImportDeclaration'
 }
 
 export function defineVariable(
@@ -463,155 +410,130 @@ export function defineVariable(
   name: string,
   value: Value,
   constant = false,
-  node: es.VariableDeclaration | es.ImportDeclaration
+  node:
+    | es.VariableDeclaration
+    | es.ImportSpecifier
+    | es.ImportDefaultSpecifier
+    | es.ImportNamespaceSpecifier
+    | es.FunctionDeclaration,
 ) {
-  const environment = currentEnvironment(context)
+  const environment = currentEnvironment(context);
 
-  // we disable this check for full scheme due to the inability to scan for variables before usage
-  if (
-    environment.head[name] !== UNASSIGNED_CONST &&
-    environment.head[name] !== UNASSIGNED_LET &&
-    context.chapter !== Chapter.FULL_SCHEME
-  ) {
-    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
+  if (environment.head[name] !== UNASSIGNED_CONST && environment.head[name] !== UNASSIGNED_LET) {
+    return handleRuntimeError(
+      context,
+      new errors.VariableRedeclarationError(node, name, !constant),
+    );
   }
 
   if (constant && value instanceof Closure) {
-    value.declaredName = name
+    value.declaredName = name;
   }
 
   Object.defineProperty(environment.head, name, {
     value,
     writable: !constant,
-    enumerable: true
-  })
+    enumerable: true,
+  });
 
-  return environment
+  return environment;
 }
 
 export const getVariable = (context: Context, name: string, node: es.Identifier) => {
-  let environment: Environment | null = currentEnvironment(context)
+  let environment: Environment | null = currentEnvironment(context);
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
       if (
         environment.head[name] === UNASSIGNED_CONST ||
         environment.head[name] === UNASSIGNED_LET
       ) {
-        return handleRuntimeError(context, new errors.UnassignedVariable(name, node))
+        return handleRuntimeError(context, new errors.UnassignedVariableError(name, node));
       } else {
-        return environment.head[name]
+        return environment.head[name];
       }
     } else {
-      environment = environment.tail
+      environment = environment.tail;
     }
   }
-  return handleRuntimeError(context, new errors.UndefinedVariable(name, node))
-}
+  return handleRuntimeError(context, new errors.UndefinedVariableError(name, node));
+};
 
 export const setVariable = (
   context: Context,
   name: string,
   value: any,
-  node: es.AssignmentExpression
+  node: es.AssignmentExpression,
 ) => {
-  let environment: Environment | null = currentEnvironment(context)
+  let environment: Environment | null = currentEnvironment(context);
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
       if (
         environment.head[name] === UNASSIGNED_CONST ||
         environment.head[name] === UNASSIGNED_LET
       ) {
-        break
+        break;
       }
-      const descriptors = Object.getOwnPropertyDescriptors(environment.head)
+      const descriptors = Object.getOwnPropertyDescriptors(environment.head);
       if (descriptors[name].writable) {
-        environment.head[name] = value
-        return undefined
+        environment.head[name] = value;
+        return undefined;
       }
-      return handleRuntimeError(context, new errors.ConstAssignment(node, name))
+      return handleRuntimeError(context, new errors.ConstAssignmentError(node, name));
     } else {
-      environment = environment.tail
+      environment = environment.tail;
     }
   }
-  return handleRuntimeError(context, new errors.UndefinedVariable(name, node))
-}
+  return handleRuntimeError(context, new errors.UndefinedVariableError(name, node));
+};
 
-export const handleRuntimeError = (context: Context, error: RuntimeSourceError) => {
-  context.errors.push(error)
-  throw error
+export function handleRuntimeError(context: Context, error: RuntimeSourceError<any>) {
+  context.errors.push(error);
+  throw error;
 }
 
 export const checkNumberOfArguments = (
   context: Context,
   callee: Closure | Value,
   args: Value[],
-  exp: es.CallExpression
+  exp: es.CallExpression,
 ) => {
   if (callee instanceof Closure) {
     // User-defined or Pre-defined functions
-    const params = callee.node.params
-    const hasVarArgs = params[params.length - 1]?.type === 'RestElement'
-    if (hasVarArgs ? params.length - 1 > args.length : params.length !== args.length) {
-      return handleRuntimeError(
-        context,
-        new errors.InvalidNumberOfArguments(
-          exp,
-          hasVarArgs ? params.length - 1 : params.length,
-          args.length,
-          hasVarArgs
-        )
-      )
+    const params = callee.node.params;
+    const hasRest = params[params.length - 1]?.type === 'RestElement';
+    const minArgs = params.filter(
+      each => each.type !== 'AssignmentPattern' && each.type !== 'RestElement',
+    ).length;
+
+    try {
+      validateFunctionArgCount(
+        exp,
+        args.length,
+        minArgs,
+        hasRest || params.length,
+        callee.declaredName,
+      );
+    } catch (error) {
+      return handleRuntimeError(context, error);
     }
   } else if (isCallWithCurrentContinuation(callee)) {
     // call/cc should have a single argument
-    if (args.length !== 1) {
-      return handleRuntimeError(
-        context,
-        new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
-      )
+    try {
+      validateFunctionArgCount(exp, args.length, 1, undefined, 'call_cc');
+    } catch (error) {
+      return handleRuntimeError(context, error);
     }
-    return undefined
-  } else if (isEval(callee)) {
-    // eval should have a single argument
-    if (args.length !== 1) {
-      return handleRuntimeError(
-        context,
-        new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
-      )
-    }
-    return undefined
-  } else if (isApply(callee)) {
-    // apply should have at least two arguments
-    if (args.length < 2) {
-      return handleRuntimeError(
-        context,
-        new errors.InvalidNumberOfArguments(exp, 2, args.length, false)
-      )
-    }
-    return undefined
+    return undefined;
   } else if (callee instanceof Continuation) {
     // Continuations have variadic arguments,
     // and so we can let it pass
     // TODO: in future, if we can somehow check the number of arguments
     // expected by the continuation, we can add a check here.
-    return undefined
-  } else {
-    // Pre-built functions
-    const hasVarArgs = callee.minArgsNeeded != undefined
-    if (hasVarArgs ? callee.minArgsNeeded > args.length : callee.length !== args.length) {
-      return handleRuntimeError(
-        context,
-        new errors.InvalidNumberOfArguments(
-          exp,
-          hasVarArgs ? callee.minArgsNeeded : callee.length,
-          args.length,
-          hasVarArgs
-        )
-      )
-    }
+    return undefined;
   }
-  return undefined
-}
+  // No need to check args for builtins, checking is done by callIfFuncAndRightArgs
+  return undefined;
+};
 
 /**
  * This function can be used to check for a stack overflow.
@@ -621,25 +543,25 @@ export const checkNumberOfArguments = (
  */
 export const checkStackOverFlow = (context: Context, control: Control) => {
   if (control.size() > 100000) {
-    const stacks: es.CallExpression[] = []
-    let counter = 0
+    const stacks: es.CallExpression[] = [];
+    let counter = 0;
     for (
       let i = 0;
-      counter < errors.MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW &&
+      counter < errors.MaximumStackLimitExceededError.MAX_CALLS_TO_SHOW &&
       i < context.runtime.environments.length;
       i++
     ) {
       if (context.runtime.environments[i].callExpression) {
-        stacks.unshift(context.runtime.environments[i].callExpression!)
-        counter++
+        stacks.unshift(context.runtime.environments[i].callExpression!);
+        counter++;
       }
     }
     handleRuntimeError(
       context,
-      new errors.MaximumStackLimitExceeded(context.runtime.nodes[0], stacks)
-    )
+      new errors.MaximumStackLimitExceededError(context.runtime.nodes[0], stacks),
+    );
   }
-}
+};
 
 /**
  * Checks whether an `if` statement returns in every possible branch.
@@ -647,18 +569,18 @@ export const checkStackOverFlow = (context: Context, control: Control) => {
  * @return `true` if every branch has a return statement, else `false`.
  */
 export const hasReturnStatementIf = (statement: es.IfStatement): boolean => {
-  let hasReturn = true
+  let hasReturn = true;
   // Parser enforces that if/else have braces (block statement)
-  hasReturn = hasReturn && hasReturnStatement(statement.consequent as es.BlockStatement)
+  hasReturn = hasReturn && hasReturnStatement(statement.consequent as es.BlockStatement);
   if (statement.alternate) {
     if (isIfStatement(statement.alternate)) {
-      hasReturn = hasReturn && hasReturnStatementIf(statement.alternate as es.IfStatement)
+      hasReturn = hasReturn && hasReturnStatementIf(statement.alternate);
     } else if (isBlockStatement(statement.alternate) || isStatementSequence(statement.alternate)) {
-      hasReturn = hasReturn && hasReturnStatement(statement.alternate)
+      hasReturn = hasReturn && hasReturnStatement(statement.alternate);
     }
   }
-  return hasReturn
-}
+  return hasReturn;
+};
 
 /**
  * Checks whether a block returns in every possible branch.
@@ -666,32 +588,35 @@ export const hasReturnStatementIf = (statement: es.IfStatement): boolean => {
  * @return `true` if every branch has a return statement, else `false`.
  */
 export const hasReturnStatement = (block: es.BlockStatement | StatementSequence): boolean => {
-  let hasReturn = false
+  let hasReturn = false;
   for (const statement of block.body) {
     if (isReturnStatement(statement)) {
-      hasReturn = true
+      hasReturn = true;
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
-      hasReturn = hasReturn || hasReturnStatementIf(statement as es.IfStatement)
+      hasReturn = hasReturn || hasReturnStatementIf(statement);
     } else if (isBlockStatement(statement) || isStatementSequence(statement)) {
-      hasReturn = hasReturn && hasReturnStatement(statement)
+      hasReturn = hasReturn && hasReturnStatement(statement);
     }
   }
-  return hasReturn
-}
+  return hasReturn;
+};
 
-export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
-  let hasBreak = false
-  // Parser enforces that if/else have braces (block statement)
-  hasBreak = hasBreak || hasBreakStatement(statement.consequent as es.BlockStatement)
-  if (statement.alternate) {
-    if (isIfStatement(statement.alternate)) {
-      hasBreak = hasBreak || hasBreakStatementIf(statement.alternate)
-    } else if (isBlockStatement(statement.alternate) || isStatementSequence(statement.alternate)) {
-      hasBreak = hasBreak || hasBreakStatement(statement.alternate)
+function nodeVisitor(node: Node, type: Node['type']): boolean {
+  switch (node.type) {
+    case 'BlockStatement':
+    case 'StatementSequence':
+    case 'Program':
+      return node.body.some(each => nodeVisitor(each, type));
+    case 'IfStatement': {
+      const { consequent, alternate } = node;
+      if (nodeVisitor(consequent, type)) return true;
+
+      return !!alternate && nodeVisitor(alternate, type);
     }
+    default:
+      return node.type === type;
   }
-  return hasBreak
 }
 
 /**
@@ -700,33 +625,8 @@ export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
  * @return `true` if there is a `break` statement, else `false`.
  */
 export const hasBreakStatement = (block: es.BlockStatement | StatementSequence): boolean => {
-  let hasBreak = false
-  for (const statement of block.body) {
-    if (statement.type === 'BreakStatement') {
-      hasBreak = true
-    } else if (isIfStatement(statement)) {
-      // Parser enforces that if/else have braces (block statement)
-      hasBreak = hasBreak || hasBreakStatementIf(statement as es.IfStatement)
-    } else if (isBlockStatement(statement) || isStatementSequence(statement)) {
-      hasBreak = hasBreak || hasBreakStatement(statement)
-    }
-  }
-  return hasBreak
-}
-
-export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
-  let hasContinue = false
-  // Parser enforces that if/else have braces (block statement)
-  hasContinue = hasContinue || hasContinueStatement(statement.consequent as es.BlockStatement)
-  if (statement.alternate) {
-    if (isIfStatement(statement.alternate)) {
-      hasContinue = hasContinue || hasContinueStatementIf(statement.alternate)
-    } else if (isBlockStatement(statement.alternate) || isStatementSequence(statement.alternate)) {
-      hasContinue = hasContinue || hasContinueStatement(statement.alternate)
-    }
-  }
-  return hasContinue
-}
+  return nodeVisitor(block, 'BreakStatement');
+};
 
 /**
  * Checks whether a block OR any of its child blocks has a `continue` statement.
@@ -734,239 +634,91 @@ export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
  * @return `true` if there is a `continue` statement, else `false`.
  */
 export const hasContinueStatement = (block: es.BlockStatement | StatementSequence): boolean => {
-  let hasContinue = false
-  for (const statement of block.body) {
-    if (statement.type === 'ContinueStatement') {
-      hasContinue = true
-    } else if (isIfStatement(statement)) {
-      // Parser enforces that if/else have braces (block statement)
-      hasContinue = hasContinue || hasContinueStatementIf(statement as es.IfStatement)
-    } else if (isBlockStatement(statement) || isStatementSequence(statement)) {
-      hasContinue = hasContinue || hasContinueStatement(statement)
-    }
-  }
-  return hasContinue
-}
+  return nodeVisitor(block, 'ContinueStatement');
+};
 
-type PropertySetter = Map<string, Transformer>
-type Transformer = (item: ControlItem) => ControlItem
+/**
+ * Utility type for getting all the keys of a ControlItem that have values
+ * that are assignable to Nodes
+ */
+type GetNodeKeys<T extends ControlItem> = {
+  [K in keyof T as T[K] extends Node | null | undefined ? K : never]: K;
+};
+/**
+ * Extracts all the keys of a ControlItem that have values that are assignable to Nodes
+ * as a union
+ */
+type KeysOfNodeProperties<T extends ControlItem> = GetNodeKeys<T>[keyof GetNodeKeys<T>];
 
-const setToTrue = (item: ControlItem): ControlItem => {
-  item.isEnvDependent = true
-  return item
-}
+/**
+ * To provide a specification on how to calculate whether a ControlItem is env dependent or not:
+ * - If a boolean is provided, that value is used directly
+ * - If a string is provided, it is treated as the name of a property. `isEnvDependent` is then called on the value of that property.
+ * - If an array of strings is provided, all values are treated as names of properties and `isEnvDependent` is called on all
+ * their values
+ * - If a function is provided, the function is called with the node and the return value is used
+ */
+type EnvDependentCalculator<T extends ControlItem> =
+  | ((item: T) => boolean)
+  | boolean
+  | KeysOfNodeProperties<T>
+  | KeysOfNodeProperties<T>[];
 
-const setToFalse = (item: ControlItem): ControlItem => {
-  item.isEnvDependent = false
-  return item
-}
+type EnvCalculators = {
+  [K in Node['type']]?: EnvDependentCalculator<NodeTypeToNode<K>>;
+} & {
+  [K in InstrType]?: EnvDependentCalculator<InstrTypeToInstr<K>>;
+};
 
-const propertySetter: PropertySetter = new Map<string, Transformer>([
-  [
-    'Program',
-    (node: Node) => {
-      node = node as es.Program
-      node.isEnvDependent = node.body.some(elem => isEnvDependent(elem))
-      return node
-    }
-  ],
-  ['Literal', setToFalse],
-  ['ImportDeclaration', setToFalse],
-  ['BreakStatement', setToFalse],
-  ['ContinueStatement', setToFalse],
-  ['DebuggerStatement', setToFalse],
-  ['VariableDeclaration', setToTrue],
-  ['FunctionDeclaration', setToTrue],
-  ['ArrowFunctionExpression', setToTrue],
-  ['Identifier', setToTrue],
-  [
-    'LogicalExpression',
-    (node: Node) => {
-      node = node as es.LogicalExpression
-      node.isEnvDependent = isEnvDependent(node.left) || isEnvDependent(node.right)
-      return node
-    }
-  ],
-  [
-    'BinaryExpression',
-    (node: Node) => {
-      node = node as es.BinaryExpression
-      node.isEnvDependent = isEnvDependent(node.left) || isEnvDependent(node.right)
-      return node
-    }
-  ],
-  [
-    'UnaryExpression',
-    (node: Node) => {
-      node = node as es.UnaryExpression
-      node.isEnvDependent = isEnvDependent(node.argument)
-      return node
-    }
-  ],
-  [
-    'ConditionalExpression',
-    (node: Node) => {
-      node = node as es.ConditionalExpression
-      node.isEnvDependent =
-        isEnvDependent(node.consequent) ||
-        isEnvDependent(node.alternate) ||
-        isEnvDependent(node.test)
-      return node
-    }
-  ],
-  [
-    'MemberExpression',
-    (node: Node) => {
-      node = node as es.MemberExpression
-      node.isEnvDependent = isEnvDependent(node.property) || isEnvDependent(node.object)
-      return node
-    }
-  ],
-  [
-    'ArrayExpression',
-    (node: Node) => {
-      node = node as es.ArrayExpression
-      node.isEnvDependent = node.elements.some(elem => isEnvDependent(elem))
-      return node
-    }
-  ],
-  [
-    'AssignmentExpression',
-    (node: Node) => {
-      node = node as es.AssignmentExpression
-      node.isEnvDependent = isEnvDependent(node.left) || isEnvDependent(node.right)
-      return node
-    }
-  ],
-  [
-    'ReturnStatement',
-    (node: Node) => {
-      node = node as es.ReturnStatement
-      node.isEnvDependent = isEnvDependent(node.argument)
-      return node
-    }
-  ],
-  [
-    'CallExpression',
-    (node: Node) => {
-      node = node as es.CallExpression
-      node.isEnvDependent =
-        isEnvDependent(node.callee) || node.arguments.some(arg => isEnvDependent(arg))
-      return node
-    }
-  ],
-  [
-    'ExpressionStatement',
-    (node: Node) => {
-      node = node as es.ExpressionStatement
-      node.isEnvDependent = isEnvDependent(node.expression)
-      return node
-    }
-  ],
-  [
-    'IfStatement',
-    (node: Node) => {
-      node = node as es.IfStatement
-      node.isEnvDependent =
-        isEnvDependent(node.test) ||
-        isEnvDependent(node.consequent) ||
-        isEnvDependent(node.alternate)
-      return node
-    }
-  ],
-  [
-    'ForStatement',
-    (node: Node) => {
-      node = node as es.ForStatement
-      node.isEnvDependent =
-        isEnvDependent(node.body) ||
-        isEnvDependent(node.init) ||
-        isEnvDependent(node.test) ||
-        isEnvDependent(node.update)
-      return node
-    }
-  ],
-  [
-    'WhileStatement',
-    (node: Node) => {
-      node = node as es.WhileStatement
-      node.isEnvDependent = isEnvDependent(node.body) || isEnvDependent(node.test)
-      return node
-    }
-  ],
-  [
-    'BlockStatement',
-    (node: Node) => {
-      node = node as es.BlockStatement
-      node.isEnvDependent = node.body.some(stm => isEnvDependent(stm))
-      return node
-    }
-  ],
-  [
-    'StatementSequence',
-    (node: Node) => {
-      node = node as StatementSequence
-      node.isEnvDependent = node.body.some(stm => isEnvDependent(stm))
-      return node
-    }
-  ],
-
-  [
-    'ImportDeclaration',
-    (node: Node) => {
-      node = node as es.ImportDeclaration
-      node.isEnvDependent = node.specifiers.some(x => isEnvDependent(x))
-      return node
-    }
-  ],
-
-  ['ImportSpecifier', setToTrue],
-
-  ['ImportDefaultSpecifier', setToTrue],
+const envCalculators: EnvCalculators = {
+  ArrayExpression: ({ elements }) => elements.some(isEnvDependent),
+  ArrowFunctionExpression: true,
+  AssignmentExpression: ['left', 'right'],
+  BlockStatement: ({ body }) => body.some(isEnvDependent),
+  BinaryExpression: ['left', 'right'],
+  BreakStatement: false,
+  CallExpression: node => [node.callee, ...node.arguments].some(isEnvDependent),
+  ConditionalExpression: ['alternate', 'consequent', 'test'],
+  ContinueStatement: false,
+  DebuggerStatement: false,
+  ExpressionStatement: 'expression',
+  ForStatement: ['body', 'init', 'test', 'update'],
+  FunctionDeclaration: true,
+  Identifier: true,
+  IfStatement: ['alternate', 'consequent', 'test'],
+  ImportDeclaration: ({ specifiers }) => specifiers.some(isEnvDependent),
+  ImportDefaultSpecifier: true,
+  ImportSpecifier: true,
+  Literal: false,
+  LogicalExpression: ['left', 'right'],
+  MemberExpression: ['object', 'property'],
+  Program: ({ body }) => body.some(isEnvDependent),
+  ReturnStatement: 'argument',
+  StatementSequence: ({ body }) => body.some(isEnvDependent),
+  UnaryExpression: 'argument',
+  VariableDeclaration: true,
+  WhileStatement: ['body', 'test'],
 
   //Instruction
-  [InstrType.RESET, setToFalse],
-  [InstrType.UNARY_OP, setToFalse],
-  [InstrType.BINARY_OP, setToFalse],
-  [InstrType.POP, setToFalse],
-  [InstrType.ARRAY_ACCESS, setToFalse],
-  [InstrType.ARRAY_ASSIGNMENT, setToFalse],
-  [InstrType.CONTINUE, setToFalse],
-  [InstrType.CONTINUE_MARKER, setToFalse],
-  [InstrType.BREAK_MARKER, setToFalse],
-  [InstrType.MARKER, setToFalse],
-  [InstrType.ENVIRONMENT, setToFalse],
-  [InstrType.APPLICATION, setToTrue],
-  [InstrType.ASSIGNMENT, setToTrue],
-  [InstrType.ARRAY_LITERAL, setToTrue],
-  [InstrType.SPREAD, setToFalse],
-  [
-    InstrType.WHILE,
-    (instr: WhileInstr) => {
-      instr.isEnvDependent = isEnvDependent(instr.test) || isEnvDependent(instr.body)
-      return instr
-    }
-  ],
-  [
-    InstrType.FOR,
-    (instr: ForInstr) => {
-      instr.isEnvDependent =
-        isEnvDependent(instr.init) ||
-        isEnvDependent(instr.test) ||
-        isEnvDependent(instr.update) ||
-        isEnvDependent(instr.body)
-      return instr
-    }
-  ],
-  [
-    InstrType.BRANCH,
-    (instr: BranchInstr) => {
-      instr.isEnvDependent = isEnvDependent(instr.consequent) || isEnvDependent(instr.alternate)
-      return instr
-    }
-  ]
-])
-
+  [InstrType.APPLICATION]: true,
+  [InstrType.ARRAY_ACCESS]: false,
+  [InstrType.ARRAY_ASSIGNMENT]: false,
+  [InstrType.ARRAY_LITERAL]: true,
+  [InstrType.ASSIGNMENT]: true,
+  [InstrType.BINARY_OP]: false,
+  [InstrType.BRANCH]: ['alternate', 'consequent'],
+  [InstrType.BREAK_MARKER]: false,
+  [InstrType.CONTINUE]: false,
+  [InstrType.CONTINUE_MARKER]: false,
+  [InstrType.ENVIRONMENT]: false,
+  [InstrType.MARKER]: false,
+  [InstrType.POP]: false,
+  [InstrType.RESET]: false,
+  [InstrType.SPREAD]: false,
+  [InstrType.UNARY_OP]: false,
+  [InstrType.WHILE]: ['body', 'test'],
+  [InstrType.FOR]: ['body', 'init', 'test', 'update'],
+};
 /**
  * Checks whether the evaluation of the given control item depends on the current environment.
  * The item is also considered environment dependent if its evaluation introduces
@@ -977,38 +729,48 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
 
 export function isEnvDependent(item: ControlItem | null | undefined): boolean {
   if (item === null || item === undefined) {
-    return false
-  }
-
-  // Scheme primitives are not environment dependent.
-  if (typeof item === 'string' || typeof item === 'boolean') {
-    return false
-  }
-
-  // Scheme symbols represent identifiers, which are environment dependent.
-  if (item instanceof _Symbol) {
-    return true
-  }
-
-  // We assume no optimisations for scheme lists.
-  if (isArray(item)) {
-    return true
+    return false;
   }
 
   // If result is already calculated, return it
   if (item.isEnvDependent !== undefined) {
-    return item.isEnvDependent
+    return item.isEnvDependent;
   }
 
-  const setter = isNode(item)
-    ? propertySetter.get(item.type)
-    : isInstr(item)
-      ? propertySetter.get(item.instrType)
-      : undefined
-
-  if (setter) {
-    return setter(item)?.isEnvDependent ?? false
+  let calculator;
+  if (isNode(item)) {
+    calculator = envCalculators[item.type];
+  } else if (isInstr(item)) {
+    calculator = envCalculators[item.instrType];
   }
 
-  return false
+  switch (typeof calculator) {
+    case 'boolean': {
+      item.isEnvDependent = calculator;
+      break;
+    }
+    case 'string': {
+      // @ts-expect-error Indexing with an arbitrary index
+      item.isEnvDependent = isEnvDependent(item[calculator]);
+      break;
+    }
+    case 'function': {
+      // @ts-expect-error Function parameter gets narrowed to never
+      item.isEnvDependent = calculator(item);
+      break;
+    }
+    case 'undefined': {
+      item.isEnvDependent = false;
+      break;
+    }
+    default: {
+      if (!Array.isArray(calculator)) throw new Error(`Invalid setter for ${item}: ${calculator}`);
+
+      // @ts-expect-error Indexing with an arbitrary index
+      item.isEnvDependent = calculator.some(each => isEnvDependent(item[each]));
+      break;
+    }
+  }
+
+  return item.isEnvDependent;
 }

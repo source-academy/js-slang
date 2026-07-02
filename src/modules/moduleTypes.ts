@@ -1,48 +1,143 @@
-import type { RequireProvider } from './loader/requireProvider'
-import type { ImportAnalysisOptions } from './preprocessor/analyzer'
-import type { LinkerOptions } from './preprocessor/linker'
+import type es from 'estree';
+import type { Chapter } from '../langs';
+import type { RequireProvider } from './loader/requireProvider';
+import type { ImportAnalysisOptions } from './preprocessor/analyzer';
+import type { LinkerOptions } from './preprocessor/linker';
 
-export type ModuleManifest = {
-  [module: string]: {
-    tabs: string[]
-  }
+/**
+ * Represents a {@link es.Node|Node} that refers to an import "source".
+ */
+export type ModuleDeclarationWithSource =
+  | es.ImportDeclaration
+  | es.ExportNamedDeclaration
+  | es.ExportAllDeclaration;
+
+/**
+ * Represents the meta information for a Source module
+ */
+export interface ModuleInfo {
+  name: string;
+  tabs: string[];
+  version?: string;
+  requires?: Chapter;
+  node?: ModuleDeclarationWithSource;
 }
 
-export type ModuleBundle = (require: RequireProvider) => ModuleFunctions
-
-export type ModuleFunctions = {
-  [name: string]: any
+/**
+ * Represents the main modules manifest that contains a ModuleInfo for each
+ * Source module that exists
+ */
+export interface ModulesManifest {
+  [module: string]: Omit<ModuleInfo, 'name'>;
 }
 
+export type PartialSourceModule = (require: RequireProvider) => LoadedBundle;
+
+export type LoadedBundle = {
+  [name: string]: unknown;
+};
+
+type ParamType = 'regular' | 'optional' | 'rest';
+
+interface BaseParam<T extends ParamType> {
+  paramType: T;
+  name: string;
+  type: string;
+}
+
+/**
+ * Represents a rest parameter
+ */
+export type RestParam = BaseParam<'rest'>;
+
+/**
+ * Represents an optional parameter, i.e `x1?: number`.
+ */
+export type OptionalParam = BaseParam<'optional'>;
+
+/**
+ * Represents a regular parameter
+ */
+export interface RegularParam extends BaseParam<'regular'> {
+  defaultValue?: string;
+}
+
+export type ParamSpecifier = RegularParam | RestParam | OptionalParam;
+
+/**
+ * Represents a doc entry documenting a function
+ */
 export interface FunctionDocumentation {
-  kind: 'function'
-  retType: string
-  description: string
-  params: [name: string, type: string][]
+  kind: 'function';
+  retType: string;
+  description: string;
+  params: ParamSpecifier[];
 }
 
+/**
+ * Represents a doc entry documenting a variable
+ */
 export interface VariableDocumentation {
-  kind: 'variable'
-  type: string
-  description: string
+  kind: 'variable';
+  type: string;
+  description: string;
 }
 
+/**
+ * Represents a doc entry for something that isn't
+ * a variable or function.
+ */
 export interface UnknownDocumentation {
-  kind: 'unknown'
+  kind: 'unknown';
 }
 
-export const unknownDocs: UnknownDocumentation = { kind: 'unknown' }
+export const unknownDocs: UnknownDocumentation = { kind: 'unknown' };
 
-export type ModuleDocsEntry = FunctionDocumentation | VariableDocumentation | UnknownDocumentation
+export type ModuleDocsEntry = FunctionDocumentation | VariableDocumentation | UnknownDocumentation;
 
-export type ModuleDocumentation = {
-  [name: string]: ModuleDocsEntry
+export interface ModuleDocumentation {
+  [name: string]: ModuleDocsEntry;
 }
 
-export type ImportOptions = {
-  loadTabs: boolean
-} & ImportAnalysisOptions &
-  LinkerOptions
+export type Importer<T = object> = (
+  name: string,
+  node?: ModuleDeclarationWithSource,
+) => Promise<{ default: T }>;
 
-export type SourceFiles = Partial<Record<string, string>>
-export type FileGetter = (p: string) => Promise<string | undefined>
+export type ManifestImporter = () => Promise<{ default: ModulesManifest }>;
+
+export interface ImportLoadingOptions {
+  /**
+   * Set to `true` to load tabs when loading a module
+   */
+  loadTabs: boolean;
+
+  sourceBundleImporter: Importer<PartialSourceModule>;
+  sourceTabImporter: Importer<PartialSourceModule>;
+  docsImporter: Importer<ModuleDocumentation>;
+}
+
+export type ImportOptions = ImportLoadingOptions & ImportAnalysisOptions & LinkerOptions;
+
+export type SourceFiles = Partial<Record<string, string>>;
+export type FileGetter = (p: string) => Promise<string | undefined>;
+
+/**
+ * Represents a module context, which is used to store the state of a module and the tabs that it has loaded
+ * within the evaluation context
+ */
+export interface ModuleContext<TState = any> {
+  /**
+   * Whatever state the module wishes to store. If the state is set to `null`, it means that the module has not
+   * been loaded yet.
+   */
+  state: null | TState;
+
+  /**
+   * The tabs that the module has loaded. If the tabs are set to `null`, it means that the module has not tried to
+   * load its tabs yet.
+   *
+   * This array will be empty if the module does not have any tabs to load
+   */
+  tabs: null | any[];
+}

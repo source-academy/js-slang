@@ -36,9 +36,15 @@ jobs:
       - name: Enable corepack for Yarn
         run: corepack enable
       - name: Setup Node
+<<<<<<< HEAD
         uses: actions/setup-node@v4
         with:
           node-version: 20
+=======
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+>>>>>>> master
           cache: yarn
       - run: yarn install --immutable
       - run: yarn build

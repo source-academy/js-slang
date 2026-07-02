@@ -1,33 +1,31 @@
-import type { ExportNamedDeclaration } from 'estree'
-import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
-import type { Rule } from '../../types'
-import syntaxBlacklist from '../syntax'
-import { RuleError } from '../../errors'
-import { mapAndFilter } from '../../../utils/misc'
+import type { ExportNamedDeclaration } from 'estree';
+import { defaultExportLookupName } from '../../../stdlib/localImport.prelude';
+import { getSpecifierName } from '../../../utils/ast/helpers';
+import { mapAndFilter } from '../../../utils/misc';
+import { RuleError } from '../../errors';
+import { defineRule } from '../../types';
+import syntaxBlacklist from '../syntax';
 
 export class NoExportNamedDeclarationWithDefaultError extends RuleError<ExportNamedDeclaration> {
-  public explain() {
-    return 'Export default declarations are not allowed.'
+  public override explain() {
+    return 'Export default declarations are not allowed.';
   }
 
-  public elaborate() {
-    return 'You are trying to use an export default declaration, which is not allowed (yet).'
+  public override elaborate() {
+    return 'You are trying to use an export default declaration, which is not allowed (yet).';
   }
 }
 
-const noExportNamedDeclarationWithDefault: Rule<ExportNamedDeclaration> = {
-  name: 'no-declare-mutable',
-  disableFromChapter: syntaxBlacklist['ExportDefaultDeclaration'],
-
-  checkers: {
+export default defineRule(
+  'no-named-export-with-default',
+  {
     ExportNamedDeclaration(node) {
       return mapAndFilter(node.specifiers, specifier =>
-        specifier.exported.name === defaultExportLookupName
+        getSpecifierName(specifier.exported) === defaultExportLookupName
           ? new NoExportNamedDeclarationWithDefaultError(node)
-          : undefined
-      )
-    }
-  }
-}
-
-export default noExportNamedDeclarationWithDefault
+          : undefined,
+      );
+    },
+  },
+  syntaxBlacklist['ExportDefaultDeclaration'],
+);

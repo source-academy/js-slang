@@ -1,31 +1,29 @@
-import type { ImportSpecifier } from 'estree'
-import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
-import type { Rule } from '../../types'
-import syntaxBlacklist from '../syntax'
-import { RuleError } from '../../errors'
+import type { ImportSpecifier } from 'estree';
+import { defaultExportLookupName } from '../../../stdlib/localImport.prelude';
+import { getSpecifierName } from '../../../utils/ast/helpers';
+import { RuleError } from '../../errors';
+import { defineRule } from '../../types';
+import syntaxBlacklist from '../syntax';
 
 export class NoImportSpecifierWithDefaultError extends RuleError<ImportSpecifier> {
-  public explain() {
-    return 'Import default specifiers are not allowed.'
+  public override explain() {
+    return 'Import default specifiers are not allowed.';
   }
 
-  public elaborate() {
-    return 'You are trying to use an import default specifier, which is not allowed (yet).'
+  public override elaborate() {
+    return 'You are trying to use an import default specifier, which is not allowed (yet).';
   }
 }
 
-const noImportSpecifierWithDefault: Rule<ImportSpecifier> = {
-  name: 'no-declare-mutable',
-  disableFromChapter: syntaxBlacklist['ImportDefaultSpecifier'],
-
-  checkers: {
+export default defineRule(
+  'no-import-with-default',
+  {
     ImportSpecifier(node) {
-      if (node.imported.name === defaultExportLookupName) {
-        return [new NoImportSpecifierWithDefaultError(node)]
+      if (getSpecifierName(node.imported) === defaultExportLookupName) {
+        return [new NoImportSpecifierWithDefaultError(node)];
       }
-      return []
-    }
-  }
-}
-
-export default noImportSpecifierWithDefault
+      return [];
+    },
+  },
+  syntaxBlacklist['ImportDefaultSpecifier'],
+);

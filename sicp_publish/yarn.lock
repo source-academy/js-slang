@@ -5,17 +5,10 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@joeychenofficial/alt-ergo-modified@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "@joeychenofficial/alt-ergo-modified@npm:2.4.0"
-  checksum: 10c0/b6587dac0a76331602984ed61e482c2f7af2920d7069c873024bbc7575809ef440c7b91a7fb9a144b54abe98dd1d38a942e57f4476a0736a661c79bd66c176fa
-  languageName: node
-  linkType: hard
-
-"@types/estree@npm:1.0.8":
-  version: 1.0.8
-  resolution: "@types/estree@npm:1.0.8"
-  checksum: 10c0/39d34d1afaa338ab9763f37ad6066e3f349444f9052b9676a7cc0252ef9485a41c6d81c9c4e0d26e9077993354edf25efc853f3224dd4b447175ef62bdcc86a5
+"@types/estree@npm:1.0.9":
+  version: 1.0.9
+  resolution: "@types/estree@npm:1.0.9"
+  checksum: 10c0/3ad3286ca2988cd550dafb8f2ad599c8474868e954fa601a36655bdfefd8039f7c714b8c1c7f2ae219ffbd58bd4660e66fa7479a0120fc02d4777057d4865387
   languageName: node
   linkType: hard
 
@@ -29,20 +22,20 @@ __metadata:
   linkType: hard
 
 "acorn-walk@npm:^8.0.0":
-  version: 8.3.4
-  resolution: "acorn-walk@npm:8.3.4"
+  version: 8.3.5
+  resolution: "acorn-walk@npm:8.3.5"
   dependencies:
     acorn: "npm:^8.11.0"
-  checksum: 10c0/76537ac5fb2c37a64560feaf3342023dadc086c46da57da363e64c6148dc21b57d49ace26f949e225063acb6fb441eabffd89f7a3066de5ad37ab3e328927c62
+  checksum: 10c0/e31bf5b5423ed1349437029d66d708b9fbd1b77a644b031501e2c753b028d13b56348210ed901d5b1d0d86eb3381c0a0fc0d0998511a9d546d1194936266a332
   languageName: node
   linkType: hard
 
 "acorn@npm:^8.0.3, acorn@npm:^8.11.0, acorn@npm:^8.15.0":
-  version: 8.15.0
-  resolution: "acorn@npm:8.15.0"
+  version: 8.17.0
+  resolution: "acorn@npm:8.17.0"
   bin:
     acorn: bin/acorn
-  checksum: 10c0/dec73ff59b7d6628a01eebaece7f2bdb8bb62b9b5926dcad0f8931f2b8b79c2be21f6c68ac095592adb5adb15831a3635d9343e6a91d028bbe85d564875ec3ec
+  checksum: 10c0/5dcefea5f8f023b6cc24cbe71fb5a8112b601d36c4fa07d14e4e6ffc2ee47383332c46b36c766d9437725aa6660156eae50efa0c838719823b50d7c327c4ed42
   languageName: node
   linkType: hard
 
@@ -56,9 +49,9 @@ __metadata:
   linkType: hard
 
 "lodash@npm:^4.17.20":
-  version: 4.17.21
-  resolution: "lodash@npm:4.17.21"
-  checksum: 10c0/d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c
+  version: 4.18.1
+  resolution: "lodash@npm:4.18.1"
+  checksum: 10c0/757228fc68805c59789e82185135cf85f05d0b2d3d54631d680ca79ec21944ec8314d4533639a14b8bcfbd97a517e78960933041a5af17ecb693ec6eecb99a27
   languageName: node
   linkType: hard
 
@@ -66,15 +59,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "sicp@workspace:."
   dependencies:
-    "@joeychenofficial/alt-ergo-modified": "npm:^2.4.0"
-    "@types/estree": "npm:1.0.8"
+    "@types/estree": "npm:1.0.9"
     acorn: "npm:^8.0.3"
     acorn-loose: "npm:^8.0.0"
     acorn-walk: "npm:^8.0.0"
     astring: "npm:^1.4.3"
     lodash: "npm:^4.17.20"
     source-map: "npm:^0.7.3"
-    xmlhttprequest-ts: "npm:^1.0.1"
   languageName: unknown
   linkType: soft
 
@@ -82,24 +73,5 @@ __metadata:
   version: 0.7.6
   resolution: "source-map@npm:0.7.6"
   checksum: 10c0/59f6f05538539b274ba771d2e9e32f6c65451982510564438e048bc1352f019c6efcdc6dd07909b1968144941c14015c2c7d4369fb7c4d7d53ae769716dcc16c
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^1.9.2":
-  version: 1.14.1
-  resolution: "tslib@npm:1.14.1"
-  checksum: 10c0/69ae09c49eea644bc5ebe1bca4fa4cc2c82b7b3e02f43b84bd891504edf66dbc6b2ec0eef31a957042de2269139e4acff911e6d186a258fb14069cd7f6febce2
-  languageName: node
-  linkType: hard
-
-"xmlhttprequest-ts@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "xmlhttprequest-ts@npm:1.0.1"
-  dependencies:
-    tslib: "npm:^1.9.2"
-  peerDependencies:
-    "@angular/common": ">= 5.0.0"
-    "@angular/core": ">= 5.0.0"
-  checksum: 10c0/5ef31a94ed2cd94bfa6d5d7024cfb20253813c48ab94b7b5cea1b7e0bcbcc3bb51a53bc8eaca52642c93229507de4f95624b0dd339156c31533f3dc617e7240f
   languageName: node
   linkType: hard

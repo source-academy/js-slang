@@ -1,8 +1,7 @@
-import * as es from 'estree'
-import type { Environment, Node } from '../types'
-import Closure from './closure'
-import { Transformers } from './interpreter'
-import type { SchemeControlItems } from './scheme-macros'
+import type es from 'estree';
+
+import type { Environment, Node } from '../types';
+import type Closure from './closure';
 
 export enum InstrType {
   RESET = 'Reset',
@@ -24,86 +23,95 @@ export enum InstrType {
   CONTINUE_MARKER = 'ContinueMarker',
   BREAK = 'Break',
   BREAK_MARKER = 'BreakMarker',
-  SPREAD = 'Spread'
+  SPREAD = 'Spread',
 }
 
-interface BaseInstr {
-  instrType: InstrType
-  srcNode: Node
-  isEnvDependent?: boolean
+interface BaseInstr<T extends InstrType = InstrType, U extends Node = Node> {
+  instrType: T;
+  srcNode: U;
+  isEnvDependent?: boolean;
 }
 
-export interface WhileInstr extends BaseInstr {
-  test: es.Expression
-  body: es.Statement
+export interface WhileInstr extends BaseInstr<InstrType.WHILE, es.WhileStatement> {
+  test: es.Expression;
+  body: es.Statement;
 }
 
-export interface ForInstr extends BaseInstr {
-  init: es.VariableDeclaration | es.Expression
-  test: es.Expression
-  update: es.Expression
-  body: es.Statement
+export interface ForInstr extends BaseInstr<InstrType.FOR, es.ForStatement> {
+  init: es.VariableDeclaration | es.Expression;
+  test: es.Expression;
+  update: es.Expression;
+  body: es.Statement;
 }
 
-export interface AssmtInstr extends BaseInstr {
-  symbol: string
-  constant: boolean
-  declaration: boolean
+export interface DeclAssmtInstr extends BaseInstr<InstrType.ASSIGNMENT, es.VariableDeclaration> {
+  symbol: string;
+  constant: boolean;
+  declaration: true;
 }
 
-export interface UnOpInstr extends BaseInstr {
-  symbol: es.UnaryOperator
+export interface RegularAssmtInstr extends BaseInstr<
+  InstrType.ASSIGNMENT,
+  es.AssignmentExpression
+> {
+  declaration: false;
+  symbol: string;
 }
 
-export interface BinOpInstr extends BaseInstr {
-  symbol: es.BinaryOperator
+export type AssmtInstr = DeclAssmtInstr | RegularAssmtInstr;
+
+export interface UnOpInstr extends BaseInstr<InstrType.UNARY_OP, es.UnaryExpression> {
+  symbol: es.UnaryOperator;
 }
 
-export interface AppInstr extends BaseInstr {
-  numOfArgs: number
-  srcNode: es.CallExpression
+export interface BinOpInstr extends BaseInstr<InstrType.BINARY_OP, es.BinaryExpression> {
+  symbol: es.BinaryOperator;
 }
 
-export interface BranchInstr extends BaseInstr {
-  consequent: es.Expression | es.Statement
-  alternate: es.Expression | es.Statement | null | undefined
+export interface AppInstr extends BaseInstr<InstrType.APPLICATION, es.CallExpression> {
+  numOfArgs: number;
 }
 
-export interface EnvInstr extends BaseInstr {
-  env: Environment
-  transformers: Transformers
+export interface BranchInstr extends BaseInstr<InstrType.BRANCH> {
+  consequent: es.Expression | es.Statement;
+  alternate: es.Expression | es.Statement | null | undefined;
 }
 
-export interface ArrLitInstr extends BaseInstr {
-  arity: number
+export interface EnvInstr extends BaseInstr<InstrType.ENVIRONMENT> {
+  env: Environment;
 }
 
-export interface SpreadInstr extends BaseInstr {
-  symbol: es.SpreadElement
+export interface ArrLitInstr extends BaseInstr<InstrType.ARRAY_LITERAL> {
+  arity: number;
 }
 
 export type Instr =
-  | BaseInstr
-  | WhileInstr
-  | AssmtInstr
   | AppInstr
+  | ArrLitInstr
+  | AssmtInstr
+  | BaseInstr
+  | BinOpInstr
   | BranchInstr
   | EnvInstr
-  | ArrLitInstr
-  | SpreadInstr
+  | ForInstr
+  | UnOpInstr
+  | WhileInstr;
 
-export type ControlItem = (Node | Instr | SchemeControlItems) & {
-  isEnvDependent?: boolean
-}
+export type InstrTypeToInstr<T extends InstrType> =
+  Extract<Instr, { instrType: T }> extends never ? BaseInstr : Extract<Instr, { instrType: T }>;
+
+export type ControlItem = (Node | Instr) & {
+  isEnvDependent?: boolean;
+};
 
 // Every array also has the properties `id` and `environment` for use in the frontend CSE Machine
 export type EnvArray = any[] & {
-  readonly id: string
-  environment: Environment
-}
+  readonly id: string;
+  environment: Environment;
+};
 
 // Objects in the heap can only store arrays or closures
-export type HeapObject = EnvArray | Closure
+export type HeapObject = EnvArray | Closure;
 
 // Special class that cannot be found on the stash so is safe to be used
 // as an indicator of a breakpoint from running the CSE machine

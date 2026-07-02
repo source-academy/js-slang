@@ -1,200 +1,246 @@
-import type es from 'estree'
-import { UNKNOWN_LOCATION } from '../constants'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { ErrorSeverity, ErrorType, type Node, type SourceError } from '../types'
-import { nonAlphanumericCharEncoding } from './preprocessor/filePaths'
+import type es from 'estree';
 
-export class ModuleInternalError extends RuntimeSourceError {
-  constructor(
-    public moduleName: string,
-    public error?: any,
-    node?: Node
-  ) {
-    super(node)
-  }
+import { UNKNOWN_LOCATION } from '../constants';
+import {
+  ErrorSeverity,
+  ErrorType,
+  InternalRuntimeError,
+  SourceErrorWithNode,
+} from '../errors/base';
+import type { Node } from '../types';
+import type { Chapter } from '../langs';
+import { getChapterName } from '../utils/misc';
+import { nonAlphanumericCharEncoding } from './preprocessor/filePaths';
+import type { ModuleDeclarationWithSource } from './moduleTypes';
 
-  public explain() {
-    return `Error(s) occured when executing the module '${this.moduleName}'.`
-  }
-
-  public elaborate() {
-    return 'You may need to contact with the author for this module to fix this error.'
-  }
-}
-
-abstract class ImportError implements SourceError {
-  public type: ErrorType.IMPORT
-  public severity = ErrorSeverity.ERROR
-  public get location() {
-    return this.node?.loc ?? UNKNOWN_LOCATION
-  }
-
-  constructor(public node?: Node) {}
-
-  public abstract explain(): string
-  public abstract elaborate(): string
-}
-
-export class ModuleConnectionError extends ImportError {
-  private static message: string = `Unable to get modules.`
-  private static elaboration: string = `You should check your Internet connection, and ensure you have used the correct module path.`
-  constructor(node?: Node) {
-    super(node)
-  }
-
-  public explain() {
-    return ModuleConnectionError.message
-  }
-
-  public elaborate() {
-    return ModuleConnectionError.elaboration
-  }
-}
-
-export class ModuleNotFoundError extends ImportError {
-  constructor(
-    public moduleName: string,
-    node?: Node
-  ) {
-    super(node)
-  }
-
-  public explain() {
-    return `Module '${this.moduleName}' not found.`
-  }
-
-  public elaborate() {
-    return 'You should check your import declarations, and ensure that all are valid modules.'
-  }
-}
-
-export class UndefinedNamespaceImportError extends ImportError {
+/**
+ * Error thrown at runtime when loading amodule throws an unhandled error.
+ */
+export class ModuleInternalError extends InternalRuntimeError<ModuleDeclarationWithSource> {
   constructor(
     public readonly moduleName: string,
-    node?:
-      | Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
-      | es.ImportDeclaration['specifiers'][number]
-      | es.ExportSpecifier
+    node: ModuleDeclarationWithSource,
+    public readonly error?: any,
   ) {
-    super(node)
+    super(`Error(s) occured when executing the module '${moduleName}'.`, node);
   }
 
-  public explain(): string {
-    return `'${this.moduleName}' does not export any symbols!`
-  }
-
-  public elaborate(): string {
-    return "Check your imports and make sure what you're trying to import exists!"
+  public override elaborate() {
+    return 'You may need to contact with the author for this module to fix this error.';
   }
 }
 
-export class UndefinedImportError extends UndefinedNamespaceImportError {
-  constructor(
-    public readonly symbol: string,
-    moduleName: string,
-    node?: es.ImportDeclaration['specifiers'][number] | es.ExportSpecifier
-  ) {
-    super(moduleName, node)
+abstract class ImportError<T extends Node | undefined> extends SourceErrorWithNode<T> {
+  type = ErrorType.IMPORT;
+  severity = ErrorSeverity.ERROR;
+}
+
+/**
+ * Error thrown at Import time when the configured modules server can't be reached.
+ */
+export class ModuleConnectionError extends ImportError<ModuleDeclarationWithSource | undefined> {
+  private static message: string = `Unable to get modules.`;
+  private static elaboration: string = `You should check your Internet connection, and ensure you have used the correct module path.`;
+
+  public override explain() {
+    return ModuleConnectionError.message;
   }
 
-  public explain(): string {
-    return `'${this.moduleName}' does not contain a definition for '${this.symbol}'`
+  public override elaborate() {
+    return ModuleConnectionError.elaboration;
+  }
+}
+
+/**
+ * Error thrown at import time when the requested module can't be found on the configured modules
+ * server. If this error is thrown, it means that the modules server is reachable.
+ */
+export class ModuleNotFoundError extends ImportError<ModuleDeclarationWithSource | undefined> {
+  constructor(
+    public readonly moduleName: string,
+    node?: ModuleDeclarationWithSource,
+  ) {
+    super(node);
+  }
+
+  public explain() {
+    return `Module '${this.moduleName}' not found.`;
+  }
+
+  public elaborate() {
+    return 'You should check your import declarations, and ensure that all are valid modules.';
+  }
+}
+
+/**
+ * Error thrown when the given module has a chapter restriction and the current
+ * evaluation context is not of a high enough chapter
+ */
+export class WrongChapterForModuleError extends ImportError<
+  ModuleDeclarationWithSource | undefined
+> {
+  constructor(
+    public readonly moduleName: string,
+    public readonly required: Chapter,
+    public readonly actual: Chapter,
+    node?: ModuleDeclarationWithSource,
+  ) {
+    super(node);
+  }
+
+  public override explain(): string {
+    const reqName = getChapterName(this.required);
+    const actName = getChapterName(this.actual);
+    return `${this.moduleName} needs at least ${reqName}, but you are using ${actName}`;
+  }
+
+  public override elaborate() {
+    return this.explain();
+  }
+}
+
+/**
+ * Nodes that directly import and declare an export from another module
+ */
+type ImportingNodes =
+  | Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
+  | es.ImportDeclaration['specifiers'][number]
+  | es.ExportSpecifier;
+
+/**
+ * Error thrown when the module being imported doesn't actually export any symbols
+ */
+export class UndefinedNamespaceImportError<T extends ImportingNodes> extends ImportError<
+  T | undefined
+> {
+  constructor(
+    public readonly moduleName: string,
+    node?: T,
+  ) {
+    super(node);
+  }
+
+  public override explain() {
+    return `'${this.moduleName}' does not export any symbols!`;
+  }
+
+  public override elaborate() {
+    return "Check your imports and make sure what you're trying to import exists!";
+  }
+}
+
+/**
+ * Error thrown when the module being imported doesn't export a symbol with the given name
+ */
+export class UndefinedImportError extends UndefinedNamespaceImportError<
+  es.ImportDeclaration['specifiers'][number] | es.ExportSpecifier
+> {
+  constructor(
+    /**
+     * Symbol that is being imported
+     */
+    public readonly symbol: string,
+    moduleName: string,
+    node?: es.ImportDeclaration['specifiers'][number] | es.ExportSpecifier,
+  ) {
+    super(moduleName, node);
+  }
+
+  public override explain() {
+    return `'${this.moduleName}' does not contain a definition for '${this.symbol}'`;
   }
 }
 
 export class UndefinedDefaultImportError extends UndefinedImportError {
   constructor(
     moduleName: string,
-    node?: es.ImportDeclaration['specifiers'][number] | es.ExportSpecifier
+    node?: es.ImportDeclaration['specifiers'][number] | es.ExportSpecifier,
   ) {
-    super('default', moduleName, node)
+    super('default', moduleName, node);
   }
 
-  public explain(): string {
-    return `'${this.moduleName}' does not have a default export!`
+  public override explain(): string {
+    return `'${this.moduleName}' does not have a default export!`;
   }
 }
 
-export class CircularImportError extends ImportError {
-  constructor(public filePathsInCycle: string[]) {
-    super()
+/**
+ * Error thrown when together, the imports by a group of files
+ * causes an import cycle.
+ */
+export class CircularImportError extends ImportError<undefined> {
+  constructor(public readonly filePathsInCycle: string[]) {
+    super(undefined);
   }
 
-  public explain() {
+  public override explain() {
     // We need to reverse the file paths in the cycle so that the
     // semantics of "'/a.js' -> '/b.js'" is "'/a.js' imports '/b.js'".
     const formattedCycle = this.filePathsInCycle
       .map(filePath => `'${filePath}'`)
       .reverse()
-      .join(' -> ')
-    return `Circular import detected: ${formattedCycle}.`
+      .join(' -> ');
+    return `Circular import detected: ${formattedCycle}.`;
   }
 
-  public elaborate() {
-    return 'Break the circular import cycle by removing imports from any of the offending files.'
+  public override elaborate() {
+    return 'Break the circular import cycle by removing imports from any of the offending files.';
   }
 }
 
-export abstract class InvalidFilePathError extends ImportError {
-  constructor(public filePath: string) {
-    super()
+export abstract class InvalidFilePathError extends ImportError<undefined> {
+  constructor(public readonly filePath: string) {
+    super(undefined);
   }
-
-  abstract explain(): string
-
-  abstract elaborate(): string
 }
 
 export class IllegalCharInFilePathError extends InvalidFilePathError {
-  public explain() {
+  public override explain() {
     const validNonAlphanumericChars = Object.keys(nonAlphanumericCharEncoding)
       .map(char => `'${char}'`)
-      .join(', ')
-    return `File path '${this.filePath}' must only contain alphanumeric chars and/or ${validNonAlphanumericChars}.`
+      .join(', ');
+    return `File path '${this.filePath}' must only contain alphanumeric chars and/or ${validNonAlphanumericChars}.`;
   }
 
-  public elaborate() {
-    return 'Rename the offending file path to only use valid chars.'
+  public override elaborate() {
+    return 'Rename the offending file path to only use valid chars.';
   }
 }
 
 export class ConsecutiveSlashesInFilePathError extends InvalidFilePathError {
-  public explain() {
-    return `File path '${this.filePath}' cannot contain consecutive slashes '//'.`
+  public override explain() {
+    return `File path '${this.filePath}' cannot contain consecutive slashes '//'.`;
   }
 
-  public elaborate() {
-    return 'Remove consecutive slashes from the offending file path.'
+  public override elaborate() {
+    return 'Remove consecutive slashes from the offending file path.';
   }
 }
 
-export class DuplicateImportNameError extends ImportError {
-  public readonly locString: string
+export class DuplicateImportNameError extends ImportError<undefined> {
+  public readonly locString: string;
 
-  public get location() {
-    return this.nodes[0].loc ?? UNKNOWN_LOCATION
+  public override get location() {
+    return this.nodes[0].loc ?? UNKNOWN_LOCATION;
   }
 
-  constructor(
-    public readonly name: string,
-    public readonly nodes: Node[]
-  ) {
-    super()
+  constructor(public readonly nodes: Node[]) {
+    super(undefined);
 
     this.locString = nodes
       .map(({ loc }) => {
-        const { source, start } = loc ?? UNKNOWN_LOCATION
-        return `(${source ?? 'Unknown File'}:${start.line}:${start.column})`
+        const { source, start } = loc ?? UNKNOWN_LOCATION;
+        return `(${source ?? 'Unknown File'}:${start.line}:${start.column})`;
       })
-      .join(', ')
+      .join(', ');
   }
 
-  public explain() {
-    return `Source does not support different imports from Source modules being given the same name. The following are the offending imports: ${this.locString}`
+  public override explain() {
+    return `Source does not support different imports from Source modules being given the same name. The following are the offending imports: ${this.locString}`;
   }
 
-  public elaborate() {
+  public override elaborate() {
     return `You cannot have different symbols across different files being given the same declared name, for example: \`import { foo as a } from 'one_module';\` and \`import { bar as a } from 'another_module';
-    You also cannot have different symbols from the same module with the same declared name, for example: \`import { foo as a } from 'one_module';\` and \`import { bar as a } from 'one_module'; `
+    You also cannot have different symbols from the same module with the same declared name, for example: \`import { foo as a } from 'one_module';\` and \`import { bar as a } from 'one_module'; `;
   }
 }

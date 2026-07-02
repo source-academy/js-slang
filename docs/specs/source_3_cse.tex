@@ -1,0 +1,370 @@
+\input source_header.tex
+
+\begin{document}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\docheader{2025}{Source}{\S 3 CSE Machine}{Martin Henz}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Purpose of CSE machine}
+
+The CSE machine can run programs of the language Source \S 3.
+The terms \emph{statement}, \emph{expression},
+\emph{name}, etc refer to the 
+\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3}.
+
+\section{Values and environments}
+
+The CSE machine handles the following kinds of values:
+\begin{itemize}
+\item number,
+\item Boolean value (\lstinline{true} and \lstinline{false}),
+\item string,
+\item $\texttt{null}$,
+\item $\texttt{undefined}$,
+\item array (including array with length 2 that we call \emph{pair}), and
+\item closure, consisting of a list of parameters, a body statement, and an \emph{environment};
+a closure is either \emph{simple} or \emph{complex}.
+\end{itemize}
+Numbers, Boolean values, strings, and arrays are specified in the
+\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3}.
+Environments are stacks (lists) of frames, and frames specify the bindings of some names.
+If a frame has a binding for a name, the name is either \emph{unassigned} or
+bound to a value.
+The \emph{global environment} has a single frame, the \emph{global frame}, which has
+bindings for all predeclared names of Source \S 3.
+Non-primitive predeclared functions are bound to closures whose environment is the global environment,
+and whose parameters and bodies are given in the
+\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3}.
+Primitive functions are explained below.
+
+\section{Value producing statements}
+
+In Source \S 3, constant, variable, and function declarations, \lstinline{break}
+and \lstinline{continue} are non-value-producing.
+Expression statements, conditional statements, \lstinline{return} statements,
+and loops are value-producing.
+A statement sequence ($\textit{statement}\ldots$) is value-producing if any of its
+component statements is value-producing. A block is value-producing if its body
+is value-producing.
+
+\section{Running the machine}
+
+Before running a program, it is checked for syntactic consistency: all names need
+to be declared in the program or predeclared in the global environment, return
+statements can only occur in function bodies, \lstinline{continue;} and \lstinline{break;}
+can only occur in loops outside of function bodies that are enclosed by the loop, assignment to a name declared with \lstinline{const} is not allowed, and function parameters cannot
+be redeclared directly in the body block of the function.
+
+The CSE machine has three components:
+\begin{description}
+\item[C (control):] a stack (list) of program components (expressions and statements) and \emph{instructions}
+(see Section~\ref{transitions} for details on instructions),
+\item[S (stash):] a stack (list) of values, and
+\item[E (environments):] a set of environments, 
+one of which is designated as the \emph{current environment}.
+\end{description}
+The CSE machine is running a given program $P$ by placing it in the control, wrapped
+in a block \verb#{# $P$ \verb#}#. The stash is intially empty and the environments only
+contain the global environment.
+
+\section{Machine transitions}
+\label{transitions}
+The CSE machine keeps transforming $C$, $S$, and $E$, based on
+the first element of $C$.
+That element is popped, i.e. it is not
+included in the new $C$ after the transformation. 
+The following rules describe the additional
+changes in $C$, $S$, and $E$, based on the first element of~$C$.
+
+\subsection*{Statements}
+
+\begin{description}
+
+\item[\textit{statement}$\ldots$:] The component statements of the sequence
+are pushed on $C$; each
+value-producing statement is followed by a \texttt{pop} instruction if it is not
+the last value-producing statement of the sequence. (The exact position of this
+\texttt{pop} instruction may vary.)
+
+\item[\texttt{const}/\texttt{let}\ $\textit{name}$ \ \texttt{=} \ \textit{expression}:]
+\textit{expression} is pushed on $C$, followed by an instruction \texttt{asgn} \textit{name},
+followed by a \texttt{pop} instruction.
+
+\item[\texttt{function}...:]
+The corresponding constant declaration is pushed on $C$.
+
+\item[\texttt{return}\ $\textit{expression}$ \texttt{;}:]
+$\textit{expression}$ is pushed on $C$, followed by a \texttt{return} instruction.
+
+\item[\texttt{if (}\ $\textit{expression}$ \texttt{)}\ $\textit{block}_1$\
+\texttt{else}\ $\textit{block}_2$:]
+$\textit{expression}$ is pushe on $C$, followed by a \texttt{branch} instruction
+that has
+$\textit{block}_1$ as its consequent branch and 
+$\textit{block}_2$ as its alternative branch.
+
+\item[\texttt{while (}\ $\textit{expression}$ \texttt{)}\ $\textit{block}$:]
+The name $\texttt{undefined}$ is pushed on $C$, followed by
+$\textit{expression}$, 
+followed by a \texttt{while} instruction
+that has
+$\textit{block}$ as its body and $\textit{expression}$ as its predicate.
+If $\textit{block}$ contains a \texttt{break}
+statement that is not included in a nested block, the \texttt{while} instruction
+is followed by a \texttt{brk mark} instruction.
+
+\item[$\texttt{for (}\texttt{let}\ \textit{name} \ \texttt{=} \ \textit{expression}_1;\ \textit{expression}_2;\ \textit{expression}_3\texttt{)}\ \textit{block}$:]
+The corresponding for loop without
+loop control variable is pushed on $C$ as specified in
+\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3}.
+
+\item[$\texttt{for (}\ \textit{expression}_1\texttt{;}\ \textit{expression}_2\texttt{;}\ \textit{expression}_3\texttt{)}\ \textit{block}$:]
+The name $\texttt{undefined}$ is pushed on $C$,
+followed by $\textit{expression}_1$, 
+followed by a \texttt{pop} instruction,
+followed by a \texttt{for} instruction
+that has
+$\textit{block}$ as its body,
+$\textit{expression}_2$ as its predicate,
+and $\textit{expression}_3$ as its increment expression.
+If $\textit{block}$ contains a \lstinline{break;}
+statement that is not included in a nested block, the \texttt{for} instruction
+is followed by a \texttt{brk mark} instruction.
+
+\item[\texttt{break;}:]
+A $\texttt{break}$ instruction is pushed on $C$.
+
+\item[\texttt{continue;}:]
+A $\texttt{continue}$ instruction is pushed on $C$.
+
+\item[\texttt{\{}\ $\textit{statement}\ldots$ \texttt{\}}:]
+The statement sequence $\textit{statement}\ldots$ is pushed on $C$.
+If the current environment is needed after the block, the
+statement sequence is followed by an \texttt{env} instruction that
+refers to the current environment.
+If the statement sequence contains declarations outside of
+any block, a new environment is added to $E$ that extends the current environment
+with a frame in which all declared names are unassigned. This new environment
+is now considered the current environment.
+
+\end{description}
+
+\subsection*{Expressions}
+
+
+\begin{description}
+\item[Primitive expressions:]
+Primitive expressions (numbers, strings, \lstinline{true}, \lstinline{false},
+\lstinline{null}) are pushed on $S$.
+
+\item[$\textit{name}$:]
+$\textit{name}$ is looked up in the current environment, frame-by-frame starting with
+the first frame, until a frame is found that has a binding for 
+$\textit{name}$. If
+$\textit{name}$ is unassigned in the frame, the program execution is terminated
+and an error is displayed. If
+$\textit{name}$ is bound to a value, that value is pushed on $S$.
+
+\item[$\textit{expression}_1\ \textit{binary-operator}\ \textit{expression}_2$:]
+$\textit{expression}_1$ is pushed on $C$, followed by
+$\textit{expression}_2$, followed by a
+$\textit{binary-operator}$ instruction for
+$\textit{binary-operator}$.
+
+\item[$\textit{unary-operator}\ \textit{expression}$:]
+$\textit{expression}$ is pushed on $C$, followed by a
+$\textit{unary-operator}$ instruction for
+$\textit{unary-operator}$.
+
+\item[$\textit{expression}_1\ \textit{binary-logical}\ \textit{expression}_2$:]
+The corresponding conditional expression 
+is pushed on $C$ as specified in
+\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3}.
+
+\item[$\textit{expression}\ \texttt{(}\ \textit{expression}_1,\ldots,\textit{expression}_n\
+\texttt{)}$:]
+$\textit{expression}$ is pushed on $C$, followed by
+$\textit{expression}_1$, followed by ..., followed by
+$\textit{expression}_n$, followed by
+the instruction \texttt{call}\ $n$.
+
+\item[$\textit{names} \texttt{ => } \textit{expression}$:]
+A simple closure is pushed on $S$ that has
+$\textit{names}$ as parameters, 
+$\textit{expression}$ as body,
+the length of \textit{names} as arity,
+and the current environment as environment.
+
+\item[$\textit{names} \texttt{ => \{ return}\ \textit{expression}\texttt{; \}}$:]
+A simple closure is pushed on $S$ that has
+$\textit{names}$ as parameters, 
+$\textit{expression}$ as body, and the current environment as environment.
+
+\item[$\textit{names} \texttt{ => } \textit{block}$:]
+A complex closure is pushed on $S$ that has 
+$\textit{names}$ as parameters, 
+$\textit{block}$ as body, and the current environment as environment.
+
+\item[$\textit{name} \texttt{ = } \textit{expression}$:]
+$\textit{expression}$ is pushed on $C$, followed by
+an \texttt{asgn}\ $\textit{name}$ instruction.
+
+\item[$\textit{expression}_1\ \texttt{[}\ \textit{expression}_2\ \texttt{]}\ \texttt{=}\ \textit{expression}_3$:]
+$\textit{expression}_1$ is pushed on $C$, followed by
+$\textit{expression}_2$, followed by
+$\textit{expression}_3$, followed by
+an \texttt{arr asgn} instruction.
+
+\item[$\textit{expression}_1\ \texttt{?}\ \textit{expression}_2\ \texttt{:}\
+\textit{expression}_3$:]
+$\textit{expression}_1$  is pushed on $C$, followed by
+a \texttt{branch} instruction that has  $\textit{expression}_2$ as
+consequent branch and $\textit{expression}_3$ and alternative branch.
+
+\item[$\textit{expression}_1\ \texttt{[}\ \textit{expression}_2\ \texttt{]}$:]
+$\textit{expression}_1$ is pushed on $C$, followed by
+$\textit{expression}_2$, followed by an
+\texttt{arr acc} instruction.
+
+\item[$\texttt{[}\textit{expression}_1\texttt{,}\ \ldots\ \texttt{,} \textit{expression}_n \texttt{]}$:]
+$\textit{expression}_1$ is pushed on $C$, followed by
+$\textit{expression}_2$, etc until
+$\textit{expression}_n$, followed by an \texttt{arr lit} $n$ instruction.
+
+\end{description}
+
+\subsection*{Instructions}
+
+\begin{description}
+
+\item[$\texttt{pop}$:]
+The first value on $S$ is popped.
+
+\item[$\textit{binary-operator}$:]
+The first two values on $S$ are replaced by the result of
+applying the operator to the second and first as operands, in this order.
+If the operands do not comply with the
+types specified in Section~3 of
+\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3},
+the program execution is terminated an an error is displayed.
+
+\item[$\textit{unary-operator}$:]
+The first value on $S$ is replaced by the result of
+applying the operator to it.
+If the operand does not comply with the
+types specified in Section~3 of
+\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3},
+the program execution is terminated and an error is displayed.
+
+\item[$\texttt{asgn}\ \textit{name}$:]
+$\textit{name}$ is looked up in the current environment, frame-by-frame starting with the
+first frame, 
+until a frame is found that has a binding for 
+$\textit{name}$.
+% If $\textit{name}$ is unassigned in the frame, the program execution is terminated
+% and an error is displayed. If
+This frame is changed such that $\textit{name}$ is bound to the first value on $S$.
+
+%\item[$\texttt{init}\ \textit{name}$:]
+%$\textit{name}$ is bound to the first value on $S$ in the first frame of
+%the current environment.
+ 
+\item[$\texttt{return}$:]
+The control items are popped one-by-one, starting with the first, until
+a \texttt{mark} instruction is reached, which is also popped.
+
+\item[$\texttt{branch}$:]
+The first value $b$ is popped from $S$. If $b$ is true, the branch instructions
+consequent is pushed on $C$, if $b$ is false,
+the branch instructions
+alternative is pushed on $C$, and otherwise the program
+execution is terminated with an error.
+
+\item[$\texttt{while}$:]
+The first value $b$ is popped from $S$. If $b$ is true,
+the next value is popped from $S$, and the body of the
+while instruction is pushed on $C$, followed by the predicate
+of the while instruction, followed by the while instruction itself.
+If $b$ is false, no action is taken.
+Otherwise the program
+execution is terminated with an error.
+
+\item[$\texttt{for}$:]
+The first value $b$ is popped from $S$. If $b$ is true,
+the next value is popped from $S$, and the body of the
+for instruction is pushed on $C$,
+followed by the increment expression
+of the for instruction, 
+followed by the predicate
+of the for instruction, followed by the for instruction itself.
+If $b$ is false, no action is taken.
+Otherwise the program
+execution is terminated with an error.
+
+\item[$\texttt{break}$:]
+The control items are popped one-by-one from $C$, starting with the first, until
+a \texttt{brk mark} instruction is reached, which is also popped.
+
+\item[$\texttt{continue}$:]
+The control items are popped one-by-one from $C$, starting with the first, until
+a \texttt{while} instruction is reached, which is kept on $C$.
+
+\item[$\texttt{env}$:]
+Execution continues with the environment of the \texttt{env} instruction as
+the current environment.
+
+\item[$\texttt{call}\ n$:]
+The $n + 1$st element on $S$ (starting counting with 1) needs to be a closure
+or primitive function with arity $n$, otherwise the program
+execution is terminated with an error.
+
+If the $n + 1$st element on $S$ is a primitive function,
+the first $n + 1$ values on $S$ are replaced by the result of applying the primitive
+function to the first $n$ elements on $S$ in reverse order in which they appear.
+
+If the $n + 1$st element on $S$ is a closure, 
+the body of the closure is pushed on $C$.
+This is followed by a \texttt{mark} instruction if the closure is complex.
+If the current environment is needed after the call instruction, this
+is followed by an $\texttt{env}$ instruction that refers to the current environment.
+If $n \neq 0$, a new environment is added to $E$
+that extends the environment of the closure with a frame in which the
+parameters of the closure are bound to the first $n$ elements on $S$
+in reverse order in which they appear.
+This new environment is now considered the current environment.
+The first $n + 1$ values are popped from $S$.
+
+\item[\texttt{arr lit} $n$:]
+An array value with $n$ elements is constructed, whose first $n$ array entries
+are the first $n$ elements on $S$
+(starting counting with 1) in reverse order in which they appear: The array entry
+at index $n - 1$ is the first value on $S$ and the array entry
+at index $0$ is the $n$th value on $S$. The first $n$ values on $S$ are replaced
+by the array value.
+
+\item[$\texttt{arr acc}$:]
+The second value on $S$ (starting counting from 1) needs to be an array value, and the first
+value on $S$ needs to be an index---a non-negative integer from 1 to $2^{32} - 2$
+(4,294,967,294)---otherwise the execution of the program is terminated with an error.
+The first two values on $S$ are replaced by 
+the array value at the given index or
+the value \texttt{undefined}
+if the array does not have a value at the given index.
+
+\item[$\texttt{arr asgn}$:]
+The third value on $S$ (starting counting from 1) needs to be an array value, and the second
+value on $S$ needs to be an index---a non-negative integer from 1 to $2^{32} - 2$
+(4,294,967,294)---otherwise the execution of the program is terminated with an error.
+The array value at the given index is replaced by the first value on $S$, or added
+to the array if the array did not have a value at the given index.
+The second and third values are removed from $S$, but the first value is kept.
+
+\end{description}
+
+\subsection*{Result}
+
+When $C$ is empty, 
+the first value of $S$ is the result of program, or if $S$ is empty,
+the value \lstinline{undefined} is the result of the program.
+
+\end{document}

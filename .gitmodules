@@ -1,6 +1,0 @@
-[submodule "src/alt-langs/scheme/scm-slang"]
-	path = src/alt-langs/scheme/scm-slang
-	url = ../../source-academy/scm-slang.git
-[submodule "src/py-slang"]
-	path = src/py-slang
-	url = ../../source-academy/py-slang.git

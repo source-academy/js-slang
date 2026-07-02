@@ -1,22 +1,27 @@
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { Chapter } from '../types'
+import { TimeoutError } from '../errors/timeoutErrors';
+import type { Node } from '../types';
+import { Chapter, type ChapterStrings, Variant } from '../langs';
 
-export class PromiseTimeoutError extends RuntimeSourceError {}
+export class PromiseTimeoutError extends TimeoutError {
+  public override explain() {
+    return 'An internal operation timed out while executing.';
+  }
+}
 
-export const timeoutPromise = <T>(promise: Promise<T>, timeout: number) =>
+export const timeoutPromise = <T>(promise: Promise<T>, timeout: number, node?: Node) =>
   new Promise<T>((resolve, reject) => {
-    const timeoutid = setTimeout(() => reject(new PromiseTimeoutError()), timeout)
+    const timeoutid = setTimeout(() => reject(new PromiseTimeoutError(node)), timeout);
 
     promise
       .then(res => {
-        clearTimeout(timeoutid)
-        resolve(res)
+        clearTimeout(timeoutid);
+        resolve(res);
       })
       .catch(e => {
-        clearTimeout(timeoutid)
-        reject(e)
-      })
-  })
+        clearTimeout(timeoutid);
+        reject(e);
+      });
+  });
 
 /**
  * Run the mapping function over the items, filtering out any items that
@@ -24,29 +29,29 @@ export const timeoutPromise = <T>(promise: Promise<T>, timeout: number) =>
  */
 export function mapAndFilter<T, U>(items: T[], mapper: (input: T) => U | undefined) {
   return items.reduce((res, item) => {
-    const newItem = mapper(item)
-    if (newItem !== undefined) return [...res, newItem]
-    return res
-  }, [] as U[])
+    const newItem = mapper(item);
+    if (newItem !== undefined) return [...res, newItem];
+    return res;
+  }, [] as U[]);
 }
 
 /**
  * Type safe `Object.keys`
  */
 export function objectKeys<T extends string | number | symbol>(obj: Record<T, any>): T[] {
-  return Object.keys(obj) as T[]
-}
-
-/**
- * Type safe `Object.values`
- */
-export function objectValues<T>(obj: Record<any, T>) {
-  return Object.values(obj) as T[]
+  return Object.keys(obj) as T[];
 }
 
 /**
  * Given the chapter value, return the string name of that chapter
  */
 export function getChapterName(chapter: Chapter) {
-  return objectKeys(Chapter).find(name => Chapter[name] === chapter)!
+  return Chapter[chapter] as ChapterStrings;
+}
+
+/**
+ * Given the variant value, return the string name of that variant
+ */
+export function getVariantName(variant: Variant) {
+  return objectKeys(Variant).find(name => Variant[name] === variant)!;
 }

@@ -1,17 +1,17 @@
-import type es from 'estree'
+import type es from 'estree';
 
-import createContext, { EnvTree } from '../../createContext'
-import Closure from '../../cse-machine/closure'
-import { Chapter, type Context, type Environment, type LanguageOptions, Variant } from '../../types'
-import { Transformers } from '../../cse-machine/interpreter'
-import { createBlockEnvironment } from '../../cse-machine/utils'
+import createContext, { EnvTree } from '../../createContext';
+import Closure from '../../cse-machine/closure';
+import { createBlockEnvironment } from '../../cse-machine/utils';
+import { Chapter, type LanguageOptions, Variant } from '../../langs';
+import type { Context, Environment } from '../../types';
 
 export function mockContext(
   chapter: Chapter = Chapter.SOURCE_1,
   variant: Variant = Variant.DEFAULT,
-  languageOptions: LanguageOptions = {}
+  languageOptions: LanguageOptions = {},
 ): Context {
-  return createContext(chapter, variant, languageOptions)
+  return createContext(chapter, variant, languageOptions);
 }
 
 export function mockImportDeclaration(): es.ImportDeclaration {
@@ -22,21 +22,22 @@ export function mockImportDeclaration(): es.ImportDeclaration {
         type: 'ImportDefaultSpecifier',
         local: {
           type: 'Identifier',
-          name: 'MockName'
-        }
-      }
+          name: 'MockName',
+        },
+      },
     ],
+    attributes: [],
     source: {
       type: 'Literal',
       value: 'mock-path',
-      raw: "'mock-path'"
-    }
-  }
-  return mockImportDecl
+      raw: "'mock-path'",
+    },
+  };
+  return mockImportDecl;
 }
 
 export function mockRuntimeContext(): Context {
-  const context = createContext()
+  const context = createContext();
   context.runtime = {
     break: false,
     debuggerOn: true,
@@ -48,25 +49,25 @@ export function mockRuntimeContext(): Context {
         type: 'Literal',
         loc: {
           start: { line: 1, column: 0 },
-          end: { line: 1, column: 1 }
+          end: { line: 1, column: 1 },
         },
         value: 0,
         raw: '0',
-        range: [0, 1]
-      }
+        range: [0, 1],
+      },
     ],
     control: null,
     stash: null,
     objectCount: 0,
     envStepsTotal: 0,
     breakpointSteps: [],
-    changepointSteps: []
-  }
-  return context
+    changepointSteps: [],
+  };
+  return context;
 }
 
 export function mockClosure(): Closure {
-  const context = createContext()
+  const context = createContext();
   return new Closure(
     {
       type: 'ArrowFunctionExpression',
@@ -75,19 +76,14 @@ export function mockClosure(): Closure {
       params: [],
       body: {
         type: 'BlockStatement',
-        body: []
-      }
-    } as es.ArrowFunctionExpression,
+        body: [],
+      },
+    },
     mockEnvironment(context),
-    mockTransformers(),
-    context
-  )
+    context,
+  );
 }
 
 export function mockEnvironment(context: Context, name = 'blockEnvironment'): Environment {
-  return createBlockEnvironment(context, name)
-}
-
-export function mockTransformers(): any {
-  return new Transformers()
+  return createBlockEnvironment(context, name);
 }
