@@ -322,4 +322,11 @@ export async function compileFiles(
   }
 }
 
-export { assemble, type Context, createContext, type ModuleContext, type Result, setBreakpointAtLine };
+export {
+  assemble,
+  type Context,
+  createContext,
+  type ModuleContext,
+  type Result,
+  setBreakpointAtLine,
+};

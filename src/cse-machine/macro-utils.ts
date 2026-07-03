@@ -1,4 +1,4 @@
-import type { List, Pair } from '../stdlib/list'
+import type { List, Pair } from '../stdlib/list';
 
 /**
  * Low-level check for a list.
@@ -7,9 +7,9 @@ import type { List, Pair } from '../stdlib/list'
  */
 export function isList(value: any): value is List {
   if (value === null) {
-    return true
+    return true;
   }
-  return Array.isArray(value) && value.length === 2 && isList(value[1])
+  return Array.isArray(value) && value.length === 2 && isList(value[1]);
 }
 
 /**
@@ -19,9 +19,9 @@ export function isList(value: any): value is List {
  */
 export function flattenList(value: List): any[] {
   if (value === null) {
-    return []
+    return [];
   }
-  return [value[0], ...flattenList(value[1])]
+  return [value[0], ...flattenList(value[1])];
 }
 
 /**
@@ -30,7 +30,7 @@ export function flattenList(value: List): any[] {
  * @returns
  */
 export function arrayToList(arr: any[]): List {
-  return arrayToImproperList(arr, null) as List
+  return arrayToImproperList(arr, null) as List;
 }
 
 /**
@@ -41,11 +41,11 @@ export function arrayToList(arr: any[]): List {
  */
 export function arrayToImproperList(arr: any[], last: any): any {
   if (arr.length === 0) {
-    return last
+    return last;
   }
-  const pair: any[] = [arr[0], arrayToImproperList(arr.slice(1), last)] as any[]
-  ;(pair as any).pair = true
-  return pair
+  const pair: any[] = [arr[0], arrayToImproperList(arr.slice(1), last)] as any[];
+  (pair as any).pair = true;
+  return pair;
 }
 
 /**
@@ -56,9 +56,9 @@ export function arrayToImproperList(arr: any[], last: any): any {
  */
 export function isImproperList(value: any): value is Pair<any, any> {
   if (value === null) {
-    return false
+    return false;
   }
-  return Array.isArray(value) && value.length === 2 && !isList(value[1])
+  return Array.isArray(value) && value.length === 2 && !isList(value[1]);
 }
 
 /**
@@ -67,7 +67,7 @@ export function isImproperList(value: any): value is Pair<any, any> {
  * @returns
  */
 export function isPair(value: any): value is Pair<any, any> {
-  return Array.isArray(value) && value.length === 2
+  return Array.isArray(value) && value.length === 2;
 }
 
 /**
@@ -76,13 +76,13 @@ export function isPair(value: any): value is Pair<any, any> {
  * @returns
  */
 export function flattenImproperList(value: any): [any[], any] {
-  let items = []
-  let working = value
+  let items = [];
+  let working = value;
   while (working instanceof Array && working.length === 2) {
-    items.push(working[0])
-    working = working[1]
+    items.push(working[0]);
+    working = working[1];
   }
-  return [items, working]
+  return [items, working];
 }
 
 /**
@@ -91,11 +91,11 @@ export function flattenImproperList(value: any): [any[], any] {
  * @returns
  */
 export function improperListLength(value: any): number {
-  let length = 0
-  let working = value
+  let length = 0;
+  let working = value;
   while (isPair(working)) {
-    length++
-    working = working[1]
+    length++;
+    working = working[1];
   }
-  return length
+  return length;
 }

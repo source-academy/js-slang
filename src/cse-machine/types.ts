@@ -50,10 +50,8 @@ export interface DeclAssmtInstr extends BaseInstr<InstrType.ASSIGNMENT, es.Varia
   declaration: true;
 }
 
-export interface RegularAssmtInstr extends BaseInstr<
-  InstrType.ASSIGNMENT,
-  es.AssignmentExpression
-> {
+export interface RegularAssmtInstr
+  extends BaseInstr<InstrType.ASSIGNMENT, es.AssignmentExpression> {
   declaration: false;
   symbol: string;
 }
