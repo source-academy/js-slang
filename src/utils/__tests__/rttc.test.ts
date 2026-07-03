@@ -396,7 +396,7 @@ describe(rttc.isFunctionOfLength, () => {
 
     const func3: unknown = (_a: any) => {};
     if (rttc.isFunctionOfLength(func3, 1)) {
-      expectTypeOf(func3).toEqualTypeOf<(a: unknown, ...args: unknown[]) => unknown>();
+      expectTypeOf(func3).toEqualTypeOf<(a: unknown) => unknown>();
     } else {
       expectTypeOf(func3).toEqualTypeOf<unknown>();
       expect.fail('Type guard failed unexpectedly');

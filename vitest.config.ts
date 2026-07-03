@@ -17,6 +17,9 @@ export default defineConfig({
       ],
       reporter: ['text', 'html', 'lcov']
     },
+    typecheck: {
+      include: ['./src/utils/__tests__/typeUtils.test.ts'],
+    },
     snapshotFormat: {
       escapeString: true,
       printBasicPrototype: true

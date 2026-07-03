@@ -1,4 +1,4 @@
-import type acorn from 'acorn';
+import type * as acorn from 'acorn';
 import type es from 'estree';
 
 import { simple } from '../ast/walkers';

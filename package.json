@@ -64,7 +64,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@types/estree": "^1.0.5",
+    "@types/estree": "^1.0.9",
     "@types/lodash": "^4.14.202",
     "@types/node": "^24.12.2",
     "@vitest/coverage-v8": "^4.0.4",

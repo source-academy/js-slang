@@ -1,4 +1,4 @@
-import acorn from 'acorn';
+import type * as acorn from 'acorn';
 import type es from 'estree';
 
 import { partition } from 'lodash';

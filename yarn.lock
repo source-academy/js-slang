@@ -725,17 +725,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/estree@npm:^1.0.0":
+"@types/estree@npm:^1.0.0, @types/estree@npm:^1.0.9":
   version: 1.0.9
   resolution: "@types/estree@npm:1.0.9"
   checksum: 10c0/3ad3286ca2988cd550dafb8f2ad599c8474868e954fa601a36655bdfefd8039f7c714b8c1c7f2ae219ffbd58bd4660e66fa7479a0120fc02d4777057d4865387
-  languageName: node
-  linkType: hard
-
-"@types/estree@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "@types/estree@npm:1.0.5"
-  checksum: 10c0/b3b0e334288ddb407c7b3357ca67dbee75ee22db242ca7c56fe27db4e1a31989cb8af48a84dd401deb787fe10cc6b2ab1ee82dc4783be87ededbe3d53c79c70d
   languageName: node
   linkType: hard
 
@@ -3181,7 +3174,7 @@ __metadata:
     "@babel/parser": "npm:^7.19.4"
     "@commander-js/extra-typings": "npm:^14.0.0"
     "@ts-morph/bootstrap": "npm:^0.18.0"
-    "@types/estree": "npm:^1.0.5"
+    "@types/estree": "npm:^1.0.9"
     "@types/lodash": "npm:^4.14.202"
     "@types/node": "npm:^24.12.2"
     "@vitest/coverage-v8": "npm:^4.0.4"
