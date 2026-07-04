@@ -8,8 +8,8 @@ Every class should have the following properties
 */
 
 import type es from 'estree';
-import { generate } from './utils';
 import assert from '../utils/assert';
+import { generate } from './utils';
 import { isBuiltinFunction } from './builtins';
 import type { StepperBaseNode } from './interface';
 import { StepperArrayExpression } from './nodes/Expression/ArrayExpression';
