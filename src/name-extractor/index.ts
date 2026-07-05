@@ -310,7 +310,7 @@ function cursorInIdentifier(node: Node, locTest: (node: Node) => boolean): boole
   }
 }
 
-function docsToHtml(
+export function docsToHtml(
   spec: es.ImportSpecifier | es.ImportDefaultSpecifier,
   obj: ModuleDocsEntry,
 ): string {
@@ -320,11 +320,25 @@ function docsToHtml(
   switch (obj.kind) {
     case 'function': {
       let paramStr: string;
-
       if (obj.params.length === 0) {
         paramStr = '()';
       } else {
-        paramStr = `(${obj.params.map(([name, type]) => `${name}: ${type}`).join(', ')})`;
+        const [otherParams, restParams] = partition(obj.params, each => each.paramType !== 'rest');
+        const paramArgs = otherParams.map(each => {
+          if (each.paramType === 'optional') {
+            return `${each.name}?: ${each.type}`;
+          }
+
+          return `${each.name}: ${each.type}${each.defaultValue === undefined ? '' : ` = ${each.defaultValue}`}`;
+        });
+
+        if (restParams.length >= 1) {
+          // There should only ever be one rest parameter, but if there are we can just ignore the rest
+          const { name: paramName, type: paramType } = restParams[0];
+          paramArgs.push(`...${paramName}: ${paramType}`);
+        }
+
+        paramStr = `(${paramArgs.join(', ')})`;
       }
 
       const header = `${importedName}${paramStr} → {${obj.retType}}`;

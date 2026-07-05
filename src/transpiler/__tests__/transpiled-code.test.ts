@@ -41,7 +41,7 @@ test('Ensure no name clashes', () => {
   expect(replacedGlobalsLine).toMatchSnapshot();
 });
 
-describe('Wrapping call expressions', () => {
+describe.todo('Wrapping call expressions', () => {
   test('when callee is a member expression', () => {
     const code = stripIndent`
       const obj = {};

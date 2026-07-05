@@ -1,10 +1,11 @@
-import type { BinaryOperator, UnaryOperator } from 'estree';
+import type { BinaryOperator, CallExpression, UnaryOperator } from 'estree';
 
 import {
   CallingNonFunctionValueError,
   ExceptionError,
   GetInheritedPropertyError,
-  InvalidNumberOfArgumentsError,
+  TooFewArgumentsError,
+  TooManyArgumentsError,
 } from '../errors/errors';
 import { RuntimeSourceError } from '../errors/base';
 import {
@@ -16,6 +17,8 @@ import type { NativeStorage } from '../types';
 import * as create from './ast/astCreator';
 import { callExpression, locationDummyNode } from './ast/astCreator';
 import * as rttc from './rttc';
+import { HasCorrectParameters } from './typeUtils';
+import assert from './assert';
 
 export function throwIfTimeout(
   nativeStorage: NativeStorage,
@@ -114,7 +117,7 @@ interface FunctionDetails {
    * was originally defined in
    */
   source: string | null;
-  minArgsNeeded?: number;
+  maxArgsAllowed: number | true;
 }
 
 const funcDetSymbol = Symbol();
@@ -125,9 +128,81 @@ function getFunctionDetails(f: Function): FunctionDetails {
   }
 
   return {
-    minArgsNeeded: f.length, // no way to check if the function hasVarArgs
+    maxArgsAllowed: f.length, // no way to check if the function hasVarArgs
     source: null,
   };
+}
+
+/**
+ * Check that the number of arguments provided falls within the range specified.
+ *
+ * You can call it with just a {@link CallExpression}, in which case its `callee` should be either a
+ * {@link FunctionExpression} or {@link ArrowFunctionExpression}.
+ *
+ * Otherwise, the node is just used for location information and you have to manually specify
+ * everything else.
+ *
+ * - If `maxArgs` is true, then there is no maximum number of arguments. Useful for functions
+ * with a rest parameter.
+ * - If `maxArgs` is a number, then that value is the maximum number of arguments.
+ * - If `maxArgs` is `undefined` or not provided, then the maximum number of arguments is assumed
+ * to be `minArgs`.
+ */
+export function validateFunctionArgCount(exp: CallExpression): void;
+export function validateFunctionArgCount(
+  exp: CallExpression,
+  received: number,
+  minArgs: number,
+  maxArgs?: number | true,
+  funcName?: string,
+): void;
+export function validateFunctionArgCount(
+  exp: CallExpression,
+  received?: number,
+  rawMinArgs?: number,
+  rawMaxArgs?: number | true,
+  funcName?: string,
+) {
+  let minArgs: number;
+  let maxArgs: number | true;
+
+  if (received === undefined) {
+    assert(
+      exp.callee.type === 'ArrowFunctionExpression' || exp.callee.type === 'FunctionExpression',
+      `${validateFunctionArgCount.name}: When called with CallExpression only, callee must be a function node`,
+    );
+
+    const func = exp.callee;
+    received = exp.arguments.length;
+    minArgs = func.params.filter(
+      x => x.type !== 'AssignmentPattern' && x.type !== 'RestElement',
+    ).length;
+    maxArgs =
+      (func.params.length > 0 && func.params[func.params.length - 1].type === 'RestElement') ||
+      func.params.length;
+  } else {
+    minArgs = rawMinArgs!;
+    maxArgs = rawMaxArgs ?? rawMinArgs!;
+  }
+
+  assert(
+    typeof maxArgs !== 'number' || maxArgs >= minArgs,
+    `MaxArgs was a number (${maxArgs}) but less than MinArgs = ${minArgs}`,
+  );
+
+  if (received < minArgs) {
+    throw new TooFewArgumentsError(
+      exp,
+      received,
+      minArgs,
+      maxArgs === true || maxArgs !== minArgs,
+      funcName,
+    );
+  }
+
+  if (maxArgs !== true && received > maxArgs) {
+    throw new TooManyArgumentsError(exp, received, maxArgs, maxArgs !== minArgs, funcName);
+  }
 }
 
 /**
@@ -161,9 +236,8 @@ export function callIfFuncAndRightArgs(
       );
     }
 
-    const expectedLength = f.length;
     const receivedLength = args.length;
-    const { minArgsNeeded, source: funcSource } = getFunctionDetails(f);
+    const { maxArgsAllowed, source: funcSource } = getFunctionDetails(f);
 
     if (funcSource === 'prelude') {
       // Once we call into a prelude function, everything that follows
@@ -171,20 +245,17 @@ export function callIfFuncAndRightArgs(
       isPrelude = true;
     }
 
-    const hasVarArgs = minArgsNeeded !== undefined;
-    if (hasVarArgs ? minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
-      throw new InvalidNumberOfArgumentsError(
-        callExpression(dummy, args, {
-          start: { line, column },
-          end: { line, column },
-          source,
-        }),
-        hasVarArgs ? minArgsNeeded : expectedLength,
-        receivedLength,
-        f.name,
-        hasVarArgs,
-      );
-    }
+    validateFunctionArgCount(
+      callExpression(dummy, args, {
+        start: { line, column },
+        end: { line, column },
+        source,
+      }),
+      receivedLength,
+      f.length,
+      maxArgsAllowed,
+      f.name,
+    );
 
     let res;
     try {
@@ -256,44 +327,68 @@ export function callWithoutMetadata<T extends (...args: any[]) => any>(
  * properly by {@link callIfFuncAndRightArgs}. It won't redefine any existing details
  * that the function has already been wrapped with.
  *
- * - `hasVarArgs`
- *   - If `hasVarArgs` is `false` or `undefined`, then `f` is assumed not to have variadic args.
- *   - If `hasVarArgs` is `true`, `minArgsNeeded` is inferred from `f.length`.
- *   - If `hasVarArgs` is a number, it is used for `minArgsNeeded`.
+ * @example
+ * ```ts
+ * export const wrapped = wrap((...args: any[]) => args.length, true, 'wrapped');
+ * ```
+ *
+ * - `optArgCount`: Represents the number of optional arguments the function has
+ *   - If set to `undefined`, it will be assumed to be 0
+ *   - If set to a number, that will be taken to be the number of optional arguments
+ *   - If set to `true`, the function is assumed to have a rest argument
  *
  * - If `stringified` is `undefined`, the function won't try to define `toReplString`.
  * - `funcName`
  *   - If `funcName` is `undefined`, the function won't try to define the `name` property.
  *   - If `funcName` is provided, the `name` property will get overriden.
  */
+export function wrap<T extends (...args: any[]) => any, OptArgs extends number>(
+  f: HasCorrectParameters<T, OptArgs>,
+  optArgCount: OptArgs,
+  funcName?: string,
+  stringified?: string,
+  source?: string | null,
+): T;
 export function wrap<T extends (...args: any[]) => any>(
-  f: T,
-  hasVarArgs: boolean | undefined | number,
+  f: HasCorrectParameters<T, true>,
+  optArgCount: true,
+  funcName?: string,
+  stringified?: string,
+  source?: string | null,
+): T;
+export function wrap<T extends (...args: any[]) => any>(
+  f: HasCorrectParameters<T, 0>,
+  optArgCount?: undefined,
+  funcName?: string,
+  stringified?: string,
+  source?: string | null,
+): T;
+export function wrap(
+  f: (...args: any[]) => any,
+  optArgCount?: number | true,
+  funcName?: string,
   stringified?: string,
   source: string | null = null,
-  funcName?: string,
-): T {
-  let minArgsNeeded: number | undefined;
-  if (hasVarArgs === true) {
-    minArgsNeeded = f.length;
-  } else if (typeof hasVarArgs === 'number') {
-    minArgsNeeded = hasVarArgs;
-  }
-
+) {
   if (funcName !== undefined) {
     Object.defineProperty(f, 'name', { value: funcName });
   }
 
+  const maxArgsAllowed =
+    optArgCount === true ? true : optArgCount === undefined ? f.length : f.length + optArgCount;
+
   if (!(funcDetSymbol in f)) {
-    (f as any)[funcDetSymbol] = {
-      minArgsNeeded,
+    const details: FunctionDetails = {
+      maxArgsAllowed,
       source,
     };
+
+    (f as any)[funcDetSymbol] = details;
   } else {
     const funcDets = getFunctionDetails(f);
 
-    if (typeof funcDets.minArgsNeeded !== 'number') {
-      funcDets.minArgsNeeded = minArgsNeeded;
+    if (typeof funcDets.maxArgsAllowed !== 'number' && funcDets.maxArgsAllowed !== true) {
+      funcDets.maxArgsAllowed = maxArgsAllowed;
     }
 
     if (typeof funcDets.source !== 'string') {
@@ -307,6 +402,21 @@ export function wrap<T extends (...args: any[]) => any>(
     f.toReplString = () => stringified;
   }
   return f;
+}
+
+/**
+ * A type-agnostic version of {@link wrap} to make it easier
+ * when the function type is not known.
+ */
+export function wrapUnsafe<T extends (...args: any[]) => any>(
+  f: T,
+  optArgCount?: number | true,
+  funcName?: string,
+  stringified?: string,
+  source?: string | null,
+) {
+  // @ts-expect-error Ignore type safety
+  return wrap(f, optArgCount, funcName, stringified, source);
 }
 
 export function setProp(

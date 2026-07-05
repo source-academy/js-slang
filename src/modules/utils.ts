@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import type { RecursivePartial } from '../types';
+import type { RecursivePartial } from '../utils/typeUtils';
 import type { ModuleContext, ImportOptions } from './moduleTypes';
 import { defaultAnalysisOptions } from './preprocessor/analyzer';
 

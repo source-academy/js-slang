@@ -3,7 +3,8 @@ import type { Program } from 'estree';
 import type { IOptions } from '..';
 import type { Variant } from '../langs';
 import { areBreakpointsSet } from '../stdlib/inspector';
-import type { Context, RecursivePartial } from '../types';
+import type { Context } from '../types';
+import type { RecursivePartial } from '../utils/typeUtils';
 import { simple } from '../utils/ast/walkers';
 
 // Context Utils

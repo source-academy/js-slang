@@ -38,5 +38,8 @@ jobs:
           publish_dir: docs/source
           external_repository: source-academy/docs.sourceacademy.org
           publish_branch: master
-          force_orphan: true
+          # Do not wipe the branch: keep files published by other sources
+          # (e.g. py-slang's Python docs under /python). Previously this used
+          # force_orphan: true, which replaced the whole branch on every deploy.
+          keep_files: true
           cname: docs.sourceacademy.org

@@ -4,12 +4,10 @@ import { getBuiltinFunction, isBuiltinFunction } from '../../builtins';
 import { convert } from '../../generator';
 import { StepperBaseNode } from '../../interface';
 import { StepperBlockStatement } from '../Statement/BlockStatement';
-import {
-  CallingNonFunctionValueError,
-  InvalidNumberOfArgumentsError,
-} from '../../../errors/errors';
+import { CallingNonFunctionValueError } from '../../../errors/errors';
 import { GeneralRuntimeError, InternalRuntimeError } from '../../../errors/base';
 import type { RedexInfo } from '../..';
+import { validateFunctionArgCount } from '../../../utils/operators';
 import { StepperBlockExpression } from './BlockExpression';
 
 export class StepperFunctionApplication
@@ -44,11 +42,9 @@ export class StepperFunctionApplication
   }
 
   public override isContractible(redex: RedexInfo): boolean {
-    const isValidCallee =
-      this.callee.type === 'ArrowFunctionExpression' ||
-      (this.callee.type === 'Identifier' && isBuiltinFunction(this.callee.name));
-
-    if (!isValidCallee) {
+    if (this.callee.type === 'ArrowFunctionExpression') {
+      validateFunctionArgCount(this);
+    } else if (this.callee.type !== 'Identifier' || !isBuiltinFunction(this.callee.name)) {
       // Since the callee can not proceed further, calling non callables should result to an error.
 
       if (
@@ -58,17 +54,6 @@ export class StepperFunctionApplication
         throw new CallingNonFunctionValueError(this.callee, this);
       }
       return false;
-    }
-
-    if (this.callee.type === 'ArrowFunctionExpression') {
-      const arrowFunction = this.callee;
-      if (arrowFunction.params.length !== this.arguments.length) {
-        throw new InvalidNumberOfArgumentsError(
-          this,
-          arrowFunction.params.length,
-          this.arguments.length,
-        );
-      }
     }
 
     return this.arguments.every(arg => !arg.isOneStepPossible(redex));

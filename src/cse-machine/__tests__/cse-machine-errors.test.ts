@@ -477,7 +477,7 @@ test('Error when calling function with too few arguments', () => {
     f();
   `,
     optionEC,
-  ).toEqual('Line 4: Expected 1 arguments, but got 0.');
+  ).toEqual('Line 4: f: Expected 1 arguments, but got 0.');
 });
 
 test('Error when calling function with too few arguments - verbose', async ({ expect }) => {
@@ -493,8 +493,8 @@ test('Error when calling function with too few arguments - verbose', async ({ ex
   );
 
   expect(errStr).toMatchInlineSnapshot(`
-            "Line 5, Column 2: Expected 1 arguments, but got 0.
-            Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+            "Line 5, Column 2: f: Expected 1 arguments, but got 0.
+            Try calling f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
           `);
 });
@@ -508,7 +508,7 @@ test('Error when calling function with too many arguments', () => {
     f(1, 2);
   `,
     optionEC,
-  ).toEqual('Line 4: Expected 1 arguments, but got 2.');
+  ).toEqual('Line 4: f: Expected 1 arguments, but got 2.');
 });
 
 test('Error when calling function with too many arguments - verbose', async ({ expect }) => {
@@ -524,8 +524,8 @@ test('Error when calling function with too many arguments - verbose', async ({ e
   );
 
   expect(errStr).toMatchInlineSnapshot(`
-            "Line 5, Column 2: Expected 1 arguments, but got 2.
-            Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+            "Line 5, Column 2: f: Expected 1 arguments, but got 2.
+            Try calling f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
           `);
 });
@@ -537,7 +537,7 @@ test('Error when calling arrow function with too few arguments', () => {
     f();
   `,
     optionEC,
-  ).toEqual('Line 2: Expected 1 arguments, but got 0.');
+  ).toEqual('Line 2: f: Expected 1 arguments, but got 0.');
 });
 
 test('Error when calling arrow function with too few arguments - verbose', async ({ expect }) => {
@@ -550,8 +550,8 @@ test('Error when calling arrow function with too few arguments - verbose', async
     optionEC,
   );
   expect(errStr).toMatchInlineSnapshot(`
-            "Line 3, Column 2: Expected 1 arguments, but got 0.
-            Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+            "Line 3, Column 2: f: Expected 1 arguments, but got 0.
+            Try calling f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
           `);
 });
@@ -563,7 +563,7 @@ test('Error when calling arrow function with too many arguments', () => {
     f(1, 2);
   `,
     optionEC,
-  ).toEqual('Line 2: Expected 1 arguments, but got 2.');
+  ).toEqual('Line 2: f: Expected 1 arguments, but got 2.');
 });
 
 test('Error when calling arrow function with too many arguments - verbose', async ({ expect }) => {
@@ -576,8 +576,8 @@ test('Error when calling arrow function with too many arguments - verbose', asyn
     optionEC,
   );
   expect(errStr).toMatchInlineSnapshot(`
-            "Line 3, Column 2: Expected 1 arguments, but got 2.
-            Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+            "Line 3, Column 2: f: Expected 1 arguments, but got 2.
+            Try calling f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
           `);
 });
@@ -605,7 +605,7 @@ test('Error when calling function from member expression with too many arguments
   );
   expect(errStr).toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected 1 arguments, but got 2.
-            Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+            Try calling the function again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
             "
           `);
 });
@@ -621,8 +621,8 @@ test('Error when calling arrow function in tail call with too many arguments - v
     optionEC,
   );
   expect(errStr).toMatchInlineSnapshot(`
-            "Line 3, Column 15: Expected 0 arguments, but got 1.
-            Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
+            "Line 3, Column 15: g: Expected 0 arguments, but got 1.
+            Try calling g again without arguments.
             "
           `);
 });
@@ -635,7 +635,7 @@ test('Error when calling arrow function in tail call with too many arguments', (
     f(1);
   `,
     optionEC,
-  ).toEqual('Line 2: Expected 0 arguments, but got 1.');
+  ).toEqual('Line 2: g: Expected 0 arguments, but got 1.');
 });
 
 test('Error when calling builtin function in with too many arguments', () => {
@@ -743,7 +743,7 @@ test('Error with too few arguments passed to rest parameters', () => {
     rest(1);
   `,
     optionEC3,
-  ).toEqual('Line 2: Expected 2 or more arguments, but got 1.');
+  ).toEqual('Line 2: rest: Expected 2 or more arguments, but got 1.');
 });
 
 test('Error when redeclaring constant', () => {

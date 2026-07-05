@@ -90,6 +90,7 @@ export async function testInContext(code: string, rawOptions: TestOptions) {
   const context = createTestContext(options);
   const result = await runInContext(code, context);
   return {
+    verboseErrors: options.verboseErrors,
     context,
     result,
   };
@@ -101,15 +102,10 @@ export async function testInContext(code: string, rawOptions: TestOptions) {
  */
 export async function testSuccess(code: string, options: TestOptions = {}) {
   const { context, result } = await testInContext(code, options);
-
-  switch (result.status) {
-    case 'error': {
-      const errStr = parseError(context.errors);
-      expect.fail(errStr);
-      // expect.fail(`Program exited with error: ${errStr}`);
-    }
-    case 'suspended-cse-eval':
-      expect.fail(`Program was suspended!`);
+  if (result.status === 'error') {
+    expect.fail(parseError(context.errors));
+  } else if (result.status === 'suspended-cse-eval') {
+    expect.fail('Program was suspended');
   }
 
   return {
@@ -125,7 +121,7 @@ export async function testSuccess(code: string, options: TestOptions = {}) {
 export async function testFailure(code: string, options: TestOptions = {}) {
   const res = await testInContext(code, options);
   expect(res.result.status).toEqual('error');
-  return parseError(res.context.errors);
+  return parseError(res.context.errors, res.verboseErrors);
 }
 
 /**
@@ -135,7 +131,11 @@ export async function testFailure(code: string, options: TestOptions = {}) {
 export const expectFinishedResult = vi.defineHelper(
   (code: string, options: TestOptions = {}): RemoveMatcher<Promisify<Assertion<Promise<any>>>> => {
     return removeMatcher(
-      expect(testSuccess(code, options).then(({ result }) => result.value)).resolves,
+      expect(
+        testSuccess(code, options).then(({ result }) => {
+          return result.value;
+        }),
+      ).resolves,
     );
   },
 );
@@ -147,16 +147,8 @@ export const expectFinishedResult = vi.defineHelper(
 export const expectParsedError = (
   code: string,
   options: TestOptions = {},
-  verbose?: boolean,
 ): RemoveMatcher<Promisify<Assertion<Promise<string>>>> => {
-  return removeMatcher(
-    expect(
-      testInContext(code, options).then(({ result, context }) => {
-        expect(result.status).toEqual('error');
-        return parseError(context.errors, verbose);
-      }),
-    ).resolves,
-  );
+  return removeMatcher(expect(testFailure(code, options)).resolves);
 };
 
 export const expectNativeToTimeoutAndError = vi.defineHelper(

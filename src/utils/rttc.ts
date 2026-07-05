@@ -8,6 +8,7 @@ import {
 import { RuntimeSourceError } from '../errors/base';
 import { Chapter } from '../langs';
 import type { Node, Value } from '../types';
+import { TupleOfLength } from './typeUtils';
 
 const LHS = ' on left hand side of operation';
 const RHS = ' on right hand side of operation';
@@ -304,14 +305,9 @@ export function checkArray(
   }
 }
 
-type TupleOfLengthHelper<T extends number, U, V extends U[] = []> = V['length'] extends T
-  ? V
-  : TupleOfLengthHelper<T, U, [...V, U]>;
-
-/**
- * Utility type that represents a tuple of a specific length
- */
-export type TupleOfLength<T extends number, U = unknown> = TupleOfLengthHelper<T, U>;
+// TODO: Should it be the "proper" signature?
+// type FunctionOfLength<T extends number> = (...args: [...TupleOfLength<T>, ...unknown[]]) => unknown;
+type FunctionOfLength<T extends number> = (...args: TupleOfLength<T>) => unknown;
 
 /**
  * Type guard for checking that the provided value is a function and that it has the specified number of parameters.
@@ -321,10 +317,7 @@ export function isFunctionOfLength<T extends (...args: any[]) => any>(
   f: (...args: any) => any,
   l: Parameters<T>['length'],
 ): f is T;
-export function isFunctionOfLength<T extends number>(
-  f: unknown,
-  l: T,
-): f is (...args: TupleOfLength<T>) => unknown;
+export function isFunctionOfLength<T extends number>(f: unknown, l: T): f is FunctionOfLength<T>;
 export function isFunctionOfLength(f: unknown, l: number) {
   // TODO: Need a variation for rest parameters
   return typeof f === 'function' && f.length === l;
@@ -352,7 +345,7 @@ export function assertFunctionOfLength<T extends number>(
   func_name: string,
   type_name?: string,
   param_name?: string,
-): asserts f is (...args: TupleOfLength<T>) => unknown;
+): asserts f is FunctionOfLength<T>;
 export function assertFunctionOfLength(
   f: unknown,
   l: number,

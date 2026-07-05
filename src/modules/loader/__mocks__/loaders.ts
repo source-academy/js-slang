@@ -9,7 +9,13 @@ export const memoizedLoadModuleDocsAsync = vi.fn((module: string) => {
   const barDocs: FunctionDocumentation = {
     kind: 'function',
     retType: 'void',
-    params: [['a', 'number']],
+    params: [
+      {
+        name: 'a',
+        paramType: 'regular',
+        type: 'number',
+      },
+    ],
     description: 'bar',
   };
 

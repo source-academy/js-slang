@@ -33,7 +33,7 @@ export function extractIdsFromPattern(pattern: es.Pattern): es.Identifier[] {
       return extractIdsFromPattern(pattern.argument);
     default:
       throw new InternalRuntimeError(
-        `Should not encounter a ${pattern.type} in ${extractIdsFromPattern.name}`,
+        `Should not encounter a ${pattern.type} in ${extractDeclarations.name}`,
         pattern,
       );
   }

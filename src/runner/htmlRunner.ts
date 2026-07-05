@@ -1,5 +1,6 @@
 import type { IOptions, Result } from '..';
-import type { Context, RecursivePartial } from '../types';
+import type { Context } from '../types';
+import type { RecursivePartial } from '../utils/typeUtils';
 
 const HTML_ERROR_HANDLING_SCRIPT_TEMPLATE = `<script>
   window.onerror = (msg, url, lineNum) => {

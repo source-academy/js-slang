@@ -9,7 +9,7 @@ import {
   accessExportFunctionName,
   defaultExportLookupName,
 } from '../../../stdlib/localImport.prelude';
-import type { RecursivePartial } from '../../../types';
+import type { RecursivePartial } from '../../../utils/typeUtils';
 import { mockContext } from '../../../utils/testing/mocks';
 import { sanitizeAST } from '../../../utils/testing/sanitizer';
 import { UndefinedImportError } from '../../errors';

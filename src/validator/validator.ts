@@ -4,7 +4,7 @@ import { ConstAssignmentError, UndefinedVariableError } from '../errors/errors';
 import { NoAssignmentToForVariableError } from '../errors/validityErrors';
 import { parse } from '../parser/parser';
 import type { Context, Node, NodeWithInferredType } from '../types';
-import { getSourceVariableDeclaration } from '../utils/ast/helpers';
+import { extractIdsFromPattern, getSourceVariableDeclaration } from '../utils/ast/helpers';
 import { ancestor, base, type FullWalkerCallback } from '../utils/ast/walkers';
 import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds';
 import assert from '../utils/assert';
@@ -201,13 +201,7 @@ export function checkForUndefinedVariables(
   ) {
     identifiersIntroducedByNode.set(
       node,
-      new Set(
-        node.params.map(id =>
-          id.type === 'Identifier'
-            ? id.name
-            : ((id as es.RestElement).argument as es.Identifier).name,
-        ),
-      ),
+      new Set(node.params.flatMap(each => extractIdsFromPattern(each).map(({ name }) => name))),
     );
   }
   const identifiersToAncestors = new Map<es.Identifier, es.Node[]>();
