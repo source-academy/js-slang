@@ -224,6 +224,7 @@ function transformBooleanTest(
     | es.ConditionalExpression
     | es.LogicalExpression
     | es.ForStatement
+    | es.DoWhileStatement
     | es.WhileStatement,
   ctx: TranspilationContext,
 ) {
@@ -285,8 +286,9 @@ function transformPropertyAccess(node: es.MemberExpression, ctx: TranspilationCo
  * // gets transformed into
  * setProp(a, 0, "a");
  * ```
+ * Otherwise, just transform the right side of the assignment.
  */
-function transformPropertyAssignment(node: es.AssignmentExpression, ctx: TranspilationContext) {
+function transformAssignmentExpression(node: es.AssignmentExpression, ctx: TranspilationContext) {
   const { line, column, source } = getNodeLoc(node);
 
   assert(node.operator === '=', `Unsupported assignment operator: ${node.operator}`, node);
@@ -324,13 +326,6 @@ function transformPropertyAssignment(node: es.AssignmentExpression, ctx: Transpi
  * foo("a", "b");
  * // gets transformed into
  * callIfFuncAndRightArgs(foo, 1, 1, null, nativeStorage, "a", "b");
- * ```
- *
- * A special case occurs when MemberExpressions are called. The bound version also called instead:
- * ```js
- * obj.foo("a", "b");
- * // gets transformed into
- * callIfFuncAndRightArgs(foo.bind(obj), 1, 1, null, nativeStorage, "a", "b");
  * ```
  */
 function transformCallExpression(node: es.CallExpression, ctx: TranspilationContext) {
@@ -461,6 +456,10 @@ function transformFunction(
       ? transformNode(f.body, ctx)
       : transformReturnExpression(f.body, ctx);
 
+  const optArgs =
+    f.params[f.params.length - 1]?.type === 'RestElement' ||
+    f.params.filter(x => x.type === 'AssignmentPattern').length;
+
   return create.callExpression(
     ctx.nativeIds.wrap,
     [
@@ -470,7 +469,7 @@ function transformFunction(
         expression: f.type === 'ArrowFunctionExpression' && f.expression,
         body: newBody,
       },
-      create.literal(f.params[f.params.length - 1]?.type === 'RestElement'),
+      create.literal(optArgs),
       create.literal(generate(f)),
       create.literal(ctx.isPrelude ? 'prelude' : null),
       name === undefined ? create.identifier('undefined') : create.literal(name),
@@ -498,7 +497,12 @@ function transformFunction(
  * ```
  */
 function addInfiniteLoopProtection(
-  node: es.ForStatement | es.WhileStatement,
+  node:
+    | es.ForStatement
+    | es.ForOfStatement
+    | es.ForInStatement
+    | es.WhileStatement
+    | es.DoWhileStatement,
   ctx: TranspilationContext,
 ): [es.VariableDeclaration, es.BlockStatement] {
   const getTimeAst = () => create.callExpression(create.identifier('get_time'), []);
@@ -567,6 +571,19 @@ function transformStatements(stmts: es.Statement[], ctx: TranspilationContext): 
           },
         ];
       }
+      case 'ForInStatement':
+      case 'ForOfStatement': {
+        const [startTimeDecl, newBody] = addInfiniteLoopProtection(node, ctx);
+        return [
+          startTimeDecl,
+          {
+            ...node,
+            right: transformNode(node.right, ctx),
+            body: newBody,
+          },
+        ];
+      }
+      case 'DoWhileStatement':
       case 'WhileStatement': {
         const newTest = transformBooleanTest(node, ctx);
         const [startTimeDecl, newBody] = addInfiniteLoopProtection(node, ctx);
@@ -595,7 +612,7 @@ function transformNode(node: Exclude<Node, es.Program>, ctx: TranspilationContex
     case 'FunctionExpression':
       return transformFunction(node, ctx);
     case 'AssignmentExpression':
-      return transformPropertyAssignment(node, ctx);
+      return transformAssignmentExpression(node, ctx);
     case 'BinaryExpression':
       return transformBinaryExpression(node, ctx);
     case 'CallExpression':

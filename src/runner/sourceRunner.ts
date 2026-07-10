@@ -42,7 +42,12 @@ const runners = {
     let sourceMapJson: RawSourceMap | undefined;
     try {
       let transpiled: string;
-      ({ transpiled, sourceMapJson } = transpileToSource(program, context, false, options.isPrelude));
+      ({ transpiled, sourceMapJson } = transpileToSource(
+        program,
+        context,
+        false,
+        options.isPrelude,
+      ));
 
       let value = sandboxedEval(transpiled, context.nativeStorage);
 
