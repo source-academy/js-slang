@@ -401,12 +401,7 @@ export interface MemberExpression extends BaseExpression, BasePattern {
 }
 
 export type Pattern =
-  | Identifier
-  | ObjectPattern
-  | ArrayPattern
-  | RestElement
-  | AssignmentPattern
-  | MemberExpression;
+  Identifier | ObjectPattern | ArrayPattern | RestElement | AssignmentPattern | MemberExpression;
 
 type BasePattern = BaseNode;
 
@@ -623,17 +618,11 @@ export interface MetaProperty extends BaseExpression {
 }
 
 export type ModuleDeclaration =
-  | ImportDeclaration
-  | ExportNamedDeclaration
-  | ExportDefaultDeclaration
-  | ExportAllDeclaration;
+  ImportDeclaration | ExportNamedDeclaration | ExportDefaultDeclaration | ExportAllDeclaration;
 type BaseModuleDeclaration = BaseNode;
 
 export type ModuleSpecifier =
-  | ImportSpecifier
-  | ImportDefaultSpecifier
-  | ImportNamespaceSpecifier
-  | ExportSpecifier;
+  ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier | ExportSpecifier;
 interface BaseModuleSpecifier extends BaseNode {
   local: Identifier;
 }
@@ -716,10 +705,7 @@ export type TSTypeKeyword =
   | 'TSVoidKeyword';
 
 export type TSOnlyNode =
-  | 'TSTypeAliasDeclaration'
-  | 'TSAsExpression'
-  | 'TSInterfaceDeclaration'
-  | 'TSTypeReference';
+  'TSTypeAliasDeclaration' | 'TSAsExpression' | 'TSInterfaceDeclaration' | 'TSTypeReference';
 
 export type TSNode =
   | TSTypeAnnotation

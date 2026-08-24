@@ -1361,10 +1361,7 @@ function hasTypeMismatchErrors(
  */
 function getTypeAnnotationType(
   annotationNode:
-    | tsEs.TSTypeAnnotation
-    | tsEs.TSTypeAliasDeclaration
-    | tsEs.TSAsExpression
-    | undefined,
+    tsEs.TSTypeAnnotation | tsEs.TSTypeAliasDeclaration | tsEs.TSAsExpression | undefined,
 ): Type {
   if (!annotationNode) {
     return tAny;

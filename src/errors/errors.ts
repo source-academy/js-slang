@@ -246,10 +246,7 @@ export class VariableRedeclarationError extends RuntimeSourceError<
 > {
   constructor(
     node:
-      | es.Declaration
-      | es.ImportSpecifier
-      | es.ImportDefaultSpecifier
-      | es.ImportNamespaceSpecifier,
+      es.Declaration | es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier,
     private readonly varname: string,
     private readonly writable: boolean,
   ) {

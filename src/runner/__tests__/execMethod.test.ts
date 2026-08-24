@@ -288,17 +288,15 @@ describe('Ensure that the correct runner is used for the given evaluation contex
         verboseErrors: true,
       };
 
-      const variantCases = Object.values(Variant).map(
-        (variant): TestCase => ({
-          code: '',
-          variant,
-          chapter,
-          expectedPrelude: false,
-          expectedRunner: 'fulljs',
-          verboseErrors: false,
-          expectedValidate: false,
-        }),
-      );
+      const variantCases = Object.values(Variant).map((variant): TestCase => ({
+        code: '',
+        variant,
+        chapter,
+        expectedPrelude: false,
+        expectedRunner: 'fulljs',
+        verboseErrors: false,
+        expectedValidate: false,
+      }));
 
       return [fullCase, verboseErrorCase, ...variantCases];
     }),
