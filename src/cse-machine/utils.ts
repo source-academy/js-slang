@@ -347,10 +347,7 @@ export function declareIdentifier(
   context: Context,
   name: string,
   node:
-    | es.Declaration
-    | es.ImportSpecifier
-    | es.ImportDefaultSpecifier
-    | es.ImportNamespaceSpecifier,
+    es.Declaration | es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier,
   environment: Environment,
   constant: boolean = false,
 ) {
@@ -659,10 +656,7 @@ type KeysOfNodeProperties<T extends ControlItem> = GetNodeKeys<T>[keyof GetNodeK
  * - If a function is provided, the function is called with the node and the return value is used
  */
 type EnvDependentCalculator<T extends ControlItem> =
-  | ((item: T) => boolean)
-  | boolean
-  | KeysOfNodeProperties<T>
-  | KeysOfNodeProperties<T>[];
+  ((item: T) => boolean) | boolean | KeysOfNodeProperties<T> | KeysOfNodeProperties<T>[];
 
 type EnvCalculators = {
   [K in Node['type']]?: EnvDependentCalculator<NodeTypeToNode<K>>;

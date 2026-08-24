@@ -229,10 +229,7 @@ export interface StatementSequence extends es.BaseStatement {
  * js-slang's custom Node type - this should be used wherever es.Node is used.
  */
 export type Node = { isEnvDependent?: boolean } & (
-  | es.Node
-  | StatementSequence
-  | es.MaybeNamedClassDeclaration
-  | es.MaybeNamedFunctionDeclaration
+  es.Node | StatementSequence | es.MaybeNamedClassDeclaration | es.MaybeNamedFunctionDeclaration
 );
 /*
 	Although the ESTree specifications supposedly provide a Directive interface, the index file does not seem to export it.
@@ -304,14 +301,7 @@ export type Constraint = 'none' | 'addable';
 
 // Types used by both type inferencer and Source Typed
 export type Type =
-  | Primitive
-  | Variable
-  | FunctionType
-  | List
-  | Pair
-  | SArray
-  | UnionType
-  | LiteralType;
+  Primitive | Variable | FunctionType | List | Pair | SArray | UnionType | LiteralType;
 
 export interface Primitive {
   kind: 'primitive';

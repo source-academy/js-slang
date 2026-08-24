@@ -37,9 +37,7 @@ interface FuncWithSkipAndOnly<T extends (...args: any[]) => any> {
  * Refers to the three `describe` operations
  */
 export type DescribeFunctions =
-  | typeof describe
-  | (typeof describe)['only']
-  | (typeof describe)['skip'];
+  typeof describe | (typeof describe)['only'] | (typeof describe)['skip'];
 
 /**
  * Refers to the three `test` operations

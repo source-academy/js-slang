@@ -27,10 +27,7 @@ export type StepperPattern = StepperIdentifier;
 export { StepperStatement };
 
 export type StepperNode =
-  | StepperExpression
-  | StepperStatement
-  | StepperProgram
-  | StepperVariableDeclarator;
+  StepperExpression | StepperStatement | StepperProgram | StepperVariableDeclarator;
 
 export type NodeTypeToStepperNode<T extends StepperNode['type']> = Extract<
   StepperNode,

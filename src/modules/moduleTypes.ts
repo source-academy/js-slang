@@ -8,9 +8,7 @@ import type { LinkerOptions } from './preprocessor/linker';
  * Represents a {@link es.Node|Node} that refers to an import "source".
  */
 export type ModuleDeclarationWithSource =
-  | es.ImportDeclaration
-  | es.ExportNamedDeclaration
-  | es.ExportAllDeclaration;
+  es.ImportDeclaration | es.ExportNamedDeclaration | es.ExportAllDeclaration;
 
 /**
  * Represents the meta information for a Source module

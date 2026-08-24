@@ -310,11 +310,7 @@ interface KvPairStringDag {
 }
 
 type StringDag =
-  | TerminalStringDag
-  | MultilineStringDag
-  | PairStringDag
-  | ArrayLikeStringDag
-  | KvPairStringDag;
+  TerminalStringDag | MultilineStringDag | PairStringDag | ArrayLikeStringDag | KvPairStringDag;
 
 export function valueToStringDag(value: Value): StringDag {
   const ancestors: Map<Value, number> = new Map();

@@ -26,9 +26,7 @@ type GetNodeKeys<T extends Node> = {
 type KeysOfNodeProperties<T extends Node> = GetNodeKeys<T>[keyof GetNodeKeys<T>];
 
 type NodeTransformer<T extends Node> =
-  | KeysOfNodeProperties<T>
-  | KeysOfNodeProperties<T>[]
-  | ((node: T) => Node);
+  KeysOfNodeProperties<T> | KeysOfNodeProperties<T>[] | ((node: T) => Node);
 
 type NodeTransformers = {
   [K in Node['type']]?: NodeTransformer<NodeTypeToNode<K>>;

@@ -33,13 +33,11 @@ export function getSteps(
         const newNode = node.oneStep(redex);
 
         const explanations = redex.preRedex.map(explain);
-        const beforeMarkers = redex.preRedex.map(
-          (redex, index): Marker => ({
-            redex,
-            redexType: 'beforeMarker',
-            explanation: explanations[index],
-          }),
-        );
+        const beforeMarkers = redex.preRedex.map((redex, index): Marker => ({
+          redex,
+          redexType: 'beforeMarker',
+          explanation: explanations[index],
+        }));
         numSteps += 1;
         if (numSteps >= limit) {
           return node;
