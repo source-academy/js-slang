@@ -1,0 +1,79 @@
+# Publishes the Conductor evaluator bundles to GitHub Pages, so the language directory can point
+# at https://source-academy.github.io/js-slang/<Evaluator>.js instead of a developer's localhost.
+#
+# Deliberately separate from deploy-docs.yml: that one publishes the LaTeX/jsdoc language docs to
+# an *external* repository (docs.sourceacademy.org) and needs a TeX toolchain, which has nothing to
+# do with shipping worker bundles. Mirrors py-slang's build-deploy.yml, which serves the same role
+# for its evaluators.
+#
+# Only `build:evaluators` runs here, never `build:slang`. Both write into dist/, and the latter is
+# the tsc output for the published npm library — megabytes of .js/.d.ts that have no business on a
+# CDN. On a clean CI checkout dist/ therefore contains exactly the bundles and their sourcemaps.
+name: Deploy evaluators
+
+on:
+  push:
+    branches:
+      - master
+  # Allows publishing a fix without waiting for the next push to master.
+  workflow_dispatch:
+
+# Never let two deploys race: the later push should win rather than whichever job finishes last.
+# In-progress runs are not cancelled, so a deploy that has already started still completes.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build evaluator bundles
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      # Has to run before actions/setup-node. See actions/setup-node#480.
+      - name: Enable corepack for Yarn
+        run: corepack enable
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: yarn
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Build evaluators
+        run: yarn build:evaluators
+      - name: Check the bundles were produced
+        # A rollup config change can leave a target silently unbuilt; publishing a directory that
+        # is missing an evaluator would 404 for whoever the language directory points at it.
+        run: |
+          set -euo pipefail
+          for name in \
+            SourceEvaluator1 SourceEvaluator2 SourceEvaluator3 SourceEvaluator4 \
+            SourceCseEvaluator3 SourceCseEvaluator4 \
+            SourceStepperEvaluator1 SourceStepperEvaluator2
+          do
+            test -s "dist/$name.js" || { echo "missing or empty: dist/$name.js"; exit 1; }
+          done
+          ls -lh dist/
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
