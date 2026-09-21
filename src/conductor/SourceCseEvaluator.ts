@@ -6,6 +6,7 @@ import createContext from '../createContext';
 import { Chapter, Variant } from '../langs';
 import { Control, Stash } from '../cse-machine/interpreter';
 import { parse } from '../parser/parser';
+import type { SourceError } from '../errors/base';
 import type { Context, Value } from '../types';
 import * as seq from '../utils/statementSeqTransform';
 import { collectSnapshots } from './cse/collectSnapshots';
@@ -102,6 +103,7 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
         stash,
         chunk,
         maxSnapshots,
+        config.breakpointLines ?? [],
       );
 
       this.csePlugin.sendSnapshots(snapshots, breakpointSteps);
@@ -110,15 +112,21 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
       const items = stash.getStack();
       return items[items.length - 1];
     } catch (e) {
-      this.reportErrors();
-      this.conductor.sendError(unknownToConductorError(e));
+      // `handleRuntimeError` both pushes onto `context.errors` *and* throws, so a Source runtime
+      // error arrives here already drained and reported by the line below. Sending the thrown
+      // value too would show the user the same failure twice, the second time as a generic
+      // message with no location.
+      const reported = this.reportErrors();
+      if (!reported.includes(e as never)) {
+        this.conductor.sendError(unknownToConductorError(e));
+      }
       return undefined;
     }
   }
 
   /** Same contract as the transpiler evaluator's: drain, so an error cannot be re-reported on
    * every later chunk, and route warnings to stdout since the host renders `__error` in red. */
-  private reportErrors(): void {
+  private reportErrors(): SourceError[] {
     const errors = this.context.errors;
     this.context.errors = [];
     for (const error of errors) {
@@ -128,6 +136,7 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
         this.conductor.sendError(toConductorError(error));
       }
     }
+    return errors;
   }
 }
 

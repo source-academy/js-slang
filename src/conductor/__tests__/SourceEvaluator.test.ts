@@ -40,6 +40,21 @@ describe('SourceEvaluator', () => {
     expect(output).toEqual([]);
   });
 
+  test('a syntax error is reported exactly once', async () => {
+    // The debugger-statement check parses the chunk before the run does. Parsing into the shared
+    // context appended its diagnostics there, runFilesInContext then parsed again and appended
+    // the same ones, and the host received every error twice.
+    const { plugin, errors } = fakeConductor();
+    await new SourceEvaluator1(plugin).evaluateChunk('1 +;');
+    expect(errors.length).toBe(1);
+  });
+
+  test('an undeclared name is reported exactly once', async () => {
+    const { plugin, errors } = fakeConductor();
+    await new SourceEvaluator1(plugin).evaluateChunk('nope();');
+    expect(errors.length).toBe(1);
+  });
+
   test('errors do not leak into the next chunk', async () => {
     const { plugin, errors } = fakeConductor();
     const evaluator = new SourceEvaluator1(plugin);

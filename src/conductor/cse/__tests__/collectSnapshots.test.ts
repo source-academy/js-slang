@@ -53,9 +53,14 @@ function rawRun(code: string, chapter: Chapter = Chapter.SOURCE_3) {
   return steps;
 }
 
-function serialisedRun(code: string, chapter: Chapter = Chapter.SOURCE_3, limit = 100000) {
+function serialisedRun(
+  code: string,
+  chapter: Chapter = Chapter.SOURCE_3,
+  limit = 100000,
+  breakpointLines: number[] = [],
+) {
   const { context, control, stash } = setup(code, chapter);
-  return collectSnapshots(context, control, stash, code, limit);
+  return collectSnapshots(context, control, stash, code, limit, breakpointLines);
 }
 
 const PROGRAMS: [string, string][] = [
@@ -183,5 +188,85 @@ describe('run configuration', () => {
   test('a program without a debugger statement reports no breakpoints', () => {
     const { breakpointSteps } = serialisedRun('const x = 1;\nx + 1;');
     expect(breakpointSteps).toEqual([]);
+  });
+});
+
+describe('step indices', () => {
+  test.each(PROGRAMS)('%s: every stepIndex is unique and matches its position', (_name, code) => {
+    // `steps` is incremented before each yield, so the first yield reports 1. Subtracting one
+    // produced a second snapshot numbered 0, colliding with the initial one — and every recorded
+    // breakpoint step then pointed one position behind the state it described.
+    const { snapshots } = serialisedRun(code);
+    expect(snapshots.map(s => s.stepIndex)).toEqual(snapshots.map((_, i) => i));
+  });
+
+  test('a recorded breakpoint step indexes the snapshot whose control has the debugger on top', () => {
+    const { snapshots, breakpointSteps } = serialisedRun('const x = 1;\ndebugger;\nx + 1;');
+    expect(breakpointSteps.length).toBeGreaterThan(0);
+    for (const step of breakpointSteps) {
+      const snapshot = snapshots.find(s => s.stepIndex === step)!;
+      expect(snapshot, `no snapshot at step ${step}`).toBeDefined();
+      expect(snapshot.control[0].metadata).toMatchObject({ nodeType: 'DebuggerStatement' });
+    }
+  });
+});
+
+describe('editor gutter breakpoints', () => {
+  const code = 'const a = 1;\nconst b = 2;\nconst c = a + b;\nc;';
+
+  test('a breakpoint line is reported even with no debugger statement', () => {
+    const { snapshots, breakpointSteps } = serialisedRun(code, Chapter.SOURCE_3, 100000, [3]);
+    expect(breakpointSteps.length).toBeGreaterThan(0);
+    for (const step of breakpointSteps) {
+      const snapshot = snapshots.find(s => s.stepIndex === step)!;
+      const meta = snapshot.control[0].metadata as { startLine?: number };
+      expect(meta.startLine).toBe(3);
+    }
+  });
+
+  test('no breakpoint lines means no breakpoint steps', () => {
+    expect(serialisedRun(code, Chapter.SOURCE_3, 100000, []).breakpointSteps).toEqual([]);
+  });
+
+  test('one node staying on top across steps is reported once', () => {
+    const { breakpointSteps } = serialisedRun(code, Chapter.SOURCE_3, 100000, [3]);
+    expect(new Set(breakpointSteps).size).toBe(breakpointSteps.length);
+  });
+});
+
+describe('reachable environments', () => {
+  test('every frame id a value references is present in the same snapshot', () => {
+    // An invariant, not a regression repro: `serializeValue` emits `envId` on arrays and
+    // `closureFrameId` on closures, and the host looks both up in `environments`. Any id it
+    // cannot resolve is a frame the adapter silently cannot rebuild.
+    //
+    // Honest caveat: in the programs tried here the frames stay reachable through the call stack
+    // anyway, so this does not currently *distinguish* the array-following walk in
+    // serializeEnvironments from one that skips arrays. That walk was added on the reasoning that
+    // an array carries its own `environment` and may hold closures, so the ids can outlive the
+    // call stack — a case this test would catch if one is ever constructed, but which is not
+    // demonstrated below.
+    const { snapshots } = serialisedRun(
+      'function f() {\n  const n = 1;\n  return [() => n];\n}\nf();',
+    );
+    for (const snapshot of snapshots) {
+      const ids = new Set(snapshot.environments.map(e => e.id));
+      const referenced: string[] = [];
+      const walk = (v: { label: string; metadata?: unknown }) => {
+        const meta = (v.metadata ?? {}) as {
+          closureFrameId?: string;
+          envId?: string | null;
+          elements?: { label: string; metadata?: unknown }[];
+        };
+        if (meta.closureFrameId) referenced.push(meta.closureFrameId);
+        if (meta.envId) referenced.push(meta.envId);
+        for (const el of meta.elements ?? []) walk(el);
+      };
+      snapshot.stash.forEach(walk);
+      snapshot.environments.flatMap(e => e.bindings.map(b => b.value)).forEach(walk);
+      for (const id of referenced) {
+        expect(ids.has(id), `frame ${id} referenced but not serialised`).toBe(true);
+      }
+    }
   });
 });

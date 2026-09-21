@@ -248,24 +248,41 @@ export function serializeEnvironments(
 ): CseSerializedEnvFrame[] {
   const seen = new Set<string>();
   const ordered: Environment[] = [];
+  const seenArrays = new Set<unknown>();
 
   const visit = (env: Environment | null | undefined): void => {
     if (!env || seen.has(env.id)) return;
     seen.add(env.id);
     ordered.push(env);
     visit(env.tail);
-    for (const value of Object.values(env.head)) {
-      if (value instanceof Closure) visit(value.environment);
+    for (const value of Object.values(env.head)) visitValue(value);
+    for (const obj of env.heap.getHeap()) visitValue(obj as Value);
+  };
+
+  /**
+   * Follows a value to the environments it keeps alive.
+   *
+   * Arrays matter as much as closures here: an array carries the `environment` it was created in,
+   * and may hold closures of its own. A function returning an array — `function f() { return
+   * [() => 1]; }` — leaves that array on the stash after its frame is popped, and `serializeValue`
+   * still emits the frame's id in `envId`/`closureFrameId`. Without following it, the frame is
+   * missing from `environments` entirely and the host cannot draw the arrows pointing at it.
+   */
+  const visitValue = (value: Value): void => {
+    if (value instanceof Closure) {
+      visit(value.environment);
+      return;
     }
-    for (const obj of env.heap.getHeap()) {
-      if (obj instanceof Closure) visit(obj.environment);
+    if (Array.isArray(value)) {
+      if (seenArrays.has(value)) return;
+      seenArrays.add(value);
+      visit((value as Value[] & { environment?: Environment }).environment);
+      for (const element of value) visitValue(element);
     }
   };
 
   for (const env of callStackEnvs) visit(env);
-  for (const value of stashItems) {
-    if (value instanceof Closure) visit(value.environment);
-  }
+  for (const value of stashItems) visitValue(value);
   for (const item of rawControl) {
     if (item?.instrType === InstrType.ENVIRONMENT && item.env) visit(item.env as Environment);
   }

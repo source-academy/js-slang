@@ -27,9 +27,14 @@ export interface CollectedSnapshots {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyItem = any;
 
-/** True when the item about to be evaluated is a `debugger;` statement. */
-function isBreakpointItem(item: AnyItem): boolean {
-  return item?.type === 'DebuggerStatement';
+/**
+ * True when the item about to be evaluated should stop the user's breakpoint navigation: either a
+ * literal `debugger;`, or any node starting on a line carrying an editor gutter breakpoint.
+ */
+function isBreakpointItem(item: AnyItem, breakpointLines: ReadonlySet<number>): boolean {
+  if (item?.type === 'DebuggerStatement') return true;
+  const line = item?.loc?.start?.line as number | undefined;
+  return line !== undefined && breakpointLines.has(line);
 }
 
 function snapshotOf(
@@ -72,12 +77,24 @@ export function collectSnapshots(
   stash: Stash,
   source: string,
   maxSnapshots: number,
+  breakpointLines: readonly number[] = [],
 ): CollectedSnapshots {
+  const breakpoints = new Set(breakpointLines);
   const snapshots: CseSnapshot[] = [];
   const breakpointSteps: number[] = [];
 
+  // The same node can sit on top of the control across consecutive steps; without this the
+  // navigation controls would stop repeatedly on what the user sees as one breakpoint.
+  let lastBreakpointNode: unknown;
   const recordIfBreakpoint = (rawControl: AnyItem[], stepIndex: number) => {
-    if (isBreakpointItem(rawControl[rawControl.length - 1])) breakpointSteps.push(stepIndex);
+    const top = rawControl[rawControl.length - 1];
+    if (!isBreakpointItem(top, breakpoints)) {
+      lastBreakpointNode = undefined;
+      return;
+    }
+    if (top === lastBreakpointNode) return;
+    lastBreakpointNode = top;
+    breakpointSteps.push(stepIndex);
   };
 
   // Step 0, before the generator runs: the Program node is still on the control, so the user's
@@ -103,7 +120,11 @@ export function collectSnapshots(
     // Mirrors the non-conductor CSE machine's own `updateInspector`, which reads
     // `context.runtime.nodes[0]` to drive the editor's current-line highlight.
     const currentNode = context.runtime.nodes[0] as AnyItem;
-    const stepIndex = steps - 1;
+    // `steps` is incremented *before* each yield, so the first yield reports 1 — which is exactly
+    // the index after the step-0 snapshot pushed above. Subtracting one would collide with it,
+    // giving every run two snapshots numbered 0 and leaving every recorded breakpoint step
+    // pointing one position behind the state it describes.
+    const stepIndex = steps;
     snapshots.push(
       snapshotOf(stepIndex, context, rawControl, rawStash, source, currentNode?.loc?.start?.line),
     );

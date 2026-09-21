@@ -89,7 +89,11 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
   private warnIfDebuggerStatement(chunk: string): void {
     let program;
     try {
-      program = parse(chunk, this.context, {}, false);
+      // A throwaway context: this parse exists only to look for `debugger;`, and its errors are
+      // not the run's. Parsing into `this.context` appended them to the shared array, and
+      // `runFilesInContext` then parsed the same chunk again and appended the same errors, so an
+      // invalid chunk reported every diagnostic to the host twice.
+      program = parse(chunk, createContext(this.chapter, Variant.DEFAULT), {}, false);
     } catch {
       return;
     }
