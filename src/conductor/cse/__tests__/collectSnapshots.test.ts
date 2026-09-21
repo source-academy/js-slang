@@ -270,3 +270,61 @@ describe('reachable environments', () => {
     }
   });
 });
+
+describe('global frame pruning', () => {
+  const code = 'display(1);';
+
+  function globalFrameOf(usedGlobalNames?: Set<string>) {
+    const { context, control, stash } = setup(code);
+    const { snapshots } = collectSnapshots(
+      context,
+      control,
+      stash,
+      code,
+      100000,
+      [],
+      usedGlobalNames,
+    );
+    const last = snapshots[snapshots.length - 1];
+    return last.environments.find(e => e.name === 'global' && e.parentId === null)!;
+  }
+
+  test('without a name set, every binding is sent', () => {
+    // The default has to stay permissive: a caller that has not done the analysis must not
+    // silently lose bindings.
+    expect(globalFrameOf(undefined).bindings.length).toBeGreaterThan(20);
+  });
+
+  test('with one, the global frame carries only those names', () => {
+    const frame = globalFrameOf(new Set(['display']));
+    expect(frame.bindings.map(b => b.name)).toEqual(['display']);
+  });
+
+  test('pruning applies only to the global frame', () => {
+    const { context, control, stash } = setup('function f(a) {\n  return a;\n}\nf(1);');
+    const { snapshots } = collectSnapshots(
+      context,
+      control,
+      stash,
+      'function f(a) {\n  return a;\n}\nf(1);',
+      100000,
+      [],
+      new Set<string>(),
+    );
+    // The global frame is emptied, but the program's own frames keep their bindings.
+    const withBindings = snapshots.some(s =>
+      s.environments.some(
+        e => !(e.name === 'global' && e.parentId === null) && e.bindings.length > 0,
+      ),
+    );
+    expect(withBindings).toBe(true);
+  });
+
+  test('the pruned frame is dramatically smaller', () => {
+    // This is the point: an unpruned global frame renders the whole standard library, with full
+    // source text, above the student's own frame.
+    const all = globalFrameOf(undefined).bindings.length;
+    const pruned = globalFrameOf(new Set(['display'])).bindings.length;
+    expect(pruned).toBeLessThan(all / 10);
+  });
+});

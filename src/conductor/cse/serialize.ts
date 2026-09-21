@@ -245,6 +245,10 @@ export function serializeEnvironments(
   callStackEnvs: Environment[],
   stashItems: Value[],
   rawControl: AnyItem[],
+  /** Global/prelude names the program actually uses. When given, the global frame is pruned to
+   * these — see `usedGlobals.ts` for why that happens here rather than in the host. Omitted, every
+   * binding is sent, which is the right default for any caller that has not done the analysis. */
+  usedGlobalNames?: ReadonlySet<string>,
 ): CseSerializedEnvFrame[] {
   const seen = new Set<string>();
   const ordered: Environment[] = [];
@@ -289,10 +293,15 @@ export function serializeEnvironments(
 
   const callStackIds = new Set(callStackEnvs.map(e => e.id));
 
+  // js-slang's global frame holds every builtin, each rendered with its full source text, so an
+  // unpruned frame buries the student's own frame thousands of pixels down the canvas.
+  const isGlobal = (env: Environment) => env.name === 'global' && env.tail === null;
+
   return ordered.map(env => {
-    const bindings: CseSerializedBinding[] = Object.entries(
-      Object.getOwnPropertyDescriptors(env.head),
-    ).map(([name, descriptor]) => ({
+    const entries = Object.entries(Object.getOwnPropertyDescriptors(env.head)).filter(
+      ([name]) => !(usedGlobalNames && isGlobal(env)) || usedGlobalNames.has(name),
+    );
+    const bindings: CseSerializedBinding[] = entries.map(([name, descriptor]) => ({
       name,
       value: serializeValue(descriptor.value),
       // `const` is non-writable; the renderer shows `:=` vs `:` off this.
