@@ -1185,6 +1185,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sourceacademy/common-stepper@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@sourceacademy/common-stepper@npm:0.0.1"
+  checksum: 10c0/e3a79fb07f68e24a045553a8c5c66e652df12d3b80150a20b4b4603936605e3a2e10c5636e48ba180b2a3473287727340c4b791abe8df301d00e0984d07667a4
+  languageName: node
+  linkType: hard
+
 "@sourceacademy/conductor@npm:^0.8.3":
   version: 0.8.3
   resolution: "@sourceacademy/conductor@npm:0.8.3"
@@ -1199,6 +1206,15 @@ __metadata:
     "@sourceacademy/common-cse-machine": ">=0.3.0"
     "@sourceacademy/conductor": ">=0.3.0"
   checksum: 10c0/dbf3c9220bb35b2f10d46dcfd13e1c827931d9bb9fb41266eff512d5859ab7734e594cda3b0e741a9896e8f7a3598cdb4d914ef13b7ecce941f8fc1798d8965e
+  languageName: node
+  linkType: hard
+
+"@sourceacademy/runner-stepper@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@sourceacademy/runner-stepper@npm:0.0.1"
+  peerDependencies:
+    "@sourceacademy/conductor": ">=0.3.0"
+  checksum: 10c0/0c454960bba50f1f0cfbe5d08a4c0f079100a3044ef24171104ee82594646a1fcea5e2b154dfcd7963d2b85cfb88b9e35bdcbadd85a68362c7b8b4fcb443e34d
   languageName: node
   linkType: hard
 
@@ -3870,8 +3886,10 @@ __metadata:
     "@rollup/plugin-replace": "npm:^6.0.3"
     "@rollup/plugin-terser": "npm:^1.0.0"
     "@sourceacademy/common-cse-machine": "npm:^0.3.0"
+    "@sourceacademy/common-stepper": "npm:^0.0.1"
     "@sourceacademy/conductor": "npm:^0.8.3"
     "@sourceacademy/runner-cse-machine": "npm:^3.0.0"
+    "@sourceacademy/runner-stepper": "npm:^0.0.1"
     "@ts-morph/bootstrap": "npm:^0.18.0"
     "@types/estree": "npm:^1.0.5"
     "@types/lodash": "npm:^4.14.202"
