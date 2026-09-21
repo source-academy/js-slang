@@ -1178,10 +1178,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sourceacademy/common-cse-machine@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@sourceacademy/common-cse-machine@npm:0.3.0"
+  checksum: 10c0/c0462cc2dd8d779179c31d168aa3e71ea7f81818535166e38aeb3c048469fcf7eebc388ed4110d3300d6b6933cc310da3fbe4c3a4026746c5df409eb91dd7042
+  languageName: node
+  linkType: hard
+
 "@sourceacademy/conductor@npm:^0.8.3":
   version: 0.8.3
   resolution: "@sourceacademy/conductor@npm:0.8.3"
   checksum: 10c0/25a35004fd92abc3f9342c1928a6be884388d3a8465cdc26491ccf56566121dd7a68a0c305defe668dfe7b96eebe61e93059631f80a92e0d9a4dc2775090f3e5
+  languageName: node
+  linkType: hard
+
+"@sourceacademy/runner-cse-machine@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@sourceacademy/runner-cse-machine@npm:3.0.0"
+  peerDependencies:
+    "@sourceacademy/common-cse-machine": ">=0.3.0"
+    "@sourceacademy/conductor": ">=0.3.0"
+  checksum: 10c0/dbf3c9220bb35b2f10d46dcfd13e1c827931d9bb9fb41266eff512d5859ab7734e594cda3b0e741a9896e8f7a3598cdb4d914ef13b7ecce941f8fc1798d8965e
   languageName: node
   linkType: hard
 
@@ -3852,7 +3869,9 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^16.0.3"
     "@rollup/plugin-replace": "npm:^6.0.3"
     "@rollup/plugin-terser": "npm:^1.0.0"
+    "@sourceacademy/common-cse-machine": "npm:^0.3.0"
     "@sourceacademy/conductor": "npm:^0.8.3"
+    "@sourceacademy/runner-cse-machine": "npm:^3.0.0"
     "@ts-morph/bootstrap": "npm:^0.18.0"
     "@types/estree": "npm:^1.0.5"
     "@types/lodash": "npm:^4.14.202"
