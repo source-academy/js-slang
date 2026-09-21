@@ -15,7 +15,6 @@ import * as misc from './stdlib/misc';
 import * as parser from './stdlib/parser';
 import * as stream from './stdlib/stream';
 import { streamPrelude } from './stdlib/stream.prelude';
-import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils';
 import type { Context, CustomBuiltIns, Environment, NativeStorage, Value } from './types';
 import * as operators from './utils/operators';
 import { stringify } from './utils/stringify';
@@ -151,7 +150,6 @@ export const createEmptyContext = <T>(
     languageOptions,
     moduleContexts: createEmptyModuleContexts(),
     unTypecheckedCode: [],
-    typeEnvironment: createTypeEnvironment(chapter),
     previousPrograms: [],
     shouldIncreaseEvaluationTimeout: false,
   };
@@ -186,13 +184,6 @@ export function defineSymbol(context: Context, name: string, value: Value) {
   }
 
   context.nativeStorage.builtins.set(name, value);
-  const typeEnv = context.typeEnvironment[0];
-  // if the global type env doesn't already have the imported symbol,
-  // we set it to a type var T that can typecheck with anything.
-  if (!typeEnv.declKindMap.has(name)) {
-    typeEnv.typeMap.set(name, tForAll(tVar('T1')));
-    typeEnv.declKindMap.set(name, 'const');
-  }
 }
 
 // Defines a builtin in the given context
@@ -443,7 +434,7 @@ const createContext = <T>(
   externalContext?: T,
   externalBuiltIns: Partial<CustomBuiltIns> = {},
 ): Context => {
-  if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS) {
+  if (chapter === Chapter.FULL_JS) {
     // fullJS will include all builtins and preludes of source 4
     return {
       ...createContext(

@@ -128,7 +128,6 @@ export interface Context<T = any> {
    * Contains the evaluated code that has not yet been typechecked.
    */
   unTypecheckedCode: string[];
-  typeEnvironment: TypeEnvironment;
 
   /**
    * Storage container for module specific information and state
@@ -240,15 +239,6 @@ export interface Directive extends es.ExpressionStatement {
   expression: es.Literal;
   directive: string;
 }
-
-export type {
-  Address as SVMAddress,
-  Argument as SVMArgument,
-  SVMFunction,
-  Instruction as SVMInstruction,
-  Offset as SVMOffset,
-  Program as SVMProgram,
-} from './vm/svml-compiler';
 
 export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>;
 

@@ -116,7 +116,7 @@ const sourceCases: TestCase[] = [
 
 // These JS cases never evaluate a prelude,
 // nor ever have verbose errors enabled
-const fullJSCases: Chapter[] = [Chapter.FULL_JS, Chapter.FULL_TS];
+const fullJSCases: Chapter[] = [Chapter.FULL_JS];
 
 type TestObject = {
   code: string;
