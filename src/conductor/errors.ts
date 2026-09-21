@@ -27,6 +27,15 @@ import { ErrorSeverity, ErrorType, type SourceError } from '../errors/base';
  * structure to be upgraded to `EvaluatorTypeError` properly.
  */
 export function toConductorError(error: SourceError): ConductorError {
+  // `context.errors` is typed as `SourceError[]`, but js-slang does not always keep that promise:
+  // the CSE machine's `evaluateImports` pushes whatever `evaluate` threw, and for an unresolved
+  // import that is a raw `TypeError`. Calling `explain()` on it threw *from the error reporter*,
+  // replacing the student's diagnostic with `error.explain is not a function` and, on the paths
+  // that report from a `catch`, losing the original failure entirely.
+  if (typeof error?.explain !== 'function') {
+    return unknownToConductorError(error);
+  }
+
   const line = error.location?.start?.line;
   const column = error.location?.start?.column;
   const fileName = error.location?.source ?? undefined;
