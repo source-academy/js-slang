@@ -135,7 +135,7 @@ const explainers: {
     if (testStatus === true) {
       return 'Conditional expression evaluated, condition is true, consequent evaluated';
     } else {
-      return 'Conditional expression evaluated, condition is false, alternate evaluated';
+      return 'Conditional expression evaluated, condition is false, alternative evaluated';
     }
   },
   DebuggerStatement: () => {
