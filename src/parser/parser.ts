@@ -1,11 +1,9 @@
 import type { Program } from 'estree';
 
-import { Chapter, Variant } from '../langs';
+import { Chapter } from '../langs';
 import type { Context } from '../types';
 import { FullJSParser } from './fullJS';
-import { FullTSParser } from './fullTS';
 import { SourceParser } from './source';
-import { SourceTypedParser } from './source/typed';
 import type { AcornOptions, Parser } from './types';
 
 export function parse<TOptions extends AcornOptions>(
@@ -19,17 +17,8 @@ export function parse<TOptions extends AcornOptions>(
     case Chapter.FULL_JS:
       parser = new FullJSParser();
       break;
-    case Chapter.FULL_TS:
-      parser = new FullTSParser();
-      break;
     default:
-      switch (context.variant) {
-        case Variant.TYPED:
-          parser = new SourceTypedParser(context.chapter, context.variant);
-          break;
-        default:
-          parser = new SourceParser(context.chapter, context.variant);
-      }
+      parser = new SourceParser(context.chapter, context.variant);
   }
 
   const ast: Program | null = parser.parse(programStr, context, options, throwOnError);

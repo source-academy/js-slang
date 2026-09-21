@@ -32,7 +32,6 @@
   "files": [
     "dist"
   ],
-  "bin": "dist/repl/index.js",
   "dependencies": {
     "@babel/parser": "^7.19.4",
     "@commander-js/extra-typings": "^15.0.0",
@@ -48,7 +47,7 @@
     "source-map": "0.7.6"
   },
   "scripts": {
-    "build": "yarn docs && yarn build:slang",
+    "build": "yarn build:slang",
     "build:slang": "tsc --project tsconfig.prod.json",
     "build:evaluators": "node scripts/build-evaluators.mjs",
     "eslint": "eslint --concurrency=auto src scripts",
@@ -56,11 +55,6 @@
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "test": "vitest",
     "test-coverage": "yarn test --coverage",
-    "docs": "node ./scripts/docs.mjs docs",
-    "jsdoc": "node ./scripts/docs.mjs",
-    "autocomplete": "node ./scripts/docs.mjs autocomplete",
-    "build_sicp_package": "yarn build && node ./scripts/build_sicp_package.mjs",
-    "publish_sicp_package": "./scripts/publish_sicp_package.sh",
     "benchmark": "vitest benchmark",
     "prepare": "husky"
   },

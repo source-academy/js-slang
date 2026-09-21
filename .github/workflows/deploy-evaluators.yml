@@ -43,20 +43,6 @@ jobs:
           cache: yarn
       - name: Install dependencies
         run: yarn install --immutable
-      # src/editors/ace/docTooltip/*.json are generated and gitignored, and the bundles import
-      # them, so a clean checkout cannot build without generating them.
-      #
-      # It has to be `yarn docs`, not `yarn autocomplete`: autocomplete does not *produce* the
-      # documentation, it reads the jsdoc HTML that `yarn docs` emits first, and fails with
-      # "path to jsdoc html is invalid" when that output is absent. No TeX toolchain is needed
-      # here — that is only for deploy-docs.yml's LaTeX language specs.
-      #
-      # Both this and the earlier autocomplete-only attempt looked fine locally, because a
-      # machine that has ever run `yarn build` already has docs/source and the JSON lying
-      # around. Verified instead by deleting docs/source, dist/ and every docTooltip/*.json
-      # first, then running this exact sequence.
-      - name: Generate documentation
-        run: yarn docs
       - name: Build evaluators
         run: yarn build:evaluators
       - name: Check the bundles were produced
