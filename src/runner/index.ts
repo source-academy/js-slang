@@ -42,6 +42,7 @@ export const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
     docsImporter: defaultDocsImporter,
   },
   shouldAddFileName: null,
+  forceAsyncTranspile: false,
 };
 
 async function sourceRunner(

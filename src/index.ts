@@ -34,6 +34,20 @@ export interface IOptions {
    * Set to null to let js-slang decide automatically
    */
   shouldAddFileName: boolean | null;
+
+  /**
+   * Forces the `native` runner to dual-compile (async mode) even when this particular chunk's own
+   * program contains no `import`. `runners.native` already switches to async mode on its own for a
+   * program that imports something directly (`hasImports`); this is for the *other* half of that
+   * decision — a chunk with no import of its own that may still *reach* a binding an earlier chunk
+   * imported (a previously-loaded module's export, still in scope via the REPL's persistent eval
+   * chain). A caller that loads Conductor modules (`SourceEvaluator`) is expected to set this once
+   * true for the remainder of that evaluator's lifetime, the moment any chunk has ever imported
+   * anything — see source-academy/js-slang#2081's design doc for why this is coarser than strictly
+   * necessary (no reachability analysis, just "has this session touched a module at all") and why
+   * that's an acceptable simplification for now.
+   */
+  forceAsyncTranspile: boolean;
 }
 
 // needed to work on browsers

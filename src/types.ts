@@ -50,6 +50,16 @@ export interface NativeStorage {
    */
   loadedModules: Record<string, LoadedBundle>;
   loadedModuleTypes: Record<string, Record<string, string>>;
+  /**
+   * Counts *nested* (non-tail) calls currently in flight through {@link callIfFuncAndRightArgsAsync}
+   * — incremented on entry, decremented on exit, never touched by the trampoline's own tail-call
+   * loop, which reuses one call rather than nesting. A synchronous non-tail recursion is bounded for
+   * free by V8's native call stack (a clean, catchable `RangeError`); an async one is not, since each
+   * `await` unwinds the stack completely and a runaway chain grows as heap-allocated promise reaction
+   * records instead, which V8 does not bound the same way — see that function's own doc comment.
+   * This is the async engine's stand-in for that missing stack limit.
+   */
+  asyncCallDepth: number;
 }
 
 export interface Context<T = any> {

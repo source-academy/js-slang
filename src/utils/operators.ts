@@ -312,6 +312,180 @@ export function callIfFuncAndRightArgs(
 }
 
 /**
+ * The async twin of {@link callIfFuncAndRightArgs}, used only in a program that imports a module
+ * (see `transpiler.ts`'s dual-mode compilation, gated by `hasImports`). A module function crosses
+ * the Conductor boundary as an `ExternCallable` — by protocol, always a Promise-returning call,
+ * whether or not that particular invocation actually needs to suspend — so once a program can reach
+ * one, every call in it must be prepared to await, including the proper-tail-call trampoline itself.
+ *
+ * Everything here mirrors {@link callIfFuncAndRightArgs} line for line — argument validation, the
+ * trampoline, the same error-wrapping — with exactly one addition: a call whose result is *actually*
+ * a thenable is awaited, and the wall-clock time spent suspended is excluded from the infinite-
+ * recursion budget below.
+ *
+ * That exclusion is deliberately narrow. It only ever fires when `f(...args)` itself returned a
+ * thenable — a genuine host round-trip — never for an ordinary synchronous Source call, which
+ * matches the pre-existing budget exactly (no `await`, no extra tick, nothing excluded). A call
+ * that busy-loops synchronously inside `f` still counts fully against the budget; only real
+ * suspension time, which the student's code did not spend "recursing", is forgiven. The *iteration*
+ * budget a `for`/`while` loop carries (`throwIfTimeout`, inserted by `addInfiniteLoopProtection`) is
+ * untouched by this — a loop that keeps making module calls forever should still time out, and
+ * unlike this function's own per-call-chain budget, that one is meant to bound wall-clock time
+ * regardless of what the loop body did with it.
+ */
+/**
+ * A stand-in for the native call-stack limit a synchronous non-tail recursion is bounded by for
+ * free (V8 throws a clean, catchable `RangeError` well before anything worse happens). An async
+ * non-tail recursion has no such limit — nothing here grows a stack frame, it grows a chain of
+ * heap-allocated promise reaction records, and letting that run unbounded does not fail cleanly;
+ * it can take the whole worker down. This threshold is deliberately conservative rather than tuned
+ * to match V8's own (variable, frame-size-dependent) stack depth exactly: it exists to guarantee a
+ * catchable `PotentialInfiniteRecursionError` fires before that happens, not to permit the same
+ * depth a sync program could reach.
+ */
+const MAX_ASYNC_CALL_DEPTH = 2000;
+
+export async function callIfFuncAndRightArgsAsync(
+  f: unknown,
+  line: number,
+  column: number,
+  source: string | null,
+  nativeStorage: NativeStorage | undefined,
+  ...args: any[]
+) {
+  let startTime = Date.now();
+  const pastCalls: [string, any[]][] = [];
+  let isPrelude = source === 'prelude';
+
+  // Tracks *nested* invocations only — the trampoline loop below reuses this same call for a tail
+  // call, so it never re-enters this function and never re-increments. A non-tail call, by
+  // contrast, is a fresh, nested invocation made from inside `f`'s own body while this one is still
+  // suspended at `await rawResult` below, exactly the shape that needs bounding (see
+  // MAX_ASYNC_CALL_DEPTH's doc comment).
+  //
+  // `?? 0` matters, not just style: `NativeStorage.asyncCallDepth` is a real, always-initialized
+  // field on every context `createNativeStorage()` builds, but this function only requires
+  // `NativeStorage | undefined` and a caller — a test mock, or any future one — can construct an
+  // object missing the field. `undefined++` is `NaN`, and every comparison against `NaN` is
+  // `false`, so an uninitialized counter would silently defeat this guard forever rather than
+  // fail loudly. This is not hypothetical: an earlier version of this function's own test suite
+  // did exactly that, and the resulting unbounded recursion crashed the test worker outright.
+  if (nativeStorage) {
+    nativeStorage.asyncCallDepth = (nativeStorage.asyncCallDepth ?? 0) + 1;
+    if (nativeStorage.asyncCallDepth > MAX_ASYNC_CALL_DEPTH) {
+      nativeStorage.asyncCallDepth--;
+      throw new PotentialInfiniteRecursionError(
+        locationDummyNode(line, column, source),
+        pastCalls,
+        nativeStorage.maxExecTime,
+      );
+    }
+  }
+
+  try {
+    return await runTrampoline();
+  } finally {
+    if (nativeStorage) {
+      nativeStorage.asyncCallDepth--;
+    }
+  }
+
+  async function runTrampoline(): Promise<any> {
+    while (true) {
+      const dummy = locationDummyNode(line, column, source);
+      if (typeof f !== 'function') {
+        throw new CallingNonFunctionValueError(
+          f,
+          callExpression(dummy, args, {
+            start: { line, column },
+            end: { line, column },
+            source,
+          }),
+        );
+      }
+
+      const receivedLength = args.length;
+      const { maxArgsAllowed, source: funcSource } = getFunctionDetails(f);
+
+      if (funcSource === 'prelude') {
+        isPrelude = true;
+      }
+
+      validateFunctionArgCount(
+        callExpression(dummy, args, {
+          start: { line, column },
+          end: { line, column },
+          source,
+        }),
+        receivedLength,
+        f.length,
+        maxArgsAllowed,
+        f.name,
+      );
+
+      let res;
+      try {
+        const rawResult = f(...args);
+
+        if (
+          rawResult !== null &&
+          typeof rawResult === 'object' &&
+          typeof rawResult.then === 'function'
+        ) {
+          // A genuine asynchronous call: exclude however long it actually took to suspend from the
+          // budget below, by shifting the clock forward by exactly that duration.
+          const beforeAwait = Date.now();
+          res = await rawResult;
+          startTime += Date.now() - beforeAwait;
+        } else {
+          res = rawResult;
+        }
+
+        if (nativeStorage && Date.now() - startTime > nativeStorage.maxExecTime) {
+          throw new PotentialInfiniteRecursionError(dummy, pastCalls, nativeStorage.maxExecTime);
+        }
+      } catch (error) {
+        if (error instanceof ExceptionError) throw error;
+
+        if (error instanceof RuntimeSourceError) {
+          if (!error.node) {
+            error.node = locationDummyNode(line, column, isPrelude ? 'prelude' : funcSource);
+          } else if (funcSource) {
+            if (!error.node.loc) {
+              error.node.loc = {
+                start: { line, column },
+                end: { line, column },
+                source: isPrelude ? 'prelude' : funcSource,
+              };
+            } else {
+              error.node.loc.source = isPrelude ? 'prelude' : funcSource;
+            }
+          }
+          throw error;
+        }
+
+        throw new ExceptionError(error);
+      }
+
+      if (res === null || res === undefined) {
+        return res;
+      } else if (res.isTail === true) {
+        f = res.function;
+        args = res.arguments;
+        source = res.source;
+        line = res.line;
+        column = res.column;
+        pastCalls.push([res.functionName, args]);
+      } else if (res.isTail === false) {
+        return res.value;
+      } else {
+        return res;
+      }
+    }
+  }
+}
+
+/**
  * Convenience wrapper for {@link callIfFuncAndRightArgs} that doesn't require any
  * extra metadata to be passed into the function.
  */
@@ -320,6 +494,18 @@ export function callWithoutMetadata<T extends (...args: any[]) => any>(
   ...args: Parameters<T>
 ): ReturnType<T> {
   return callIfFuncAndRightArgs(f, -1, -1, null, undefined, ...args);
+}
+
+/**
+ * Async twin of {@link callWithoutMetadata}, for calling a Source closure from module interop code
+ * (`src/conductor/modules/moduleInterop.ts`) — a module calling back into a student's function must
+ * go through the trampoline like any other Source call, but from TypeScript, not transpiled code.
+ */
+export function callWithoutMetadataAsync<T extends (...args: any[]) => any>(
+  f: T,
+  ...args: Parameters<T>
+): Promise<Awaited<ReturnType<T>>> {
+  return callIfFuncAndRightArgsAsync(f, -1, -1, null, undefined, ...args);
 }
 
 /**
