@@ -4,12 +4,13 @@ import { CseMachinePlugin } from '@sourceacademy/runner-cse-machine';
 
 import createContext from '../createContext';
 import { Chapter, Variant } from '../langs';
-import { Control, Stash } from '../cse-machine/interpreter';
+import { Control, evaluate as cseEvaluate, Stash } from '../cse-machine/interpreter';
 import { parse } from '../parser/parser';
 import type { SourceError } from '../errors/base';
 import type { Context, Value } from '../types';
 import * as seq from '../utils/statementSeqTransform';
 import { collectSnapshots } from './cse/collectSnapshots';
+import { collectUsedGlobalNames } from './cse/usedGlobals';
 import { DEFAULT_STEP_LIMIT, fetchRunConfig } from './cse/runConfig';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
 
@@ -54,6 +55,7 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
   private readonly chapter: Chapter;
   private readonly csePlugin: CseMachinePlugin;
   private context: Context;
+  private preludeRun = false;
 
   protected constructor(conductor: IRunnerPlugin, chapter: Chapter) {
     super(conductor);
@@ -78,8 +80,38 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
     });
   }
 
+  /**
+   * Runs the chapter's prelude once, before the first chunk.
+   *
+   * `map`, `filter`, `accumulate` and the rest of the list library are defined in Source itself
+   * (`context.prelude`), not as native builtins, so they only exist after the prelude has been
+   * evaluated into the context. `runFilesInContext` does this for the transpiler evaluator; this
+   * evaluator drives the machine directly and so has to do it itself. Without it, every prelude
+   * name raises `UndefinedVariableError` in the CSE tab.
+   *
+   * The prelude runs to completion outside the snapshot stream: the student is stepping through
+   * *their* program, and prepending several hundred steps of library setup would bury it.
+   */
+  private ensurePreludeRun(): void {
+    if (this.preludeRun) return;
+    this.preludeRun = true;
+    const prelude = this.context.prelude;
+    if (prelude === null) return;
+    this.context.prelude = null;
+
+    const program = parse(prelude, this.context);
+    if (program === null) return;
+    cseEvaluate(program, this.context, {
+      isPrelude: true,
+      envSteps: -1,
+      stepLimit: Number.MAX_SAFE_INTEGER,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
+  }
+
   async evaluateChunk(chunk: string): Promise<Value> {
     try {
+      this.ensurePreludeRun();
       const program = parse(chunk, this.context);
       if (program === null) {
         this.reportErrors();
@@ -97,6 +129,16 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
       const config = await fetchRunConfig(this.conductor);
       const maxSnapshots = config.stepLimit ?? DEFAULT_STEP_LIMIT;
 
+      // Prune the global frame to the names this program touches. js-slang keeps every builtin in
+      // the global environment's own head, so an unpruned frame renders the whole standard library
+      // — with full source text — above the student's own frame. See cse/usedGlobals.ts and
+      // source-academy/frontend#4401.
+      const globalEnv = this.context.runtime.environments.find(env => env.tail === null);
+      const preludeEnv = this.context.runtime.environments.find(env => env.name === 'prelude');
+      const usedGlobalNames = globalEnv
+        ? collectUsedGlobalNames(program, globalEnv.head, preludeEnv?.head)
+        : undefined;
+
       const { snapshots, breakpointSteps } = collectSnapshots(
         this.context,
         control,
@@ -104,6 +146,7 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
         chunk,
         maxSnapshots,
         config.breakpointLines ?? [],
+        usedGlobalNames,
       );
 
       this.csePlugin.sendSnapshots(snapshots, breakpointSteps);

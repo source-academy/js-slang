@@ -55,3 +55,34 @@ describe('SourceCseEvaluator', () => {
     expect(snapshotCalls[0].snapshots.length).toBe(12);
   });
 });
+
+describe('prelude', () => {
+  // map/filter/accumulate are defined in Source (context.prelude), not as native builtins, so
+  // they exist only after the prelude has been evaluated. This evaluator drives the machine
+  // directly rather than through runFilesInContext, so it has to run the prelude itself —
+  // without that, every prelude name raised UndefinedVariableError in the CSE tab.
+  test.each([
+    ['map', 'map(x => x + 1, list(1, 2));'],
+    ['accumulate', 'accumulate((a, b) => a + b, 0, list(1, 2, 3));'],
+    ['filter', 'filter(x => x > 1, list(1, 2, 3));'],
+  ])('%s resolves', async (_name, code) => {
+    const { plugin, errors } = fakeConductor();
+    await new SourceCseEvaluator3(plugin).evaluateChunk(code);
+    expect(errors.map(e => e.message)).toEqual([]);
+  });
+
+  test('the prelude is not stepped through: snapshots start at the user program', async () => {
+    const { plugin, snapshotCalls } = fakeConductor();
+    await new SourceCseEvaluator3(plugin).evaluateChunk('1 + 1;');
+    // A few steps for a one-line program, not the hundreds the prelude would add.
+    expect(snapshotCalls[0].snapshots.length).toBeLessThan(30);
+  });
+
+  test('it runs once, not per chunk', async () => {
+    const { plugin, errors } = fakeConductor();
+    const evaluator = new SourceCseEvaluator3(plugin);
+    await evaluator.evaluateChunk('map(x => x, list(1));');
+    await evaluator.evaluateChunk('accumulate((a, b) => a + b, 0, list(1, 2));');
+    expect(errors.map(e => e.message)).toEqual([]);
+  });
+});

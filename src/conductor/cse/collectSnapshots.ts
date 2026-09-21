@@ -44,6 +44,7 @@ function snapshotOf(
   rawStash: unknown[],
   source: string,
   currentLine: number | undefined,
+  usedGlobalNames?: ReadonlySet<string>,
 ): CseSnapshot {
   return {
     stepIndex,
@@ -58,7 +59,12 @@ function snapshotOf(
       .slice()
       .reverse()
       .map(value => serializeValue(value)),
-    environments: serializeEnvironments(context.runtime.environments, rawStash, rawControl),
+    environments: serializeEnvironments(
+      context.runtime.environments,
+      rawStash,
+      rawControl,
+      usedGlobalNames,
+    ),
     currentLine,
   };
 }
@@ -78,6 +84,7 @@ export function collectSnapshots(
   source: string,
   maxSnapshots: number,
   breakpointLines: readonly number[] = [],
+  usedGlobalNames?: ReadonlySet<string>,
 ): CollectedSnapshots {
   const breakpoints = new Set(breakpointLines);
   const snapshots: CseSnapshot[] = [];
@@ -104,7 +111,15 @@ export function collectSnapshots(
   const initialStash = stash.getStack();
   const initialTop = initialControl[initialControl.length - 1] as AnyItem;
   snapshots.push(
-    snapshotOf(0, context, initialControl, initialStash, source, initialTop?.loc?.start?.line),
+    snapshotOf(
+      0,
+      context,
+      initialControl,
+      initialStash,
+      source,
+      initialTop?.loc?.start?.line,
+      usedGlobalNames,
+    ),
   );
   recordIfBreakpoint(initialControl, 0);
 
@@ -126,7 +141,15 @@ export function collectSnapshots(
     // pointing one position behind the state it describes.
     const stepIndex = steps;
     snapshots.push(
-      snapshotOf(stepIndex, context, rawControl, rawStash, source, currentNode?.loc?.start?.line),
+      snapshotOf(
+        stepIndex,
+        context,
+        rawControl,
+        rawStash,
+        source,
+        currentNode?.loc?.start?.line,
+        usedGlobalNames,
+      ),
     );
     recordIfBreakpoint(rawControl, stepIndex);
   }
