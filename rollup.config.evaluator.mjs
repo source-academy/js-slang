@@ -89,8 +89,6 @@ export default {
         { find: 'path', replacement: shim('path.mjs') },
         // Pulled in transitively by source-map's Node build; unreachable in the browser.
         { find: 'inspector', replacement: shim('empty.mjs') },
-        // See the shim: keeps the TypeScript compiler out of every evaluator bundle.
-        { find: '@ts-morph/bootstrap', replacement: shim('ts-morph.mjs') },
       ],
     }),
     esbuild({ target: 'es2020', sourceMap: true }),
