@@ -43,6 +43,15 @@ jobs:
           cache: yarn
       - name: Install dependencies
         run: yarn install --immutable
+      # src/editors/ace/docTooltip/*.json are generated and gitignored, and the bundles import
+      # them, so a clean checkout cannot build without this step. It is easy to miss locally,
+      # where a previous build has already left them lying around: this workflow passed locally
+      # and failed on its first real run for exactly that reason.
+      #
+      # `yarn autocomplete` rather than `yarn docs`: the latter also builds the full jsdoc site,
+      # which this deploy has no use for. Verified that autocomplete alone regenerates every file.
+      - name: Generate autocomplete documentation
+        run: yarn autocomplete
       - name: Build evaluators
         run: yarn build:evaluators
       - name: Check the bundles were produced
