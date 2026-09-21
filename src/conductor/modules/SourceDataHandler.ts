@@ -117,6 +117,11 @@ export class SourceDataHandler implements IDataHandler {
    * Resolves a value the caller is treating as a pair, whether it is a genuine `PAIR` or an `ARRAY`
    * of length ≥ 2 — see the class comment on why both are accepted. Returns a view that writes
    * back to whichever table actually owns the value.
+   *
+   * The array-backed `setHead`/`setTail` enforce `array.type` on the incoming value, exactly as
+   * `array_set` does — without this, `pair_sethead` on a typed array would be a second, unchecked
+   * way to write into it, silently breaking the array's own homogeneity (writing a `CONST_STRING`
+   * into a `NUMBER` array, say) in a way `array_get` and `array_type` would then both disagree with.
    */
   private resolvePairView(p: TypedValue<DataType.PAIR>): {
     head: TypedValue<DataType>;
@@ -129,11 +134,22 @@ export class SourceDataHandler implements IDataHandler {
       if (!array || array.elements.length < 2) {
         throw new InvalidIdentifierError('a pair', p.value);
       }
+      const checkType = (tv: TypedValue<DataType>) => {
+        if (array.type !== DataType.VOID && !isSameType(tv.type, array.type)) {
+          throw new InvalidTypeError('an array element', typeName(array.type), typeName(tv.type));
+        }
+      };
       return {
         head: array.elements[0],
         tail: array.elements[1],
-        setHead: tv => (array.elements[0] = tv),
-        setTail: tv => (array.elements[1] = tv),
+        setHead: tv => {
+          checkType(tv);
+          array.elements[0] = tv;
+        },
+        setTail: tv => {
+          checkType(tv);
+          array.elements[1] = tv;
+        },
       };
     }
 
@@ -308,15 +324,22 @@ export class SourceDataHandler implements IDataHandler {
 
   /**
    * A pair and a two-element array are the same thing to a module (see the class comment), so a
-   * declared `PAIR`/`LIST` is satisfied by an `ARRAY` and vice versa. Without this, a bundle that
-   * encodes a list as an `ARRAY` — which py-slang's interop does — fails its own signature check.
+   * declared `PAIR`/`LIST` is satisfied by an `ARRAY`. Without this, a bundle that encodes a list as
+   * an `ARRAY` — which py-slang's interop does — fails its own signature check.
+   *
+   * Deliberately one-directional: the reverse (a declared `ARRAY` accepting an actual `PAIR`) is NOT
+   * allowed, even though it sounds symmetric. `resolveArray`/`array_get`/`array_set` only ever
+   * consult `arrayMap` — a genuine (non-array-backed) `PAIR` has no entry there — so accepting one
+   * here would let a value straight through the signature check only to throw
+   * `InvalidIdentifierError` the moment the closure actually calls an array operation on it. Letting
+   * that check fail immediately, at the boundary, is a far clearer error than a mismatched promise
+   * a few lines further into the module's own code.
    */
   private typesCompatible(declared: DataType, actual: DataType): boolean {
     if (declared === DataType.ANY) return true;
     if ((declared === DataType.PAIR || declared === DataType.LIST) && actual === DataType.ARRAY) {
       return true;
     }
-    if (declared === DataType.ARRAY && actual === DataType.PAIR) return true;
     return isSameType(actual, declared);
   }
 
@@ -449,13 +472,22 @@ export class SourceDataHandler implements IDataHandler {
    * Drops every identifier issued so far. Called between runs, not between REPL chunks: a value a
    * module is still holding across chunks (a `sound` still playing, a `pix_n_flix` filter) must
    * survive, but nothing should survive pressing Run again.
+   *
+   * `uniqueId` is deliberately NOT reset here, even though every table it indexes into is cleared.
+   * A module can hold a handle from a *previous* run past this call — the exact "still playing
+   * sound" case this method exists to let survive across chunks is also, structurally, nothing
+   * more than a module retaining a stale reference across a call to `reset()` it doesn't know
+   * happened. If ids restarted at 0, the next value created after this reset would get the same
+   * numeric id as the first value from the run before it, and a stale handle would silently read
+   * or mutate the new run's unrelated value instead of raising `InvalidIdentifierError` the way a
+   * genuinely dangling handle should. Keeping the counter monotonic for the handler's entire
+   * lifetime is what keeps that error honest.
    */
   reset(): void {
     this.pairMap.clear();
     this.arrayMap.clear();
     this.closureMap.clear();
     this.opaqueMap.clear();
-    this.uniqueId = 0;
   }
 
   // ------------------------------------------------------- list utilities

@@ -75,6 +75,37 @@ describe('pairs', () => {
     );
   });
 
+  // pair_sethead/pair_settail on an array-backed pair must honour the array's own element type,
+  // exactly as array_set does — otherwise they're a second, unchecked way to write into a typed
+  // array, and array_get/array_type would disagree with what actually got stored.
+  test('pair_sethead on an array-backed pair enforces the array element type', async () => {
+    const h = new SourceDataHandler();
+    const a = await h.array_make(DataType.NUMBER, 2, num(0));
+    const asPair = a as unknown as TypedValue<DataType.PAIR>;
+    await expect(h.pair_sethead(asPair, str('not a number'))).rejects.toBeInstanceOf(
+      InvalidTypeError,
+    );
+    // Rejected before the write happens, not after.
+    expect(await h.array_get(a, 0)).toEqual(num(0));
+  });
+
+  test('pair_sethead on an array-backed pair accepts a same-typed value, and it is visible via array_get', async () => {
+    const h = new SourceDataHandler();
+    const a = await h.array_make(DataType.NUMBER, 2, num(0));
+    const asPair = a as unknown as TypedValue<DataType.PAIR>;
+    await h.pair_sethead(asPair, num(5));
+    expect(await h.array_get(a, 0)).toEqual(num(5));
+  });
+
+  // A VOID-typed (untyped) array accepts anything through either door, matching array_set.
+  test('pair_sethead on a VOID-typed array-backed pair accepts anything', async () => {
+    const h = new SourceDataHandler();
+    const a = await h.array_make(DataType.VOID, 2, { type: DataType.VOID, value: undefined });
+    const asPair = a as unknown as TypedValue<DataType.PAIR>;
+    await expect(h.pair_sethead(asPair, str('x'))).resolves.toBeUndefined();
+    expect(await h.array_get(a, 0)).toEqual(str('x'));
+  });
+
   test('a handle from another handler is rejected', async () => {
     const a = new SourceDataHandler();
     const b = new SourceDataHandler();
@@ -177,7 +208,7 @@ describe('closures', () => {
 
   // Same cross-language tolerance as the pair operations above: a declared PAIR is satisfied by an
   // ARRAY, because a pair *is* a two-element array.
-  test('a declared pair accepts an array, and vice versa', async () => {
+  test('a declared pair accepts an array', async () => {
     const h = new SourceDataHandler();
     const sig = { args: [DataType.PAIR], returnType: DataType.NUMBER } as const;
     const c = await h.closure_make(
@@ -186,6 +217,24 @@ describe('closures', () => {
     );
     const a = await h.array_make(DataType.NUMBER, 2, num(0));
     await expect(drive(h.closure_call(c, [a], DataType.NUMBER))).resolves.toEqual(num(1));
+  });
+
+  // NOT symmetric, on purpose: resolveArray/array_get/array_set only ever consult arrayMap, so a
+  // genuine (non-array-backed) PAIR has no way to actually satisfy an array operation once inside
+  // the closure, even though the signature check might otherwise let it through. Accepting it here
+  // would only defer the failure to a confusing InvalidIdentifierError deeper in the module's own
+  // code instead of rejecting it cleanly at the boundary.
+  test('a declared array does NOT accept a genuine pair', async () => {
+    const h = new SourceDataHandler();
+    const sig = { args: [DataType.ARRAY], returnType: DataType.NUMBER } as const;
+    const c = await h.closure_make(
+      sig,
+      extern(() => num(1)),
+    );
+    const p = await h.pair_make(num(1), num(2));
+    await expect(drive(h.closure_call(c, [p], DataType.NUMBER))).rejects.toBeInstanceOf(
+      InvalidTypeError,
+    );
   });
 
   test('DataType.ANY accepts anything', async () => {
@@ -338,6 +387,22 @@ describe('lifetimes', () => {
     h.reset();
     await expect(h.pair_head(p)).rejects.toBeInstanceOf(InvalidIdentifierError);
     await expect(h.opaque_get(o)).rejects.toBeInstanceOf(InvalidIdentifierError);
+  });
+
+  // A module can legitimately hold a handle across a reset — the exact "still-playing sound" case
+  // reset() exists to let survive across chunks is, structurally, a module retaining a stale
+  // reference across a reset() call it doesn't know happened. If ids recycled from 0, the FIRST
+  // value created after reset would silently alias the stale handle instead of raising
+  // InvalidIdentifierError — so this checks the id space stays monotonic across a reset, not just
+  // that the reset table lookups fail.
+  test('reset does not recycle identifiers: a stale handle never aliases a post-reset value', async () => {
+    const h = new SourceDataHandler();
+    const stale = await h.pair_make(num(1), num(2));
+    h.reset();
+    const fresh = await h.pair_make(num(99), num(100));
+    expect(fresh.value).not.toBe(stale.value);
+    await expect(h.pair_head(stale)).rejects.toBeInstanceOf(InvalidIdentifierError);
+    expect(await h.pair_head(fresh)).toEqual(num(99));
   });
 });
 
