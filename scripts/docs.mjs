@@ -5,7 +5,6 @@ import pathlib from 'path'
 import fs from 'fs/promises'
 import process from 'process'
 import { Command } from '@commander-js/extra-typings'
-import autocomplete from './autocomplete.mjs'
 
 const configs = {
   landing: {
@@ -318,15 +317,8 @@ await new Command()
       .action(args => prepare(args.silent))
   )
   .addCommand(new Command('clean').description('Clear the output directory').action(clean))
-  .addCommand(
-    new Command('autocomplete')
-      .description('Update autocomplete documentation')
-      .action(autocomplete)
-  )
-  .addCommand(
-    new Command('docs')
-      .description("Execute the 'run' command and then the 'autocomplete' command")
-      .option('--silent', 'Run without outputting to stdout')
-      .action(args => run(args.silent).then(autocomplete))
-  )
+  // The `autocomplete` and `docs` subcommands are gone with #2070: both existed only to
+  // regenerate src/editors/ace/docTooltip, the Ace editor tooltip data the frontend used to
+  // import, and that directory no longer exists. What remains here builds the *language*
+  // documentation published to docs.sourceacademy.org, which is unrelated to running Source.
   .parseAsync()
