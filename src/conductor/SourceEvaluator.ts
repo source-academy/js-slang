@@ -3,7 +3,9 @@ import { BasicEvaluator, type IRunnerPlugin } from '@sourceacademy/conductor/run
 import createContext from '../createContext';
 import { Chapter, Variant } from '../langs';
 import { runFilesInContext } from '../index';
+import { parse } from '../parser/parser';
 import type { Context, Value } from '../types';
+import { simple } from '../utils/ast/walkers';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
 
 /** Fallback entrypoint path, used only if the host never names one. js-slang validates file paths
@@ -23,10 +25,12 @@ const DEFAULT_ENTRYPOINT = '/program.js';
  */
 abstract class SourceEvaluatorBase extends BasicEvaluator {
   private readonly context: Context;
+  private readonly chapter: Chapter;
   private entrypoint = DEFAULT_ENTRYPOINT;
 
   protected constructor(conductor: IRunnerPlugin, chapter: Chapter) {
     super(conductor);
+    this.chapter = chapter;
 
     const rawDisplay = (value: Value, str: string) => {
       this.conductor.sendOutput((str === undefined ? '' : str + ' ') + String(value));
@@ -68,9 +72,49 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
     return this.evaluateChunk(fileContent);
   }
 
+  /**
+   * Warns, once per run, that a `debugger;` statement does nothing on this evaluator.
+   *
+   * Both pre-existing behaviours were invisible to the user: the legacy `'auto'` execution
+   * method silently *switched engines* on seeing a `debugger;` (see `determineExecutionMethod`),
+   * while this evaluator pins `'native'` and silently ignores it. A hint is better than either.
+   *
+   * Only §3/§4 get pointed at the CSE evaluator, because that is the only place one exists — the
+   * frontend gates the CSE tab at `chapter >= Chapter.SOURCE_3`. Below that, say what happens and
+   * stop there rather than sending the user somewhere that is not in their dropdown.
+   *
+   * Detection walks the AST rather than the source text, so `"debugger;"` inside a string or a
+   * comment does not trigger it. A parse failure here is ignored: the real run reports it.
+   */
+  private warnIfDebuggerStatement(chunk: string): void {
+    let program;
+    try {
+      program = parse(chunk, this.context, {}, false);
+    } catch {
+      return;
+    }
+    if (!program) return;
+
+    let found = false;
+    simple(program, {
+      DebuggerStatement() {
+        found = true;
+      },
+    });
+    if (!found) return;
+
+    this.conductor.sendOutput(
+      this.chapter >= Chapter.SOURCE_3
+        ? 'Note: this evaluator ignores `debugger;`. Select the CSE machine evaluator to step ' +
+            'through the program instead.'
+        : 'Note: this evaluator ignores `debugger;`.',
+    );
+  }
+
   async evaluateChunk(chunk: string): Promise<Value> {
     const path = this.entrypoint;
     try {
+      this.warnIfDebuggerStatement(chunk);
       const result = await runFilesInContext({ [path]: chunk }, path, this.context, {
         // Pin the engine. The default 'auto' silently switches to the CSE machine when verbose
         // errors are on or the program contains a `debugger;` statement (see
