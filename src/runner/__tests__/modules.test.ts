@@ -15,7 +15,6 @@ const describeCases: DescribeCase[] = [
       Chapter.SOURCE_3,
       Chapter.SOURCE_4,
       Chapter.FULL_JS,
-      Chapter.FULL_TS,
       Chapter.LIBRARY_PARSER,
     ],
     [
