@@ -28,16 +28,23 @@ type AnyNode = any;
  */
 function serializeTree(root: StepperBaseNode): {
   ast: SerializedStepperStep['ast'];
-  ids: Map<unknown, string>;
+  ids: Map<unknown, string[]>;
 } {
-  const ids = new Map<unknown, string>();
+  // One node object can sit at several positions in the same tree: substituting a parameter that
+  // occurs more than once — `(x => x + x)(1)` — inserts the *same* `StepperLiteral` at every
+  // occurrence. So each object maps to *all* the ids it was given, not just the last, otherwise
+  // every marker pointing at it would collapse onto whichever occurrence happened to be walked
+  // last and the host would highlight that one instead of the intended occurrences.
+  const ids = new Map<unknown, string[]>();
   let counter = 0;
 
   const walk = (value: unknown): unknown => {
     if (Array.isArray(value)) return value.map(walk);
     if (value instanceof StepperBaseNode) {
       const nodeId = `n${counter++}`;
-      ids.set(value, nodeId);
+      const existing = ids.get(value);
+      if (existing) existing.push(nodeId);
+      else ids.set(value, [nodeId]);
       const out: Record<string, unknown> = { nodeId };
       for (const [key, child] of Object.entries(value)) {
         out[key] = walk(child);
@@ -57,31 +64,37 @@ function serializeTree(root: StepperBaseNode): {
 }
 
 /**
- * Resolves a marker's redex reference to an id within the step it belongs to.
+ * Resolves a marker's redex reference to ids within the step it belongs to.
  *
- * A redex that is not part of this step's own tree yields `redexId: null` rather than a dangling
- * id — the protocol allows exactly that, and it is better than pointing the host at a node it
- * cannot find. `redexNodeType` is sent regardless, since the host uses it for breakpoint
+ * Returns *one marker per occurrence*. In the original stepper a marker holds a node reference,
+ * so a redex substituted into several positions highlights all of them; `SerializedMarker` can
+ * only name one id, so the faithful translation is several markers rather than an arbitrary pick.
+ *
+ * A redex that is not part of this step's own tree yields a single marker with `redexId: null`
+ * rather than a dangling id — the protocol allows exactly that, and it beats pointing the host at
+ * a node it cannot find. `redexNodeType` is sent regardless, since the host uses it for breakpoint
  * navigation and can no longer dereference the node to read its type.
  */
-function serializeMarker(marker: Marker, ids: Map<unknown, string>): SerializedMarker {
-  const out: SerializedMarker = {};
-  if (marker.redex) {
-    out.redexId = ids.get(marker.redex) ?? null;
-    out.redexNodeType = (marker.redex as AnyNode).type as string;
-  } else {
-    out.redexId = null;
+function serializeMarkers(marker: Marker, ids: Map<unknown, string[]>): SerializedMarker[] {
+  const base: SerializedMarker = {};
+  if (marker.redexType !== undefined) base.redexType = marker.redexType;
+  if (marker.explanation !== undefined) base.explanation = marker.explanation;
+
+  if (!marker.redex) return [{ ...base, redexId: null }];
+
+  const redexNodeType = (marker.redex as AnyNode).type as string;
+  const occurrences = ids.get(marker.redex);
+  if (!occurrences || occurrences.length === 0) {
+    return [{ ...base, redexId: null, redexNodeType }];
   }
-  if (marker.redexType !== undefined) out.redexType = marker.redexType;
-  if (marker.explanation !== undefined) out.explanation = marker.explanation;
-  return out;
+  return occurrences.map(redexId => ({ ...base, redexId, redexNodeType }));
 }
 
 /** Serialises the whole run. */
 export function serializeSteps(steps: IStepperPropContents[]): SerializedStepperStep[] {
   return steps.map(step => {
     const { ast, ids } = serializeTree(step.ast);
-    const markers = step.markers?.map(marker => serializeMarker(marker, ids));
+    const markers = step.markers?.flatMap(marker => serializeMarkers(marker, ids));
     return markers && markers.length > 0 ? { ast, markers } : { ast };
   });
 }

@@ -29,6 +29,23 @@ function run(code: string, chapter: Chapter, stepLimit = 200) {
   return { raw, serialized: serializeSteps(raw) };
 }
 
+/**
+ * How many positions in `root` are occupied by the very same object as `target`.
+ *
+ * Compares by identity and deliberately does *not* memoise visited objects: the whole point is to
+ * count repeats of one object, which a visited-set would collapse to one.
+ */
+function countOccurrences(root: unknown, target: unknown): number {
+  let count = 0;
+  const walk = (value: unknown): void => {
+    if (value === target) count++;
+    if (Array.isArray(value)) return value.forEach(walk);
+    if (value && typeof value === 'object') Object.values(value).forEach(walk);
+  };
+  walk(root);
+  return count;
+}
+
 function collectNodeIds(node: unknown, out: string[] = []): string[] {
   if (Array.isArray(node)) {
     node.forEach(child => collectNodeIds(child, out));
@@ -99,5 +116,58 @@ describe('step limit', () => {
     expect(run(code, Chapter.SOURCE_1, 6).serialized.length).toBeLessThan(
       run(code, Chapter.SOURCE_1, 200).serialized.length,
     );
+  });
+});
+
+describe('a value substituted at several occurrences', () => {
+  // `StepperIdentifier.substitute` inserts the *same* node object at every occurrence of the
+  // parameter, so one object genuinely sits at several positions in the tree — confirmed for all
+  // three programs below (a `Literal` appearing 2-3 times).
+  //
+  // Honest scope: measured across these programs, no marker's redex is ever one of those shared
+  // objects — every marker redex occupies exactly one position. So the per-occurrence id map is
+  // *defensive*: it makes a marker pointing at a shared node highlight every occurrence, which is
+  // what the reference stepper does with a node reference, instead of silently collapsing onto
+  // whichever occurrence was walked last. These tests pin the invariants (ids unique per position,
+  // marker count matching occurrence count, every redexId resolving) rather than demonstrating a
+  // failure of the previous behaviour.
+  const REPEATED: [string, string][] = [
+    ['twice', '(x => x + x)(1);'],
+    ['three times', '(x => x * x * x)(2);'],
+    ['named function', 'function f(y) {\n  return y + y;\n}\nf(3);'],
+  ];
+
+  test.each(REPEATED)('%s: each occurrence gets its own id', (_name, code) => {
+    const { serialized } = run(code, Chapter.SOURCE_1);
+    for (const step of serialized) {
+      const ids = collectNodeIds(step.ast);
+      expect(new Set(ids).size, 'ids must stay unique per position').toBe(ids.length);
+    }
+  });
+
+  test.each(REPEATED)('%s: markers cover every occurrence, not just one', (_name, code) => {
+    const { raw, serialized } = run(code, Chapter.SOURCE_1);
+    for (const [i, step] of serialized.entries()) {
+      const rawMarkers = raw[i].markers ?? [];
+      // One serialized marker per occurrence of each redex, so a value substituted into two
+      // places is highlighted in both — matching what the reference stepper does with a node
+      // reference the renderer matches by identity.
+      const expected = rawMarkers.reduce(
+        (total, marker) =>
+          total + (marker.redex ? Math.max(1, countOccurrences(raw[i].ast, marker.redex)) : 1),
+        0,
+      );
+      expect(step.markers?.length ?? 0, `step ${i}`).toBe(expected);
+    }
+  });
+
+  test.each(REPEATED)('%s: every redexId still resolves', (_name, code) => {
+    const { serialized } = run(code, Chapter.SOURCE_1);
+    for (const step of serialized) {
+      const ids = new Set(collectNodeIds(step.ast));
+      for (const marker of step.markers ?? []) {
+        if (marker.redexId != null) expect(ids.has(marker.redexId)).toBe(true);
+      }
+    }
   });
 });

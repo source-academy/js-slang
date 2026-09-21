@@ -6,6 +6,8 @@ import type { SourceError } from '../errors/base';
 import { Chapter, Variant } from '../langs';
 import { parse } from '../parser/parser';
 import type { Context, Value } from '../types';
+import { EvaluatorSyntaxError } from '@sourceacademy/conductor/common';
+
 import { DEFAULT_STEP_LIMIT, fetchRunConfig } from './cse/runConfig';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
 import { SourceStepperRunnerPlugin } from './stepper/SourceStepperRunnerPlugin';
@@ -57,6 +59,32 @@ abstract class SourceStepperEvaluatorBase extends BasicEvaluator {
     try {
       const program = parse(chunk, this.context);
       if (program === null) {
+        this.reportErrors();
+        return undefined;
+      }
+
+      // The stepper has no converter for import/export declarations, and handing it one does not
+      // degrade gracefully — `getSteps` throws `this.body[0].contractEmpty is not a function`,
+      // which would reach the user as an internal-looking message with no hint of the cause.
+      //
+      // The non-conductor substitution path avoids this by running `preprocessFileImports` first.
+      // Doing that here would pull the whole module pipeline into this slice, which is module
+      // support (#2062) rather than stepping, so for now say plainly what is unsupported.
+      const importing = program.body.find(
+        node =>
+          node.type === 'ImportDeclaration' ||
+          node.type === 'ExportNamedDeclaration' ||
+          node.type === 'ExportDefaultDeclaration' ||
+          node.type === 'ExportAllDeclaration',
+      );
+      if (importing) {
+        this.conductor.sendError(
+          new EvaluatorSyntaxError(
+            'The stepper does not support import and export declarations.',
+            importing.loc?.start.line,
+            importing.loc?.start.column,
+          ),
+        );
         this.reportErrors();
         return undefined;
       }
