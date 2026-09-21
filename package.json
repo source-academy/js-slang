@@ -50,6 +50,7 @@
     "build": "yarn build:slang",
     "build:slang": "tsc --project tsconfig.prod.json",
     "build:evaluators": "node scripts/build-evaluators.mjs",
+    "jsdoc": "node ./scripts/docs.mjs",
     "eslint": "eslint --concurrency=auto src scripts",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
