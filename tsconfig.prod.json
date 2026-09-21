@@ -15,6 +15,9 @@
     "src/**/__tests__/**",
     "src/**/__mocks__/**",
     "src/utils/testing",
+    // Conductor is ESM-only; this project emits CommonJS. The conductor sources are
+    // bundled separately by rollup.config.evaluator.mjs and must not reach the published dist/.
+    "src/conductor",
     "vitest.config.ts"
   ]
 }

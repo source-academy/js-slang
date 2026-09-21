@@ -42,6 +42,11 @@ jobs:
           cache: yarn
       - run: yarn install --immutable
       - run: yarn build
+      # Bundles the Conductor evaluators. Not covered by `yarn build` (which is tsc for the
+      # published library) and not exercised by the test suite either, so without this a change
+      # that breaks browser bundling — a newly reachable Node builtin, an inline require() that
+      # rollup cannot rewrite — would land green and only surface when someone ran the worker.
+      - run: yarn build:evaluators
       - run: yarn format:ci
       - run: yarn eslint
       - run: yarn test-coverage
