@@ -48,7 +48,21 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
     });
   }
 
-  /** Captures the host's entrypoint name so reported errors carry the right file. */
+  /**
+   * Captures the host's entrypoint name, so the file js-slang is asked to run is the one the host
+   * actually named rather than a constant invented here. It is the map key and the entrypoint
+   * argument below; `validateFilePath` and the module preprocessor's resolution both key off it.
+   *
+   * It deliberately does *not* reach reported errors. `runFilesInContext` defaults
+   * `shouldAddFileName` to `Object.keys(files).length > 1` (`src/index.ts:258`), and this evaluator
+   * always passes exactly one file, so the linker parses without `sourceFile` and
+   * `error.location.source` stays undefined — meaning `toConductorError` renders `1:3: ...` rather
+   * than `/program.js:1:3: ...`. That is the wanted behaviour while there is only ever one file:
+   * js-slang's own default exists precisely to keep a redundant filename off every single-file
+   * diagnostic. When this evaluator grows real multi-file support (local imports, folder mode) it
+   * should pass `shouldAddFileName: true` at the same time, because then the filename genuinely
+   * disambiguates.
+   */
   override async evaluateFile(fileName: string, fileContent: string): Promise<Value> {
     this.entrypoint = fileName;
     return this.evaluateChunk(fileContent);
