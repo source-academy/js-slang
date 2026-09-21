@@ -3924,8 +3924,6 @@ __metadata:
     typescript: "npm:^6.0.2"
     typescript-eslint: "npm:^8.46.3"
     vitest: "npm:^4.0.4"
-  bin:
-    js-slang: dist/repl/index.js
   languageName: unknown
   linkType: soft
 
