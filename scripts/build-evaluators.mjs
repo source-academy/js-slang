@@ -13,6 +13,8 @@ const allTargets = [
   'SourceEvaluator2',
   'SourceEvaluator3',
   'SourceEvaluator4',
+  'SourceCseEvaluator3',
+  'SourceCseEvaluator4',
 ];
 
 function buildTarget(target) {
