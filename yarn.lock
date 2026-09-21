@@ -1185,10 +1185,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sourceacademy/common-stepper@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@sourceacademy/common-stepper@npm:0.0.1"
-  checksum: 10c0/e3a79fb07f68e24a045553a8c5c66e652df12d3b80150a20b4b4603936605e3a2e10c5636e48ba180b2a3473287727340c4b791abe8df301d00e0984d07667a4
+"@sourceacademy/common-stepper@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@sourceacademy/common-stepper@npm:0.0.2"
+  checksum: 10c0/5172c92f61c4dcda10818d4c1e345b39bfa21b2296935805b3b600d8947515c492dbc58fb5ed73bdfe169c22348c4181216d6ef397ffeb65c763a1767144f956
   languageName: node
   linkType: hard
 
@@ -3886,7 +3886,7 @@ __metadata:
     "@rollup/plugin-replace": "npm:^6.0.3"
     "@rollup/plugin-terser": "npm:^1.0.0"
     "@sourceacademy/common-cse-machine": "npm:^0.3.0"
-    "@sourceacademy/common-stepper": "npm:^0.0.1"
+    "@sourceacademy/common-stepper": "npm:^0.0.2"
     "@sourceacademy/conductor": "npm:^0.8.3"
     "@sourceacademy/runner-cse-machine": "npm:^3.0.0"
     "@sourceacademy/runner-stepper": "npm:^0.0.1"
@@ -3924,8 +3924,6 @@ __metadata:
     typescript: "npm:^6.0.2"
     typescript-eslint: "npm:^8.46.3"
     vitest: "npm:^4.0.4"
-  bin:
-    js-slang: dist/repl/index.js
   languageName: unknown
   linkType: soft
 
