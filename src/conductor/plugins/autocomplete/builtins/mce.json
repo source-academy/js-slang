@@ -8,7 +8,7 @@
   {
     "name": "parse",
     "title": "parse(x) -> value",
-    "description": "returns the parse tree that results from parsing\nthe string <CODE>str</CODE> as a Source program. The format\nof the parse tree is described in chapter 4 of\nthe textbook\nin <a href=\"https://sourceacademy.org/sicpjs/\">Structure and\nInterpretation of Computer Programs, JavaScript Adaptation</a> (SICP).",
+    "description": "returns the parse tree that results from parsing\nthe string <CODE>str</CODE> as a JavaScript program. The format\nof the parse tree is described in chapter 4 of\nthe textbook\nin <a href=\"https://sourceacademy.org/sicpjs/\">Structure and\nInterpretation of Computer Programs, JavaScript Adaptation</a> (SICP).",
     "meta": "func"
   },
   {

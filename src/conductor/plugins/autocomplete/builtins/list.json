@@ -38,7 +38,7 @@
   {
     "name": "equal",
     "title": "equal(x, y) -> boolean",
-    "description": "Returns <CODE>true</CODE> if both\nhave the same structure with respect to <CODE>pair</CODE>,\nand identical values at corresponding leave positions (places that are not\nthemselves pairs), and <CODE>false</CODE> otherwise. For the \"identical\",\nthe values need to have the same type, otherwise the result is\n<CODE>false</CODE>. If corresponding leaves are boolean values, these values\nneed to be the same. If both are <CODE>undefined</CODE> or both are\n<CODE>null</CODE>, the result is <CODE>true</CODE>. Otherwise they are compared\nwith <CODE>===</CODE> (using the definition of <CODE>===</CODE> in the\nrespective Source language in use).\nTime, space:\n<CODE>Theta(n)</CODE>, where <CODE>n</CODE> is the total number of data structures such as\npairs in <CODE>x</CODE> and <CODE>y</CODE>.",
+    "description": "Returns <CODE>true</CODE> if both\nhave the same structure with respect to <CODE>pair</CODE>,\nand identical values at corresponding leave positions (places that are not\nthemselves pairs), and <CODE>false</CODE> otherwise. For the \"identical\",\nthe values need to have the same type, otherwise the result is\n<CODE>false</CODE>. If corresponding leaves are boolean values, these values\nneed to be the same. If both are <CODE>undefined</CODE> or both are\n<CODE>null</CODE>, the result is <CODE>true</CODE>. Otherwise they are compared\nwith <CODE>===</CODE> (using the definition of <CODE>===</CODE> in the\nrespective JavaScript sublanguage in use).\nTime, space:\n<CODE>Theta(n)</CODE>, where <CODE>n</CODE> is the total number of data structures such as\npairs in <CODE>x</CODE> and <CODE>y</CODE>.",
     "meta": "func"
   },
   {
