@@ -76,6 +76,8 @@ exports[`Ensure no name clashes 1`] = `
   const array_length = nativeStorage.builtins.get(\\"array_length\\");
   const is_array = nativeStorage.builtins.get(\\"is_array\\");
   const stream = nativeStorage.builtins.get(\\"stream\\");
+  const set_timeout = nativeStorage.builtins.get(\\"set_timeout\\");
+  const clear_all_timeout = nativeStorage.builtins.get(\\"clear_all_timeout\\");
   const parse = nativeStorage.builtins.get(\\"parse\\");
   const tokenize = nativeStorage.builtins.get(\\"tokenize\\");
   const apply_in_underlying_javascript = nativeStorage.builtins.get(\\"apply_in_underlying_javascript\\");
@@ -193,6 +195,8 @@ Object {
   const array_length = nativeStorage.builtins.get(\\"array_length\\");
   const is_array = nativeStorage.builtins.get(\\"is_array\\");
   const stream = nativeStorage.builtins.get(\\"stream\\");
+  const set_timeout = nativeStorage.builtins.get(\\"set_timeout\\");
+  const clear_all_timeout = nativeStorage.builtins.get(\\"clear_all_timeout\\");
   const parse = nativeStorage.builtins.get(\\"parse\\");
   const tokenize = nativeStorage.builtins.get(\\"tokenize\\");
   const apply_in_underlying_javascript = nativeStorage.builtins.get(\\"apply_in_underlying_javascript\\");

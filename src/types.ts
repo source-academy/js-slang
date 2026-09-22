@@ -21,6 +21,15 @@ export interface CustomBuiltIns {
   /* Used for list visualisation. See #12. `values` is the full argument list of one `draw_data(...)`
    * call, not just its first argument — see #2078. */
   visualiseList: (values: Value[], externalContext: any) => void;
+  /** Schedules `f` (already validated as a zero-argument function) to be called after `delayMs`
+   * milliseconds, without blocking the calling code. See #2025 — only the transpiler evaluator
+   * (`SourceEvaluator`) wires a real implementation; every other evaluator falls through to
+   * `defaultBuiltIns.setTimeout`, which throws, since `f` must still be a plain, always-callable
+   * JS closure whenever the real timer eventually fires, which the CSE machine and stepper
+   * cannot currently guarantee. */
+  setTimeout: (f: Value, delayMs: number, externalContext: any) => void;
+  /** Cancels every timer `setTimeout` above has scheduled that hasn't fired yet. See #2025. */
+  clearAllTimeout: (externalContext: any) => void;
 }
 
 /**
