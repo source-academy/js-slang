@@ -118,12 +118,15 @@ export class InvalidArityError extends ModuleInterfaceError {
 
 /** `array_make` with no initial value, for a type that has no sensible zero (a pair, a closure). */
 export class InvalidArrayCreationError extends ModuleInterfaceError {
-  constructor(private readonly type: string) {
+  // Named `dataTypeName`, not `type`: `RuntimeSourceError` -> `SourceError` already declares a
+  // public `readonly type: ErrorType` for error classification (`src/errors/base.ts`) — a
+  // same-named constructor parameter property here shadowed it with an unrelated string.
+  constructor(private readonly dataTypeName: string) {
     super();
   }
 
   public override explain(): string {
-    return `A module tried to create an array of ${this.type} without an initial value.`;
+    return `A module tried to create an array of ${this.dataTypeName} without an initial value.`;
   }
 }
 

@@ -115,7 +115,7 @@ export async function sourceToModule(
           value: undefined,
         });
         for (let i = 0; i < elements.length; i++) {
-          await dh.array_set(array as TypedValue<DataType.ARRAY, DataType.VOID>, i, elements[i]);
+          await dh.array_set(array, i, elements[i]);
         }
         // Remembers that this specific array was a flattened proper list, purely so moduleToSource
         // can rebuild the cons chain if this exact identifier crosses back unchanged (see the tag's

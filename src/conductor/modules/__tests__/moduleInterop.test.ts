@@ -199,7 +199,13 @@ describe('moduleToSource', () => {
     const dh = new SourceDataHandler();
     const sig = { args: [DataType.ARRAY], returnType: DataType.ARRAY } as const;
     const reverseTyped = await dh.closure_make(sig, async function* (xs) {
-      const elements = await dh.list_to_vec(xs as TypedValue<DataType.LIST>);
+      // `xs` is statically `TypedValue<DataType.ARRAY>` (from `sig.args`), which doesn't overlap
+      // with `list_to_vec`'s declared `TypedValue<DataType.LIST>` parameter — but `list_to_vec`
+      // deliberately also accepts a flat ARRAY at runtime (see its own doc comment), and that's
+      // exactly what crosses here: a proper Source list flattens into one before it crosses into a
+      // module (`sourceToModule`). Double cast through `unknown`, as TS itself suggests, rather than
+      // widening `list_to_vec`'s own parameter type just for this call site.
+      const elements = await dh.list_to_vec(xs as unknown as TypedValue<DataType.LIST>);
       return dh.list(...elements.reverse());
     });
 

@@ -305,9 +305,13 @@ export function checkArray(
   }
 }
 
-// TODO: Should it be the "proper" signature?
-// type FunctionOfLength<T extends number> = (...args: [...TupleOfLength<T>, ...unknown[]]) => unknown;
-type FunctionOfLength<T extends number> = (...args: TupleOfLength<T>) => unknown;
+// The rest-args form, not a fixed T-tuple: `isFunctionOfLength`'s runtime check is `f.length === l`,
+// and JS's own `Function.length` already excludes trailing rest parameters — so a value that passes
+// this guard may genuinely accept more than `l` arguments (it just declared them as `...rest`, not as
+// `l` fixed params). Narrowing to a strict `l`-tuple signature would be unsound: calling the guarded
+// value with extra arguments is always safe at runtime (JS silently drops them), but a strict tuple
+// type would make TypeScript reject that call at compile time for a value that can actually handle it.
+type FunctionOfLength<T extends number> = (...args: [...TupleOfLength<T>, ...unknown[]]) => unknown;
 
 /**
  * Type guard for checking that the provided value is a function and that it has the specified number of parameters.
