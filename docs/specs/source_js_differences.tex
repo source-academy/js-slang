@@ -1,15 +1,15 @@
 \section*{Deviations from JavaScript}
 
-We intend the 
-Source language to be a conservative extension
+We intend this
+JavaScript sublanguage to be a conservative extension
 of JavaScript: Every correct
-Source program should behave \emph{exactly} the same
-using a Source implementation, as it does using a JavaScript
+program in this sublanguage should behave \emph{exactly} the same
+using an implementation of this sublanguage, as it does using a full JavaScript
 implementation. We assume, of course, that suitable libraries are
-used by the JavaScript implementation, to account for the predefined names
-of each Source language.
+used by the full JavaScript implementation, to account for the predefined names
+of each JavaScript sublanguage.
 
-This section lists some exceptions where we think a Source implementation
+This section lists some exceptions where we think an implementation of this sublanguage
 should be allowed to deviate from the JavaScript specification, for the
 sake of internal consistency and esthetics.
 
@@ -56,7 +56,7 @@ JavaScript statically
   \end{lstlisting}
   The result of evaluating this program in JavaScript is \texttt{undefined}.
 
-  Implementations of Source are currently allowed to opt for a simpler scheme. 
+  Implementations of this sublanguage are currently allowed to opt for a simpler scheme.
 
 \item[\href{https://sourceacademy.org/sicpjs/1.3.2\#footnote-2}{Hoisting of function declarations:}] In JavaScript, function declarations
   are ``hoisted''
@@ -64,10 +64,10 @@ JavaScript statically
   to the beginning of the block in which
   they appear. This means that applications of functions that are declared
   with function declaration statements never fail because the name is not
-  yet assigned to their function value. The specification of Source does 
-  not include this hoisting; in Source, function declaration can be seen as
+  yet assigned to their function value. The specification of this sublanguage does
+  not include this hoisting; here, function declaration can be seen as
   syntactic sugar for constant declaration and lambda expression.
   As a consequence, application of functions declared with function declaration
-  may fail in Source if the name that appears as function expression is not yet
+  may fail here if the name that appears as function expression is not yet
   assigned to the function value it is supposed to refer to.
 \end{description}

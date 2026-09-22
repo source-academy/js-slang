@@ -1,11 +1,11 @@
-Source §2 is a small programming language, designed for the second chapter
+JavaScript §2 is a small programming language, designed for the second chapter
 of the textbook
 <a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 
-## What names are predeclared in Source §2?
+## What names are predeclared in JavaScript §2?
 
-On the right, you see all predeclared names of Source §2, in alphabetical
+On the right, you see all predeclared names of JavaScript §2, in alphabetical
 order. Click on a name to see how it is defined and used. They come in
 these groups:
   <ul>
@@ -23,18 +23,18 @@ these groups:
     </li>
   </ul>
 
-## What can you do in Source §2?
+## What can you do in JavaScript §2?
 
 You can use all features of
-<a href="../source_1/">Source §1</a> and all
+<a href="../javascript_1/">JavaScript §1</a> and all
 features that are introduced in
 <a href="https://sourceacademy.org/sicpjs/2">chapter 2</a> of the
 textbook.
-Below are the features that Source §2 adds to Source §1.
+Below are the features that JavaScript §2 adds to JavaScript §1.
 
 ### The empty list `null`
 
-Source §2 provides a new primitive value, `null`, that serves as empty list.
+JavaScript §2 provides a new primitive value, `null`, that serves as empty list.
 
 ### The LIST functions
 
@@ -46,7 +46,7 @@ above.
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_2.pdf">Specification of Source §2</a>. Feel free to
+<a href="../javascript_2.pdf">Specification of JavaScript §2</a>. Feel free to
 take a peek!
 
 

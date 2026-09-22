@@ -41,7 +41,7 @@ node_modules    package.json    test.js         yarn.lock
 "love"
 ```
 The documentation of the functions and constants provided by the `sicp` package is
-[available here](https://docs.sourceacademy.org/source_4/global.html).
+[available here](https://docs.sourceacademy.org/javascript/javascript_4/global.html).
 
 This package is generated from the GitHub repository [`js-slang`](https://github.com/source-academy/js-slang) in the GitHub organization `source-academy`. Please report issues and bugs in this repository, using the prefix `sicp:` in the title.
 

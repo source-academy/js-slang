@@ -506,7 +506,7 @@ const cmdEvaluators: CommandEvaluators = {
     const update = command.update!;
 
     // Loop control variable present
-    // Refer to Source §3 specifications https://docs.sourceacademy.org/source_3.pdf
+    // Refer to JavaScript §3 specifications https://docs.sourceacademy.org/javascript/javascript_3.pdf
     if (init.type === 'VariableDeclaration' && init.kind === 'let') {
       const { id } = getSourceVariableDeclaration(init);
       control.push(

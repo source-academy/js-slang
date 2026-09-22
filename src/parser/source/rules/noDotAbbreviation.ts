@@ -9,7 +9,7 @@ export class NoDotAbbreviationError extends RuleError<MemberExpression> {
   }
 
   public override elaborate() {
-    return `Source doesn't use object-oriented programming, so you don't need any dots in your code (except decimal \
+    return `This JavaScript sublanguage doesn't use object-oriented programming, so you don't need any dots in your code (except decimal \
         points in numbers).`;
   }
 }

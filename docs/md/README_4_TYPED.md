@@ -15,7 +15,7 @@ that check the code for errors at compile time.
 ## What can you do in Source §4 Typed?
 
 You can use all features of
-<a href="../source_3_typed/">Source §3 Typed</a> and <a href="../source_4/">Source §4</a>, but with the following additional types:
+<a href="../source_3_typed/">Source §3 Typed</a> and <a href="../javascript_4/">JavaScript §4</a>, but with the following additional types:
 
 - Parse tree types, e.g. `Program`, `Statement`
 

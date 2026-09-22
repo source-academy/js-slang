@@ -15,7 +15,7 @@ that check the code for errors at compile time.
 ## What can you do in Source §3 Typed?
 
 You can use all features of
-<a href="../source_2_typed/">Source §2 Typed</a> and <a href="../source_3/">Source §3</a>, but with the following additional types:
+<a href="../source_2_typed/">Source §2 Typed</a> and <a href="../javascript_3/">JavaScript §3</a>, but with the following additional types:
 
 - Array types, e.g. `number[]`, `(string | number)[]`
 

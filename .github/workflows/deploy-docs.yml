@@ -31,7 +31,23 @@ jobs:
         run: |
           yarn run jsdoc prepare
           find docs/source -name .gitignore -delete -print
-      - name: Deploy
+      - name: Deploy (/javascript, the canonical URL going forward)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.DOCS_DEPLOY_SSH_KEY }}
+          publish_dir: docs/source
+          external_repository: source-academy/docs.sourceacademy.org
+          publish_branch: master
+          keep_files: true
+          # Mirrors how py-slang publishes into /python alongside the root - see
+          # py-slang's deploy-docs.yml. https://docs.sourceacademy.org/javascript is the
+          # language docs' new canonical URL, following the "Source" -> "JavaScript" rename.
+          # This step must run (and thus publish docs/source's real, full index.html here)
+          # before docs/source/index.html gets overwritten with the root redirect stub below.
+          destination_dir: javascript
+      - name: Replace the root index page with a pointer to /javascript
+        run: cp docs/root_redirect.html docs/source/index.html
+      - name: Deploy (root, kept only for old deep links like /source_1/ or /source_1.pdf)
         uses: peaceiris/actions-gh-pages@v4
         with:
           deploy_key: ${{ secrets.DOCS_DEPLOY_SSH_KEY }}

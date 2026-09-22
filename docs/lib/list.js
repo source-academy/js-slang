@@ -80,7 +80,7 @@ function draw_data(value1, value2, ...values) {}
  * need to be the same. If both are <CODE>undefined</CODE> or both are
  * <CODE>null</CODE>, the result is <CODE>true</CODE>. Otherwise they are compared
  * with <CODE>===</CODE> (using the definition of <CODE>===</CODE> in the
- * respective Source language in use).
+ * respective JavaScript sublanguage in use).
  * Time, space:
  * <CODE>Theta(n)</CODE>, where <CODE>n</CODE> is the total number of data structures such as
  * pairs in <CODE>x</CODE> and <CODE>y</CODE>.

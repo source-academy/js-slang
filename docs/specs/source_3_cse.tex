@@ -10,7 +10,7 @@
 The CSE machine can run programs of the language Source \S 3.
 The terms \emph{statement}, \emph{expression},
 \emph{name}, etc refer to the 
-\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3}.
+\href{https://docs.sourceacademy.org/javascript/javascript_3.pdf}{\color{blue}Specification of JavaScript \S 3}.
 
 \section{Values and environments}
 
@@ -26,7 +26,7 @@ The CSE machine handles the following kinds of values:
 a closure is either \emph{simple} or \emph{complex}.
 \end{itemize}
 Numbers, Boolean values, strings, and arrays are specified in the
-\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3}.
+\href{https://docs.sourceacademy.org/javascript/javascript_3.pdf}{\color{blue}Specification of JavaScript \S 3}.
 Environments are stacks (lists) of frames, and frames specify the bindings of some names.
 If a frame has a binding for a name, the name is either \emph{unassigned} or
 bound to a value.
@@ -34,7 +34,7 @@ The \emph{global environment} has a single frame, the \emph{global frame}, which
 bindings for all predeclared names of Source \S 3.
 Non-primitive predeclared functions are bound to closures whose environment is the global environment,
 and whose parameters and bodies are given in the
-\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3}.
+\href{https://docs.sourceacademy.org/javascript/javascript_3.pdf}{\color{blue}Specification of JavaScript \S 3}.
 Primitive functions are explained below.
 
 \section{Value producing statements}
@@ -116,7 +116,7 @@ is followed by a \texttt{brk mark} instruction.
 \item[$\texttt{for (}\texttt{let}\ \textit{name} \ \texttt{=} \ \textit{expression}_1;\ \textit{expression}_2;\ \textit{expression}_3\texttt{)}\ \textit{block}$:]
 The corresponding for loop without
 loop control variable is pushed on $C$ as specified in
-\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3}.
+\href{https://docs.sourceacademy.org/javascript/javascript_3.pdf}{\color{blue}Specification of JavaScript \S 3}.
 
 \item[$\texttt{for (}\ \textit{expression}_1\texttt{;}\ \textit{expression}_2\texttt{;}\ \textit{expression}_3\texttt{)}\ \textit{block}$:]
 The name $\texttt{undefined}$ is pushed on $C$,
@@ -179,7 +179,7 @@ $\textit{unary-operator}$.
 \item[$\textit{expression}_1\ \textit{binary-logical}\ \textit{expression}_2$:]
 The corresponding conditional expression 
 is pushed on $C$ as specified in
-\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3}.
+\href{https://docs.sourceacademy.org/javascript/javascript_3.pdf}{\color{blue}Specification of JavaScript \S 3}.
 
 \item[$\textit{expression}\ \texttt{(}\ \textit{expression}_1,\ldots,\textit{expression}_n\
 \texttt{)}$:]
@@ -245,7 +245,7 @@ The first two values on $S$ are replaced by the result of
 applying the operator to the second and first as operands, in this order.
 If the operands do not comply with the
 types specified in Section~3 of
-\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3},
+\href{https://docs.sourceacademy.org/javascript/javascript_3.pdf}{\color{blue}Specification of JavaScript \S 3},
 the program execution is terminated an an error is displayed.
 
 \item[$\textit{unary-operator}$:]
@@ -253,7 +253,7 @@ The first value on $S$ is replaced by the result of
 applying the operator to it.
 If the operand does not comply with the
 types specified in Section~3 of
-\href{https://docs.sourceacademy.org/source_3.pdf}{\color{blue}Specification of Source \S 3},
+\href{https://docs.sourceacademy.org/javascript/javascript_3.pdf}{\color{blue}Specification of JavaScript \S 3},
 the program execution is terminated and an error is displayed.
 
 \item[$\texttt{asgn}\ \textit{name}$:]

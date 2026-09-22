@@ -9,7 +9,7 @@ export class NoNullError extends RuleError<Literal> {
   }
 
   public override elaborate() {
-    return "They're not part of the Source §1 specs.";
+    return "They're not part of the JavaScript §1 specs.";
   }
 }
 

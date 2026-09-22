@@ -1,11 +1,11 @@
-Source §1 is a small programming language, designed for the first chapter
+JavaScript §1 is a small programming language, designed for the first chapter
 of the textbook
 <a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 
-## What names are predeclared in Source §1?
+## What names are predeclared in JavaScript §1?
 
-On the right, you see all predeclared names of Source §1, in alphabetical
+On the right, you see all predeclared names of JavaScript §1, in alphabetical
 order. Click on a name to see how it is defined and used.
 They come in these groups:
   <ul>
@@ -17,7 +17,7 @@ They come in these groups:
     </li>
   </ul>
 
-## What can you do in Source §1?
+## What can you do in JavaScript §1?
 
 You can use all features that are introduced in
 <a href="https://sourceacademy.org/sicpjs/1">chapter 1</a> of the
@@ -35,7 +35,7 @@ More on literal values in <a href="https://sourceacademy.org/sicpjs/1.1">section
 
 ### Constant declarations
 
-Constant declarations are done in Source with <PRE><CODE>const my_name = x + 2;</CODE></PRE>
+Constant declarations are done in JavaScript with <PRE><CODE>const my_name = x + 2;</CODE></PRE>
 Here the name `my_name` gets declared within the surrounding block,
 and refers to the result of evaluating `x + 2` in the rest of the block.
 You can read more about the <EM>scope of names</EM> in
@@ -77,7 +77,7 @@ as in `square(5);`. You can read about function declaration statements in textbo
 
 Sometimes, it's not necessary to give a name to a function: You may
 want to create a function only to pass it to some other function as argument.
-For that, Source
+For that, JavaScript
 supports function definition expressions. For example
 <PRE><CODE>(x => x * x)(3); // returns 9</CODE>
 </PRE>
@@ -110,7 +110,7 @@ Functions as Black-Box Abstractions</a>.
 
 ### Boolean operators
 
-Boolean operators in Source have a special meaning. Usually, an operator combination
+Boolean operators in JavaScript have a special meaning. Usually, an operator combination
 evaluates all its arguments and then applies the operation to which the operator refers.
 For example, `(2 * 3) + (4 * 5)` evaluates `2 * 3` and `4 * 5` first, before the addition
 is carried out. However, the operator `&&` works differently. An expression
@@ -125,7 +125,7 @@ Expressions and Predicates</a>.
 
 A program or the body of a block does not need to consist of a single statement.
 You can write multiple statements in a row. In the REPL ("Read-Eval-Print-Loop")
-of a Source implementation, you can write
+of a JavaScript implementation, you can write
 <PRE><CODE>cube(7);
 square(5);</CODE></PRE>
 The statements in such a sequence are evaluated in the given order. The
@@ -139,6 +139,6 @@ Naming and the Environment</a> of the textbook.
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_1.pdf">Specification of Source §1</a>. Feel free to
+<a href="../javascript_1.pdf">Specification of JavaScript §1</a>. Feel free to
 take a peek.
 

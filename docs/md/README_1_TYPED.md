@@ -15,7 +15,7 @@ that check the code for errors at compile time.
 ## What can you do in Source §1 Typed?
 
 You can use all features of
-<a href="../source_1/">Source §1</a>, but with the added
+<a href="../javascript_1/">JavaScript §1</a>, but with the added
 option of type checking your code at compile time.
 
 This can be done by annotating functions and variables with <EM>type annotations</EM>:
