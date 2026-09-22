@@ -47,6 +47,16 @@ jobs:
           destination_dir: javascript
       - name: Replace the root index page with a pointer to /javascript
         run: cp docs/root_redirect.html docs/source/index.html
+      # peaceiris/actions-gh-pages starts an ssh-agent on a fixed socket path
+      # (/tmp/ssh-auth.sock) and leaves it running; a second invocation of the action in the same
+      # job then fails to bind its own agent to that same path ("Address already in use"). Kill
+      # the first step's agent (ssh-agent -k reads $SSH_AUTH_SOCK/$SSH_AGENT_PID, which the first
+      # step already exported to the job environment) before the second deploy step starts one of
+      # its own.
+      - name: Stop the ssh-agent the previous deploy step started
+        run: |
+          ssh-agent -k || true
+          rm -f /tmp/ssh-auth.sock
       - name: Deploy (root, kept only for old deep links like /source_1/ or /source_1.pdf)
         uses: peaceiris/actions-gh-pages@v4
         with:
