@@ -38,10 +38,17 @@ export function toDataVisualizerNode(
     if (alreadySeen) {
       return { type: 'ref', refId };
     }
+    // Array.from, not value.map: Source permits a sparse array via an out-of-bounds assignment
+    // (`const xs = []; xs[2] = 1;` — setProp only validates the index type, not contiguity), and
+    // `.map` skips holes entirely rather than calling back with `undefined`, leaving `children`
+    // itself sparse — which does not survive the channel's structured clone as a valid, dense
+    // SerializedDataVisualizerNode[]. Array.from reads every index up to `.length`, turning a hole
+    // into a real `undefined` element, matching how a hole already displays elsewhere (e.g.
+    // `stringify`'s own `[undefined, []]` for the same shape).
     return {
       type: 'array',
       refId,
-      children: value.map(element => toDataVisualizerNode(element, refs)),
+      children: Array.from(value, element => toDataVisualizerNode(element, refs)),
     };
   }
 

@@ -58,6 +58,30 @@ describe('toDataVisualizerNode', () => {
     expect(node.children).toHaveLength(4);
   });
 
+  // Regression test for a Codex finding on #2089: Source permits a sparse array through an
+  // out-of-bounds assignment (setProp only validates the index type, not contiguity). `.map`
+  // would skip the holes, leaving `children` itself sparse; every slot must come back as a real
+  // node instead.
+  test('a sparse array serializes its holes as undefined leaves, not as holes', () => {
+    const refs = createRefIdAllocator();
+    const xs: unknown[] = [];
+    xs[2] = 1;
+    const node = toDataVisualizerNode(xs, refs);
+    if (node.type !== 'array') throw new Error('expected an array node');
+    expect(node.children).toHaveLength(3);
+    expect(node.children[0]).toEqual({
+      type: 'leaf',
+      displayValue: stringify(undefined),
+      label: 'undefined',
+    });
+    expect(node.children[1]).toEqual({
+      type: 'leaf',
+      displayValue: stringify(undefined),
+      label: 'undefined',
+    });
+    expect(node.children[2]).toEqual({ type: 'leaf', displayValue: stringify(1), label: 'number' });
+  });
+
   test('a self-referential array terminates via a ref node instead of recursing forever', () => {
     const refs = createRefIdAllocator();
     const xs: unknown[] = [1];
