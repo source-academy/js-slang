@@ -46,6 +46,30 @@ describe('sourceToModule', () => {
     ]);
   });
 
+  // A module that simply forwards its argument unchanged (the common case: identity, a predicate
+  // that returns its input, a wrapper that passes a value through) must hand the SAME flattened
+  // ARRAY straight back to moduleToSource — this is exactly the shape `flattenedProperListArrays`
+  // exists to recognise, so the round trip reconstructs `[1, [2, null]]`, not the lossy flat
+  // `[1, 2]` a naive ARRAY -> array conversion would produce.
+  test('a proper list survives an unchanged round trip through a module', async () => {
+    const dh = new SourceDataHandler();
+    const array = await sourceToModule(dh, [1, [2, null]]); // list(1, 2)
+    expect(await moduleToSource(dh, array)).toEqual([1, [2, null]]);
+  });
+
+  // A flattened list nested inside a compound value (here, a genuine PAIR's head) must still be
+  // recognised and reconstructed — the tracking is keyed by the array's own identifier, not by the
+  // position moduleToSource happens to encounter it at.
+  test('a flattened proper list nested inside a PAIR still reconstructs correctly', async () => {
+    const dh = new SourceDataHandler();
+    const list = await sourceToModule(dh, [1, [2, null]]); // list(1, 2)
+    const pair = await dh.pair_make(list, {
+      type: DataType.EMPTY_LIST,
+      value: null,
+    });
+    expect(await moduleToSource(dh, pair)).toEqual([[1, [2, null]], null]);
+  });
+
   // [1, 2] is NOT a proper list — its "tail", 2, is neither null nor another pair — whether it came
   // from `pair(1, 2)` or a §3 array literal. It must cross as a plain two-element ARRAY, unflattened
   // — flattening only applies to a chain that actually terminates in null.
@@ -58,6 +82,15 @@ describe('sourceToModule', () => {
       type: DataType.NUMBER,
       value: 2,
     });
+  });
+
+  // A genuine §3 array (not a proper list) round-trips as a plain flat array, same as before this
+  // was tracked — the reconstruction above must be specific to a flattened proper list, not to
+  // every ARRAY.
+  test('a genuine array round-trips as a plain flat array, not a cons chain', async () => {
+    const dh = new SourceDataHandler();
+    const array = await sourceToModule(dh, [1, 2]);
+    expect(await moduleToSource(dh, array)).toEqual([1, 2]);
   });
 
   test('a plain closure becomes a callable module closure', async () => {

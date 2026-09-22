@@ -633,10 +633,24 @@ function transpileToSource(
   // cannot see into (see the class doc on SourceEvaluator's `hasEverLoadedAModule`). Keeping it in
   // the same outer, eval-chainable scope sync mode already relies on is what lets a later chunk with
   // no import of its own still use a name an earlier chunk imported.
+  //
+  // The prelude gets the exact same "don't trap it inside the IIFE" treatment as import bindings,
+  // for the same reason: `map`, `filter`, `accumulate`, ... are declared at the prelude's own top
+  // level, and a later chunk's separate `eval()` call must still be able to see them, exactly like
+  // any other prelude-declared name always could in sync mode. The prelude never actually needs the
+  // IIFE for its own sake — every one of its top-level statements is a plain function declaration,
+  // never a call needing `await` at the top level; only calls made from *inside* those functions'
+  // own bodies do, and marking those functions `async` (above) already makes `await` legal there
+  // regardless of whether the enclosing top-level code is wrapped in an IIFE or not. Wrapping it
+  // anyway would silently break every later chunk's ability to call `map`/`filter`/... at all — this
+  // is exactly the "own code declared inside the IIFE is invisible to a later eval()" limitation the
+  // class doc on `SourceEvaluator` accepts for a *user* chunk's own declarations, but the prelude,
+  // unlike a user chunk, is not allowed to have that limitation.
   const otherStatements = otherNodes as es.Statement[];
-  const lastStatements = isAsync
-    ? [buildAsyncCompletionValueIIFE(otherStatements, usedIdentifiers)]
-    : otherStatements;
+  const lastStatements =
+    isAsync && !isPrelude
+      ? [buildAsyncCompletionValueIIFE(otherStatements, usedIdentifiers)]
+      : otherStatements;
 
   const newStatements = [
     ...getDeclarationsToAccessTranspilerInternals(globalIds),

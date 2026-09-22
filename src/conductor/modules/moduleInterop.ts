@@ -1,7 +1,7 @@
-import { DataType, type TypedValue } from '@sourceacademy/conductor/types';
+import { type ArrayIdentifier, DataType, type TypedValue } from '@sourceacademy/conductor/types';
 
 import type { Value } from '../../types';
-import { callWithoutMetadataAsync, wrapUnsafe } from '../../utils/operators';
+import { callWithoutMetadataAsync, markExternModuleCall, wrapUnsafe } from '../../utils/operators';
 
 import type { SourceDataHandler } from './SourceDataHandler';
 
@@ -29,6 +29,12 @@ import type { SourceDataHandler } from './SourceDataHandler';
  * (its tail, `2`, isn't `null` or another pair) and crosses as a plain flat two-element `ARRAY`,
  * unaffected — `SourceDataHandler`'s pair/array tolerance handles it identically either way once it's
  * on the module side.
+ *
+ * Flattening is one-way lossy by itself — a flat `ARRAY` looks identical whether it started life as a
+ * proper list or a genuine §3 array — so `moduleToSource`'s `ARRAY` case would otherwise hand back a
+ * flat array even for a list a module simply forwarded unchanged. `flattenedProperListArrays` below
+ * is what recovers that: the exact `ArrayIdentifier` this function builds from a proper list is
+ * remembered, so the reverse conversion can rebuild the cons chain if it sees that identifier again.
  *
  * ## What crosses and what doesn't
  *
@@ -101,7 +107,8 @@ export async function sourceToModule(
     }
     case 'object':
       if (Array.isArray(value)) {
-        const flatElements = isProperList(value) ? flattenProperList(value) : value;
+        const properList = isProperList(value);
+        const flatElements = properList ? flattenProperList(value) : value;
         const elements = await Promise.all(flatElements.map(el => sourceToModule(dh, el)));
         const array = await dh.array_make(DataType.ANY, elements.length, {
           type: DataType.VOID,
@@ -110,6 +117,12 @@ export async function sourceToModule(
         for (let i = 0; i < elements.length; i++) {
           await dh.array_set(array as TypedValue<DataType.ARRAY, DataType.VOID>, i, elements[i]);
         }
+        // Remembers that this specific array was a flattened proper list, purely so moduleToSource
+        // can rebuild the cons chain if this exact identifier crosses back unchanged (see the tag's
+        // own doc comment below) — flattening itself still has to happen; SourceDataHandler reads a
+        // DataType.ARRAY's elements flat with no recursion, and shared bundles (py-slang's included)
+        // expect a list's ARRAY encoding to already be flat.
+        if (properList) markFlattenedProperList(dh, array);
         return array;
       }
       if (value instanceof SourceOpaque) {
@@ -149,6 +162,39 @@ function flattenProperList(value: unknown[]): Value[] {
     current = tail;
   }
   return result;
+}
+
+/**
+ * Which `ArrayIdentifier`s (per `SourceDataHandler` instance — a fresh handler starts with an empty
+ * set) were produced by flattening a proper Source list, rather than converting a genuine §3 array.
+ * `sourceToModule`'s ARRAY case has no way to *ask* a module for this after the fact — a module that
+ * simply forwards the same array unchanged (or holds it in a pair/another array) still calls
+ * `moduleToSource` with the identical `ArrayIdentifier`, and this is the only surviving record that
+ * it should come back as a cons chain (`[1, [2, [3, null]]]`) rather than the flat array
+ * `SourceDataHandler` itself can't distinguish from a real one. A module that builds a genuinely new
+ * array from the elements (rather than forwarding this one) necessarily loses this, same as it would
+ * lose any other provenance the Conductor protocol itself doesn't carry — nothing can recover that
+ * without a protocol-level tag on `TypedValue` itself.
+ *
+ * `WeakMap`, not a per-run field on `SourceDataHandler`, so this file doesn't need `SourceDataHandler`
+ * to grow module-interop-specific state: entries for a still-live handler are kept alive by the
+ * `SourceDataHandler` key itself, and a handler that goes out of scope (a finished run's) lets this
+ * collect along with it — mirroring how `SourceDataHandler`'s own tables already leak within a run
+ * (its `reset()` doc) rather than trying to be smarter about it here.
+ */
+const flattenedProperListArrays = new WeakMap<SourceDataHandler, Set<ArrayIdentifier<DataType>>>();
+
+function markFlattenedProperList(dh: SourceDataHandler, array: TypedValue<DataType.ARRAY>): void {
+  let ids = flattenedProperListArrays.get(dh);
+  if (!ids) {
+    ids = new Set();
+    flattenedProperListArrays.set(dh, ids);
+  }
+  ids.add(array.value);
+}
+
+function wasFlattenedProperList(dh: SourceDataHandler, array: TypedValue<DataType.ARRAY>): boolean {
+  return flattenedProperListArrays.get(dh)?.has(array.value) ?? false;
 }
 
 /**
@@ -208,11 +254,26 @@ export async function moduleToSource(
       // pointless round trip through sourceToModule/moduleToSource on values already in their
       // module-side form).
       (f as { moduleClosure?: TypedValue<DataType.CLOSURE> }).moduleClosure = value;
+      // Marks `f` as a genuine module call, not merely a Promise-returning Source function (every
+      // Source function is one, in dual/async mode) — see callIfFuncAndRightArgsAsync's use of this
+      // tag to decide whether a call's suspension time is real host latency worth excluding from
+      // the infinite-recursion budget.
+      markExternModuleCall(f);
       return f;
     }
     case DataType.PAIR:
     case DataType.ARRAY: {
       const elements = await readCompoundElements(dh, value);
+      // Rebuild the cons chain this exact array was flattened from (see
+      // `flattenedProperListArrays`'s doc), rather than handing back the flat array — a module that
+      // simply forwards `list(1, 2)` unchanged must come back as `[1, [2, null]]`, not `[1, 2]`.
+      if (value.type === DataType.ARRAY && wasFlattenedProperList(dh, value)) {
+        let result: Value = null;
+        for (let i = elements.length - 1; i >= 0; i--) {
+          result = [await moduleToSource(dh, elements[i], name), result];
+        }
+        return result;
+      }
       const result: Value[] = [];
       for (const el of elements) {
         result.push(await moduleToSource(dh, el, name));

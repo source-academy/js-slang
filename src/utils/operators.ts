@@ -134,6 +134,26 @@ function getFunctionDetails(f: Function): FunctionDetails {
 }
 
 /**
+ * Tags `f` as a call that genuinely crosses into a Conductor module — used by
+ * `callIfFuncAndRightArgsAsync` to decide whether a call's await time should be excluded from the
+ * infinite-recursion budget (real host latency isn't the student's program "recursing", but a
+ * same-thread async Source-to-Source call, which resolves through nothing but the microtask queue,
+ * is). Every Source function is `async` in dual/async mode (see `transpiler.ts`'s
+ * `markArrowFunctionsAsync`), so `rawResult.then` alone can't tell the two apart — only a module
+ * closure, which `moduleInterop.ts`'s `moduleToSource` wraps and marks with this, is exempt.
+ */
+const externModuleCallSymbol = Symbol();
+
+export function markExternModuleCall<T extends (...args: any[]) => any>(f: T): T {
+  (f as { [externModuleCallSymbol]?: true })[externModuleCallSymbol] = true;
+  return f;
+}
+
+function isExternModuleCall(f: unknown): boolean {
+  return typeof f === 'function' && externModuleCallSymbol in f;
+}
+
+/**
  * Check that the number of arguments provided falls within the range specified.
  *
  * You can call it with just a {@link CallExpression}, in which case its `callee` should be either a
@@ -432,11 +452,20 @@ export async function callIfFuncAndRightArgsAsync(
           typeof rawResult === 'object' &&
           typeof rawResult.then === 'function'
         ) {
-          // A genuine asynchronous call: exclude however long it actually took to suspend from the
-          // budget below, by shifting the clock forward by exactly that duration.
-          const beforeAwait = Date.now();
-          res = await rawResult;
-          startTime += Date.now() - beforeAwait;
+          if (isExternModuleCall(f)) {
+            // A genuine asynchronous call into a module: exclude however long it actually took to
+            // suspend from the budget below, by shifting the clock forward by exactly that
+            // duration. Every Source function is Promise-returning in dual/async mode regardless of
+            // whether it ever touches a module (see `markArrowFunctionsAsync`), so this exclusion
+            // must stay limited to an actual module call — otherwise a same-thread Source-to-Source
+            // tail recursion would forgive its own elapsed time every iteration and never trip this
+            // budget (see js-slang#2083, Codex finding).
+            const beforeAwait = Date.now();
+            res = await rawResult;
+            startTime += Date.now() - beforeAwait;
+          } else {
+            res = await rawResult;
+          }
         } else {
           res = rawResult;
         }

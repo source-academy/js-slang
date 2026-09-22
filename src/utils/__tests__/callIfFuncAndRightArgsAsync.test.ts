@@ -3,7 +3,12 @@ import { describe, expect, test } from 'vitest';
 import { CallingNonFunctionValueError, ExceptionError } from '../../errors/errors';
 import { PotentialInfiniteRecursionError } from '../../errors/timeoutErrors';
 import type { NativeStorage } from '../../types';
-import { callIfFuncAndRightArgsAsync, callWithoutMetadataAsync, wrap } from '../operators';
+import {
+  callIfFuncAndRightArgsAsync,
+  callWithoutMetadataAsync,
+  markExternModuleCall,
+  wrap,
+} from '../operators';
 
 /** A minimal `NativeStorage` slice — `maxExecTime` for the timeout budget, `asyncCallDepth` for
  * the call-depth guard, both real fields `callIfFuncAndRightArgsAsync` reads and writes. */
@@ -195,20 +200,44 @@ describe('callIfFuncAndRightArgsAsync', () => {
 
   // The actual point of the exclusion: a call chain that spends real wall-clock time suspended on
   // a genuine host round-trip (what a module call looks like) must not trip the same budget a
-  // synchronous busy-loop would, even though more real time elapses.
-  test('time spent awaiting a thenable is excluded from the recursion budget', async () => {
+  // synchronous busy-loop would, even though more real time elapses. `markExternModuleCall` is
+  // exactly the tag `moduleInterop.ts` applies to a module's own closure wrapper — without it, this
+  // call is indistinguishable from any other Promise-returning Source function.
+  test('time spent awaiting a thenable is excluded from the recursion budget, for a genuine module call', async () => {
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-    const slowButFinite = wrap(
-      async (): Promise<any> => {
-        await delay(30); // longer than the 10ms budget below, on purpose
-        return { isTail: false, value: 'done' };
-      },
-      0,
-      'slowButFinite',
+    const slowButFinite = markExternModuleCall(
+      wrap(
+        async (): Promise<any> => {
+          await delay(30); // longer than the 10ms budget below, on purpose
+          return { isTail: false, value: 'done' };
+        },
+        0,
+        'slowButFinite',
+      ),
     );
 
     await expect(
       callIfFuncAndRightArgsAsync(slowButFinite, -1, -1, null, nativeStorage(10)),
     ).resolves.toBe('done');
+  });
+
+  // Every Source function is Promise-returning in dual/async mode, not just a genuine module call
+  // (see `markArrowFunctionsAsync` in transpiler.ts) — so an ordinary, untagged async function must
+  // NOT get the exclusion above, or a same-thread Source-to-Source tail recursion would forgive its
+  // own elapsed time every iteration and never trip this budget (js-slang#2083, Codex finding).
+  test('time spent awaiting a thenable is NOT excluded for a call not tagged as a module call', async () => {
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    const slowUntaggedCall = wrap(
+      async (): Promise<any> => {
+        await delay(30); // longer than the 10ms budget below
+        return { isTail: false, value: 'done' };
+      },
+      0,
+      'slowUntaggedCall',
+    );
+
+    await expect(
+      callIfFuncAndRightArgsAsync(slowUntaggedCall, -1, -1, null, nativeStorage(10)),
+    ).rejects.toBeInstanceOf(PotentialInfiniteRecursionError);
   });
 });

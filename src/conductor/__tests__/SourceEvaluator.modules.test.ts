@@ -160,6 +160,37 @@ describe('SourceEvaluator modules', () => {
     expect(value).toBe(21); // 1 -> 11 -> 21
   });
 
+  // The prelude's own higher-order functions (map, accumulate, ...) are sync-compiled closures —
+  // they must keep working on an ordinary Source callback even in the very same chunk that imports
+  // a module and is therefore compiled in async/dual mode (every user closure becomes `async` in
+  // that mode; a sync-compiled `map` calling one through the sync trampoline would collect Promise
+  // objects instead of numbers). Regression test for js-slang#2083 (Codex finding).
+  test('prelude higher-order functions still work in a chunk that also imports a module', async () => {
+    const { plugin, errors } = fakeConductor();
+    ModuleLoaderRunnerPlugin.instance = {
+      // eslint-disable-next-line @typescript-eslint/require-await
+      requestModule: async () => {
+        const exports: IModuleExport[] = [{ symbol: 'the_answer', value: num(42) }];
+        return {
+          id: 'fake',
+          exports,
+          evaluator: undefined,
+          initialise: () => {},
+        } as unknown as IModulePlugin;
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
+
+    const evaluator = new SourceEvaluator2(plugin);
+    const value = await evaluator.evaluateChunk(
+      'import { the_answer } from "fake_module"; ' +
+        'accumulate((x, y) => x + y, 0, map(x => x + 1, list(1, 2, 3)));',
+    );
+
+    expect(errors).toEqual([]);
+    expect(value).toBe(9); // map: [2, 3, 4]; accumulate: 2 + 3 + 4
+  });
+
   // Cross-chunk: a name a later, non-importing chunk uses must still resolve, once
   // hasEverLoadedAModule has latched on — the coarser-than-strictly-necessary gate this evaluator
   // uses (see SourceEvaluator's own class doc).

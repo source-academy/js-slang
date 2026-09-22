@@ -7,6 +7,7 @@ import preprocessFileImports from '../modules/preprocessor';
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer';
 import { defaultLinkerOptions } from '../modules/preprocessor/linker';
 import { parse } from '../parser/parser';
+import { hasImports } from '../transpiler/transpiler';
 import assert from '../utils/assert';
 import { validateAndAnnotate } from '../validator/validator';
 import {
@@ -86,7 +87,19 @@ async function sourceRunner(
     const prelude = parse(context.prelude, context);
     if (prelude === null) return { status: 'error', context };
 
-    await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true });
+    await sourceRunner(prelude, context, isVerboseErrorsEnabled, {
+      ...options,
+      isPrelude: true,
+      // The native runner picks async (dual) mode per chunk via `hasImports(program) ||
+      // forceAsyncTranspile` (see sourceRunner.ts) — the prelude must be compiled in that same mode
+      // as the program it is about to run for, or its own higher-order functions (map, filter, ...)
+      // stay on the sync trampoline while a program compiled in async mode hands them
+      // Promise-returning callbacks. `options.forceAsyncTranspile` alone isn't enough: it reflects
+      // only an *earlier* chunk's imports (see SourceEvaluator's `hasEverLoadedAModule`), so it
+      // still lags by one chunk — the very chunk that contains the first `import` itself needs
+      // `hasImports(program)` checked directly here too.
+      forceAsyncTranspile: options.forceAsyncTranspile || hasImports(program),
+    });
   }
 
   if (context.variant === Variant.EXPLICIT_CONTROL || context.executionMethod === 'cse-machine') {
