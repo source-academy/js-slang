@@ -10,6 +10,7 @@ import mceJSON from './builtins/mce.json';
 import miscJSON from './builtins/misc.json';
 import pairmutatorJSON from './builtins/pairmutator.json';
 import streamJSON from './builtins/stream.json';
+import timingJSON from './builtins/timing.json';
 import { identifierCharRe } from './highlight-rules';
 import { getKeywords } from './keywords';
 
@@ -165,7 +166,7 @@ function getQueryAt(doc: string, pos: number): string {
 function getBuiltins(chapter: Chapter): (typeof miscJSON)[number][] {
   const symbols = [...miscJSON, ...mathJSON];
   if (chapter >= 2) symbols.push(...listJSON);
-  if (chapter >= 3) symbols.push(...streamJSON, ...arrayJSON, ...pairmutatorJSON);
+  if (chapter >= 3) symbols.push(...streamJSON, ...arrayJSON, ...pairmutatorJSON, ...timingJSON);
   if (chapter >= 4) symbols.push(...mceJSON);
   return symbols;
 }

@@ -78,6 +78,16 @@ describe('getNames', () => {
     expect(entries.map(e => e.name)).toContain('stream');
   });
 
+  // Regression coverage for set_timeout/clear_all_timeout (see #2025's Codex review): they're
+  // registered as chapter 3+ builtins in createContext.ts, but had no docs/lib entry, so
+  // getBuiltins's chapter-3 JSON list never picked them up.
+  test('set_timeout and clear_all_timeout are suggested at chapter 3', () => {
+    expect(complete('set_tim|', Chapter.SOURCE_3).map(e => e.name)).toContain('set_timeout');
+    expect(complete('clear_all_tim|', Chapter.SOURCE_3).map(e => e.name)).toContain(
+      'clear_all_timeout',
+    );
+  });
+
   test('a chapter-gated keyword is only suggested from its chapter onward', () => {
     expect(complete('whil|', Chapter.SOURCE_2).map(e => e.name)).not.toContain('while');
     expect(complete('whil|', Chapter.SOURCE_3).map(e => e.name)).toContain('while');
