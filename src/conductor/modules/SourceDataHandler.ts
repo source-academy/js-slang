@@ -245,15 +245,20 @@ export class SourceDataHandler implements IDataHandler {
     return array.elements[idx];
   }
 
+  async array_set<T extends DataType>(
+    a: TypedValue<DataType.ARRAY, T>,
+    idx: number,
+    tv: TypedValue<NoInfer<T>>,
+  ): Promise<void>;
   async array_set(
     a: TypedValue<DataType.ARRAY, DataType.VOID>,
     idx: number,
     tv: TypedValue<DataType>,
   ): Promise<void>;
-  async array_set<T extends DataType>(
-    a: TypedValue<DataType.ARRAY, T>,
+  async array_set(
+    a: TypedValue<DataType.ARRAY, DataType>,
     idx: number,
-    tv: TypedValue<NoInfer<T>>,
+    tv: TypedValue<DataType>,
   ): Promise<void> {
     const array = this.resolveArray(a);
     if (!Number.isInteger(idx) || idx < 0 || idx >= array.elements.length) {

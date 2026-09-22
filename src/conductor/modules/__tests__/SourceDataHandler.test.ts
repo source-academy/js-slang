@@ -148,7 +148,9 @@ describe('arrays', () => {
   test('a typed array rejects an element of another type', async () => {
     const h = new SourceDataHandler();
     const a = await h.array_make(DataType.NUMBER, 1, num(0));
-    await expect(h.array_set(a, 0, str('x'))).rejects.toBeInstanceOf(InvalidTypeError);
+    // `as any`: this call is deliberately mismatched (a string into a NUMBER array) to exercise the
+    // runtime check — `array_set`'s own overloads correctly refuse it at compile time otherwise.
+    await expect(h.array_set(a, 0, str('x') as any)).rejects.toBeInstanceOf(InvalidTypeError);
   });
 
   test('a VOID-typed array accepts anything', async () => {

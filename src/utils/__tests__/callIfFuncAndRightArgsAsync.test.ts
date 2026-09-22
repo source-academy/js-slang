@@ -32,7 +32,11 @@ describe('callIfFuncAndRightArgsAsync', () => {
   });
 
   test('rejects the same way a sync call throws for a non-function value', async () => {
-    await expect(callWithoutMetadataAsync(42 as never)).rejects.toBeInstanceOf(
+    // `as any`, not `as never`: with a `never`-typed argument, `T`'s inferred `Parameters<T>` also
+    // collapses to `never`, and TS then rejects the call's own (empty) argument list against that
+    // — a generic-inference artifact of testing a value that's deliberately not a function, not
+    // something to work around by weakening `callWithoutMetadataAsync`'s real signature.
+    await expect(callWithoutMetadataAsync(42 as any)).rejects.toBeInstanceOf(
       CallingNonFunctionValueError,
     );
   });
@@ -67,7 +71,9 @@ describe('callIfFuncAndRightArgsAsync', () => {
           source: null,
         };
       },
-      1,
+      // 0, not 1: `n` is a single required parameter, no optional ones — `optArgCount` counts
+      // optional arguments, not the total parameter count (see `wrap`'s own doc comment).
+      0,
       'countDown',
     );
     // Every OTHER call suspends on a real await, so the trampoline is forced through both the
@@ -86,7 +92,7 @@ describe('callIfFuncAndRightArgsAsync', () => {
           source: null,
         };
       },
-      1,
+      0,
       'countDownAsync',
     );
 
