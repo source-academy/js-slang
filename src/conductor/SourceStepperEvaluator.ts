@@ -1,4 +1,5 @@
 import { STEPPER_DIRECTORY_ID } from '@sourceacademy/common-stepper';
+import { DATA_VISUALIZER_DIRECTORY_ID } from '@sourceacademy/common-data-visualizer';
 import { BasicEvaluator, type IRunnerPlugin } from '@sourceacademy/conductor/runner';
 
 import createContext from '../createContext';
@@ -9,6 +10,7 @@ import type { Context, Value } from '../types';
 import { EvaluatorSyntaxError } from '@sourceacademy/conductor/common';
 
 import { DEFAULT_STEP_LIMIT, fetchRunConfig } from './cse/runConfig';
+import { SourceDataVisualizerRunnerPlugin } from './dataVisualizer/SourceDataVisualizerRunnerPlugin';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
 import { SourceStepperRunnerPlugin } from './stepper/SourceStepperRunnerPlugin';
 
@@ -28,9 +30,23 @@ abstract class SourceStepperEvaluatorBase extends BasicEvaluator {
   private readonly context: Context;
   private readonly stepper: SourceStepperRunnerPlugin;
 
+  /** Registered only for §2 — `draw_data` doesn't exist as a builtin below that, and unlike
+   * SourceCseEvaluator this class also instantiates for §1 (SourceStepperEvaluator1 below).
+   *
+   * Present for parity with the other two evaluators, but currently inert here: the stepper has
+   * its own, entirely separate symbolic `draw_data` (`src/stepper/builtins/lists.ts`) that just
+   * returns its first argument as an AST node, and never calls `visualiseList`/this plugin at
+   * all — the substitution model has no notion of "the host's data visualizer tab" to step
+   * through. Fixing that is a stepper-engine question, not this class's. */
+  private readonly dataVisualizerPlugin?: SourceDataVisualizerRunnerPlugin;
+
   protected constructor(conductor: IRunnerPlugin, chapter: Chapter) {
     super(conductor);
     this.chapter = chapter;
+    if (chapter >= Chapter.SOURCE_2) {
+      this.dataVisualizerPlugin = conductor.registerPlugin(SourceDataVisualizerRunnerPlugin);
+      conductor.hostLoadPlugin(DATA_VISUALIZER_DIRECTORY_ID);
+    }
     this.context = this.freshContext();
     this.stepper = conductor.registerPlugin(
       SourceStepperRunnerPlugin,
@@ -49,14 +65,15 @@ abstract class SourceStepperEvaluatorBase extends BasicEvaluator {
       rawDisplay,
       alert: rawDisplay,
       prompt: () => this.conductor.tryRequestInput() ?? null,
-      visualiseList: () => {
-        throw new Error('draw_data is not supported by this evaluator.');
-      },
+      visualiseList: values => this.dataVisualizerPlugin?.sendDrawing(values),
     });
   }
 
   async evaluateChunk(chunk: string): Promise<Value> {
     try {
+      // The Conductor-era equivalent of the old frontend's DataVisualizer.clearWithData() on every
+      // Run press — without this, rows from an earlier REPL entry keep accumulating into this one's.
+      this.dataVisualizerPlugin?.resetRun();
       const program = parse(chunk, this.context);
       if (program === null) {
         this.reportErrors();

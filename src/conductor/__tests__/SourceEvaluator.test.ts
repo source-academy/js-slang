@@ -1,14 +1,23 @@
 import { describe, expect, test } from 'vitest';
 
-import { SourceEvaluator1, SourceEvaluator3 } from '..';
+import { SourceEvaluator1, SourceEvaluator2, SourceEvaluator3 } from '..';
+import { SourceDataVisualizerRunnerPlugin } from '../dataVisualizer/SourceDataVisualizerRunnerPlugin';
 
-/** The slice of `IRunnerPlugin` these evaluators actually touch. */
+/** The slice of `IRunnerPlugin` these evaluators actually touch.
+ *
+ * `registerPlugin` constructs a *real* `SourceDataVisualizerRunnerPlugin` when asked for one —
+ * rather than the bare `{}` every other plugin class gets here — over a minimal fake channel that
+ * just records every message sent, so a test can assert on what actually reached "the host" through
+ * the real `sendDrawing`/`resetRun` methods, not a stand-in.
+ */
 function fakeConductor() {
   const output: string[] = [];
   const errors: { message: string; name: string }[] = [];
+  const dataVisualizerMessages: unknown[] = [];
   return {
     output,
     errors,
+    dataVisualizerMessages,
     plugin: {
       sendOutput: (m: string) => output.push(m),
       sendError: (e: { message: string; name: string }) => errors.push(e),
@@ -17,7 +26,20 @@ function fakeConductor() {
       requestFile: () => Promise.resolve(undefined),
       requestChunk: () => Promise.resolve(''),
       updateStatus: () => {},
-      registerPlugin: () => ({}),
+      registerPlugin: (pluginClass: unknown) => {
+        if (pluginClass === SourceDataVisualizerRunnerPlugin) {
+          const channel = {
+            name: '__data_visualizer',
+            send: (message: unknown) => dataVisualizerMessages.push(message),
+            subscribe: () => {},
+            unsubscribe: () => {},
+            close: () => {},
+          };
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return new SourceDataVisualizerRunnerPlugin({} as any, [channel]);
+        }
+        return {};
+      },
       hostLoadPlugin: () => Promise.resolve(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any,
@@ -98,6 +120,43 @@ describe('SourceEvaluator', () => {
         'const x = 1;\ndebugger;\nx + 1;',
       );
       expect(value).toBe(2);
+    });
+  });
+
+  // Regression coverage for #2078: the data visualizer plugin, wired up through the same
+  // `visualiseList` hook createContext.ts already had.
+  describe('draw_data', () => {
+    test('reaches the data visualizer plugin with every argument, not just the first', async () => {
+      const { plugin, dataVisualizerMessages } = fakeConductor();
+      await new SourceEvaluator2(plugin).evaluateChunk('draw_data(1, 2, 3);');
+      expect(dataVisualizerMessages[dataVisualizerMessages.length - 1]).toEqual({
+        type: 'rows',
+        rows: [
+          [
+            { type: 'leaf', displayValue: '1', label: 'number' },
+            { type: 'leaf', displayValue: '2', label: 'number' },
+            { type: 'leaf', displayValue: '3', label: 'number' },
+          ],
+        ],
+      });
+    });
+
+    test('rows do not accumulate across chunks', async () => {
+      const { plugin, dataVisualizerMessages } = fakeConductor();
+      const evaluator = new SourceEvaluator2(plugin);
+      await evaluator.evaluateChunk('draw_data(1);');
+      await evaluator.evaluateChunk('draw_data(2);');
+      expect(dataVisualizerMessages[dataVisualizerMessages.length - 1]).toEqual({
+        type: 'rows',
+        rows: [[{ type: 'leaf', displayValue: '2', label: 'number' }]],
+      });
+    });
+
+    test('§1 never registers the plugin — draw_data is not even a declared name there', async () => {
+      const { plugin, errors } = fakeConductor();
+      await new SourceEvaluator1(plugin).evaluateChunk('draw_data(1);');
+      expect(errors.length).toBeGreaterThan(0);
+      expect(errors[0].name).toBe('EvaluatorRuntimeError');
     });
   });
 });

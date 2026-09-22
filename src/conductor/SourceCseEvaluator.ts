@@ -1,4 +1,5 @@
 import { CSE_DIRECTORY_ID } from '@sourceacademy/common-cse-machine';
+import { DATA_VISUALIZER_DIRECTORY_ID } from '@sourceacademy/common-data-visualizer';
 import { BasicEvaluator, type IRunnerPlugin } from '@sourceacademy/conductor/runner';
 import { CseMachinePlugin } from '@sourceacademy/runner-cse-machine';
 
@@ -12,6 +13,7 @@ import * as seq from '../utils/statementSeqTransform';
 import { collectSnapshots } from './cse/collectSnapshots';
 import { collectUsedGlobalNames } from './cse/usedGlobals';
 import { DEFAULT_STEP_LIMIT, fetchRunConfig } from './cse/runConfig';
+import { SourceDataVisualizerRunnerPlugin } from './dataVisualizer/SourceDataVisualizerRunnerPlugin';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
 
 /**
@@ -57,9 +59,15 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
   private context: Context;
   private preludeRun = false;
 
+  // Unconditional, unlike the transpiler/stepper evaluators' own gating: this class only ever
+  // instantiates for §3/§4 (SourceCseEvaluator3/4 below), both of which are >= Chapter.SOURCE_2.
+  private readonly dataVisualizerPlugin: SourceDataVisualizerRunnerPlugin;
+
   protected constructor(conductor: IRunnerPlugin, chapter: Chapter) {
     super(conductor);
     this.chapter = chapter;
+    this.dataVisualizerPlugin = conductor.registerPlugin(SourceDataVisualizerRunnerPlugin);
+    conductor.hostLoadPlugin(DATA_VISUALIZER_DIRECTORY_ID);
     this.context = this.freshContext();
     this.csePlugin = conductor.registerPlugin(CseMachinePlugin);
     void conductor.hostLoadPlugin(CSE_DIRECTORY_ID);
@@ -74,9 +82,7 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
       rawDisplay,
       alert: rawDisplay,
       prompt: () => this.conductor.tryRequestInput() ?? null,
-      visualiseList: () => {
-        throw new Error('draw_data is not supported by this evaluator.');
-      },
+      visualiseList: values => this.dataVisualizerPlugin.sendDrawing(values),
     });
   }
 
@@ -111,6 +117,9 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
 
   async evaluateChunk(chunk: string): Promise<Value> {
     try {
+      // The Conductor-era equivalent of the old frontend's DataVisualizer.clearWithData() on every
+      // Run press — without this, rows from an earlier REPL entry keep accumulating into this one's.
+      this.dataVisualizerPlugin.resetRun();
       this.ensurePreludeRun();
       const program = parse(chunk, this.context);
       if (program === null) {

@@ -5,6 +5,7 @@ import { afterEach, describe, expect, test } from 'vitest';
 import type { IModuleExport, IModulePlugin } from '@sourceacademy/conductor/module';
 
 import { SourceEvaluator2 } from '..';
+import { SourceDataVisualizerRunnerPlugin } from '../dataVisualizer/SourceDataVisualizerRunnerPlugin';
 
 const num = (value: number): TypedValue<DataType.NUMBER> => ({ type: DataType.NUMBER, value });
 
@@ -37,7 +38,22 @@ function fakeConductor() {
       requestFile: () => Promise.resolve(undefined),
       requestChunk: () => Promise.resolve(''),
       updateStatus: () => {},
-      registerPlugin: (_pluginClass: unknown, ...args: unknown[]) => {
+      registerPlugin: (pluginClass: unknown, ...args: unknown[]) => {
+        // SourceEvaluator2 (§2) also registers a SourceDataVisualizerRunnerPlugin — unrelated to
+        // the module machinery this file tests, but it must still get back something real: a bare
+        // {} has no resetRun/sendDrawing, and every evaluateChunk call here would throw calling
+        // them (chapter 2 always registers one, see SourceEvaluator.ts).
+        if (pluginClass === SourceDataVisualizerRunnerPlugin) {
+          const channel = {
+            name: '__data_visualizer',
+            send: () => {},
+            subscribe: () => {},
+            unsubscribe: () => {},
+            close: () => {},
+          };
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return new SourceDataVisualizerRunnerPlugin({} as any, [channel]);
+        }
         // registerPlugin(ModuleLoaderRunnerPlugin, conductor, evaluator) — the evaluator (which
         // also satisfies IDataHandler via the proxy) is always the last argument.
         capturedDataHandler = args[args.length - 1] as IDataHandler;

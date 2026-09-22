@@ -62,8 +62,8 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
       }),
     visualiseList:
       testBuiltins?.visualiseList ??
-      (value => {
-        otherTestResults.visualiseListResult.push(value);
+      (values => {
+        otherTestResults.visualiseListResult.push(values);
       }),
   };
 

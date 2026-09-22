@@ -18,8 +18,9 @@ export interface CustomBuiltIns {
   rawDisplay: (value: Value, str: string, externalContext: any) => Value;
   prompt: (value: Value, str: string, externalContext: any) => string | null;
   alert: (value: Value, str: string, externalContext: any) => void;
-  /* Used for list visualisation. See #12 */
-  visualiseList: (list: any, externalContext: any) => void;
+  /* Used for list visualisation. See #12. `values` is the full argument list of one `draw_data(...)`
+   * call, not just its first argument — see #2078. */
+  visualiseList: (values: Value[], externalContext: any) => void;
 }
 
 /**

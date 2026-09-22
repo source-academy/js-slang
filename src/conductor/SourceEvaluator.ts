@@ -1,3 +1,4 @@
+import { DATA_VISUALIZER_DIRECTORY_ID } from '@sourceacademy/common-data-visualizer';
 import { BasicEvaluator, type IRunnerPlugin } from '@sourceacademy/conductor/runner';
 import { ModuleLoaderRunnerPlugin } from '@sourceacademy/runner-module-loader';
 
@@ -7,6 +8,7 @@ import { runFilesInContext } from '../index';
 import { parse } from '../parser/parser';
 import type { Context, Value } from '../types';
 import { simple } from '../utils/ast/walkers';
+import { SourceDataVisualizerRunnerPlugin } from './dataVisualizer/SourceDataVisualizerRunnerPlugin';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
 import { asInterfacableEvaluator, SourceDataHandler } from './modules/SourceDataHandler';
 import {
@@ -67,6 +69,10 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
    * lifetime, forcing every subsequent chunk onto the async transpilation path. */
   private hasEverLoadedAModule = false;
 
+  /** Registered only for §2+ — `draw_data` doesn't exist as a builtin below that, so there's no
+   * reason to register the plugin or have the host fetch its web bundle for a §1 user. */
+  private readonly dataVisualizerPlugin?: SourceDataVisualizerRunnerPlugin;
+
   protected constructor(conductor: IRunnerPlugin, chapter: Chapter) {
     super(conductor);
     this.chapter = chapter;
@@ -76,6 +82,11 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
       this.conductor,
       asInterfacableEvaluator(this, this.dataHandler),
     );
+
+    if (chapter >= Chapter.SOURCE_2) {
+      this.dataVisualizerPlugin = conductor.registerPlugin(SourceDataVisualizerRunnerPlugin);
+      conductor.hostLoadPlugin(DATA_VISUALIZER_DIRECTORY_ID);
+    }
 
     const rawDisplay = (value: Value, str: string) => {
       this.conductor.sendOutput((str === undefined ? '' : str + ' ') + String(value));
@@ -91,9 +102,7 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
       // no way to *block* for input on this engine, so an unattended `prompt()` reads as a
       // cancelled prompt (`null`) rather than hanging the worker.
       prompt: () => this.conductor.tryRequestInput() ?? null,
-      visualiseList: () => {
-        throw new Error('draw_data is not supported by this evaluator.');
-      },
+      visualiseList: values => this.dataVisualizerPlugin?.sendDrawing(values),
     });
   }
 
@@ -163,6 +172,9 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
   async evaluateChunk(chunk: string): Promise<Value> {
     const path = this.entrypoint;
     try {
+      // The Conductor-era equivalent of the old frontend's DataVisualizer.clearWithData() on every
+      // Run press — without this, rows from an earlier REPL entry keep accumulating into this one's.
+      this.dataVisualizerPlugin?.resetRun();
       this.warnIfDebuggerStatement(chunk);
       const result = await runFilesInContext({ [path]: chunk }, path, this.context, {
         // Pin the engine. The default 'auto' silently switches to the CSE machine when verbose
