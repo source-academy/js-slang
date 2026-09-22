@@ -152,9 +152,31 @@ describe('Extra test results', () => {
     expect(visualiseListResult).toMatchInlineSnapshot(`
       Array [
         Array [
-          1,
           Array [
-            2,
+            1,
+            Array [
+              2,
+              null,
+            ],
+          ],
+        ],
+      ]
+    `);
+  });
+
+  // Regression test for #2078: draw_data is variadic, but its implementation used to forward only
+  // its first argument to visualiseList, silently dropping the rest.
+  test('Calling draw_data with multiple arguments forwards all of them', async () => {
+    const {
+      context: { visualiseListResult },
+    } = await testSuccess(`draw_data(1, "two", list(3));`, Chapter.SOURCE_2);
+    expect(visualiseListResult).toMatchInlineSnapshot(`
+      Array [
+        Array [
+          1,
+          "two",
+          Array [
+            3,
             null,
           ],
         ],

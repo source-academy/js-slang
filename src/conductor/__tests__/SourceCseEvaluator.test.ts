@@ -1,15 +1,25 @@
 import { describe, expect, test } from 'vitest';
 
 import { SourceCseEvaluator3 } from '..';
+import { SourceDataVisualizerRunnerPlugin } from '../dataVisualizer/SourceDataVisualizerRunnerPlugin';
 
+/**
+ * `registerPlugin` constructs a *real* `SourceDataVisualizerRunnerPlugin` when asked for one —
+ * over a minimal fake channel that just records every message sent — rather than the CSE plugin
+ * stand-in every other registration gets here. This evaluator always registers a data visualizer
+ * (§3/§4 only ever instantiate it, both >= §2), so every test's `fakeConductor()` needs a real
+ * one to call `resetRun`/`sendDrawing` on, not the CSE stand-in.
+ */
 function fakeConductor(config?: Record<string, unknown>) {
   const output: string[] = [];
   const errors: { message: string; name: string }[] = [];
   const snapshotCalls: { snapshots: unknown[]; breakpointSteps?: number[] }[] = [];
+  const dataVisualizerMessages: unknown[] = [];
   return {
     output,
     errors,
     snapshotCalls,
+    dataVisualizerMessages,
     plugin: {
       sendOutput: (m: string) => output.push(m),
       sendError: (e: { message: string; name: string }) => errors.push(e),
@@ -18,10 +28,23 @@ function fakeConductor(config?: Record<string, unknown>) {
       requestFile: () => Promise.resolve(config ? JSON.stringify(config) : undefined),
       requestChunk: () => Promise.resolve(''),
       updateStatus: () => {},
-      registerPlugin: () => ({
-        sendSnapshots: (snapshots: unknown[], breakpointSteps?: number[]) =>
-          snapshotCalls.push({ snapshots, breakpointSteps }),
-      }),
+      registerPlugin: (pluginClass: unknown) => {
+        if (pluginClass === SourceDataVisualizerRunnerPlugin) {
+          const channel = {
+            name: '__data_visualizer',
+            send: (message: unknown) => dataVisualizerMessages.push(message),
+            subscribe: () => {},
+            unsubscribe: () => {},
+            close: () => {},
+          };
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return new SourceDataVisualizerRunnerPlugin({} as any, [channel]);
+        }
+        return {
+          sendSnapshots: (snapshots: unknown[], breakpointSteps?: number[]) =>
+            snapshotCalls.push({ snapshots, breakpointSteps }),
+        };
+      },
       hostLoadPlugin: () => Promise.resolve(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any,
@@ -84,5 +107,33 @@ describe('prelude', () => {
     await evaluator.evaluateChunk('map(x => x, list(1));');
     await evaluator.evaluateChunk('accumulate((a, b) => a + b, 0, list(1, 2));');
     expect(errors.map(e => e.message)).toEqual([]);
+  });
+});
+
+// Regression coverage for #2078.
+describe('draw_data', () => {
+  test('reaches the data visualizer plugin with every argument, not just the first', async () => {
+    const { plugin, dataVisualizerMessages } = fakeConductor();
+    await new SourceCseEvaluator3(plugin).evaluateChunk('draw_data(1, 2);');
+    expect(dataVisualizerMessages[dataVisualizerMessages.length - 1]).toEqual({
+      type: 'rows',
+      rows: [
+        [
+          { type: 'leaf', displayValue: '1', label: 'number' },
+          { type: 'leaf', displayValue: '2', label: 'number' },
+        ],
+      ],
+    });
+  });
+
+  test('rows do not accumulate across chunks', async () => {
+    const { plugin, dataVisualizerMessages } = fakeConductor();
+    const evaluator = new SourceCseEvaluator3(plugin);
+    await evaluator.evaluateChunk('draw_data(1);');
+    await evaluator.evaluateChunk('draw_data(2);');
+    expect(dataVisualizerMessages[dataVisualizerMessages.length - 1]).toEqual({
+      type: 'rows',
+      rows: [[{ type: 'leaf', displayValue: '2', label: 'number' }]],
+    });
   });
 });

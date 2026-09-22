@@ -16,7 +16,8 @@ export interface TestResults {
   displayResult: string[];
   promptResult: string[];
   alertResult: string[];
-  visualiseListResult: Value[];
+  /** One entry per `draw_data(...)` call, each the call's full argument list (see #2078). */
+  visualiseListResult: Value[][];
 }
 
 export type TestContext = Context<any> & TestResults;

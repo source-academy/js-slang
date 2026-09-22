@@ -281,8 +281,12 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     (externalBuiltIns.alert ?? defaultBuiltIns.alert)(v, '', context.externalContext);
     context.nativeStorage.maxExecTime += Date.now() - start;
   };
-  const visualise_list = (v0: Value, ..._v: Value[]) => {
-    (externalBuiltIns.visualiseList ?? defaultBuiltIns.visualiseList)(v0, context.externalContext);
+  const visualise_list = (v0: Value, ...rest: Value[]) => {
+    // The whole argument list, not just v0 — draw_data(xs, ys) previously silently dropped ys (#2078).
+    (externalBuiltIns.visualiseList ?? defaultBuiltIns.visualiseList)(
+      [v0, ...rest],
+      context.externalContext,
+    );
     return v0;
   };
 
@@ -422,7 +426,7 @@ export const defaultBuiltIns: CustomBuiltIns = {
   prompt: misc.rawDisplay,
   // See issue #11
   alert: misc.rawDisplay,
-  visualiseList: (_v: Value) => {
+  visualiseList: (_values: Value[]) => {
     throw new GeneralRuntimeError('List visualizer is not enabled');
   },
 };
