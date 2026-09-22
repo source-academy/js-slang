@@ -50,5 +50,5 @@ given in  <a href="../CONTINUATION/index.html">CONTINUATION</a>.
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_4_explicitcontrol.pdf">Specification of Source §4 Explicit-Control</a>. Feel free to
+<a href="../javascript_4_explicitcontrol.pdf">Specification of Source §4 Explicit-Control</a>. Feel free to
 take a peek!

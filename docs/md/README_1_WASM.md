@@ -37,6 +37,6 @@ Runtime type errors are detected, however the line numbers are not reported beca
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_1_wasm.pdf">Specification of Source §1 WebAssembly</a>. Feel free to
+<a href="../javascript_1_wasm.pdf">Specification of Source §1 WebAssembly</a>. Feel free to
 take a peek.
 

@@ -23,5 +23,5 @@ You can use all features of
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_3_typed.pdf">Specification of Source §3 Typed</a>.
+<a href="../javascript_3_typed.pdf">Specification of Source §3 Typed</a>.
 Feel free to take a peek!
