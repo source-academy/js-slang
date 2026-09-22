@@ -8,6 +8,7 @@ import { runFilesInContext } from '../index';
 import { parse } from '../parser/parser';
 import type { Context, Value } from '../types';
 import { simple } from '../utils/ast/walkers';
+import { registerAutoCompletePlugin } from './plugins/autocomplete';
 import { SourceDataVisualizerRunnerPlugin } from './dataVisualizer/SourceDataVisualizerRunnerPlugin';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
 import { asInterfacableEvaluator, SourceDataHandler } from './modules/SourceDataHandler';
@@ -76,6 +77,7 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
   protected constructor(conductor: IRunnerPlugin, chapter: Chapter) {
     super(conductor);
     this.chapter = chapter;
+    registerAutoCompletePlugin(conductor, chapter);
 
     this.conductor.registerPlugin(
       ModuleLoaderRunnerPlugin,

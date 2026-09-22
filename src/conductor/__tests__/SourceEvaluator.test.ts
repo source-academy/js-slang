@@ -1,7 +1,9 @@
-import { describe, expect, test } from 'vitest';
+import { WEB_PLUGIN_ID } from '@sourceacademy/common-autocomplete';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { SourceEvaluator1, SourceEvaluator2, SourceEvaluator3 } from '..';
 import { SourceDataVisualizerRunnerPlugin } from '../dataVisualizer/SourceDataVisualizerRunnerPlugin';
+import AutoCompletePlugin from '../plugins/autocomplete';
 
 /** The slice of `IRunnerPlugin` these evaluators actually touch.
  *
@@ -14,10 +16,14 @@ function fakeConductor() {
   const output: string[] = [];
   const errors: { message: string; name: string }[] = [];
   const dataVisualizerMessages: unknown[] = [];
+  const registeredPluginClasses: unknown[] = [];
+  const hostLoadedPlugins: unknown[] = [];
   return {
     output,
     errors,
     dataVisualizerMessages,
+    registeredPluginClasses,
+    hostLoadedPlugins,
     plugin: {
       sendOutput: (m: string) => output.push(m),
       sendError: (e: { message: string; name: string }) => errors.push(e),
@@ -27,6 +33,7 @@ function fakeConductor() {
       requestChunk: () => Promise.resolve(''),
       updateStatus: () => {},
       registerPlugin: (pluginClass: unknown) => {
+        registeredPluginClasses.push(pluginClass);
         if (pluginClass === SourceDataVisualizerRunnerPlugin) {
           const channel = {
             name: '__data_visualizer',
@@ -40,13 +47,27 @@ function fakeConductor() {
         }
         return {};
       },
-      hostLoadPlugin: () => Promise.resolve(),
+      hostLoadPlugin: (id: unknown) => {
+        hostLoadedPlugins.push(id);
+        return Promise.resolve();
+      },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any,
   };
 }
 
 describe('SourceEvaluator', () => {
+  // Every evaluator now registers AutoCompletePlugin unconditionally (#2079), whose constructor
+  // starts a real setInterval pushing mode data to the host. Fake timers keep that interval from
+  // actually firing (and leaking across tests) for every test in this file, not just the ones
+  // that exercise autocomplete directly.
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   test('display() output reaches the host', async () => {
     const { plugin, output } = fakeConductor();
     const value = await new SourceEvaluator1(plugin).evaluateChunk('display("hi"); 1 + 1;');
@@ -158,5 +179,14 @@ describe('SourceEvaluator', () => {
       expect(errors.length).toBeGreaterThan(0);
       expect(errors[0].name).toBe('EvaluatorRuntimeError');
     });
+  });
+
+  // Regression coverage for #2079: every chapter registers the autocomplete plugin, unlike the
+  // data visualizer above (§1 has no draw_data, but §1 still wants autocomplete/highlighting).
+  test('the autocomplete plugin is registered at every chapter, including §1', () => {
+    const { plugin, registeredPluginClasses, hostLoadedPlugins } = fakeConductor();
+    new SourceEvaluator1(plugin);
+    expect(registeredPluginClasses).toContain(AutoCompletePlugin);
+    expect(hostLoadedPlugins).toContain(WEB_PLUGIN_ID);
   });
 });

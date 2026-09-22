@@ -1,0 +1,14 @@
+[
+  {
+    "name": "array_length",
+    "title": "array_length(x) -> number",
+    "description": "**primitive**; returns\nthe current length of array <CODE>x</CODE>, which is 1 plus the\nhighest index that has been used so far in an array assignment on\n<CODE>x</CODE>. Here literal array expressions are counted too: The\narray <CODE>[10, 20, 30]</CODE> has a length of 3.\nTime: <CODE>Θ(1)</CODE>, space: <CODE>Θ(1)</CODE>",
+    "meta": "func"
+  },
+  {
+    "name": "is_array",
+    "title": "is_array(x) -> boolean",
+    "description": "**primitive**; returns <CODE>true</CODE> if <CODE>x</CODE>\nis an array, and <CODE>false</CODE> if it is not.\nTime: <CODE>Θ(1)</CODE>, space: <CODE>Θ(1)</CODE>",
+    "meta": "func"
+  }
+]

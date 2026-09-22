@@ -13,6 +13,7 @@ import * as seq from '../utils/statementSeqTransform';
 import { collectSnapshots } from './cse/collectSnapshots';
 import { collectUsedGlobalNames } from './cse/usedGlobals';
 import { DEFAULT_STEP_LIMIT, fetchRunConfig } from './cse/runConfig';
+import { registerAutoCompletePlugin } from './plugins/autocomplete';
 import { SourceDataVisualizerRunnerPlugin } from './dataVisualizer/SourceDataVisualizerRunnerPlugin';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
 
@@ -66,6 +67,7 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
   protected constructor(conductor: IRunnerPlugin, chapter: Chapter) {
     super(conductor);
     this.chapter = chapter;
+    registerAutoCompletePlugin(conductor, chapter);
     this.dataVisualizerPlugin = conductor.registerPlugin(SourceDataVisualizerRunnerPlugin);
     conductor.hostLoadPlugin(DATA_VISUALIZER_DIRECTORY_ID);
     this.context = this.freshContext();

@@ -1,0 +1,260 @@
+[
+  {
+    "name": "math_abs",
+    "title": "math_abs(<CODE>x</CODE>) -> number",
+    "description": "computes the absolute value of x; the result has the same magnitude as <CODE>x</CODE> but has positive sign.",
+    "meta": "func"
+  },
+  {
+    "name": "math_acos",
+    "title": "math_acos(<CODE>x</CODE>) -> number",
+    "description": "computes the arc cosine of <CODE>x</CODE>.\nThe result is expressed in radians and ranges from +0 to +π.",
+    "meta": "func"
+  },
+  {
+    "name": "math_acosh",
+    "title": "math_acosh(<CODE>x</CODE>) -> number",
+    "description": "computes the inverse hyperbolic cosine of <CODE>x</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "math_asin",
+    "title": "math_asin(<CODE>x</CODE>) -> number",
+    "description": "computes the arc sine of <CODE>x</CODE>. The result is expressed in radians and ranges from -π / 2 to +π / 2.",
+    "meta": "func"
+  },
+  {
+    "name": "math_asinh",
+    "title": "math_asinh(<CODE>x</CODE>) -> number",
+    "description": "computes the inverse hyperbolic\nsine of <CODE>x</CODE>. The result is expressed in radians and ranges from -π / 2 to +π / 2.",
+    "meta": "func"
+  },
+  {
+    "name": "math_atan",
+    "title": "math_atan(<CODE>x</CODE>) -> number",
+    "description": "computes the arc tangent of <CODE>x</CODE>. The result is expressed in radians and ranges from -π / 2 to +π / 2.",
+    "meta": "func"
+  },
+  {
+    "name": "math_atan2",
+    "title": "math_atan2(<CODE>y</CODE>, <CODE>x</CODE>) -> number",
+    "description": "computes the arc tangent of the quotient <CODE>y</CODE> / <CODE>x</CODE> of the arguments <CODE>y</CODE> and <CODE>x</CODE>, where the signs of <CODE>y</CODE> and <CODE>x</CODE> are used to determine the quadrant of the result. Note that it is intentional and traditional for the two-argument arc tangent function that the argument named <CODE>y</CODE> be first and the argument named <CODE>x</CODE> be second. The result is expressed in radians and ranges from -π to +π.",
+    "meta": "func"
+  },
+  {
+    "name": "math_atanh",
+    "title": "math_atanh(<CODE>x</CODE>) -> number",
+    "description": "computes the inverse hyperbolic tangent of <CODE>x</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "math_cbrt",
+    "title": "math_cbrt(<CODE>x</CODE>) -> number",
+    "description": "computes the cube root of <CODE>x</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "math_ceil",
+    "title": "math_ceil(<CODE>x</CODE>) -> number",
+    "description": "computes the smallest (closest to -∞) Number value that is not less than <CODE>x</CODE> and is an integer. If <CODE>x</CODE> is already an integer, the result is <CODE>x</CODE>.\nThe value of math_ceil(x) is the same as the value of -math_floor(-x).",
+    "meta": "func"
+  },
+  {
+    "name": "math_clz32",
+    "title": "math_clz32(n) -> number",
+    "description": "When math_clz32 is called with one argument <CODE>x</CODE>, the following steps are taken:\n\nLet n be ToUint32(x).\nLet p be the number of leading zero bits in the 32-bit binary representation of n.\nReturn p.\n\n<P/>NOTE:\n<BR/>If n is 0, p will be 32. If the most significant bit of the 32-bit binary encoding of n is 1,\np will be 0.",
+    "meta": "func"
+  },
+  {
+    "name": "math_cos",
+    "title": "math_cos(<CODE>x</CODE>) -> number",
+    "description": "Computes the cosine of <CODE>x</CODE>.\nThe argument is expressed in radians.",
+    "meta": "func"
+  },
+  {
+    "name": "math_cosh",
+    "title": "math_cosh(<CODE>x</CODE>) -> number",
+    "description": "computes the hyperbolic cosine of <CODE>x</CODE>.\n<P/>NOTE:\nThe value of cosh(x) is the same as (exp(x) + exp(-x)) / 2.",
+    "meta": "func"
+  },
+  {
+    "name": "math_E",
+    "title": "math_E",
+    "description": "The Number value for e, Euler's number,\nwhich is approximately 2.718281828459045.",
+    "meta": "var"
+  },
+  {
+    "name": "math_exp",
+    "title": "math_exp(<CODE>x</CODE>) -> number",
+    "description": "computes the exponential function of <CODE>x</CODE>\n(e raised to the power of <CODE>x</CODE>, where e is the base of the natural logarithms).",
+    "meta": "func"
+  },
+  {
+    "name": "math_expm1",
+    "title": "math_expm1(<CODE>x</CODE>) -> number",
+    "description": "computes subtracting 1 from the\nexponential function of <CODE>x</CODE> (e raised to the power of <CODE>x</CODE>, where e is the base of\nthe natural logarithms). The result is computed in a way that is accurate even\nwhen the value of <CODE>x</CODE> is close to 0.",
+    "meta": "func"
+  },
+  {
+    "name": "math_floor",
+    "title": "math_floor(<CODE>x</CODE>) -> number",
+    "description": "computes the greatest (closest to +∞) Number value that is not greater than <CODE>x</CODE>\nand is an integer.\n<BR/>If <CODE>x</CODE> is already an integer, the result is <CODE>x</CODE>.\n\n<P/>NOTE:\nThe value of math_floor(x) is the same as the value of -math_ceil(-x).",
+    "meta": "func"
+  },
+  {
+    "name": "math_fround",
+    "title": "math_fround(<CODE>x</CODE>) -> number",
+    "description": "When math_fround is called with argument <CODE>x</CODE>, the following steps are taken:\n\n<OL><LI>If <CODE>x</CODE> is NaN, return NaN.</LI>\n<LI>If <CODE>x</CODE> is one of +0, -0, +∞, -∞, return <CODE>x</CODE>.</LI>\n<LI>Let x32 be the result of converting <CODE>x</CODE> to a value in IEEE 754-2008 binary32 format using roundTiesToEven mode.</LI>\n<LI>Let x64 be the result of converting x32 to a value in IEEE 754-2008 binary64 format.</LI>\n<LI>Return the ECMAScript Number value corresponding to x64.</LI></OL>",
+    "meta": "func"
+  },
+  {
+    "name": "math_hypot",
+    "title": "math_hypot(value1,value2,...) -> number",
+    "description": "computes the square root\nof the sum of squares of its arguments.\n\n<BR/>If no arguments are passed, the result is +0.",
+    "meta": "func"
+  },
+  {
+    "name": "math_imul",
+    "title": "math_imul(<CODE>x</CODE>, <CODE>x</CODE>) -> number",
+    "description": "When math_imul is called with arguments <CODE>x</CODE> and <CODE>y</CODE>,\nthe following steps are taken:\n<OL>\n<LI>Let a be ToUint32(x).</LI>\n<LI>Let b be ToUint32(y).</LI>\n<LI>Let product be (a × b) modulo 2<SUP>32</SUP>.</LI>\n<LI>If product ≥ 2<SUP>31</SUP>, return product - 2<SUP>32</SUP>; otherwise return product.</LI></OL>",
+    "meta": "func"
+  },
+  {
+    "name": "math_LN10",
+    "title": "math_LN10",
+    "description": "The Number value for the natural logarithm of 10,\nwhich is approximately 2.302585092994046.",
+    "meta": "var"
+  },
+  {
+    "name": "math_LN2",
+    "title": "math_LN2",
+    "description": "The Number value for the natural logarithm of 2,\nwhich is approximately 0.6931471805599453.",
+    "meta": "var"
+  },
+  {
+    "name": "math_log",
+    "title": "math_log(<CODE>x</CODE>) -> number",
+    "description": "Computes the natural logarithm of <CODE>x</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "math_log10",
+    "title": "math_log10(<CODE>x</CODE>) -> number",
+    "description": "computes the base 10 logarithm of <CODE>x</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "math_LOG10E",
+    "title": "math_LOG10E",
+    "description": "The Number value for the base-10 logarithm of e, \nthe base of the natural logarithms; this value is approximately 0.4342944819032518.\n\n<P/>NOTE:\nThe value of math_LOG10E is approximately the reciprocal of the value of math_LN10.",
+    "meta": "var"
+  },
+  {
+    "name": "math_log1p",
+    "title": "math_log1p(<CODE>x</CODE>) -> number",
+    "description": "computes the natural logarithm of 1 + <CODE>x</CODE>. The result is computed in a way that is accurate even when the value of <CODE>x</CODE> is close to zero.",
+    "meta": "func"
+  },
+  {
+    "name": "math_log2",
+    "title": "math_log2(<CODE>x</CODE>) -> number",
+    "description": "computes the base 2 logarithm of <CODE>x</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "math_LOG2E",
+    "title": "math_LOG2E",
+    "description": "The Number value for the base-2 logarithm of eℝ, the base of the natural logarithms; \nthis value is approximately 1.4426950408889634.\n\n<P/>NOTE:\nThe value of math_LOG2E is approximately the reciprocal of the value of math_LN2.",
+    "meta": "var"
+  },
+  {
+    "name": "math_max",
+    "title": "math_max(value1,value2,...) -> number",
+    "description": "Given zero or more numbers, returns the largest of them.\n\n<BR/>If no arguments are given, the result is -∞.\n<BR/>If any value is NaN, the result is NaN.\nThe comparison of values to determine the largest value is done using the\nAbstract Relational Comparison algorithm except that +0 is considered to be larger than -0.",
+    "meta": "func"
+  },
+  {
+    "name": "math_min",
+    "title": "math_min(value1,value2,...) -> number",
+    "description": "Given zero or more arguments, returns the smallest of them.\n\n<BR/>If no arguments are given, the result is +∞.\n<BR/>If any value is NaN, the result is NaN.\nThe comparison of values to determine the smallest value is done using the\nAbstract Relational Comparison algorithm except that +0 is considered to be larger than -0.",
+    "meta": "func"
+  },
+  {
+    "name": "math_PI",
+    "title": "math_PI",
+    "description": "The Number value for π, the ratio of the circumference of a circle to its diameter, \nwhich is approximately 3.1415926535897932.",
+    "meta": "var"
+  },
+  {
+    "name": "math_pow",
+    "title": "math_pow(base, exponent) -> number",
+    "description": "Computes the result of raising base to\nthe power of exponent.",
+    "meta": "func"
+  },
+  {
+    "name": "math_random",
+    "title": "math_random() -> number",
+    "description": "Returns a number value with positive sign, greater than or equal to 0 but less than 1,\nchosen randomly or pseudo randomly with approximately uniform distribution over that\nrange, using an implementation-dependent algorithm or strategy. This function takes no arguments.\n\nEach math_random function created for distinct realms must produce a distinct sequence\nof values from successive calls.",
+    "meta": "func"
+  },
+  {
+    "name": "math_round",
+    "title": "math_round(<CODE>x</CODE>) -> number",
+    "description": "Returns the number value that is closest to <CODE>x</CODE> and is an integer.\n<BR/>If two integers are equally close to <CODE>x</CODE>, then the result is the Number value\nthat is closer to +∞. If <CODE>x</CODE> is already an integer, the result is <CODE>x</CODE>.\n\nNOTE 1:\nmath_round(3.5) returns 4, but math_round(-3.5) returns -3.",
+    "meta": "func"
+  },
+  {
+    "name": "math_sign",
+    "title": "math_sign(<CODE>x</CODE>) -> number",
+    "description": "Computes the sign of <CODE>x</CODE>, indicating whether <CODE>x</CODE> is positive, negative, or zero.",
+    "meta": "func"
+  },
+  {
+    "name": "math_sin",
+    "title": "math_sin(<CODE>x</CODE>) -> number",
+    "description": "Computes the sine of <CODE>x</CODE>.\nThe argument is expressed in radians.",
+    "meta": "func"
+  },
+  {
+    "name": "math_sinh",
+    "title": "math_sinh(<CODE>x</CODE>) -> number",
+    "description": "Computes the hyperbolic sine of <CODE>x</CODE>.\n<P/>NOTE:\nThe value of sinh(x) is the same as (exp(x) - exp(-x)) / 2.",
+    "meta": "func"
+  },
+  {
+    "name": "math_sqrt",
+    "title": "math_sqrt(<CODE>x</CODE>) -> number",
+    "description": "Computes the square root of <CODE>x</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "math_SQRT1_2",
+    "title": "math_SQRT1_2",
+    "description": "The Number value for the square root of 0.5, which is approximately 0.7071067811865476.\n\n<P/>NOTE:\nThe value of math_SQRT1_2 is approximately the reciprocal of the value of math_SQRT2.",
+    "meta": "var"
+  },
+  {
+    "name": "math_SQRT2",
+    "title": "math_SQRT2",
+    "description": "The Number value for the square root of 2, which is approximately 1.4142135623730951.",
+    "meta": "var"
+  },
+  {
+    "name": "math_tan",
+    "title": "math_tan(<CODE>x</CODE>) -> number",
+    "description": "Computes the tangent of <CODE>x</CODE>. The argument is expressed in radians.",
+    "meta": "func"
+  },
+  {
+    "name": "math_tanh",
+    "title": "math_tanh(<CODE>x</CODE>) -> number",
+    "description": "Computes the hyperbolic tangent of <CODE>x</CODE>.\n\n<P/>NOTE:\nThe value of <CODE>math_tanh(x)</CODE> is the same as\n<CODE>(exp(x) - exp(-x))/(exp(x) + exp(-x))</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "math_trunc",
+    "title": "math_trunc(<CODE>x</CODE>) -> number",
+    "description": "Computes the integral part of the number <CODE>x</CODE>,\nremoving any fractional digits.",
+    "meta": "func"
+  }
+]

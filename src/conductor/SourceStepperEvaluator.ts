@@ -10,6 +10,7 @@ import type { Context, Value } from '../types';
 import { EvaluatorSyntaxError } from '@sourceacademy/conductor/common';
 
 import { DEFAULT_STEP_LIMIT, fetchRunConfig } from './cse/runConfig';
+import { registerAutoCompletePlugin } from './plugins/autocomplete';
 import { SourceDataVisualizerRunnerPlugin } from './dataVisualizer/SourceDataVisualizerRunnerPlugin';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
 import { SourceStepperRunnerPlugin } from './stepper/SourceStepperRunnerPlugin';
@@ -43,6 +44,7 @@ abstract class SourceStepperEvaluatorBase extends BasicEvaluator {
   protected constructor(conductor: IRunnerPlugin, chapter: Chapter) {
     super(conductor);
     this.chapter = chapter;
+    registerAutoCompletePlugin(conductor, chapter);
     if (chapter >= Chapter.SOURCE_2) {
       this.dataVisualizerPlugin = conductor.registerPlugin(SourceDataVisualizerRunnerPlugin);
       conductor.hostLoadPlugin(DATA_VISUALIZER_DIRECTORY_ID);

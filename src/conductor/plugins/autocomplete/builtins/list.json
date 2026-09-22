@@ -1,0 +1,146 @@
+[
+  {
+    "name": "accumulate",
+    "title": "accumulate(f, initial, xs) -> value",
+    "description": "Applies binary\nfunction <CODE>f</CODE> to the elements of <CODE>xs</CODE> from\nright-to-left order, first applying <CODE>f</CODE> to the last element\nand the value <CODE>initial</CODE>, resulting in <CODE>r</CODE><SUB>1</SUB>,\nthen to the\nsecond-last element and <CODE>r</CODE><SUB>1</SUB>, resulting in\n<CODE>r</CODE><SUB>2</SUB>,\netc, and finally\nto the first element and <CODE>r</CODE><SUB>n-1</SUB>, where\n<CODE>n</CODE> is the length of the\nlist. Thus, <CODE>accumulate(f,zero,list(1,2,3))</CODE> results in\n<CODE>f(1, f(2, f(3, zero)))</CODE>.\nIterative process;\ntime: <CODE>Theta(n)</CODE> (apart from <CODE>f</CODE>), space: <CODE>Theta(n)</CODE> (apart from <CODE>f</CODE>),\nwhere <CODE>n</CODE> is the length of <CODE>xs</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "append",
+    "title": "append(xs, ys) -> list",
+    "description": "Returns a list that results from\nappending the list <CODE>ys</CODE> to the list <CODE>xs</CODE>.\nIterative process; time: <CODE>Theta(n)</CODE>, space:\n<CODE>Theta(n)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.\nIn the result, null at the end of the first argument list\nis replaced by the second argument, regardless what the second\nargument consists of.",
+    "meta": "func"
+  },
+  {
+    "name": "build_list",
+    "title": "build_list(f, n) -> list",
+    "description": "Makes a list with <CODE>n</CODE>\nelements by applying the unary function <CODE>f</CODE>\nto the numbers 0 to <CODE>n - 1</CODE>, assumed to be a nonnegative integer.\nIterative process; time: <CODE>Theta(n)</CODE> (apart from <CODE>f</CODE>), space: <CODE>Theta(n)</CODE> (apart from <CODE>f</CODE>).",
+    "meta": "func"
+  },
+  {
+    "name": "display_list",
+    "title": "display_list(xs, s) -> value",
+    "description": "Optional second argument.\nSimilar to <CODE>display</CODE>, but formats well-formed lists nicely if detected;\ntime, space:\n<CODE>Theta(n)</CODE>, where <CODE>n</CODE> is the total number of data structures such as\npairs in <CODE>x</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "draw_data",
+    "title": "draw_data(value1,value2,...,value_n) -> value",
+    "description": "visualizes the arguments in a separate drawing\narea in the Source Academy using box-and-pointer diagrams; time, space:\n<CODE>Theta(n)</CODE>, where <CODE>n</CODE> is the total number of data structures such as\npairs in the arguments.",
+    "meta": "func"
+  },
+  {
+    "name": "enum_list",
+    "title": "enum_list(start, end) -> list",
+    "description": "Returns a list that enumerates\nnumbers starting from <CODE>start</CODE> using a step size of 1, until\nthe number exceeds (<CODE>&gt;</CODE>) <CODE>end</CODE>.\nIterative process;\ntime: <CODE>Theta(n)</CODE>, space: <CODE>Theta(n)</CODE>,\nwhere <CODE>n</CODE> is <CODE>end - start</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "equal",
+    "title": "equal(x, y) -> boolean",
+    "description": "Returns <CODE>true</CODE> if both\nhave the same structure with respect to <CODE>pair</CODE>,\nand identical values at corresponding leave positions (places that are not\nthemselves pairs), and <CODE>false</CODE> otherwise. For the \"identical\",\nthe values need to have the same type, otherwise the result is\n<CODE>false</CODE>. If corresponding leaves are boolean values, these values\nneed to be the same. If both are <CODE>undefined</CODE> or both are\n<CODE>null</CODE>, the result is <CODE>true</CODE>. Otherwise they are compared\nwith <CODE>===</CODE> (using the definition of <CODE>===</CODE> in the\nrespective Source language in use).\nTime, space:\n<CODE>Theta(n)</CODE>, where <CODE>n</CODE> is the total number of data structures such as\npairs in <CODE>x</CODE> and <CODE>y</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "filter",
+    "title": "filter(pred, xs) -> list",
+    "description": "Returns a list that contains\nonly those elements for which the one-argument function\n<CODE>pred</CODE>\nreturns <CODE>true</CODE>.\nIterative process;\ntime: <CODE>Theta(n)</CODE> (apart from <CODE>pred</CODE>), space: <CODE>Theta(n)</CODE> (apart from <CODE>pred</CODE>),\nwhere <CODE>n</CODE> is the length of <CODE>xs</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "for_each",
+    "title": "for_each(f, xs) -> boolean",
+    "description": "Applies unary function <CODE>f</CODE> to every\nelement of the list <CODE>xs</CODE>.\nIterative process; time: <CODE>Theta(n)</CODE> (apart from <CODE>f</CODE>), space: <CODE>Theta(1)</CODE> (apart from <CODE>f</CODE>),\nwhere <CODE>n</CODE> is the length of <CODE>xs</CODE>.\n<CODE>f</CODE> is applied element-by-element:\n<CODE>for_each(fun, list(1, 2))</CODE> results in the calls\n<CODE>fun(1)</CODE> and <CODE>fun(2)</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "head",
+    "title": "head(p) -> value",
+    "description": "**primitive**; returns head (first component) of given pair <CODE>p</CODE>; time: <CODE>Theta(1)</CODE, space: <CODE>Theta(1)</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "is_list",
+    "title": "is_list(xs) -> xs",
+    "description": "**primitive**; returns <CODE>true</CODE> if\n<CODE>xs</CODE> is a list as defined in the textbook, and\n<CODE>false</CODE> otherwise. Iterative process;\ntime: <CODE>Theta(n)</CODE>, space: <CODE>Theta(1)</CODE>, where <CODE>n</CODE>\nis the length of the\nchain of <CODE>tail</CODE> operations that can be applied to <CODE>xs</CODE>.\n<CODE>is_list</CODE> recurses down the list and checks that it ends with the empty list null",
+    "meta": "func"
+  },
+  {
+    "name": "is_null",
+    "title": "is_null(x) -> boolean",
+    "description": "**primitive**; returns <CODE>true</CODE> if <CODE>x</CODE> is the\nempty list <CODE>null</CODE>, and <CODE>false</CODE> otherwise; time: <CODE>Theta(1)</CODE, space: <CODE>Theta(1)</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "is_pair",
+    "title": "is_pair(x) -> boolean",
+    "description": "**primitive**; returns <CODE>true</CODE> if <CODE>x</CODE> is a\npair and false otherwise; time: <CODE>Theta(1)</CODE, space: <CODE>Theta(1)</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "length",
+    "title": "length(xs) -> number",
+    "description": "Returns the length of the list\n<CODE>xs</CODE>.\nIterative process; time: <CODE>Theta(n)</CODE>, space:\n<CODE>Theta(1)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "list",
+    "title": "list(value1,value2,...,value_n) -> list",
+    "description": "**primitive**; given <CODE>n</CODE> values, returns a list of length <CODE>n</CODE>.\nThe elements of the list are the given values in the given order; time: <CODE>Theta(n)</CODE, space: <CODE>Theta(n)</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "list_ref",
+    "title": "list_ref(xs, n) -> value",
+    "description": "Returns the element\nof list <CODE>xs</CODE> at position <CODE>n</CODE>,\nwhere the first element has index 0.\nIterative process;\ntime: <CODE>Theta(n)</CODE>, space: <CODE>Theta(1)</CODE>,\nwhere <CODE>n</CODE> is the length of <CODE>xs</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "list_to_string",
+    "title": "list_to_string(xs) -> string",
+    "description": "Returns a string that represents\nlist <CODE>xs</CODE> using the text-based box-and-pointer notation\n<CODE>[...]</CODE>.\nIterative process; time: <CODE>Theta(n)</CODE> where <CODE>n</CODE> is the size of the list, space: <CODE>Theta(m)</CODE> where <CODE>m</CODE> is the length of the string.\nThe process is iterative, but consumes space <CODE>O(m)</CODE>\nbecause of the result string.",
+    "meta": "func"
+  },
+  {
+    "name": "map",
+    "title": "map(f, xs) -> list",
+    "description": "Returns a list that results from list\n<CODE>xs</CODE> by element-wise application of unary function <CODE>f</CODE>.\nIterative process; time: <CODE>Theta(n)</CODE> (apart from <CODE>f</CODE>),\nspace: <CODE>Theta(n)</CODE> (apart from <CODE>f</CODE>), where <CODE>n</CODE> is the length of <CODE>xs</CODE>.\n<CODE>f</CODE> is applied element-by-element:\n<CODE>map(f, list(1, 2))</CODE> results in <CODE>list(f(1), f(2))</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "member",
+    "title": "member(v, xs) -> list",
+    "description": "Returns first postfix sublist\nwhose head is identical to\n<CODE>v</CODE> (using <CODE>===</CODE>); returns <CODE>null</CODE> if the\nelement does not occur in the list.\nIterative process; time: <CODE>Theta(n)</CODE>,\nspace: <CODE>Theta(1)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "pair",
+    "title": "pair(x, y) -> pair",
+    "description": "**primitive**; makes a pair whose head (first component) is <CODE>x</CODE>\nand whose tail (second component) is <CODE>y</CODE>; time: <CODE>Theta(1)</CODE, space: <CODE>Theta(1)</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "remove",
+    "title": "remove(v, xs) -> list",
+    "description": "Returns a list that results from\n<CODE>xs</CODE> by removing the first item from <CODE>xs</CODE> that\nis identical (<CODE>===</CODE>) to <CODE>v</CODE>.\nReturns the original\nlist if there is no occurrence. Iterative process;\ntime: <CODE>Theta(n)</CODE>, space: <CODE>Theta(n)</CODE>, where <CODE>n</CODE>\nis the length of <CODE>xs</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "remove_all",
+    "title": "remove_all(v, xs) -> list",
+    "description": "Returns a list that results from\n<CODE>xs</CODE> by removing all items from <CODE>xs</CODE> that\nare identical (<CODE>===</CODE>) to <CODE>v</CODE>.\nReturns the original\nlist if there is no occurrence.\nIterative process;\ntime: <CODE>Theta(n)</CODE>, space: <CODE>Theta(n)</CODE>, where <CODE>n</CODE>\nis the length of <CODE>xs</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "reverse",
+    "title": "reverse(xs) -> list",
+    "description": "Returns list <CODE>xs</CODE> in reverse\norder. Iterative process; time: <CODE>Theta(n)</CODE>,\nspace: <CODE>Theta(n)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.\nThe process is iterative, but consumes space <CODE>Theta(n)</CODE>\nbecause of the result list.",
+    "meta": "func"
+  },
+  {
+    "name": "tail",
+    "title": "tail(p) -> value",
+    "description": "**primitive**; returns tail (second component of given pair <CODE>p</CODE>; time: <CODE>Theta(1)</CODE, space: <CODE>Theta(1)</CODE>.",
+    "meta": "func"
+  }
+]
