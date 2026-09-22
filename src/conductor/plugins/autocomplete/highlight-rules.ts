@@ -53,6 +53,7 @@ import mceJSON from './builtins/mce.json';
 import miscJSON from './builtins/misc.json';
 import pairmutatorJSON from './builtins/pairmutator.json';
 import streamJSON from './builtins/stream.json';
+import timingJSON from './builtins/timing.json';
 import { getKeywords } from './keywords';
 
 // `¡-￿` is the same deliberately-approximate "anything non-ASCII" range ace's own JS
@@ -73,7 +74,8 @@ const identifierRe = `[${identifierCharRe}][${identifierCharRe}0-9]*`;
 function builtinsByMeta(chapter: Chapter): { functions: string[]; constants: string[] } {
   const symbols = [...miscJSON, ...mathJSON];
   if (chapter >= Chapter.SOURCE_2) symbols.push(...listJSON);
-  if (chapter >= Chapter.SOURCE_3) symbols.push(...streamJSON, ...arrayJSON, ...pairmutatorJSON);
+  if (chapter >= Chapter.SOURCE_3)
+    symbols.push(...streamJSON, ...arrayJSON, ...pairmutatorJSON, ...timingJSON);
   if (chapter >= Chapter.SOURCE_4) symbols.push(...mceJSON);
 
   const functions: string[] = [];

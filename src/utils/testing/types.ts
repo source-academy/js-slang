@@ -18,6 +18,10 @@ export interface TestResults {
   alertResult: string[];
   /** One entry per `draw_data(...)` call, each the call's full argument list (see #2078). */
   visualiseListResult: Value[][];
+  /** One entry per `set_timeout(f, t)` call, as `[f, t]` — the generic test harness records the
+   * call rather than actually scheduling `f`, since only `SourceEvaluator` (see #2025) has a real
+   * implementation; a test that needs `f` to actually run should override via `testBuiltins`. */
+  setTimeoutResult: [Value, number][];
 }
 
 export type TestContext = Context<any> & TestResults;

@@ -17,6 +17,7 @@ import * as stream from './stdlib/stream';
 import { streamPrelude } from './stdlib/stream.prelude';
 import type { Context, CustomBuiltIns, Environment, NativeStorage, Value } from './types';
 import * as operators from './utils/operators';
+import { assertFunctionOfLength, assertNumberWithinRange } from './utils/rttc';
 import { stringify } from './utils/stringify';
 
 export class EnvTree {
@@ -289,6 +290,23 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     );
     return v0;
   };
+  // Transpiler-evaluator only (js-slang#2025): externalBuiltIns.setTimeout/clearAllTimeout are
+  // wired to a real, working implementation only by SourceEvaluator — see defaultBuiltIns below,
+  // which every other evaluator (CSE machine, stepper) falls through to, and which throws.
+  const set_timeout = (f: Value, delayMs: number) => {
+    assertFunctionOfLength(f, 0, set_timeout.name);
+    assertNumberWithinRange(delayMs, set_timeout.name, 0, undefined, false);
+    (externalBuiltIns.setTimeout ?? defaultBuiltIns.setTimeout)(
+      f,
+      delayMs,
+      context.externalContext,
+    );
+    return undefined;
+  };
+  const clear_all_timeout = () => {
+    (externalBuiltIns.clearAllTimeout ?? defaultBuiltIns.clearAllTimeout)(context.externalContext);
+    return undefined;
+  };
 
   if (context.chapter >= 1) {
     defineBuiltin(context, 'get_time()', misc.get_time);
@@ -360,6 +378,9 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
 
     // Stream library
     defineBuiltin(context, 'stream(...values)', stream.stream, true);
+
+    defineBuiltin(context, 'set_timeout(f, t)', set_timeout);
+    defineBuiltin(context, 'clear_all_timeout()', clear_all_timeout);
   }
 
   if (context.chapter >= 4) {
@@ -428,6 +449,12 @@ export const defaultBuiltIns: CustomBuiltIns = {
   alert: misc.rawDisplay,
   visualiseList: (_values: Value[]) => {
     throw new GeneralRuntimeError('List visualizer is not enabled');
+  },
+  setTimeout: (_f: Value, _delayMs: number) => {
+    throw new GeneralRuntimeError('set_timeout is not supported by this evaluator.');
+  },
+  clearAllTimeout: () => {
+    throw new GeneralRuntimeError('clear_all_timeout is not supported by this evaluator.');
   },
 };
 

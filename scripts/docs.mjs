@@ -47,7 +47,8 @@ const configs = {
       'list.js',
       'stream.js',
       'array.js',
-      'pairmutator.js'
+      'pairmutator.js',
+      'timing.js'
     ]
   },
   'Source §3 Typed': {
@@ -74,6 +75,7 @@ const configs = {
       'stream.js',
       'array.js',
       'pairmutator.js',
+      'timing.js',
       'mce.js'
     ]
   },

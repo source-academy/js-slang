@@ -40,6 +40,7 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
     promptResult: [],
     alertResult: [],
     visualiseListResult: [],
+    setTimeoutResult: [],
   };
 
   const customBuiltIns: CustomBuiltIns = {
@@ -65,6 +66,12 @@ export function createTestContext(rawOptions: TestOptions = {}): TestContext {
       (values => {
         otherTestResults.visualiseListResult.push(values);
       }),
+    setTimeout:
+      testBuiltins?.setTimeout ??
+      ((f, delayMs, _externalContext) => {
+        otherTestResults.setTimeoutResult.push([f, delayMs]);
+      }),
+    clearAllTimeout: testBuiltins?.clearAllTimeout ?? (_externalContext => {}),
   };
 
   const evalContext = createContext(
