@@ -63,6 +63,30 @@ describe('sourceHighlightRules', () => {
     expect(findKeywordMapperKeywords(Chapter.SOURCE_1)).not.toContain('while');
   });
 
+  function findKeywordMapperFunctions(chapter: Chapter): string {
+    for (const rule of sourceHighlightRules(chapter).start) {
+      if (
+        'token' in rule &&
+        typeof rule.token === 'object' &&
+        !Array.isArray(rule.token) &&
+        'map' in rule.token
+      ) {
+        return rule.token.map['support.function'];
+      }
+    }
+    throw new Error('expected a keyword-mapper rule in the start state');
+  }
+
+  // Regression coverage for set_timeout/clear_all_timeout (see #2025's Codex review): they're
+  // registered as chapter 3+ builtins in createContext.ts, but had no docs/lib entry, so
+  // builtinsByMeta's chapter-3 JSON list never picked them up for syntax highlighting either.
+  test('set_timeout and clear_all_timeout highlight as builtins from chapter 3 onward', () => {
+    expect(findKeywordMapperFunctions(Chapter.SOURCE_2)).not.toContain('set_timeout');
+    const ch3 = findKeywordMapperFunctions(Chapter.SOURCE_3);
+    expect(ch3).toContain('set_timeout');
+    expect(ch3).toContain('clear_all_timeout');
+  });
+
   test('import/export/debugger are keywords from their actual chapter, per syntaxBlacklist', () => {
     const ch1 = findKeywordMapperKeywords(Chapter.SOURCE_1);
     expect(ch1).toContain('import');

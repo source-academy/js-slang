@@ -159,6 +159,16 @@ describe('draw_data', () => {
   });
 });
 
+// Regression coverage for #2025: this evaluator doesn't wire a `setTimeout` hook into
+// `createContext`, so it falls through to `defaultBuiltIns.setTimeout`, which throws — a clear
+// "not supported" error rather than the call silently doing nothing.
+test('set_timeout is not supported on the CSE machine', async () => {
+  const { plugin, errors } = fakeConductor();
+  await new SourceCseEvaluator3(plugin).evaluateChunk('set_timeout(() => 1, 10);');
+  expect(errors.length).toBe(1);
+  expect(errors[0].message).toMatch(/not supported/);
+});
+
 // Regression coverage for #2079.
 test('the autocomplete plugin is registered', () => {
   const { plugin, registeredPluginClasses, hostLoadedPlugins } = fakeConductor();

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "clear_all_timeout",
+    "title": "clear_all_timeout() -> undefined",
+    "description": "**primitive**; cancels every timer scheduled by <CODE>set_timeout</CODE>\nthat has not fired yet.",
+    "meta": "func"
+  },
+  {
+    "name": "set_timeout",
+    "title": "set_timeout(f, t) -> undefined",
+    "description": "**primitive**; schedules <CODE>f</CODE>, a function of no arguments, to\nbe called after <CODE>t</CODE> milliseconds, without blocking the\ncalling code. An error thrown by <CODE>f</CODE> when it eventually runs\nis reported the way an uncaught runtime error normally is, not silently\nswallowed.",
+    "meta": "func"
+  }
+]

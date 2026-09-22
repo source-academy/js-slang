@@ -181,6 +181,51 @@ describe('SourceEvaluator', () => {
     });
   });
 
+  // Regression coverage for #2025: mirrors py-slang's Py2JS `set_timeout` — a compiled Source
+  // function is already a plain JS closure, so a real timer firing later can just call it
+  // directly. Every test in this file already runs under `vi.useFakeTimers()` (see the top-level
+  // `beforeEach` above), so `vi.advanceTimersByTimeAsync` both fires the timer and flushes the
+  // microtasks `callIfFuncAndRightArgsAsync`'s `.catch`/`.finally` chain needs to settle.
+  describe('set_timeout / clear_all_timeout', () => {
+    test('f runs after the delay, without blocking evaluateChunk', async () => {
+      const { plugin, output } = fakeConductor();
+      const evaluator = new SourceEvaluator3(plugin);
+      const value = await evaluator.evaluateChunk('set_timeout(() => display("late"), 100);');
+      expect(value).toBeUndefined();
+      expect(output).toEqual([]);
+      await vi.advanceTimersByTimeAsync(100);
+      expect(output).toContain('"late"');
+    });
+
+    test('an error thrown by f is reported, not silently swallowed', async () => {
+      // This is the exact bug #2025 exists to retire: the `matrix` module's own hand-rolled
+      // `set_timeout` reimplementation drops an uncaught error from its scheduled callback on the
+      // floor (source-academy/modules#831).
+      const { plugin, errors } = fakeConductor();
+      const evaluator = new SourceEvaluator3(plugin);
+      await evaluator.evaluateChunk('set_timeout(() => head(null), 10);');
+      expect(errors).toEqual([]);
+      await vi.advanceTimersByTimeAsync(10);
+      expect(errors.length).toBe(1);
+      expect(errors[0].name).toBe('EvaluatorRuntimeError');
+    });
+
+    test('clear_all_timeout() cancels a pending timer before it fires', async () => {
+      const { plugin, output } = fakeConductor();
+      const evaluator = new SourceEvaluator3(plugin);
+      await evaluator.evaluateChunk('set_timeout(() => display("late"), 100);');
+      await evaluator.evaluateChunk('clear_all_timeout();');
+      await vi.advanceTimersByTimeAsync(200);
+      expect(output).toEqual([]);
+    });
+
+    test('is not declared below §3', async () => {
+      const { plugin, errors } = fakeConductor();
+      await new SourceEvaluator2(plugin).evaluateChunk('set_timeout(() => 1, 10);');
+      expect(errors.length).toBe(1);
+    });
+  });
+
   // Regression coverage for #2079: every chapter registers the autocomplete plugin, unlike the
   // data visualizer above (§1 has no draw_data, but §1 still wants autocomplete/highlighting).
   test('the autocomplete plugin is registered at every chapter, including §1', () => {

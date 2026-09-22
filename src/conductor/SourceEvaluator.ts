@@ -6,8 +6,10 @@ import createContext from '../createContext';
 import { Chapter, Variant } from '../langs';
 import { runFilesInContext } from '../index';
 import { parse } from '../parser/parser';
+import type { SourceError } from '../errors/base';
 import type { Context, Value } from '../types';
 import { simple } from '../utils/ast/walkers';
+import { callIfFuncAndRightArgsAsync } from '../utils/operators';
 import { registerAutoCompletePlugin } from './plugins/autocomplete';
 import { SourceDataVisualizerRunnerPlugin } from './dataVisualizer/SourceDataVisualizerRunnerPlugin';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
@@ -74,6 +76,11 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
    * reason to register the plugin or have the host fetch its web bundle for a §1 user. */
   private readonly dataVisualizerPlugin?: SourceDataVisualizerRunnerPlugin;
 
+  /** Every `set_timeout(f, t)` call still outstanding (see #2025), so `clear_all_timeout()` can
+   * cancel them and so `evaluateChunk`'s own `beginPendingWork()`/`endPendingWork()` pair — one per
+   * entry here — always balances, however the timer resolves. */
+  private readonly pendingTimeoutIds = new Set<ReturnType<typeof setTimeout>>();
+
   protected constructor(conductor: IRunnerPlugin, chapter: Chapter) {
     super(conductor);
     this.chapter = chapter;
@@ -105,6 +112,28 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
       // cancelled prompt (`null`) rather than hanging the worker.
       prompt: () => this.conductor.tryRequestInput() ?? null,
       visualiseList: values => this.dataVisualizerPlugin?.sendDrawing(values),
+      // A compiled Source function already *is* a plain JS closure (mirrors py-slang's Py2JS
+      // `set_timeout` — see #2025), so a real `setTimeout` firing later can just call it directly,
+      // no cold-re-entry machinery needed. `beginPendingWork`/`endPendingWork` keep the host from
+      // tearing this evaluator down while a timer is still outstanding (py-slang#329 documents what
+      // goes wrong without that).
+      setTimeout: (f: Value, delayMs: number) => {
+        this.beginPendingWork();
+        const id = setTimeout(() => {
+          this.pendingTimeoutIds.delete(id);
+          callIfFuncAndRightArgsAsync(f, -1, -1, null, this.context.nativeStorage)
+            .catch((e: unknown) => this.conductor.sendError(toConductorError(e as SourceError)))
+            .finally(() => this.endPendingWork());
+        }, delayMs);
+        this.pendingTimeoutIds.add(id);
+      },
+      clearAllTimeout: () => {
+        for (const id of this.pendingTimeoutIds) {
+          clearTimeout(id);
+          this.endPendingWork();
+        }
+        this.pendingTimeoutIds.clear();
+      },
     });
   }
 

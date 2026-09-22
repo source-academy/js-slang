@@ -30,7 +30,16 @@ const repoRoot = pathlib.join(__dirname, '..')
  * `continuation.js` (§4 Explicit-Control only, which has no Conductor evaluator yet — #2054), or
  * `ev3.js`/`parsetreetypes.js`/`empty.js` (EV3 hardware and jsdoc scaffolding, not part of any
  * Source chapter). Order matches `scripts/docs.mjs`'s own per-chapter `libs` lists. */
-const libFiles = ['misc.js', 'math.js', 'list.js', 'stream.js', 'array.js', 'pairmutator.js', 'mce.js']
+const libFiles = [
+  'misc.js',
+  'math.js',
+  'list.js',
+  'stream.js',
+  'array.js',
+  'pairmutator.js',
+  'timing.js',
+  'mce.js',
+]
 
 const libDir = pathlib.join(repoRoot, 'docs/lib')
 const confFile = pathlib.join(repoRoot, 'docs/jsdoc/conf.json')

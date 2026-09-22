@@ -62,7 +62,8 @@ const configs = {
       'list.js',
       'stream.js',
       'array.js',
-      'pairmutator.js'
+      'pairmutator.js',
+      'timing.js'
     ]
   },
   'JavaScript §3': {
@@ -102,6 +103,7 @@ const configs = {
       'stream.js',
       'array.js',
       'pairmutator.js',
+      'timing.js',
       'mce.js'
     ]
   },
