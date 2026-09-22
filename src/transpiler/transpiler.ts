@@ -49,6 +49,17 @@ export function transformImportDeclarations(
   return [declNodes, otherNodes];
 }
 
+/**
+ * True iff `program` imports at least one module — the signal `transpile` uses to decide whether
+ * this chunk needs dual (async) compilation. A chunk containing no imports of its own can still
+ * *reach* a previously-imported module binding (declared by an earlier REPL chunk); that case is
+ * the caller's responsibility — see `SourceEvaluator`'s `hasEverLoadedAModule` — not this function's,
+ * which only ever looks at `program`'s own body.
+ */
+export function hasImports(program: es.Program): boolean {
+  return program.body.some(node => node.type === 'ImportDeclaration');
+}
+
 export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
   return program.body.filter(isVariableDeclaration).map(decl => {
     const {
@@ -169,6 +180,25 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
 }
 
 /**
+ * Marks every arrow function in the program `async`, in dual/async mode only. Every Source function
+ * value is, by the time this runs, an `ArrowFunctionExpression` — `transformFunctionDeclarationsToArrowFunctions`
+ * has already turned every `function` declaration into one — so this single pass covers both original
+ * arrows and converted declarations uniformly.
+ *
+ * `async` is required for a function's own body to legally contain the `await` calls
+ * `transformCallExpressionsToCheckIfFunction` is about to insert. Must run before
+ * `wrapArrowFunctionsToAllowNormalCallsAndNiceToString`, whose `{ ...node }` shallow copy needs
+ * `.async` already set to carry it into the copy that becomes the function's real body.
+ */
+function markArrowFunctionsAsync(program: es.Program) {
+  simple(program, {
+    ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
+      node.async = true;
+    },
+  });
+}
+
+/**
  * Transforms all return statements (including expression arrow functions) to return an intermediate value
  * return nonFnCall + 1;
  *  =>
@@ -234,23 +264,52 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
   });
 }
 
-function transformCallExpressionsToCheckIfFunction(program: es.Program, globalIds: NativeIds) {
+/**
+ * Wraps every call in the program through {@link callIfFuncAndRightArgs} (or, in async/dual mode,
+ * its twin — see transpiler.ts's module doc) for argument checking and the proper-tail-call
+ * trampoline.
+ *
+ * `isAsync` is the only difference from the non-module path: the callee changes from
+ * `callIfFuncAndRightArgs` to `callIfFuncAndRightArgsAsync`, and the resulting call is wrapped in an
+ * `await` (`mutateToAwaitCallExpression` rather than `mutateToCallExpression`) — needed because the
+ * callee might now be a Conductor module closure, which crosses the boundary as an
+ * `ExternCallable`, i.e. always Promise-returning by protocol regardless of whether any *particular*
+ * call actually suspends.
+ */
+function transformCallExpressionsToCheckIfFunction(
+  program: es.Program,
+  globalIds: NativeIds,
+  isAsync: boolean,
+) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
       const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start;
       const source = node.loc?.source ?? null;
       const args = node.arguments;
+      const callee = node.callee as es.Expression;
 
-      node.arguments = [
-        node.callee as es.Expression,
+      // `node.arguments`'s declared type (`(Expression | SpreadElement)[]`) is wider than
+      // `mutateTo*CallExpression`'s (`Expression[]`) — Source's own grammar never puts a spread
+      // element in call-argument position, matching the assumption `mutateToCallExpression`'s other
+      // existing callers already make.
+      const wrappedArgs = [
+        callee,
         create.literal(line),
         create.literal(column),
         create.literal(source),
         globalIds.native,
         ...args,
-      ];
+      ] as es.Expression[];
 
-      node.callee = globalIds.callIfFuncAndRightArgs;
+      if (isAsync) {
+        create.mutateToAwaitCallExpression(
+          node,
+          globalIds.callIfFuncAndRightArgsAsync,
+          wrappedArgs,
+        );
+      } else {
+        create.mutateToCallExpression(node, globalIds.callIfFuncAndRightArgs, wrappedArgs);
+      }
     },
   });
 }
@@ -429,11 +488,89 @@ function getDeclarationsToAccessTranspilerInternals(
 
 export type TranspiledResult = { transpiled: string; sourceMapJson?: RawSourceMap };
 
+/**
+ * Dual/async mode cannot rely on `eval()`'s own completion-value tracking — the mechanism the sync
+ * path uses to report "the value of the program" for free, with no code of its own: `eval` reports
+ * the value of the last statement it actually executed, propagating through `if`/`for`/`while`
+ * exactly as the ECMAScript spec's Completion Records do. Async mode instead runs the program inside
+ * an `async` IIFE (see `transpileToSource`'s use of this function), whose own completion — an
+ * ordinary function return — is *not* eval's implicit one, so there is nothing to fall back on.
+ *
+ * This reproduces that same propagation by hand, for exactly the statement shapes Source's grammar
+ * allows at a position that can be "last": `ExpressionStatement` (the common case — assign into
+ * `resultId`) and three constructs that all share one rule — `IfStatement`, `ForStatement` and
+ * `WhileStatement` each reset to `undefined` *immediately before themselves*, then recurse into
+ * whichever branch/body actually runs (Source requires braces on `if`, so a branch is always a
+ * `BlockStatement`). Resetting first, rather than merely leaving `resultId` untouched, is what makes
+ * a branch/body whose own last statement is itself empty-completion (a bare declaration) correctly
+ * report `undefined` instead of silently carrying forward whatever ran *before* the construct — per
+ * spec, `if (true) { let y = 10; }`'s own completion is `undefined`, not "whatever came before the
+ * `if`", even though a bare `let y = 10;` in isolation (no `if` around it) *does* carry the previous
+ * value through. A loop's reset also naturally reproduces "last iteration's last value", since the
+ * same rewritten body statements run — and keep assigning into the same `resultId` — on every pass.
+ * Every other statement type (`VariableDeclaration`, `FunctionDeclaration`, an import) has an empty
+ * completion in spec terms and is never itself reset, which is what lets it correctly carry the
+ * previous statement's value through when it is the LAST statement in a plain list.
+ *
+ * Verified against plain `eval()` on every construct Source's grammar can put in program-final
+ * position, including the two cases naive reasoning gets wrong (see this file's test suite): a
+ * zero-iteration loop, and a taken `if` branch that ends in a bare declaration.
+ */
+export function transformStatementsToTrackCompletionValue(
+  statements: es.Statement[],
+  resultId: es.Identifier,
+): es.Statement[] {
+  const assignResult = (expr: es.Expression) =>
+    create.expressionStatement(create.assignmentExpression(resultId, expr));
+  const resetResult = () => assignResult(create.identifier('undefined'));
+
+  const transformBranch = (stmt: es.Statement): es.Statement =>
+    stmt.type === 'BlockStatement'
+      ? create.blockStatement(
+          transformStatementsToTrackCompletionValue(stmt.body, resultId),
+          stmt.loc,
+        )
+      : transformOne(stmt);
+
+  function transformOne(stmt: es.Statement): es.Statement {
+    switch (stmt.type) {
+      case 'ExpressionStatement':
+        return assignResult(stmt.expression);
+      case 'IfStatement':
+        // Resetting to `undefined` before the statement — not merely leaving `resultId`
+        // untouched — matters when the taken branch's own completion is itself empty (e.g. it
+        // ends in a bare declaration): per spec, `IfStatement`'s completion in that case is
+        // `undefined`, dropping whatever value was running *before* the `if`, not carrying it
+        // through. Exactly the same rule `ForStatement`/`WhileStatement` need below, and for the
+        // same reason.
+        return create.blockStatement([
+          resetResult(),
+          {
+            ...stmt,
+            consequent: transformBranch(stmt.consequent),
+            alternate: stmt.alternate ? transformBranch(stmt.alternate) : stmt.alternate,
+          },
+        ]);
+      case 'ForStatement':
+      case 'WhileStatement':
+        return create.blockStatement(
+          [resetResult(), { ...stmt, body: transformBranch(stmt.body) }],
+          stmt.loc,
+        );
+      default:
+        return stmt;
+    }
+  }
+
+  return statements.map(transformOne);
+}
+
 function transpileToSource(
   originalProgram: es.Program,
   context: Context,
   skipUndefined: boolean,
   isPrelude: boolean,
+  isAsync: boolean,
 ): TranspiledResult {
   if (originalProgram.body.length === 0) {
     return { transpiled: '' };
@@ -450,7 +587,7 @@ function transpileToSource(
   const functionsToStringMap = generateFunctionsToStringMap(program);
 
   transformReturnStatementsToAllowProperTailCalls(program);
-  transformCallExpressionsToCheckIfFunction(program, globalIds);
+  transformCallExpressionsToCheckIfFunction(program, globalIds, isAsync);
   transformUnaryAndBinaryOperationsToFunctionCalls(program, globalIds, context.chapter);
   transformSomeExpressionsToCheckIfBoolean(program, globalIds);
   transformPropertyAssignment(program, globalIds);
@@ -458,6 +595,12 @@ function transpileToSource(
   checkForUndefinedVariables(program, context, globalIds, skipUndefined);
   // checkProgramForUndefinedVariables(program, context, skipUndefined)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap);
+  if (isAsync) {
+    // Every user function must be able to contain the `await` calls just inserted above — must run
+    // before wrapArrowFunctionsToAllowNormalCallsAndNiceToString, whose shallow copy of each arrow
+    // needs `.async` already set to carry it into the function that actually executes.
+    markArrowFunctionsAsync(program);
+  }
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
     program,
     functionsToStringMap,
@@ -473,14 +616,48 @@ function transpileToSource(
 
   program.body = (importNodes as es.Program['body']).concat(otherNodes);
 
+  // Must run on the still-flat statement list, exactly as in sync mode: this seeds cross-chunk
+  // "was this name already declared" tracking, which async mode still populates even though (see
+  // the module design doc, source-academy/js-slang#2081) a name an async-mode chunk itself declares
+  // does not actually survive into a *later* chunk the way a sync-mode chunk's does — a known,
+  // documented gap, not something to silently paper over by skipping this call.
   getGloballyDeclaredIdentifiers(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id),
   );
+
+  // In async mode, the import bindings stay OUTSIDE the completion-value IIFE below, unlike the
+  // rest of the chunk's own code. An import binding is a plain property read
+  // (`native.loadedModules.foo.bar`) that never needs `await` — the module it names was already
+  // loaded, as a separate step, before this chunk was ever transpiled — so there is no reason to
+  // trap it inside the IIFE's own function scope, which a *later* chunk's separate `eval()` call
+  // cannot see into (see the class doc on SourceEvaluator's `hasEverLoadedAModule`). Keeping it in
+  // the same outer, eval-chainable scope sync mode already relies on is what lets a later chunk with
+  // no import of its own still use a name an earlier chunk imported.
+  //
+  // The prelude gets the exact same "don't trap it inside the IIFE" treatment as import bindings,
+  // for the same reason: `map`, `filter`, `accumulate`, ... are declared at the prelude's own top
+  // level, and a later chunk's separate `eval()` call must still be able to see them, exactly like
+  // any other prelude-declared name always could in sync mode. The prelude never actually needs the
+  // IIFE for its own sake — every one of its top-level statements is a plain function declaration,
+  // never a call needing `await` at the top level; only calls made from *inside* those functions'
+  // own bodies do, and marking those functions `async` (above) already makes `await` legal there
+  // regardless of whether the enclosing top-level code is wrapped in an IIFE or not. Wrapping it
+  // anyway would silently break every later chunk's ability to call `map`/`filter`/... at all — this
+  // is exactly the "own code declared inside the IIFE is invisible to a later eval()" limitation the
+  // class doc on `SourceEvaluator` accepts for a *user* chunk's own declarations, but the prelude,
+  // unlike a user chunk, is not allowed to have that limitation.
+  const otherStatements = otherNodes as es.Statement[];
+  const lastStatements =
+    isAsync && !isPrelude
+      ? [buildAsyncCompletionValueIIFE(otherStatements, usedIdentifiers)]
+      : otherStatements;
+
   const newStatements = [
     ...getDeclarationsToAccessTranspilerInternals(globalIds),
     evallerReplacer(globalIds.native, usedIdentifiers),
     create.expressionStatement(create.identifier('undefined')),
-    ...(program.body as es.Statement[]),
+    ...(importNodes as es.Statement[]),
+    ...lastStatements,
   ];
 
   program.body =
@@ -492,6 +669,44 @@ function transpileToSource(
   const transpiled = generate(program, { sourceMap: map });
   const sourceMapJson = map.toJSON();
   return { transpiled, sourceMapJson };
+}
+
+/**
+ * Wraps a dual-mode chunk's own non-import statements in `(async () => { ...; return __result__;
+ * })()` — an immediately-invoked async arrow, the only way for this chunk's `await` calls to be
+ * syntactically legal (see this file's module doc on why `eval()`'s own completion-value tracking
+ * cannot be reused here, and `transformStatementsToTrackCompletionValue`'s doc for how the returned
+ * value is computed instead). Import bindings are deliberately NOT passed to this function —
+ * `transpileToSource` keeps them outside it, in the same outer scope sync mode already uses, since
+ * they're plain property reads that never need `await` (see `SourceEvaluator`'s own class doc on
+ * why that specifically is what lets a later chunk still reach an earlier one's import).
+ *
+ * The evaluated program's own value is exactly the value of the ONE resulting ExpressionStatement —
+ * a call to this IIFE — so `eval()`/`nativeStorage.evaller`'s completion-value tracking (unmodified,
+ * still relied on one level up — see `evallerReplacer`) reports it correctly with no further work:
+ * calling an async function always synchronously returns a Promise, and that Promise *is* the
+ * completion value the sync machinery reports, for `sourceRunner.ts`'s native runner to await.
+ */
+function buildAsyncCompletionValueIIFE(
+  statements: es.Statement[],
+  usedIdentifiers: Set<string>,
+): es.Statement {
+  const resultId = create.identifier(getUniqueId(usedIdentifiers, 'result'));
+  const trackedStatements = transformStatementsToTrackCompletionValue(statements, resultId);
+
+  const body = create.blockStatement([
+    create.variableDeclaration(
+      [create.variableDeclarator(resultId, create.identifier('undefined'))],
+      'let',
+    ),
+    ...trackedStatements,
+    create.returnStatement(resultId),
+  ]);
+
+  const iife = create.blockArrowFunction([], body);
+  iife.async = true;
+
+  return create.expressionStatement(create.callExpression(iife, []));
 }
 
 function transpileToFullJS(
@@ -539,17 +754,25 @@ function transpileToFullJS(
   return { transpiled, sourceMapJson };
 }
 
+/**
+ * `isAsync` selects dual/async-mode compilation (see this file's module doc): every call in the
+ * program routes through `await callIfFuncAndRightArgsAsync` instead of the plain trampoline, and
+ * the whole chunk runs inside an async IIFE. Ignored for `Chapter.FULL_JS`/`Variant.NATIVE`
+ * (`transpileToFullJS`) — modules under that path are out of scope for now (see
+ * source-academy/js-slang#2081).
+ */
 export function transpile(
   program: es.Program,
   context: Context,
   isPrelude: boolean,
   skipUndefined = false,
+  isAsync = false,
 ): TranspiledResult {
   if (context.chapter === Chapter.FULL_JS) {
     return transpileToFullJS(program, context, true);
   } else if (context.variant === Variant.NATIVE) {
     return transpileToFullJS(program, context, false);
   } else {
-    return transpileToSource(program, context, skipUndefined, isPrelude);
+    return transpileToSource(program, context, skipUndefined, isPrelude, isAsync);
   }
 }

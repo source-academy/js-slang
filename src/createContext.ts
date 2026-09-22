@@ -124,6 +124,7 @@ const createNativeStorage = (): NativeStorage => ({
   evaller: null,
   loadedModules: {},
   loadedModuleTypes: {},
+  asyncCallDepth: 0,
 });
 
 export const createEmptyContext = <T>(

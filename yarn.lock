@@ -1209,6 +1209,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sourceacademy/runner-module-loader@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@sourceacademy/runner-module-loader@npm:0.0.1"
+  peerDependencies:
+    "@sourceacademy/conductor": ">=0.3.0"
+  checksum: 10c0/848d2a943cc0523ba6f6913d18ab8a1538e83998968e18b097c2bb485100cdbb701428168483a270a0451285a8d04019829f50b8321b8f1268313f7586b5a23c
+  languageName: node
+  linkType: hard
+
 "@sourceacademy/runner-stepper@npm:^0.0.1":
   version: 0.0.1
   resolution: "@sourceacademy/runner-stepper@npm:0.0.1"
@@ -3889,6 +3898,7 @@ __metadata:
     "@sourceacademy/common-stepper": "npm:^0.0.1"
     "@sourceacademy/conductor": "npm:^0.8.3"
     "@sourceacademy/runner-cse-machine": "npm:^3.0.0"
+    "@sourceacademy/runner-module-loader": "npm:^0.0.1"
     "@sourceacademy/runner-stepper": "npm:^0.0.1"
     "@ts-morph/bootstrap": "npm:^0.18.0"
     "@types/estree": "npm:^1.0.5"

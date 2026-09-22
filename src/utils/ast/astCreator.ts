@@ -118,6 +118,15 @@ export const expressionStatement = (expression: es.Expression): es.ExpressionSta
   expression,
 });
 
+export const awaitExpression = (
+  argument: es.Expression,
+  loc?: es.SourceLocation | null,
+): es.AwaitExpression => ({
+  type: 'AwaitExpression',
+  argument,
+  loc,
+});
+
 export const blockArrowFunction = (
   params: es.Identifier[],
   body: es.Statement[] | es.BlockStatement | es.Expression,
@@ -203,6 +212,29 @@ export const mutateToCallExpression = (
   const mutatedNode = node as es.CallExpression;
   mutatedNode.callee = callee;
   mutatedNode.arguments = args;
+};
+
+/**
+ * Mutates `node` (a `CallExpression`, in every current use — see the async-mode transform in
+ * `transpiler.ts`) into `await callee(...args)`. Unlike {@link mutateToCallExpression}, the wrapped
+ * call cannot simply overwrite `node`'s own fields in place: the outer shape is now an
+ * `AwaitExpression`, which has no `callee`/`arguments` of its own, so the actual call becomes a
+ * *fresh* nested node, reachable only through `node.argument`.
+ *
+ * Mutation (rather than returning a new node) matters here for the same reason it does in
+ * `mutateToCallExpression`: the AST walker holds a reference to this exact object from its parent,
+ * and replacing what `node` *is* — while keeping that same reference valid — is what lets a
+ * `simple()` visitor rewrite a node without also rewriting whoever points at it.
+ */
+export const mutateToAwaitCallExpression = (
+  node: Node,
+  callee: es.Expression,
+  args: es.Expression[],
+) => {
+  const call = callExpression(callee, args, (node as { loc?: es.SourceLocation | null }).loc);
+  node.type = 'AwaitExpression';
+  const mutatedNode = node as unknown as es.AwaitExpression;
+  mutatedNode.argument = call;
 };
 
 export const mutateToAssignmentExpression = (

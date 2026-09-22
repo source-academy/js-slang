@@ -1,4 +1,5 @@
 import { BasicEvaluator, type IRunnerPlugin } from '@sourceacademy/conductor/runner';
+import { ModuleLoaderRunnerPlugin } from '@sourceacademy/runner-module-loader';
 
 import createContext from '../createContext';
 import { Chapter, Variant } from '../langs';
@@ -7,6 +8,11 @@ import { parse } from '../parser/parser';
 import type { Context, Value } from '../types';
 import { simple } from '../utils/ast/walkers';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
+import { asInterfacableEvaluator, SourceDataHandler } from './modules/SourceDataHandler';
+import {
+  conductorManifestImporter,
+  createConductorBundleImporter,
+} from './modules/conductorBundleImporter';
 
 /** Fallback entrypoint path, used only if the host never names one. js-slang validates file paths
  * (`validateFilePath`), so this cannot simply be the empty string. */
@@ -22,15 +28,54 @@ const DEFAULT_ENTRYPOINT = '/program.js';
  *
  * One `Context` is created per evaluator instance and reused across chunks, so a later REPL entry
  * sees the declarations of an earlier one.
+ *
+ * ## Modules
+ *
+ * `import` is wired to Conductor module plugins via `createConductorBundleImporter`, plugged into
+ * the *existing* legacy preprocessing pipeline (`preprocessFileImports`, reached through
+ * `runFilesInContext`) as its `sourceBundleImporter` — see that importer's own doc for why this is
+ * the chosen integration point rather than a parallel one. `dataHandler` (`SourceDataHandler`) is the
+ * `IDataHandler` a loaded module's values are read through; it is registered as this evaluator's
+ * `IInterfacableEvaluator` half via `asInterfacableEvaluator` so `ModuleLoaderRunnerPlugin` can use
+ * both halves as one object, exactly mirroring py-slang's own evaluators.
+ *
+ * A chunk that imports something — or any chunk after one that did, tracked by
+ * `hasEverLoadedAModule` — is transpiled in dual/async mode (`forceAsyncTranspile`), because a name
+ * bound in an earlier chunk (a module export, or anything derived from one) may be referenced from a
+ * *later* chunk that has no import of its own. This is deliberately coarser than a real reachability
+ * analysis — see source-academy/js-slang#2081 — and, in exchange, simple: once a session has touched
+ * a module at all, every later chunk stays on the async path for its own remaining lifetime.
+ *
+ * Known limitation, also recorded in #2081: an import binding survives into a later chunk just like
+ * a sync-mode declaration does (`transpiler.ts` deliberately keeps import bindings *outside* the
+ * async IIFE, in the same outer, eval-chainable scope sync mode already relies on — they're plain
+ * property reads that never need `await`, since the module they name already finished loading before
+ * this chunk was transpiled at all). What does *not* survive is a name the chunk's *own code*
+ * declares — `let`/`const`/a function defined inside the async IIFE itself — because dual mode has to
+ * run that code inside a real async function body for its `await` calls to be legal, and that
+ * function's own scope is invisible to a later, separate `eval()` call the way sync mode's bare block
+ * scope is not. Reading an *earlier* chunk's own declarations works fine either way; only a later
+ * chunk seeing what an async-mode chunk's *own code* just introduced does not.
  */
 abstract class SourceEvaluatorBase extends BasicEvaluator {
   private readonly context: Context;
   private readonly chapter: Chapter;
+  private readonly dataHandler = new SourceDataHandler();
   private entrypoint = DEFAULT_ENTRYPOINT;
+
+  /** See the class doc's "Modules" section: once true, stays true for the rest of this evaluator's
+   * lifetime, forcing every subsequent chunk onto the async transpilation path. */
+  private hasEverLoadedAModule = false;
 
   protected constructor(conductor: IRunnerPlugin, chapter: Chapter) {
     super(conductor);
     this.chapter = chapter;
+
+    this.conductor.registerPlugin(
+      ModuleLoaderRunnerPlugin,
+      this.conductor,
+      asInterfacableEvaluator(this, this.dataHandler),
+    );
 
     const rawDisplay = (value: Value, str: string) => {
       this.conductor.sendOutput((str === undefined ? '' : str + ' ') + String(value));
@@ -125,7 +170,27 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
         // `determineExecutionMethod`), which this evaluator does not support. Revisit once the CSE
         // evaluator exists and there is somewhere sensible to switch *to*.
         executionMethod: 'native',
+        // See this class's doc on modules: forced on from the first chunk that ever imports
+        // anything, and stays on — a later chunk may reference what that one bound.
+        forceAsyncTranspile: this.hasEverLoadedAModule,
+        importOptions: {
+          sourceBundleImporter: createConductorBundleImporter(this.dataHandler),
+          // Tabs are a frontend UI concept from the legacy, non-Conductor module panels; Conductor
+          // modules don't have them, and there is nothing for this importer to fetch on their
+          // behalf. Loading them would just fail (or silently fetch nothing) on every import.
+          loadTabs: false,
+          // Without this, module *name resolution* (not loading) still hits the network — see
+          // conductorManifestImporter's own doc for why a permissive stand-in is correct here, not
+          // just convenient for testing.
+          resolverOptions: { manifestImporter: conductorManifestImporter },
+        },
       });
+
+      // `loadedModules` reflects only *this* run's own imports (`loadSourceModules` replaces it
+      // wholesale, from that run's own import graph) — never mixed with an earlier chunk's, so this
+      // correctly latches on the first chunk that imports anything and never turns back off.
+      this.hasEverLoadedAModule ||=
+        Object.keys(this.context.nativeStorage.loadedModules).length > 0;
 
       this.reportErrors();
       return result.status === 'finished' ? result.value : undefined;
