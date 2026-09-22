@@ -326,6 +326,7 @@ async function run(silent) {
   if (nonzeroRetcode !== undefined) process.exit(nonzeroRetcode)
 
   await patchLandingPageHeadline(silent)
+  await patchOldChapterFolderHeadings(silent)
 }
 
 /**
@@ -358,6 +359,38 @@ async function patchLandingPageHeadline(silent) {
   }
   await fs.writeFile(indexPath, patched)
   if (!silent) console.log(`Patched landing page headline in ${indexPath}`)
+}
+
+/**
+ * The old source_1../4/ folders (kept only so their historical URLs keep resolving) share their
+ * READMEs with the new javascript_1../4/ folders, so their own body content already reads
+ * "JavaScript §N" - only the same folder-name-derived headings patchLandingPageHeadline works
+ * around (index.html's <title>/<h1>, global.html's "Predeclared in ...") still read "Source §N",
+ * inconsistent with the rest of each page. Every occurrence of the literal phrase "Source §N" in
+ * these folders' generated .html files is one of those headings - verified by grepping a build for
+ * "Source" once every body sentence was already renamed - so a plain string replace across every
+ * .html file in each folder is safe, without needing to know exactly which files or how many the
+ * template produces (global.html, index.html, ... - the same libs won't necessarily produce the
+ * same set of pages if docs/lib content changes later).
+ * @param {boolean | undefined} silent
+ */
+async function patchOldChapterFolderHeadings(silent) {
+  for (const n of [1, 2, 3, 4]) {
+    const dir = pathlib.join(out_dir, `source_${n}`)
+    const from = `Source §${n}`
+    const to = `JavaScript §${n}`
+    const files = await fs.readdir(dir)
+    for (const file of files) {
+      if (!file.endsWith('.html')) continue
+      const filePath = pathlib.join(dir, file)
+      const html = await fs.readFile(filePath, 'utf8')
+      const patched = html.replaceAll(from, to)
+      if (patched !== html) {
+        await fs.writeFile(filePath, patched)
+        if (!silent) console.log(`Patched heading in ${filePath}`)
+      }
+    }
+  }
 }
 
 /**
