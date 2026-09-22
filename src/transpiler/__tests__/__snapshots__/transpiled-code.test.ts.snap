@@ -83,6 +83,7 @@ exports[`Ensure no name clashes 1`] = `
   {
     const native0 = nativeStorage;
     const callIfFuncAndRightArgs0 = native0.operators.get(\\"callIfFuncAndRightArgs\\");
+    const callIfFuncAndRightArgsAsync = native0.operators.get(\\"callIfFuncAndRightArgsAsync\\");
     const boolOrErr0 = native0.operators.get(\\"boolOrErr\\");
     const wrap90 = native0.operators.get(\\"wrap\\");
     const unaryOp = native0.operators.get(\\"unaryOp\\");
@@ -199,6 +200,7 @@ Object {
   {
     const native = nativeStorage;
     const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+    const callIfFuncAndRightArgsAsync = native.operators.get(\\"callIfFuncAndRightArgsAsync\\");
     const boolOrErr = native.operators.get(\\"boolOrErr\\");
     const wrap = native.operators.get(\\"wrap\\");
     const unaryOp = native.operators.get(\\"unaryOp\\");

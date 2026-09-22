@@ -7,6 +7,11 @@ import { simple } from './ast/walkers';
 const globalIdNames = [
   'native',
   'callIfFuncAndRightArgs',
+  // Declared unconditionally alongside the sync trampoline, even though only a dual-mode (module-
+  // importing) program's transpiled output ever calls it — matching how every other entry here is
+  // declared once per chunk regardless of whether the chunk happens to use it. See transpiler.ts's
+  // hasImports/isAsync.
+  'callIfFuncAndRightArgsAsync',
   'boolOrErr',
   'wrap',
   'unaryOp',

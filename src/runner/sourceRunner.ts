@@ -6,7 +6,7 @@ import { ExceptionError } from '../errors/errors';
 import { TimeoutError } from '../errors/timeoutErrors';
 import { getSteps } from '../stepper/steppers';
 import { sandboxedEval } from '../transpiler/evalContainer';
-import { transpile } from '../transpiler/transpiler';
+import { hasImports, transpile } from '../transpiler/transpiler';
 import { SourceErrorWithNode } from '../errors/base';
 import { toSourceError } from './errors';
 import fullJSRunner from './fullJSRunner';
@@ -42,9 +42,20 @@ const runners = {
     let sourceMapJson: RawSourceMap | undefined;
     try {
       let transpiled: string;
-      ({ transpiled, sourceMapJson } = transpile(program, context, options.isPrelude));
+      const isAsync = hasImports(program) || options.forceAsyncTranspile;
+      ({ transpiled, sourceMapJson } = transpile(
+        program,
+        context,
+        options.isPrelude,
+        false,
+        isAsync,
+      ));
 
-      let value = sandboxedEval(transpiled, context.nativeStorage);
+      // Cheap and always safe to await: a sync-mode chunk's transpiled code never returns a
+      // thenable, and awaiting a plain value simply resolves to that same value one microtask
+      // later. Only a dual/async-mode chunk's async IIFE (see transpiler.ts) actually returns a
+      // Promise here, and this is the one place that Promise gets unwrapped into `value`.
+      let value = await sandboxedEval(transpiled, context.nativeStorage);
 
       if (!options.isPrelude) {
         isPreviousCodeTimeoutError = false;
