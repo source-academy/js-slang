@@ -10,6 +10,7 @@ import mceJSON from './builtins/mce.json';
 import miscJSON from './builtins/misc.json';
 import pairmutatorJSON from './builtins/pairmutator.json';
 import streamJSON from './builtins/stream.json';
+import { identifierCharRe } from './highlight-rules';
 import { getKeywords } from './keywords';
 
 /** acorn attaches real `start`/`end` char offsets to every node it parses, but the plain `estree`
@@ -31,19 +32,42 @@ interface ScopeLevel {
   functions: string[];
 }
 
-function collectBlockDeclarations(body: es.Statement[]): ScopeLevel {
-  const variables: string[] = [];
-  const functions: string[] = [];
-  for (const stmt of body) {
-    if (stmt.type === 'VariableDeclaration') {
-      for (const decl of stmt.declarations) {
-        if (decl.id.type === 'Identifier') variables.push(decl.id.name);
-      }
-    } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
-      functions.push(stmt.id.name);
+/** Collects the bindings a single top-level statement introduces into `level` — factored out of
+ * `collectBlockDeclarations` so `ExportNamedDeclaration`'s own wrapped declaration
+ * (`export const x = 1;`, `export function f() {}`) can recurse through the exact same cases
+ * `import { x } from "..."`'s sibling top-level statements do, without duplicating them. */
+function collectStatementDeclarations(
+  stmt: es.Statement | es.ModuleDeclaration,
+  level: ScopeLevel,
+) {
+  if (stmt.type === 'VariableDeclaration') {
+    for (const decl of stmt.declarations) {
+      if (decl.id.type === 'Identifier') level.variables.push(decl.id.name);
     }
+  } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
+    level.functions.push(stmt.id.name);
+  } else if (stmt.type === 'ImportDeclaration') {
+    // `local` is already the locally-bound name post-`as`-aliasing, for every specifier kind —
+    // Source itself only accepts ImportSpecifier (a bare or `as`-aliased named import; default
+    // and namespace imports are library-only, see src/parser/source/syntax.ts), but nothing here
+    // depends on that restriction, so all three specifier kinds are handled the same way.
+    for (const specifier of stmt.specifiers) {
+      level.variables.push(specifier.local.name);
+    }
+  } else if (stmt.type === 'ExportNamedDeclaration' && stmt.declaration) {
+    // `export { x, y as z };` (a bare re-export, no `declaration`) introduces no new binding —
+    // x/y must already be declared locally — so only the `export const/function ...` form, which
+    // wraps a real declaration, needs to recurse here.
+    collectStatementDeclarations(stmt.declaration, level);
   }
-  return { variables, functions };
+}
+
+function collectBlockDeclarations(body: (es.Statement | es.ModuleDeclaration)[]): ScopeLevel {
+  const level: ScopeLevel = { variables: [], functions: [] };
+  for (const stmt of body) {
+    collectStatementDeclarations(stmt, level);
+  }
+  return level;
 }
 
 /** Builds the scope chain from an ancestor path (root to the node at the cursor, as
@@ -53,7 +77,7 @@ function buildScopeChain(ancestors: es.Node[]): ScopeLevel[] {
   const chain: ScopeLevel[] = [];
   for (const node of ancestors) {
     if (node.type === 'Program' || node.type === 'BlockStatement') {
-      chain.push(collectBlockDeclarations(node.body as es.Statement[]));
+      chain.push(collectBlockDeclarations(node.body));
     } else if (
       node.type === 'FunctionDeclaration' ||
       node.type === 'FunctionExpression' ||
@@ -130,9 +154,11 @@ function convertPosToIndex(doc: string, line: number, column: number): number {
  * string resolves to a String node, not VariableName) — a known, accepted gap; the query is what
  * makes an irrelevant location's suggestion list a no-op in the from-inside-a-string case anyway,
  * as long as the string doesn't itself end in an identifier-shaped run of characters. */
+const queryAtCursorRe = new RegExp(`[${identifierCharRe}][${identifierCharRe}0-9]*$`);
+
 function getQueryAt(doc: string, pos: number): string {
   const before = doc.slice(0, pos);
-  const match = /[a-zA-Z_$][a-zA-Z0-9_$]*$/.exec(before);
+  const match = queryAtCursorRe.exec(before);
   return match?.[0] ?? '';
 }
 

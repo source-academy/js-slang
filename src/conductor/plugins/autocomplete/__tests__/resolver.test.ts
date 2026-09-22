@@ -92,4 +92,39 @@ describe('getNames', () => {
     const entries = complete('const accountBalance = 0;\ndisplay(acc|,');
     expect(entries.map(e => e.name)).toContain('accountBalance');
   });
+
+  // Regression tests for Codex findings on #2090.
+  describe('modules', () => {
+    test('an aliased named import is a suggestible local binding', () => {
+      const entries = complete('import { foo as bar } from "rune";\nba|');
+      expect(entries.map(e => e.name)).toContain('bar');
+    });
+
+    test('a bare named import is a suggestible local binding', () => {
+      const entries = complete('import { show } from "rune";\nsho|');
+      expect(entries.map(e => e.name)).toContain('show');
+    });
+
+    test('an export const introduces its binding, same as a plain const', () => {
+      const entries = complete('export const alpha = 1;\nalp|');
+      expect(entries.map(e => e.name)).toContain('alpha');
+    });
+
+    test('an export function introduces its binding, same as a plain function', () => {
+      const entries = complete('export function alphaFn() {}\nalp|');
+      expect(entries.map(e => e.name)).toContain('alphaFn');
+    });
+
+    test('a bare re-export (no declaration) introduces no new binding', () => {
+      const entries = complete('const alpha = 1;\nexport { alpha };\nalp|');
+      // Just confirms this doesn't crash and still finds the *real* declaration once, not that
+      // re-exporting is somehow invisible.
+      expect(entries.filter(e => e.name === 'alpha')).toHaveLength(1);
+    });
+  });
+
+  test('a Unicode identifier prefix is matched, not silently dropped', () => {
+    const entries = complete('const über = 1;\nüb|');
+    expect(entries.map(e => e.name)).toContain('über');
+  });
 });

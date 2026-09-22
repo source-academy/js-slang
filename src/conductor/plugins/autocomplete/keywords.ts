@@ -6,7 +6,12 @@ import { Chapter } from '../../../langs';
  * README specs and the pre-Conductor `src/editors/ace/modes/source.ts`, which this mirrors).
  */
 const chapterKeywords: Partial<Record<Chapter, readonly string[]>> = {
-  [Chapter.SOURCE_1]: ['const', 'else', 'if', 'return', 'function'],
+  // ImportDeclaration/DebuggerStatement are both gated from chapter 1, ExportNamedDeclaration
+  // from chapter 2 — see src/parser/source/syntax.ts's syntaxBlacklist, the actual restriction
+  // this list needs to track (default/namespace imports and default/`export *` are excluded
+  // there as library-only, so `import`/`export` cover only the forms a student can actually write).
+  [Chapter.SOURCE_1]: ['const', 'else', 'if', 'return', 'function', 'import', 'debugger'],
+  [Chapter.SOURCE_2]: ['export'],
   [Chapter.SOURCE_3]: ['while', 'for', 'break', 'continue', 'let'],
 };
 

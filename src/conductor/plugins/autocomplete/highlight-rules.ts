@@ -9,9 +9,14 @@
  *   that isn't a boolean, string or number, so `/` is always division — never the start of a regex
  *   — and ace's own `start`/`no_regex`/`regex`/`regex_character_class` states, which exist
  *   entirely to disambiguate that, collapse into a single state here.
- * - No template literals, no JSX, no classes, no generators/`yield`, no `var`: none of these are
- *   part of Source's grammar (see `docs/specs`), so the states and rules ace's mode carries for
- *   them are simply absent.
+ * - Template literals, but no interpolation: `syntaxBlacklist` (`src/parser/source/syntax.ts`)
+ *   allows `TemplateLiteral` from chapter 1, but `noTemplateExpression`
+ *   (`src/parser/source/rules`) rejects any `${...}` inside one — Source treats a template literal
+ *   purely as a backtick-delimited "multiline string" (that error's own wording), not JS's real
+ *   templating feature. `qtemplate` below matches that: a plain string state, no `${` handling.
+ * - No JSX, no classes, no generators/`yield`, no `var`: none of these are part of Source's
+ *   grammar (see `docs/specs`), so the states and rules ace's mode carries for them are simply
+ *   absent.
  *
  * Copyright (c) 2010, Ajax.org B.V.
  * All rights reserved.
@@ -50,7 +55,13 @@ import pairmutatorJSON from './builtins/pairmutator.json';
 import streamJSON from './builtins/stream.json';
 import { getKeywords } from './keywords';
 
-const identifierRe = '[a-zA-Z_$][a-zA-Z0-9_$]*';
+// `¡-￿` is the same deliberately-approximate "anything non-ASCII" range ace's own JS
+// mode — and the pre-Conductor source.ts before it — used in place of a real Unicode
+// ID_Start/ID_Continue table; acorn's own identifier grammar (which Source doesn't narrow) accepts
+// non-ASCII names, so an ASCII-only pattern here would leave e.g. `über`/`π` unstyled. Exported so
+// resolver.ts's own identifier-prefix regex matches the same character set, rather than drifting.
+export const identifierCharRe = 'a-zA-Z_$\\u00a1-\\uffff';
+const identifierRe = `[${identifierCharRe}][${identifierCharRe}0-9]*`;
 
 /** Every builtin visible at `chapter`, split by the JSDoc-derived `meta` py-slang's own
  * `highlight-rules.ts` splits the same way: a `func` colors as `support.function` (a call), a
@@ -104,17 +115,23 @@ export default function sourceHighlightRules(chapter: Chapter): AceRules {
       { token: 'comment', regex: '/\\*', next: 'comment' },
       { token: 'string', regex: "'(?=.)", next: 'qstring' },
       { token: 'string', regex: '"(?=.)', next: 'qqstring' },
+      { token: 'string', regex: '`', next: 'qtemplate' },
       { token: 'constant.numeric', regex: numberRe },
       {
         token: ['storage.type', 'text', 'entity.name.function', 'text', 'paren.lparen'],
         regex: `(function)(\\s+)(${identifierRe})(\\s*)(\\()`,
         next: 'function_arguments',
       },
+      // `from` only colors as a keyword directly before the module string it introduces
+      // (`import { x } from "y"`) — elsewhere it's a perfectly ordinary identifier, unlike every
+      // other entry in the keyword mapper. Must come before the keywordMapper rule below, since
+      // ace's tokenizer takes the first rule that matches, not the most specific one.
+      { token: 'keyword', regex: 'from(?=\\s*([\'"]))' },
       { token: keywordMapper, regex: identifierRe },
       { token: 'punctuation.operator', regex: '\\.(?!\\.)' },
       { token: 'storage.type', regex: '=>' },
       // Longest-alternative-first (===/!== before ==, <=/>= before </>): see the numberRe comment.
-      { token: 'keyword.operator', regex: '===|!==|==|=|<=|>=|<|>|!|&&|\\|\\||[%*+-]' },
+      { token: 'keyword.operator', regex: '===|!==|==|=|<=|>=|<|>|!|&&|\\|\\||[%*+\\-/]' },
       { token: 'punctuation.operator', regex: '[?:,;]' },
       { token: 'paren.lparen', regex: '[[({]' },
       { token: 'paren.rparen', regex: '[\\])}]' },
@@ -134,6 +151,17 @@ export default function sourceHighlightRules(chapter: Chapter): AceRules {
     qqstring: [
       { token: 'constant.language.escape', regex: escapedStringCharRe },
       { token: 'string', regex: '"|$', next: 'start' },
+      { defaultToken: 'string' },
+    ],
+    // No `${...}` handling, unlike ace's own template-literal state: Source's own restriction on
+    // one (see this file's top doc comment) means a real, literal newline is the only special case
+    // worth a rule of its own — everything else, `$` included, is plain string content. Unlike
+    // qstring/qqstring, the terminator here does *not* also fire at end-of-line: a template
+    // literal is a genuine multiline string, so an embedded newline must stay part of it rather
+    // than ending the token the way an unterminated '/" string is treated as doing.
+    qtemplate: [
+      { token: 'constant.language.escape', regex: escapedStringCharRe },
+      { token: 'string', regex: '`', next: 'start' },
       { defaultToken: 'string' },
     ],
   };
