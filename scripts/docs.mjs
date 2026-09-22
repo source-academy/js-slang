@@ -32,9 +32,19 @@ const configs = {
     dst: 'source_1_typed/',
     libs: ['misc.js', 'math.js']
   },
+  'JavaScript §1 Typed': {
+    readme: 'README_1_TYPED.md',
+    dst: 'javascript_1_typed/',
+    libs: ['misc.js', 'math.js']
+  },
   'Source §1 WebAssembly': {
     readme: 'README_1_WASM.md',
     dst: 'source_1_wasm/',
+    libs: ['empty.js']
+  },
+  'JavaScript §1 WebAssembly': {
+    readme: 'README_1_WASM.md',
+    dst: 'javascript_1_wasm/',
     libs: ['empty.js']
   },
   'Source §2': {
@@ -50,6 +60,11 @@ const configs = {
   'Source §2 Typed': {
     readme: 'README_2_TYPED.md',
     dst: 'source_2_typed/',
+    libs: ['auxiliary.js', 'misc.js', 'math.js', 'list.js']
+  },
+  'JavaScript §2 Typed': {
+    readme: 'README_2_TYPED.md',
+    dst: 'javascript_2_typed/',
     libs: ['auxiliary.js', 'misc.js', 'math.js', 'list.js']
   },
   'Source §3': {
@@ -82,6 +97,19 @@ const configs = {
   'Source §3 Typed': {
     readme: 'README_3_TYPED.md',
     dst: 'source_3_typed/',
+    libs: [
+      'auxiliary.js',
+      'misc.js',
+      'math.js',
+      'list.js',
+      'stream.js',
+      'array.js',
+      'pairmutator.js'
+    ]
+  },
+  'JavaScript §3 Typed': {
+    readme: 'README_3_TYPED.md',
+    dst: 'javascript_3_typed/',
     libs: [
       'auxiliary.js',
       'misc.js',
@@ -136,9 +164,38 @@ const configs = {
       'continuation.js'
     ]
   },
+  'JavaScript §4 Explicit-Control': {
+    readme: 'README_4_EXPLICIT-CONTROL.md',
+    dst: 'javascript_4_explicit-control/',
+    libs: [
+      'auxiliary.js',
+      'misc.js',
+      'math.js',
+      'list.js',
+      'stream.js',
+      'array.js',
+      'pairmutator.js',
+      'mce.js',
+      'continuation.js'
+    ]
+  },
   'Source §4 Typed': {
     readme: 'README_4_TYPED.md',
     dst: 'source_4_typed/',
+    libs: [
+      'auxiliary.js',
+      'misc.js',
+      'math.js',
+      'list.js',
+      'stream.js',
+      'array.js',
+      'pairmutator.js',
+      'mce.js'
+    ]
+  },
+  'JavaScript §4 Typed': {
+    readme: 'README_4_TYPED.md',
+    dst: 'javascript_4_typed/',
     libs: [
       'auxiliary.js',
       'misc.js',
@@ -267,6 +324,40 @@ async function run(silent) {
   const nonzeroRetcode = retcodes.find(c => c !== 0)
 
   if (nonzeroRetcode !== undefined) process.exit(nonzeroRetcode)
+
+  await patchLandingPageHeadline(silent)
+}
+
+/**
+ * The landing page's own <title>/<h1> aren't sourced from README_top.md - the template
+ * (publish.js) derives them from `path.basename(outdir)`, which for the landing config (`dst:
+ * ''`) is always the literal local directory name "source", regardless of where this later gets
+ * deployed (see deploy-docs.yml's /javascript destination_dir). jsdoc has no CLI option to
+ * override this (`--mainpagetitle` looks like one in the template but isn't a real registered
+ * flag - confirmed it makes jsdoc itself fail with "Unknown command-line option"), so this patches
+ * the two known auto-generated strings directly after the build, rather than fighting the
+ * template's plugin API for one page.
+ * @param {boolean | undefined} silent
+ */
+async function patchLandingPageHeadline(silent) {
+  const headline = 'JavaScript sublanguages for SICP JS'
+  const indexPath = pathlib.join(out_dir, configs.landing.dst, 'index.html')
+  const html = await fs.readFile(indexPath, 'utf8')
+  const patched = html
+    .replace('<title>Source</title>', `<title>${headline}</title>`)
+    .replace(
+      '<h1 class="page-title">Source</h1>',
+      `<h1 class="page-title">${headline}</h1>`,
+    )
+  if (patched === html) {
+    console.error(
+      `Expected to find the auto-generated "Source" headline in ${indexPath} to patch - the ` +
+        'template must have changed.',
+    )
+    process.exit(1)
+  }
+  await fs.writeFile(indexPath, patched)
+  if (!silent) console.log(`Patched landing page headline in ${indexPath}`)
 }
 
 /**

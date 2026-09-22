@@ -7,7 +7,14 @@ SPECS = $(SPECSNUMS:%=source_%)
 # source_1..4 are now thin `\input javascript_N.tex` shims kept only for the historical PDF URLs
 # (see javascript_N.tex) - javascript_1..4 are the real, renamed ("Source" -> "JavaScript") entry
 # points and should be used for any new reference.
-JSSPECS = javascript_1 javascript_2 javascript_3 javascript_4
+#
+# The deprecated-variant and styleguide entries below go the *other* way around: source_* still
+# holds the real (unrenamed) content, and javascript_* is a thin forwarding alias, so their PDF
+# URLs don't say "source" either, without renaming any of their own body text.
+JSSPECS = javascript_1 javascript_2 javascript_3 javascript_4 \
+	javascript_1_wasm javascript_1_typed javascript_2_typed javascript_3_typed \
+	javascript_4_typed javascript_4_explicitcontrol javascript_1_infinite_loop_detection \
+	javascript_2_stepper javascript_3_type_inference javascript_styleguide
 
 PDFSPECS = $(SPECS:%=%.pdf) $(JSSPECS:%=%.pdf)
 

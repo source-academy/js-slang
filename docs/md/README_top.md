@@ -19,23 +19,23 @@
 
 ### Style guide
 
-The <a href="source_styleguide.pdf">Source Style Guide</a> gives general
+The <a href="javascript_styleguide.pdf">JavaScript Style Guide</a> gives general
 recommendations on how to write your programs so that they are readable by
 the members of our learning community.
 
 ### Language variants
 
-#### <a href="source_1_wasm/">Source §1 WebAssembly</a>
+#### <a href="javascript_1_wasm/">JavaScript §1 WebAssembly</a>
 
-#### <a href="source_1_typed/">Source §1 Typed</a>
+#### <a href="javascript_1_typed/">JavaScript §1 Typed</a>
   
-#### <a href="source_2_typed/">Source §2 Typed</a>
+#### <a href="javascript_2_typed/">JavaScript §2 Typed</a>
 
-#### <a href="source_3_typed/">Source §3 Typed</a>
+#### <a href="javascript_3_typed/">JavaScript §3 Typed</a>
 
-#### <a href="source_4_typed/">Source §4 Typed</a>
+#### <a href="javascript_4_typed/">JavaScript §4 Typed</a>
 
-#### <a href="source_4_explicit-control/">Source §4 Explicit-Control</a>
+#### <a href="javascript_4_explicit-control/">JavaScript §4 Explicit-Control</a>
 
 ### Specifications
 
@@ -50,20 +50,20 @@ the Source Academy.
   
 #### <a href="javascript_4.pdf">Specification of JavaScript §4</a>
   
-#### <a href="source_1_wasm.pdf">Specification of Source §1 WebAssembly</a>
+#### <a href="javascript_1_wasm.pdf">Specification of JavaScript §1 WebAssembly</a>
 
-#### <a href="source_1_typed.pdf">Specification of Source §1 Typed</a>
+#### <a href="javascript_1_typed.pdf">Specification of JavaScript §1 Typed</a>
   
-#### <a href="source_2_typed.pdf">Specification of Source §2 Typed</a>
+#### <a href="javascript_2_typed.pdf">Specification of JavaScript §2 Typed</a>
 
-#### <a href="source_3_typed.pdf">Specification of Source §3 Typed</a>
+#### <a href="javascript_3_typed.pdf">Specification of JavaScript §3 Typed</a>
 
-#### <a href="source_4_typed.pdf">Specification of Source §4 Typed</a>
+#### <a href="javascript_4_typed.pdf">Specification of JavaScript §4 Typed</a>
 
-#### <a href="source_4_explicitcontrol.pdf">Specification of Source §4 Explicit-Control</a>
+#### <a href="javascript_4_explicitcontrol.pdf">Specification of JavaScript §4 Explicit-Control</a>
 
-#### <a href="source_1_infinite_loop_detection.pdf">Specification of Source §1 Infinite Loop Detection</a>
+#### <a href="javascript_1_infinite_loop_detection.pdf">Specification of JavaScript §1 Infinite Loop Detection</a>
 
-#### <a href="source_2_stepper.pdf">Specification of Source §2 Stepper</a>
+#### <a href="javascript_2_stepper.pdf">Specification of JavaScript §2 Stepper</a>
 
-#### <a href="source_3_type_inference.pdf">Specification of Source §3 Type Inference</a>
+#### <a href="javascript_3_type_inference.pdf">Specification of JavaScript §3 Type Inference</a>

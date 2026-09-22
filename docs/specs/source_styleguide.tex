@@ -9,9 +9,9 @@
         %% copied and adapted ffrom source_header.tex
   \thispagestyle{empty}
   
-\markright{SICP, JavaScript Adaptation, Source Style Guide, Version 2.0}
+\markright{SICP, JavaScript Adaptation, JavaScript Style Guide, Version 2.0}
 \begin{center}
-  {\Large {\bf Source Style Guide}---Version 2.1}\\[10mm]
+  {\Large {\bf JavaScript Style Guide}---Version 2.1}\\[10mm]
 
   {\large Martin Henz}\\[5mm]
 
@@ -22,8 +22,8 @@
 \end{center}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \noindent
-This is the style guide for the language Source,
-the JavaScript sublanguage used in the book \emph{Structure and Interpretation
+This is the style guide for the JavaScript §1-4 sublanguages
+used in the book \emph{Structure and Interpretation
 of Computer Programs}, JavaScript Adaptation (SICP JS). 
 In the beginning of a first-year course, instructors may just \emph{encourage}
 adherence to the style, and then gradually enforce adherence in order to
@@ -101,7 +101,7 @@ function make_abs_adder(x) {
 \end{lstlisting}
 
 \paragraph{Always use braces...} even if the block consists of only 
-  one statement. This is required in Source, and recommended in JavaScript.
+  one statement. This is required here, and recommended in JavaScript generally.
 
 \begin{lstlisting}
 // good example
@@ -111,7 +111,7 @@ if (<predicate>) {
     return x * y;
 }
 
-// bad example (illegal in Source)
+// bad example (illegal here)
 if (<predicate>) 
     return x + y;
 else 
@@ -177,7 +177,7 @@ const aspect_ratio = landscape
 \end{lstlisting}
 
 Avoid parentheses around the predicate. Note that conditional expressions have lower
-precedence than all other operators in Source (except the assignment operator
+precedence than all other operators in JavaScript (except the assignment operator
 \lstinline{=}, so parentheses around the predicate are rarely needed.
 
 \begin{lstlisting}
@@ -530,7 +530,7 @@ function f(x) {
 \end{lstlisting}
 
 \begin{lstlisting}
-// illegal in JavaScript (and therefore Source)
+// illegal in JavaScript
 function f(x) {
     const x = 1;
     // in JavaScript, a parameter of a function cannot be 
@@ -541,9 +541,9 @@ function f(x) {
 Finally, the worst case would be a (surely accidental) 
 use of the same variable name for two parameters of a function.
 In this case, the second variable is not visible; it is ``shadowed''
-by the first. This is illegal in Source and JavaScript (strict mode).
+by the first. This is illegal in JavaScript (strict mode).
 \begin{lstlisting}
-// illegal in Source and JavaScript strict mode
+// illegal in JavaScript strict mode
 function f(x, x) {
     ...
 }

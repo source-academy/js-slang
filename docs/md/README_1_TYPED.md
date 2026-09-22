@@ -52,5 +52,5 @@ The addition of type annotations is optional, i.e. if there are no type annotati
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_1_typed.pdf">Specification of Source §1 Typed</a>.
+<a href="../javascript_1_typed.pdf">Specification of Source §1 Typed</a>.
 Feel free to take a peek!
