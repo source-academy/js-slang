@@ -1,11 +1,11 @@
-Source §3 is a small programming language, designed for the third chapter
+JavaScript §3 is a small programming language, designed for the third chapter
 of the textbook
 <a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 
-## What names are predeclared in Source §3?
+## What names are predeclared in JavaScript §3?
 
-On the right, you see all predeclared names of Source §3, in alphabetical
+On the right, you see all predeclared names of JavaScript §3, in alphabetical
 order. Click on a name to see how it is defined and used. They come in these groups:
   <ul>
     <li>
@@ -31,19 +31,19 @@ order. Click on a name to see how it is defined and used. They come in these gro
     </li>
   </ul>
 
-## What can you do in Source §3?
+## What can you do in JavaScript §3?
 
 You can use all features of
-<a href="../source_2/">Source §2</a> and all
+<a href="../javascript_2/">JavaScript §2</a> and all
 features that are introduced in
 <a href="https://sourceacademy.org/sicpjs/3">chapter 3</a> of the
 textbook.
-Below are the features that Source §3 adds to Source §2.
+Below are the features that JavaScript §3 adds to JavaScript §2.
 
 
 ### Variable declaration statements
 
-In Source §3, variables are declared as in:
+In JavaScript §3, variables are declared as in:
 
 <CODE>let my_variable = x * 4;</CODE>
 
@@ -113,12 +113,12 @@ a given key:
 
 <CODE>my_array[0] + my_array[1] + my_array[2]; // 60</CODE>
 
-Like pairs, arrays can be changed in Source §3. This is done
+Like pairs, arrays can be changed in JavaScript §3. This is done
 using array assignment:
 
 <CODE>my_array[1] = 200;</CODE>
 
-Array assignment and array access in Source §3 are restricted
+Array assignment and array access in JavaScript §3 are restricted
 to integers (numbers with no fractional component) larger than or
 equal to 0 and less than 2<SUP>32</SUP>-1. We call such numbers <EM>array indices</EM>.
 
@@ -133,7 +133,7 @@ Arrays are not covered in the textbook.
 
 For our development team, we are maintaining a definitive description
 of the language, called the
-<a href="../source_3.pdf">Specification of Source §3</a>. Feel free to
+<a href="../javascript_3.pdf">Specification of JavaScript §3</a>. Feel free to
 take a peek!
 
 

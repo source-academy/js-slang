@@ -12,9 +12,19 @@ const configs = {
     dst: '',
     libs: ['empty.js']
   },
+  // "Source §N" below is kept only so the historical source_N/ URLs keep resolving; its readme
+  // is shared with "JavaScript §N" (see javascript_N.tex's docs/specs analogue), so its own
+  // content already reads "JavaScript §N" - only the folder name (and thus this generated page's
+  // auto-derived title, see publish.js) stays on the old name. "JavaScript §N" is the real,
+  // renamed entry point and should be used for any new reference.
   'Source §1': {
     readme: 'README_1.md',
     dst: 'source_1/',
+    libs: ['misc.js', 'math.js']
+  },
+  'JavaScript §1': {
+    readme: 'README_1.md',
+    dst: 'javascript_1/',
     libs: ['misc.js', 'math.js']
   },
   'Source §1 Typed': {
@@ -30,6 +40,11 @@ const configs = {
   'Source §2': {
     readme: 'README_2.md',
     dst: 'source_2/',
+    libs: ['auxiliary.js', 'misc.js', 'math.js', 'list.js']
+  },
+  'JavaScript §2': {
+    readme: 'README_2.md',
+    dst: 'javascript_2/',
     libs: ['auxiliary.js', 'misc.js', 'math.js', 'list.js']
   },
   'Source §2 Typed': {
@@ -49,6 +64,19 @@ const configs = {
       'array.js',
       'pairmutator.js',
       'timing.js'
+    ]
+  },
+  'JavaScript §3': {
+    readme: 'README_3.md',
+    dst: 'javascript_3/',
+    libs: [
+      'auxiliary.js',
+      'misc.js',
+      'math.js',
+      'list.js',
+      'stream.js',
+      'array.js',
+      'pairmutator.js'
     ]
   },
   'Source §3 Typed': {
@@ -76,6 +104,20 @@ const configs = {
       'array.js',
       'pairmutator.js',
       'timing.js',
+      'mce.js'
+    ]
+  },
+  'JavaScript §4': {
+    readme: 'README_4.md',
+    dst: 'javascript_4/',
+    libs: [
+      'auxiliary.js',
+      'misc.js',
+      'math.js',
+      'list.js',
+      'stream.js',
+      'array.js',
+      'pairmutator.js',
       'mce.js'
     ]
   },

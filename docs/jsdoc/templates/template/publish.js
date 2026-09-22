@@ -392,7 +392,10 @@ function buildNav(members) {
       // JC: 29/3/20: restrict above transformation to first "_"
       const symbolReplacedName = path.basename(outdir).replace(/_/, ' §')
       // JC: 29/3/20: change all remaining "_" to " "
-      const displayName = symbolReplacedName.replace(/_/g, ' ')
+      // "JavaScript" is corrected explicitly since this heading isn't capitalized at all otherwise
+      // (unlike the index page's own heading, further below in this file, which is) - see that
+      // one's comment for why "javascript" specifically needs the extra fix-up.
+      const displayName = symbolReplacedName.replace(/_/g, ' ').replace(/\bjavascript\b/gi, 'JavaScript')
       const link = `<a href=".">${displayName}</a>`
       nav += `<h3>${linkto('global', 'Predeclared in ' + link)}</h3>`
     } else {
@@ -627,7 +630,12 @@ exports.publish = (taffyData, opts, tutorials) => {
   // JC: 29/3/20: change all remaining "_" to " ", then capitalize each word
   const spacedName = symbolReplacedName.replace(/_/g, ' ')
   // Arsalan: 21/4/20: capitalize the first letter of each word, including those separated by a hyphen
-  const displayName = spacedName.replace(/(^|[\s-])\S/g, firstLetter => firstLetter.toUpperCase())
+  // "JavaScript" has an internal capital the rule above can't produce from an all-lowercase folder
+  // name (e.g. "javascript_1" -> "Javascript §1"), so it's corrected explicitly afterwards - see
+  // the analogous fix a few lines below, in the sidebar nav heading.
+  const displayName = spacedName
+    .replace(/(^|[\s-])\S/g, firstLetter => firstLetter.toUpperCase())
+    .replace(/\bjavascript\b/gi, 'JavaScript')
 
   const link = `<a href=".">${displayName}</a>`
 

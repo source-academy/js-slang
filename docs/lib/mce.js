@@ -1,6 +1,6 @@
 /**
  * returns the parse tree that results from parsing
- * the string <CODE>str</CODE> as a Source program. The format
+ * the string <CODE>str</CODE> as a JavaScript program. The format
  * of the parse tree is described in chapter 4 of
  * the textbook
  * in <a href="https://sourceacademy.org/sicpjs/">Structure and

@@ -236,7 +236,7 @@ export class DuplicateImportNameError extends ImportError<undefined> {
   }
 
   public override explain() {
-    return `Source does not support different imports from Source modules being given the same name. The following are the offending imports: ${this.locString}`;
+    return `JavaScript does not support different imports from JavaScript modules being given the same name. The following are the offending imports: ${this.locString}`;
   }
 
   public override elaborate() {

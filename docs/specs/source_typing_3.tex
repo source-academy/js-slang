@@ -2,7 +2,7 @@
 \section{Dynamic Type Checking}
 
 Expressions evaluate to numbers, boolean values, strings, arrays or function values. Implementations
-of Source generate error messages when unexpected values are used as follows.
+of JavaScript generate error messages when unexpected values are used as follows.
 
 Only function values can be applied using the syntax:
 
@@ -16,7 +16,7 @@ Only function values can be applied using the syntax:
 For compound functions, implementations need to check that the number of \textit{expressions}
 matches the number of parameters.
 
-The following table specifies what arguments Source's operators
+The following table specifies what arguments JavaScript's operators
 take and what results they return. Implementations need to check the types of arguments and
 generate an error message when the types do not match.
 
@@ -46,16 +46,16 @@ operator & argument 1 & argument 2 & result\\ \hline
 \end{tabular}
 \end{center}
 
-Preceding \texttt{\textbf{?}} and following \texttt{\textbf{if}}, Source only allows
+Preceding \texttt{\textbf{?}} and following \texttt{\textbf{if}}, JavaScript only allows
 boolean expressions.
 
 In array access \texttt{\textbf{arr[key]}},
 only arrays are allowed as \texttt{\textbf{arr}} and
 only integers are allowed as \texttt{\textbf{key}}.
 
-Array indices in Source are limited to integers $i$ in the range $0 \le i < 2^{32} - 1$.
+Array indices in JavaScript are limited to integers $i$ in the range $0 \le i < 2^{32} - 1$.
 
-Pairs in Source are represented by arrays with two elements. Therefore,
+Pairs in JavaScript are represented by arrays with two elements. Therefore,
 \begin{lstlisting}
 is_pair([1, 2]);
 \end{lstlisting}

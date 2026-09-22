@@ -311,10 +311,10 @@ test('Error when calling non function value null', () => {
 test('Error when calling non function value null - verbose', async ({ expect }) => {
   const errStr = await testFailure(callingNonFunctionValueNullVerbose, optionEC);
   expect(errStr).toMatchInlineSnapshot(`
-            "Line 2, Column 2: null literals are not allowed.
-            They're not part of the Source §1 specs.
-            "
-          `);
+    "Line 2, Column 2: null literals are not allowed.
+    They're not part of the JavaScript §1 specs.
+    "
+  `);
 });
 
 test('Calling non function value null error message differs from verbose version', () => {

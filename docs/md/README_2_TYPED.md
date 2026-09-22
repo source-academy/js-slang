@@ -15,7 +15,7 @@ that check the code for errors at compile time.
 ## What can you do in Source §2 Typed?
 
 You can use all features of
-<a href="../source_1_typed/">Source §1 Typed</a> and <a href="../source_2/">Source §2</a>, but with the following additional types:
+<a href="../source_1_typed/">Source §1 Typed</a> and <a href="../javascript_2/">JavaScript §2</a>, but with the following additional types:
 
 - `null` types
 - Pair type (`Pair<headType, tailType>`): takes in two type parameters, head type and tail type

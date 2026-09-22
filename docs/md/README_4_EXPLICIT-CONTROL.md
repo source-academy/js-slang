@@ -42,7 +42,7 @@ order. Click on a name to see how it is defined and used. They come in these gro
 ## What can you do in Source §4 Explicit-Control?
 
 You can use all features of
-<a href="../source_4/">Source §4</a> and 
+<a href="../javascript_4/">JavaScript §4</a> and 
 the facilities supporting continuations,
 given in  <a href="../CONTINUATION/index.html">CONTINUATION</a>.
 

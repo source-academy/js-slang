@@ -1,21 +1,21 @@
-  Source is a family of languages, designed for the textbook
+  JavaScript §1 to §4 are a family of sublanguages, designed for the textbook
   <a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
   of Computer Programs, JavaScript Adaptation</a> (SICP JS) and supported by the
-  <a href="https://sourceacademy.org">Source Academy</a> system.  The languages are
-  called Source §1, Source §2, Source §3 and Source §4, corresponding to the
-  respective chapters 1, 2, 3 and 4 of the textbook. Each previous Source
-  language is a sublanguage of the next, and all Source languages are
-  sublanguages of JavaScript. (Chapter 5 does not require any features beyond
-  Source §4.) This webpage contains the description of the Source languages
-  and the libraries they come with.
+  <a href="https://sourceacademy.org">Source Academy</a> system.  The sublanguages are
+  called JavaScript §1, JavaScript §2, JavaScript §3 and JavaScript §4, corresponding to the
+  respective chapters 1, 2, 3 and 4 of the textbook. Each previous sublanguage
+  is a sublanguage of the next, and all of them are sublanguages of full
+  JavaScript. (Chapter 5 does not require any features beyond
+  JavaScript §4.) This webpage contains the description of these JavaScript
+  sublanguages and the libraries they come with.
 
-## <a href="source_1/">Source §1</a>
+## <a href="javascript_1/">JavaScript §1</a>
   
-## <a href="source_2/">Source §2</a>
+## <a href="javascript_2/">JavaScript §2</a>
 
-## <a href="source_3/">Source §3</a>
+## <a href="javascript_3/">JavaScript §3</a>
 
-## <a href="source_4/">Source §4</a>
+## <a href="javascript_4/">JavaScript §4</a>
 
 ### Style guide
 
@@ -42,13 +42,13 @@ the members of our learning community.
 The following technical documents specify the languages and components of
 the Source Academy. 
 
-#### <a href="source_1.pdf">Specification of Source §1</a>
+#### <a href="javascript_1.pdf">Specification of JavaScript §1</a>
   
-#### <a href="source_2.pdf">Specification of Source §2</a>
+#### <a href="javascript_2.pdf">Specification of JavaScript §2</a>
   
-#### <a href="source_3.pdf">Specification of Source §3</a>
+#### <a href="javascript_3.pdf">Specification of JavaScript §3</a>
   
-#### <a href="source_4.pdf">Specification of Source §4</a>
+#### <a href="javascript_4.pdf">Specification of JavaScript §4</a>
   
 #### <a href="source_1_wasm.pdf">Specification of Source §1 WebAssembly</a>
 

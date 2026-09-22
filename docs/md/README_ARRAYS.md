@@ -5,4 +5,4 @@ Arrays are not covered in
 the textbook
 <a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS),
-but they are included in Source §3.
+but they are included in JavaScript §3.
