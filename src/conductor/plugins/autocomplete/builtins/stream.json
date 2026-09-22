@@ -1,0 +1,116 @@
+[
+  {
+    "name": "build_stream",
+    "title": "build_stream(f, n) -> stream",
+    "description": "Makes a stream with <CODE>n</CODE>\nelements by applying the unary function <CODE>f</CODE>\nto the numbers 0 to <CODE>n - 1</CODE>, assumed to be a nonnegative integer.\nLazy? Yes: The result stream forces the application of <CODE>f</CODE>\n          for the next element",
+    "meta": "func"
+  },
+  {
+    "name": "enum_stream",
+    "title": "enum_stream(start, end) -> stream",
+    "description": "Returns a stream that enumerates\nnumbers starting from <CODE>start</CODE> using a step size of 1, until\nthe number exceeds (<CODE>&gt;</CODE>) <CODE>end</CODE>.\nLazy? Yes: The result stream forces the construction of\n           each next element",
+    "meta": "func"
+  },
+  {
+    "name": "eval_stream",
+    "title": "eval_stream(s, n) -> list",
+    "description": "Constructs the list of the first <CODE>n</CODE> elements\nof a given stream <CODE>s</CODE>\nLazy? Sort-of: <CODE>eval_stream</CODE> only forces the computation of\nthe first <CODE>n</CODE> elements, and leaves the rest of\nthe stream untouched.",
+    "meta": "func"
+  },
+  {
+    "name": "integers_from",
+    "title": "integers_from(start) -> stream",
+    "description": "Returns infinite stream if integers starting\nat given number <CODE>n</CODE> using a step size of 1.\nLazy? Yes: The result stream forces the construction of\n           each next element",
+    "meta": "func"
+  },
+  {
+    "name": "is_stream",
+    "title": "is_stream(xs) -> boolean",
+    "description": "Returns <CODE>true</CODE> if\n<CODE>xs</CODE> is a stream as defined in the textbook, and\n<CODE>false</CODE> otherwise. Iterative process.\nRecurses down the stream and checks that it ends with the empty stream null.\nLaziness:  No: <CODE>is_stream</CODE> needs to force the given stream.",
+    "meta": "func"
+  },
+  {
+    "name": "list_to_stream",
+    "title": "list_to_stream(xs) -> stream",
+    "description": "Given list <CODE>xs</CODE>, returns a stream of same length with\nthe same elements as <CODE>xs</CODE> in the same order.\nLaziness:  Yes: <CODE>list_to_stream</CODE>\ngoes down the list only when forced.",
+    "meta": "func"
+  },
+  {
+    "name": "stream",
+    "title": "stream(value1,value2,...,value_n) -> stream",
+    "description": "Given <CODE>n</CODE> values, returns a stream of length <CODE>n</CODE>.\nThe elements of the stream are the given values in the given order.\nLazy? No: A\ncomplete list is generated,\nand then a stream using <CODE>list_to_stream</CODE> is generated from it.",
+    "meta": "func"
+  },
+  {
+    "name": "stream_append",
+    "title": "stream_append(xs, ys) -> stream",
+    "description": "Returns a stream that results from\nappending the stream <CODE>ys</CODE> to the stream <CODE>xs</CODE>.\nIn the result, null at the end of the first argument stream\nis replaced by the second argument, regardless what the second\nargument consists of.\nLazy? Yes: the result stream forces the actual append operation",
+    "meta": "func"
+  },
+  {
+    "name": "stream_filter",
+    "title": "stream_filter(pred, xs) -> stream",
+    "description": "Returns a stream that contains\nonly those elements of given stream <CODE>xs</CODE>\nfor which the one-argument function\n<CODE>pred</CODE>\nreturns <CODE>true</CODE>.\nLazy? Yes: The result stream forces the construction of\n           each next element. Of course, the construction\n           of the next element needs to go down the stream\n           until an element is found for which <CODE>pred</CODE> holds.",
+    "meta": "func"
+  },
+  {
+    "name": "stream_for_each",
+    "title": "stream_for_each(f, xs) -> boolean",
+    "description": "Applies unary function <CODE>f</CODE> to every\nelement of the stream <CODE>xs</CODE>.\nIterative process.\n<CODE>f</CODE> is applied element-by-element:\n<CODE>stream_for_each(f, stream(1, 2))</CODE> results in the calls\n<CODE>f(1)</CODE> and <CODE>f(2)</CODE>.\nLazy? No: <CODE>stream_for_each</CODE>\nforces the exploration of the entire stream",
+    "meta": "func"
+  },
+  {
+    "name": "stream_length",
+    "title": "stream_length(xs) -> number",
+    "description": "Returns the length of the stream\n<CODE>xs</CODE>.\nIterative process.\nLazy? No: The function needs to explore the whole stream",
+    "meta": "func"
+  },
+  {
+    "name": "stream_map",
+    "title": "stream_map(f, xs) -> stream",
+    "description": "Returns a stream that results from stream\n<CODE>xs</CODE> by element-wise application\nof unary function <CODE>f</CODE>.\n<CODE>f</CODE> is applied element-by-element:\n<CODE>stream_map(f, stream(1,2))</CODE> results in\nthe same as <CODE>stream(f(1),f(2))</CODE>.\nLazy? Yes: The argument stream is only explored as forced by\n           the result stream.",
+    "meta": "func"
+  },
+  {
+    "name": "stream_member",
+    "title": "stream_member(v, xs) -> stream",
+    "description": "Returns first postfix substream\nwhose head is identical to\n<CODE>v</CODE> (using <CODE>===</CODE>); returns <CODE>null</CODE> if the\nelement does not occur in the stream.\nIterative process.\nLazy? Sort-of: <CODE>stream_member</CODE>\nforces the stream only until the element\nis found.",
+    "meta": "func"
+  },
+  {
+    "name": "stream_ref",
+    "title": "stream_ref(xs, n) -> value",
+    "description": "Returns the element\nof stream <CODE>xs</CODE> at position <CODE>n</CODE>,\nwhere the first element has index 0.\nIterative process.\nLazy? Sort-of: <CODE>stream_ref</CODE> only forces the computation of\n               the first <CODE>n</CODE> elements, and leaves the rest of\n               the stream untouched.",
+    "meta": "func"
+  },
+  {
+    "name": "stream_remove",
+    "title": "stream_remove(v, xs) -> stream",
+    "description": "Returns a stream that results from\n<CODE>xs</CODE> by removing the first item from <CODE>xs</CODE> that\nis identical (<CODE>===</CODE>) to <CODE>v</CODE>.\nReturns the original\nstream if there is no occurrence.\nLazy? Yes: the result stream forces the construction of each next element",
+    "meta": "func"
+  },
+  {
+    "name": "stream_remove_all",
+    "title": "stream_remove_all(v, xs) -> stream",
+    "description": "Returns a stream that results from\n<CODE>xs</CODE> by removing all items from <CODE>xs</CODE> that\nare identical (<CODE>===</CODE>) to <CODE>v</CODE>.\nReturns the original\nstream if there is no occurrence.\nRecursive process.\nLazy? Yes: the result stream forces the construction of each next\nelement",
+    "meta": "func"
+  },
+  {
+    "name": "stream_reverse",
+    "title": "stream_reverse(xs) -> stream",
+    "description": "Returns stream <CODE>xs</CODE> in reverse\norder. Iterative process.\nThe process is iterative, but consumes space <CODE>Omega(n)</CODE>\nbecause of the result stream.\nLazy? No: <CODE>stream_reverse</CODE>\nforces the exploration of the entire stream",
+    "meta": "func"
+  },
+  {
+    "name": "stream_tail",
+    "title": "stream_tail(xs) -> Stream",
+    "description": "assumes that the tail (second component) of the\npair {x} is a nullary function, and returns the result of\napplying that function. Throws an exception if the argument\nis not a pair, or if the tail is not a function.\nLaziness: Yes: {stream_tail} only forces the direct tail\nstream, but not the rest of the stream, i.e. not the tail\nof the tail, etc.",
+    "meta": "func"
+  },
+  {
+    "name": "stream_to_list",
+    "title": "stream_to_list(xs) -> list",
+    "description": "Given stream <CODE>xs</CODE>, returns a list of same length with\nthe same elements as <CODE>xs</CODE> in the same order.\nLaziness:  No: <CODE>stream_to_list</CODE> needs to force the whole\nstream.",
+    "meta": "func"
+  }
+]

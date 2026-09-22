@@ -1,0 +1,14 @@
+[
+  {
+    "name": "set_head",
+    "title": "set_head(p, x) -> undefined",
+    "description": "changes the pair <CODE>p</CODE> such that its head is <CODE>x</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "set_tail",
+    "title": "set_tail(p, x) -> undefined",
+    "description": "changes the pair <CODE>p</CODE> such that its tail is <CODE>x</CODE>.",
+    "meta": "func"
+  }
+]

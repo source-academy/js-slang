@@ -1,0 +1,98 @@
+[
+  {
+    "name": "arity",
+    "title": "arity(f) -> number",
+    "description": "Returns the number of parameters the given function <CODE>f</CODE> expects,\nexcluding the rest parameter.",
+    "meta": "func"
+  },
+  {
+    "name": "char_at",
+    "title": "char_at(s, i) -> string",
+    "description": "Takes a string <CODE>s</CODE> as first argument and a nonnegative integer\n<CODE>i</CODE> as second argument. If <CODE>i</CODE> is less than the length\nof <CODE>s</CODE>, this function returns a one-character string that contains\nthe character of <CODE>s</CODE> at position <CODE>i</CODE>, counting from 0.\nIf <CODE>i</CODE> is larger than or equal to the length of\n<CODE>s</CODE>, this function returns <CODE>undefined</CODE>.",
+    "meta": "func"
+  },
+  {
+    "name": "display",
+    "title": "display(v, s) -> value",
+    "description": "Optional second argument. If present,\ndisplays the given string <CODE>s</CODE>, followed by a space character, followed by the\nvalue <CODE>v</CODE> in the console.\nIf second argument not present,\njust displays the value <CODE>v</CODE> in the console.\nThe notation used for the display of values\nis consistent with\n<a href=\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\">JSON</a>,\nbut also displays <CODE>undefined</CODE>, <CODE>NaN</CODE>, <CODE>Infinity</CODE>, and function objects.",
+    "meta": "func"
+  },
+  {
+    "name": "error",
+    "title": "error(v, s) -> undefined",
+    "description": "Optional second argument.\nIf present,\ndisplays the given string <CODE>s</CODE>, followed by a space character, followed by the\nvalue <CODE>v</CODE> in the console with error flag.\nIf second argument not present,\njust displays the value <CODE>v</CODE> in the console with error flag.\nThe evaluation\nof any call of <CODE>error</CODE> aborts the running program immediately.\nThe notation used for the display of values\nis consistent with\n<a href=\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\">JSON</a>,\nbut also displays <CODE>undefined</CODE>, <CODE>NaN</CODE>, <CODE>Infinity</CODE>, and function objects.",
+    "meta": "func"
+  },
+  {
+    "name": "get_time",
+    "title": "get_time() -> number",
+    "description": "Returns number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.\nSee also <a href=\"https://sourceacademy.org/sicpjs/1.2.6#ex-1.21\">textbook example</a>.",
+    "meta": "func"
+  },
+  {
+    "name": "Infinity",
+    "title": "Infinity",
+    "description": "The name <CODE>Infinity</CODE> refers to the special number value <CODE>Infinity</CODE>.\nSee <a href=\"https://www.ecma-international.org/ecma-262/9.0/index.html#sec-value-properties-of-the-global-object-infinity\">ECMAScript Specification, Section 4.3.23</a>",
+    "meta": "var"
+  },
+  {
+    "name": "is_boolean",
+    "title": "is_boolean(v) -> boolean",
+    "description": "checks whether a given value is a boolean",
+    "meta": "func"
+  },
+  {
+    "name": "is_function",
+    "title": "is_function(v) -> boolean",
+    "description": "checks whether a given value is a function",
+    "meta": "func"
+  },
+  {
+    "name": "is_number",
+    "title": "is_number(v) -> boolean",
+    "description": "checks whether a given value is a number.\nSee also <a href=\"https://sourceacademy.org/sicpjs/2.3.2\">textbook example</a>.",
+    "meta": "func"
+  },
+  {
+    "name": "is_string",
+    "title": "is_string(v) -> boolean",
+    "description": "checks whether a given value is a string.\nSee also <a href=\"https://sourceacademy.org/sicpjs/2.3.2\">textbook example</a>.",
+    "meta": "func"
+  },
+  {
+    "name": "is_undefined",
+    "title": "is_undefined(v) -> boolean",
+    "description": "checks whether a given value is the special value <CODE>undefined</CODE>",
+    "meta": "func"
+  },
+  {
+    "name": "NaN",
+    "title": "NaN",
+    "description": "The name <CODE>NaN</CODE> refers to the special number value <CODE>NaN</CODE> (\"not a number\"). Note that\n<CODE>NaN</CODE> is a number, as specified by <CODE>is_number</CODE>.\nSee <a href=\"https://www.ecma-international.org/ecma-262/9.0/index.html#sec-value-properties-of-the-global-object-nan\">ECMAScript Specification, Section 4.3.24</a>",
+    "meta": "var"
+  },
+  {
+    "name": "parse_int",
+    "title": "parse_int(s, i) -> number",
+    "description": "Interprets a given string <CODE>s</CODE> as an integer,\nusing the positive integer <CODE>i</CODE> as radix,\nand returns the respective value.\n<BR/>Examples: <CODE>parse_int(\"909\", 10)</CODE> returns the number\n<CODE>909</CODE>, and <CODE>parse_int(\"-1111\", 2)</CODE> returns the number\n<CODE>-15</CODE>.<BR/>\nSee <a href=\"https://www.ecma-international.org/ecma-262/9.0/index.html#sec-parseint-string-radix\">ECMAScript Specification, Section 18.2.5</a> for details.",
+    "meta": "func"
+  },
+  {
+    "name": "prompt",
+    "title": "prompt(s) -> string",
+    "description": "Pops up a window that displays the string <CODE>s</CODE>, provides\nan input line for the user to enter a text, a <CODE>Cancel</CODE> button and an <CODE>OK</CODE> button.\nThe call of <CODE>prompt</CODE>\nsuspends execution of the program until one of the two buttons is pressed. If\nthe <CODE>OK</CODE> button is pressed, <CODE>prompt</CODE> returns the entered text as a string.\nIf the <CODE>Cancel</CODE> button is pressed, <CODE>prompt</CODE> returns a non-string value.",
+    "meta": "func"
+  },
+  {
+    "name": "stringify",
+    "title": "stringify(v) -> string",
+    "description": "returns a string that represents the value <CODE>v</CODE>, using a\nnotation that is is consistent with\n<a href=\"http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf\">JSON</a>,\nbut also displays <CODE>undefined</CODE>, <CODE>NaN</CODE>, <CODE>Infinity</CODE>, and function objects.\nSee also <a href=\"https://sourceacademy.org/sicpjs/3.3.5\">textbook example</a>.",
+    "meta": "func"
+  },
+  {
+    "name": "undefined",
+    "title": "undefined",
+    "description": "The name <CODE>undefined</CODE> refers to the special value <CODE>undefined</CODE>.\nSee also <a href=\"https://sourceacademy.org/sicpjs/4.1.1#h5\">textbook explanation in section 4.1.1</a>.",
+    "meta": "var"
+  }
+]

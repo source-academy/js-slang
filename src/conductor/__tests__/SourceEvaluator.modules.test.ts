@@ -1,6 +1,6 @@
 import { DataType, type IDataHandler, type TypedValue } from '@sourceacademy/conductor/types';
 import { ModuleLoaderRunnerPlugin } from '@sourceacademy/runner-module-loader';
-import { afterEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { IModuleExport, IModulePlugin } from '@sourceacademy/conductor/module';
 
@@ -39,10 +39,11 @@ function fakeConductor() {
       requestChunk: () => Promise.resolve(''),
       updateStatus: () => {},
       registerPlugin: (pluginClass: unknown, ...args: unknown[]) => {
-        // SourceEvaluator2 (§2) also registers a SourceDataVisualizerRunnerPlugin — unrelated to
-        // the module machinery this file tests, but it must still get back something real: a bare
-        // {} has no resetRun/sendDrawing, and every evaluateChunk call here would throw calling
-        // them (chapter 2 always registers one, see SourceEvaluator.ts).
+        // SourceEvaluator2 (§2) also registers a SourceDataVisualizerRunnerPlugin and an
+        // AutoCompletePlugin, both unrelated to the module machinery this file tests, but each
+        // must still get back something real: a bare {} has no resetRun/sendDrawing (thrown on
+        // every evaluateChunk, since chapter 2 always registers a data visualizer) and could
+        // otherwise be mistaken below for the module loader's own registration.
         if (pluginClass === SourceDataVisualizerRunnerPlugin) {
           const channel = {
             name: '__data_visualizer',
@@ -53,6 +54,9 @@ function fakeConductor() {
           };
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           return new SourceDataVisualizerRunnerPlugin({} as any, [channel]);
+        }
+        if (pluginClass !== ModuleLoaderRunnerPlugin) {
+          return {};
         }
         // registerPlugin(ModuleLoaderRunnerPlugin, conductor, evaluator) — the evaluator (which
         // also satisfies IDataHandler via the proxy) is always the last argument.
@@ -66,8 +70,15 @@ function fakeConductor() {
 }
 
 describe('SourceEvaluator modules', () => {
+  // AutoCompletePlugin's constructor starts a real setInterval pushing mode data to the host
+  // (#2079); fake timers keep it from firing/leaking across every test here, since SourceEvaluator2
+  // registers it unconditionally.
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
   afterEach(() => {
     ModuleLoaderRunnerPlugin.instance = null;
+    vi.useRealTimers();
   });
 
   test('a plain value export is importable and usable', async () => {

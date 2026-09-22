@@ -1,7 +1,9 @@
-import { describe, expect, test } from 'vitest';
+import { WEB_PLUGIN_ID } from '@sourceacademy/common-autocomplete';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { SourceCseEvaluator3 } from '..';
 import { SourceDataVisualizerRunnerPlugin } from '../dataVisualizer/SourceDataVisualizerRunnerPlugin';
+import AutoCompletePlugin from '../plugins/autocomplete';
 
 /**
  * `registerPlugin` constructs a *real* `SourceDataVisualizerRunnerPlugin` when asked for one —
@@ -15,11 +17,15 @@ function fakeConductor(config?: Record<string, unknown>) {
   const errors: { message: string; name: string }[] = [];
   const snapshotCalls: { snapshots: unknown[]; breakpointSteps?: number[] }[] = [];
   const dataVisualizerMessages: unknown[] = [];
+  const registeredPluginClasses: unknown[] = [];
+  const hostLoadedPlugins: unknown[] = [];
   return {
     output,
     errors,
     snapshotCalls,
     dataVisualizerMessages,
+    registeredPluginClasses,
+    hostLoadedPlugins,
     plugin: {
       sendOutput: (m: string) => output.push(m),
       sendError: (e: { message: string; name: string }) => errors.push(e),
@@ -29,6 +35,7 @@ function fakeConductor(config?: Record<string, unknown>) {
       requestChunk: () => Promise.resolve(''),
       updateStatus: () => {},
       registerPlugin: (pluginClass: unknown) => {
+        registeredPluginClasses.push(pluginClass);
         if (pluginClass === SourceDataVisualizerRunnerPlugin) {
           const channel = {
             name: '__data_visualizer',
@@ -45,11 +52,25 @@ function fakeConductor(config?: Record<string, unknown>) {
             snapshotCalls.push({ snapshots, breakpointSteps }),
         };
       },
-      hostLoadPlugin: () => Promise.resolve(),
+      hostLoadPlugin: (id: unknown) => {
+        hostLoadedPlugins.push(id);
+        return Promise.resolve();
+      },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any,
   };
 }
+
+// AutoCompletePlugin's constructor starts a real setInterval pushing mode data to the host
+// (#2079); fake timers keep it from firing/leaking across every test in this file, since every
+// one of them constructs an evaluator that registers it unconditionally. File-level, not inside
+// a single describe: the three describes below are siblings, not nested.
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('SourceCseEvaluator', () => {
   test('a runtime error is reported exactly once, with its location', async () => {
@@ -136,4 +157,12 @@ describe('draw_data', () => {
       rows: [[{ type: 'leaf', displayValue: '2', label: 'number' }]],
     });
   });
+});
+
+// Regression coverage for #2079.
+test('the autocomplete plugin is registered', () => {
+  const { plugin, registeredPluginClasses, hostLoadedPlugins } = fakeConductor();
+  new SourceCseEvaluator3(plugin);
+  expect(registeredPluginClasses).toContain(AutoCompletePlugin);
+  expect(hostLoadedPlugins).toContain(WEB_PLUGIN_ID);
 });

@@ -36,6 +36,12 @@ jobs:
           node-version: 22
           cache: yarn
       - run: yarn install --immutable
+      # The autocomplete builtin data (src/conductor/plugins/autocomplete/builtins/*.json) is
+      # committed, not generated at build time, so a docs/lib/*.js edit that forgot to also run
+      # `yarn autocomplete` would otherwise land green and only surface as stale autocomplete
+      # suggestions once someone actually opened the playground.
+      - run: yarn autocomplete
+      - run: git diff --exit-code -- src/conductor/plugins/autocomplete/builtins
       - run: yarn build
       # Bundles the Conductor evaluators. Not covered by `yarn build` (which is tsc for the
       # published library) and not exercised by the test suite either, so without this a change
