@@ -51,7 +51,6 @@ export interface NativeStorage {
   builtins: Map<string, Value>;
   previousProgramsIdentifiers: Set<string>;
   operators: Map<string, (...operands: Value[]) => Value>;
-  maxExecTime: number;
   evaller: null | ((program: string) => Value);
   /*
   the first time evaller is used, it must be used directly like `eval(code)` to inherit
@@ -160,11 +159,6 @@ export interface Context<T = any> {
    * Programs previously executed in this context
    */
   previousPrograms: es.Program[];
-
-  /**
-   * Whether the evaluation timeout should be increased
-   */
-  shouldIncreaseEvaluationTimeout: boolean;
 }
 
 export interface BlockFrame {

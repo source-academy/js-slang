@@ -90,7 +90,6 @@ exports[`Ensure no name clashes 1`] = `
     const wrap90 = native0.operators.get(\\"wrap\\");
     const unaryOp = native0.operators.get(\\"unaryOp\\");
     const binaryOp = native0.operators.get(\\"binaryOp\\");
-    const throwIfTimeout = native0.operators.get(\\"throwIfTimeout\\");
     const setProp = native0.operators.get(\\"setProp\\");
     const getProp = native0.operators.get(\\"getProp\\");
     const builtins = native0.operators.get(\\"builtins\\");
@@ -209,7 +208,6 @@ Object {
     const wrap = native.operators.get(\\"wrap\\");
     const unaryOp = native.operators.get(\\"unaryOp\\");
     const binaryOp = native.operators.get(\\"binaryOp\\");
-    const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
     const setProp = native.operators.get(\\"setProp\\");
     const getProp = native.operators.get(\\"getProp\\");
     const builtins = native.operators.get(\\"builtins\\");

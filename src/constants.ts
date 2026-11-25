@@ -21,7 +21,3 @@ export const UNKNOWN_LOCATION: SourceLocation = {
     column: -1,
   },
 };
-export const JSSLANG_PROPERTIES = {
-  maxExecTime: 1000,
-  factorToIncreaseBy: 10,
-};

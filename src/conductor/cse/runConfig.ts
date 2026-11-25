@@ -16,8 +16,8 @@ export interface RunConfig {
   breakpointLines?: number[];
 }
 
-/** js-slang's own default step budget, matching `JSSLANG_PROPERTIES.maxExecTime`'s sibling in
- * the frontend's step-limit control. Used when the host serves no config at all. */
+/** js-slang's own default step budget, matching the frontend's step-limit control. Used when the
+ * host serves no config at all. */
 export const DEFAULT_STEP_LIMIT = 1000;
 
 /**

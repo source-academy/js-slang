@@ -1,6 +1,6 @@
 // Variable determining chapter of Source is contained in this file.
 
-import { GLOBAL, JSSLANG_PROPERTIES } from './constants';
+import { GLOBAL } from './constants';
 import { call_with_current_continuation } from './cse-machine/continuations';
 import Heap from './cse-machine/heap';
 import { GeneralRuntimeError } from './errors/base';
@@ -121,7 +121,6 @@ const createNativeStorage = (): NativeStorage => ({
   builtins: new Map(),
   previousProgramsIdentifiers: new Set(),
   operators: new Map(Object.entries(operators)),
-  maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
   evaller: null,
   loadedModules: {},
   loadedModuleTypes: {},
@@ -153,7 +152,6 @@ export const createEmptyContext = <T>(
     moduleContexts: createEmptyModuleContexts(),
     unTypecheckedCode: [],
     previousPrograms: [],
-    shouldIncreaseEvaluationTimeout: false,
   };
 };
 
@@ -268,19 +266,10 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
   };
 
   const prompt = (v: Value) => {
-    const start = Date.now();
-    const promptResult = (externalBuiltIns.prompt ?? defaultBuiltIns.prompt)(
-      v,
-      '',
-      context.externalContext,
-    );
-    context.nativeStorage.maxExecTime += Date.now() - start;
-    return promptResult;
+    return (externalBuiltIns.prompt ?? defaultBuiltIns.prompt)(v, '', context.externalContext);
   };
   const alert = (v: Value) => {
-    const start = Date.now();
     (externalBuiltIns.alert ?? defaultBuiltIns.alert)(v, '', context.externalContext);
-    context.nativeStorage.maxExecTime += Date.now() - start;
   };
   const visualise_list = (v0: Value, ...rest: Value[]) => {
     // The whole argument list, not just v0 — draw_data(xs, ys) previously silently dropped ys (#2078).

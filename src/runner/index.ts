@@ -19,20 +19,13 @@ import type { RecursivePartial } from '../utils/typeUtils';
 import runners from './sourceRunner';
 import { determineExecutionMethod, determineVariant } from './utils';
 
-let previousCode: {
-  files: Partial<Record<string, string>>;
-  entrypointFilePath: string;
-} | null = null;
-
 export const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   steps: 1000,
   stepLimit: -1,
   executionMethod: 'auto',
   variant: Variant.DEFAULT,
-  originalMaxExecTime: 1000,
   useSubst: false,
   isPrelude: false,
-  throwInfiniteLoops: true,
   envSteps: -1,
   importOptions: {
     ...defaultAnalysisOptions,
@@ -156,13 +149,6 @@ export async function sourceFilesRunner(
   //        the type checker is currently not used at all so this is not very
   //        urgent.
   context.unTypecheckedCode.push(files[entrypointFilePath]);
-
-  const currentCode = {
-    files,
-    entrypointFilePath,
-  };
-  context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode);
-  previousCode = currentCode;
 
   context.previousPrograms.unshift(preprocessedProgram);
 

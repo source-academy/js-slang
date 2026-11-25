@@ -422,47 +422,6 @@ function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
   });
 }
 
-function addInfiniteLoopProtection(
-  program: es.Program,
-  globalIds: NativeIds,
-  usedIdentifiers: Set<string>,
-) {
-  const getTimeAst = () => create.callExpression(create.identifier('get_time'), []);
-
-  function instrumentLoops(node: es.Program | es.BlockStatement) {
-    const newStatements = [];
-    for (const statement of node.body) {
-      if (statement.type === 'ForStatement' || statement.type === 'WhileStatement') {
-        const startTimeConst = getUniqueId(usedIdentifiers, 'startTime');
-        newStatements.push(create.constantDeclaration(startTimeConst, getTimeAst()));
-        if (statement.body.type === 'BlockStatement') {
-          const { line, column } = (statement.loc ?? UNKNOWN_LOCATION).start;
-          const source = statement.loc?.source ?? null;
-          statement.body.body.unshift(
-            create.expressionStatement(
-              create.callExpression(globalIds.throwIfTimeout, [
-                globalIds.native,
-                create.identifier(startTimeConst),
-                getTimeAst(),
-                create.literal(line),
-                create.literal(column),
-                create.literal(source),
-              ]),
-            ),
-          );
-        }
-      }
-      newStatements.push(statement);
-    }
-    node.body = newStatements;
-  }
-
-  simple(program, {
-    Program: instrumentLoops,
-    BlockStatement: instrumentLoops,
-  });
-}
-
 function wrapWithBuiltins(statements: es.Statement[], nativeStorage: NativeStorage) {
   return create.blockStatement([...getBuiltins(nativeStorage), create.blockStatement(statements)]);
 }
@@ -607,7 +566,6 @@ function transpileToSource(
     globalIds,
     isPrelude,
   );
-  addInfiniteLoopProtection(program, globalIds, usedIdentifiers);
 
   const [importNodes, otherNodes] = transformImportDeclarations(
     program,

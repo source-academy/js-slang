@@ -16,7 +16,6 @@ const globalIdNames = [
   'wrap',
   'unaryOp',
   'binaryOp',
-  'throwIfTimeout',
   'setProp',
   'getProp',
   'builtins',

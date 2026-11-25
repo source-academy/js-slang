@@ -4,7 +4,6 @@ import createContext, { defineBuiltin } from '../../createContext';
 import { Chapter } from '../../langs';
 import type { CustomBuiltIns } from '../../types';
 import { processTestOptions } from './misc';
-import { mockContext } from './mocks';
 import type { TestContext, TestOptions, TestResults } from './types';
 
 /**
@@ -157,21 +156,6 @@ export const expectParsedError = (
 ): RemoveMatcher<Promisify<Assertion<Promise<string>>>> => {
   return removeMatcher(expect(testFailure(code, options)).resolves);
 };
-
-export const expectNativeToTimeoutAndError = vi.defineHelper(
-  async (code: string, timeout: number) => {
-    const start = Date.now();
-    const context = mockContext(Chapter.SOURCE_4);
-    await runInContext(code, context, {
-      executionMethod: 'native',
-      throwInfiniteLoops: false,
-    });
-    const timeTaken = Date.now() - start;
-    expect(timeTaken).toBeLessThan(timeout * 5);
-    expect(timeTaken).toBeGreaterThanOrEqual(timeout);
-    return parseError(context.errors);
-  },
-);
 
 /**
  * Run the given code, expect it to finish without errors and also match a snapshot
