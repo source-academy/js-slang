@@ -1,9 +1,7 @@
 import type { RawSourceMap } from 'source-map';
 
-import { JSSLANG_PROPERTIES } from '../constants';
 import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter';
 import { ExceptionError } from '../errors/errors';
-import { TimeoutError } from '../errors/timeoutErrors';
 import { getSteps } from '../stepper/steppers';
 import { sandboxedEval } from '../transpiler/evalContainer';
 import { hasImports, transpile } from '../transpiler/transpiler';
@@ -12,7 +10,6 @@ import { toSourceError } from './errors';
 import fullJSRunner from './fullJSRunner';
 import type { Runner } from './types';
 
-let isPreviousCodeTimeoutError = false;
 const runners = {
   fulljs: fullJSRunner,
   'cse-machine': (program, context, options) => {
@@ -31,14 +28,6 @@ const runners = {
     });
   },
   native: async (program, context, options) => {
-    if (!options.isPrelude) {
-      if (context.shouldIncreaseEvaluationTimeout && isPreviousCodeTimeoutError) {
-        context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy;
-      } else {
-        context.nativeStorage.maxExecTime = options.originalMaxExecTime;
-      }
-    }
-
     let sourceMapJson: RawSourceMap | undefined;
     try {
       let transpiled: string;
@@ -57,10 +46,6 @@ const runners = {
       // Promise here, and this is the one place that Promise gets unwrapped into `value`.
       let value = await sandboxedEval(transpiled, context.nativeStorage);
 
-      if (!options.isPrelude) {
-        isPreviousCodeTimeoutError = false;
-      }
-
       return {
         status: 'finished',
         context,
@@ -78,10 +63,6 @@ const runners = {
       }
 
       if (error instanceof SourceErrorWithNode) {
-        if (error instanceof TimeoutError) {
-          isPreviousCodeTimeoutError = true;
-        }
-
         context.errors.push(error);
         return { status: 'error', context };
       }

@@ -213,11 +213,6 @@ abstract class SourceEvaluatorBase extends BasicEvaluator {
         // `determineExecutionMethod`), which this evaluator does not support. Revisit once the CSE
         // evaluator exists and there is somewhere sensible to switch *to*.
         executionMethod: 'native',
-        // No time limit of our own. The default 1 s limit predates the Conductor: it existed so a
-        // runaway program could not hang the frontend, which ran it on the main thread. Now the
-        // evaluator runs in its own worker and the host can stop it at any time, so the limit only
-        // cuts off programs that a host (e.g. the grader) meant to allow longer.
-        originalMaxExecTime: Infinity,
         // See this class's doc on modules: forced on from the first chunk that ever imports
         // anything, and stays on — a later chunk may reference what that one bound.
         forceAsyncTranspile: this.hasEverLoadedAModule,

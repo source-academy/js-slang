@@ -19,10 +19,8 @@ export interface IOptions {
   stepLimit: number;
   executionMethod: ExecutionMethod;
   variant: Variant;
-  originalMaxExecTime: number;
   useSubst: boolean;
   isPrelude: boolean;
-  throwInfiniteLoops: boolean;
   envSteps: number;
 
   importOptions: ImportOptions;

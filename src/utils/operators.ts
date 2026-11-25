@@ -8,10 +8,7 @@ import {
   TooManyArgumentsError,
 } from '../errors/errors';
 import { RuntimeSourceError } from '../errors/base';
-import {
-  PotentialInfiniteLoopError,
-  PotentialInfiniteRecursionError,
-} from '../errors/timeoutErrors';
+import { PotentialInfiniteRecursionError } from '../errors/timeoutErrors';
 import type { Chapter } from '../langs';
 import type { NativeStorage } from '../types';
 import * as create from './ast/astCreator';
@@ -19,22 +16,6 @@ import { callExpression, locationDummyNode } from './ast/astCreator';
 import * as rttc from './rttc';
 import { HasCorrectParameters } from './typeUtils';
 import assert from './assert';
-
-export function throwIfTimeout(
-  nativeStorage: NativeStorage,
-  start: number,
-  current: number,
-  line: number,
-  column: number,
-  source: string | null,
-) {
-  if (current - start > nativeStorage.maxExecTime) {
-    throw new PotentialInfiniteLoopError(
-      create.locationDummyNode(line, column, source),
-      nativeStorage.maxExecTime,
-    );
-  }
-}
 
 export function boolOrErr(candidate: any, line: number, column: number, source: string | null) {
   rttc.checkIfStatement(create.locationDummyNode(line, column, source), candidate);
@@ -134,26 +115,6 @@ function getFunctionDetails(f: Function): FunctionDetails {
 }
 
 /**
- * Tags `f` as a call that genuinely crosses into a Conductor module — used by
- * `callIfFuncAndRightArgsAsync` to decide whether a call's await time should be excluded from the
- * infinite-recursion budget (real host latency isn't the student's program "recursing", but a
- * same-thread async Source-to-Source call, which resolves through nothing but the microtask queue,
- * is). Every Source function is `async` in dual/async mode (see `transpiler.ts`'s
- * `markArrowFunctionsAsync`), so `rawResult.then` alone can't tell the two apart — only a module
- * closure, which `moduleInterop.ts`'s `moduleToSource` wraps and marks with this, is exempt.
- */
-const externModuleCallSymbol = Symbol();
-
-export function markExternModuleCall<T extends (...args: any[]) => any>(f: T): T {
-  (f as { [externModuleCallSymbol]?: true })[externModuleCallSymbol] = true;
-  return f;
-}
-
-function isExternModuleCall(f: unknown): boolean {
-  return typeof f === 'function' && externModuleCallSymbol in f;
-}
-
-/**
  * Check that the number of arguments provided falls within the range specified.
  *
  * You can call it with just a {@link CallExpression}, in which case its `callee` should be either a
@@ -229,18 +190,17 @@ export function validateFunctionArgCount(
  * Calls the provided value as if it were a function being called from the `line` and `column`
  * within the provided `source` file, checking for argument count.
  *
- * - If `nativeStorage` is provided, then infinite recursion protection is also added.
+ * `nativeStorage` is unused here; it is accepted so that sync and async calls share one signature
+ * in transpiled code (see {@link callIfFuncAndRightArgsAsync}, which bounds its recursion with it).
  */
 export function callIfFuncAndRightArgs(
   f: unknown,
   line: number,
   column: number,
   source: string | null,
-  nativeStorage: NativeStorage | undefined,
+  _nativeStorage: NativeStorage | undefined,
   ...args: any[]
 ) {
-  const startTime = Date.now();
-  const pastCalls: [string, any[]][] = [];
   let isPrelude = source === 'prelude';
 
   while (true) {
@@ -280,10 +240,6 @@ export function callIfFuncAndRightArgs(
     let res;
     try {
       res = f(...args);
-
-      if (nativeStorage && Date.now() - startTime > nativeStorage.maxExecTime) {
-        throw new PotentialInfiniteRecursionError(dummy, pastCalls, nativeStorage.maxExecTime);
-      }
     } catch (error) {
       // if we already handled the error, simply pass it on
       if (error instanceof ExceptionError) throw error;
@@ -321,7 +277,6 @@ export function callIfFuncAndRightArgs(
       source = res.source;
       line = res.line;
       column = res.column;
-      pastCalls.push([res.functionName, args]);
       // Then go back to the top of the while loop
     } else if (res.isTail === false) {
       return res.value;
@@ -339,19 +294,8 @@ export function callIfFuncAndRightArgs(
  * one, every call in it must be prepared to await, including the proper-tail-call trampoline itself.
  *
  * Everything here mirrors {@link callIfFuncAndRightArgs} line for line — argument validation, the
- * trampoline, the same error-wrapping — with exactly one addition: a call whose result is *actually*
- * a thenable is awaited, and the wall-clock time spent suspended is excluded from the infinite-
- * recursion budget below.
- *
- * That exclusion is deliberately narrow. It only ever fires when `f(...args)` itself returned a
- * thenable — a genuine host round-trip — never for an ordinary synchronous Source call, which
- * matches the pre-existing budget exactly (no `await`, no extra tick, nothing excluded). A call
- * that busy-loops synchronously inside `f` still counts fully against the budget; only real
- * suspension time, which the student's code did not spend "recursing", is forgiven. The *iteration*
- * budget a `for`/`while` loop carries (`throwIfTimeout`, inserted by `addInfiniteLoopProtection`) is
- * untouched by this — a loop that keeps making module calls forever should still time out, and
- * unlike this function's own per-call-chain budget, that one is meant to bound wall-clock time
- * regardless of what the loop body did with it.
+ * trampoline, the same error-wrapping — with two additions: a call whose result is *actually* a
+ * thenable is awaited, and the depth of nested calls is bounded (see `MAX_ASYNC_CALL_DEPTH`).
  */
 /**
  * A stand-in for the native call-stack limit a synchronous non-tail recursion is bounded by for
@@ -373,7 +317,6 @@ export async function callIfFuncAndRightArgsAsync(
   nativeStorage: NativeStorage | undefined,
   ...args: any[]
 ) {
-  let startTime = Date.now();
   const pastCalls: [string, any[]][] = [];
   let isPrelude = source === 'prelude';
 
@@ -394,11 +337,7 @@ export async function callIfFuncAndRightArgsAsync(
     nativeStorage.asyncCallDepth = (nativeStorage.asyncCallDepth ?? 0) + 1;
     if (nativeStorage.asyncCallDepth > MAX_ASYNC_CALL_DEPTH) {
       nativeStorage.asyncCallDepth--;
-      throw new PotentialInfiniteRecursionError(
-        locationDummyNode(line, column, source),
-        pastCalls,
-        nativeStorage.maxExecTime,
-      );
+      throw new PotentialInfiniteRecursionError(locationDummyNode(line, column, source), pastCalls);
     }
   }
 
@@ -452,26 +391,9 @@ export async function callIfFuncAndRightArgsAsync(
           typeof rawResult === 'object' &&
           typeof rawResult.then === 'function'
         ) {
-          if (isExternModuleCall(f)) {
-            // A genuine asynchronous call into a module: exclude however long it actually took to
-            // suspend from the budget below, by shifting the clock forward by exactly that
-            // duration. Every Source function is Promise-returning in dual/async mode regardless of
-            // whether it ever touches a module (see `markArrowFunctionsAsync`), so this exclusion
-            // must stay limited to an actual module call — otherwise a same-thread Source-to-Source
-            // tail recursion would forgive its own elapsed time every iteration and never trip this
-            // budget (see js-slang#2083, Codex finding).
-            const beforeAwait = Date.now();
-            res = await rawResult;
-            startTime += Date.now() - beforeAwait;
-          } else {
-            res = await rawResult;
-          }
+          res = await rawResult;
         } else {
           res = rawResult;
-        }
-
-        if (nativeStorage && Date.now() - startTime > nativeStorage.maxExecTime) {
-          throw new PotentialInfiniteRecursionError(dummy, pastCalls, nativeStorage.maxExecTime);
         }
       } catch (error) {
         if (error instanceof ExceptionError) throw error;

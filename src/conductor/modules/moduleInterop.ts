@@ -1,7 +1,7 @@
 import { type ArrayIdentifier, DataType, type TypedValue } from '@sourceacademy/conductor/types';
 
 import type { Value } from '../../types';
-import { callWithoutMetadataAsync, markExternModuleCall, wrapUnsafe } from '../../utils/operators';
+import { callWithoutMetadataAsync, wrapUnsafe } from '../../utils/operators';
 
 import type { SourceDataHandler } from './SourceDataHandler';
 
@@ -254,11 +254,6 @@ export async function moduleToSource(
       // pointless round trip through sourceToModule/moduleToSource on values already in their
       // module-side form).
       (f as { moduleClosure?: TypedValue<DataType.CLOSURE> }).moduleClosure = value;
-      // Marks `f` as a genuine module call, not merely a Promise-returning Source function (every
-      // Source function is one, in dual/async mode) — see callIfFuncAndRightArgsAsync's use of this
-      // tag to decide whether a call's suspension time is real host latency worth excluding from
-      // the infinite-recursion budget.
-      markExternModuleCall(f);
       return f;
     }
     case DataType.PAIR:
