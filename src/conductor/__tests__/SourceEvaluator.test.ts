@@ -107,6 +107,18 @@ describe('SourceEvaluator', () => {
     expect(errors.length).toBe(afterFirst);
   });
 
+  test('imposes no time limit of its own: the host owns the evaluator’s lifetime', async () => {
+    // The clock must really advance for the busy-wait below; the file's default is fake timers.
+    vi.useRealTimers();
+    const { plugin, errors } = fakeConductor();
+    // Busy-waits past js-slang's old default limit of one second.
+    const value = await new SourceEvaluator3(plugin).evaluateChunk(
+      'const start = get_time();\nwhile (get_time() - start < 1300) {}\n42;',
+    );
+    expect(errors).toEqual([]);
+    expect(value).toBe(42);
+  }, 10_000);
+
   test('a later chunk sees an earlier chunk’s declarations', async () => {
     const { plugin } = fakeConductor();
     const evaluator = new SourceEvaluator1(plugin);
