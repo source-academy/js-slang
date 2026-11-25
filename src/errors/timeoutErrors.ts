@@ -5,6 +5,11 @@ import { stringify } from '../utils/stringify';
 import { RuntimeSourceError } from './base';
 
 function getWarningMessage(maxExecTime: number) {
+  // No time limit (the Conductor evaluators set none): running again cannot raise anything, so
+  // do not promise it. Only the recursion depth guard can still fire in this mode.
+  if (!Number.isFinite(maxExecTime)) {
+    return 'Running the program again will not help: this is the recursion depth limit, not a time limit.';
+  }
   const from = maxExecTime / 1000;
   const to = from * JSSLANG_PROPERTIES.factorToIncreaseBy;
   return stripIndent`If you are certain your program is correct, press run again without editing your program.
