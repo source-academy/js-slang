@@ -91,6 +91,7 @@ export function* generateSteps(
       const afterMarkers: Marker[] =
         redex.postRedex.length > 0
           ? redex.postRedex.map((redex, index) => ({
+              redex,
               redexType: 'afterMarker',
               explanation: explanations[index],
             }))

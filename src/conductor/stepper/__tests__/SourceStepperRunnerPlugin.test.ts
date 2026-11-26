@@ -129,6 +129,19 @@ describe('SourceStepperRunnerPlugin', () => {
     );
   });
 
+  test('the markers of a step point at the nodes they mark, before and after the reduction', async () => {
+    // A marker without a target (`redexId: null`) shows no highlight in the tab, and loses the
+    // breakpoint navigation that goes by the node type: the after-markers once lost theirs.
+    const { program, channel, plugin } = setUp('1 + 2 * 3;', 1000, Chapter.SOURCE_1);
+    await plugin.sendSteps(program);
+    const markers = received(channel.sent).flatMap(step => step.markers ?? []);
+    for (const redexType of ['beforeMarker', 'afterMarker']) {
+      const ofType = markers.filter(marker => marker.redexType === redexType);
+      expect(ofType.length).toBeGreaterThan(0);
+      expect(ofType.every(marker => marker.redexId != null && marker.redexNodeType)).toBe(true);
+    }
+  });
+
   test('a run cut off by the step limit ends cut off, with the reason, and keeps its last step', async () => {
     const { program, channel, plugin } = setUp(FACTORIAL, 20);
     await plugin.sendSteps(program);
