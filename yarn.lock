@@ -1122,10 +1122,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sourceacademy/common-autocomplete@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@sourceacademy/common-autocomplete@npm:0.0.1"
-  checksum: 10c0/24be061f41ba6629585681abafb8b29e00f3f6e79723ca92d242655324c12e9de8f38e041192040f1271d24a71974920bf48bf4aa26cc0163e221806fe15917e
+"@sourceacademy/common-autocomplete@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@sourceacademy/common-autocomplete@npm:0.0.2"
+  checksum: 10c0/56269cec51fe530cc022d34e423c0719ba11f5f1c4d9493a3c3d767ec659a61ae881e4937822feb45b125b7aa124efdaf9816b71e1aca2a4dcc9d1c73dbda005
   languageName: node
   linkType: hard
 
@@ -1157,14 +1157,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sourceacademy/runner-autocomplete@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@sourceacademy/runner-autocomplete@npm:0.0.2"
+"@sourceacademy/runner-autocomplete@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@sourceacademy/runner-autocomplete@npm:0.0.3"
   dependencies:
-    "@sourceacademy/common-autocomplete": "npm:^0.0.1"
+    "@sourceacademy/common-autocomplete": "npm:^0.0.2"
   peerDependencies:
-    "@sourceacademy/conductor": ">=0.3.0"
-  checksum: 10c0/7bdf7ea448899b0121d240ab8ccad97b9bbea43b2abbf08c4637d6badf22c67867cf7a98763de152f90b6e84243b4223ff7ca2210e3ee55a23832d5663c13958
+    "@sourceacademy/conductor": ^0.8.0
+  checksum: 10c0/2ffa8470c17fe89583e8c9c8a0ebc0e76d579040914e8875e1a4b2b914084232ec77acfc52fc4019880f9fdc334f0788fe3d90fa9fbebeb0437794efcaf118cf
   languageName: node
   linkType: hard
 
@@ -3863,12 +3863,12 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^16.0.3"
     "@rollup/plugin-replace": "npm:^6.0.3"
     "@rollup/plugin-terser": "npm:^1.0.0"
-    "@sourceacademy/common-autocomplete": "npm:^0.0.1"
+    "@sourceacademy/common-autocomplete": "npm:^0.0.2"
     "@sourceacademy/common-cse-machine": "npm:^0.5.0"
     "@sourceacademy/common-data-visualizer": "npm:^0.0.1"
     "@sourceacademy/common-stepper": "npm:^0.1.0"
     "@sourceacademy/conductor": "npm:^0.8.3"
-    "@sourceacademy/runner-autocomplete": "npm:^0.0.2"
+    "@sourceacademy/runner-autocomplete": "npm:^0.0.3"
     "@sourceacademy/runner-cse-machine": "npm:^3.1.0"
     "@sourceacademy/runner-data-visualizer": "npm:^0.0.1"
     "@sourceacademy/runner-module-loader": "npm:^0.0.1"
