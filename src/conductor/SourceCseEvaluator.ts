@@ -1,4 +1,4 @@
-import { CSE_DIRECTORY_ID } from '@sourceacademy/common-cse-machine';
+import { CSE_DIRECTORY_ID, type CseTraceEnd } from '@sourceacademy/common-cse-machine';
 import { DATA_VISUALIZER_DIRECTORY_ID } from '@sourceacademy/common-data-visualizer';
 import { BasicEvaluator, type IRunnerPlugin } from '@sourceacademy/conductor/runner';
 import { CseMachinePlugin } from '@sourceacademy/runner-cse-machine';
@@ -12,7 +12,7 @@ import type { Context, Value } from '../types';
 import * as seq from '../utils/statementSeqTransform';
 import { collectSnapshots } from './cse/collectSnapshots';
 import { collectUsedGlobalNames } from './cse/usedGlobals';
-import { DEFAULT_STEP_LIMIT, fetchRunConfig } from './cse/runConfig';
+import { CSE_STEP_CAP, fetchRunConfig } from './cse/runConfig';
 import { registerAutoCompletePlugin } from './plugins/autocomplete';
 import { SourceDataVisualizerRunnerPlugin } from './dataVisualizer/SourceDataVisualizerRunnerPlugin';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
@@ -138,7 +138,7 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
       this.context.runtime.stash = stash;
 
       const config = await fetchRunConfig(this.conductor);
-      const maxSnapshots = config.stepLimit ?? DEFAULT_STEP_LIMIT;
+      const maxSnapshots = Math.min(config.stepLimit ?? CSE_STEP_CAP, CSE_STEP_CAP);
 
       // Prune the global frame to the names this program touches. js-slang keeps every builtin in
       // the global environment's own head, so an unpruned frame renders the whole standard library
@@ -150,17 +150,23 @@ abstract class SourceCseEvaluatorBase extends BasicEvaluator {
         ? collectUsedGlobalNames(program, globalEnv.head, preludeEnv?.head)
         : undefined;
 
-      const { snapshots, breakpointSteps } = collectSnapshots(
-        this.context,
-        control,
-        stash,
-        chunk,
-        maxSnapshots,
-        config.breakpointLines ?? [],
-        usedGlobalNames,
-      );
-
-      this.csePlugin.sendSnapshots(snapshots, breakpointSteps);
+      // The snapshots go to the host while the machine runs, so that a run that is stopped, or whose
+      // program fails, leaves the ones so far. The trace is complete unless the cap cut it off; a
+      // program that fails ends it where it failed, and its error is reported below.
+      let end: CseTraceEnd = { status: 'complete' };
+      try {
+        const { cutOff } = collectSnapshots(this.context, control, stash, chunk, maxSnapshots, {
+          breakpointLines: config.breakpointLines ?? [],
+          usedGlobalNames,
+          onBatch: (snapshots, breakpointSteps) =>
+            this.csePlugin.sendBatch(snapshots, breakpointSteps),
+        });
+        if (cutOff) {
+          end = { status: 'cut-off', reason: `the limit of ${maxSnapshots} steps was reached` };
+        }
+      } finally {
+        this.csePlugin.endRun(end);
+      }
       this.reportErrors();
 
       const items = stash.getStack();

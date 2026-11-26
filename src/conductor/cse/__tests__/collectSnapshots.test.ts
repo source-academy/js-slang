@@ -6,6 +6,7 @@
  * same program, rather than snapshotting the serialiser's own output.
  */
 
+import type { CseSnapshot } from '@sourceacademy/common-cse-machine';
 import { describe, expect, test } from 'vitest';
 
 import { Control, generateCSEMachineStateStream, Stash } from '../../../cse-machine/interpreter';
@@ -15,7 +16,7 @@ import type { Context } from '../../../types';
 import * as seq from '../../../utils/statementSeqTransform';
 import { stringify } from '../../../utils/stringify';
 import createContext from '../../../createContext';
-import { collectSnapshots } from '../collectSnapshots';
+import { collectSnapshots, SNAPSHOTS_PER_BATCH } from '../collectSnapshots';
 import { serializeValue } from '../serialize';
 
 function setup(code: string, chapter: Chapter = Chapter.SOURCE_3) {
@@ -60,7 +61,7 @@ function serialisedRun(
   breakpointLines: number[] = [],
 ) {
   const { context, control, stash } = setup(code, chapter);
-  return collectSnapshots(context, control, stash, code, limit, breakpointLines);
+  return collectSnapshots(context, control, stash, code, limit, { breakpointLines });
 }
 
 const PROGRAMS: [string, string][] = [
@@ -276,15 +277,9 @@ describe('global frame pruning', () => {
 
   function globalFrameOf(usedGlobalNames?: Set<string>) {
     const { context, control, stash } = setup(code);
-    const { snapshots } = collectSnapshots(
-      context,
-      control,
-      stash,
-      code,
-      100000,
-      [],
+    const { snapshots } = collectSnapshots(context, control, stash, code, 100000, {
       usedGlobalNames,
-    );
+    });
     const last = snapshots[snapshots.length - 1];
     return last.environments.find(e => e.name === 'global' && e.parentId === null)!;
   }
@@ -308,8 +303,7 @@ describe('global frame pruning', () => {
       stash,
       'function f(a) {\n  return a;\n}\nf(1);',
       100000,
-      [],
-      new Set<string>(),
+      { usedGlobalNames: new Set<string>() },
     );
     // The global frame is emptied, but the program's own frames keep their bindings.
     const withBindings = snapshots.some(s =>
@@ -326,5 +320,80 @@ describe('global frame pruning', () => {
     const all = globalFrameOf(undefined).bindings.length;
     const pruned = globalFrameOf(new Set(['display'])).bindings.length;
     expect(pruned).toBeLessThan(all / 10);
+  });
+});
+
+describe('batches', () => {
+  const LOOP = 'let i = 0;\nwhile (i < 40) {\n  i = i + 1;\n}\ni;';
+
+  function runWithBatches(code: string, limit = 100000, breakpointLines: number[] = []) {
+    const batches: { snapshots: CseSnapshot[]; breakpointSteps: number[] }[] = [];
+    const { context, control, stash } = setup(code);
+    const result = collectSnapshots(context, control, stash, code, limit, {
+      breakpointLines,
+      onBatch: (snapshots, breakpointSteps) => batches.push({ snapshots, breakpointSteps }),
+    });
+    return { batches, result };
+  }
+
+  test('the batches add up to all the snapshots, in order, SNAPSHOTS_PER_BATCH at a time', () => {
+    const { batches, result } = runWithBatches(LOOP);
+    expect(batches.length).toBeGreaterThan(1);
+    for (const batch of batches.slice(0, -1)) {
+      expect(batch.snapshots.length).toBe(SNAPSHOTS_PER_BATCH);
+    }
+    const all = batches.flatMap(batch => batch.snapshots);
+    expect(all).toEqual(result.snapshots);
+    expect(all.map(s => s.stepIndex)).toEqual(all.map((_, i) => i));
+  });
+
+  test('batching changes nothing about what is collected', () => {
+    const { result } = runWithBatches(LOOP, 100000, [3]);
+    expect(result).toEqual(serialisedRun(LOOP, Chapter.SOURCE_3, 100000, [3]));
+  });
+
+  test('the breakpoint steps go out with the batch their step is in, and add up', () => {
+    const { batches, result } = runWithBatches(LOOP, 100000, [3]);
+    expect(result.breakpointSteps.length).toBeGreaterThan(1);
+    expect(batches.flatMap(batch => batch.breakpointSteps)).toEqual(result.breakpointSteps);
+    // Each is a step of the batch that carries it.
+    for (const batch of batches) {
+      const steps = new Set(batch.snapshots.map(s => s.stepIndex));
+      expect(batch.breakpointSteps.every(step => steps.has(step))).toBe(true);
+    }
+  });
+
+  test('a run that ends in the middle of a batch sends the rest', () => {
+    const { batches, result } = runWithBatches('1 + 1;');
+    expect(result.snapshots.length).toBeLessThan(SNAPSHOTS_PER_BATCH);
+    expect(batches.length).toBe(1);
+    expect(batches[0].snapshots).toEqual(result.snapshots);
+  });
+
+  test('says that the run was cut off, and only if it was', () => {
+    expect(runWithBatches(LOOP, 12).result.cutOff).toBe(true);
+    expect(runWithBatches(LOOP, 12).result.snapshots.length).toBe(12);
+    expect(runWithBatches(LOOP).result.cutOff).toBe(false);
+    // A limit of exactly the number of steps is not a cut-off: the machine had nothing left.
+    const total = runWithBatches(LOOP).result.snapshots.length;
+    expect(runWithBatches(LOOP, total).result.cutOff).toBe(false);
+    expect(runWithBatches(LOOP, total - 1).result.cutOff).toBe(true);
+  });
+
+  test('a program that fails still sends the snapshots up to the failure', () => {
+    const code = 'let i = 0;\nwhile (i < 40) {\n  i = i + 1;\n}\ni + "a" - 1;';
+    const batches: CseSnapshot[][] = [];
+    const { context, control, stash } = setup(code);
+    expect(() =>
+      collectSnapshots(context, control, stash, code, 100000, {
+        onBatch: snapshots => batches.push(snapshots),
+      }),
+    ).toThrow();
+    expect(batches.flat().length).toBeGreaterThan(SNAPSHOTS_PER_BATCH);
+  });
+
+  test('without a callback nothing is batched', () => {
+    const { context, control, stash } = setup(LOOP);
+    expect(() => collectSnapshots(context, control, stash, LOOP, 100000)).not.toThrow();
   });
 });
