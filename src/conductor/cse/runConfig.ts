@@ -32,16 +32,6 @@ export const DEFAULT_STEP_LIMIT = 1000;
 export const STEPPER_STEP_CAP = 3000;
 
 /**
- * The most snapshots that the CSE machine records in a run, a safety net like {@link STEPPER_STEP_CAP}
- * and for the same reason (a snapshot holds the control, the stash and the environments, which grow
- * with the recursion or the data). Measured on programs of 1,000,000 steps cut at the cap: 2500
- * snapshots serialise to 83 MB for a deep recursion, 113 MB for building a long list and 27 MB for a
- * loop of constant size; 5000 to 278, 400 and 54 MB, taking up to three seconds. The host's
- * `stepLimit`, while it still sends one, is a lower cap.
- */
-export const CSE_STEP_CAP = 2500;
-
-/**
  * Fetches and parses `/__cse_config__`. A missing or malformed file falls back to `{}` rather
  * than failing the run: every field is optional and callers apply their own defaults, so a
  * config problem should never cost the user their program's output.

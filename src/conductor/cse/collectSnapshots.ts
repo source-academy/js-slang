@@ -22,26 +22,6 @@ export interface CollectedSnapshots {
   /** 0-based step indices at which a `debugger;` sits on top of the control, for the host's
    * breakpoint navigation. */
   breakpointSteps: number[];
-  /** Whether the run was cut off by `maxSnapshots`, with the machine still having steps to take. */
-  cutOff: boolean;
-}
-
-/** How many snapshots go into a batch that is passed on while the run goes on. A snapshot is
- * large (see `STEPPER_STEP_CAP`'s note on size), so not too many. */
-export const SNAPSHOTS_PER_BATCH = 25;
-
-/** What {@link collectSnapshots} can be given besides the machine. */
-export interface CollectOptions {
-  /** 1-indexed editor lines carrying a gutter breakpoint. */
-  breakpointLines?: readonly number[];
-  usedGlobalNames?: ReadonlySet<string>;
-  /**
-   * Called with the next snapshots (and the breakpoint steps among them) every
-   * {@link SNAPSHOTS_PER_BATCH} snapshots, and with the rest when the run ends or fails, so that a
-   * caller can pass them on while the machine is still running. The returned `snapshots` are all of
-   * them regardless.
-   */
-  onBatch?: (snapshots: CseSnapshot[], breakpointSteps: number[]) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -103,21 +83,12 @@ export function collectSnapshots(
   stash: Stash,
   source: string,
   maxSnapshots: number,
-  { breakpointLines = [], usedGlobalNames, onBatch }: CollectOptions = {},
+  breakpointLines: readonly number[] = [],
+  usedGlobalNames?: ReadonlySet<string>,
 ): CollectedSnapshots {
   const breakpoints = new Set(breakpointLines);
   const snapshots: CseSnapshot[] = [];
   const breakpointSteps: number[] = [];
-
-  // What has not yet gone to `onBatch`.
-  let sentSnapshots = 0;
-  let sentBreakpoints = 0;
-  const flush = () => {
-    if (!onBatch || sentSnapshots === snapshots.length) return;
-    onBatch(snapshots.slice(sentSnapshots), breakpointSteps.slice(sentBreakpoints));
-    sentSnapshots = snapshots.length;
-    sentBreakpoints = breakpointSteps.length;
-  };
 
   // The same node can sit on top of the control across consecutive steps; without this the
   // navigation controls would stop repeatedly on what the user sees as one breakpoint.
@@ -156,45 +127,34 @@ export function collectSnapshots(
   // that the limit counts *snapshots the user can scrub through* rather than internal steps.
   const stream = generateCSEMachineStateStream(context, control, stash, -1, -1);
 
-  let cutOff = false;
-  try {
-    for (const { stash: s, control: c, steps } of stream) {
-      if (snapshots.length >= maxSnapshots) {
-        cutOff = true;
-        break;
-      }
+  for (const { stash: s, control: c, steps } of stream) {
+    if (snapshots.length >= maxSnapshots) break;
 
-      const rawControl = c.getStack();
-      const rawStash = s.getStack();
-      // Mirrors the non-conductor CSE machine's own `updateInspector`, which reads
-      // `context.runtime.nodes[0]` to drive the editor's current-line highlight.
-      const currentNode = context.runtime.nodes[0] as AnyItem;
-      // `steps` is incremented *before* each yield, so the first yield reports 1 — which is exactly
-      // the index after the step-0 snapshot pushed above. Subtracting one would collide with it,
-      // giving every run two snapshots numbered 0 and leaving every recorded breakpoint step
-      // pointing one position behind the state it describes.
-      const stepIndex = steps;
-      snapshots.push(
-        snapshotOf(
-          stepIndex,
-          context,
-          rawControl,
-          rawStash,
-          source,
-          currentNode?.loc?.start?.line,
-          usedGlobalNames,
-        ),
-      );
-      recordIfBreakpoint(rawControl, stepIndex);
-      if (snapshots.length - sentSnapshots >= SNAPSHOTS_PER_BATCH) flush();
-    }
-  } finally {
-    // The snapshots so far go on even if the program fails in the middle: a runtime error ends the
-    // run, and the steps up to it are the part worth seeing.
-    flush();
+    const rawControl = c.getStack();
+    const rawStash = s.getStack();
+    // Mirrors the non-conductor CSE machine's own `updateInspector`, which reads
+    // `context.runtime.nodes[0]` to drive the editor's current-line highlight.
+    const currentNode = context.runtime.nodes[0] as AnyItem;
+    // `steps` is incremented *before* each yield, so the first yield reports 1 — which is exactly
+    // the index after the step-0 snapshot pushed above. Subtracting one would collide with it,
+    // giving every run two snapshots numbered 0 and leaving every recorded breakpoint step
+    // pointing one position behind the state it describes.
+    const stepIndex = steps;
+    snapshots.push(
+      snapshotOf(
+        stepIndex,
+        context,
+        rawControl,
+        rawStash,
+        source,
+        currentNode?.loc?.start?.line,
+        usedGlobalNames,
+      ),
+    );
+    recordIfBreakpoint(rawControl, stepIndex);
   }
 
-  return { snapshots, breakpointSteps, cutOff };
+  return { snapshots, breakpointSteps };
 }
 
 /** Exported for the conformance tests: the final value left on the stash, if any. */

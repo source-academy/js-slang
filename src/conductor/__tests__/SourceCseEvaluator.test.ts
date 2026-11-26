@@ -2,8 +2,6 @@ import { WEB_PLUGIN_ID } from '@sourceacademy/common-autocomplete';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { SourceCseEvaluator3 } from '..';
-import { SNAPSHOTS_PER_BATCH } from '../cse/collectSnapshots';
-import { CSE_STEP_CAP } from '../cse/runConfig';
 import { SourceDataVisualizerRunnerPlugin } from '../dataVisualizer/SourceDataVisualizerRunnerPlugin';
 import AutoCompletePlugin from '../plugins/autocomplete';
 
@@ -17,9 +15,7 @@ import AutoCompletePlugin from '../plugins/autocomplete';
 function fakeConductor(config?: Record<string, unknown>) {
   const output: string[] = [];
   const errors: { message: string; name: string }[] = [];
-  // The batches of snapshots sent while the run went on, and how each run ended.
   const snapshotCalls: { snapshots: unknown[]; breakpointSteps?: number[] }[] = [];
-  const ends: unknown[] = [];
   const dataVisualizerMessages: unknown[] = [];
   const registeredPluginClasses: unknown[] = [];
   const hostLoadedPlugins: unknown[] = [];
@@ -27,7 +23,6 @@ function fakeConductor(config?: Record<string, unknown>) {
     output,
     errors,
     snapshotCalls,
-    ends,
     dataVisualizerMessages,
     registeredPluginClasses,
     hostLoadedPlugins,
@@ -53,9 +48,8 @@ function fakeConductor(config?: Record<string, unknown>) {
           return new SourceDataVisualizerRunnerPlugin({} as any, [channel]);
         }
         return {
-          sendBatch: (snapshots: unknown[], breakpointSteps?: number[]) =>
+          sendSnapshots: (snapshots: unknown[], breakpointSteps?: number[]) =>
             snapshotCalls.push({ snapshots, breakpointSteps }),
-          endRun: (end: unknown) => ends.push(end),
         };
       },
       hostLoadPlugin: (id: unknown) => {
@@ -98,60 +92,11 @@ describe('SourceCseEvaluator', () => {
   });
 
   test('the host step limit caps what is sent', async () => {
-    const { plugin, snapshotCalls, ends } = fakeConductor({ stepLimit: 12 });
+    const { plugin, snapshotCalls } = fakeConductor({ stepLimit: 12 });
     await new SourceCseEvaluator3(plugin).evaluateChunk(
       'let i = 0;\nwhile (i < 100) {\n  i = i + 1;\n}\ni;',
     );
-    expect(snapshotCalls.flatMap(call => call.snapshots).length).toBe(12);
-    // A run that the limit cut off says so, and why.
-    expect(ends).toEqual([{ status: 'cut-off', reason: 'the limit of 12 steps was reached' }]);
-  });
-
-  describe('streaming', () => {
-    const LOOP = (n: number) => `let i = 0;\nwhile (i < ${n}) {\n  i = i + 1;\n}\ni;`;
-
-    test('the snapshots go out in batches as the run goes on, and the run ends complete', async () => {
-      const { plugin, snapshotCalls, ends } = fakeConductor();
-      await new SourceCseEvaluator3(plugin).evaluateChunk(LOOP(30));
-      expect(snapshotCalls.length).toBeGreaterThan(1);
-      for (const call of snapshotCalls.slice(0, -1)) {
-        expect(call.snapshots.length).toBe(SNAPSHOTS_PER_BATCH);
-      }
-      expect(ends).toEqual([{ status: 'complete' }]);
-    });
-
-    test("without a host limit, a long run is cut off at the evaluator's own cap", async () => {
-      const { plugin, snapshotCalls, ends } = fakeConductor();
-      await new SourceCseEvaluator3(plugin).evaluateChunk(LOOP(100000));
-      expect(snapshotCalls.flatMap(call => call.snapshots).length).toBe(CSE_STEP_CAP);
-      expect(ends).toEqual([
-        { status: 'cut-off', reason: `the limit of ${CSE_STEP_CAP} steps was reached` },
-      ]);
-    });
-
-    test('a host limit above the cap does not raise it', async () => {
-      const { plugin, snapshotCalls } = fakeConductor({ stepLimit: 10 * CSE_STEP_CAP });
-      await new SourceCseEvaluator3(plugin).evaluateChunk(LOOP(100000));
-      expect(snapshotCalls.flatMap(call => call.snapshots).length).toBe(CSE_STEP_CAP);
-    });
-
-    test('a program that fails keeps the steps up to the failure, ends there, and reports the error', async () => {
-      const { plugin, snapshotCalls, ends, errors } = fakeConductor();
-      await new SourceCseEvaluator3(plugin).evaluateChunk(
-        'const a = 1;\nconst b = a + "x" - 1;\nb;',
-      );
-      expect(snapshotCalls.flatMap(call => call.snapshots).length).toBeGreaterThan(1);
-      expect(ends).toEqual([{ status: 'complete' }]);
-      expect(errors.length).toBe(1);
-    });
-
-    test('each run ends once, and a second run starts a new one', async () => {
-      const { plugin, ends } = fakeConductor();
-      const evaluator = new SourceCseEvaluator3(plugin);
-      await evaluator.evaluateChunk('1 + 1;');
-      await evaluator.evaluateChunk('2 + 2;');
-      expect(ends).toEqual([{ status: 'complete' }, { status: 'complete' }]);
-    });
+    expect(snapshotCalls[0].snapshots.length).toBe(12);
   });
 });
 
