@@ -213,6 +213,27 @@ function scopeForStatement(node: es.ForStatement): BlockFrame {
   return block;
 }
 
+/** The for statement whose initialiser declares the name at `definitionLocation`, if any: its range. */
+function getLoopHeaderScope(
+  program: es.Program,
+  definitionLocation: es.SourceLocation,
+): es.SourceLocation | undefined {
+  let scope: es.SourceLocation | undefined;
+  simple(program, {
+    ForStatement(node: es.ForStatement) {
+      const init = node.init?.loc;
+      if (
+        init &&
+        node.loc &&
+        isInLoc(definitionLocation.start.line, definitionLocation.start.column, init)
+      ) {
+        scope = node.loc;
+      }
+    },
+  });
+  return scope;
+}
+
 /*
 This function finds the list of location ranges
 where a given identifier is in scope.
@@ -226,7 +247,9 @@ export function getScopeHelper(
 
   // Find closest ancestor of node.
   const block = getBlockFromLoc(definitionLocation, lookupTree);
-  const parentRange = block.loc;
+  // A variable declared by a for loop is in scope in all of it, the condition and the update as
+  // well as the body; the block that the analysis has for the loop is only its body.
+  const parentRange = getLoopHeaderScope(program, definitionLocation) ?? block.loc;
 
   // Recurse on the children to find other
   // definitions of the same identifier

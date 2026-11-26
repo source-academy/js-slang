@@ -10,7 +10,6 @@ import type {
 } from 'estree';
 
 import type { Node } from '../../../../types';
-import { getSpecifierName } from '../../../../utils/ast/helpers';
 import {
   ancestor,
   base,
@@ -90,8 +89,9 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
         }
       },
       ImportSpecifier(node: ImportSpecifier, _state: any, _callback: WalkerCallback<any>) {
-        if (getSpecifierName(node.imported) === identifier.name) {
-          declarations.push(node.imported);
+        // The binding is the local name: `bar` in `import { foo as bar } from 'm'`.
+        if (node.local.name === identifier.name) {
+          declarations.push(node.local);
         }
       },
     });

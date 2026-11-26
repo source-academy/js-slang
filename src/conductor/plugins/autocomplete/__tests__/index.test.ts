@@ -161,6 +161,40 @@ describe('AutoCompletePlugin', () => {
       expect(plugin.scope(code, { line: 4, character: 0 })).toEqual([]);
     });
 
+    test('a name imported under another name is declared by that name', () => {
+      const { plugin } = makeAnalysingPlugin();
+      const imported = 'import { foo as bar } from "m";\nbar(1);\nbar(2);';
+      expect(plugin.definition(imported, { line: 1, character: 0 })).toEqual(range(0, 16, 19));
+      expect(plugin.occurrences(imported, { line: 2, character: 1 })).toEqual([
+        range(0, 16, 19),
+        range(1, 0, 3),
+        range(2, 0, 3),
+      ]);
+    });
+
+    test('a variable of a for loop is in scope in all of the loop, not only its body', () => {
+      const { plugin } = makeAnalysingPlugin();
+      const loop = 'for (let i = 0; i < 3; i = i + 1) {\n  display(i);\n}';
+      expect(plugin.scope(loop, { line: 0, character: 9 })).toEqual([
+        { start: { line: 0, character: 0 }, end: { line: 2, character: 1 } },
+      ]);
+      // Its uses in the condition and the update are found as well as the one in the body.
+      expect(plugin.occurrences(loop, { line: 1, character: 10 })).toEqual([
+        range(0, 9, 10),
+        range(0, 16, 17),
+        range(0, 23, 24),
+        range(0, 27, 28),
+        range(1, 10, 11),
+      ]);
+    });
+
+    test('a position right after a name is on it, as an editor has its cursor after what is typed', () => {
+      const { plugin } = makeAnalysingPlugin();
+      // `x` of `const x = 1;` is characters 6 up to 7: the cursor at 7 is on it, and at 8 is not.
+      expect(plugin.definition(code, { line: 0, character: 7 })).toEqual(range(0, 6, 7));
+      expect(plugin.definition(code, { line: 0, character: 8 })).toBeNull();
+    });
+
     test('works on code that does not parse, as a student has it mid-keystroke', () => {
       const { plugin } = makeAnalysingPlugin();
       expect(plugin.occurrences('const x = ;\nx + x', { line: 1, character: 0 })).toEqual([

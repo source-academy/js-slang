@@ -61,5 +61,20 @@ export function getAllOccurrencesInScope(code: string, loc: SourcePosition): es.
   if (declarationNode == null || declarationNode.loc == null) {
     return [];
   }
-  return getAllOccurrencesInScopeHelper(declarationNode.loc, program, identifierNode.name);
+  const occurrences = getAllOccurrencesInScopeHelper(
+    declarationNode.loc,
+    program,
+    identifierNode.name,
+  );
+  // The declaration is one of them. The walk finds the declaration of a variable, a function or a
+  // parameter, but not that of a name that is imported.
+  const { start, end } = declarationNode.loc;
+  const hasDeclaration = occurrences.some(
+    loc =>
+      loc.start.line === start.line &&
+      loc.start.column === start.column &&
+      loc.end.line === end.line &&
+      loc.end.column === end.column,
+  );
+  return hasDeclaration ? occurrences : [declarationNode.loc, ...occurrences];
 }
