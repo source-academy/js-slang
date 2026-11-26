@@ -1129,10 +1129,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sourceacademy/common-cse-machine@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@sourceacademy/common-cse-machine@npm:0.3.0"
-  checksum: 10c0/c0462cc2dd8d779179c31d168aa3e71ea7f81818535166e38aeb3c048469fcf7eebc388ed4110d3300d6b6933cc310da3fbe4c3a4026746c5df409eb91dd7042
+"@sourceacademy/common-cse-machine@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@sourceacademy/common-cse-machine@npm:0.5.0"
+  checksum: 10c0/14f399f25d940e802f279a6fdb948d60936ed6da804b94c360bf27918a650a8ca67921788123e883915c3f4f7c52f8020bcb6f8b3b0cf6969504c0d9d1b5dfe8
   languageName: node
   linkType: hard
 
@@ -1168,13 +1168,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sourceacademy/runner-cse-machine@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@sourceacademy/runner-cse-machine@npm:3.0.0"
+"@sourceacademy/runner-cse-machine@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@sourceacademy/runner-cse-machine@npm:3.1.0"
   peerDependencies:
-    "@sourceacademy/common-cse-machine": ">=0.3.0"
-    "@sourceacademy/conductor": ">=0.3.0"
-  checksum: 10c0/dbf3c9220bb35b2f10d46dcfd13e1c827931d9bb9fb41266eff512d5859ab7734e594cda3b0e741a9896e8f7a3598cdb4d914ef13b7ecce941f8fc1798d8965e
+    "@sourceacademy/common-cse-machine": ">=0.5.0"
+    "@sourceacademy/conductor": ^0.8.0
+  checksum: 10c0/1cca98ae6dcb56caecf5d0fa88b0e808c72b05a58d0de9d238d43079efbd6143cd8fd8fc14494718785a7a19bb98a6f899eb40caa888ec3c6d1dc94dd1700a60
   languageName: node
   linkType: hard
 
@@ -3864,12 +3864,12 @@ __metadata:
     "@rollup/plugin-replace": "npm:^6.0.3"
     "@rollup/plugin-terser": "npm:^1.0.0"
     "@sourceacademy/common-autocomplete": "npm:^0.0.1"
-    "@sourceacademy/common-cse-machine": "npm:^0.3.0"
+    "@sourceacademy/common-cse-machine": "npm:^0.5.0"
     "@sourceacademy/common-data-visualizer": "npm:^0.0.1"
     "@sourceacademy/common-stepper": "npm:^0.1.0"
     "@sourceacademy/conductor": "npm:^0.8.3"
     "@sourceacademy/runner-autocomplete": "npm:^0.0.2"
-    "@sourceacademy/runner-cse-machine": "npm:^3.0.0"
+    "@sourceacademy/runner-cse-machine": "npm:^3.1.0"
     "@sourceacademy/runner-data-visualizer": "npm:^0.0.1"
     "@sourceacademy/runner-module-loader": "npm:^0.0.1"
     "@sourceacademy/runner-stepper": "npm:^0.1.0"
