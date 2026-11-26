@@ -11,107 +11,47 @@ import { undefinedNode } from './nodes';
 import { StepperExpressionStatement } from './nodes/Statement/ExpressionStatement';
 import type { IStepperPropContents, Marker, RedexInfo } from '.';
 
-export function getSteps(
+/** How a run of {@link generateSteps} ended, once its last step has been produced. */
+export type StepsEnd = {
+  /** Whether the run was cut off by the step limit, before the program had finished. */
+  readonly limitReached: boolean;
+};
+
+/**
+ * The steps of the program, one at a time, as they are computed: the first step is there before
+ * the program has been stepped at all, so that a caller can pass the steps on while a long run is
+ * going (and keep those it had if the run is stopped). The generator returns how the run ended.
+ *
+ * The steps are those of {@link getSteps}, which collects them.
+ */
+export function* generateSteps(
   inputNode: es.BaseNode,
   context: Context,
   { stepLimit }: Pick<IOptions, 'stepLimit'>,
-): IStepperPropContents[] {
+): Generator<IStepperPropContents, StepsEnd> {
   const redex: RedexInfo = {
     preRedex: [],
     postRedex: [],
   };
 
   const node = prelude(inputNode, redex);
-  const steps: IStepperPropContents[] = [];
   const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1;
   let hasError = false;
 
-  let numSteps = 1;
-  function evaluate(node: StepperBaseNode): StepperBaseNode {
-    try {
-      if (node.isOneStepPossible(redex)) {
-        const newNode = node.oneStep(redex);
-
-        const explanations = redex.preRedex.map(explain);
-        const beforeMarkers = redex.preRedex.map((redex, index): Marker => ({
-          redex,
-          redexType: 'beforeMarker',
-          explanation: explanations[index],
-        }));
-        numSteps += 1;
-        if (numSteps >= limit) {
-          return node;
-        }
-        steps.push({
-          ast: node,
-          markers: beforeMarkers,
-        });
-
-        const afterMarkers: Marker[] =
-          redex.postRedex.length > 0
-            ? redex.postRedex.map((redex, index) => ({
-                redex,
-                redexType: 'afterMarker',
-                explanation: explanations[index],
-              }))
-            : [
-                {
-                  redexType: 'afterMarker',
-                  explanation: explanations[0], // use explanation based on preRedex
-                },
-              ];
-        numSteps += 1;
-        if (numSteps >= limit) {
-          return node;
-        }
-        steps.push({
-          ast: newNode,
-          markers: afterMarkers,
-        });
-
-        // reset
-        redex.preRedex = [];
-        redex.postRedex = [];
-        return evaluate(newNode);
-      } else {
-        return node;
-      }
-    } catch (error) {
-      if (!(error instanceof RuntimeSourceError)) {
-        throw error;
-      }
-
-      const errStr = parseError([error]);
-
-      // Handle error during step evaluation
-      hasError = true;
-      steps.push({
-        ast: node,
-        markers: [
-          {
-            redexType: 'beforeMarker',
-            explanation: errStr,
-          },
-        ],
-      });
-      return node;
-    }
-  }
-
   // First node
-  steps.push({
+  yield {
     ast: node,
     markers: [
       {
         explanation: 'Start of evaluation',
       },
     ],
-  });
+  };
   // check for undefined variables
   try {
     checkProgramForUndefinedVariables(inputNode as es.Program, context);
   } catch (error) {
-    steps.push({
+    yield {
       ast: node,
       markers: [
         {
@@ -122,46 +62,116 @@ export function getSteps(
               : String(error),
         },
       ],
-    });
-    return steps;
+    };
+    return { limitReached: false };
   }
 
-  let result = evaluate(node);
+  // A loop and not a recursion, so that the depth of the program's evaluation, which can be
+  // thousands of steps, does not grow the call stack.
+  let numSteps = 1;
+  let current: StepperBaseNode = node;
+  for (;;) {
+    try {
+      if (!current.isOneStepPossible(redex)) break;
+      const newNode = current.oneStep(redex);
+
+      const explanations = redex.preRedex.map(explain);
+      const beforeMarkers = redex.preRedex.map((redex, index): Marker => ({
+        redex,
+        redexType: 'beforeMarker',
+        explanation: explanations[index],
+      }));
+      numSteps += 1;
+      if (numSteps >= limit) break;
+      yield {
+        ast: current,
+        markers: beforeMarkers,
+      };
+
+      const afterMarkers: Marker[] =
+        redex.postRedex.length > 0
+          ? redex.postRedex.map((redex, index) => ({
+              redex,
+              redexType: 'afterMarker',
+              explanation: explanations[index],
+            }))
+          : [
+              {
+                redexType: 'afterMarker',
+                explanation: explanations[0], // use explanation based on preRedex
+              },
+            ];
+      numSteps += 1;
+      if (numSteps >= limit) break;
+      yield {
+        ast: newNode,
+        markers: afterMarkers,
+      };
+
+      // reset
+      redex.preRedex = [];
+      redex.postRedex = [];
+      current = newNode;
+    } catch (error) {
+      if (!(error instanceof RuntimeSourceError)) {
+        throw error;
+      }
+
+      const errStr = parseError([error]);
+
+      // Handle error during step evaluation
+      hasError = true;
+      yield {
+        ast: current,
+        markers: [
+          {
+            redexType: 'beforeMarker',
+            explanation: errStr,
+          },
+        ],
+      };
+      break;
+    }
+  }
+
+  let result = current;
   // If program has not completed within the step limit, halt.
   if (numSteps >= limit) {
-    steps.push({
+    yield {
       ast: result,
       markers: [
         {
           explanation: 'Maximum number of steps exceeded',
         },
       ],
-    });
-    return steps;
+    };
+    return { limitReached: true };
   }
   // If the program does not return anything, return undefined
   if (result.type === 'Program' && (result as StepperProgram).body.length === 0) {
     result = new StepperExpressionStatement(undefinedNode);
   }
 
-  if (!hasError) {
-    steps.push({
-      ast: result,
-      markers: [
-        {
-          explanation: 'Evaluation complete',
-        },
-      ],
-    });
-  } else {
-    steps.push({
-      ast: result,
-      markers: [
-        {
-          explanation: 'Evaluation stuck',
-        },
-      ],
-    });
+  yield {
+    ast: result,
+    markers: [
+      {
+        explanation: hasError ? 'Evaluation stuck' : 'Evaluation complete',
+      },
+    ],
+  };
+  return { limitReached: false };
+}
+
+export function getSteps(
+  inputNode: es.BaseNode,
+  context: Context,
+  options: Pick<IOptions, 'stepLimit'>,
+): IStepperPropContents[] {
+  const steps: IStepperPropContents[] = [];
+  const generator = generateSteps(inputNode, context, options);
+  for (let next = generator.next(); !next.done; next = generator.next()) {
+    steps.push(next.value);
   }
   return steps;
 }
