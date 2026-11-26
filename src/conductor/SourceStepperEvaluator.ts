@@ -9,7 +9,7 @@ import { parse } from '../parser/parser';
 import type { Context, Value } from '../types';
 import { EvaluatorSyntaxError } from '@sourceacademy/conductor/common';
 
-import { DEFAULT_STEP_LIMIT, fetchRunConfig } from './cse/runConfig';
+import { fetchRunConfig, STEPPER_STEP_CAP } from './cse/runConfig';
 import { registerAutoCompletePlugin } from './plugins/autocomplete';
 import { SourceDataVisualizerRunnerPlugin } from './dataVisualizer/SourceDataVisualizerRunnerPlugin';
 import { isWarning, toConductorError, unknownToConductorError } from './errors';
@@ -53,7 +53,7 @@ abstract class SourceStepperEvaluatorBase extends BasicEvaluator {
     this.stepper = conductor.registerPlugin(
       SourceStepperRunnerPlugin,
       this.context,
-      DEFAULT_STEP_LIMIT,
+      STEPPER_STEP_CAP,
     );
     void conductor.hostLoadPlugin(STEPPER_DIRECTORY_ID);
   }
@@ -109,7 +109,7 @@ abstract class SourceStepperEvaluatorBase extends BasicEvaluator {
       }
 
       const config = await fetchRunConfig(this.conductor);
-      this.stepper.setStepLimit(config.stepLimit ?? DEFAULT_STEP_LIMIT);
+      this.stepper.setStepLimit(Math.min(config.stepLimit ?? STEPPER_STEP_CAP, STEPPER_STEP_CAP));
       await this.stepper.sendSteps(program);
 
       this.reportErrors();

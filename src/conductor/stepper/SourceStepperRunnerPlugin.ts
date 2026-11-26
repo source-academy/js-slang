@@ -1,11 +1,16 @@
-import type { SerializedStepperStep } from '@sourceacademy/common-stepper';
+import type { SerializedStepperStep, TraceEnd } from '@sourceacademy/common-stepper';
 import { checkIsPluginClass, type IChannel, type IConduit } from '@sourceacademy/conductor/conduit';
-import { BaseStepperRunnerPlugin } from '@sourceacademy/runner-stepper';
+import { BaseStepperRunnerPlugin, type StepBatches } from '@sourceacademy/runner-stepper';
 import type es from 'estree';
 
-import { getSteps } from '../../stepper/steppers';
+import type { IStepperPropContents } from '../../stepper';
+import { generateSteps, getSteps } from '../../stepper/steppers';
 import type { Context } from '../../types';
 import { serializeSteps } from './serialize';
+
+/** How many steps go into a batch that is sent to the host while the run goes on. A batch of a
+ * long run is large (steps of a recursive program grow with the recursion), so not too many. */
+export const STEPS_PER_BATCH = 25;
 
 /**
  * The js-slang binding for the language-agnostic stepper runner.
@@ -36,6 +41,32 @@ export class SourceStepperRunnerPlugin extends BaseStepperRunnerPlugin<es.Progra
 
   getSteps(ast: es.Program): SerializedStepperStep[] {
     return serializeSteps(getSteps(ast, this.context, { stepLimit: this.stepLimit }));
+  }
+
+  /**
+   * The steps in batches, as they are computed, so that the host has the steps so far if the run is
+   * stopped, or never finishes (the host stops a run by terminating the worker). The trace ends as
+   * cut off, with the reason, if the step limit was reached.
+   */
+  protected override getStepBatches(ast: es.Program): StepBatches {
+    const { context, stepLimit } = this;
+    return (function* (): Generator<SerializedStepperStep[], TraceEnd | undefined> {
+      const steps = generateSteps(ast, context, { stepLimit });
+      let batch: IStepperPropContents[] = [];
+      for (let next = steps.next(); ; next = steps.next()) {
+        if (next.done) {
+          if (batch.length > 0) yield serializeSteps(batch);
+          return next.value.limitReached
+            ? { status: 'cut-off', reason: `the limit of ${stepLimit} steps was reached` }
+            : undefined;
+        }
+        batch.push(next.value);
+        if (batch.length >= STEPS_PER_BATCH) {
+          yield serializeSteps(batch);
+          batch = [];
+        }
+      }
+    })();
   }
 }
 checkIsPluginClass(SourceStepperRunnerPlugin);

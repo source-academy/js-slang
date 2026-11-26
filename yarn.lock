@@ -1143,10 +1143,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sourceacademy/common-stepper@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@sourceacademy/common-stepper@npm:0.0.1"
-  checksum: 10c0/e3a79fb07f68e24a045553a8c5c66e652df12d3b80150a20b4b4603936605e3a2e10c5636e48ba180b2a3473287727340c4b791abe8df301d00e0984d07667a4
+"@sourceacademy/common-stepper@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@sourceacademy/common-stepper@npm:0.1.0"
+  checksum: 10c0/587c87faf77f3694b063360d660754fb629153325006917be38925cbecfae2a9bbd7bd0c95956bbdbe55f5b3fb01fd4a5f163533b24ba66d22e2ce1b58af4f39
   languageName: node
   linkType: hard
 
@@ -1196,12 +1196,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sourceacademy/runner-stepper@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@sourceacademy/runner-stepper@npm:0.0.1"
+"@sourceacademy/runner-stepper@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@sourceacademy/runner-stepper@npm:0.1.0"
   peerDependencies:
-    "@sourceacademy/conductor": ">=0.3.0"
-  checksum: 10c0/0c454960bba50f1f0cfbe5d08a4c0f079100a3044ef24171104ee82594646a1fcea5e2b154dfcd7963d2b85cfb88b9e35bdcbadd85a68362c7b8b4fcb443e34d
+    "@sourceacademy/conductor": ^0.8.0
+  checksum: 10c0/c4c9a26d534b78afce6e03b6f888adf0ffc2e67f7558440f0093858456570b825291f08f12de4e9377aeaa7525f610a5464559d4c3804ccc67e84a210a5c394e
   languageName: node
   linkType: hard
 
@@ -3866,13 +3866,13 @@ __metadata:
     "@sourceacademy/common-autocomplete": "npm:^0.0.1"
     "@sourceacademy/common-cse-machine": "npm:^0.3.0"
     "@sourceacademy/common-data-visualizer": "npm:^0.0.1"
-    "@sourceacademy/common-stepper": "npm:^0.0.1"
+    "@sourceacademy/common-stepper": "npm:^0.1.0"
     "@sourceacademy/conductor": "npm:^0.8.3"
     "@sourceacademy/runner-autocomplete": "npm:^0.0.2"
     "@sourceacademy/runner-cse-machine": "npm:^3.0.0"
     "@sourceacademy/runner-data-visualizer": "npm:^0.0.1"
     "@sourceacademy/runner-module-loader": "npm:^0.0.1"
-    "@sourceacademy/runner-stepper": "npm:^0.0.1"
+    "@sourceacademy/runner-stepper": "npm:^0.1.0"
     "@ts-morph/bootstrap": "npm:^0.18.0"
     "@types/estree": "npm:^1.0.5"
     "@types/lodash": "npm:^4.14.202"
