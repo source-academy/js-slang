@@ -12,6 +12,7 @@ import { list_to_vector } from './stdlib/list';
 import { listPrelude } from './stdlib/list.prelude';
 import { localImportPrelude } from './stdlib/localImport.prelude';
 import * as misc from './stdlib/misc';
+import { MATH_LIBRARY_NAMES } from './stdlib/mathLibrary';
 import * as parser from './stdlib/parser';
 import * as stream from './stdlib/stream';
 import { streamPrelude } from './stdlib/stream.prelude';
@@ -316,7 +317,7 @@ export function importBuiltins(context: Context, externalBuiltIns: Partial<Custo
     defineBuiltin(context, 'NaN', NaN);
     defineBuiltin(context, 'Infinity', Infinity);
     // Define all Math libraries
-    const mathLibraryNames = Object.getOwnPropertyNames(Math);
+    const mathLibraryNames = MATH_LIBRARY_NAMES;
     // Short param names for stringified version of math functions
     const parameterNames = [...'abcdefghijklmnopqrstuvwxyz'];
     for (const name of mathLibraryNames) {

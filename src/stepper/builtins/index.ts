@@ -6,6 +6,7 @@ import { StepperLiteral } from '../nodes/Expression/Literal';
 import type { StepperFunctionApplication } from '../nodes/Expression/FunctionApplication';
 import type { RedexInfo } from '..';
 import { InvalidParameterTypeError } from '../../errors/rttcErrors';
+import { MATH_LIBRARY_NAMES } from '../../stdlib/mathLibrary';
 import { validateFunctionArgCount } from '../../utils/operators';
 import { auxiliaryBuiltinFunctions } from './auxiliary';
 import { listBuiltinFunctions } from './lists';
@@ -21,15 +22,13 @@ export function prelude(node: es.BaseNode, redex: RedexInfo) {
   let inputNode = convert(node);
 
   // Substitute math constant
-  Object.getOwnPropertyNames(Math)
-    .filter(name => name in Math && typeof Math[name as keyof typeof Math] !== 'function')
-    .forEach(name => {
-      inputNode = inputNode.substitute(
-        new StepperIdentifier('math_' + name),
-        new StepperLiteral(Math[name as keyof typeof Math] as number),
-        redex,
-      );
-    });
+  MATH_LIBRARY_NAMES.filter(name => typeof Math[name] !== 'function').forEach(name => {
+    inputNode = inputNode.substitute(
+      new StepperIdentifier('math_' + name),
+      new StepperLiteral(Math[name as keyof typeof Math] as number),
+      redex,
+    );
+  });
   return inputNode;
 }
 
