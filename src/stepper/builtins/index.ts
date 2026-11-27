@@ -42,30 +42,28 @@ export function getBuiltinFunction(
 ): StepperExpression {
   const args = call.arguments;
 
-  if (name.startsWith('math_')) {
-    const mathFnName = name.split('_')[1];
-    if (mathFnName in Math) {
-      // Is a math function
-      const fn = (Math as any)[mathFnName];
+  if (isMathName(name)) {
+    const mathFnName = name.slice('math_'.length);
+    // Is a math function
+    const fn = (Math as any)[mathFnName];
 
-      if (mathFnName === 'min' || mathFnName === 'max') {
-        // Assume that only min and max have varargs
-        validateFunctionArgCount(call, args.length, 0, true, name);
-      } else {
-        // And use f.length for everything else
-        validateFunctionArgCount(call, args.length, fn.length, undefined, name);
-      }
-
-      const argVal = args.map(arg => (arg as StepperLiteral).value);
-      argVal.forEach(arg => {
-        if (typeof arg !== 'number' && typeof arg !== 'bigint') {
-          throw new InvalidParameterTypeError('number', arg, name, undefined, call);
-        }
-      });
-
-      const result = fn(...argVal);
-      return new StepperLiteral(result, result);
+    if (mathFnName === 'min' || mathFnName === 'max') {
+      // Assume that only min and max have varargs
+      validateFunctionArgCount(call, args.length, 0, true, name);
+    } else {
+      // And use f.length for everything else
+      validateFunctionArgCount(call, args.length, fn.length, undefined, name);
     }
+
+    const argVal = args.map(arg => (arg as StepperLiteral).value);
+    argVal.forEach(arg => {
+      if (typeof arg !== 'number' && typeof arg !== 'bigint') {
+        throw new InvalidParameterTypeError('number', arg, name, undefined, call);
+      }
+    });
+
+    const result = fn(...argVal);
+    return new StepperLiteral(result, result);
   }
 
   const calledFunction = builtinFunctions[name as keyof typeof builtinFunctions];
@@ -81,6 +79,17 @@ export function getBuiltinFunction(
   return calledFunction.definition(args);
 }
 
+/**
+ * Whether `name` is `math_` followed by a member of Source's Math library (see `MATH_LIBRARY_NAMES`),
+ * not by any member that the engine happens to have in `Math`.
+ */
+function isMathName(name: string): boolean {
+  return (
+    name.startsWith('math_') &&
+    (MATH_LIBRARY_NAMES as readonly string[]).includes(name.slice('math_'.length))
+  );
+}
+
 export function isBuiltinFunction(name: string): boolean {
-  return name.startsWith('math_') || Object.keys(builtinFunctions).includes(name);
+  return isMathName(name) || Object.keys(builtinFunctions).includes(name);
 }
