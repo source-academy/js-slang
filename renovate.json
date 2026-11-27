@@ -6,6 +6,11 @@
       "rangeStrategy": "update-lockfile",
       "matchPackageNames": ["*"],
       "minimumReleaseAge": "5 days"
+    },
+    {
+      "description": "Node is one version for every repository, decided on the documentation site (Node.js version); the types follow it.",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "<25"
     }
   ],
   "enabledManagers": ["npm"]
