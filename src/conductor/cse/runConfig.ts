@@ -1,7 +1,7 @@
 import type { IRunnerPlugin } from '@sourceacademy/conductor/runner';
 
 /**
- * Per-run settings the host serves as a virtual `/__cse_config__` file, fetched through
+ * Per-run settings the host serves as a virtual `/__run_config__` file, fetched through
  * `IRunnerPlugin.requestFile` — Conductor has no dedicated message type for either field, and
  * `requestFile` is its only generic inbound channel.
  *
@@ -41,14 +41,21 @@ export const STEPPER_STEP_CAP = 3000;
  */
 export const CSE_STEP_CAP = 2500;
 
+/** The file of the per-run settings. Hosts served it as `/__cse_config__` before the rename. */
+const RUN_CONFIG_FILE = '/__run_config__';
+const LEGACY_RUN_CONFIG_FILE = '/__cse_config__';
+
 /**
- * Fetches and parses `/__cse_config__`. A missing or malformed file falls back to `{}` rather
- * than failing the run: every field is optional and callers apply their own defaults, so a
- * config problem should never cost the user their program's output.
+ * Fetches and parses `/__run_config__`, or `/__cse_config__` from a host that has not been renamed
+ * yet. A missing or malformed file falls back to `{}` rather than failing the run: every field is
+ * optional and callers apply their own defaults, so a config problem should never cost the user
+ * their program's output.
  */
 export async function fetchRunConfig(conductor: IRunnerPlugin): Promise<RunConfig> {
   try {
-    const raw = await conductor.requestFile('/__cse_config__');
+    const raw =
+      (await conductor.requestFile(RUN_CONFIG_FILE)) ||
+      (await conductor.requestFile(LEGACY_RUN_CONFIG_FILE));
     if (!raw) return {};
     return JSON.parse(raw) as RunConfig;
   } catch {
