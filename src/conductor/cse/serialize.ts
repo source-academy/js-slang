@@ -11,8 +11,9 @@
  *  - `control` and `stash` are serialised **top-first**; the adapter reverses both back.
  *  - `InstrType` is a *string* enum in js-slang (`'Application'`, `'Environment'`, ...) and the
  *    frontend imports that same enum, so the raw value is passed through untouched.
- *  - an `ENVIRONMENT` instruction is matched by the adapter on `displayText === 'ENVIRONMENT'`
- *    (case-insensitively) together with `metadata.envId` — not on its `instrType`.
+ *  - an `ENVIRONMENT` instruction carries `metadata.instrType: 'env'` and `metadata.envId`, which is
+ *    how the host takes it (not js-slang's own enum value, which is passed through for the others);
+ *    its `displayText` stays `'ENVIRONMENT'` for hosts that match on that.
  */
 
 import type { Identifier, RestElement } from 'estree';
@@ -164,9 +165,13 @@ export function serializeControlItem(item: AnyItem, source: string): CseSerializ
   if (item?.instrType !== undefined) {
     const instrType = item.instrType as InstrType;
 
-    // Matched by the adapter on displayText, not instrType — see this file's header.
+    // The host takes it by `instrType: 'env'` (CseEnvironmentInstructionMetadata in
+    // `@sourceacademy/common-cse-machine`), not by displayText, nor by js-slang's own enum value.
     if (instrType === InstrType.ENVIRONMENT && item.env?.id) {
-      return { displayText: 'ENVIRONMENT', metadata: { envId: item.env.id as string } };
+      return {
+        displayText: 'ENVIRONMENT',
+        metadata: { instrType: 'env', envId: item.env.id as string },
+      };
     }
     if (instrType === InstrType.ASSIGNMENT && item.symbol) {
       return {
