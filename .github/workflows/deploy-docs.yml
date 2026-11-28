@@ -47,10 +47,14 @@ jobs:
           # py-slang's deploy-docs.yml. https://docs.sourceacademy.org/javascript is the
           # language docs' new canonical URL, following the "Source" -> "JavaScript" rename.
           # This step must run (and thus publish docs/source's real, full index.html here)
-          # before docs/source/index.html gets overwritten with the root redirect stub below.
+          # before docs/source/index.html is removed below.
           destination_dir: javascript
-      - name: Replace the root index page with a pointer to /javascript
-        run: cp docs/root_redirect.html docs/source/index.html
+      # The root page of docs.sourceacademy.org is the landing page that the docs repository
+      # (source-academy/docs) publishes: do not publish this one's index.html there. The root deploy
+      # below keeps the files that other publishers put in the deployment repository (keep_files), so
+      # leaving index.html out leaves the landing page as it is.
+      - name: Leave the root index page to the docs repository
+        run: rm docs/source/index.html
       # peaceiris/actions-gh-pages starts an ssh-agent on a fixed socket path
       # (/tmp/ssh-auth.sock) and leaves it running; a second invocation of the action in the same
       # job then fails to bind its own agent to that same path ("Address already in use"). Kill
