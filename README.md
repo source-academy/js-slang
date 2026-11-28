@@ -20,7 +20,7 @@ Open-source implementations of the teaching language family _JavaScript §1_ to 
 
 ## Prerequisites
 
-- NodeJS v24: use the version in `.node-version` (see the [Node.js version](https://github.com/source-academy/documentation/blob/main/app/docs/developers/node-version.md) page)
+- NodeJS v24: use the version in `.node-version` (see the [Node.js version](https://docs.sourceacademy.org/developer/node-version) page)
 - Python: On MacBook Pro with chip Apple M1 Pro, use python 3.10.12. Here is [the correct way to set Python 3 as default on a Mac](https://opensource.com/article/19/5/python-3-default-mac).
 - yarn: use the version specified in `package.json`. On macos, you may need to run `corepack enable`.
 
